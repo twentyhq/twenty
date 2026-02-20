@@ -10,8 +10,6 @@ import { CommandMenuEditOwnerSection } from '@/command-menu/pages/navigation-men
 import { useNavigationMenuItemEditOrganizeActions } from '@/command-menu/pages/navigation-menu-item/hooks/useNavigationMenuItemEditOrganizeActions';
 import { getOrganizeActionsSelectableItemIds } from '@/command-menu/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
-import { ViewKey } from '@/views/types/ViewKey';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/hooks/useOpenAddItemToFolderPage';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
@@ -19,8 +17,10 @@ import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-it
 import { useSelectedNavigationMenuItemEditItemObjectMetadata } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemObjectMetadata';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { ViewKey } from '@/views/types/ViewKey';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -51,7 +51,7 @@ export const CommandMenuNavigationMenuItemEditPage = () => {
   const selectedItemType = selectedItem?.itemType ?? null;
 
   const [isFolderPickerOpen, setIsFolderPickerOpen] = useState(false);
-  const setFolderPicker = () => setIsFolderPickerOpen(true);
+  const openFolderPicker = () => setIsFolderPickerOpen(true);
 
   const {
     canMoveUp,
@@ -107,7 +107,7 @@ export const CommandMenuNavigationMenuItemEditPage = () => {
       if (!selectedItemObjectMetadata) return null;
       return (
         <CommandMenuEditObjectViewBase
-          onOpenFolderPicker={setFolderPicker}
+          onOpenFolderPicker={openFolderPicker}
           canMoveUp={canMoveUp}
           canMoveDown={canMoveDown}
           onMoveUp={onMoveUp}
@@ -132,7 +132,7 @@ export const CommandMenuNavigationMenuItemEditPage = () => {
             key={selectedItem.id}
             selectedItem={selectedItem}
             onUpdateLink={(linkId, link) => updateLinkInDraft(linkId, { link })}
-            onOpenFolderPicker={setFolderPicker}
+            onOpenFolderPicker={openFolderPicker}
             canMoveUp={canMoveUp}
             canMoveDown={canMoveDown}
             onMoveUp={onMoveUp}
@@ -208,7 +208,7 @@ export const CommandMenuNavigationMenuItemEditPage = () => {
             onAddBefore={onAddBefore}
             onAddAfter={onAddAfter}
             showMoveToFolder
-            onMoveToFolder={setFolderPicker}
+            onMoveToFolder={openFolderPicker}
           />
         </CommandMenuList>
       );
