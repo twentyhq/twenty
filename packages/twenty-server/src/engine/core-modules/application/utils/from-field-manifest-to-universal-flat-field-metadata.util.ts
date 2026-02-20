@@ -1,8 +1,8 @@
+import { type FieldManifest } from 'twenty-shared/application';
 import {
-  type FieldManifest,
-  type RelationFieldManifest,
-} from 'twenty-shared/application';
-import { FieldMetadataType } from 'twenty-shared/types';
+  FieldMetadataType,
+  type RelationAndMorphRelationFieldMetadataType,
+} from 'twenty-shared/types';
 
 import {
   ApplicationException,
@@ -15,7 +15,7 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 
 const isRelationFieldManifest = (
   fieldManifest: FieldManifest,
-): fieldManifest is RelationFieldManifest =>
+): fieldManifest is FieldManifest<RelationAndMorphRelationFieldMetadataType> =>
   isMorphOrRelationFieldMetadataType(fieldManifest.type);
 
 const getRelationTargetUniversalIdentifiers = (
