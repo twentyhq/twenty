@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/display';
+import { IconColumnInsertRight } from 'twenty-ui/display';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
@@ -119,7 +119,7 @@ export const useNavigationMenuItemEditOrganizeActions =
       navigateCommandMenu({
         page: CommandMenuPages.NavigationMenuAddItem,
         pageTitle: t`New sidebar item`,
-        pageIcon: IconPlus,
+        pageIcon: IconColumnInsertRight,
         resetNavigationStack: true,
       });
     };

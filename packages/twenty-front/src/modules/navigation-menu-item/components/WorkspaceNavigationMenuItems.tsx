@@ -1,7 +1,13 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilCallback } from 'recoil';
-import { IconLink, IconPlus, IconTool, useIcons } from 'twenty-ui/display';
+import {
+  IconColumnInsertRight,
+  IconLink,
+  IconPlus,
+  IconTool,
+  useIcons,
+} from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -28,7 +34,7 @@ import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValu
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useStore } from 'jotai';
-import { type CommandMenuPages } from 'twenty-shared/types';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledRightIconsContainer = styled.div`
@@ -133,7 +139,7 @@ export const WorkspaceNavigationMenuItems = () => {
     navigateCommandMenu({
       page: CommandMenuPages.NavigationMenuAddItem,
       pageTitle: t`New sidebar item`,
-      pageIcon: IconPlus,
+      pageIcon: IconColumnInsertRight,
       resetNavigationStack: true,
     });
   };

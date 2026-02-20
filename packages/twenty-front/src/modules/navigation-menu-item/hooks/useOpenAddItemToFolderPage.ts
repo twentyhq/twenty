@@ -1,9 +1,9 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { CommandMenuPages } from 'twenty-shared/types';
 import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useLingui } from '@lingui/react/macro';
-import { IconPlus } from 'twenty-ui/display';
+import { CommandMenuPages } from 'twenty-shared/types';
+import { IconColumnInsertRight } from 'twenty-ui/display';
 
 type OpenAddItemToFolderPageParams = {
   targetFolderId: string;
@@ -30,7 +30,7 @@ export const useOpenAddItemToFolderPage = () => {
     navigateCommandMenu({
       page: CommandMenuPages.NavigationMenuAddItem,
       pageTitle: t`New sidebar item`,
-      pageIcon: IconPlus,
+      pageIcon: IconColumnInsertRight,
       resetNavigationStack,
     });
   };

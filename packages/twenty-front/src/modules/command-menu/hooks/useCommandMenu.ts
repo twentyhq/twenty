@@ -17,7 +17,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDotsVertical } from 'twenty-ui/display';
+import { IconColumnInsertRight, IconDotsVertical } from 'twenty-ui/display';
 
 export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
@@ -63,6 +63,13 @@ export const useCommandMenu = () => {
         page: CommandMenuPages.NavigationMenuItemEdit,
         pageTitle: t`Edit`,
         pageIcon: IconDotsVertical,
+        resetNavigationStack: true,
+      });
+    } else if (isNavigationMenuInEditMode) {
+      navigateCommandMenu({
+        page: CommandMenuPages.NavigationMenuAddItem,
+        pageTitle: t`New sidebar item`,
+        pageIcon: IconColumnInsertRight,
         resetNavigationStack: true,
       });
     } else {
