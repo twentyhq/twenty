@@ -14,7 +14,6 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
-  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -59,14 +58,6 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     objectMetadataItems,
   );
 
-  const recordFilterFields = currentRecordFilters
-    .map((recordFilter) =>
-      objectMetadataItem.fields.find(
-        (field) => field.id === recordFilter.fieldMetadataId,
-      ),
-    )
-    .filter(isDefined);
-
   const recordGroupFieldMetadata = useRecoilComponentValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
@@ -74,7 +65,6 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
   const recordGqlFields = useRecordsUsefulGqlFields({
     objectMetadataItem,
     additionalFieldMetadataId: recordGroupFieldMetadata?.id,
-    recordFilterFields,
   });
 
   const recordGroupDefinitions = useRecoilComponentValue(

@@ -1,6 +1,5 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -9,6 +8,7 @@ import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-
 
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -18,16 +18,18 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 type UseRecordsUsefulGqlFields = {
   objectMetadataItem: ObjectMetadataItem;
   additionalFieldMetadataId?: string | null;
-  recordFilterFields?: FieldMetadataItem[];
 };
 
 export const useRecordsUsefulGqlFields = ({
   objectMetadataItem,
   additionalFieldMetadataId,
-  recordFilterFields,
 }: UseRecordsUsefulGqlFields) => {
   const visibleRecordFields = useRecoilComponentValue(
     visibleRecordFieldsComponentSelector,
+  );
+
+  const currentRecordFilters = useRecoilComponentValue(
+    currentRecordFiltersComponentState,
   );
 
   const { fieldMetadataItemByFieldMetadataItemId } =
@@ -43,6 +45,14 @@ export const useRecordsUsefulGqlFields = ({
     .map(
       (field) =>
         fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],
+    )
+    .filter(isDefined);
+
+  const recordFilterFields = currentRecordFilters
+    .map((recordFilter) =>
+      objectMetadataItem.fields.find(
+        (field) => field.id === recordFilter.fieldMetadataId,
+      ),
     )
     .filter(isDefined);
 
