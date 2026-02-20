@@ -11,6 +11,7 @@ const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const TEST_SECOND_ROLE_ID = uuidv4();
 const TEST_FIELD_ID = uuidv4();
+const TEST_SKILL_ID = uuidv4();
 
 const TEST_OBJECT = buildDefaultObjectManifest({
   nameSingular: 'ticket',
@@ -35,7 +36,7 @@ describe('syncApplication', () => {
     appCreated = true;
   }, 60000);
 
-  afterAll(async () => {
+  afterEach(async () => {
     if (!appCreated) {
       return;
     }
@@ -66,6 +67,7 @@ describe('syncApplication', () => {
           description: 'A test role',
         },
       ],
+      skills: [],
       objects: [TEST_OBJECT],
       fields: [
         {
@@ -118,6 +120,80 @@ describe('syncApplication', () => {
           description: 'Ticket description',
           icon: 'IconFileDescription',
           objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+        },
+      ],
+    };
+
+    const { data: secondSyncData } = await syncApplication({
+      manifest: updatedManifest,
+      expectToFail: false,
+    });
+
+    expect(secondSyncData).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(secondSyncData),
+    );
+  }, 60000);
+
+  it('should sync a skill then update it on second sync', async () => {
+    const initialManifest: Manifest = {
+      application: {
+        universalIdentifier: TEST_APP_ID,
+        defaultRoleUniversalIdentifier: TEST_ROLE_ID,
+        displayName: 'Test Application',
+        description: 'A test application for workspace migration',
+        icon: 'IconTestPipe',
+        applicationVariables: {},
+        packageJsonChecksum: null,
+        yarnLockChecksum: null,
+        apiClientChecksum: null,
+      },
+      roles: [
+        {
+          universalIdentifier: TEST_ROLE_ID,
+          label: 'Test Role',
+          description: 'A test role',
+        },
+      ],
+      skills: [
+        {
+          universalIdentifier: TEST_SKILL_ID,
+          name: 'test-skill',
+          label: 'Test Skill',
+          description: 'A skill for testing',
+          icon: 'IconBrain',
+          content: '# Test Skill\n\nThis is a test skill.',
+        },
+      ],
+      objects: [],
+      fields: [],
+      logicFunctions: [],
+      frontComponents: [],
+      publicAssets: [],
+      views: [],
+      navigationMenuItems: [],
+      pageLayouts: [],
+    };
+
+    const { data: firstSyncData } = await syncApplication({
+      manifest: initialManifest,
+      expectToFail: false,
+    });
+
+    expect(firstSyncData).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(firstSyncData),
+    );
+
+    const updatedManifest: Manifest = {
+      ...initialManifest,
+      skills: [
+        {
+          universalIdentifier: TEST_SKILL_ID,
+          name: 'test-skill',
+          label: 'Test Skill Updated',
+          description: 'An updated skill for testing',
+          icon: 'IconBrain',
+          content:
+            '# Test Skill\n\nThis is an updated test skill with more content.',
         },
       ],
     };

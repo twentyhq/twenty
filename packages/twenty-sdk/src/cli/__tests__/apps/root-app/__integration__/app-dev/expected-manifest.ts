@@ -17,6 +17,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     yarnLockChecksum: '[checksum]',
     apiClientChecksum: null,
   },
+  skills: [],
   publicAssets: [],
   fields: [
     {

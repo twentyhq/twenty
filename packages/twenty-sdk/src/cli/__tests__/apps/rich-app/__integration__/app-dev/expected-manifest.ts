@@ -18,6 +18,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       fileType: 'png',
     },
   ],
+  skills: [],
   application: {
     applicationVariables: {
       DEFAULT_RECIPIENT_NAME: {
