@@ -11,6 +11,7 @@ import { FieldsConfigurationGroupRenameInput } from '@/page-layout/widgets/field
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { IconNewSection } from 'twenty-ui/display';
@@ -133,12 +134,13 @@ export const FieldsConfigurationGroupEditor = ({
             </StyledMenuItemDraggableWrapper>
           }
           disableClickForClickableComponent
-          dropdownPlacement="bottom-start"
+          dropdownPlacement="top-start"
           dropdownOffset={{ x: 32 }}
           onClose={handleCancelRename}
           dropdownComponents={
-            <DropdownContent>
+            <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
               <FieldsConfigurationGroupRenameInput
+                dropdownId={renameDropdownId}
                 renameValue={renamingGroupValue}
                 onRenameValueChange={onRenamingGroupValueChange}
                 onSave={(newName) => handleRenameGroup(group.id, newName)}

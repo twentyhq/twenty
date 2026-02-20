@@ -1,17 +1,22 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRef } from 'react';
+import { Key } from 'ts-key-enum';
 
-import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
-import { LightButton } from 'twenty-ui/input';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)};
   width: 100%;
+  box-sizing: border-box;
 `;
 
 type FieldsConfigurationGroupRenameInputProps = {
+  dropdownId: string;
   renameValue: string;
   onRenameValueChange: (value: string) => void;
   onSave: (newName: string) => void;
@@ -19,14 +24,13 @@ type FieldsConfigurationGroupRenameInputProps = {
 };
 
 export const FieldsConfigurationGroupRenameInput = ({
+  dropdownId,
   renameValue,
   onRenameValueChange,
   onSave,
   onCancel,
 }: FieldsConfigurationGroupRenameInputProps) => {
   const { t } = useLingui();
-
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
     if (renameValue.trim().length > 0) {
@@ -35,27 +39,36 @@ export const FieldsConfigurationGroupRenameInput = ({
     onCancel();
   };
 
-  const handleCancel = () => {
-    onCancel();
-  };
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: handleSave,
+    focusId: dropdownId,
+    dependencies: [handleSave],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: onCancel,
+    focusId: dropdownId,
+    dependencies: [onCancel],
+  });
 
   return (
     <StyledContainer>
-      <DropdownMenuInput
-        ref={inputRef}
-        instanceId="fields-configuration-group-rename"
+      <TextInput
         value={renameValue}
-        onChange={(e) => onRenameValueChange(e.target.value)}
-        onEnter={handleSave}
-        onEscape={handleCancel}
+        onChange={onRenameValueChange}
         autoFocus
-        rightComponent={
-          <LightButton
-            title={t`Done`}
-            accent="secondary"
-            onClick={handleSave}
-          />
-        }
+        fullWidth
+        sizeVariant="sm"
+        placeholder={t`Group name`}
+      />
+      <Button
+        variant="primary"
+        accent="blue"
+        size="small"
+        title="Done"
+        onClick={handleSave}
       />
     </StyledContainer>
   );
