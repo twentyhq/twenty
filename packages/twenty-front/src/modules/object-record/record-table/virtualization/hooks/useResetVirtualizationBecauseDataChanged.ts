@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
-import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
+import { useRecordsUsefulGqlFields } from '@/object-record/record-field/hooks/useRecordsUsefulGqlFields';
 
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
@@ -30,7 +30,7 @@ export const useResetVirtualizationBecauseDataChanged = (
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
   // TODO: we could optimize this by using an aggregate or using only id: true in recordGqlFields
-  const recordGqlFields = useRecordsFieldVisibleGqlFields({
+  const recordGqlFields = useRecordsUsefulGqlFields({
     objectMetadataItem,
   });
 
