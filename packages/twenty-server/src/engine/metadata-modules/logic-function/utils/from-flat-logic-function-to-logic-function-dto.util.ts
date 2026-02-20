@@ -14,6 +14,7 @@ export const fromFlatLogicFunctionToLogicFunctionDto = ({
     runtime: flatLogicFunction.runtime,
     timeoutSeconds: flatLogicFunction.timeoutSeconds,
     sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
+    builtHandlerPath: flatLogicFunction.builtHandlerPath,
     handlerName: flatLogicFunction.handlerName,
     toolInputSchema: flatLogicFunction.toolInputSchema ?? undefined,
     isTool: flatLogicFunction.isTool,
