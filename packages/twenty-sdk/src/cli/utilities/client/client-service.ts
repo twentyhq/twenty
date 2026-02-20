@@ -120,9 +120,9 @@ export default class Twenty {
     form.append(
       'operations',
       JSON.stringify({
-        query: \`\mutation UploadFilesFieldFileByUniversalIdentifier($file: Upload!, $fieldMetadataUniversalIdentifier: String!) {
+        query: \`mutation UploadFilesFieldFileByUniversalIdentifier($file: Upload!, $fieldMetadataUniversalIdentifier: String!) {
         uploadFilesFieldFileByUniversalIdentifier(file: $file, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { id path size createdAt url }
-      }\`\,
+      }\`,
         variables: { file: null, fieldMetadataUniversalIdentifier },
       }),
     );
