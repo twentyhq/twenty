@@ -26,20 +26,19 @@ export const useGetRelationMetadata = () =>
         }),
       );
 
-        if (!relationObjectMetadataItem) return null;
+      if (!relationObjectMetadataItem) return null;
 
-        const relationFieldMetadataItem =
-          relationObjectMetadataItem.fields.find(
-            (field) => field.id === relation.targetFieldMetadata.id,
-          );
+      const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
+        (field) => field.id === relation.targetFieldMetadata.id,
+      );
 
-        if (!relationFieldMetadataItem) return null;
+      if (!relationFieldMetadataItem) return null;
 
-        return {
-          relationFieldMetadataItem,
-          relationObjectMetadataItem,
-          relationType: relation.type,
-        };
-      },
+      return {
+        relationFieldMetadataItem,
+        relationObjectMetadataItem,
+        relationType: relation.type,
+      };
+    },
     [],
   );

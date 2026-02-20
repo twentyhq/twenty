@@ -36,7 +36,7 @@ export const useGraphWidgetAggregateQuery = ({
 
   const ratioField = isRatioQuery
     ? objectMetadataItem.fields.find(
-        (field) => field.id === ratioConfig.fieldMetadataId,
+        (field: { id: string }) => field.id === ratioConfig.fieldMetadataId,
       )
     : undefined;
 

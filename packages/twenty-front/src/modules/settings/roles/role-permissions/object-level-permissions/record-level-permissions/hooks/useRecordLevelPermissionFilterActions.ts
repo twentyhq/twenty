@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { useRecoilValue } from 'recoil';
 import {
   FieldMetadataType,
   RecordFilterGroupLogicalOperator,

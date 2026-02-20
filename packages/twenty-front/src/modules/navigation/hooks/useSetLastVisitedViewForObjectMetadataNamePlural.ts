@@ -1,5 +1,6 @@
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { useRecoilCallback } from 'recoil';
@@ -21,9 +22,9 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
           (view: CoreViewWithRelations) => view.id === viewId,
         );
 
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+        const objectMetadataItems = jotaiStore.get(
+          objectMetadataItemsState.atom,
+        );
 
         const objectMetadataItem = objectMetadataItems.find(
           (item) => item.namePlural === objectNamePlural,

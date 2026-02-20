@@ -1,5 +1,4 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
@@ -46,18 +45,19 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
 });
 
 describe('useCreateFavorite', () => {
+  beforeEach(() => {
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+  });
+
   it('should create favorite successfully', async () => {
     jotaiStore.set(currentWorkspaceMemberState.atom, mockWorkspaceMember);
 
-    const { result } = renderHook(
-      () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(generatedMockObjectMetadataItems);
-
-        return useCreateFavorite();
-      },
-      { wrapper: Wrapper },
-    );
+    const { result } = renderHook(() => useCreateFavorite(), {
+      wrapper: Wrapper,
+    });
 
     result.current.createFavorite(
       favoriteTargetObjectRecord,

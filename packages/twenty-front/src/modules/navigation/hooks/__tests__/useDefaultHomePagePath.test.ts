@@ -1,5 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { useEffect } from 'react';
+import { createElement, useEffect, type ReactNode } from 'react';
+import { Provider as JotaiProvider } from 'jotai';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -7,6 +8,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { AppPath } from 'twenty-shared/types';
@@ -19,6 +21,13 @@ import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies'
 import { mockedUserData } from '~/testing/mock-data/users';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
+const Wrapper = ({ children }: { children: ReactNode }) =>
+  createElement(
+    JotaiProvider,
+    { store: jotaiStore },
+    createElement(RecoilRoot, null as any, children),
+  );
+
 const renderHooks = ({
   withCurrentUser,
   withExistingView,
@@ -26,20 +35,20 @@ const renderHooks = ({
   withCurrentUser: boolean;
   withExistingView: boolean;
 }) => {
+  jotaiStore.set(
+    objectMetadataItemsState.atom,
+    generatedMockObjectMetadataItems,
+  );
+
   const { result } = renderHook(
     () => {
       const setCurrentUser = useSetRecoilStateV2(currentUserState);
       const setCurrentUserWorkspace = useSetRecoilStateV2(
         currentUserWorkspaceState,
       );
-      const setObjectMetadataItems = useSetRecoilState(
-        objectMetadataItemsState,
-      );
       const setCoreViews = useSetRecoilState(coreViewsState);
 
       useEffect(() => {
-        setObjectMetadataItems(generatedMockObjectMetadataItems);
-
         if (withExistingView) {
           setCoreViews([
             {
@@ -71,17 +80,12 @@ const renderHooks = ({
           setCurrentUser(mockedUserData);
           setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
         }
-      }, [
-        setCurrentUser,
-        setCurrentUserWorkspace,
-        setObjectMetadataItems,
-        setCoreViews,
-      ]);
+      }, [setCurrentUser, setCurrentUserWorkspace, setCoreViews]);
 
       return useDefaultHomePagePath();
     },
     {
-      wrapper: RecoilRoot,
+      wrapper: Wrapper,
     },
   );
   return { result };

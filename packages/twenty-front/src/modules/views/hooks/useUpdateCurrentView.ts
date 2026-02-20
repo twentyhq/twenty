@@ -57,10 +57,7 @@ export const useUpdateCurrentView = () => {
                   field.id === newMainGroupByFieldMetadataId,
               )
               ?.options?.map(
-                (
-                  option: { value: string },
-                  index: number,
-                ) =>
+                (option: { value: string }, index: number) =>
                   ({
                     id: v4(),
                     __typename: 'ViewGroup',

@@ -8,37 +8,36 @@ import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const availableFieldMetadataItemsForFilterFamilySelector =
-  createFamilySelectorV2<
-    FieldMetadataItem[],
-    { objectMetadataItemId: string }
-  >({
-    key: 'availableFieldMetadataItemsForFilterFamilySelector',
-    get:
-      ({ objectMetadataItemId }: { objectMetadataItemId: string }) =>
-      ({ get }) => {
-        const currentWorkspace = get(currentWorkspaceState);
-        const objectMetadataItems = get(objectMetadataItemsState);
+  createFamilySelectorV2<FieldMetadataItem[], { objectMetadataItemId: string }>(
+    {
+      key: 'availableFieldMetadataItemsForFilterFamilySelector',
+      get:
+        ({ objectMetadataItemId }: { objectMetadataItemId: string }) =>
+        ({ get }) => {
+          const currentWorkspace = get(currentWorkspaceState);
+          const objectMetadataItems = get(objectMetadataItemsState);
 
-        const objectMetadataItem = objectMetadataItems.find(
-          (item) => item.id === objectMetadataItemId,
-        );
-        if (!isDefined(objectMetadataItem)) {
-          return [];
-        }
-
-        const isJsonFeatureFlagEnabled =
-          checkIfFeatureFlagIsEnabledOnWorkspace(
-            FeatureFlagKey.IS_JSON_FILTER_ENABLED,
-            currentWorkspace,
+          const objectMetadataItem = objectMetadataItems.find(
+            (item) => item.id === objectMetadataItemId,
           );
+          if (!isDefined(objectMetadataItem)) {
+            return [];
+          }
 
-        const filterFilterableFieldMetadataItems =
-          getFilterFilterableFieldMetadataItems({
-            isJsonFilterEnabled: isJsonFeatureFlagEnabled,
-          });
+          const isJsonFeatureFlagEnabled =
+            checkIfFeatureFlagIsEnabledOnWorkspace(
+              FeatureFlagKey.IS_JSON_FILTER_ENABLED,
+              currentWorkspace,
+            );
 
-        return objectMetadataItem.readableFields.filter(
-          filterFilterableFieldMetadataItems,
-        );
-      },
-  });
+          const filterFilterableFieldMetadataItems =
+            getFilterFilterableFieldMetadataItems({
+              isJsonFilterEnabled: isJsonFeatureFlagEnabled,
+            });
+
+          return objectMetadataItem.readableFields.filter(
+            filterFilterableFieldMetadataItems,
+          );
+        },
+    },
+  );

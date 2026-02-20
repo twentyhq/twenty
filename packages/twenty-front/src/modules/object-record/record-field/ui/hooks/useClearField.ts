@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 
@@ -21,9 +22,9 @@ export const useClearField = () => {
   const clearField = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+        const objectMetadataItems = jotaiStore.get(
+          objectMetadataItemsState.atom,
+        );
 
         const foundObjectMetadataItem = objectMetadataItems.find(
           (item) =>

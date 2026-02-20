@@ -16,6 +16,7 @@ import {
   WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const mockObjectMetadataItem: ObjectMetadataItem = {
   id: 'obj-1',
@@ -79,6 +80,8 @@ const buildBarChartConfiguration = (
   }) as TypedBarChartConfiguration;
 
 const renderUseChartSettingsValues = (configuration: ChartConfiguration) => {
+  jotaiStore.set(objectMetadataItemsState.atom, [mockObjectMetadataItem]);
+
   return renderHook(
     () =>
       useChartSettingsValues({
@@ -86,15 +89,7 @@ const renderUseChartSettingsValues = (configuration: ChartConfiguration) => {
         configuration,
       }),
     {
-      wrapper: ({ children }) => (
-        <RecoilRoot
-          initializeState={({ set }) => {
-            set(objectMetadataItemsState, [mockObjectMetadataItem]);
-          }}
-        >
-          {children}
-        </RecoilRoot>
-      ),
+      wrapper: ({ children }) => <RecoilRoot>{children}</RecoilRoot>,
     },
   );
 };
@@ -414,6 +409,8 @@ describe('useChartSettingsValues', () => {
     it('should handle missing objectMetadataItem gracefully', () => {
       const config = buildBarChartConfiguration({});
 
+      jotaiStore.set(objectMetadataItemsState.atom, [mockObjectMetadataItem]);
+
       const { result } = renderHook(
         () =>
           useChartSettingsValues({
@@ -421,15 +418,7 @@ describe('useChartSettingsValues', () => {
             configuration: config,
           }),
         {
-          wrapper: ({ children }) => (
-            <RecoilRoot
-              initializeState={({ set }) => {
-                set(objectMetadataItemsState, [mockObjectMetadataItem]);
-              }}
-            >
-              {children}
-            </RecoilRoot>
-          ),
+          wrapper: ({ children }) => <RecoilRoot>{children}</RecoilRoot>,
         },
       );
 

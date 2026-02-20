@@ -132,12 +132,13 @@ describe('useActivityTargetObjectRecords', () => {
   it('return targetObjects', async () => {
     jotaiStore.set(currentWorkspaceMemberState.atom, mockWorkspaceMembers[0]);
 
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+
     const { result } = renderHook(
       () => {
-        const setObjectMetadataItems = useSetRecoilState(
-          objectMetadataItemsState,
-        );
-
         const setRecordFromStore = useSetRecoilState(
           recordStoreFamilyState(task.id),
         );
@@ -148,7 +149,6 @@ describe('useActivityTargetObjectRecords', () => {
 
         return {
           activityTargetObjectRecords,
-          setObjectMetadataItems,
           setRecordFromStore,
         };
       },
@@ -156,7 +156,6 @@ describe('useActivityTargetObjectRecords', () => {
     );
 
     act(() => {
-      result.current.setObjectMetadataItems(generatedMockObjectMetadataItems);
       result.current.setRecordFromStore(task);
     });
 

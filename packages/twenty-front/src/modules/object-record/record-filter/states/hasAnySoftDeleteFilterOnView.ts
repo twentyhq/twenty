@@ -2,6 +2,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 
 export const hasAnySoftDeleteFilterOnViewComponentSelector =
@@ -11,7 +12,9 @@ export const hasAnySoftDeleteFilterOnViewComponentSelector =
     get:
       ({ instanceId }) =>
       ({ get }) => {
-        const objectMetadataItems = get(objectMetadataItemsState);
+        const objectMetadataItems = jotaiStore.get(
+          objectMetadataItemsState.atom,
+        );
         const currentRecordFilters = get(
           currentRecordFiltersComponentState.atomFamily({ instanceId }),
         );

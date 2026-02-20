@@ -1,10 +1,13 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { RecoilRoot } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -13,9 +16,11 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
-    <RecoilRoot>
-      <JestObjectMetadataItemSetter>{children}</JestObjectMetadataItemSetter>
-    </RecoilRoot>
+    <JotaiProvider store={jotaiStore}>
+      <RecoilRoot>
+        <JestObjectMetadataItemSetter>{children}</JestObjectMetadataItemSetter>
+      </RecoilRoot>
+    </JotaiProvider>
   );
 };
 
@@ -78,7 +83,7 @@ describe('useBuildSpreadSheetImportFields', () => {
   it('should build importFields for basic field types', () => {
     const { result } = renderHook(
       () => {
-        const setObjectMetadataItems = useSetRecoilState(
+        const setObjectMetadataItems = useSetRecoilStateV2(
           objectMetadataItemsState,
         );
         setObjectMetadataItems([]);
@@ -139,7 +144,7 @@ describe('useBuildSpreadSheetImportFields', () => {
   it('should build importFields for select types', () => {
     const { result } = renderHook(
       () => {
-        const setObjectMetadataItems = useSetRecoilState(
+        const setObjectMetadataItems = useSetRecoilStateV2(
           objectMetadataItemsState,
         );
         setObjectMetadataItems([]);
@@ -229,7 +234,7 @@ describe('useBuildSpreadSheetImportFields', () => {
   it('should build importFields for composite types (full name)', () => {
     const { result } = renderHook(
       () => {
-        const setObjectMetadataItems = useSetRecoilState(
+        const setObjectMetadataItems = useSetRecoilStateV2(
           objectMetadataItemsState,
         );
         setObjectMetadataItems([]);
@@ -271,7 +276,7 @@ describe('useBuildSpreadSheetImportFields', () => {
   it('should filter out ACTOR fields', () => {
     const { result } = renderHook(
       () => {
-        const setObjectMetadataItems = useSetRecoilState(
+        const setObjectMetadataItems = useSetRecoilStateV2(
           objectMetadataItemsState,
         );
         setObjectMetadataItems([]);
@@ -306,7 +311,7 @@ describe('useBuildSpreadSheetImportFields', () => {
   it('should return empty array for unsupported field types', () => {
     const { result } = renderHook(
       () => {
-        const setObjectMetadataItems = useSetRecoilState(
+        const setObjectMetadataItems = useSetRecoilStateV2(
           objectMetadataItemsState,
         );
         setObjectMetadataItems([]);
@@ -338,7 +343,7 @@ describe('useBuildSpreadSheetImportFields', () => {
   it('should build importFields for relation field type', () => {
     const { result } = renderHook(
       () => {
-        const setObjectMetadataItems = useSetRecoilState(
+        const setObjectMetadataItems = useSetRecoilStateV2(
           objectMetadataItemsState,
         );
 

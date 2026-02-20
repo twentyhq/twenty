@@ -26,7 +26,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set }) =>
       ({
         objectMetadataItem,
         recordId,

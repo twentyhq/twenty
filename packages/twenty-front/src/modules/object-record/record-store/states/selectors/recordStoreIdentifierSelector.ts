@@ -24,9 +24,7 @@ export const recordStoreIdentifierFamilySelector = selectorFamily({
         recordFromStore?.__typename ?? '',
       );
 
-      const objectMetadataItems = jotaiStore.get(
-        objectMetadataItemsState.atom,
-      );
+      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
 
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.nameSingular === objectNameSingular,

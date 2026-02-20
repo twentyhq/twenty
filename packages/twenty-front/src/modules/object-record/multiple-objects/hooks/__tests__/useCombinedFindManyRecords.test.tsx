@@ -1,12 +1,12 @@
 import { gql } from '@apollo/client';
 import { renderHook, waitFor } from '@testing-library/react';
-import { useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -123,18 +123,17 @@ const renderUseCombinedFindManyRecordsHook = async ({
     },
   ];
 
-  const { result } = renderHook(
-    () => {
-      const setObjectMetadataItems = useSetRecoilState(
-        objectMetadataItemsState,
-      );
-      setObjectMetadataItems(generatedMockObjectMetadataItems);
+  jotaiStore.set(
+    objectMetadataItemsState.atom,
+    generatedMockObjectMetadataItems,
+  );
 
-      return useCombinedFindManyRecords({
+  const { result } = renderHook(
+    () =>
+      useCombinedFindManyRecords({
         operationSignatures,
         skip,
-      });
-    },
+      }),
     {
       wrapper: getJestMetadataAndApolloMocksWrapper({ apolloMocks: mocks }),
     },

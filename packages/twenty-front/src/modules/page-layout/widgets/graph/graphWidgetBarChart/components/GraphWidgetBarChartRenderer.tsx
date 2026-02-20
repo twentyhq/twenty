@@ -88,7 +88,8 @@ export const GraphWidgetBarChartRenderer = () => {
   );
 
   const primaryGroupByField = objectMetadataItem.fields.find(
-    (field) => field.id === configuration.primaryAxisGroupByFieldMetadataId,
+    (field: { id: string }) =>
+      field.id === configuration.primaryAxisGroupByFieldMetadataId,
   );
   const canRedirectToFilteredView =
     isFilteredViewRedirectionSupported(primaryGroupByField);

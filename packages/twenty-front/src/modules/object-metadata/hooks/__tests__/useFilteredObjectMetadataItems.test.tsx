@@ -10,6 +10,7 @@ import {
 } from '@/object-metadata/hooks/__mocks__/useFilteredObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isDefined } from 'twenty-shared/utils';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -27,17 +28,20 @@ const mocks = [
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot
-    initializeState={({ set }) =>
-      set(objectMetadataItemsState, generatedMockObjectMetadataItems)
-    }
-  >
-    <MockedProvider mocks={mocks} addTypename={false}>
-      {children}
-    </MockedProvider>
-  </RecoilRoot>
-);
+const Wrapper = ({ children }: { children: ReactNode }) => {
+  jotaiStore.set(
+    objectMetadataItemsState.atom,
+    generatedMockObjectMetadataItems,
+  );
+
+  return (
+    <RecoilRoot>
+      <MockedProvider mocks={mocks} addTypename={false}>
+        {children}
+      </MockedProvider>
+    </RecoilRoot>
+  );
+};
 
 describe('useFilteredObjectMetadataItems', () => {
   it('should findActiveObjectMetadataItemByNamePlural', async () => {

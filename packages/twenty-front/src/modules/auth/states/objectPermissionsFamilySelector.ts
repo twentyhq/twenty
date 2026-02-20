@@ -19,9 +19,7 @@ export const objectPermissionsFamilySelector = selectorFamily<
       const currentUserWorkspace = jotaiStore.get(
         currentUserWorkspaceState.atom,
       );
-      const objectMetadataItems = jotaiStore.get(
-        objectMetadataItemsState.atom,
-      );
+      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
 
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.nameSingular === objectNameSingular,

@@ -9,8 +9,11 @@ import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockO
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
-  onInitializeRecoilSnapshot: (snapshot) => {
-    snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+  onInitializeRecoilSnapshot: () => {
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
   },
 });
 

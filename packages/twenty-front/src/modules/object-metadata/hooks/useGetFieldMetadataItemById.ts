@@ -1,4 +1,5 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
@@ -13,9 +14,9 @@ export const useGetFieldMetadataItemByIdOrThrow = () => {
   const getFieldMetadataItemById = useRecoilCallback(
     ({ snapshot }) =>
       (fieldMetadataId: string): GetFieldMetadataItemByIdOrThrowResult => {
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+        const objectMetadataItems = jotaiStore.get(
+          objectMetadataItemsState.atom,
+        );
 
         return getFieldMetadataItemByIdOrThrow({
           fieldMetadataId,
