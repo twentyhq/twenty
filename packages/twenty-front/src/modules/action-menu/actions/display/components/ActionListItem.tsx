@@ -4,19 +4,26 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
 
 export const ActionListItem = ({
   action,
   onClick,
   to,
+  disabled,
 }: {
   action: ActionDisplayProps;
   onClick?: () => void;
   to?: string;
+  disabled?: boolean;
 }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
+    if (disabled) {
+      return;
+    }
+
     onClick?.();
     if (isDefined(to)) {
       navigate(to);
@@ -31,8 +38,10 @@ export const ActionListItem = ({
         label={getActionLabel(action.label)}
         description={getActionLabel(action.description ?? '')}
         to={to}
-        onClick={onClick}
+        onClick={disabled ? undefined : onClick}
         hotKeys={action.hotKeys}
+        disabled={disabled}
+        RightComponent={disabled ? <Loader /> : undefined}
       />
     </SelectableListItem>
   );
