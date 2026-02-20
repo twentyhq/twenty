@@ -1,13 +1,8 @@
-export type SnackBarVariant =
-  | 'default'
-  | 'error'
-  | 'success'
-  | 'info'
-  | 'warning';
+export type SnackBarVariant = 'error' | 'success' | 'info' | 'warning';
 
 export type EnqueueSnackbarParams = {
   message: string;
-  variant?: SnackBarVariant;
+  variant: SnackBarVariant;
   duration?: number;
   detailedMessage?: string;
   dedupeKey?: string;

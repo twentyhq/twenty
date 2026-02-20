@@ -10,6 +10,7 @@ import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandM
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -89,8 +90,7 @@ export const useFrontComponentExecutionContext = ({
           enqueueSuccessSnackBar({ message, options: snackBarOptions });
           break;
         default:
-          enqueueSuccessSnackBar({ message, options: snackBarOptions });
-          break;
+          assertUnreachable(variant);
       }
     };
 
