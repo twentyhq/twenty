@@ -55,10 +55,10 @@ export const useCommandMenu = () => {
     const isNavigationMenuInEditMode = store.get(
       isNavigationMenuInEditModeStateV2.atom,
     );
-    const selectedNavItemId = store.get(
+    const selectedNavigationItemId = store.get(
       selectedNavigationMenuItemInEditModeStateV2.atom,
     );
-    if (isNavigationMenuInEditMode && isDefined(selectedNavItemId)) {
+    if (isNavigationMenuInEditMode && isDefined(selectedNavigationItemId)) {
       navigateCommandMenu({
         page: CommandMenuPages.NavigationMenuItemEdit,
         pageTitle: t`Edit`,
