@@ -8,13 +8,12 @@ import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroying
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey, OnboardingStatus } from '~/generated-metadata/graphql';
+import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 export const SSEEventStreamEffect = () => {
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
@@ -29,9 +28,6 @@ export const SSEEventStreamEffect = () => {
   const isDestroyingEventStream = useRecoilValue(isDestroyingEventStreamState);
 
   const isLoggedIn = useIsLogged();
-  const isSseDbEventsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
-  );
   const currentUser = useRecoilValueV2(currentUserState);
 
   const { triggerEventStreamCreation } = useTriggerEventStreamCreation();
@@ -44,7 +40,6 @@ export const SSEEventStreamEffect = () => {
     const willCreateEventStream =
       isSseClientAvailable &&
       isLoggedIn &&
-      isSseDbEventsEnabled &&
       isDefined(currentUser) &&
       currentUser.onboardingStatus === OnboardingStatus.COMPLETED &&
       !shouldDestroyEventStream &&
@@ -66,7 +61,6 @@ export const SSEEventStreamEffect = () => {
     triggerEventStreamCreation,
     isLoggedIn,
     currentUser,
-    isSseDbEventsEnabled,
     isDestroyingEventStream,
     triggerEventStreamDestroy,
     shouldDestroyEventStream,

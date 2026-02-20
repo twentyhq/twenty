@@ -1,23 +1,25 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type Manifest, type RoleManifest } from 'twenty-shared/application';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { APPLICATION_MANIFEST_METADATA_NAMES } from 'src/engine/core-modules/application/constants/application-manifest-metadata-names.constant';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { computeApplicationManifestAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/utils/compute-application-manifest-all-universal-flat-entity-maps.util';
-import { getSubApplicationFromToAllFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-sub-application-from-to-all-flat-entity-maps.util';
+import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-application-sub-all-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
@@ -48,31 +50,41 @@ export class ApplicationManifestMigrationService {
   }): Promise<WorkspaceMigration> {
     const now = new Date().toISOString();
 
-    const toAllUniversalFlatEntityMaps =
-      computeApplicationManifestAllUniversalFlatEntityMaps({
-        manifest,
-        applicationUniversalIdentifier:
-          ownerFlatApplication.universalIdentifier,
-        now,
-      });
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
 
     const cacheResult = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       [
-        ...APPLICATION_MANIFEST_METADATA_NAMES.map(
-          getMetadataFlatEntityMapsKey,
-        ),
+        ...Object.values(ALL_METADATA_NAME).map(getMetadataFlatEntityMapsKey),
         'featureFlagsMap',
       ],
     );
 
-    const { featureFlagsMap, ...fromAllFlatEntityMaps } = cacheResult;
+    const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
 
-    const fromToAllFlatEntityMaps = getSubApplicationFromToAllFlatEntityMaps({
-      applicationId: ownerFlatApplication.id,
-      fromAllFlatEntityMaps,
-      toAllUniversalFlatEntityMaps,
+    const toAllUniversalFlatEntityMaps =
+      computeApplicationManifestAllUniversalFlatEntityMaps({
+        manifest,
+        ownerFlatApplication,
+        now,
+      });
+
+    const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
+      applicationIds: [ownerFlatApplication.id],
+      fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
+
+    const dependencyAllFlatEntityMaps =
+      ownerFlatApplication.universalIdentifier ===
+      TWENTY_STANDARD_APPLICATION.universalIdentifier
+        ? undefined
+        : getApplicationSubAllFlatEntityMaps({
+            applicationIds: [twentyStandardFlatApplication.id],
+            fromAllFlatEntityMaps: existingAllFlatEntityMaps,
+          });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
@@ -83,8 +95,12 @@ export class ApplicationManifestMigrationService {
             applicationUniversalIdentifier:
               ownerFlatApplication.universalIdentifier,
           },
-          fromToAllFlatEntityMaps,
+          fromToAllFlatEntityMaps: buildFromToAllUniversalFlatEntityMaps({
+            fromAllFlatEntityMaps,
+            toAllUniversalFlatEntityMaps,
+          }),
           workspaceId,
+          dependencyAllFlatEntityMaps,
           additionalCacheDataMaps: { featureFlagsMap },
         },
       );

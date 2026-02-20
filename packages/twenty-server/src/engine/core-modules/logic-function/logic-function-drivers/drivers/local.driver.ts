@@ -12,6 +12,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/utils/copy-yarn-engine-and-build-dependencies';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
@@ -215,9 +216,9 @@ export class LocalDriver implements LogicFunctionDriver {
     builtFileAbsPath: string;
     handlerName: string;
   }) {
-    if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(handlerName)) {
+    if (!HANDLER_NAME_REGEX.test(handlerName)) {
       throw new Error(
-        `Invalid handlerName "${handlerName}": must be a valid JavaScript identifier`,
+        `Invalid handlerName "${handlerName}": must be a valid JavaScript identifier or dotted path`,
       );
     }
 

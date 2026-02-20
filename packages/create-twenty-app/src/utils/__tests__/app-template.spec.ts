@@ -1,8 +1,9 @@
-import * as fs from 'fs-extra';
-import { join } from 'path';
-import { tmpdir } from 'os';
-import { copyBaseApplicationProject } from '@/utils/app-template';
 import { type ExampleOptions } from '@/types/scaffolding-options';
+import { GENERATED_DIR } from 'twenty-shared/application';
+import { copyBaseApplicationProject } from '@/utils/app-template';
+import * as fs from 'fs-extra';
+import { tmpdir } from 'os';
+import { join } from 'path';
 
 // Mock fs-extra's copy function to skip copying base template (not available during tests)
 jest.mock('fs-extra', () => {
@@ -23,11 +24,13 @@ const ALL_EXAMPLES: ExampleOptions = {
   includeExampleFrontComponent: true,
   includeExampleView: true,
   includeExampleNavigationMenuItem: true,
+  includeExampleSkill: true,
 };
 
 const NO_EXAMPLES: ExampleOptions = {
   includeExampleObject: false,
   includeExampleField: false,
+  includeExampleSkill: false,
   includeExampleLogicFunction: false,
   includeExampleFrontComponent: false,
   includeExampleView: false,
@@ -109,7 +112,7 @@ describe('copyBaseApplicationProject', () => {
 
     const gitignoreContent = await fs.readFile(gitignorePath, 'utf8');
     expect(gitignoreContent).toContain('/node_modules');
-    expect(gitignoreContent).toContain('generated');
+    expect(gitignoreContent).toContain(GENERATED_DIR);
   });
 
   it('should create yarn.lock file', async () => {
@@ -437,6 +440,7 @@ describe('copyBaseApplicationProject', () => {
           exampleOptions: {
             includeExampleObject: false,
             includeExampleField: false,
+            includeExampleSkill: false,
             includeExampleLogicFunction: false,
             includeExampleFrontComponent: true,
             includeExampleView: false,
@@ -472,6 +476,7 @@ describe('copyBaseApplicationProject', () => {
           appDirectory: testAppDirectory,
           exampleOptions: {
             includeExampleObject: false,
+            includeExampleSkill: false,
             includeExampleField: false,
             includeExampleLogicFunction: true,
             includeExampleFrontComponent: false,

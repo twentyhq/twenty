@@ -22,6 +22,7 @@ import {
 } from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @InputType()
@@ -54,8 +55,8 @@ class UpdateLogicFunctionFromSourceInputUpdates {
   toolInputSchema?: object;
 
   @IsString()
-  @Matches(/^[a-zA-Z_$][a-zA-Z0-9_$]*$/, {
-    message: 'handlerName must be a valid JavaScript identifier',
+  @Matches(HANDLER_NAME_REGEX, {
+    message: 'handlerName must be a valid JavaScript identifier or dotted path',
   })
   @Field({ nullable: true })
   @IsOptional()

@@ -1,6 +1,10 @@
 import { FieldType } from '@/sdk';
 import type { Manifest } from 'twenty-shared/application';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
   application: {
@@ -9,12 +13,113 @@ export const EXPECTED_MANIFEST: Manifest = {
     description: 'An app with all entities at root level',
     icon: 'IconFolder',
     defaultRoleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000002',
-    packageJsonChecksum: '93ae1e2eb3db18351d06f43550700dcc',
-    yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
+    packageJsonChecksum: '[checksum]',
+    yarnLockChecksum: '[checksum]',
     apiClientChecksum: null,
   },
+  skills: [],
   publicAssets: [],
-  fields: [],
+  fields: [
+    {
+      name: 'targetMyNote',
+      label: 'MyNote',
+      description: 'MyNote My note',
+      icon: 'IconTimelineEvent',
+      isNullable: true,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'targetMyNoteId',
+      },
+      universalIdentifier: '7e28b1ea-9a94-5d36-bc03-3f12f476867a',
+      objectUniversalIdentifier: '20202020-6736-4337-b5c4-8b39fae325a5',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '12c84c1c-6e3f-54c5-a9a8-e93c7b46ac35',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'e1e2e3e4-e5e6-4000-8000-000000000030',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
+    },
+    {
+      name: 'targetMyNote',
+      label: 'MyNote',
+      description: 'MyNote My note',
+      icon: 'IconHeart',
+      isNullable: true,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'targetMyNoteId',
+      },
+      universalIdentifier: '698f12fe-3feb-55e3-b6cc-73375f1a8ae6',
+      objectUniversalIdentifier: '20202020-ab56-4e05-92a3-e2414a499860',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'ed80c73b-25ff-5a3c-99c7-e27fa2f2611e',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'e1e2e3e4-e5e6-4000-8000-000000000030',
+      type: FieldType.RELATION,
+    },
+    {
+      name: 'targetMyNote',
+      label: 'MyNote',
+      description: 'MyNote My note',
+      icon: 'IconFileImport',
+      isNullable: true,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'targetMyNoteId',
+      },
+      universalIdentifier: '721b12d8-7a3d-5e13-b8d5-62b3ad8cb8b5',
+      objectUniversalIdentifier: '20202020-bd3d-4c60-8dca-571c71d4447a',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '56a872c8-7a1e-563d-8772-3978c2c5c220',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'e1e2e3e4-e5e6-4000-8000-000000000030',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: '20202020-f634-435d-ab8d-e1168b375c69',
+    },
+    {
+      name: 'targetMyNote',
+      label: 'MyNote',
+      description: 'MyNote My note',
+      icon: 'IconCheckbox',
+      isNullable: true,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'targetMyNoteId',
+      },
+      universalIdentifier: '94b6f269-fc9a-5bcd-af5b-2bdac69f276b',
+      objectUniversalIdentifier: '20202020-fff0-4b44-be82-bda313884400',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '011595e8-7524-5ec7-9fbc-4bd3c42d7d24',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'e1e2e3e4-e5e6-4000-8000-000000000030',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: '20202020-f635-435d-ab8d-e1168b375c70',
+    },
+    {
+      name: 'targetMyNote',
+      label: 'MyNote',
+      description: 'MyNote My note',
+      icon: 'IconCheckbox',
+      isNullable: true,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'targetMyNoteId',
+      },
+      universalIdentifier: '50da3cfa-dea5-5c9b-b1b7-cb615e1df4c3',
+      objectUniversalIdentifier: '20202020-5a9a-44e8-95df-771cd06d0fb1',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'dd734fa3-26c3-53dd-91aa-577c313e1fa4',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'e1e2e3e4-e5e6-4000-8000-000000000030',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: '20202020-f636-435d-ab8d-e1168b375c71',
+    },
+  ],
   objects: [
     {
       universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000030',
@@ -108,6 +213,106 @@ export const EXPECTED_MANIFEST: Manifest = {
           name: 'updatedBy',
           type: FieldMetadataType.ACTOR,
           universalIdentifier: 'fa60f87d-15c8-5ff7-9da0-191fa14a922f',
+        },
+        {
+          defaultValue: 0,
+          description: 'Position',
+          icon: 'IconHierarchy2',
+          isNullable: false,
+          label: 'Position',
+          name: 'position',
+          type: FieldMetadataType.POSITION,
+          universalIdentifier: '4a5d7791-ddc9-53ee-bc46-699da7373290',
+        },
+        {
+          defaultValue: null,
+          description: 'Search vector',
+          icon: 'IconSearch',
+          isNullable: true,
+          label: 'Search vector',
+          name: 'searchVector',
+          type: FieldMetadataType.TS_VECTOR,
+          universalIdentifier: '0f00bc3b-f313-5206-8496-842af20a538a',
+        },
+        {
+          name: 'timelineActivities',
+          label: 'Timeline Activities',
+          description: 'My notes tied to the MyNote',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          type: FieldType.RELATION,
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+          universalIdentifier: '12c84c1c-6e3f-54c5-a9a8-e93c7b46ac35',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '7e28b1ea-9a94-5d36-bc03-3f12f476867a',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-6736-4337-b5c4-8b39fae325a5',
+        },
+        {
+          name: 'favorites',
+          label: 'Favorites',
+          description: 'My notes tied to the MyNote',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          type: FieldType.RELATION,
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+          universalIdentifier: 'ed80c73b-25ff-5a3c-99c7-e27fa2f2611e',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '698f12fe-3feb-55e3-b6cc-73375f1a8ae6',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-ab56-4e05-92a3-e2414a499860',
+        },
+        {
+          name: 'attachments',
+          label: 'Attachments',
+          description: 'My notes tied to the MyNote',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          type: FieldType.RELATION,
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+          universalIdentifier: '56a872c8-7a1e-563d-8772-3978c2c5c220',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '721b12d8-7a3d-5e13-b8d5-62b3ad8cb8b5',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-bd3d-4c60-8dca-571c71d4447a',
+        },
+        {
+          name: 'noteTargets',
+          label: 'Note Targets',
+          description: 'My notes tied to the MyNote',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          type: FieldType.RELATION,
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+          universalIdentifier: '011595e8-7524-5ec7-9fbc-4bd3c42d7d24',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '94b6f269-fc9a-5bcd-af5b-2bdac69f276b',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-fff0-4b44-be82-bda313884400',
+        },
+        {
+          name: 'taskTargets',
+          label: 'Task Targets',
+          description: 'My notes tied to the MyNote',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          type: FieldType.RELATION,
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+          universalIdentifier: 'dd734fa3-26c3-53dd-91aa-577c313e1fa4',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '50da3cfa-dea5-5c9b-b1b7-cb615e1df4c3',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-5a9a-44e8-95df-771cd06d0fb1',
         },
       ],
     },
