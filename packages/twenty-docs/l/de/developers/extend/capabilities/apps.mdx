@@ -46,13 +46,13 @@ yarn twenty app:dev
 Das Scaffolding-Tool unterstützt drei Modi, um zu steuern, welche Beispieldateien enthalten sind:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Standard (umfassend): alle Beispiele (Objekt, Feld, Logikfunktion, Frontend-Komponente, View, Navigationsmenüeintrag, Skill)
 npx create-twenty-app@latest my-app
 
-# Minimal: only core files (application-config.ts and default-role.ts)
+# Minimal: nur Kerndateien (application-config.ts und default-role.ts)
 npx create-twenty-app@latest my-app --minimal
 
-# Interactive: select which examples to include
+# Interaktiv: wähle aus, welche Beispiele enthalten sein sollen
 npx create-twenty-app@latest my-app --interactive
 ```
 
@@ -103,26 +103,26 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Ordner für öffentliche Assets (Bilder, Schriftarten usw.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Erforderlich - Hauptkonfiguration der Anwendung
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Standardrolle für Logikfunktionen
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # Beispiel für eine benutzerdefinierte Objektdefinition
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # Beispiel für eine eigenständige Felddefinition
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Beispiel für eine Logikfunktion
+  │   └── post-install.ts               # Post-Installations-Logikfunktion
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # Beispiel für eine Frontend-Komponente
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # Beispiel für eine gespeicherte View-Definition
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  │   └── example-navigation-menu-item.ts # Beispiel für einen Navigationslink in der Seitenleiste
   └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+      └── example-skill.ts                # Beispiel für eine Skill-Definition eines KI-Agenten
 ```
 
 Mit `--minimal` werden nur die Kerndateien erstellt (`application-config.ts`, `roles/default-role.ts` und `logic-functions/post-install.ts`). Mit `--interactive` wählst du aus, welche Beispieldateien enthalten sein sollen.
@@ -151,7 +151,7 @@ Das SDK erkennt Entitäten, indem es Ihre TypeScript-Dateien nach Aufrufen von *
 | `defineField()`              | Felderweiterungen für bestehende Objekte  |
 | `defineView()`               | Gespeicherte View-Definitionen            |
 | `defineNavigationMenuItem()` | Definitionen von Navigationsmenüeinträgen |
-| `defineSkill()`              | AI agent skill definitions                |
+| `defineSkill()`              | Skill-Definitionen für KI-Agenten         |
 
 <Note>
   **Dateibenennung ist flexibel.** Die Entitätserkennung ist AST-basiert — das SDK durchsucht Ihre Quelldateien nach dem Muster `export default define<Entity>({...})`. Sie können Ihre Dateien und Ordner nach Belieben organisieren. Die Gruppierung nach Entitätstyp (z. B. `logic-functions/`, `roles/`) ist lediglich eine Konvention zur Codeorganisation, keine Voraussetzung.
@@ -173,7 +173,7 @@ export default defineObject({
 Spätere Befehle fügen weitere Dateien und Ordner hinzu:
 
 * `yarn twenty app:dev` generiert automatisch einen typisierten API-Client in `node_modules/twenty-sdk/generated` (typisierter Twenty-Client + Arbeitsbereichs-Typen).
-* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
+* `yarn twenty entity:add` fügt unter `src/` Entitätsdefinitionsdateien für Ihre benutzerdefinierten Objekte, Funktionen, Frontend-Komponenten, Rollen, Skills und mehr hinzu.
 
 ## Authentifizierung
 
@@ -226,7 +226,7 @@ Das SDK stellt Hilfsfunktionen bereit, um die Entitäten Ihrer App zu definieren
 | `defineField()`              | Bestehende Objekte mit zusätzlichen Feldern erweitern          |
 | `defineView()`               | Gespeicherte Views für Objekte definieren                      |
 | `defineNavigationMenuItem()` | Seitenleisten-Navigationslinks definieren                      |
-| `defineSkill()`              | Define AI agent skills                                         |
+| `defineSkill()`              | Definieren Sie Skills für KI-Agenten                           |
 
 Diese Funktionen validieren Ihre Konfiguration zur Build-Zeit und bieten IDE-Autovervollständigung sowie Typsicherheit.
 
@@ -748,7 +748,7 @@ Sie können neue Frontend-Komponenten auf zwei Arten erstellen:
 
 ### Fähigkeiten
 
-Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+Skills definieren wiederverwendbare Anweisungen und Fähigkeiten, die KI-Agenten in Ihrem Arbeitsbereich verwenden können. Verwenden Sie `defineSkill()`, um Skills mit eingebauter Validierung zu definieren:
 
 ```typescript
 // src/skills/example-skill.ts
@@ -770,16 +770,16 @@ export default defineSkill({
 
 Hauptpunkte:
 
-* `name` is a unique identifier string for the skill (kebab-case recommended).
-* `label` is the human-readable display name shown in the UI.
-* `content` contains the skill instructions — this is the text the AI agent uses.
-* `icon` (optional) sets the icon displayed in the UI.
-* `description` (optional) provides additional context about the skill's purpose.
+* `name` ist eine eindeutige Kennung (als Zeichenfolge) für den Skill (kebab-case empfohlen).
+* `label` ist der menschenlesbare Anzeigename, der in der UI angezeigt wird.
+* `content` enthält die Skill-Anweisungen — dies ist der Text, den der KI-Agent verwendet.
+* `icon` (optional) legt das in der UI angezeigte Symbol fest.
+* `description` (optional) liefert zusätzlichen Kontext zum Zweck des Skills.
 
-You can create new skills in two ways:
+Sie können neue Skills auf zwei Arten erstellen:
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
-* **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
+* **Generiert**: Führen Sie `yarn twenty entity:add` aus und wählen Sie die Option zum Hinzufügen eines neuen Skills.
+* **Manuell**: Erstellen Sie eine neue Datei und verwenden Sie `defineSkill()` nach demselben Muster.
 
 ### Generierter typisierter Client
 
