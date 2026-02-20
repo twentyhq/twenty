@@ -1,10 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-jest.mock('@toon-format/toon', () => ({
-  encode: (value: unknown) => JSON.stringify(value),
-}));
-
 import { MCP_SERVER_METADATA } from 'src/engine/api/mcp/constants/mcp.const';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
