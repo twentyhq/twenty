@@ -138,6 +138,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceComponentPath: 'my.front-component.tsx',
       builtComponentPath: 'my.front-component.mjs',
       builtComponentChecksum: '[checksum]',
+      isHeadless: false,
     },
   ],
   views: [],
