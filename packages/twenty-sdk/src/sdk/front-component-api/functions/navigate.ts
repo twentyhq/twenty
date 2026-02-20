@@ -13,7 +13,7 @@ export const setNavigate = (fn: NavigateFunction): void => {
 export const navigate: NavigateFunction = <T extends AppPath>(
   to: T,
   params?: Parameters<typeof getAppPath<T>>[1],
-  queryParams?: Record<string, any>,
+  queryParams?: Record<string, unknown>,
   options?: NavigateOptions,
 ): Promise<void> => {
   const navigateFunction = frontComponentHostCommunicationApi.navigate;
