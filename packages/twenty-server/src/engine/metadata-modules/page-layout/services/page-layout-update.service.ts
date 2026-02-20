@@ -120,6 +120,7 @@ export class PageLayoutUpdateService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatViewFieldGroupMaps,
+      flatViewMaps,
     } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -128,6 +129,7 @@ export class PageLayoutUpdateService {
             'flatObjectMetadataMaps',
             'flatFieldMetadataMaps',
             'flatViewFieldGroupMaps',
+            'flatViewMaps',
           ],
         },
       );
@@ -153,6 +155,7 @@ export class PageLayoutUpdateService {
           workspaceCustomFlatApplication.universalIdentifier,
         flatFieldMetadataMaps,
         flatViewFieldGroupMaps,
+        flatViewMaps,
       });
 
     const validateAndBuildResult =
@@ -365,6 +368,7 @@ export class PageLayoutUpdateService {
     workspaceCustomApplicationUniversalIdentifier,
     flatFieldMetadataMaps,
     flatViewFieldGroupMaps,
+    flatViewMaps,
   }: {
     tabs: UpdatePageLayoutTabWithWidgetsInput[];
     workspaceId: string;
@@ -375,6 +379,7 @@ export class PageLayoutUpdateService {
     | 'flatObjectMetadataMaps'
     | 'flatFieldMetadataMaps'
     | 'flatViewFieldGroupMaps'
+    | 'flatViewMaps'
     | 'flatPageLayoutTabMaps'
     | 'flatPageLayoutWidgetMaps'
   >): {
@@ -398,6 +403,7 @@ export class PageLayoutUpdateService {
           workspaceCustomApplicationUniversalIdentifier,
           flatFieldMetadataMaps,
           flatViewFieldGroupMaps,
+          flatViewMaps,
         });
 
       allWidgetsToCreate.push(...widgetsToCreate);
@@ -422,6 +428,7 @@ export class PageLayoutUpdateService {
     workspaceCustomApplicationUniversalIdentifier,
     flatFieldMetadataMaps,
     flatViewFieldGroupMaps,
+    flatViewMaps,
   }: {
     tabId: string;
     widgets: UpdatePageLayoutWidgetWithIdInput[];
@@ -433,6 +440,7 @@ export class PageLayoutUpdateService {
     | 'flatObjectMetadataMaps'
     | 'flatFieldMetadataMaps'
     | 'flatViewFieldGroupMaps'
+    | 'flatViewMaps'
     | 'flatPageLayoutTabMaps'
     | 'flatPageLayoutWidgetMaps'
   >): {
@@ -503,6 +511,7 @@ export class PageLayoutUpdateService {
                 flatFieldMetadataMaps.universalIdentifierById,
               viewFieldGroupUniversalIdentifierById:
                 flatViewFieldGroupMaps.universalIdentifierById,
+              viewUniversalIdentifierById: flatViewMaps.universalIdentifierById,
             }),
         };
       },
@@ -549,6 +558,8 @@ export class PageLayoutUpdateService {
                   flatFieldMetadataMaps.universalIdentifierById,
                 viewFieldGroupUniversalIdentifierById:
                   flatViewFieldGroupMaps.universalIdentifierById,
+                viewUniversalIdentifierById:
+                  flatViewMaps.universalIdentifierById,
               }),
           }),
         };
@@ -597,6 +608,8 @@ export class PageLayoutUpdateService {
                   flatFieldMetadataMaps.universalIdentifierById,
                 viewFieldGroupUniversalIdentifierById:
                   flatViewFieldGroupMaps.universalIdentifierById,
+                viewUniversalIdentifierById:
+                  flatViewMaps.universalIdentifierById,
               }),
           }),
         };

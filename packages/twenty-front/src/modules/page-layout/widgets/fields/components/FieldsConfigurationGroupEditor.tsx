@@ -5,11 +5,8 @@ import { useLingui } from '@lingui/react/macro';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import {
-  type FieldsConfigurationFieldItem,
-  type FieldsConfigurationSection,
-} from '@/page-layout/types/FieldsConfiguration';
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
+import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { IconDotsVertical, IconNewSection } from 'twenty-ui/display';
 import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
 
@@ -18,7 +15,7 @@ const StyledFieldsDroppable = styled.div`
   flex-direction: column;
 `;
 
-const StyledSectionContainer = styled.div<{ isDragging: boolean }>`
+const StyledGroupContainer = styled.div<{ isDragging: boolean }>`
   background: ${({ isDragging, theme }) =>
     isDragging ? theme.background.primary : 'transparent'};
   border: 1px solid
@@ -30,61 +27,31 @@ const StyledSectionContainer = styled.div<{ isDragging: boolean }>`
   width: 100%;
 `;
 
-type FieldsConfigurationSectionEditorProps = {
-  section: FieldsConfigurationSection;
+type FieldsConfigurationGroupEditorProps = {
+  group: FieldsWidgetGroup;
   index: number;
   objectMetadataItem: ObjectMetadataItem;
-  onSectionChange: (section: FieldsConfigurationSection) => void;
   draggableProvided: DraggableProvided;
   isDragging: boolean;
+  onAddGroup?: () => void;
+  onToggleFieldVisibility: (fieldMetadataId: string) => void;
 };
 
-export const FieldsConfigurationSectionEditor = ({
-  section,
-  objectMetadataItem,
-  onSectionChange,
+export const FieldsConfigurationGroupEditor = ({
+  group,
   draggableProvided,
   isDragging,
-}: FieldsConfigurationSectionEditorProps) => {
+  onAddGroup,
+  onToggleFieldVisibility,
+}: FieldsConfigurationGroupEditorProps) => {
   const { t } = useLingui();
 
-  const handleFieldChange = (
-    fieldMetadataId: string,
-    updatedField: FieldsConfigurationFieldItem,
-  ) => {
-    const updatedFields = section.fields.map((field) =>
-      field.fieldMetadataId === fieldMetadataId ? updatedField : field,
-    );
-
-    onSectionChange({
-      ...section,
-      fields: updatedFields,
-    });
-  };
-
-  const handleToggleFieldVisibility = (fieldMetadataId: string) => {
-    const field = section.fields.find(
-      (f) => f.fieldMetadataId === fieldMetadataId,
-    );
-
-    if (!field) {
-      return;
-    }
-
-    const updatedField: FieldsConfigurationFieldItem = {
-      ...field,
-      conditionalDisplay: false,
-    };
-
-    handleFieldChange(fieldMetadataId, updatedField);
-  };
-
-  const sortedFields = [...section.fields].sort(
+  const sortedFields = [...group.fields].sort(
     (a, b) => a.position - b.position,
   );
 
   return (
-    <StyledSectionContainer
+    <StyledGroupContainer
       ref={draggableProvided.innerRef}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...draggableProvided.draggableProps}
@@ -93,7 +60,7 @@ export const FieldsConfigurationSectionEditor = ({
       {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <div {...draggableProvided.dragHandleProps}>
         <MenuItemDraggable
-          text={section.title}
+          text={group.name}
           gripMode="always"
           isIconDisplayedOnHoverOnly={false}
           withIconContainer
@@ -102,14 +69,14 @@ export const FieldsConfigurationSectionEditor = ({
               Icon: IconDotsVertical,
               onClick: (e) => {
                 e.stopPropagation();
-                // TODO: Add section menu
+                // TODO: Add group menu
               },
             },
           ]}
         />
       </div>
 
-      <Droppable droppableId={`section-${section.id}`} type="FIELD">
+      <Droppable droppableId={`group-${group.id}`} type="FIELD">
         {(droppableProvided) => (
           <StyledFieldsDroppable
             ref={droppableProvided.innerRef}
@@ -117,27 +84,23 @@ export const FieldsConfigurationSectionEditor = ({
             {...droppableProvided.droppableProps}
           >
             {sortedFields.map((field, fieldIndex) => {
-              const fieldMetadata = objectMetadataItem.fields.find(
-                (f) => f.id === field.fieldMetadataId,
-              );
-
-              if (!fieldMetadata) {
-                return null;
-              }
-
               return (
                 <DraggableItem
-                  key={field.fieldMetadataId}
-                  draggableId={`field-${field.fieldMetadataId}`}
+                  key={field.fieldMetadataItem.id}
+                  draggableId={`field-${field.fieldMetadataItem.id}`}
                   index={fieldIndex}
                   isInsideScrollableContainer
                   itemComponent={
                     <FieldsConfigurationFieldEditor
-                      field={field}
-                      fieldMetadata={fieldMetadata}
-                      onToggleVisibility={() =>
-                        handleToggleFieldVisibility(field.fieldMetadataId)
-                      }
+                      field={{
+                        fieldMetadataId: field.fieldMetadataItem.id,
+                        position: field.position,
+                        isVisible: field.isVisible,
+                      }}
+                      fieldMetadata={field.fieldMetadataItem}
+                      onToggleVisibility={() => {
+                        onToggleFieldVisibility(field.fieldMetadataItem.id);
+                      }}
                     />
                   }
                 />
@@ -151,11 +114,9 @@ export const FieldsConfigurationSectionEditor = ({
       <MenuItem
         LeftIcon={IconNewSection}
         withIconContainer
-        text={t`Add a Section`}
-        onClick={() => {
-          // TODO: Implement add section
-        }}
+        text={t`Add a Group`}
+        onClick={onAddGroup}
       />
-    </StyledSectionContainer>
+    </StyledGroupContainer>
   );
 };

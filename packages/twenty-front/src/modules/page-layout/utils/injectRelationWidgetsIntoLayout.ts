@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { DYNAMIC_RELATION_WIDGET_ID_PREFIX } from '@/page-layout/utils/isDynamicRelationWidget';
 import { isDefined } from 'twenty-shared/utils';
 import {
   WidgetConfigurationType,
@@ -12,7 +13,7 @@ const getRelationFieldWidgetToInsert = (
   tabId: string,
 ): PageLayoutWidget => ({
   __typename: 'PageLayoutWidget' as const,
-  id: `dynamic-relation-widget-${field.id}-${field.label}`,
+  id: `${DYNAMIC_RELATION_WIDGET_ID_PREFIX}${field.id}-${field.label}`,
   pageLayoutTabId: tabId,
   title: field.label,
   type: WidgetType.FIELD,

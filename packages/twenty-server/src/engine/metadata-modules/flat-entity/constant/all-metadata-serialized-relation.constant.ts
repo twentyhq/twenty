@@ -34,6 +34,8 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   pageLayoutTab: {},
   pageLayoutWidget: {
     fieldMetadata: true,
+    view: true,
+    viewFieldGroup: true,
   },
   rowLevelPermissionPredicate: {},
   rowLevelPermissionPredicateGroup: {},
