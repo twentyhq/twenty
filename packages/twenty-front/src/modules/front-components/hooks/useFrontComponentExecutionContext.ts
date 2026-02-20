@@ -3,12 +3,13 @@ import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
 } from 'twenty-sdk/front-component-renderer';
-import { type AppPath } from 'twenty-shared/types';
+import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useIcons } from 'twenty-ui/display';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -26,6 +27,12 @@ export const useFrontComponentExecutionContext = ({
   const setCommandMenuSearchState = useSetRecoilState(commandMenuSearchState);
   const { getIcon } = useIcons();
   const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();
+  const {
+    enqueueSuccessSnackBar,
+    enqueueErrorSnackBar,
+    enqueueInfoSnackBar,
+    enqueueWarningSnackBar,
+  } = useSnackBar();
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
     to,
@@ -54,7 +61,41 @@ export const useFrontComponentExecutionContext = ({
       }
     };
 
+  const enqueueSnackbar: FrontComponentHostCommunicationApi['enqueueSnackbar'] =
+    async ({
+      message,
+      variant,
+      duration,
+      detailedMessage,
+      dedupeKey,
+    }: EnqueueSnackbarParams) => {
+      const snackBarOptions = {
+        duration,
+        detailedMessage,
+        dedupeKey,
+      };
+
+      switch (variant) {
+        case 'error':
+          enqueueErrorSnackBar({ message, options: snackBarOptions });
+          break;
+        case 'info':
+          enqueueInfoSnackBar({ message, options: snackBarOptions });
+          break;
+        case 'warning':
+          enqueueWarningSnackBar({ message, options: snackBarOptions });
+          break;
+        case 'success':
+          enqueueSuccessSnackBar({ message, options: snackBarOptions });
+          break;
+        default:
+          enqueueSuccessSnackBar({ message, options: snackBarOptions });
+          break;
+      }
+    };
+
   const executionContext: FrontComponentExecutionContext = {
+    frontComponentId,
     userId: currentUser?.id ?? null,
   };
 
@@ -67,6 +108,7 @@ export const useFrontComponentExecutionContext = ({
     {
       navigate,
       openSidePanelPage,
+      enqueueSnackbar,
       unmountFrontComponent,
     };
 

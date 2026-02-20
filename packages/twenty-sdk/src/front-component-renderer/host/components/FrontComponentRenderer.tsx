@@ -1,7 +1,7 @@
 import { FrontComponentErrorEffect } from '@/front-component-renderer/remote/components/FrontComponentErrorEffect';
 import { FrontComponentHostCommunicationApiEffect } from '@/front-component-renderer/remote/components/FrontComponentHostCommunicationApiEffect';
 import { FrontComponentUpdateContextEffect } from '@/front-component-renderer/remote/components/FrontComponentUpdateContextEffect';
-import { type FrontComponentExecutionContext } from '@/front-component-renderer/types/FrontComponentExecutionContext';
+import { type FrontComponentExecutionContext } from '@/sdk/front-component-api';
 import { type FrontComponentHostCommunicationApi } from '@/front-component-renderer/types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '@/front-component-renderer/types/WorkerExports';
 import { type ThreadWebWorker } from '@quilted/threads';

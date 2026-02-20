@@ -1,6 +1,8 @@
 import {
+  enqueueSnackbar,
   openSidePanelPage,
   unmountFrontComponent,
+  useFrontComponentId,
 } from '@/sdk/front-component-api';
 import { useEffect, useState } from 'react';
 
@@ -23,6 +25,8 @@ export const ActionOpenSidePanelPage = ({
 }: ActionOpenSidePanelPageProps) => {
   const [hasExecuted, setHasExecuted] = useState(false);
 
+  const frontComponentId = useFrontComponentId();
+
   useEffect(() => {
     if (hasExecuted) {
       return;
@@ -40,13 +44,30 @@ export const ActionOpenSidePanelPage = ({
           pageIcon,
           shouldResetSearchState,
         });
+      } catch (error) {
+        if (error instanceof Error) {
+          await enqueueSnackbar({
+            message: 'Action failed',
+            detailedMessage: error.message,
+            variant: 'error',
+            dedupeKey: `${frontComponentId}-action-error`,
+          });
+        }
       } finally {
         await unmountFrontComponent();
       }
     };
 
     run();
-  }, [page, pageTitle, pageIcon, shouldResetSearchState, onClick, hasExecuted]);
+  }, [
+    page,
+    pageTitle,
+    pageIcon,
+    shouldResetSearchState,
+    onClick,
+    hasExecuted,
+    frontComponentId,
+  ]);
 
   return null;
 };

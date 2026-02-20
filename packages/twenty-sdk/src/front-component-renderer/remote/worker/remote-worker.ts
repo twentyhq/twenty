@@ -16,9 +16,12 @@ import { installStyleBridge } from '@/front-component-renderer/polyfills/install
 import { installStylePropertyOnRemoteElements } from '@/front-component-renderer/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementSetAttribute } from '@/front-component-renderer/remote/utils/patchRemoteElementSetAttribute';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/sdk/front-component-api/constants/HtmlTagToRemoteComponent';
-import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
+import { frontComponentHostCommunicationApi } from '@/sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 
-import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
+import {
+  setFrontComponentExecutionContext,
+  type FrontComponentExecutionContext,
+} from '@/sdk/front-component-api';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
@@ -94,6 +97,8 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
       hostApi.openSidePanelPage;
     frontComponentHostCommunicationApi.unmountFrontComponent =
       hostApi.unmountFrontComponent;
+    frontComponentHostCommunicationApi.enqueueSnackbar =
+      hostApi.enqueueSnackbar;
   };
 
 const updateContext: WorkerExports['updateContext'] = async (
