@@ -1,7 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { useIcons } from 'twenty-ui/display';
-
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuAddToNavDroppable } from '@/command-menu/components/CommandMenuAddToNavDroppable';
 import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
@@ -22,6 +18,10 @@ import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValu
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 
 type CommandMenuNewSidebarItemViewPickerSubViewProps = {
   selectedObjectMetadataIdForView: string;
@@ -81,7 +81,7 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
       currentDraft,
       addMenuItemInsertionContext?.targetFolderId ?? null,
       addMenuItemInsertionContext?.targetIndex,
-      selectedObjectMetadataItem
+      isDefined(selectedObjectMetadataItem)
         ? getStandardObjectIconColor(selectedObjectMetadataItem.nameSingular)
         : undefined,
     );
