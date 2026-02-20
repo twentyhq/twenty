@@ -360,12 +360,19 @@ export class SearchService {
 
     queryBuilder.select(fieldsToSelect);
 
-    const escapedInput = escapeForIlike(searchInput.trim());
+    const searchWords = searchInput
+      .trim()
+      .split(/\s+/)
+      .filter(isNonEmptyString);
 
-    queryBuilder.andWhere(
-      `public.unaccent_immutable("${SEARCH_VECTOR_FIELD.name}"::text) ILIKE public.unaccent_immutable(:ilikeFallbackPattern)`,
-      { ilikeFallbackPattern: `%${escapedInput}%` },
-    );
+    searchWords.forEach((word, index) => {
+      const paramName = `ilikeFallback${index}`;
+
+      queryBuilder.andWhere(
+        `public.unaccent_immutable("${SEARCH_VECTOR_FIELD.name}"::text) ILIKE public.unaccent_immutable(:${paramName})`,
+        { [paramName]: `%${escapeForIlike(word)}%` },
+      );
+    });
 
     const rawResults = await queryBuilder
       .orderBy('"id"', 'ASC')
