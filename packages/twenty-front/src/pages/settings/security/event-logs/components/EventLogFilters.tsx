@@ -38,7 +38,9 @@ export const EventLogFilters = ({
   onChange,
 }: EventLogFiltersProps) => {
   const { t } = useLingui();
-  const currentWorkspaceMembers = useRecoilValueV2(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useRecoilValueV2(
+    currentWorkspaceMembersState,
+  );
   const { objectMetadataItems } = useObjectMetadataItems();
   const { getIcon } = useIcons();
 

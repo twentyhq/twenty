@@ -4,6 +4,7 @@ import { useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import {
@@ -23,13 +24,10 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
 
 describe('useDeleteFavorite', () => {
   it('should delete favorite successfully', async () => {
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockWorkspaceMember);
+
     const { result } = renderHook(
       () => {
-        const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState,
-        );
-        setCurrentWorkspaceMember(mockWorkspaceMember);
-
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(generatedMockObjectMetadataItems);
 

@@ -40,32 +40,31 @@ describe('useUserTimezone', () => {
   });
 
   it('should return system timezone when currentWorkspaceMember.timeZone is "system"', () => {
+    jotaiStore.set(currentWorkspaceMemberState.atom, {
+      id: 'workspace-member-id',
+      name: {
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+      colorScheme: 'Light',
+      locale: 'en-US',
+      userEmail: 'john@example.com',
+      timeZone: 'system',
+      dateFormat: null,
+      timeFormat: null,
+      numberFormat: null,
+      calendarStartDay: null,
+    });
+
     const WrapperWithSystemTimezone = ({
       children,
     }: {
       children: React.ReactNode;
-    }) => {
-      jotaiStore.set(currentWorkspaceMemberState.atom, {
-        id: 'workspace-member-id',
-        name: {
-          firstName: 'John',
-          lastName: 'Doe',
-        },
-        colorScheme: 'Light',
-        locale: 'en-US',
-        userEmail: 'john@example.com',
-        timeZone: 'system',
-        dateFormat: null,
-        timeFormat: null,
-        numberFormat: null,
-        calendarStartDay: null,
-      });
-      return (
-        <JotaiProvider store={jotaiStore}>
-          <RecoilRoot>{children}</RecoilRoot>
-        </JotaiProvider>
-      );
-    };
+    }) => (
+      <JotaiProvider store={jotaiStore}>
+        <RecoilRoot>{children}</RecoilRoot>
+      </JotaiProvider>
+    );
 
     const { result } = renderHook(() => useUserTimezone(), {
       wrapper: WrapperWithSystemTimezone,
@@ -78,32 +77,30 @@ describe('useUserTimezone', () => {
   it('should return user-specific timezone when currentWorkspaceMember.timeZone is set', () => {
     const userTimezone = 'Europe/Paris';
 
+    jotaiStore.set(currentWorkspaceMemberState.atom, {
+      id: 'workspace-member-id',
+      name: {
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+      colorScheme: 'Light',
+      locale: 'en-US',
+      userEmail: 'john@example.com',
+      timeZone: userTimezone,
+      dateFormat: null,
+      timeFormat: null,
+      numberFormat: null,
+      calendarStartDay: null,
+    });
+
     const WrapperWithUserTimezone = ({
       children,
     }: {
       children: React.ReactNode;
     }) => (
-      <RecoilRoot
-        initializeState={(snapshot) => {
-          snapshot.set(currentWorkspaceMemberState, {
-            id: 'workspace-member-id',
-            name: {
-              firstName: 'John',
-              lastName: 'Doe',
-            },
-            colorScheme: 'Light',
-            locale: 'en-US',
-            userEmail: 'john@example.com',
-            timeZone: userTimezone,
-            dateFormat: null,
-            timeFormat: null,
-            numberFormat: null,
-            calendarStartDay: null,
-          });
-        }}
-      >
-        {children}
-      </RecoilRoot>
+      <JotaiProvider store={jotaiStore}>
+        <RecoilRoot>{children}</RecoilRoot>
+      </JotaiProvider>
     );
 
     const { result } = renderHook(() => useUserTimezone(), {

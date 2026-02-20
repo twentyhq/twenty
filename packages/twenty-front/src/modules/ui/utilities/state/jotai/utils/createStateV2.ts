@@ -1,5 +1,6 @@
 import { atom, type WritableAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type StateV2 } from '@/ui/utilities/state/jotai/types/StateV2';
 import { createJotaiCookieStorage } from '@/ui/utilities/state/jotai/utils/createJotaiCookieStorage';
@@ -34,7 +35,7 @@ export const createStateV2 = <ValueType>({
 }): StateV2<ValueType> => {
   let baseAtom: StateAtom<ValueType>;
 
-  if (useCookieStorage) {
+  if (isDefined(useCookieStorage)) {
     const storage = createJotaiCookieStorage<ValueType>({
       cookieKey: useCookieStorage.cookieKey,
       attributes: useCookieStorage.attributes,

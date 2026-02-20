@@ -6,6 +6,7 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import {
@@ -20,15 +21,12 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
 
 describe('useFavorites', () => {
   it('should fetch and sort favorites successfully', () => {
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockWorkspaceMember);
+
     const { result } = renderHook(
       () => {
         const setPrefetchFavorites = useSetRecoilState(prefetchFavoritesState);
         setPrefetchFavorites(initialFavorites);
-
-        const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState,
-        );
-        setCurrentWorkspaceMember(mockWorkspaceMember);
 
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(generatedMockObjectMetadataItems);

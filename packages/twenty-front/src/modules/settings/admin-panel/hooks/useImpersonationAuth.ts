@@ -1,12 +1,13 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useSetRecoilState } from 'recoil';
 
 export const useImpersonationAuth = () => {
   const { getAuthTokensFromLoginToken } = useAuth();
   const setShouldAppBeLoading = useSetRecoilState(shouldAppBeLoadingState);
-  const setIsAppEffectRedirectEnabled = useSetRecoilState(
+  const setIsAppEffectRedirectEnabled = useSetRecoilStateV2(
     isAppEffectRedirectEnabledState,
   );
 

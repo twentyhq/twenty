@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -92,7 +93,7 @@ export const EventRow = ({
   event,
   mainObjectMetadataItem,
 }: EventRowProps) => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
 
   const allowRequestsToTwentyIcons = useRecoilValue(
     allowRequestsToTwentyIconsState,

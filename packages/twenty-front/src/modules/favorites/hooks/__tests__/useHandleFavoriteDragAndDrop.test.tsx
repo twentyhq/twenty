@@ -11,6 +11,7 @@ import { createFolderDroppableId } from '@/favorites/utils/createFolderDroppable
 import { createFolderHeaderDroppableId } from '@/favorites/utils/createFolderHeaderDroppableId';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import {
@@ -33,17 +34,14 @@ describe('useHandleFavoriteDragAndDrop', () => {
   };
 
   const setupHook = () => {
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockWorkspaceMember);
+
     return renderHook(
       () => {
         const setPrefetchFavorites = useSetRecoilState(prefetchFavoritesState);
         setPrefetchFavorites(initialFavorites as Favorite[]);
 
-        const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState,
-        );
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-
-        setCurrentWorkspaceMember(mockWorkspaceMember);
         setMetadataItems(generatedMockObjectMetadataItems);
 
         return {

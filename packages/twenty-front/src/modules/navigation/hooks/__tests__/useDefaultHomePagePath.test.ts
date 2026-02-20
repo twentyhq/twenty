@@ -6,6 +6,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { AppPath } from 'twenty-shared/types';
@@ -27,8 +28,8 @@ const renderHooks = ({
 }) => {
   const { result } = renderHook(
     () => {
-      const setCurrentUser = useSetRecoilState(currentUserState);
-      const setCurrentUserWorkspace = useSetRecoilState(
+      const setCurrentUser = useSetRecoilStateV2(currentUserState);
+      const setCurrentUserWorkspace = useSetRecoilStateV2(
         currentUserWorkspaceState,
       );
       const setObjectMetadataItems = useSetRecoilState(

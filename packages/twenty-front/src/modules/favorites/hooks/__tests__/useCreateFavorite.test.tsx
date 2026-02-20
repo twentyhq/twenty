@@ -5,6 +5,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import {
@@ -46,13 +47,10 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
 
 describe('useCreateFavorite', () => {
   it('should create favorite successfully', async () => {
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockWorkspaceMember);
+
     const { result } = renderHook(
       () => {
-        const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState,
-        );
-        setCurrentWorkspaceMember(mockWorkspaceMember);
-
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(generatedMockObjectMetadataItems);
 

@@ -15,8 +15,13 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { messages } from '~/locales/generated/en';
 
@@ -46,23 +51,26 @@ const mockBilling: Billing = {
 };
 
 const initializeState = ({ set }: MutableSnapshot) => {
-  set(currentUserState, mockCurrentUser);
+  // currentUserState is now a Jotai state, set it directly
+  jotaiStore.set(currentUserState.atom, mockCurrentUser);
   set(billingState, mockBilling);
 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider>
-    <RecoilRoot initializeState={initializeState}>
-      <MemoryRouter>
-        <I18nProvider i18n={i18n}>
-          <SnackBarComponentInstanceContext.Provider
-            value={{ instanceId: 'test-scope-id' }}
-          >
-            {children}
-          </SnackBarComponentInstanceContext.Provider>
-        </I18nProvider>
-      </MemoryRouter>
-    </RecoilRoot>
+    <JotaiProvider store={jotaiStore}>
+      <RecoilRoot initializeState={initializeState}>
+        <MemoryRouter>
+          <I18nProvider i18n={i18n}>
+            <SnackBarComponentInstanceContext.Provider
+              value={{ instanceId: 'test-scope-id' }}
+            >
+              {children}
+            </SnackBarComponentInstanceContext.Provider>
+          </I18nProvider>
+        </MemoryRouter>
+      </RecoilRoot>
+    </JotaiProvider>
   </MockedProvider>
 );
 
@@ -71,6 +79,10 @@ jest.mock('@/settings/roles/hooks/usePermissionFlagMap', () => ({
 }));
 
 describe('useSettingsNavigationItems', () => {
+  beforeEach(() => {
+    resetJotaiStore();
+  });
+
   it('should hide workspace settings when no permissions', () => {
     (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
       [PermissionFlagType.WORKSPACE]: false,

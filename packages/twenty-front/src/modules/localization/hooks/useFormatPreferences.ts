@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { DateFormat } from '@/localization/constants/DateFormat';
@@ -18,6 +18,8 @@ import { getFormatPreferencesFromWorkspaceMember } from '@/localization/utils/fo
 import { getWorkspaceMemberUpdateFromFormatPreferences } from '@/localization/utils/format-preferences/getWorkspaceMemberUpdateFromFormatPreferences';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { logError } from '~/utils/logError';
 
@@ -28,8 +30,8 @@ export const useFormatPreferences = () => {
     workspaceMemberFormatPreferences,
     setWorkspaceMemberFormatPreferences,
   ] = useRecoilState(workspaceMemberFormatPreferencesState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const setCurrentWorkspaceMember = useSetRecoilState(
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const setCurrentWorkspaceMember = useSetRecoilStateV2(
     currentWorkspaceMemberState,
   );
 

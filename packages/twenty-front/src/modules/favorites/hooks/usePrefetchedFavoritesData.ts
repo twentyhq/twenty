@@ -1,6 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { type Favorite } from '@/favorites/types/Favorite';
 import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useRecoilValue } from 'recoil';
 
 type PrefetchedFavoritesData = {
@@ -10,7 +11,7 @@ type PrefetchedFavoritesData = {
 };
 
 export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
   const currentWorkspaceMemberId = currentWorkspaceMember?.id;
   const prefetchFavorites = useRecoilValue(prefetchFavoritesState);
 

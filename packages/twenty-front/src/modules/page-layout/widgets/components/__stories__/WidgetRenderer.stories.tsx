@@ -14,6 +14,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -1654,8 +1655,9 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
         );
       }
 
+      // currentUserWorkspaceState is now a Jotai state, set it directly
       if (isRestricted === true) {
-        snapshot.set(currentUserWorkspaceState, {
+        jotaiStore.set(currentUserWorkspaceState.atom, {
           permissionFlags: [],
           twoFactorAuthenticationMethodSummary: null,
           objectsPermissions: [
@@ -1672,7 +1674,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
           ],
         });
       } else {
-        snapshot.set(currentUserWorkspaceState, {
+        jotaiStore.set(currentUserWorkspaceState.atom, {
           permissionFlags: [],
           twoFactorAuthenticationMethodSummary: null,
           objectsPermissions: [

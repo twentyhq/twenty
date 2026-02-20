@@ -69,8 +69,9 @@ export const CreateProfile = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] =
-    useRecoilStateV2(currentWorkspaceMemberState);
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilStateV2(
+    currentWorkspaceMemberState,
+  );
   const setCurrentUser = useSetRecoilStateV2(currentUserState);
   const { updateOneRecord } = useUpdateOneRecord();
 

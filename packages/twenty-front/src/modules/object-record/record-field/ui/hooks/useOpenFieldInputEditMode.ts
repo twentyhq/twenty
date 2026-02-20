@@ -33,6 +33,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -74,9 +75,7 @@ export const useOpenFieldInputEditMode = () => {
           .getLoadable(objectMetadataItemsState)
           .getValue();
 
-        const currentWorkspace = snapshot
-          .getLoadable(currentWorkspaceState)
-          .getValue();
+        const currentWorkspace = jotaiStore.get(currentWorkspaceState.atom);
 
         const isJunctionRelationsEnabled =
           currentWorkspace?.featureFlags?.find(
