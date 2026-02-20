@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import { OUTPUT_DIR } from 'twenty-shared/application';
+import { OUTPUT_DIR, API_CLIENT_DIR } from 'twenty-shared/application';
 
 export const defineEntitiesTests = (appPath: string): void => {
   const outputDir = join(appPath, OUTPUT_DIR);
@@ -10,9 +10,9 @@ export const defineEntitiesTests = (appPath: string): void => {
       const sortedFiles = files.map((f) => f.toString()).sort();
 
       expect(sortedFiles).toEqual([
-        'api-client',
-        'api-client/schema.ts',
-        'api-client/types.ts',
+        API_CLIENT_DIR,
+        `${API_CLIENT_DIR}/schema.ts`,
+        `${API_CLIENT_DIR}/types.ts`,
         'manifest.json',
         'package.json',
         'public',

@@ -3,6 +3,7 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { copyBaseApplicationProject } from '@/utils/app-template';
 import { type ExampleOptions } from '@/types/scaffolding-options';
+import { GENERATED_DIR } from 'twenty-shared/application';
 
 // Mock fs-extra's copy function to skip copying base template (not available during tests)
 jest.mock('fs-extra', () => {
@@ -109,7 +110,7 @@ describe('copyBaseApplicationProject', () => {
 
     const gitignoreContent = await fs.readFile(gitignorePath, 'utf8');
     expect(gitignoreContent).toContain('/node_modules');
-    expect(gitignoreContent).toContain('generated');
+    expect(gitignoreContent).toContain(GENERATED_DIR);
   });
 
   it('should create yarn.lock file', async () => {
