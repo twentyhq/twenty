@@ -15,6 +15,7 @@ Aplikace vám umožňují vytvářet a spravovat přizpůsobení Twenty **jako k
 
 * Definujte vlastní objekty a pole jako kód (spravovaný datový model)
 * Vytvářejte logické funkce s vlastními spouštěči
+* Definujte dovednosti agentů AI
 * Nasazujte stejnou aplikaci do více pracovních prostorů
 
 ## Předpoklady
@@ -45,13 +46,13 @@ yarn twenty app:dev
 Nástroj pro generování kostry podporuje tři režimy pro řízení toho, které ukázkové soubory jsou zahrnuty:
 
 ```bash filename="Terminal"
-# Výchozí (úplný): všechny příklady (objekt, pole, logická funkce, front-endová komponenta, zobrazení, položka navigační nabídky)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
 npx create-twenty-app@latest my-app
 
-# Minimální: pouze základní soubory (application-config.ts a default-role.ts)
+# Minimal: only core files (application-config.ts and default-role.ts)
 npx create-twenty-app@latest my-app --minimal
 
-# Interaktivní: vyberte, které příklady zahrnout
+# Interactive: select which examples to include
 npx create-twenty-app@latest my-app --interactive
 ```
 
@@ -102,24 +103,26 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Složka s veřejnými prostředky (obrázky, písma apod.)
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Povinné – hlavní konfigurace aplikace
+  ├── application-config.ts           # Required - main application configuration
   ├── roles/
-  │   └── default-role.ts               # Výchozí role pro logické funkce
+  │   └── default-role.ts               # Default role for logic functions
   ├── objects/
-  │   └── example-object.ts             # Ukázková definice vlastního objektu
+  │   └── example-object.ts             # Example custom object definition
   ├── fields/
-  │   └── example-field.ts              # Ukázková samostatná definice pole
+  │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
-  │   ├── hello-world.ts                # Ukázková logická funkce
-  │   └── post-install.ts               # Postinstalační logická funkce
+  │   ├── hello-world.ts                # Example logic function
+  │   └── post-install.ts               # Post-install logic function
   ├── front-components/
-  │   └── hello-world.tsx               # Ukázková front-endová komponenta
+  │   └── hello-world.tsx               # Example front component
   ├── views/
-  │   └── example-view.ts                # Ukázková definice uloženého zobrazení
-  └── navigation-menu-items/
-      └── example-navigation-menu-item.ts # Ukázkový odkaz postranní navigace
+  │   └── example-view.ts                # Example saved view definition
+  ├── navigation-menu-items/
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  └── skills/
+      └── example-skill.ts                # Example AI agent skill definition
 ```
 
 S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.ts`, `roles/default-role.ts` a `logic-functions/post-install.ts`). S volbou `--interactive` si vyberete, které ukázkové soubory chcete zahrnout.
@@ -148,6 +151,7 @@ SDK detekuje entity analýzou vašich souborů TypeScript a hledá volání **`e
 | `defineField()`              | Rozšíření polí u existujících objektů |
 | `defineView()`               | Definice uložených zobrazení          |
 | `defineNavigationMenuItem()` | Definice položek navigační nabídky    |
+| `defineSkill()`              | AI agent skill definitions            |
 
 <Note>
   **Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
@@ -169,7 +173,7 @@ export default defineObject({
 Pozdější příkazy přidají další soubory a složky:
 
 * `yarn twenty app:dev` automaticky vygeneruje typovaného klienta API v `node_modules/twenty-sdk/generated` (typovaný klient Twenty + typy pracovního prostoru).
-* `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty nebo role.
+* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## Ověření
 
@@ -222,6 +226,7 @@ SDK poskytuje pomocné funkce pro definování entit vaší aplikace. Jak je pop
 | `defineField()`              | Rozšiřte existující objekty o další pole                          |
 | `defineView()`               | Definujte uložená zobrazení pro objekty                           |
 | `defineNavigationMenuItem()` | Definujte odkazy postranní navigace                               |
+| `defineSkill()`              | Define AI agent skills                                            |
 
 Tyto funkce validují vaši konfiguraci v době sestavení a poskytují automatické doplňování v IDE a typovou bezpečnost.
 
@@ -740,6 +745,41 @@ Nové frontendové komponenty můžete vytvořit dvěma způsoby:
 
 * **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou frontendovou komponentu.
 * **Ruční**: Vytvořte nový soubor `*.front-component.tsx` a použijte `defineFrontComponent()`.
+
+### Dovednosti
+
+Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+
+```typescript
+// src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Hlavní body:
+
+* `name` is a unique identifier string for the skill (kebab-case recommended).
+* `label` is the human-readable display name shown in the UI.
+* `content` contains the skill instructions — this is the text the AI agent uses.
+* `icon` (optional) sets the icon displayed in the UI.
+* `description` (optional) provides additional context about the skill's purpose.
+
+You can create new skills in two ways:
+
+* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
+* **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
 
 ### Generovaný typovaný klient
 
