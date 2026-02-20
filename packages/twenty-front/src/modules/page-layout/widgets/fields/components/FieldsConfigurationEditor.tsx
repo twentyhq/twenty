@@ -9,11 +9,14 @@ import {
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { FieldsConfigurationGroupEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor';
 import { useCreateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useCreateFieldsWidgetEditorGroup';
+import { useDeleteFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useDeleteFieldsWidgetEditorGroup';
 import { useFieldsWidgetGroupsDraft } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsDraft';
 import { useMoveFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveFieldInDraft';
 import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields/hooks/useReorderFieldsWidgetEditorGroups';
 import { useToggleFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleFieldVisibilityInDraft';
+import { useUpdateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useUpdateFieldsWidgetEditorGroup';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 
 const StyledGroupsDroppable = styled.div`
   display: flex;
@@ -57,6 +60,36 @@ export const FieldsConfigurationEditor = ({
     pageLayoutId,
     widgetId,
   });
+
+  const { updateGroup } = useUpdateFieldsWidgetEditorGroup({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const { deleteGroup } = useDeleteFieldsWidgetEditorGroup({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const [renamingGroupId, setRenamingGroupId] = useState<string | null>(null);
+  const [renamingGroupValue, setRenamingGroupValue] = useState('');
+
+  const handleStartRename = (groupId: string, groupName: string) => {
+    setRenamingGroupValue(groupName);
+    setRenamingGroupId(groupId);
+  };
+
+  const handleCancelRename = () => {
+    setRenamingGroupId(null);
+  };
+
+  const handleRenameGroup = (groupId: string, newName: string) => {
+    updateGroup({ groupId, name: newName });
+  };
+
+  const handleDeleteGroup = (groupId: string) => {
+    deleteGroup(groupId);
+  };
 
   const handleDragEnd = (result: DropResult) => {
     const { source, destination, type } = result;
@@ -153,6 +186,12 @@ export const FieldsConfigurationEditor = ({
                     onToggleFieldVisibility={(fieldMetadataId) =>
                       toggleFieldVisibility(group.id, fieldMetadataId)
                     }
+                    onRenameGroup={handleRenameGroup}
+                    onDeleteGroup={handleDeleteGroup}
+                    renamingGroupValue={renamingGroupValue}
+                    onRenamingGroupValueChange={setRenamingGroupValue}
+                    onStartRename={handleStartRename}
+                    onCancelRename={handleCancelRename}
                   />
                 )}
               </Draggable>
