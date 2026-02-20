@@ -1,0 +1,193 @@
+# Bug #3085: 
+
+## CRITICAL: Working Directory
+
+Your working directory is `/work/worktrees/twentyhq-twenty-wt-2843`. This is your primary repository (`twentyhq/twenty`).
+All edits MUST be performed within this directory.
+
+## Sentry Error Details (TOON format)
+
+Error information from Sentry (TOON = compact CSV-like format for lists):
+
+```
+event_info:
+  title: Cannot query field 'addQueryToEventStream' on type 'Mutation'.: Cannot query field 'addQueryToEventStream' on type 'Mutation'.
+  type: error
+  platform: javascript
+  culprit: /objects/companies
+  release: {'id': 1670216096; 'version': 'v1.17.0'; 'status': 'open'; 'shortVersion': 'v1.17.0'; 'versionInfo': {'package': None; 'version': {'raw': 'v1.17.0'}; 'description': 'v1.17.0'; 'buildHash': None}; 'ref...
+user:
+  geo: country_code=DE, city=Berlin, region=Germany
+exceptions[1]{type,value,mechanism}:
+  Cannot query field 'addQueryToEventStream' on type...,Cannot query field 'addQueryToEventStream' on type 'Mutation'.,handled=True
+stack_frames[3]:
+  [+] ../../src/modules/apollo/services/apollo.factory.ts:186:13
+      fn: <anonymous> (module: src/modules/apollo/services/apollo.factory)
+          187: const error = new Error(graphQLError.message);
+          188: 
+          189: error.name = graphQLError.message;
+          190: 
+          191: const fingerPrint: string[] = [];
+  [-] ../../../../node_modules/@sentry/core/build/esm/asyncContext/stackStrategy.js:39:28
+      fn: AsyncContextStack.withScope (module: @sentry/core/build/esm/asyncContext/stackStrategy)
+          40: } catch (e) {
+          41: this._popScope();
+          42: throw e;
+          43: }
+          44: 
+  [+] ../../src/modules/apollo/services/apollo.factory.ts:187:33
+      fn: callback (module: src/modules/apollo/services/apollo.factory)
+          188: 
+          189: error.name = graphQLError.message;
+          190: 
+          191: const fingerPrint: string[] = [];
+          192: if (isDefined(graphQLError.extensions)) {
+request:
+  url: https://crm.priorist.dev/objects/companies
+contexts:
+  browser: browser=Safari 26.3; name=Safari; version=26.3
+  device: family=Mac; model=Mac; brand=Apple
+  os: os=Mac OS X >=10.15.7; name=Mac OS X; version=>=10.15.7
+breadcrumbs_console[12]{ts,level,msg}:
+  10:30:10,i,tokenPair is undefined
+  10:30:10,i,UNAUTHENTICATED; triggering token renewal
+  10:30:10,i,tokenPair is undefined
+  10:30:10,i,Failed to renew token; triggering unauthenticated error from handleTokenRenewal
+  10:30:10,i,onUnauthenticatedError; resetting state
+  10:30:10,i,tokenPair is undefined
+  10:30:11,w,Uncompiled message detected! Message:  > You must be authenticated to perform this action.  That mea...
+  10:32:34,i,tokenPair is undefined
+  10:32:39,i,tokenPair is undefined
+  10:32:39,i,tokenPair is undefined
+  10:32:42,w,Uncompiled message detected! Message:  > Befehlsmenü öffnen  That means you use raw catalog or your ...
+  10:32:45,i,[FrontChat][Front] SDK Version: 9.73.23
+breadcrumbs_fetch[24]{ts,method,url,status}:
+  10:30:10,POST,https://crm.priorist.dev/metadata,200
+  10:30:10,POST,https://crm.priorist.dev/graphql,200
+  10:30:10,POST,https://crm.priorist.dev/metadata,200
+  10:30:10,POST,https://crm.priorist.dev/graphql,200
+  10:30:10,POST,https://crm.priorist.dev/graphql,200
+  10:30:10,POST,https://crm.priorist.dev/metadata,200
+  10:30:14,POST,https://www.google.com/recaptcha/api2/clr?k=6LdC1t4pAAAAAEFBRKz4xD_0zgM2O2xuGL-j...,0
+  10:30:33,POST,https://crm.priorist.dev/graphql,200
+  10:32:02,POST,https://www.google.com/recaptcha/api2/clr?k=6LdC1t4pAAAAAEFBRKz4xD_0zgM2O2xuGL-j...,0
+  10:32:35,POST,https://crm.priorist.dev/metadata,200
+  10:32:35,POST,https://www.google.com/recaptcha/api2/clr?k=6LdC1t4pAAAAAEFBRKz4xD_0zgM2O2xuGL-j...,0
+  10:32:39,POST,https://crm.priorist.dev/metadata,200
+  10:32:40,POST,https://crm.priorist.dev/metadata,200
+  10:32:40,POST,https://crm.priorist.dev/metadata,200
+  10:32:40,POST,https://crm.priorist.dev/metadata,200
+  10:32:40,POST,https://www.google.com/recaptcha/api2/clr?k=6LdC1t4pAAAAAEFBRKz4xD_0zgM2O2xuGL-j...,0
+  10:32:40,POST,https://crm.priorist.dev/metadata,200
+  10:32:41,POST,https://crm.priorist.dev/graphql,200
+  10:32:41,POST,https://crm.priorist.dev/metadata,200
+  10:32:41,POST,https://crm.priorist.dev/graphql,200
+  10:32:44,POST,https://crm.priorist.dev/graphql,200
+  10:32:45,POST,https://crm.priorist.dev/metadata,200
+  10:32:45,POST,https://crm.priorist.dev/graphql,200
+  10:32:45,POST,https://crm.priorist.dev/graphql,200
+breadcrumbs_sentry.transaction[1]{ts,type,level,msg}:
+  10:30:12,default,i,7f79bee458384acc98a5adf886324fea
+breadcrumbs_ui.click[4]{ts,type,level,msg}:
+  10:31:19,default,i,div.css-1xm32e0 > button.css-1rm16ma.e1lpzrnu0[type="submit"]
+  10:31:56,default,i,div.css-8qbqv4 > div.css-1k5l5tl > div.css-18kzbsm > input#:r1cv:.css-11o0k4a
+  10:32:34,default,i,form.css-17hx0l5 > div.css-1xm32e0 > button.css-aqo494.e1lpzrnu0[type="submit"]
+  10:32:39,default,i,form.css-17hx0l5 > div.css-1xm32e0 > button.css-aqo494.e1lpzrnu0[type="submit"]
+breadcrumbs_ui.input[5]{ts,type,level,msg}:
+  10:31:58,default,i,div.css-8qbqv4 > div.css-1k5l5tl > div.css-18kzbsm > input#:r1cv:.css-11o0k4a
+  10:32:23,default,i,div.css-8qbqv4 > div.css-1k5l5tl > div.css-18kzbsm > input#:r1cv:.css-11o0k4a
+  10:32:30,default,i,div.css-8qbqv4 > div.css-1k5l5tl > div.css-18kzbsm > input#:r1cv:.css-11o0k4a
+  10:32:34,default,i,div.css-8qbqv4 > div.css-1k5l5tl > div.css-18kzbsm > input#:r1cv:.css-11o0k4a
+  10:32:38,default,i,div.css-1k5l5tl > div.css-18kzbsm > input#:r1d0:.css-11o0k4a[type="password"]
+breadcrumbs_sentry.event[2]{ts,type,level,msg}:
+  10:32:40,default,e,Cannot query field "builtHandlerPath" on type "LogicFunction". Did you mean "sou...
+  10:32:45,default,e,Unknown type "AddQuerySubscriptionInput". Did you mean "AddressCreateInput"?: Un...
+breadcrumbs_navigation[1]{ts,from,to}:
+  10:32:42,/welcome,/objects/companies?viewId=e202a065-770b-4bb7-b03d-99eb46c43c...
+breadcrumbs_xhr[1]{ts,method,url,status}:
+  10:32:44,POST,/cdn-cgi/rum?,204
+```
+
+## Severity Assessment
+
+After analyzing the bug, determine severity independently based on your analysis:
+- **critical**: User CANNOT complete a critical task. Crashes, core feature broken, data loss risk.
+- **medium**: User CAN complete tasks but degraded experience. Non-critical feature broken, workaround exists.
+- **low**: User unlikely to notice. Cosmetic, rare edge case, transient error that auto-recovers.
+
+Your severity assessment in the output JSON is the FINAL severity that will be used.
+## STRICT GIT RULES (violations = failed run)
+
+- You are already on the correct fix branch — do NOT run `git checkout`, `git switch`, or `git merge`
+- **NEVER run `git merge`** — merging other branches (feature branches, main, etc.) is FORBIDDEN
+- **NEVER run `git checkout` on a different branch** — stay on your current branch at all times
+- **NEVER run `git rebase`** — rebasing is not needed and can corrupt the worktree
+- If the code you need to fix is not on this branch, fix the code that IS on this branch
+  or report that the fix cannot be applied — do NOT merge or pull in other branches
+- **NEVER run `git add`, `git commit`, or `git push`** — the system handles all git write operations automatically after your analysis
+- Only allowed git commands: `git blame`, `git log`, `git diff`, `git show` (read-only)
+
+## Your Task (in this order)
+
+1. **Find the Root Cause**
+   - Locate the exact file and line where the bug originates
+   - Understand why this error occurs
+
+2. **Git Blame Analysis**
+   - Use `git blame` to find the commit that introduced this bug
+   - Note the commit SHA, author, and date
+
+3. **Fix the Bug**
+   - Implement a **minimal, targeted fix** — only change what's necessary to resolve this specific error
+   - **NEVER modify shared/generic utilities, base classes, or ORM internals** to work around a missing field or feature.
+     Instead, fix the specific code paths that trigger the error (e.g. add a guard/try-catch in the caller).
+     Changing a generic utility to silently skip errors is ALWAYS wrong — it masks future bugs.
+   - Do NOT refactor surrounding code, add new features, or make unrelated improvements
+   - Do NOT build new components, screens, or functionality — only fix the reported error
+   - Add appropriate error handling if needed
+   - Do NOT run any git write commands (`git add`, `git commit`, `git push`) — the system handles committing and pushing automatically after your analysis
+
+4. **Output Structured Analysis**
+   At the end of your response, output a JSON block between these markers:
+
+```
+SONARLY_ANALYSIS_START
+{
+  "title": "User-focused title (max 60 chars)",
+  "severity": "critical|medium|low",
+  "summary": "1-2 sentence summary of the bug",
+  "user_impact": "Who was impacted and how they were impacted",
+  "evidence": "Markdown string showing the faulty code. Put each snippet in a fenced code block with the language, and add the file path + line as a comment on the first line. Example:\n\n```python\n# src/checkout/process.py:42\ndef process_order(order_id):\n    orders = db.query(\"SELECT * FROM orders\")  # missing WHERE clause\n```\n\nInclude multiple code blocks if multiple files are involved. Empty string if no evidence.",
+  "root_cause": {
+    "explanation": "Root cause explanation. Use plain text only — NO bold, italic, or code backticks. When listing multiple points, use a numbered list (1. 2. 3.) with each item on its own line. Include who introduced it (git blame author), when (date), and why.",
+    "blame": {
+      "commit_sha": "abc123def (the full commit SHA from git blame, or null if unknown)",
+      "author": "Author Name (from git blame output, or null if unknown)",
+      "date": "2026-01-15 (date from git blame, or null if unknown)",
+      "commit_url": "https://github.com/{owner}/{repo}/commit/{sha} (build from git remote get-url origin + sha, strip any access token, or null)",
+      "explanation": "Brief explanation of when/who introduced the bug (e.g. Added in commit abc123 by John on Jan 15)"
+    }
+  },
+  "suggested_fix": {
+    "explanation": "What the fix does and why it solves the problem. Use plain text only — NO bold, italic, or code backticks. When listing multiple steps, use a numbered list (1. 2. 3.) with each item on its own line.",
+    "files_changed": ["path/to/file.py", "path/to/other.py (list of file paths you created or modified in the fix)"]
+  }
+}
+SONARLY_ANALYSIS_END
+```
+
+CRITICAL: The JSON block is the ONLY part of your response shown to the user.
+Everything outside the SONARLY_ANALYSIS markers is discarded. Put ALL investigation details,
+evidence (markdown with code blocks), and findings INSIDE the JSON fields,
+especially root_cause.explanation, and summary. Do NOT write a separate investigation summary before the JSON.
+
+IMPORTANT: The JSON between SONARLY_ANALYSIS_START and SONARLY_ANALYSIS_END must be valid JSON.
+
+## Critical: ALWAYS output the analysis JSON
+
+You MUST output SONARLY_ANALYSIS_START...SONARLY_ANALYSIS_END even if you could not find the code or fix the bug.
+If you cannot locate the relevant code or create a fix,
+explain what you found in the `root_cause.explanation` field.
+A run without the analysis JSON is a FAILED run — never end without it.
+
+Don't ask any questions to the user

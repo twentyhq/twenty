@@ -15,6 +15,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engine.module';
+import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engin
       ],
     }),
     MetadataEngineModule,
+    WorkspaceEventEmitterModule,
   ],
 })
 export class MetadataGraphQLApiModule {}

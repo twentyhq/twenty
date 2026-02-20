@@ -104,9 +104,12 @@ export const SSEQuerySubscribeEffect = () => {
                 return;
               }
               default: {
-                throw new Error(
+                // eslint-disable-next-line no-console
+                console.error(
                   `Unhandled error for event stream: ${error.message}`,
                 );
+                set(activeQueryListenersState, requiredQueryListeners);
+                return;
               }
             }
           }
