@@ -67,6 +67,7 @@ export class ClientService {
 
 const defaultOptions: ClientOptions = {
   url: \`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\`,
+  metadataUrl: \`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\`,
   headers: {
     'Content-Type': 'application/json',
     Authorization: \`Bearer \${process.env.${DEFAULT_API_KEY_NAME}}\`,
@@ -75,16 +76,23 @@ const defaultOptions: ClientOptions = {
 
 export default class Twenty {
   private client: Client;
+  private url: string;
+  private metadataUrl: string;
+  private authorizationToken: string;
 
   constructor(options?: ClientOptions) {
-    this.client = createClient({
+  const merged: ClientOptions = {
       ...defaultOptions,
       ...options,
       headers: {
         ...defaultOptions.headers,
         ...(options?.headers ?? {}),
       },
-    });
+    };
+    this.client = createClient(merged);
+    this.url = merged.url;
+    this.metadataUrl = merged.metadataUrl;
+    this.authorizationToken = merged.headers.Authorization;
   }
 
   query<R extends QueryGenqlSelection>(request: R & { __name?: string }) {
@@ -115,7 +123,7 @@ export default class Twenty {
     form.append('map', JSON.stringify({ '0': ['variables.file'] }));
     form.append('0', new Blob([fileBuffer], { type: contentType }), filename);
 
-    const response = await fetch(\`\${this.apiUrl}/metadata\`, {
+    const response = await fetch(this.metadataUrl, {
       method: 'POST',
       headers: {
         Authorization: this.authorizationToken,
@@ -129,7 +137,7 @@ export default class Twenty {
       throw new GenqlError(result.errors, result.data);
     }
 
-    return result.data.uploadFile;
+    return result.data.uploadFilesFieldFileByUniversalIdentifier;
   }
 }
 
