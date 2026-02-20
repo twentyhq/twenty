@@ -31,6 +31,7 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     flatViewFieldGroupMaps,
+    flatViewMaps,
   }: {
     updatePageLayoutWidgetInput: UpdatePageLayoutWidgetInputWithId;
     flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
@@ -39,6 +40,7 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     | 'flatObjectMetadataMaps'
     | 'flatFieldMetadataMaps'
     | 'flatViewFieldGroupMaps'
+    | 'flatViewMaps'
   >): FlatPageLayoutWidget => {
     const { id: pageLayoutWidgetToUpdateId } =
       extractAndSanitizeObjectStringFields(rawUpdatePageLayoutWidgetInput, [
@@ -102,6 +104,7 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
             flatFieldMetadataMaps.universalIdentifierById,
           viewFieldGroupUniversalIdentifierById:
             flatViewFieldGroupMaps.universalIdentifierById,
+          viewUniversalIdentifierById: flatViewMaps.universalIdentifierById,
         });
     }
 

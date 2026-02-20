@@ -3,15 +3,19 @@
 exports[`Page layout with tabs creation via update should succeed should create a new tab with a widget via page layout update 1`] = `
 {
   "createdAt": Any<String>,
+  "defaultTabToFocusOnMobileAndSidePanelId": null,
   "deletedAt": null,
   "id": Any<String>,
   "name": "Layout With New Tab",
   "objectMetadataId": null,
   "tabs": [
     {
+      "applicationId": Any<String>,
       "createdAt": Any<String>,
       "deletedAt": null,
+      "icon": null,
       "id": Any<String>,
+      "layoutMode": "GRID",
       "pageLayoutId": Any<String>,
       "position": 0,
       "title": "Existing Tab",
@@ -54,9 +58,12 @@ exports[`Page layout with tabs creation via update should succeed should create 
       ],
     },
     {
+      "applicationId": Any<String>,
       "createdAt": Any<String>,
       "deletedAt": null,
+      "icon": null,
       "id": Any<String>,
+      "layoutMode": "GRID",
       "pageLayoutId": Any<String>,
       "position": 1,
       "title": "New Tab Created Via Update",

@@ -1,6 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/hooks/useSaveNavigationMenuItemsDraft';
 import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
@@ -16,6 +15,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconCheck, useIcons } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 

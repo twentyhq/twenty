@@ -24,7 +24,7 @@ import { CommandMenuWorkflowEditStepType } from '@/command-menu/pages/workflow/s
 import { CommandMenuWorkflowRunViewStep } from '@/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStep';
 import { CommandMenuWorkflowViewStep } from '@/command-menu/pages/workflow/step/view/components/CommandMenuWorkflowViewStep';
 import { CommandMenuWorkflowSelectTriggerType } from '@/command-menu/pages/workflow/trigger-type/components/CommandMenuWorkflowSelectTriggerType';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { CommandMenuPages } from 'twenty-shared/types';
 
 export const COMMAND_MENU_PAGES_CONFIG = new Map<
   CommandMenuPages,

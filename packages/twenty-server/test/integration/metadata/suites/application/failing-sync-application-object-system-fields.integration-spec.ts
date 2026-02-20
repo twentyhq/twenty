@@ -48,6 +48,7 @@ const buildBaseManifest = (
   views: [],
   navigationMenuItems: [],
   pageLayouts: [],
+  skills: [],
   ...overrides,
 });
 

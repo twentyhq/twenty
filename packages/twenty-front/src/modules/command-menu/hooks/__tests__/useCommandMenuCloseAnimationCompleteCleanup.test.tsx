@@ -15,8 +15,8 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconList } from 'twenty-ui/display';
 
 const mockCloseDropdown = jest.fn();

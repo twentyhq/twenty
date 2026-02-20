@@ -1,3 +1,4 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordFieldListInputContextProvider } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListInputContextProvider';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
@@ -5,7 +6,6 @@ import { recordFieldListCellEditModePositionComponentState } from '@/object-reco
 import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
-import { useFieldsWidgetFlattenedFields } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetFlattenedFields';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,11 +13,13 @@ import { isDefined } from 'twenty-shared/utils';
 type FieldsWidgetCellEditModePortalProps = {
   objectMetadataItem: ObjectMetadataItem;
   recordId: string;
+  flattenedFieldMetadataItems: FieldMetadataItem[];
 };
 
 export const FieldsWidgetCellEditModePortal = ({
   objectMetadataItem,
   recordId,
+  flattenedFieldMetadataItems,
 }: FieldsWidgetCellEditModePortalProps) => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldListComponentInstanceContext,
@@ -25,10 +27,6 @@ export const FieldsWidgetCellEditModePortal = ({
 
   const editModePosition = useRecoilComponentValue(
     recordFieldListCellEditModePositionComponentState,
-  );
-
-  const { flattenedFieldMetadataItems } = useFieldsWidgetFlattenedFields(
-    objectMetadataItem.nameSingular,
   );
 
   const editedFieldMetadataItem = isDefined(editModePosition)

@@ -775,6 +775,11 @@ msgstr "Ajouter \"{trimmedName}\" aux options"
 msgid "Add a {objectLabelSingular}"
 msgstr "Ajouter un {objectLabelSingular}"
 
+#. js-lingui-id: 7W8nJr
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Add a Group"
+msgstr ""
+
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
@@ -789,11 +794,6 @@ msgstr "Ajouter un nœud"
 #. js-lingui-id: nGv1DN
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
 msgid "Add a record"
-msgstr ""
-
-#. js-lingui-id: r8W+9y
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationSectionEditor.tsx
-msgid "Add a Section"
 msgstr ""
 
 #. js-lingui-id: eMc2xs
@@ -1517,6 +1517,9 @@ msgstr "Une erreur s'est produite lors du téléversement de l'image."
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
@@ -3247,11 +3250,6 @@ msgstr "Noyau"
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Core Objects"
 msgstr ""
-
-#. js-lingui-id: cfa2VJ
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
-msgid "Core Schema"
-msgstr "Schéma principal"
 
 #. js-lingui-id: I99Miw
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
@@ -6288,7 +6286,9 @@ msgstr ""
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
-#: src/modules/page-layout/hooks/useTemporaryFieldsConfiguration.ts
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetEditorGroupsData.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
 msgstr "Général"
@@ -7011,11 +7011,6 @@ msgstr "Instructions pour l'IA"
 #: src/utils/title-utils.ts
 msgid "Integrations - Settings"
 msgstr "Intégrations - Paramètres"
-
-#. js-lingui-id: ntgzzG
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
-msgid "Interact with your workspace data"
-msgstr "Interagissez avec les données de votre espace de travail"
 
 #. js-lingui-id: jyjroS
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -8130,11 +8125,6 @@ msgstr "Métadonnées"
 msgid "Metadata file generation failed"
 msgstr "Échec de la génération du fichier des métadonnées"
 
-#. js-lingui-id: 0BF9eC
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
-msgid "Metadata Schema"
-msgstr "Schéma des métadonnées"
-
 #. js-lingui-id: onCJJ6
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Metered tier switching has been cancelled."
@@ -8525,6 +8515,11 @@ msgstr "Nouveau champ"
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
 #: src/modules/command-menu/components/CommandMenuFolderInfo.tsx
 msgid "New folder"
+msgstr ""
+
+#. js-lingui-id: 93KA8w
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
+msgid "New Group"
 msgstr ""
 
 #. js-lingui-id: o8MyXb
@@ -9573,7 +9568,7 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/page-layout/hooks/useTemporaryFieldsConfiguration.ts
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
 msgid "Other"
 msgstr "Autres"

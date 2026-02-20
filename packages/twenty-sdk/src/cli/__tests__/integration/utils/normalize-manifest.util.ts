@@ -1,21 +1,21 @@
-// Loose type for JSON manifest imports where enum values are inferred as strings
-type JsonManifestInput = {
-  logicFunctions?: Array<{
-    builtHandlerChecksum?: string | null;
-    [key: string]: unknown;
-  }>;
-  frontComponents?: Array<{
-    builtComponentChecksum?: string;
-    [key: string]: unknown;
-  }>;
-  [key: string]: unknown;
-};
+import { type Manifest } from 'twenty-shared/application';
 
-// Replace dynamic checksum values with a placeholder for consistent comparisons
-export const normalizeManifestForComparison = <T extends JsonManifestInput>(
+export const normalizeManifestForComparison = <T extends Manifest>(
   manifest: T,
 ): T => ({
   ...manifest,
+  application: {
+    ...manifest.application,
+    yarnLockChecksum: manifest.application.yarnLockChecksum
+      ? '[checksum]'
+      : null,
+    packageJsonChecksum: manifest.application.packageJsonChecksum
+      ? '[checksum]'
+      : null,
+    apiClientChecksum: manifest.application.apiClientChecksum
+      ? '[checksum]'
+      : null,
+  },
   logicFunctions: manifest.logicFunctions?.map((fn) => ({
     ...fn,
     builtHandlerChecksum: fn.builtHandlerChecksum ? '[checksum]' : null,

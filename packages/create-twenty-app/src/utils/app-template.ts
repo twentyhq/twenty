@@ -89,6 +89,14 @@ export const copyBaseApplicationProject = async ({
     });
   }
 
+  if (exampleOptions.includeExampleSkill) {
+    await createExampleSkill({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'skills',
+      fileName: 'example-skill.ts',
+    });
+  }
+
   await createDefaultPostInstallFunction({
     appDirectory: sourceFolderPath,
     fileFolder: 'logic-functions',
@@ -417,6 +425,36 @@ export default defineNavigationMenuItem({
   // targetObjectUniversalIdentifier: '...',
   // Or link to an external URL:
   // link: 'https://example.com',
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createExampleSkill = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineSkill } from 'twenty-sdk';
+
+export const EXAMPLE_SKILL_UNIVERSAL_IDENTIFIER =
+  '${universalIdentifier}';
+
+export default defineSkill({
+  universalIdentifier: EXAMPLE_SKILL_UNIVERSAL_IDENTIFIER,
+  name: 'example-skill',
+  label: 'Example Skill',
+  description: 'A sample skill for your application',
+  icon: 'IconBrain',
+  content: 'Add your skill instructions here. Skills provide context and capabilities to AI agents.',
 });
 `;
 

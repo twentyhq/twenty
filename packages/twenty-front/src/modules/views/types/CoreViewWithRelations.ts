@@ -2,6 +2,7 @@ import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential'
 import {
   type AggregateOperations,
   type CoreViewField,
+  type CoreViewFieldGroup,
   type CoreViewFilter,
   type CoreViewFilterGroup,
   type CoreViewGroup,
@@ -12,6 +13,18 @@ import {
   type ViewVisibility,
 } from '~/generated-metadata/graphql';
 
+export type CoreViewFieldEssential = Omit<
+  CoreViewField,
+  'workspaceId' | 'createdAt' | 'updatedAt'
+>;
+
+export type CoreViewFieldGroupEssential = Omit<
+  CoreViewFieldGroup,
+  'workspaceId' | 'createdAt' | 'updatedAt' | 'viewFields'
+> & {
+  viewFields: CoreViewFieldEssential[];
+};
+
 export type CoreViewWithRelations = {
   id: string;
   name: string;
@@ -19,7 +32,8 @@ export type CoreViewWithRelations = {
   key?: ViewKey | null;
   objectMetadataId: string;
   isCompact: boolean;
-  viewFields: Omit<CoreViewField, 'workspaceId' | 'createdAt' | 'updatedAt'>[];
+  viewFields: CoreViewFieldEssential[];
+  viewFieldGroups?: CoreViewFieldGroupEssential[];
   viewGroups: Omit<CoreViewGroup, 'workspaceId' | 'createdAt' | 'updatedAt'>[];
   viewFilters: Omit<
     CoreViewFilter,

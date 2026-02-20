@@ -6,6 +6,7 @@ import { convertToLabel } from '@/cli/utilities/entity/entity-label';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
 import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
+import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
@@ -110,6 +111,16 @@ export class EntityAddCommand {
         const name = await this.getEntityName(entity);
 
         const file = getRoleBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.Skill: {
+        const name = await this.getEntityName(entity);
+
+        const file = getSkillBaseFile({
           name,
         });
 

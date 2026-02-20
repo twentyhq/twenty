@@ -1,12 +1,12 @@
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconSparkles } from 'twenty-ui/display';
 
 const navigateCommandMenuMock = jest.fn();
