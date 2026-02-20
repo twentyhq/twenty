@@ -6,7 +6,11 @@ import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import crypto from 'crypto';
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import { OUTPUT_DIR } from 'twenty-shared/application';
+import {
+  OUTPUT_DIR,
+  GENERATED_DIR,
+  API_CLIENT_DIR,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 const API_CLIENT_FILES = ['types.ts', 'schema.ts'];
@@ -114,14 +118,14 @@ export class UploadFilesOrchestratorStep {
       appPath,
       'node_modules',
       'twenty-sdk',
-      'generated',
+      GENERATED_DIR,
     );
 
     if (!(await fs.pathExists(generatedDir))) {
       return;
     }
 
-    const outputDir = join(appPath, OUTPUT_DIR, 'api-client');
+    const outputDir = join(appPath, OUTPUT_DIR, API_CLIENT_DIR);
 
     await fs.ensureDir(outputDir);
 
@@ -137,8 +141,8 @@ export class UploadFilesOrchestratorStep {
       const content = await fs.readFile(absoluteSourcePath);
       const checksum = crypto.createHash('md5').update(content).digest('hex');
 
-      const builtPath = join(OUTPUT_DIR, 'api-client', fileName);
-      const sourcePath = join('api-client', fileName);
+      const builtPath = join(OUTPUT_DIR, API_CLIENT_DIR, fileName);
+      const sourcePath = join(API_CLIENT_DIR, fileName);
 
       this.state.steps.uploadFiles.output.builtFileInfos.set(builtPath, {
         checksum,

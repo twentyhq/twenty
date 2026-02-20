@@ -5,6 +5,7 @@ import { join } from 'path';
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
+  GENERATED_DIR,
 } from 'twenty-shared/application';
 
 export class ClientService {
@@ -54,7 +55,7 @@ export class ClientService {
   }
 
   private resolveGeneratedPath(appPath: string): string {
-    return join(appPath, 'node_modules', 'twenty-sdk', 'generated');
+    return join(appPath, 'node_modules', 'twenty-sdk', GENERATED_DIR);
   }
 
   private async injectTwentyClient(output: string) {

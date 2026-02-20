@@ -7,4 +7,5 @@ export type ExampleOptions = {
   includeExampleFrontComponent: boolean;
   includeExampleView: boolean;
   includeExampleNavigationMenuItem: boolean;
+  includeExampleSkill: boolean;
 };

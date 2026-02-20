@@ -3,22 +3,23 @@ import { Injectable, Logger } from '@nestjs/common';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { APPLICATION_MANIFEST_METADATA_NAMES } from 'src/engine/core-modules/application/constants/application-manifest-metadata-names.constant';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/services/application-manifest-migration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/utils/build-from-to-all-universal-flat-entity-maps.util';
+import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-application-sub-all-flat-entity-maps.util';
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/utils/get-default-application-package-fields.util';
-import { getEmptyApplicationManifestAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-empty-application-manifest-all-universal-flat-entity-maps.util';
-import { getSubApplicationFromToAllFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-sub-application-from-to-all-flat-entity-maps.util';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -152,7 +153,7 @@ export class ApplicationSyncService {
       );
     }
 
-    const flatEntityMapsCacheKeys = APPLICATION_MANIFEST_METADATA_NAMES.map(
+    const flatEntityMapsCacheKeys = Object.values(ALL_METADATA_NAME).map(
       getMetadataFlatEntityMapsKey,
     );
 
@@ -163,11 +164,16 @@ export class ApplicationSyncService {
 
     const { featureFlagsMap, ...fromAllFlatEntityMaps } = cacheResult;
 
-    const fromToAllFlatEntityMaps = getSubApplicationFromToAllFlatEntityMaps({
-      applicationId: application.id,
-      fromAllFlatEntityMaps,
-      toAllUniversalFlatEntityMaps:
-        getEmptyApplicationManifestAllUniversalFlatEntityMaps(),
+    const applicationFromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps(
+      {
+        applicationIds: [application.id],
+        fromAllFlatEntityMaps,
+      },
+    );
+
+    const fromToAllFlatEntityMaps = buildFromToAllUniversalFlatEntityMaps({
+      fromAllFlatEntityMaps: applicationFromAllFlatEntityMaps,
+      toAllUniversalFlatEntityMaps: createEmptyAllFlatEntityMaps(),
     });
 
     const validateAndBuildResult =

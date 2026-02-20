@@ -18,6 +18,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       fileType: 'png',
     },
   ],
+  skills: [],
   application: {
     applicationVariables: {
       DEFAULT_RECIPIENT_NAME: {
@@ -76,6 +77,107 @@ export const EXPECTED_MANIFEST: Manifest = {
   ],
 
   fields: [
+    // Reverse relation fields for rootNote (5 fields)
+    {
+      description: 'RootNote Root note',
+      icon: 'IconTimelineEvent',
+      isNullable: true,
+      label: 'RootNote',
+      morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
+      name: 'targetRootNote',
+      objectUniversalIdentifier: '20202020-6736-4337-b5c4-8b39fae325a5',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '1cdb0b3a-0ae1-59f6-b3f0-59ff99e40525',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'b0b1b2b3-b4b5-4000-8000-000000000001',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: 'a0f6ffdc-a570-58a6-973d-a9bc9a527de8',
+      universalSettings: {
+        joinColumnName: 'targetRootNoteId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'RootNote Root note',
+      icon: 'IconHeart',
+      isNullable: true,
+      label: 'RootNote',
+      name: 'targetRootNote',
+      objectUniversalIdentifier: '20202020-ab56-4e05-92a3-e2414a499860',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'bbc0dc11-9daa-5e3f-b939-e6f0a12bb277',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'b0b1b2b3-b4b5-4000-8000-000000000001',
+      type: FieldType.RELATION,
+      universalIdentifier: '13fb0eae-50b4-5e28-afbc-5b5a9c422ead',
+      universalSettings: {
+        joinColumnName: 'targetRootNoteId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'RootNote Root note',
+      icon: 'IconFileImport',
+      isNullable: true,
+      label: 'RootNote',
+      morphId: '20202020-f634-435d-ab8d-e1168b375c69',
+      name: 'targetRootNote',
+      objectUniversalIdentifier: '20202020-bd3d-4c60-8dca-571c71d4447a',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'aa05ee89-bd8a-5911-a4d5-3355926186bc',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'b0b1b2b3-b4b5-4000-8000-000000000001',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: '95cad10a-bff6-524d-b6d8-dbc6db7cbf18',
+      universalSettings: {
+        joinColumnName: 'targetRootNoteId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'RootNote Root note',
+      icon: 'IconCheckbox',
+      isNullable: true,
+      label: 'RootNote',
+      morphId: '20202020-f635-435d-ab8d-e1168b375c70',
+      name: 'targetRootNote',
+      objectUniversalIdentifier: '20202020-fff0-4b44-be82-bda313884400',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '762ad37e-d624-51d8-989c-3a119eef9e7f',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'b0b1b2b3-b4b5-4000-8000-000000000001',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: 'c327faff-76eb-5baf-8b35-1c31e57306fb',
+      universalSettings: {
+        joinColumnName: 'targetRootNoteId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'RootNote Root note',
+      icon: 'IconCheckbox',
+      isNullable: true,
+      label: 'RootNote',
+      morphId: '20202020-f636-435d-ab8d-e1168b375c71',
+      name: 'targetRootNote',
+      objectUniversalIdentifier: '20202020-5a9a-44e8-95df-771cd06d0fb1',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'd4f1b0c8-8cd9-581e-9bf9-917f8c918d76',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'b0b1b2b3-b4b5-4000-8000-000000000001',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: '36843050-e6e3-5759-99b6-e975426bad73',
+      universalSettings: {
+        joinColumnName: 'targetRootNoteId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    // User-defined relation and field definitions
     {
       label: 'Post Card',
       name: 'postCard',
@@ -175,6 +277,306 @@ export const EXPECTED_MANIFEST: Manifest = {
         relationType: RelationType.MANY_TO_ONE,
       },
     },
+    // Reverse relation fields for postCardRecipient (5 fields)
+    {
+      description: 'PostCardRecipient Post Card Recipient',
+      icon: 'IconTimelineEvent',
+      isNullable: true,
+      label: 'PostCardRecipient',
+      morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
+      name: 'targetPostCardRecipient',
+      objectUniversalIdentifier: '20202020-6736-4337-b5c4-8b39fae325a5',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '02f5efba-4f94-5cc3-9e17-ca7b1fe5f71b',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: '18b6354d-8b0f-5be6-9473-d635aed670a1',
+      universalSettings: {
+        joinColumnName: 'targetPostCardRecipientId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'PostCardRecipient Post Card Recipient',
+      icon: 'IconHeart',
+      isNullable: true,
+      label: 'PostCardRecipient',
+      name: 'targetPostCardRecipient',
+      objectUniversalIdentifier: '20202020-ab56-4e05-92a3-e2414a499860',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'a284914f-650c-54ad-84ef-d6229d3fa453',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+      type: FieldType.RELATION,
+      universalIdentifier: 'f3247843-dd1f-5b15-8873-c0062a021180',
+      universalSettings: {
+        joinColumnName: 'targetPostCardRecipientId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'PostCardRecipient Post Card Recipient',
+      icon: 'IconFileImport',
+      isNullable: true,
+      label: 'PostCardRecipient',
+      morphId: '20202020-f634-435d-ab8d-e1168b375c69',
+      name: 'targetPostCardRecipient',
+      objectUniversalIdentifier: '20202020-bd3d-4c60-8dca-571c71d4447a',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '82497ec7-0121-53d6-9518-ae7434ceaf8b',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: 'ba74dfd1-e7ee-502d-abad-82e14d595874',
+      universalSettings: {
+        joinColumnName: 'targetPostCardRecipientId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'PostCardRecipient Post Card Recipient',
+      icon: 'IconCheckbox',
+      isNullable: true,
+      label: 'PostCardRecipient',
+      morphId: '20202020-f635-435d-ab8d-e1168b375c70',
+      name: 'targetPostCardRecipient',
+      objectUniversalIdentifier: '20202020-fff0-4b44-be82-bda313884400',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '6de8b57e-ed0a-5d35-bd39-bd8874445810',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: '9d5a9f4b-5431-5b90-810a-1e9d8873b302',
+      universalSettings: {
+        joinColumnName: 'targetPostCardRecipientId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'PostCardRecipient Post Card Recipient',
+      icon: 'IconCheckbox',
+      isNullable: true,
+      label: 'PostCardRecipient',
+      morphId: '20202020-f636-435d-ab8d-e1168b375c71',
+      name: 'targetPostCardRecipient',
+      objectUniversalIdentifier: '20202020-5a9a-44e8-95df-771cd06d0fb1',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '00459e7e-8ef1-5a9b-b180-26bbb54a2696',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: '85353e69-1e70-51ef-91c3-334d85013a4b',
+      universalSettings: {
+        joinColumnName: 'targetPostCardRecipientId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    // Reverse relation fields for postCard (5 fields)
+    {
+      description: 'PostCard Post card',
+      icon: 'IconTimelineEvent',
+      isNullable: true,
+      label: 'PostCard',
+      morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
+      name: 'targetPostCard',
+      objectUniversalIdentifier: '20202020-6736-4337-b5c4-8b39fae325a5',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '3f8c70b5-abb0-51ec-9109-0a94ce9c04a6',
+      relationTargetObjectMetadataUniversalIdentifier:
+        '54b589ca-eeed-4950-a176-358418b85c05',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: '1bdc52a0-0339-5360-ba17-b615250ef730',
+      universalSettings: {
+        joinColumnName: 'targetPostCardId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'PostCard Post card',
+      icon: 'IconHeart',
+      isNullable: true,
+      label: 'PostCard',
+      name: 'targetPostCard',
+      objectUniversalIdentifier: '20202020-ab56-4e05-92a3-e2414a499860',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '94f43ec4-d2d1-5a50-b414-78da27d24258',
+      relationTargetObjectMetadataUniversalIdentifier:
+        '54b589ca-eeed-4950-a176-358418b85c05',
+      type: FieldType.RELATION,
+      universalIdentifier: '9a5d4ae3-6f45-593f-923d-bcd16ede4345',
+      universalSettings: {
+        joinColumnName: 'targetPostCardId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'PostCard Post card',
+      icon: 'IconFileImport',
+      isNullable: true,
+      label: 'PostCard',
+      morphId: '20202020-f634-435d-ab8d-e1168b375c69',
+      name: 'targetPostCard',
+      objectUniversalIdentifier: '20202020-bd3d-4c60-8dca-571c71d4447a',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '547c93e4-c9e7-5880-b251-46230fb59bfa',
+      relationTargetObjectMetadataUniversalIdentifier:
+        '54b589ca-eeed-4950-a176-358418b85c05',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: 'fecb8484-7e3c-59f8-a5ef-30882c5c1904',
+      universalSettings: {
+        joinColumnName: 'targetPostCardId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'PostCard Post card',
+      icon: 'IconCheckbox',
+      isNullable: true,
+      label: 'PostCard',
+      morphId: '20202020-f635-435d-ab8d-e1168b375c70',
+      name: 'targetPostCard',
+      objectUniversalIdentifier: '20202020-fff0-4b44-be82-bda313884400',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '47deea5c-8559-5ae7-991a-60c9f7102f86',
+      relationTargetObjectMetadataUniversalIdentifier:
+        '54b589ca-eeed-4950-a176-358418b85c05',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: 'ca687361-ac2b-5722-9ad9-cd37427d087a',
+      universalSettings: {
+        joinColumnName: 'targetPostCardId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'PostCard Post card',
+      icon: 'IconCheckbox',
+      isNullable: true,
+      label: 'PostCard',
+      morphId: '20202020-f636-435d-ab8d-e1168b375c71',
+      name: 'targetPostCard',
+      objectUniversalIdentifier: '20202020-5a9a-44e8-95df-771cd06d0fb1',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'ecdccc0d-7c31-5126-89d5-0bdf3372257c',
+      relationTargetObjectMetadataUniversalIdentifier:
+        '54b589ca-eeed-4950-a176-358418b85c05',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: '17058c96-d5a4-53b1-96ca-786f8c5fc8bd',
+      universalSettings: {
+        joinColumnName: 'targetPostCardId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    // Reverse relation fields for recipient (5 fields)
+    {
+      description: 'Recipient Recipient',
+      icon: 'IconTimelineEvent',
+      isNullable: true,
+      label: 'Recipient',
+      morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
+      name: 'targetRecipient',
+      objectUniversalIdentifier: '20202020-6736-4337-b5c4-8b39fae325a5',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '51d6d2d7-2fa8-5f77-b6cf-a96dbb801fa5',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'd1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: 'b01f6937-4859-587b-b3df-92e0a6f65e93',
+      universalSettings: {
+        joinColumnName: 'targetRecipientId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'Recipient Recipient',
+      icon: 'IconHeart',
+      isNullable: true,
+      label: 'Recipient',
+      name: 'targetRecipient',
+      objectUniversalIdentifier: '20202020-ab56-4e05-92a3-e2414a499860',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'd16a6387-273b-563c-a6cc-2cb4524b9b7b',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'd1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+      type: FieldType.RELATION,
+      universalIdentifier: 'f4e6fd66-83bb-5f2d-b1ec-a3db2e0ca32d',
+      universalSettings: {
+        joinColumnName: 'targetRecipientId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'Recipient Recipient',
+      icon: 'IconFileImport',
+      isNullable: true,
+      label: 'Recipient',
+      morphId: '20202020-f634-435d-ab8d-e1168b375c69',
+      name: 'targetRecipient',
+      objectUniversalIdentifier: '20202020-bd3d-4c60-8dca-571c71d4447a',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '244a7841-9e45-5ed1-a830-83e73c1f13fa',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'd1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: '9c87e1b8-74a2-5833-9237-281d561d2a7d',
+      universalSettings: {
+        joinColumnName: 'targetRecipientId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'Recipient Recipient',
+      icon: 'IconCheckbox',
+      isNullable: true,
+      label: 'Recipient',
+      morphId: '20202020-f635-435d-ab8d-e1168b375c70',
+      name: 'targetRecipient',
+      objectUniversalIdentifier: '20202020-fff0-4b44-be82-bda313884400',
+      relationTargetFieldMetadataUniversalIdentifier:
+        'eab71eb1-b457-555a-8a2b-f292cef1671d',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'd1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: '23508618-7ed8-519e-9fee-a57b94dc98e9',
+      universalSettings: {
+        joinColumnName: 'targetRecipientId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
+    {
+      description: 'Recipient Recipient',
+      icon: 'IconCheckbox',
+      isNullable: true,
+      label: 'Recipient',
+      morphId: '20202020-f636-435d-ab8d-e1168b375c71',
+      name: 'targetRecipient',
+      objectUniversalIdentifier: '20202020-5a9a-44e8-95df-771cd06d0fb1',
+      relationTargetFieldMetadataUniversalIdentifier:
+        '305f1890-04ba-5101-b18f-a1ca25a1d8a7',
+      relationTargetObjectMetadataUniversalIdentifier:
+        'd1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+      type: FieldType.MORPH_RELATION,
+      universalIdentifier: '20500ff3-2410-5bfc-b2e7-804785c07770',
+      universalSettings: {
+        joinColumnName: 'targetRecipientId',
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
   ],
   objects: [
     {
@@ -267,6 +669,106 @@ export const EXPECTED_MANIFEST: Manifest = {
           name: 'updatedBy',
           type: FieldMetadataType.ACTOR,
           universalIdentifier: '38e2c671-cbf5-5773-a04a-e5a2d6c323c8',
+        },
+        {
+          defaultValue: 0,
+          description: 'Position',
+          icon: 'IconHierarchy2',
+          isNullable: false,
+          label: 'Position',
+          name: 'position',
+          type: FieldMetadataType.POSITION,
+          universalIdentifier: '3b56cdea-cf85-51d4-a7a0-cd701f76141a',
+        },
+        {
+          defaultValue: null,
+          description: 'Search vector',
+          icon: 'IconSearch',
+          isNullable: true,
+          label: 'Search vector',
+          name: 'searchVector',
+          type: FieldMetadataType.TS_VECTOR,
+          universalIdentifier: '7c6d88f5-a348-51dd-8d0b-74a17e626754',
+        },
+        {
+          description: 'Root notes tied to the RootNote',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Timeline Activities',
+          name: 'timelineActivities',
+          relationTargetFieldMetadataUniversalIdentifier:
+            'a0f6ffdc-a570-58a6-973d-a9bc9a527de8',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-6736-4337-b5c4-8b39fae325a5',
+          type: FieldType.RELATION,
+          universalIdentifier: '1cdb0b3a-0ae1-59f6-b3f0-59ff99e40525',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Root notes tied to the RootNote',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Favorites',
+          name: 'favorites',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '13fb0eae-50b4-5e28-afbc-5b5a9c422ead',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-ab56-4e05-92a3-e2414a499860',
+          type: FieldType.RELATION,
+          universalIdentifier: 'bbc0dc11-9daa-5e3f-b939-e6f0a12bb277',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Root notes tied to the RootNote',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Attachments',
+          name: 'attachments',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '95cad10a-bff6-524d-b6d8-dbc6db7cbf18',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-bd3d-4c60-8dca-571c71d4447a',
+          type: FieldType.RELATION,
+          universalIdentifier: 'aa05ee89-bd8a-5911-a4d5-3355926186bc',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Root notes tied to the RootNote',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Note Targets',
+          name: 'noteTargets',
+          relationTargetFieldMetadataUniversalIdentifier:
+            'c327faff-76eb-5baf-8b35-1c31e57306fb',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-fff0-4b44-be82-bda313884400',
+          type: FieldType.RELATION,
+          universalIdentifier: '762ad37e-d624-51d8-989c-3a119eef9e7f',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Root notes tied to the RootNote',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Task Targets',
+          name: 'taskTargets',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '36843050-e6e3-5759-99b6-e975426bad73',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-5a9a-44e8-95df-771cd06d0fb1',
+          type: FieldType.RELATION,
+          universalIdentifier: 'd4f1b0c8-8cd9-581e-9bf9-917f8c918d76',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
         },
       ],
       icon: 'IconNote',
@@ -365,6 +867,106 @@ export const EXPECTED_MANIFEST: Manifest = {
           name: 'updatedBy',
           type: FieldMetadataType.ACTOR,
           universalIdentifier: '1dd75ff5-5fd0-51df-b3a3-a12e3aff30df',
+        },
+        {
+          defaultValue: 0,
+          description: 'Position',
+          icon: 'IconHierarchy2',
+          isNullable: false,
+          label: 'Position',
+          name: 'position',
+          type: FieldMetadataType.POSITION,
+          universalIdentifier: '6c5e91f5-e323-555b-84e0-5a1dd7f36b1b',
+        },
+        {
+          defaultValue: null,
+          description: 'Search vector',
+          icon: 'IconSearch',
+          isNullable: true,
+          label: 'Search vector',
+          name: 'searchVector',
+          type: FieldMetadataType.TS_VECTOR,
+          universalIdentifier: '9fa18b19-41b6-5082-b3e2-4e73f7461164',
+        },
+        {
+          description: 'Post Card Recipients tied to the PostCardRecipient',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Timeline Activities',
+          name: 'timelineActivities',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '18b6354d-8b0f-5be6-9473-d635aed670a1',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-6736-4337-b5c4-8b39fae325a5',
+          type: FieldType.RELATION,
+          universalIdentifier: '02f5efba-4f94-5cc3-9e17-ca7b1fe5f71b',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Post Card Recipients tied to the PostCardRecipient',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Favorites',
+          name: 'favorites',
+          relationTargetFieldMetadataUniversalIdentifier:
+            'f3247843-dd1f-5b15-8873-c0062a021180',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-ab56-4e05-92a3-e2414a499860',
+          type: FieldType.RELATION,
+          universalIdentifier: 'a284914f-650c-54ad-84ef-d6229d3fa453',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Post Card Recipients tied to the PostCardRecipient',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Attachments',
+          name: 'attachments',
+          relationTargetFieldMetadataUniversalIdentifier:
+            'ba74dfd1-e7ee-502d-abad-82e14d595874',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-bd3d-4c60-8dca-571c71d4447a',
+          type: FieldType.RELATION,
+          universalIdentifier: '82497ec7-0121-53d6-9518-ae7434ceaf8b',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Post Card Recipients tied to the PostCardRecipient',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Note Targets',
+          name: 'noteTargets',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '9d5a9f4b-5431-5b90-810a-1e9d8873b302',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-fff0-4b44-be82-bda313884400',
+          type: FieldType.RELATION,
+          universalIdentifier: '6de8b57e-ed0a-5d35-bd39-bd8874445810',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Post Card Recipients tied to the PostCardRecipient',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Task Targets',
+          name: 'taskTargets',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '85353e69-1e70-51ef-91c3-334d85013a4b',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-5a9a-44e8-95df-771cd06d0fb1',
+          type: FieldType.RELATION,
+          universalIdentifier: '00459e7e-8ef1-5a9b-b180-26bbb54a2696',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
         },
       ],
       icon: 'IconLink',
@@ -524,6 +1126,106 @@ export const EXPECTED_MANIFEST: Manifest = {
           type: FieldMetadataType.ACTOR,
           universalIdentifier: 'dc5231a4-e128-57b0-ac9d-723678d9b239',
         },
+        {
+          defaultValue: 0,
+          description: 'Position',
+          icon: 'IconHierarchy2',
+          isNullable: false,
+          label: 'Position',
+          name: 'position',
+          type: FieldMetadataType.POSITION,
+          universalIdentifier: '3ad26df7-6345-5f85-aac1-2306cf10eaed',
+        },
+        {
+          defaultValue: null,
+          description: 'Search vector',
+          icon: 'IconSearch',
+          isNullable: true,
+          label: 'Search vector',
+          name: 'searchVector',
+          type: FieldMetadataType.TS_VECTOR,
+          universalIdentifier: 'b49b1a1c-2f6b-52a3-836b-ece89c698627',
+        },
+        {
+          description: 'Post cards tied to the PostCard',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Timeline Activities',
+          name: 'timelineActivities',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '1bdc52a0-0339-5360-ba17-b615250ef730',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-6736-4337-b5c4-8b39fae325a5',
+          type: FieldType.RELATION,
+          universalIdentifier: '3f8c70b5-abb0-51ec-9109-0a94ce9c04a6',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Post cards tied to the PostCard',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Favorites',
+          name: 'favorites',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '9a5d4ae3-6f45-593f-923d-bcd16ede4345',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-ab56-4e05-92a3-e2414a499860',
+          type: FieldType.RELATION,
+          universalIdentifier: '94f43ec4-d2d1-5a50-b414-78da27d24258',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Post cards tied to the PostCard',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Attachments',
+          name: 'attachments',
+          relationTargetFieldMetadataUniversalIdentifier:
+            'fecb8484-7e3c-59f8-a5ef-30882c5c1904',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-bd3d-4c60-8dca-571c71d4447a',
+          type: FieldType.RELATION,
+          universalIdentifier: '547c93e4-c9e7-5880-b251-46230fb59bfa',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Post cards tied to the PostCard',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Note Targets',
+          name: 'noteTargets',
+          relationTargetFieldMetadataUniversalIdentifier:
+            'ca687361-ac2b-5722-9ad9-cd37427d087a',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-fff0-4b44-be82-bda313884400',
+          type: FieldType.RELATION,
+          universalIdentifier: '47deea5c-8559-5ae7-991a-60c9f7102f86',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Post cards tied to the PostCard',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Task Targets',
+          name: 'taskTargets',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '17058c96-d5a4-53b1-96ca-786f8c5fc8bd',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-5a9a-44e8-95df-771cd06d0fb1',
+          type: FieldType.RELATION,
+          universalIdentifier: 'ecdccc0d-7c31-5126-89d5-0bdf3372257c',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
       ],
       icon: 'IconMail',
       labelIdentifierFieldMetadataUniversalIdentifier:
@@ -626,6 +1328,106 @@ export const EXPECTED_MANIFEST: Manifest = {
           name: 'updatedBy',
           type: FieldMetadataType.ACTOR,
           universalIdentifier: '8da8e149-b60e-52e2-878d-73d05c8312b2',
+        },
+        {
+          defaultValue: 0,
+          description: 'Position',
+          icon: 'IconHierarchy2',
+          isNullable: false,
+          label: 'Position',
+          name: 'position',
+          type: FieldMetadataType.POSITION,
+          universalIdentifier: '824e930c-ce9f-5267-bebd-f6db215c3c14',
+        },
+        {
+          defaultValue: null,
+          description: 'Search vector',
+          icon: 'IconSearch',
+          isNullable: true,
+          label: 'Search vector',
+          name: 'searchVector',
+          type: FieldMetadataType.TS_VECTOR,
+          universalIdentifier: '1f5df24b-8248-59cf-8bb6-362de121d2e4',
+        },
+        {
+          description: 'Recipients tied to the Recipient',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Timeline Activities',
+          name: 'timelineActivities',
+          relationTargetFieldMetadataUniversalIdentifier:
+            'b01f6937-4859-587b-b3df-92e0a6f65e93',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-6736-4337-b5c4-8b39fae325a5',
+          type: FieldType.RELATION,
+          universalIdentifier: '51d6d2d7-2fa8-5f77-b6cf-a96dbb801fa5',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Recipients tied to the Recipient',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Favorites',
+          name: 'favorites',
+          relationTargetFieldMetadataUniversalIdentifier:
+            'f4e6fd66-83bb-5f2d-b1ec-a3db2e0ca32d',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-ab56-4e05-92a3-e2414a499860',
+          type: FieldType.RELATION,
+          universalIdentifier: 'd16a6387-273b-563c-a6cc-2cb4524b9b7b',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Recipients tied to the Recipient',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Attachments',
+          name: 'attachments',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '9c87e1b8-74a2-5833-9237-281d561d2a7d',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-bd3d-4c60-8dca-571c71d4447a',
+          type: FieldType.RELATION,
+          universalIdentifier: '244a7841-9e45-5ed1-a830-83e73c1f13fa',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Recipients tied to the Recipient',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Note Targets',
+          name: 'noteTargets',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '23508618-7ed8-519e-9fee-a57b94dc98e9',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-fff0-4b44-be82-bda313884400',
+          type: FieldType.RELATION,
+          universalIdentifier: 'eab71eb1-b457-555a-8a2b-f292cef1671d',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
+        },
+        {
+          description: 'Recipients tied to the Recipient',
+          icon: 'IconBuildingSkyscraper',
+          isNullable: false,
+          label: 'Task Targets',
+          name: 'taskTargets',
+          relationTargetFieldMetadataUniversalIdentifier:
+            '20500ff3-2410-5bfc-b2e7-804785c07770',
+          relationTargetObjectMetadataUniversalIdentifier:
+            '20202020-5a9a-44e8-95df-771cd06d0fb1',
+          type: FieldType.RELATION,
+          universalIdentifier: '305f1890-04ba-5101-b18f-a1ca25a1d8a7',
+          universalSettings: {
+            relationType: RelationType.ONE_TO_MANY,
+          },
         },
       ],
       icon: 'IconUser',
