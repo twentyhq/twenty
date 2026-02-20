@@ -1,0 +1,214 @@
+# Bug #3964: 
+
+## CRITICAL: Working Directory
+
+Your working directory is `/work/worktrees/twentyhq-twenty-wt-2904`. This is your primary repository (`twentyhq/twenty`).
+All edits MUST be performed within this directory.
+
+## Sentry Error Details (TOON format)
+
+Error information from Sentry (TOON = compact CSV-like format for lists):
+
+```
+event_info:
+  title: Error: Invalid fullPath provided
+  type: error
+  platform: node
+  culprit: bw(utils)
+  release: {'id': 1678867630; 'version': 'v1.18.0'; 'status': 'open'; 'shortVersion': 'v1.18.0'; 'versionInfo': {'package': None; 'version': {'raw': 'v1.18.0'}; 'description': 'v1.18.0'; 'buildHash': None}; 'ref...
+user:
+  geo: country_code=DE, city=Frankfurt am Main, region=Germany
+exceptions[1]{type,value,mechanism}:
+  Error,Invalid fullPath provided,handled=True
+stack_frames[8]:
+  [-] /app/node_modules/bullmq/dist/cjs/classes/worker.js:520:32
+      fn: ? (module: bullmq.dist.cjs.classes:worker)
+          523: catch (err) {
+          524: const failed = await handleFailed(err);
+          525: return failed;
+          526: }
+          527: finally {
+  [+] ../../../../../src/engine/core-modules/message-queue/drivers/bullmq.driver.ts:118:9
+      fn: this.workerMap[queueName] (module: bullmq.driver)
+          119: const timeEnd = performance.now();
+          120: const executionTime = timeEnd - timeStart;
+          121: 
+          122: this.logger.log(
+          123: `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms`,
+  [-] node:internal/process/task_queues:103:5
+      fn: process.processTicksAndRejections (module: task_queues)
+  [+] ../../../../src/engine/core-modules/message-queue/message-queue.explorer.ts:139:20
+      fn: <anonymous> (module: message-queue.explorer)
+          140: }
+          141: }, options);
+          142: }
+          143: 
+          144: private async handleProcessor(
+  [+] ../../../../src/engine/core-modules/message-queue/message-queue.explorer.ts:192:18
+      fn: {MessageQueueExplorer#2}.handleProcessor (module: message-queue.explorer)
+          193: instance,
+          194: filteredProcessMethodNames,
+          195: job,
+          196: );
+          197: }
+  [+] ../../../../src/engine/core-modules/message-queue/message-queue.explorer.ts:208:43
+      fn: {MessageQueueExplorer#2}.invokeProcessMethods (module: message-queue.explorer)
+          209: } catch (err) {
+          210: if (shouldCaptureException(err)) {
+          211: this.exceptionHandlerService.captureExceptions([err]);
+          212: }
+          213: throw err;
+  [+] ../../../../../src/engine/core-modules/file/jobs/file-deletion.job.ts:23:46
+      fn: {FileDeletionJob#2}.handle (module: file-deletion.job)
+          24: 
+          25: if (!filename) {
+          26: throw new UnrecoverableError(
+          27: `[${FileDeletionJob.name}] Cannot parse filename from full path - ${fullPath}`,
+          28: );
+  [+] /app/packages/twenty-shared/dist/utils.cjs:4:81480
+      fn: bw (module: utils)
+contexts:
+  app: app_start_time=2026-02-19T15:50:56.104Z; app_memory=1265209344; free_memory=2638311424
+  device: arch=x64; memory_size=8191066112; free_memory=4874039296; boot_time=2025-12-08T16:23:55.306Z; processor_count=2; cpu_description=Intel(R) Xeon(R) Plat...
+  os: os=Alpine Linux 3.23.3 ; name=Alpine Linux; version=3.23.3 ; kernel_version=6.1.132-147.221.amzn2023.x86_64
+  runtime: runtime=node v24.13.1; name=node; version=v24.13.1
+breadcrumbs_http[50]{ts,type,level,msg}:
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:03,http,i,
+  09:45:04,http,i,
+  09:45:04,http,i,
+  09:45:04,http,i,
+  09:45:04,http,i,
+  09:45:04,http,w,
+  09:45:05,http,i,
+  09:45:05,http,i,
+  09:45:05,http,i,
+  09:45:05,http,i,
+```
+
+## Severity Assessment
+
+After analyzing the bug, determine severity independently based on your analysis:
+- **critical**: User CANNOT complete a critical task. Crashes, core feature broken, data loss risk.
+- **medium**: User CAN complete tasks but degraded experience. Non-critical feature broken, workaround exists.
+- **low**: User unlikely to notice. Cosmetic, rare edge case, transient error that auto-recovers.
+
+Your severity assessment in the output JSON is the FINAL severity that will be used.
+## STRICT GIT RULES (violations = failed run)
+
+- You are already on the correct fix branch — do NOT run `git checkout`, `git switch`, or `git merge`
+- **NEVER run `git merge`** — merging other branches (feature branches, main, etc.) is FORBIDDEN
+- **NEVER run `git checkout` on a different branch** — stay on your current branch at all times
+- **NEVER run `git rebase`** — rebasing is not needed and can corrupt the worktree
+- If the code you need to fix is not on this branch, fix the code that IS on this branch
+  or report that the fix cannot be applied — do NOT merge or pull in other branches
+- **NEVER run `git add`, `git commit`, or `git push`** — the system handles all git write operations automatically after your analysis
+- Only allowed git commands: `git blame`, `git log`, `git diff`, `git show` (read-only)
+
+## Your Task (in this order)
+
+1. **Find the Root Cause**
+   - Locate the exact file and line where the bug originates
+   - Understand why this error occurs
+
+2. **Git Blame Analysis**
+   - Use `git blame` to find the commit that introduced this bug
+   - Note the commit SHA, author, and date
+
+3. **Fix the Bug**
+   - Implement a **minimal, targeted fix** — only change what's necessary to resolve this specific error
+   - **NEVER modify shared/generic utilities, base classes, or ORM internals** to work around a missing field or feature.
+     Instead, fix the specific code paths that trigger the error (e.g. add a guard/try-catch in the caller).
+     Changing a generic utility to silently skip errors is ALWAYS wrong — it masks future bugs.
+   - Do NOT refactor surrounding code, add new features, or make unrelated improvements
+   - Do NOT build new components, screens, or functionality — only fix the reported error
+   - Add appropriate error handling if needed
+   - Do NOT run any git write commands (`git add`, `git commit`, `git push`) — the system handles committing and pushing automatically after your analysis
+
+4. **Output Structured Analysis**
+   At the end of your response, output a JSON block between these markers:
+
+```
+SONARLY_ANALYSIS_START
+{
+  "title": "User-focused title (max 60 chars)",
+  "severity": "critical|medium|low",
+  "summary": "1-2 sentence summary of the bug",
+  "user_impact": "Who was impacted and how they were impacted",
+  "evidence": {  // Each code item: file (relative path from repo root), line (integer), snippet (faulty code, max ~10 lines). Multiple items for multiple files. {} if no evidence.
+    "code": [
+      {"file": "src/checkout/process.py", "line": 42, "snippet": "def process_order(order_id):\n    orders = db.query(\"SELECT * FROM orders\")  # missing WHERE clause"}
+    ]
+  },
+  "root_cause": {
+    "explanation": "Root cause explanation. Use plain text only — NO bold, italic, or code backticks. When listing multiple points, use a numbered list (1. 2. 3.) with each item on its own line. Include who introduced it (git blame author), when (date), and why.",
+    "blame": {
+      "commit_sha": "abc123def (the full commit SHA from git blame, or null if unknown)",
+      "author": "Author Name (from git blame output, or null if unknown)",
+      "date": "2026-01-15 (date from git blame, or null if unknown)",
+      "commit_url": "https://github.com/{owner}/{repo}/commit/{sha} (build from git remote get-url origin + sha, strip any access token, or null)",
+      "explanation": "Brief explanation of when/who introduced the bug (e.g. Added in commit abc123 by John on Jan 15)"
+    }
+  },
+  "suggested_fix": {
+    "explanation": "What the fix does and why it solves the problem. Use plain text only — NO bold, italic, or code backticks. When listing multiple steps, use a numbered list (1. 2. 3.) with each item on its own line.",
+    "files_changed": ["path/to/file.py", "path/to/other.py (list of file paths you created or modified in the fix)"]
+  }
+}
+SONARLY_ANALYSIS_END
+```
+
+CRITICAL: The JSON block is the ONLY part of your response shown to the user.
+Everything outside the SONARLY_ANALYSIS markers is discarded. Put ALL investigation details,
+evidence (code snippets and log lines), and findings INSIDE the JSON fields,
+especially root_cause.explanation, and summary. Do NOT write a separate investigation summary before the JSON.
+
+IMPORTANT: The JSON between SONARLY_ANALYSIS_START and SONARLY_ANALYSIS_END must be valid JSON.
+
+## Critical: ALWAYS output the analysis JSON
+
+You MUST output SONARLY_ANALYSIS_START...SONARLY_ANALYSIS_END even if you could not find the code or fix the bug.
+If you cannot locate the relevant code or create a fix,
+explain what you found in the `root_cause.explanation` field.
+A run without the analysis JSON is a FAILED run — never end without it.
+
+Don't ask any questions to the user

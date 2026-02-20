@@ -19,6 +19,12 @@ export class FileDeletionJob {
   async handle(data: FileDeletionJobData): Promise<void> {
     const { workspaceId, fullPath } = data;
 
+    if (!fullPath) {
+      throw new UnrecoverableError(
+        `[${FileDeletionJob.name}] Invalid fullPath provided - ${fullPath}`,
+      );
+    }
+
     const { folderPath, filename } =
       extractFolderPathFilenameAndTypeOrThrow(fullPath);
 

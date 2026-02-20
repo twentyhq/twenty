@@ -28,11 +28,17 @@ export class FileAttachmentListener {
     >,
   ) {
     for (const event of payload.events) {
+      const fullPath = event.properties.before.fullPath;
+
+      if (!fullPath) {
+        continue;
+      }
+
       await this.messageQueueService.add<FileDeletionJobData>(
         FileDeletionJob.name,
         {
           workspaceId: payload.workspaceId,
-          fullPath: event.properties.before.fullPath ?? '',
+          fullPath,
         },
       );
     }
