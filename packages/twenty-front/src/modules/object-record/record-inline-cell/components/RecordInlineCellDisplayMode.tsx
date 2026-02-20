@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import {
@@ -9,6 +10,7 @@ import {
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
 import { css } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
@@ -75,6 +77,8 @@ export const RecordInlineCellDisplayMode = ({
   const { editModeContentOnly, label, buttonIcon, readonly } =
     useRecordInlineCellContext();
 
+  const { isForbidden } = useContext(FieldContext);
+
   const isFieldEmpty = useIsFieldEmpty();
   const showEditButton =
     buttonIcon &&
@@ -87,9 +91,9 @@ export const RecordInlineCellDisplayMode = ({
 
   const emptyPlaceHolder = label ?? t`Empty`;
 
-  const shouldShowValue = !isFieldEmpty || isFieldInputOnly;
+  const shouldShowValue = !isFieldEmpty || isFieldInputOnly || isForbidden;
 
-  const shouldShowEmptyPlaceholder = isFieldEmpty;
+  const shouldShowEmptyPlaceholder = isFieldEmpty && !isForbidden;
 
   return (
     <>

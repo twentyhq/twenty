@@ -15,6 +15,7 @@ Uygulamalar, Twenty özelleştirmelerini **kod olarak** oluşturup yönetmenizi 
 
 * Özel nesneleri ve alanları kod olarak tanımlayın (yönetilen veri modeli)
 * Özel tetikleyicilerle mantık fonksiyonları oluşturun
+* Yapay zekâ ajanları için becerileri tanımlayın
 * Aynı uygulamayı birden çok çalışma alanına dağıtın
 
 ## Ön Gereksinimler
@@ -45,7 +46,7 @@ yarn twenty app:dev
 İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için üç modu destekler:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
@@ -118,8 +119,10 @@ my-twenty-app/
   │   └── hello-world.tsx               # Example front component
   ├── views/
   │   └── example-view.ts                # Example saved view definition
-  └── navigation-menu-items/
-      └── example-navigation-menu-item.ts # Example sidebar navigation link
+  ├── navigation-menu-items/
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  └── skills/
+      └── example-skill.ts                # Example AI agent skill definition
 ```
 
 `--minimal` ile yalnızca çekirdek dosyalar oluşturulur (`application-config.ts`, `roles/default-role.ts` ve `logic-functions/post-install.ts`). `--interactive` ile hangi örnek dosyaların dahil edileceğini siz seçersiniz.
@@ -148,6 +151,7 @@ SDK, TypeScript dosyalarınızı **`export default define<Entity>({...})`** ça�
 | `defineField()`              | Mevcut nesneler için alan genişletmeleri |
 | `defineView()`               | Kaydedilmiş görünüm tanımları            |
 | `defineNavigationMenuItem()` | Gezinme menüsü öğesi tanımları           |
+| `defineSkill()`              | AI agent skill definitions               |
 
 <Note>
   **Dosya adlandırma esnektir.** Varlık algılama AST tabanlıdır — SDK, kaynak dosyalarınızı `export default define<Entity>({...})` desenini bulmak için tarar. Dosyalarınızı ve klasörlerinizi dilediğiniz gibi düzenleyebilirsiniz. Varlık türüne göre gruplama (örn. `logic-functions/`, `roles/`) bir gereklilik değil, yalnızca kod organizasyonu için bir gelenektir.
@@ -169,7 +173,7 @@ export default defineObject({
 İlerideki komutlar daha fazla dosya ve klasör ekleyecektir:
 
 * `yarn twenty app:dev`, `node_modules/twenty-sdk/generated` içinde tipli bir API istemcisini otomatik olarak oluşturur (tipli Twenty istemcisi + çalışma alanı türleri).
-* `yarn twenty entity:add`, özel nesneleriniz, fonksiyonlarınız, ön bileşenleriniz veya rolleriniz için `src/` altında varlık tanım dosyaları ekler.
+* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## Kimlik Doğrulama
 
@@ -222,6 +226,7 @@ SDK, uygulama varlıklarınızı tanımlamak için yardımcı fonksiyonlar sağl
 | `defineField()`              | Mevcut nesneleri ek alanlarla genişletin                                  |
 | `defineView()`               | Nesneler için kaydedilmiş görünümler tanımlayın                           |
 | `defineNavigationMenuItem()` | Kenar çubuğu gezinme bağlantılarını tanımlayın                            |
+| `defineSkill()`              | Define AI agent skills                                                    |
 
 Bu fonksiyonlar, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
 
@@ -740,6 +745,41 @@ Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
 
 * **Şablondan**: `yarn twenty entity:add` çalıştırın ve yeni bir ön uç bileşeni ekleme seçeneğini seçin.
 * **Manuel**: Yeni bir `*.front-component.tsx` dosyası oluşturun ve `defineFrontComponent()` kullanın.
+
+### Beceriler
+
+Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+
+```typescript
+// src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Önemli noktalar:
+
+* `name` is a unique identifier string for the skill (kebab-case recommended).
+* `label` is the human-readable display name shown in the UI.
+* `content` contains the skill instructions — this is the text the AI agent uses.
+* `icon` (optional) sets the icon displayed in the UI.
+* `description` (optional) provides additional context about the skill's purpose.
+
+You can create new skills in two ways:
+
+* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
+* **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
 
 ### Oluşturulmuş türlendirilmiş istemci
 
