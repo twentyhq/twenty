@@ -30,6 +30,7 @@ export const createExecuteToolTool = (
   toolRegistry: ToolRegistryService,
   context: ToolContext,
   directTools?: ToolSet,
+  excludeTools?: Set<string>,
 ) => ({
   description:
     'STEP 3: Execute a tool by name with arguments. You MUST call get_tool_catalog (step 1) and learn_tools (step 2) first to discover the tool name and its required input schema.',
@@ -40,8 +41,16 @@ export const createExecuteToolTool = (
   ): Promise<ExecuteToolResult> => {
     const { toolName, arguments: args } = parameters;
 
-    // Native provider tools and preloaded tools are already in the ToolSet;
-    // dispatch directly if the LLM routes them through execute_tool.
+    if (excludeTools?.has(toolName)) {
+      return {
+        toolName,
+        error: {
+          message: `Tool "${toolName}" is not available in this context.`,
+          suggestion: 'Use get_tool_catalog to see which tools are available.',
+        },
+      };
+    }
+
     const directTool = directTools?.[toolName];
 
     if (directTool?.execute) {

@@ -39,6 +39,7 @@ export type LearnToolsResult = {
 export const createLearnToolsTool = (
   toolRegistry: ToolRegistryService,
   context: ToolContext,
+  excludeTools?: Set<string>,
 ) => ({
   description:
     'STEP 2: Get input schemas for tools discovered via get_tool_catalog. Call this with exact tool names to learn the required arguments before calling execute_tool.',
@@ -46,8 +47,12 @@ export const createLearnToolsTool = (
   execute: async (parameters: LearnToolsInput): Promise<LearnToolsResult> => {
     const { toolNames, aspects } = parameters;
 
+    const allowedNames = excludeTools
+      ? toolNames.filter((name) => !excludeTools.has(name))
+      : toolNames;
+
     const toolInfos = await toolRegistry.getToolInfo(
-      toolNames,
+      allowedNames,
       context,
       aspects,
     );

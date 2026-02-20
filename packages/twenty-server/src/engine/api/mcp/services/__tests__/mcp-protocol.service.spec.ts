@@ -25,7 +25,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 describe('McpProtocolService', () => {
   let service: McpProtocolService;
   let featureFlagService: jest.Mocked<FeatureFlagService>;
-  let toolRegistryService: jest.Mocked<ToolRegistryService>;
+  let _toolRegistryService: jest.Mocked<ToolRegistryService>;
   let userRoleService: jest.Mocked<UserRoleService>;
   let mcpToolExecutorService: jest.Mocked<McpToolExecutorService>;
   let apiKeyRoleService: jest.Mocked<ApiKeyRoleService>;
@@ -98,7 +98,7 @@ describe('McpProtocolService', () => {
 
     service = module.get<McpProtocolService>(McpProtocolService);
     featureFlagService = module.get(FeatureFlagService);
-    toolRegistryService = module.get(ToolRegistryService);
+    _toolRegistryService = module.get(ToolRegistryService);
     userRoleService = module.get(UserRoleService);
     mcpToolExecutorService = module.get(McpToolExecutorService);
     apiKeyRoleService = module.get(ApiKeyRoleService);

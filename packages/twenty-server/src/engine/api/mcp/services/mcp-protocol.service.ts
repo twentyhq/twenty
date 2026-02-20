@@ -38,6 +38,8 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
+const MCP_EXCLUDED_TOOLS = new Set(['code_interpreter', 'http_request']);
+
 @Injectable()
 export class McpProtocolService {
   constructor(
@@ -137,11 +139,16 @@ export class McpProtocolService {
         ...createGetToolCatalogTool(this.toolRegistry, workspace.id, roleId, {
           userId: options?.userId,
           userWorkspaceId: options?.userWorkspaceId,
+          excludeTools: MCP_EXCLUDED_TOOLS,
         }),
         inputSchema: zodSchema(getToolCatalogInputSchema),
       },
       [LEARN_TOOLS_TOOL_NAME]: {
-        ...createLearnToolsTool(this.toolRegistry, toolContext),
+        ...createLearnToolsTool(
+          this.toolRegistry,
+          toolContext,
+          MCP_EXCLUDED_TOOLS,
+        ),
         inputSchema: zodSchema(learnToolsInputSchema),
       },
       [EXECUTE_TOOL_TOOL_NAME]: {
@@ -149,6 +156,7 @@ export class McpProtocolService {
           this.toolRegistry,
           toolContext,
           preloadedTools,
+          MCP_EXCLUDED_TOOLS,
         ),
         inputSchema: zodSchema(executeToolInputSchema),
       },

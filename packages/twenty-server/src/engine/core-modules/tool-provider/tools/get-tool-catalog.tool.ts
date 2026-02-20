@@ -25,7 +25,11 @@ export const createGetToolCatalogTool = (
   toolRegistry: ToolRegistryService,
   workspaceId: string,
   roleId: string,
-  options?: { userId?: string; userWorkspaceId?: string },
+  options?: {
+    userId?: string;
+    userWorkspaceId?: string;
+    excludeTools?: Set<string>;
+  },
 ) => ({
   description:
     'STEP 1: Start here. Browse available tools by category. Returns tool names and descriptions. You MUST call this before using learn_tools or execute_tool — do not guess tool names.',
@@ -43,12 +47,18 @@ export const createGetToolCatalogTool = (
       ? new Set(parameters.categories)
       : undefined;
 
+    const excludeSet = options?.excludeTools;
+
     const catalog: Record<
       string,
       Array<{ name: string; description: string }>
     > = {};
 
     for (const entry of entries as ToolIndexEntry[]) {
+      if (excludeSet?.has(entry.name)) {
+        continue;
+      }
+
       if (categoryFilter && !categoryFilter.has(entry.category)) {
         continue;
       }
