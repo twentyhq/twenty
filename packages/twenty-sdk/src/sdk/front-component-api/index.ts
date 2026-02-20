@@ -1,13 +1,7 @@
 export { setFrontComponentExecutionContext } from './context/frontComponentContext';
-export { navigate, setNavigate } from './functions/navigate';
-export {
-  openSidePanelPage,
-  setOpenSidePanelPage,
-} from './functions/openSidePanelPage';
-export {
-  unmountFrontComponent,
-  setUnmountFrontComponent,
-} from './functions/unmountFrontComponent';
+export { navigate } from './functions/navigate';
+export { openSidePanelPage } from './functions/openSidePanelPage';
+export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
 export { useUserId } from './hooks/useUserId';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
