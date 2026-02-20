@@ -27,6 +27,10 @@ export const RecordTableCellFieldContextWrapper = ({
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
+  if (!fieldMetadataItem) {
+    return null;
+  }
+
   const instanceId = getRecordFieldInputInstanceId({
     recordId,
     fieldName: fieldMetadataItem.name,
