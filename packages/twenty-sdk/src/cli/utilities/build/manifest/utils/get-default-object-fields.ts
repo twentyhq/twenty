@@ -13,7 +13,7 @@ export const getDefaultObjectFields = (
     icon: 'Icon123',
     isNullable: false,
     defaultValue: 'uuid',
-    type: FieldMetadataType.UUID,
+    type: FieldMetadataType.UUID as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
       objectConfig,
       fieldName: 'id',
@@ -27,7 +27,7 @@ export const getDefaultObjectFields = (
     icon: 'IconAbc',
     isNullable: true,
     defaultValue: null,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.TEXT as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
       objectConfig,
       fieldName: 'name',
@@ -41,7 +41,7 @@ export const getDefaultObjectFields = (
     icon: 'IconCalendar',
     isNullable: false,
     defaultValue: 'now',
-    type: FieldMetadataType.DATE_TIME,
+    type: FieldMetadataType.DATE_TIME as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
       objectConfig,
       fieldName: 'createdAt',
@@ -55,7 +55,7 @@ export const getDefaultObjectFields = (
     icon: 'IconCalendarClock',
     isNullable: false,
     defaultValue: 'now',
-    type: FieldMetadataType.DATE_TIME,
+    type: FieldMetadataType.DATE_TIME as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
       objectConfig,
       fieldName: 'updatedAt',
@@ -69,7 +69,7 @@ export const getDefaultObjectFields = (
     icon: 'IconCalendarClock',
     isNullable: true,
     defaultValue: null,
-    type: FieldMetadataType.DATE_TIME,
+    type: FieldMetadataType.DATE_TIME as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
       objectConfig,
       fieldName: 'deletedAt',
@@ -83,7 +83,7 @@ export const getDefaultObjectFields = (
     icon: 'IconCreativeCommonsSa',
     isNullable: false,
     defaultValue: { name: "''", source: "'MANUAL'" },
-    type: FieldMetadataType.ACTOR,
+    type: FieldMetadataType.ACTOR as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
       objectConfig,
       fieldName: 'createdBy',
@@ -97,7 +97,7 @@ export const getDefaultObjectFields = (
     icon: 'IconUserCircle',
     isNullable: false,
     defaultValue: { name: "''", source: "'MANUAL'" },
-    type: FieldMetadataType.ACTOR,
+    type: FieldMetadataType.ACTOR as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
       objectConfig,
       fieldName: 'updatedBy',
