@@ -16,8 +16,8 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
-import { IconDotsVertical } from 'twenty-ui/display';
 import { isDefined } from 'twenty-shared/utils';
+import { IconDotsVertical } from 'twenty-ui/display';
 
 export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
@@ -52,11 +52,13 @@ export const useCommandMenu = () => {
   const openCommandMenu = useCallback(() => {
     emitSidePanelOpenEvent();
     closeAnyOpenDropdown();
-    const isEditMode = store.get(isNavigationMenuInEditModeStateV2.atom);
+    const isNavigationMenuInEditMode = store.get(
+      isNavigationMenuInEditModeStateV2.atom,
+    );
     const selectedNavItemId = store.get(
       selectedNavigationMenuItemInEditModeStateV2.atom,
     );
-    if (isEditMode && isDefined(selectedNavItemId)) {
+    if (isNavigationMenuInEditMode && isDefined(selectedNavItemId)) {
       navigateCommandMenu({
         page: CommandMenuPages.NavigationMenuItemEdit,
         pageTitle: t`Edit`,
