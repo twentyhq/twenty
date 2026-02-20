@@ -107,8 +107,12 @@ export const WorkspaceNavigationMenuItems = () => {
         pageIcon: IconLink,
       });
     } else if (isDefined(objectMetadataItem)) {
+      const pageTitle =
+        item.itemType === NavigationMenuItemType.VIEW
+          ? item.labelIdentifier
+          : objectMetadataItem.labelSingular;
       openNavigationMenuItemInCommandMenu({
-        pageTitle: objectMetadataItem.labelPlural,
+        pageTitle,
         pageIcon: getIcon(objectMetadataItem.icon),
       });
     }
@@ -121,7 +125,7 @@ export const WorkspaceNavigationMenuItems = () => {
     enterEditMode();
     setSelectedNavigationMenuItemInEditMode(navigationMenuItemId);
     openNavigationMenuItemInCommandMenu({
-      pageTitle: objectMetadataItem.labelPlural,
+      pageTitle: objectMetadataItem.labelSingular,
       pageIcon: getIcon(objectMetadataItem.icon),
     });
   };
