@@ -55,7 +55,7 @@ export class EntityAddCommand {
       );
 
       if (entity === SyncableEntity.Object) {
-        await this.promptAndCreateViewAndNavigationMenuItem(name);
+        await this.promptAndCreateViewAndNavigationMenuItem(name, path);
       }
     } catch (error) {
       console.error(
@@ -176,6 +176,7 @@ export class EntityAddCommand {
 
   private async promptAndCreateViewAndNavigationMenuItem(
     objectName: string,
+    customPath?: string,
   ): Promise<void> {
     const { createViewAndNavItem } = await inquirer.prompt<{
       createViewAndNavItem: boolean;
@@ -201,16 +202,26 @@ export class EntityAddCommand {
       objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
     });
 
-    const viewFolderPath = join(
-      CURRENT_EXECUTION_DIRECTORY,
-      APP_FOLDER,
-      this.getFolderName(SyncableEntity.View),
-    );
+    const viewFolderPath = customPath
+      ? join(CURRENT_EXECUTION_DIRECTORY, customPath)
+      : join(
+          CURRENT_EXECUTION_DIRECTORY,
+          APP_FOLDER,
+          this.getFolderName(SyncableEntity.View),
+        );
 
     await fs.ensureDir(viewFolderPath);
 
     const viewFileName = `all-${kebabcase(objectName)}.ts`;
     const viewFilePath = join(viewFolderPath, viewFileName);
+
+    if (await fs.pathExists(viewFilePath)) {
+      const { overwrite } = await this.handleFileExist();
+
+      if (!overwrite) {
+        return;
+      }
+    }
 
     await fs.writeFile(viewFilePath, viewFile);
 
@@ -224,16 +235,26 @@ export class EntityAddCommand {
       viewUniversalIdentifier,
     });
 
-    const navFolderPath = join(
-      CURRENT_EXECUTION_DIRECTORY,
-      APP_FOLDER,
-      this.getFolderName(SyncableEntity.NavigationMenuItem),
-    );
+    const navFolderPath = customPath
+      ? join(CURRENT_EXECUTION_DIRECTORY, customPath)
+      : join(
+          CURRENT_EXECUTION_DIRECTORY,
+          APP_FOLDER,
+          this.getFolderName(SyncableEntity.NavigationMenuItem),
+        );
 
     await fs.ensureDir(navFolderPath);
 
     const navFileName = `${kebabcase(objectName)}.ts`;
     const navFilePath = join(navFolderPath, navFileName);
+
+    if (await fs.pathExists(navFilePath)) {
+      const { overwrite } = await this.handleFileExist();
+
+      if (!overwrite) {
+        return;
+      }
+    }
 
     await fs.writeFile(navFilePath, navFile);
 
