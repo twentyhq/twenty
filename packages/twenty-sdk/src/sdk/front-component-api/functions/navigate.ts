@@ -1,17 +1,13 @@
 import { type AppPath, type NavigateOptions } from 'twenty-shared/types';
 import { type getAppPath, isDefined } from 'twenty-shared/utils';
 
-type NavigateFunction = <T extends AppPath>(
-  to: T,
-  params?: Parameters<typeof getAppPath<T>>[1],
-  queryParams?: Record<string, any>,
-  options?: NavigateOptions,
-) => Promise<void>;
-
-const NAVIGATE_KEY = '__twentySdkNavigateFunction__';
+import {
+  frontComponentHostCommunicationApi,
+  type NavigateFunction,
+} from '../globals/frontComponentHostCommunicationApi';
 
 export const setNavigate = (fn: NavigateFunction): void => {
-  (globalThis as Record<string, unknown>)[NAVIGATE_KEY] = fn;
+  frontComponentHostCommunicationApi.navigate = fn;
 };
 
 export const navigate: NavigateFunction = <T extends AppPath>(
@@ -20,9 +16,7 @@ export const navigate: NavigateFunction = <T extends AppPath>(
   queryParams?: Record<string, any>,
   options?: NavigateOptions,
 ): Promise<void> => {
-  const navigateFunction = (globalThis as Record<string, unknown>)[
-    NAVIGATE_KEY
-  ] as NavigateFunction | undefined;
+  const navigateFunction = frontComponentHostCommunicationApi.navigate;
 
   if (!isDefined(navigateFunction)) {
     throw new Error('navigateFunction is not set');

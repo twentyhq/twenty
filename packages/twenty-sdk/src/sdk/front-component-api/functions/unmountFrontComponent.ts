@@ -1,21 +1,20 @@
 import { isDefined } from 'twenty-shared/utils';
 
-type UnmountFrontComponentFunction = () => Promise<void>;
-
-const UNMOUNT_FRONT_COMPONENT_KEY =
-  '__twentySdkUnmountFrontComponentFunction__';
+import {
+  frontComponentHostCommunicationApi,
+  type UnmountFrontComponentFunction,
+} from '../globals/frontComponentHostCommunicationApi';
 
 export const setUnmountFrontComponent = (
   fn: UnmountFrontComponentFunction,
 ): void => {
-  (globalThis as Record<string, unknown>)[UNMOUNT_FRONT_COMPONENT_KEY] = fn;
+  frontComponentHostCommunicationApi.unmountFrontComponent = fn;
 };
 
 export const unmountFrontComponent: UnmountFrontComponentFunction =
   (): Promise<void> => {
-    const unmountFrontComponentFunction = (
-      globalThis as Record<string, unknown>
-    )[UNMOUNT_FRONT_COMPONENT_KEY] as UnmountFrontComponentFunction | undefined;
+    const unmountFrontComponentFunction =
+      frontComponentHostCommunicationApi.unmountFrontComponent;
 
     if (!isDefined(unmountFrontComponentFunction)) {
       throw new Error('unmountFrontComponentFunction is not set');

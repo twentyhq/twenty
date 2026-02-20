@@ -1,6 +1,11 @@
 import { type CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  frontComponentHostCommunicationApi,
+  type OpenSidePanelPageFunction,
+} from '../globals/frontComponentHostCommunicationApi';
+
 export type OpenSidePanelPageParams = {
   page: CommandMenuPages;
   pageTitle: string;
@@ -8,22 +13,15 @@ export type OpenSidePanelPageParams = {
   shouldResetSearchState?: boolean;
 };
 
-type OpenSidePanelPageFunction = (
-  params: OpenSidePanelPageParams,
-) => Promise<void>;
-
-const OPEN_SIDE_PANEL_PAGE_KEY = '__twentySdkOpenSidePanelPageFunction__';
-
 export const setOpenSidePanelPage = (fn: OpenSidePanelPageFunction): void => {
-  (globalThis as Record<string, unknown>)[OPEN_SIDE_PANEL_PAGE_KEY] = fn;
+  frontComponentHostCommunicationApi.openSidePanelPage = fn;
 };
 
 export const openSidePanelPage: OpenSidePanelPageFunction = (
   params: OpenSidePanelPageParams,
 ): Promise<void> => {
-  const openSidePanelPageFunction = (globalThis as Record<string, unknown>)[
-    OPEN_SIDE_PANEL_PAGE_KEY
-  ] as OpenSidePanelPageFunction | undefined;
+  const openSidePanelPageFunction =
+    frontComponentHostCommunicationApi.openSidePanelPage;
 
   if (!isDefined(openSidePanelPageFunction)) {
     throw new Error('openSidePanelPageFunction is not set');
