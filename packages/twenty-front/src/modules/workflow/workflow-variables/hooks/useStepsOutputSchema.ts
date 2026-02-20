@@ -14,17 +14,18 @@ import {
   computeStepOutputSchema,
   shouldComputeOutputSchemaOnFrontend,
 } from '@/workflow/workflow-variables/utils/generate/computeStepOutputSchema';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 export const useStepsOutputSchema = () => {
+  const store = useStore();
+
   const populateStepsOutputSchema = useRecoilCallback(
     ({ set, snapshot }) =>
       (workflowVersion: WorkflowVersion) => {
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+        const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
         workflowVersion.steps?.forEach((step) => {
           const stepKey = getStepOutputSchemaFamilyStateKey(
@@ -126,7 +127,7 @@ export const useStepsOutputSchema = () => {
         );
         set(shouldRecomputeOutputSchemaFamilyState(stepKey), true);
       },
-    [],
+    [store],
   );
 
   const deleteStepsOutputSchema = useRecoilCallback(
@@ -147,7 +148,7 @@ export const useStepsOutputSchema = () => {
           set(shouldRecomputeOutputSchemaFamilyState(stepKey), true);
         });
       },
-    [],
+    [store],
   );
 
   return {

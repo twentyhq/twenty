@@ -16,7 +16,7 @@ import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValu
 export const useWorkspaceFavorites = () => {
   const { workspaceFavorites } = usePrefetchedFavoritesData();
   const coreViews = useRecoilValue(coreViewsState);
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Favorite,

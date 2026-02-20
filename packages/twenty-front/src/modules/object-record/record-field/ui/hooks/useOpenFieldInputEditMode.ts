@@ -71,9 +71,9 @@ export const useOpenFieldInputEditMode = () => {
         recordId: string;
         prefix?: string;
       }) => {
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+        const objectMetadataItems = jotaiStore.get(
+          objectMetadataItemsState.atom,
+        );
 
         const currentWorkspace = jotaiStore.get(currentWorkspaceState.atom);
 

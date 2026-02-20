@@ -163,7 +163,7 @@ auth/states/objectPermissionsFamilySelector.ts
 
 ---
 
-## PR 5: Client Config
+## PR 5: Client Config ✅ DONE
 
 26 simple global states, mostly boolean feature flags. Low risk.
 

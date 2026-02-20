@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
@@ -12,7 +11,7 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const PreComputedChipGeneratorsProvider = ({
   children,
 }: React.PropsWithChildren) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
   const allowRequestsToTwentyIcons = useRecoilValueV2(
     allowRequestsToTwentyIconsState,
   );

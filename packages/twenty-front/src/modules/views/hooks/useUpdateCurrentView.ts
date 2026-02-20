@@ -52,9 +52,15 @@ export const useUpdateCurrentView = () => {
         if (newMainGroupByFieldMetadataId !== null) {
           viewGroupsToCreate =
             objectMetadataItem.fields
-              ?.find((field) => field.id === newMainGroupByFieldMetadataId)
+              ?.find(
+                (field: { id: string }) =>
+                  field.id === newMainGroupByFieldMetadataId,
+              )
               ?.options?.map(
-                (option, index) =>
+                (
+                  option: { value: string },
+                  index: number,
+                ) =>
                   ({
                     id: v4(),
                     __typename: 'ViewGroup',
@@ -66,7 +72,8 @@ export const useUpdateCurrentView = () => {
 
           if (
             objectMetadataItem.fields.find(
-              (field) => field.id === newMainGroupByFieldMetadataId,
+              (field: { id: string }) =>
+                field.id === newMainGroupByFieldMetadataId,
             )?.isNullable === true
           ) {
             viewGroupsToCreate.push({

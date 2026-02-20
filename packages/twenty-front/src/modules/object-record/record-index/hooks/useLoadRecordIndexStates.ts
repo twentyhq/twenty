@@ -21,6 +21,7 @@ import { viewFieldAggregateOperationState } from '@/object-record/record-table/r
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { type View } from '@/views/types/View';
 import { type ViewField } from '@/views/types/ViewField';
@@ -75,21 +76,17 @@ export const useLoadRecordIndexStates = () => {
           (field) => field.isActive && !isHiddenSystemField(field),
         );
 
-        const filterableFieldMetadataItems = snapshot
-          .getLoadable(
-            availableFieldMetadataItemsForFilterFamilySelector({
-              objectMetadataItemId: objectMetadataItem.id,
-            }),
-          )
-          .getValue();
+        const filterableFieldMetadataItems = jotaiStore.get(
+          availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
+            objectMetadataItemId: objectMetadataItem.id,
+          }),
+        );
 
-        const sortableFieldMetadataItems = snapshot
-          .getLoadable(
-            availableFieldMetadataItemsForSortFamilySelector({
-              objectMetadataItemId: objectMetadataItem.id,
-            }),
-          )
-          .getValue();
+        const sortableFieldMetadataItems = jotaiStore.get(
+          availableFieldMetadataItemsForSortFamilySelector.selectorFamily({
+            objectMetadataItemId: objectMetadataItem.id,
+          }),
+        );
 
         const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
           activeFieldMetadataItems
@@ -178,13 +175,11 @@ export const useLoadRecordIndexStates = () => {
   const loadRecordIndexStates = useRecoilCallback(
     ({ snapshot }) =>
       async (view: View, objectMetadataItem: ObjectMetadataItem) => {
-        const filterableFieldMetadataItems = snapshot
-          .getLoadable(
-            availableFieldMetadataItemsForFilterFamilySelector({
-              objectMetadataItemId: objectMetadataItem.id,
-            }),
-          )
-          .getValue();
+        const filterableFieldMetadataItems = jotaiStore.get(
+          availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
+            objectMetadataItemId: objectMetadataItem.id,
+          }),
+        );
 
         onViewFieldsChange(view.viewFields, objectMetadataItem);
 

@@ -1,10 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { expect, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { SettingsPath } from 'twenty-shared/types';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
@@ -56,13 +56,13 @@ const meta: Meta<typeof NavigationDrawer> = {
       const setCurrentWorkspaceMember = useSetRecoilStateV2(
         currentWorkspaceMemberState,
       );
-      const setObjectMetadataItems = useSetRecoilState(
-        objectMetadataItemsState,
-      );
       useEffect(() => {
-        setObjectMetadataItems(generatedMockObjectMetadataItems);
+        jotaiStore.set(
+          objectMetadataItemsState.atom,
+          generatedMockObjectMetadataItems,
+        );
         setCurrentWorkspaceMember(mockedWorkspaceMemberData);
-      }, [setObjectMetadataItems, setCurrentWorkspaceMember]);
+      }, [setCurrentWorkspaceMember]);
       return <Story />;
     },
   ],

@@ -11,6 +11,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { isDefined } from 'twenty-shared/utils';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 import { useNavigationMenuItemsByFolder } from './useNavigationMenuItemsByFolder';
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
@@ -35,7 +36,7 @@ export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
   const { workspaceNavigationMenuItemsByFolder } =
     useNavigationMenuItemsByFolder();
   const coreViews = useRecoilValue(coreViewsState);
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const views = coreViews.map(convertCoreViewToView);
 

@@ -17,7 +17,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey, OnboardingStatus } from '~/generated-metadata/graphql';
 
 export const SSEEventStreamEffect = () => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const sseEventStreamId = useRecoilValue(sseEventStreamIdState);
   const isCreatingSseEventStream = useRecoilValue(

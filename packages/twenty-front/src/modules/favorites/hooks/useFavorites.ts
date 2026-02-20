@@ -16,7 +16,7 @@ export const useFavorites = () => {
   const favoriteViewsWithMinimalData = useRecoilValue(
     favoriteViewsWithMinimalDataSelector,
   );
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Favorite,

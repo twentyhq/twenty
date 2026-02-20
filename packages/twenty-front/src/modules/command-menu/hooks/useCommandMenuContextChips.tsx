@@ -31,7 +31,7 @@ export const useCommandMenuContextChips = () => {
     allowRequestsToTwentyIconsState,
   );
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const { navigateCommandMenuHistory } = useCommandMenuHistory();
 
