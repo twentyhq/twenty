@@ -306,9 +306,11 @@ export class CleanerWorkspaceService {
               userWorkspace.userId,
             );
           }
-          await this.billingSubscriptionService.deleteSubscriptions(
-            workspace.id,
-          );
+          if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+            await this.billingSubscriptionService.deleteSubscriptions(
+              workspace.id,
+            );
+          }
           await this.workspaceRepository.delete(workspace.id);
         }
       }
