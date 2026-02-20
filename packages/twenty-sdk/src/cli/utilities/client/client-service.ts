@@ -108,7 +108,13 @@ export default class Twenty {
     filename: string,
     contentType: string = 'application/octet-stream',
     fieldMetadataUniversalIdentifier: string,
-  ): Promise<{ path: string; token: string }> {
+  ): Promise<{
+    id: string;
+    path: string;
+    size: number;
+    createdAt: string;
+    url: string;
+  }> {
     const form = new FormData();
 
     form.append(
