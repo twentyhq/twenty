@@ -10,7 +10,10 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { IconColorSwatch } from 'twenty-ui/display';
-import { type ColorLabels, MenuItemSelectColor } from 'twenty-ui/navigation';
+import {
+  DEFAULT_COLOR_LABELS,
+  MenuItemSelectColor,
+} from 'twenty-ui/navigation';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 
 const NAVIGATION_MENU_ITEM_COLOR_DROPDOWN_ID = 'navigation-menu-item-color';
@@ -19,34 +22,6 @@ const StyledMenuStyleText = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   font-size: 13px;
 `;
-
-const COLOR_LABELS: ColorLabels = {
-  gray: 'Gray',
-  tomato: 'Tomato',
-  red: 'Red',
-  ruby: 'Ruby',
-  crimson: 'Crimson',
-  pink: 'Pink',
-  plum: 'Plum',
-  purple: 'Purple',
-  violet: 'Violet',
-  iris: 'Iris',
-  cyan: 'Cyan',
-  turquoise: 'Turquoise',
-  sky: 'Sky',
-  blue: 'Blue',
-  jade: 'Jade',
-  green: 'Green',
-  grass: 'Grass',
-  mint: 'Mint',
-  lime: 'Lime',
-  bronze: 'Bronze',
-  gold: 'Gold',
-  brown: 'Brown',
-  orange: 'Orange',
-  amber: 'Amber',
-  yellow: 'Yellow',
-};
 
 type CommandMenuEditColorOptionProps = {
   navigationMenuItemId: string;
@@ -64,7 +39,7 @@ export const CommandMenuEditColorOption = ({
 
   const [searchValue, setSearchValue] = useState('');
   const themeColor = color ?? 'gray';
-  const colorLabel = COLOR_LABELS[themeColor] ?? capitalize(themeColor);
+  const colorLabel = DEFAULT_COLOR_LABELS[themeColor] ?? capitalize(themeColor);
 
   const query = searchValue.trim().toLowerCase();
 
@@ -73,7 +48,7 @@ export const CommandMenuEditColorOption = ({
     : MAIN_COLOR_NAMES.filter(
         (colorName) =>
           colorName.toLowerCase().includes(query) ||
-          (COLOR_LABELS[colorName] ?? '').toLowerCase().includes(query),
+          (DEFAULT_COLOR_LABELS[colorName] ?? '').toLowerCase().includes(query),
       );
 
   const handleSelectColor = (selectedColor: ThemeColor) => {
@@ -106,7 +81,7 @@ export const CommandMenuEditColorOption = ({
                 onClick={() => handleSelectColor(colorName)}
                 color={colorName}
                 selected={colorName === themeColor}
-                colorLabels={COLOR_LABELS}
+                colorLabels={DEFAULT_COLOR_LABELS}
               />
             ))}
           </DropdownMenuItemsContainer>
