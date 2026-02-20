@@ -1,6 +1,6 @@
 import { ThreadWebWorker, release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { createRemoteWorker } from '../worker/utils/createRemoteWorker';
@@ -29,13 +29,13 @@ export const FrontComponentWorkerEffect = ({
   setThread,
   setError,
 }: FrontComponentWorkerEffectProps) => {
-  const frontComponentHostCommunicationApiRef = useRef(
-    frontComponentHostCommunicationApi,
-  );
-  frontComponentHostCommunicationApiRef.current =
-    frontComponentHostCommunicationApi;
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
+    if (isInitialized) {
+      return;
+    }
+
     const newReceiver = new RemoteReceiver({ retain, release });
 
     const worker = createRemoteWorker();
@@ -48,25 +48,15 @@ export const FrontComponentWorkerEffect = ({
       setError(workerError);
     };
 
-    const stableFrontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
-      {
-        navigate: (...args) =>
-          frontComponentHostCommunicationApiRef.current.navigate(...args),
-        openSidePanelPage: (...args) =>
-          frontComponentHostCommunicationApiRef.current.openSidePanelPage(
-            ...args,
-          ),
-        unmountFrontComponent: () =>
-          frontComponentHostCommunicationApiRef.current.unmountFrontComponent(),
-      };
-
     const thread = new ThreadWebWorker<
       WorkerExports,
       FrontComponentHostCommunicationApi
     >(worker, {
-      exports: stableFrontComponentHostCommunicationApi,
+      exports: frontComponentHostCommunicationApi,
     });
+
     setThread(thread);
+    setIsInitialized(true);
 
     thread.imports
       .render(newReceiver.connection, {
@@ -91,6 +81,8 @@ export const FrontComponentWorkerEffect = ({
     setError,
     setReceiver,
     setThread,
+    frontComponentHostCommunicationApi,
+    isInitialized,
   ]);
 
   return null;
