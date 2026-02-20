@@ -26,6 +26,7 @@ export class DevModeOrchestrator {
   private state: OrchestratorState;
   private debounceMs: number;
   private syncTimer: NodeJS.Timeout | null = null;
+  private serverCheckInterval: NodeJS.Timeout | null = null;
 
   private checkServerStep: CheckServerOrchestratorStep;
   private ensureValidTokensStep: EnsureValidTokensOrchestratorStep;
@@ -83,9 +84,17 @@ export class DevModeOrchestrator {
     await fs.emptyDir(outputDir);
 
     await this.startWatchersStep.start();
+
+    this.serverCheckInterval = setInterval(() => {
+      void this.checkServerHealth();
+    }, 2000);
   }
 
   async close(): Promise<void> {
+    if (this.serverCheckInterval) {
+      clearInterval(this.serverCheckInterval);
+    }
+
     await this.startWatchersStep.close();
   }
 
@@ -100,6 +109,15 @@ export class DevModeOrchestrator {
         event.sourcePath,
         event.fileFolder,
       );
+    }
+  }
+
+  private async checkServerHealth(): Promise<void> {
+    const wasReady = this.state.steps.checkServer.output.isReady;
+    const isReady = await this.checkServerStep.execute();
+
+    if (isReady && !wasReady) {
+      this.scheduleSync();
     }
   }
 
