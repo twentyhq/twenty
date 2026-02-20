@@ -83,7 +83,24 @@ export const SettingsAIModelsTab = () => {
     .sort((a, b) => a.label.localeCompare(b.label));
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [showDeprecated, setShowDeprecated] = useState(true);
+  const [showDeprecated, setShowDeprecated] = useState(false);
+  const [enabledModelIds, setEnabledModelIds] = useState<Set<string>>(
+    () => new Set(realModels.map((model) => model.modelId)),
+  );
+
+  const handleModelToggle = (modelId: string) => {
+    setEnabledModelIds((previousEnabledModelIds) => {
+      const updatedEnabledModelIds = new Set(previousEnabledModelIds);
+
+      if (updatedEnabledModelIds.has(modelId)) {
+        updatedEnabledModelIds.delete(modelId);
+      } else {
+        updatedEnabledModelIds.add(modelId);
+      }
+
+      return updatedEnabledModelIds;
+    });
+  };
 
   const searchNormalized = normalizeSearchText(searchTerm);
 
@@ -210,7 +227,12 @@ export const SettingsAIModelsTab = () => {
             <TableHeader />
           </StyledTableHeaderRow>
           {filteredModels.map((model) => (
-            <SettingsAIAvailableModelRow key={model.modelId} model={model} />
+            <SettingsAIAvailableModelRow
+              key={model.modelId}
+              model={model}
+              checked={enabledModelIds.has(model.modelId)}
+              onToggle={handleModelToggle}
+            />
           ))}
         </Table>
       </Section>

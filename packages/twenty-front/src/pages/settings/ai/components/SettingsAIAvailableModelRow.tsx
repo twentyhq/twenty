@@ -11,6 +11,8 @@ import { PROVIDER_CONFIG } from '~/pages/settings/ai/constants/SettingsAiModelPr
 
 type SettingsAIAvailableModelRowProps = {
   model: ClientAiModelConfig;
+  checked: boolean;
+  onToggle: (modelId: string) => void;
 };
 
 export const StyledModelTableRow = styled(TableRow)`
@@ -49,6 +51,8 @@ const StyledCheckboxCell = styled(TableCell)`
 
 export const SettingsAIAvailableModelRow = ({
   model,
+  checked,
+  onToggle,
 }: SettingsAIAvailableModelRowProps) => {
   const theme = useTheme();
   const isDeprecated = model.deprecated === true;
@@ -70,7 +74,7 @@ export const SettingsAIAvailableModelRow = ({
       </StyledNameTableCell>
       <StyledProviderCell align="right">{providerLabel}</StyledProviderCell>
       <StyledCheckboxCell>
-        <Checkbox checked={true} />
+        <Checkbox checked={checked} onChange={() => onToggle(model.modelId)} />
       </StyledCheckboxCell>
     </StyledModelTableRow>
   );
