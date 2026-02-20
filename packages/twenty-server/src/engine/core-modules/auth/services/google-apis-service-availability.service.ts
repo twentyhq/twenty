@@ -133,7 +133,7 @@ export class GoogleApisServiceAvailabilityService {
     const isPreconditionCheckFailed =
       firstError.message
         ?.toLowerCase()
-        ?.includes('Precondition check failed') ?? false;
+        ?.includes('precondition check failed') ?? false;
 
     return (
       isFailedPrecondition && (isServiceNotEnabled || isPreconditionCheckFailed)
