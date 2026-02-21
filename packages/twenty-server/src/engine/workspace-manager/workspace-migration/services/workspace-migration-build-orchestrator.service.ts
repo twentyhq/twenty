@@ -99,6 +99,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         const values = Object.values(
           fromToOccurence.from.byUniversalIdentifier,
         );
+        // TODO naming
         const existing = structuredClone(allFlatEntityMaps[currFlatMaps]);
 
         values.forEach((value) => {

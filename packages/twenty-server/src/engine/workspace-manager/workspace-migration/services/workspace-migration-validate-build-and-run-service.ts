@@ -105,7 +105,13 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       allRelatedFlatEntityMaps.flatApplicationMaps.idByUniversalIdentifier[
         TWENTY_STANDARD_APPLICATION.universalIdentifier
       ];
-    if (!isDefined(twentyStandardApplicationId)) {
+
+    const applicationId =
+      allRelatedFlatEntityMaps.flatApplicationMaps.idByUniversalIdentifier[
+        applicationUniversalIdentifier
+      ];
+
+    if (!isDefined(twentyStandardApplicationId) || !isDefined(applicationId)) {
       throw new Error('Prastoin TODO');
     }
 
@@ -125,8 +131,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
               MetadataFlatEntity<typeof metadataName>
             >({
               applicationIds: isBuildingTwentyStandardApplication
-                ? []
-                : [twentyStandardApplicationId],
+                ? [applicationId]
+                : [applicationId, twentyStandardApplicationId],
               flatEntityMaps:
                 allRelatedFlatEntityMaps[metadataFlatEntityMapsKey],
             }),
