@@ -194,8 +194,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
       // @ts-expect-error Metadata flat entity maps cache key and metadataName colliding
       fromToAllFlatEntityMaps[flatEntityMapsKey] =
-        computeUniversalFlatEntityMapsFromTo({
-          flatEntityMaps,
+        computeUniversalFlatEntityMapsFromToThroughMutation({
+          flatEntityMaps: structuredClone(flatEntityMaps),
           flatEntityToCreate,
           flatEntityToDelete,
           flatEntityToUpdate,

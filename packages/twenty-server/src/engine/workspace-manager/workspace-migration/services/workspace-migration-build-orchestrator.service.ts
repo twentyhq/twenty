@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import {
@@ -100,14 +101,23 @@ export class WorkspaceMigrationBuildOrchestratorService {
         );
         const existing = structuredClone(allFlatEntityMaps[currFlatMaps]);
 
-        values.forEach((value) =>
+        values.forEach((value) => {
+          if (
+            findFlatEntityByUniversalIdentifier({
+              universalIdentifier: value.universalIdentifier,
+              flatEntityMaps: existing as any,
+            })
+          ) {
+            return;
+          }
+
           addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
             {
               universalFlatEntity: value,
               universalFlatEntityMapsToMutate: existing,
             },
-          ),
-        );
+          );
+        });
 
         return {
           ...allFlatEntityMaps,
