@@ -177,18 +177,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
           {
             additionalCacheDataMaps,
             buildOptions,
-            dependencyOptimisticFlatEntityMaps: {
-              // Breaks the mutation here
-              ...optimisticAllFlatEntityMaps,
-              flatFieldMetadataMaps: {
-                byUniversalIdentifier: {
-                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
-                    ?.byUniversalIdentifier,
-                  ...flatFieldMetadataMaps?.from.byUniversalIdentifier,
-                  ...flatFieldMetadataMaps?.to.byUniversalIdentifier,
-                },
-              },
-            },
+            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
             from: fromFlatObjectMetadataMaps,
             to: toFlatObjectMetadataMaps,
             workspaceId,
