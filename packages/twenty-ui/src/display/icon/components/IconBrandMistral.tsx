@@ -1,16 +1,16 @@
 import { useTheme } from '@emotion/react';
 
-import IconAnthropicRaw from '@assets/icons/anthropic.svg?react';
+import IconBrandMistralRaw from '@assets/icons/mistral.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
-type IconAnthropicProps = Pick<IconComponentProps, 'size' | 'color'>;
+type IconBrandMistralProps = Pick<IconComponentProps, 'size' | 'color'>;
 
-export const IconAnthropic = (props: IconAnthropicProps) => {
+export const IconBrandMistral = (props: IconBrandMistralProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
   return (
-    <IconAnthropicRaw
+    <IconBrandMistralRaw
       height={size}
       width={size}
       color={props.color ?? 'currentColor'}
