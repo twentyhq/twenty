@@ -13,6 +13,7 @@ export type ComputeUniversalFlatEntityMapsFromToArgs<
   flatEntityMaps: MetadataUniversalFlatEntityMaps<T>;
 } & FlatEntityToCreateDeleteUpdate<T>;
 
+// Note: We don't load the whole application flat entity maps in the from for performances purposes
 export const computeUniversalFlatEntityMapsFromToThroughMutation = <
   T extends AllMetadataName,
 >({

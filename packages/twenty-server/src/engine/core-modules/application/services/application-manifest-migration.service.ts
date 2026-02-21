@@ -77,14 +77,14 @@ export class ApplicationManifestMigrationService {
       fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
 
-    const dependencyAllFlatEntityMaps =
-      ownerFlatApplication.universalIdentifier ===
-      TWENTY_STANDARD_APPLICATION.universalIdentifier
-        ? undefined
-        : getApplicationSubAllFlatEntityMaps({
-            applicationIds: [twentyStandardFlatApplication.id],
-            fromAllFlatEntityMaps: existingAllFlatEntityMaps,
-          });
+    const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
+      applicationIds:
+        ownerFlatApplication.universalIdentifier ===
+        TWENTY_STANDARD_APPLICATION.universalIdentifier
+          ? [twentyStandardFlatApplication.id]
+          : [ownerFlatApplication.id, twentyStandardFlatApplication.id],
+      fromAllFlatEntityMaps: existingAllFlatEntityMaps,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(

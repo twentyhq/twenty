@@ -10,8 +10,6 @@ import {
   type WorkspaceMigrationOrchestratorFailedResult,
   type WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
-import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
-import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report.util';
 import { crossEntityTransversalValidation } from 'src/engine/workspace-manager/workspace-migration/utils/cross-entity-transversal-validation.util';
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
@@ -66,76 +64,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationWebhookActionsBuilderService: WorkspaceMigrationWebhookActionsBuilderService,
   ) {}
 
-
-  // The dependency cache must contain both the current application maps and dependent application maps
-  private setupOptimisticCache({
-    fromToAllFlatEntityMaps,
-    dependencyAllFlatEntityMaps,
-  }: Pick<
-    WorkspaceMigrationOrchestratorBuildArgs,
-    'fromToAllFlatEntityMaps' | 'dependencyAllFlatEntityMaps'
-  >): AllUniversalFlatEntityMaps {
-    const allFromToFlatEntityMapsKeys = Object.keys(
-      fromToAllFlatEntityMaps,
-    ) as (keyof AllUniversalFlatEntityMaps)[];
-
-    return allFromToFlatEntityMapsKeys.reduce<AllUniversalFlatEntityMaps>(
-      (allFlatEntityMaps, currFlatMaps) => {
-        const fromToOccurence = fromToAllFlatEntityMaps[currFlatMaps];
-
-        if (!isDefined(fromToOccurence)) {
-          return allFlatEntityMaps;
-        }
-
-        if (
-          Object.keys(allFlatEntityMaps[currFlatMaps].byUniversalIdentifier)
-            .length === 0
-        ) {
-          return {
-            ...allFlatEntityMaps,
-            [currFlatMaps]: fromToOccurence.from,
-          };
-        }
-
-        const values = Object.values(
-          fromToOccurence.from.byUniversalIdentifier,
-        );
-        // TODO naming
-        const universalFlatEntityMapsToMutate = structuredClone(
-          allFlatEntityMaps[currFlatMaps],
-        );
-
-        values.forEach((value) => {
-          if (
-            isDefined(
-              universalFlatEntityMapsToMutate.byUniversalIdentifier[
-                value.universalIdentifier
-              ],
-            )
-          ) {
-            return;
-          }
-
-          addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
-            {
-              universalFlatEntity: value,
-              universalFlatEntityMapsToMutate,
-            },
-          );
-        });
-
-        return {
-          ...allFlatEntityMaps,
-          [currFlatMaps]: universalFlatEntityMapsToMutate,
-        };
-      },
-      {
-        ...createEmptyAllFlatEntityMaps(),
-        ...dependencyAllFlatEntityMaps,
-      },
-    );
-  }
-
   public async buildWorkspaceMigration({
     workspaceId,
     buildOptions,
@@ -153,10 +81,11 @@ export class WorkspaceMigrationBuildOrchestratorService {
       EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
     );
 
-    const optimisticAllFlatEntityMaps = this.setupOptimisticCache({
-      fromToAllFlatEntityMaps,
-      dependencyAllFlatEntityMaps,
-    });
+    const optimisticAllFlatEntityMaps = {
+      ...createEmptyAllFlatEntityMaps(),
+      ...dependencyAllFlatEntityMaps,
+    };
+
     const {
       flatObjectMetadataMaps,
       flatViewFieldMaps,

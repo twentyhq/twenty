@@ -84,10 +84,11 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const allFlatEntityMapsCacheKeysToCompute =
       allMetadataNameCacheToCompute.map(getMetadataFlatEntityMapsKey);
 
-    const allRelatedFlatEntityMaps =
+    const { flatApplicationMaps, ...allRelatedFlatEntityMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         ...allFlatEntityMapsCacheKeysToCompute,
         ...WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY,
+        'flatApplicationMaps',
       ]);
 
     const initialAccumulator = allDependencyMetadataName.reduce<
@@ -102,12 +103,12 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     );
 
     const twentyStandardApplicationId =
-      allRelatedFlatEntityMaps.flatApplicationMaps.idByUniversalIdentifier[
+      flatApplicationMaps.idByUniversalIdentifier[
         TWENTY_STANDARD_APPLICATION.universalIdentifier
       ];
 
     const applicationId =
-      allRelatedFlatEntityMaps.flatApplicationMaps.idByUniversalIdentifier[
+      flatApplicationMaps.idByUniversalIdentifier[
         applicationUniversalIdentifier
       ];
 
