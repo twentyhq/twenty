@@ -7,7 +7,6 @@ import { LightIconButton } from 'twenty-ui/input';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
@@ -31,6 +30,7 @@ import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetReco
 import { useStore } from 'jotai';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledRightIconsContainer = styled.div`

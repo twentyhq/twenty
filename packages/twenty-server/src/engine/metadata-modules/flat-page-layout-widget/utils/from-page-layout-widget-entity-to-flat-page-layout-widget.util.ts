@@ -13,6 +13,7 @@ type FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs =
   FromEntityToFlatEntityArgs<'pageLayoutWidget'> & {
     fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
     viewFieldGroupUniversalIdentifierById?: Partial<Record<string, string>>;
+    viewUniversalIdentifierById?: Partial<Record<string, string>>;
   };
 
 export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
@@ -22,6 +23,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
   objectMetadataIdToUniversalIdentifierMap,
   fieldMetadataUniversalIdentifierById,
   viewFieldGroupUniversalIdentifierById,
+  viewUniversalIdentifierById,
 }: FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs): FlatPageLayoutWidget => {
   const pageLayoutWidgetEntityWithoutRelations = removePropertiesFromRecord(
     pageLayoutWidgetEntity,
@@ -73,6 +75,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
       configuration: pageLayoutWidgetEntityWithoutRelations.configuration,
       fieldMetadataUniversalIdentifierById,
       viewFieldGroupUniversalIdentifierById,
+      viewUniversalIdentifierById,
     });
 
   return {

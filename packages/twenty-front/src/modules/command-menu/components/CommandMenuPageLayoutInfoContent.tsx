@@ -3,7 +3,6 @@ import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateComm
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuShouldFocusTitleInputComponentState } from '@/command-menu/states/commandMenuShouldFocusTitleInputComponentState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -16,6 +15,7 @@ import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';

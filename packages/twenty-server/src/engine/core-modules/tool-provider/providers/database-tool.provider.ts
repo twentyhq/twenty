@@ -52,10 +52,6 @@ export class DatabaseToolProvider implements ToolProvider {
     const includeSchemas = options?.includeSchemas ?? true;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    if (!isDefined(context.userId) || !isDefined(context.userWorkspaceId)) {
-      return descriptors;
-    }
-
     const { rolesPermissions } =
       await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
         'rolesPermissions',

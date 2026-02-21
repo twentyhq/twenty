@@ -14,7 +14,6 @@ import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { isMinMaxRangeValid } from '@/command-menu/pages/page-layout/utils/isMinMaxRangeValid';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -22,6 +21,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ChartSettingItemProps = {

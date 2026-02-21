@@ -1,7 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableFrontComponentIdComponentState } from '@/command-menu/pages/front-component/states/viewableFrontComponentIdComponentState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useRecoilCallback } from 'recoil';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 

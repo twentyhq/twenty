@@ -4,9 +4,11 @@ import { v4 } from 'uuid';
 export const getViewBaseFile = ({
   name,
   universalIdentifier = v4(),
+  objectUniversalIdentifier = 'fill-later',
 }: {
   name: string;
   universalIdentifier?: string;
+  objectUniversalIdentifier?: string;
 }) => {
   const kebabCaseName = kebabCase(name);
 
@@ -15,7 +17,7 @@ export const getViewBaseFile = ({
 export default defineView({
   universalIdentifier: '${universalIdentifier}',
   name: '${kebabCaseName}',
-  objectUniversalIdentifier: 'fill-later',
+  objectUniversalIdentifier: '${objectUniversalIdentifier}',
   icon: 'IconList',
   position: 0,
   // fields: [

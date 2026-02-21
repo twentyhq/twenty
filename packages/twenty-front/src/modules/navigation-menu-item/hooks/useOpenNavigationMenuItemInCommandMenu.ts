@@ -1,5 +1,5 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { CommandMenuPages } from 'twenty-shared/types';
 import type { IconComponent } from 'twenty-ui/display';
 
 export const useOpenNavigationMenuItemInCommandMenu = () => {

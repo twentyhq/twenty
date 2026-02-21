@@ -5,7 +5,6 @@ import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/
 import { getDateGranularityLabel } from '@/command-menu/pages/page-layout/utils/getDateGranularityLabel';
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
-import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -17,7 +16,10 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useR
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { type WidgetConfiguration } from '~/generated-metadata/graphql';
+import {
+  type FieldsConfiguration,
+  type WidgetConfiguration,
+} from '~/generated-metadata/graphql';
 
 type ChartDateGranularitySelectionDropdownContentProps = {
   axis?: 'primary' | 'secondary';

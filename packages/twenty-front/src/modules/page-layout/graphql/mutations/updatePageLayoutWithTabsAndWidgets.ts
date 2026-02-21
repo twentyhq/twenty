@@ -1,9 +1,8 @@
+import { PAGE_LAYOUT_TAB_FRAGMENT } from '@/dashboards/graphql/fragments/pageLayoutTabFragment';
 import { gql } from '@apollo/client';
 
-import { PAGE_LAYOUT_WIDGET_FRAGMENT } from '@/page-layout/graphql/fragments/pageLayoutWidgetFragment';
-
 export const UPDATE_PAGE_LAYOUT_WITH_TABS_AND_WIDGETS = gql`
-  ${PAGE_LAYOUT_WIDGET_FRAGMENT}
+  ${PAGE_LAYOUT_TAB_FRAGMENT}
   mutation UpdatePageLayoutWithTabsAndWidgets(
     $id: String!
     $input: UpdatePageLayoutWithTabsInput!
@@ -13,20 +12,12 @@ export const UPDATE_PAGE_LAYOUT_WITH_TABS_AND_WIDGETS = gql`
       name
       type
       objectMetadataId
+      defaultTabToFocusOnMobileAndSidePanelId
       createdAt
       updatedAt
       deletedAt
       tabs {
-        id
-        applicationId
-        title
-        position
-        pageLayoutId
-        widgets {
-          ...PageLayoutWidgetFragment
-        }
-        createdAt
-        updatedAt
+        ...PageLayoutTabFragment
       }
     }
   }

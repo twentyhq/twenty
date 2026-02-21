@@ -31,6 +31,7 @@ export const fromFrontComponentEntityToFlatFrontComponent = ({
     builtComponentPath: frontComponentEntity.builtComponentPath,
     componentName: frontComponentEntity.componentName,
     builtComponentChecksum: frontComponentEntity.builtComponentChecksum,
+    isHeadless: frontComponentEntity.isHeadless,
     workspaceId: frontComponentEntity.workspaceId,
     universalIdentifier: frontComponentEntity.universalIdentifier,
     applicationId: frontComponentEntity.applicationId,

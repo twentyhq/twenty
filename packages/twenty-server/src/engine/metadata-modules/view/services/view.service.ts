@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
-import { ViewVisibility } from 'twenty-shared/types';
+import { In, IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -375,11 +375,13 @@ export class ViewService {
   async findByWorkspaceId(
     workspaceId: string,
     userWorkspaceId?: string,
+    viewTypes?: ViewType[],
   ): Promise<ViewEntity[]> {
     const views = await this.viewRepository.find({
       where: {
         workspaceId,
         deletedAt: IsNull(),
+        ...(viewTypes && viewTypes.length > 0 && { type: In(viewTypes) }),
       },
       order: { position: 'ASC' },
       relations: [
@@ -412,12 +414,14 @@ export class ViewService {
     workspaceId: string,
     objectMetadataId: string,
     userWorkspaceId?: string,
+    viewTypes?: ViewType[],
   ): Promise<ViewEntity[]> {
     const views = await this.viewRepository.find({
       where: {
         workspaceId,
         objectMetadataId,
         deletedAt: IsNull(),
+        ...(viewTypes && viewTypes.length > 0 && { type: In(viewTypes) }),
       },
       order: { position: 'ASC' },
       relations: [

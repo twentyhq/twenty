@@ -1,6 +1,10 @@
 import crypto from 'crypto';
 import { relative } from 'path';
-import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
+import {
+  type Manifest,
+  OUTPUT_DIR,
+  API_CLIENT_DIR,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 import type { EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
@@ -97,7 +101,7 @@ export const manifestUpdateChecksums = ({
 
     if (
       fileFolder === FileFolder.Dependencies &&
-      rootBuiltPath.startsWith('api-client/')
+      rootBuiltPath.startsWith(`${API_CLIENT_DIR}/`)
     ) {
       const entry = builtFileInfos.get(builtPath);
 
