@@ -65,17 +65,17 @@ export class ApplicationManifestMigrationService {
 
     const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
 
+    const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
+      applicationIds: [ownerFlatApplication.id],
+      fromAllFlatEntityMaps: existingAllFlatEntityMaps,
+    });
+
     const toAllUniversalFlatEntityMaps =
       computeApplicationManifestAllUniversalFlatEntityMaps({
         manifest,
         ownerFlatApplication,
         now,
       });
-
-    const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
-      applicationIds: [ownerFlatApplication.id],
-      fromAllFlatEntityMaps: existingAllFlatEntityMaps,
-    });
 
     const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
       applicationIds:
