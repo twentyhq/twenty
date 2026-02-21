@@ -10,6 +10,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { MetadataEventEmitter } from 'src/engine/metadata-event-emitter/metadata-event-emitter';
 import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
@@ -113,7 +117,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       ];
 
     if (!isDefined(twentyStandardApplicationId) || !isDefined(applicationId)) {
-      throw new Error('Prastoin TODO');
+      throw new FlatEntityMapsException(
+        'Application to build and its dependent application not found',
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
     }
 
     const isBuildingTwentyStandardApplication =
@@ -196,7 +203,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         allFlatEntityOperationByMetadataName[metadataName];
 
       if (!isDefined(flatEntityOperations)) {
-        throw new Error('Should never occurs');
+        throw new FlatEntityMapsException(
+          `Could not load flat entity maps to compare for ${metadataName}, should never occur`,
+          FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR,
+        );
       }
       const { flatEntityToCreate, flatEntityToDelete, flatEntityToUpdate } =
         flatEntityOperations;

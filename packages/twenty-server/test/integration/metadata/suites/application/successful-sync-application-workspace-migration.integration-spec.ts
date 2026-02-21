@@ -209,7 +209,7 @@ describe('syncApplication', () => {
     );
   }, 60000);
 
-  it.only('should create a TEXT field on the standard Company object', async () => {
+  it('should create a TEXT field on the standard Company object', async () => {
     const companyFieldId = uuidv4();
 
     const manifest: Manifest = {

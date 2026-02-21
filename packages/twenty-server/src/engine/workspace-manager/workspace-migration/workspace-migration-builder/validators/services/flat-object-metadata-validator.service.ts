@@ -22,7 +22,6 @@ export class FlatObjectMetadataValidatorService {
     buildOptions,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-      flatFieldMetadataMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
@@ -167,7 +166,6 @@ export class FlatObjectMetadataValidatorService {
     flatEntityToValidate: flatObjectMetadataToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps: optimisticUniversalFlatObjectMetadataMaps,
-      flatFieldMetadataMaps,
     },
     buildOptions,
   }: UniversalFlatEntityValidationArgs<
