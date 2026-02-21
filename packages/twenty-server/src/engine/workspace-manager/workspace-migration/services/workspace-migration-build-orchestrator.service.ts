@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import {
@@ -67,6 +66,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationWebhookActionsBuilderService: WorkspaceMigrationWebhookActionsBuilderService,
   ) {}
 
+
+  // The dependency cache must contain both the current application maps and dependent application maps
   private setupOptimisticCache({
     fromToAllFlatEntityMaps,
     dependencyAllFlatEntityMaps,
@@ -100,14 +101,17 @@ export class WorkspaceMigrationBuildOrchestratorService {
           fromToOccurence.from.byUniversalIdentifier,
         );
         // TODO naming
-        const existing = structuredClone(allFlatEntityMaps[currFlatMaps]);
+        const universalFlatEntityMapsToMutate = structuredClone(
+          allFlatEntityMaps[currFlatMaps],
+        );
 
         values.forEach((value) => {
           if (
-            findFlatEntityByUniversalIdentifier({
-              universalIdentifier: value.universalIdentifier,
-              flatEntityMaps: existing as any,
-            })
+            isDefined(
+              universalFlatEntityMapsToMutate.byUniversalIdentifier[
+                value.universalIdentifier
+              ],
+            )
           ) {
             return;
           }
@@ -115,14 +119,14 @@ export class WorkspaceMigrationBuildOrchestratorService {
           addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
             {
               universalFlatEntity: value,
-              universalFlatEntityMapsToMutate: existing,
+              universalFlatEntityMapsToMutate,
             },
           );
         });
 
         return {
           ...allFlatEntityMaps,
-          [currFlatMaps]: existing,
+          [currFlatMaps]: universalFlatEntityMapsToMutate,
         };
       },
       {
