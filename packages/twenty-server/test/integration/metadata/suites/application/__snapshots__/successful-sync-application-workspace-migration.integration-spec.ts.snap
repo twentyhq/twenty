@@ -1,5 +1,68 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`syncApplication should create a TEXT field on the standard Company object 1`] = `
+{
+  "syncApplication": {
+    "actions": [
+      {
+        "flatEntity": {
+          "applicationUniversalIdentifier": Any<String>,
+          "createdAt": Any<String>,
+          "defaultValue": null,
+          "description": "The industry of the company",
+          "icon": "IconBuildingFactory2",
+          "isActive": true,
+          "isCustom": true,
+          "isLabelSyncedWithName": false,
+          "isNullable": true,
+          "isSystem": false,
+          "isUIReadOnly": false,
+          "isUnique": false,
+          "label": "Industry",
+          "morphId": null,
+          "name": "industry",
+          "objectMetadataUniversalIdentifier": Any<String>,
+          "options": null,
+          "relationTargetFieldMetadataUniversalIdentifier": null,
+          "relationTargetObjectMetadataUniversalIdentifier": null,
+          "standardOverrides": null,
+          "type": "TEXT",
+          "universalIdentifier": Any<String>,
+          "universalSettings": null,
+          "updatedAt": Any<String>,
+        },
+        "metadataName": "fieldMetadata",
+        "type": "create",
+      },
+      {
+        "flatEntity": {
+          "applicationUniversalIdentifier": Any<String>,
+          "canAccessAllTools": false,
+          "canBeAssignedToAgents": true,
+          "canBeAssignedToApiKeys": true,
+          "canBeAssignedToUsers": true,
+          "canDestroyAllObjectRecords": false,
+          "canReadAllObjectRecords": false,
+          "canSoftDeleteAllObjectRecords": false,
+          "canUpdateAllObjectRecords": false,
+          "canUpdateAllSettings": false,
+          "createdAt": Any<String>,
+          "description": "A test role",
+          "icon": null,
+          "isEditable": true,
+          "label": "Test Role",
+          "universalIdentifier": Any<String>,
+          "updatedAt": Any<String>,
+        },
+        "metadataName": "role",
+        "type": "create",
+      },
+    ],
+    "applicationUniversalIdentifier": Any<String>,
+  },
+}
+`;
+
 exports[`syncApplication should return workspace migration actions on initial sync then on second sync with field rename and new role 1`] = `
 {
   "syncApplication": {

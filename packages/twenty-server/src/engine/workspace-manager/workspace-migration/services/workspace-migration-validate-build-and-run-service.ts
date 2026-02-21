@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { writeFileSync } from 'fs';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MetadataEventEmitter } from 'src/engine/metadata-event-emitter/metadata-event-emitter';
 import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
@@ -236,6 +237,11 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         });
 
     if (validateAndBuildResult.status === 'fail') {
+      writeFileSync(
+        `${Date.now()}.json`,
+        JSON.stringify(validateAndBuildResult, null, 2),
+      );
+
       if (this.isDebugEnabled) {
         this.logger.debug(JSON.stringify(validateAndBuildResult, null, 2));
       }
