@@ -2,4 +2,5 @@ import { type AdditionalCacheDataMaps } from 'src/engine/workspace-cache/types/w
 
 export const WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY = [
   'featureFlagsMap',
+  'flatApplicationMaps'
 ] as const satisfies (keyof AdditionalCacheDataMaps)[];

@@ -6,16 +6,18 @@ import {
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { writeFileSync } from 'fs';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MetadataEventEmitter } from 'src/engine/metadata-event-emitter/metadata-event-emitter';
 import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/workspace-migration.exception';
 import { WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY } from 'src/engine/workspace-manager/workspace-migration/constant/workspace-migration-additional-cache-data-maps-key.constant';
 import {
@@ -30,7 +32,7 @@ import {
   WorkspaceMigrationOrchestratorFailedResult,
   WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
-import { computeUniversalFlatEntityMapsFromTo } from 'src/engine/workspace-manager/workspace-migration/utils/compute-universal-flat-entity-maps-from-to.util';
+import { computeUniversalFlatEntityMapsFromToThroughMutation } from 'src/engine/workspace-manager/workspace-migration/utils/compute-universal-flat-entity-maps-from-to-through-mutation.util';
 import { InferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/infer-deletion-from-missing-entities.type';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
@@ -40,8 +42,6 @@ type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
     [P in AllMetadataName]?: FlatEntityToCreateDeleteUpdate<P>;
   };
   isSystemBuild?: boolean;
-  // TODO remove once application synchronization do not consume services atomically anymore
-  // Should always be the universal workspace custom app id
   applicationUniversalIdentifier: string;
 };
 
@@ -67,6 +67,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   private async computeAllRelatedFlatEntityMaps({
     allFlatEntityOperationByMetadataName,
     workspaceId,
+    applicationUniversalIdentifier,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs) {
     const allMetadataNameToCompare = Object.keys(
       allFlatEntityOperationByMetadataName,
@@ -99,6 +100,19 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       }),
       {},
     );
+
+    const twentyStandardApplicationId =
+      allRelatedFlatEntityMaps.flatApplicationMaps.idByUniversalIdentifier[
+        TWENTY_STANDARD_APPLICATION.universalIdentifier
+      ];
+    if (!isDefined(twentyStandardApplicationId)) {
+      throw new Error('Prastoin TODO');
+    }
+
+    const isBuildingTwentyStandardApplication =
+      applicationUniversalIdentifier ===
+      TWENTY_STANDARD_APPLICATION.universalIdentifier;
+
     const dependencyAllFlatEntityMaps = allDependencyMetadataName.reduce(
       (allFlatEntityMaps, metadataName) => {
         const metadataFlatEntityMapsKey =
@@ -107,7 +121,15 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         return {
           ...allFlatEntityMaps,
           [metadataFlatEntityMapsKey]:
-            allRelatedFlatEntityMaps[metadataFlatEntityMapsKey],
+            getSubFlatEntityMapsByApplicationIdsOrThrow<
+              MetadataFlatEntity<typeof metadataName>
+            >({
+              applicationIds: isBuildingTwentyStandardApplication
+                ? []
+                : [twentyStandardApplicationId],
+              flatEntityMaps:
+                allRelatedFlatEntityMaps[metadataFlatEntityMapsKey],
+            }),
         };
       },
       initialAccumulator,
@@ -154,9 +176,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     });
 
     const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {};
-    const inferDeletionFromMissingEntities: InferDeletionFromMissingEntities =
-      {};
     const idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName =
+      {};
+    const inferDeletionFromMissingEntities: InferDeletionFromMissingEntities =
       {};
     const allMetadataNameToCompare = Object.keys(
       allFlatEntityOperationByMetadataName,
@@ -237,11 +259,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         });
 
     if (validateAndBuildResult.status === 'fail') {
-      writeFileSync(
-        `${Date.now()}.json`,
-        JSON.stringify(validateAndBuildResult, null, 2),
-      );
-
       if (this.isDebugEnabled) {
         this.logger.debug(JSON.stringify(validateAndBuildResult, null, 2));
       }
