@@ -424,10 +424,10 @@ describe('useChartSettingsValues', () => {
           }),
         {
           wrapper: ({ children }) => (
-        <JotaiProvider store={jotaiStore}>
-          <RecoilRoot>{children}</RecoilRoot>
-        </JotaiProvider>
-      ),
+            <JotaiProvider store={jotaiStore}>
+              <RecoilRoot>{children}</RecoilRoot>
+            </JotaiProvider>
+          ),
         },
       );
 

@@ -40,7 +40,6 @@ describe('useBuildSpreadSheetImportFields', () => {
     jotaiStore.set(objectMetadataItemsState.atom, []);
   });
 
-
   const createMockFieldMetadataItem = (
     overrides: Partial<FieldMetadataItem> = {},
   ): FieldMetadataItem => ({

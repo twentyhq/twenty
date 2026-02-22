@@ -1,3 +1,4 @@
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
@@ -47,6 +48,7 @@ export const MainContextStoreProvider = () => {
   const viewIdQueryParam = searchParams.get('viewId');
 
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const isCurrentUserLoaded = useRecoilValueV2(isCurrentUserLoadedState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
@@ -69,8 +71,9 @@ export const MainContextStoreProvider = () => {
   const showAuthModal = useShowAuthModal();
 
   const shouldComputeContextStore =
-    (isRecordIndexPage || isRecordShowPage || isSettingsPage) && !showAuthModal;
-
+    (isRecordIndexPage || isRecordShowPage || isSettingsPage) &&
+    !showAuthModal &&
+    isCurrentUserLoaded;
 
   if (!shouldComputeContextStore) {
     return null;

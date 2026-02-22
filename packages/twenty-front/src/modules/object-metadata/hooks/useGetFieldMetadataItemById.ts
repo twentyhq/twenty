@@ -12,7 +12,7 @@ type GetFieldMetadataItemByIdOrThrowResult = {
 
 export const useGetFieldMetadataItemByIdOrThrow = () => {
   const getFieldMetadataItemById = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       (fieldMetadataId: string): GetFieldMetadataItemByIdOrThrowResult => {
         const objectMetadataItems = jotaiStore.get(
           objectMetadataItemsState.atom,

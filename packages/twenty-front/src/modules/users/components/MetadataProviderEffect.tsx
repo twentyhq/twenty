@@ -262,7 +262,6 @@ export const MetadataProviderEffect = () => {
 
   useEffect(() => {
     if (localIsCurrentUserLoaded && localAreViewsLoaded) {
-      console.log('setting isCurrentUserLoaded to true');
       setIsCurrentUserLoaded(true);
     }
   }, [localIsCurrentUserLoaded, localAreViewsLoaded, setIsCurrentUserLoaded]);

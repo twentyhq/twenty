@@ -25,7 +25,7 @@ export const useOpenActivityTargetCellEditMode = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openActivityTargetCellEditMode = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       ({
         recordPickerInstanceId,
         activityTargetObjectRecords,
