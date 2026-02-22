@@ -39,7 +39,7 @@ export const SettingsAIModelsTab = () => {
     .map((model) => ({
       value: model.modelId,
       label: model.label,
-      Icon: (model.modelFamily
+      Icon: (model.modelFamily && model.modelFamily in MODEL_FAMILY_CONFIG
         ? MODEL_FAMILY_CONFIG[model.modelFamily]
         : MODEL_FAMILY_CONFIG.FALLBACK
       ).Icon,
