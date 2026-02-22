@@ -89,6 +89,15 @@ password
 {{- end -}}
 {{- end -}}
 
+{{/* Check if using external secret for redis password */}}
+{{- define "twenty.redis.useExternalSecret" -}}
+{{- if and (not .Values.redisInternal.enabled) .Values.redis.external.secretName .Values.redis.external.passwordKey -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
 {{/* Compose Redis URL */}}
 {{- define "twenty.redisUrl" -}}
 {{- if .Values.server.env.REDIS_URL -}}
@@ -99,7 +108,16 @@ password
 {{- else -}}
 {{- $host := .Values.redis.external.host | default "redis" -}}
 {{- $port := .Values.redis.external.port | default 6379 -}}
-{{- printf "redis://%s:%v" $host $port -}}
+{{- if or (eq (include "twenty.redis.useExternalSecret" .) "true") (.Values.redis.external.password) -}}
+{{- $auth := "$(REDIS_PASSWORD)@" -}}
+{{- printf "redis://%s%s:%v" $auth $host $port -}}
+{{- else if .Values.redis.external.password -}}
+{{- $auth := "$(REDIS_PASSWORD)@" -}}
+{{- printf "redis://%s%s:%v" $auth $host $port -}}
+{{- else -}}
+{{- $auth := "" -}}
+{{- printf "redis://%s%s:%v" $auth $host $port -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 
