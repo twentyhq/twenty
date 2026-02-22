@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
@@ -18,7 +19,9 @@ const mockPreferences = {
 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
+  <JotaiProvider store={jotaiStore}>
+    <RecoilRoot>{children}</RecoilRoot>
+  </JotaiProvider>
 );
 
 describe('useDateTimeFormat', () => {

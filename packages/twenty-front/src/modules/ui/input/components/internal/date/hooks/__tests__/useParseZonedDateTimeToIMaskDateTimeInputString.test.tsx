@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { RecoilRoot } from 'recoil';
 import { Temporal } from 'temporal-polyfill';
 
@@ -30,7 +31,11 @@ describe('useParseZonedDateTimeToIMaskDateTimeInputString', () => {
         numberFormat: NumberFormat.COMMAS_AND_DOT,
         calendarStartDay: CalendarStartDay.MONDAY,
       });
-      return <RecoilRoot>{children}</RecoilRoot>;
+      return (
+        <JotaiProvider store={jotaiStore}>
+          <RecoilRoot>{children}</RecoilRoot>
+        </JotaiProvider>
+      );
     };
 
   it('should format with day first format (DD/MM/YYYY, HH:mm)', () => {
