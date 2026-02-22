@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -26,9 +28,8 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
 
   const queryId = `record-table-virtualized-${objectMetadataItem.nameSingular}`;
 
-  useListenToEventsForQuery({
-    queryId,
-    operationSignature: {
+  const operationSignature = useMemo(
+    () => ({
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
         filter: computeRecordGqlOperationFilter({
@@ -39,7 +40,19 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
         }),
         orderBy: turnSortsIntoOrderBy(objectMetadataItem, currentRecordSorts),
       },
-    },
+    }),
+    [
+      objectMetadataItem,
+      currentRecordFilters,
+      currentRecordFilterGroups,
+      filterValueDependencies,
+      currentRecordSorts,
+    ],
+  );
+
+  useListenToEventsForQuery({
+    queryId,
+    operationSignature,
   });
 
   return null;

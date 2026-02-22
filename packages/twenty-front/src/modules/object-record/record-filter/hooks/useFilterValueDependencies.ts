@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
@@ -11,10 +13,13 @@ export const useFilterValueDependencies = (): {
 
   const { userTimezone } = useUserTimezone();
 
-  return {
-    filterValueDependencies: {
+  const filterValueDependencies = useMemo(
+    () => ({
       currentWorkspaceMemberId,
       timeZone: userTimezone,
-    },
-  };
+    }),
+    [currentWorkspaceMemberId, userTimezone],
+  );
+
+  return { filterValueDependencies };
 };
