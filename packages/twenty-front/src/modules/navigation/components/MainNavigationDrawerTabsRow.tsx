@@ -118,7 +118,7 @@ export const MainNavigationDrawerTabsRow = () => {
   const { createChatThread } = useCreateNewAIChatThread();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  if (isMobile || !isAiEnabled) {
+  if (!isAiEnabled) {
     return null;
   }
 
@@ -145,8 +145,8 @@ export const MainNavigationDrawerTabsRow = () => {
     isActive ? theme.font.color.primary : theme.font.color.tertiary;
 
   return (
-    <StyledRow isExpanded={isNavigationDrawerExpanded}>
-      {isNavigationDrawerExpanded && (
+    <StyledRow isExpanded={isNavigationDrawerExpanded || isMobile}>
+      {(isNavigationDrawerExpanded || isMobile) && (
         <StyledTabsPill role="tablist" aria-label={t`Navigation tabs`}>
           <StyledTabWrapper
             isActive={activeTab === 'home'}
@@ -182,7 +182,9 @@ export const MainNavigationDrawerTabsRow = () => {
           </StyledTabWrapper>
         </StyledTabsPill>
       )}
-      <StyledNewChatButtonWrapper isExpanded={isNavigationDrawerExpanded}>
+      <StyledNewChatButtonWrapper
+        isExpanded={isNavigationDrawerExpanded || isMobile}
+      >
         <StyledNewChatButton
           role="button"
           tabIndex={0}
@@ -191,7 +193,7 @@ export const MainNavigationDrawerTabsRow = () => {
           onKeyDown={handleNewChatKeyDown}
         >
           <IconMessageCirclePlus size={theme.icon.size.md} />
-          {isNavigationDrawerExpanded && t`New chat`}
+          {(isNavigationDrawerExpanded || isMobile) && t`New chat`}
         </StyledNewChatButton>
       </StyledNewChatButtonWrapper>
     </StyledRow>
