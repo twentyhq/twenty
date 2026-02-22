@@ -1,4 +1,5 @@
-import { objectMetadataItemsRecoilBridge } from '@/object-metadata/states/objectMetadataItemsRecoilBridge';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
 import { RecordFieldsComponentInstanceContext } from '@/object-record/record-field/states/context/RecordFieldsComponentInstanceContext';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
@@ -18,7 +19,7 @@ export const visibleRecordFieldsComponentSelector = createComponentSelector({
         }),
       );
 
-      const objectMetadataItems = get(objectMetadataItemsRecoilBridge);
+      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
 
       const filteredVisibleAndReadableRecordFields = currentRecordFields.filter(
         (recordFieldToFilter) => {

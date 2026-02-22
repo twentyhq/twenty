@@ -6,10 +6,10 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { ViewKey } from '@/views/types/ViewKey';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { ViewKey } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const getViewId = (
@@ -66,7 +66,7 @@ export const MainContextStoreProvider = () => {
   const indexViewId = coreViews.find(
     (view) =>
       view.objectMetadataId === objectMetadataItem?.id &&
-      view.key === ViewKey.Index,
+      view.key === ViewKey.INDEX,
   )?.id;
 
   const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);

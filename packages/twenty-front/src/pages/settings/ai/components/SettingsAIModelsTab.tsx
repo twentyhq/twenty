@@ -1,5 +1,3 @@
-import { useRecoilState } from 'recoil';
-
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -7,6 +5,7 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { t } from '@lingui/core/macro';
 import { H2Title, IconBolt } from 'twenty-ui/display';
@@ -21,7 +20,7 @@ const VIRTUAL_MODEL_IDS: Set<string> = new Set([
 
 export const SettingsAIModelsTab = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
     currentWorkspaceState,
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
