@@ -25,9 +25,6 @@ jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
-  onInitializeRecoilSnapshot: ({ set }) => {
-    set(prefetchFavoritesState, initialFavorites as Favorite[]);
-  },
 });
 
 describe('useHandleFavoriteDragAndDrop', () => {
@@ -40,6 +37,7 @@ describe('useHandleFavoriteDragAndDrop', () => {
       objectMetadataItemsState.atom,
       generatedMockObjectMetadataItems,
     );
+    jotaiStore.set(prefetchFavoritesState.atom, initialFavorites as Favorite[]);
   });
 
   const setupHook = () => {

@@ -1,5 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -9,7 +10,6 @@ import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
-import { useRecoilCallback } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 
@@ -68,33 +68,30 @@ export const useDefaultHomePagePath = () => {
     return { objectMetadataItem: firstObjectMetadataItem, view };
   }, [getFirstView, readableAlphaSortedActiveNonSystemObjectMetadataItems]);
 
-  const getDefaultObjectPathInfo = useRecoilCallback(
-    ({ snapshot }) => {
-      return () => {
-        const lastVisitedObjectMetadataItemId = snapshot
-          .getLoadable(lastVisitedObjectMetadataItemIdState)
-          .getValue();
+  const getDefaultObjectPathInfo = useCallback(() => {
+    const lastVisitedObjectMetadataItemId = jotaiStore.get(
+      lastVisitedObjectMetadataItemIdState.atom,
+    );
 
-        const lastVisitedObjectMetadataItem = isDefined(
-          lastVisitedObjectMetadataItemId,
-        )
-          ? getActiveObjectMetadataItemMatchingId(
-              lastVisitedObjectMetadataItemId,
-            )
-          : undefined;
+    const lastVisitedObjectMetadataItem = isDefined(
+      lastVisitedObjectMetadataItemId,
+    )
+      ? getActiveObjectMetadataItemMatchingId(lastVisitedObjectMetadataItemId)
+      : undefined;
 
-        if (isDefined(lastVisitedObjectMetadataItem)) {
-          return {
-            view: getFirstView(lastVisitedObjectMetadataItemId),
-            objectMetadataItem: lastVisitedObjectMetadataItem,
-          };
-        }
-
-        return firstObjectPathInfo;
+    if (isDefined(lastVisitedObjectMetadataItem)) {
+      return {
+        view: getFirstView(lastVisitedObjectMetadataItemId),
+        objectMetadataItem: lastVisitedObjectMetadataItem,
       };
-    },
-    [firstObjectPathInfo, getActiveObjectMetadataItemMatchingId, getFirstView],
-  );
+    }
+
+    return firstObjectPathInfo;
+  }, [
+    firstObjectPathInfo,
+    getActiveObjectMetadataItemMatchingId,
+    getFirstView,
+  ]);
 
   const defaultHomePagePath = useMemo(() => {
     if (!isDefined(currentUser)) {

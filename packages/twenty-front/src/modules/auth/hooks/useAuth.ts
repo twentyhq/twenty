@@ -28,6 +28,12 @@ import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetReco
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
@@ -37,6 +43,7 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { coreViewsState } from '@/views/states/coreViewState';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import {
   countAvailableWorkspaces,
@@ -167,6 +174,22 @@ export const useAuth = () => {
           lastAuthenticatedMethodState.atom,
           lastAuthenticatedMethod,
         );
+
+        // Reset user-data Jotai states that were migrated from Recoil
+        // (Recoil snapshot reset no longer handles these since they are Jotai V2)
+        jotaiStore.set(tokenPairState.atom, null);
+        jotaiStore.set(currentUserState.atom, null);
+        jotaiStore.set(currentWorkspaceState.atom, null);
+        jotaiStore.set(currentUserWorkspaceState.atom, null);
+        jotaiStore.set(currentWorkspaceMemberState.atom, null);
+        jotaiStore.set(currentWorkspaceMembersState.atom, []);
+        jotaiStore.set(availableWorkspacesState.atom, {
+          availableWorkspacesForSignIn: [],
+          availableWorkspacesForSignUp: [],
+        });
+        jotaiStore.set(loginTokenState.atom, null);
+        jotaiStore.set(signInUpStepState.atom, SignInUpStep.Init);
+        jotaiStore.set(coreViewsState.atom, []);
 
         await client.clearStore();
         setLastAuthenticateWorkspaceDomain(null);

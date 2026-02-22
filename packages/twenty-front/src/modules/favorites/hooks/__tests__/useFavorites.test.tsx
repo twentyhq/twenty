@@ -16,9 +16,6 @@ import {
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
-  onInitializeRecoilSnapshot: ({ set }) => {
-    set(prefetchFavoritesState, initialFavorites);
-  },
 });
 
 describe('useFavorites', () => {
@@ -27,6 +24,7 @@ describe('useFavorites', () => {
       objectMetadataItemsState.atom,
       generatedMockObjectMetadataItems,
     );
+    jotaiStore.set(prefetchFavoritesState.atom, initialFavorites);
   });
 
   it('should fetch and sort favorites successfully', () => {

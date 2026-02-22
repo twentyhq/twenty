@@ -17,7 +17,7 @@ import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/se
 import { ViewKey } from '@/views/types/ViewKey';
 import { useTheme } from '@emotion/react';
 import { useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
@@ -50,7 +50,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
   const iconColors = getNavigationMenuItemIconColors(theme);
-  const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
+  const lastVisitedViewPerObjectMetadataItem = useRecoilValueV2(
     lastVisitedViewPerObjectMetadataItemState,
   );
 

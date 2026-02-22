@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { getFormatPreferencesFromWorkspaceMember } from '@/localization/utils/format-preferences/getFormatPreferencesFromWorkspaceMember';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 export const useInitializeFormatPreferences = () => {
-  const setWorkspaceMemberFormatPreferences = useSetRecoilState(
+  const setWorkspaceMemberFormatPreferences = useSetRecoilStateV2(
     workspaceMemberFormatPreferencesState,
   );
 

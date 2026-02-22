@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { type MutableSnapshot, RecoilRoot } from 'recoil';
+import { RecoilRoot } from 'recoil';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -76,16 +76,11 @@ const mockInitialPreferences = {
 };
 
 const createWrapper =
-  (initializeRecoilState?: (mutableSnapshot: MutableSnapshot) => void) =>
+  () =>
   ({ children }: { children: ReactNode }) => {
-    const defaultInitState = ({ set }: MutableSnapshot) => {
-      set(workspaceMemberFormatPreferencesState, mockInitialPreferences);
-      initializeRecoilState?.({ set } as MutableSnapshot);
-    };
-
     return (
       <JotaiProvider store={jotaiStore}>
-        <RecoilRoot initializeState={defaultInitState}>{children}</RecoilRoot>
+        <RecoilRoot>{children}</RecoilRoot>
       </JotaiProvider>
     );
   };
@@ -93,6 +88,11 @@ const createWrapper =
 describe('useFormatPreferences', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    jotaiStore.set(
+      workspaceMemberFormatPreferencesState.atom,
+      mockInitialPreferences,
+    );
 
     jotaiStore.set(
       currentWorkspaceMemberState.atom,

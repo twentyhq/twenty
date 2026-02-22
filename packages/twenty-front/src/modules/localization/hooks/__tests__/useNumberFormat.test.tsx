@@ -4,6 +4,7 @@ import { RecoilRoot } from 'recoil';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { formatNumber as utilFormatNumber } from '~/utils/format/formatNumber';
 
 jest.mock('~/utils/format/formatNumber');
@@ -13,24 +14,19 @@ const mockUtilFormatNumber = utilFormatNumber as jest.MockedFunction<
 >;
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot
-    initializeState={({ set }) => {
-      set(workspaceMemberFormatPreferencesState, {
-        timeZone: 'UTC',
-        dateFormat: 'MM/dd/yyyy' as any,
-        timeFormat: 'HH:mm' as any,
-        numberFormat: '1,000.00' as any,
-        calendarStartDay: 'MONDAY' as any,
-      });
-    }}
-  >
-    {children}
-  </RecoilRoot>
+  <RecoilRoot>{children}</RecoilRoot>
 );
 
 describe('useNumberFormat', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jotaiStore.set(workspaceMemberFormatPreferencesState.atom, {
+      timeZone: 'UTC',
+      dateFormat: 'MM/dd/yyyy' as any,
+      timeFormat: 'HH:mm' as any,
+      numberFormat: '1,000.00' as any,
+      calendarStartDay: 'MONDAY' as any,
+    });
   });
 
   it('should be a function', () => {
