@@ -174,3 +174,6 @@ redis:
   external:
     host: ""
     port: 6379
+    password: ""
+    secretName: ""
+    passwordKey: ""
