@@ -30,11 +30,7 @@ const StyledPill = styled(Pill)`
   color: ${({ theme }) => theme.color.blue};
 `;
 
-const ViewBarFilterDropdownAdvancedFilterButtonContent = ({
-  objectMetadataId,
-}: {
-  objectMetadataId: string;
-}) => {
+export const ViewBarFilterDropdownAdvancedFilterButton = () => {
   const advancedFilterQuerySubFilterCount = 0; // TODO
 
   const { t } = useLingui();
@@ -54,8 +50,14 @@ const ViewBarFilterDropdownAdvancedFilterButtonContent = ({
 
   const { upsertRecordFilter } = useUpsertRecordFilter();
 
+  const objectMetadataId = currentView?.objectMetadataId;
+
+  if (!objectMetadataId) {
+    throw new Error('Object metadata id is missing from current view');
+  }
+
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataId,
+    objectId: objectMetadataId ?? null,
   });
 
   const availableFieldMetadataItemsForFilter = useFamilySelectorValueV2(
@@ -134,20 +136,5 @@ const ViewBarFilterDropdownAdvancedFilterButtonContent = ({
         <StyledPill label={advancedFilterQuerySubFilterCount.toString()} />
       )}
     </SelectableListItem>
-  );
-};
-
-export const ViewBarFilterDropdownAdvancedFilterButton = () => {
-  const { currentView } = useGetCurrentViewOnly();
-  const objectMetadataId = currentView?.objectMetadataId;
-
-  if (!isDefined(objectMetadataId)) {
-    return null;
-  }
-
-  return (
-    <ViewBarFilterDropdownAdvancedFilterButtonContent
-      objectMetadataId={objectMetadataId}
-    />
   );
 };
