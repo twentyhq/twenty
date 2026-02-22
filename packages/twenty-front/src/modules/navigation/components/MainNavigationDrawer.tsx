@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { AIChatThreadsList } from '@/ai/components/AIChatThreadsList';
+import { NavigationDrawerAIChatThreadsList } from '@/ai/components/NavigationDrawerAIChatThreadsList';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
 import { NavigationMenuItemFolderContentDispatcherEffect } from '@/navigation-menu-item/components/NavigationMenuItemFolderContentDispatcher';
@@ -71,7 +71,7 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
       <NavigationDrawerScrollableContent>
         {activeTab === 'chat' ? (
           <StyledAIChatThreadsListWrapper>
-            <AIChatThreadsList />
+            <NavigationDrawerAIChatThreadsList />
           </StyledAIChatThreadsListWrapper>
         ) : isNavigationMenuItemEditingEnabled ? (
           <StyledScrollableContent>

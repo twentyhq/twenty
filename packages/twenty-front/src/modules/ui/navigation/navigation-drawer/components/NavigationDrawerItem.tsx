@@ -55,6 +55,7 @@ export type NavigationDrawerItemProps = {
   count?: number;
   keyboard?: string[];
   rightOptions?: ReactNode;
+  alwaysShowRightOptions?: boolean;
   isDragging?: boolean;
   isRightOptionsDropdownOpen?: boolean;
   triggerEvent?: TriggerEventType;
@@ -266,6 +267,7 @@ const visibleStateStyles = css`
 const StyledRightOptionsVisbility = styled.div<{
   isMobile: boolean;
   isRightOptionsDropdownOpen?: boolean;
+  alwaysVisible?: boolean;
 }>`
   display: block;
   opacity: 0;
@@ -278,8 +280,9 @@ const StyledRightOptionsVisbility = styled.div<{
   height: 1px;
   width: 1px;
 
-  ${({ isMobile, isRightOptionsDropdownOpen }) =>
-    (isMobile || isRightOptionsDropdownOpen) && visibleStateStyles}
+  ${({ isMobile, isRightOptionsDropdownOpen, alwaysVisible }) =>
+    (isMobile || isRightOptionsDropdownOpen || alwaysVisible) &&
+    visibleStateStyles}
 
   .navigation-drawer-item:hover & {
     ${visibleStateStyles}
@@ -303,6 +306,7 @@ export const NavigationDrawerItem = ({
   keyboard,
   subItemState,
   rightOptions,
+  alwaysShowRightOptions = false,
   isDragging,
   isRightOptionsDropdownOpen,
   triggerEvent,
@@ -468,6 +472,7 @@ export const NavigationDrawerItem = ({
                 }}
               >
                 <StyledRightOptionsVisbility
+                  alwaysVisible={alwaysShowRightOptions}
                   isMobile={isMobile}
                   isRightOptionsDropdownOpen={
                     isRightOptionsDropdownOpen || false
