@@ -227,15 +227,14 @@ export class ChatExecutionService {
       .then(([usage, steps]) => {
         const cacheCreationTokens = steps.reduce((sum, step) => {
           const meta = step.providerMetadata;
-
-          return (
-            sum +
+          const stepTokens =
             ((meta?.anthropic as Record<string, unknown>)
-              ?.cacheCreationInputTokens ??
-              (meta?.bedrock as Record<string, unknown>)
-                ?.cacheWriteInputTokens ??
-              (0 as number))
-          );
+              ?.cacheCreationInputTokens as number | undefined) ??
+            ((meta?.bedrock as Record<string, unknown>)
+              ?.cacheWriteInputTokens as number | undefined) ??
+            0;
+
+          return sum + stepTokens;
         }, 0);
 
         this.aiBillingService.calculateAndBillUsage(
@@ -337,7 +336,8 @@ export class ChatExecutionService {
 
         if (bedrockProvider) {
           return {
-            web_search: bedrockProvider.tools.webSearch_20250305(),
+            web_search:
+              bedrockProvider.tools.webSearch_20250305() as ToolSet[string],
           };
         }
 

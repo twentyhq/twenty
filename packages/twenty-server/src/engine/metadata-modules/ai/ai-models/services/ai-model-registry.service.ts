@@ -202,7 +202,7 @@ export class AiModelRegistryService {
       this.modelRegistry.set(modelConfig.modelId, {
         modelId: modelConfig.modelId,
         inferenceProvider: InferenceProvider.BEDROCK,
-        model: this.bedrockProvider(modelConfig.modelId),
+        model: this.bedrockProvider!(modelConfig.modelId),
         doesSupportThinking: modelConfig.doesSupportThinking,
       });
     });

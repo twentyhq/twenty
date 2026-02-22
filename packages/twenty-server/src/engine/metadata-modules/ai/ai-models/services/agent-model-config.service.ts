@@ -57,7 +57,8 @@ export class AgentModelConfigService {
             this.aiModelRegistryService.getBedrockProvider();
 
           if (bedrockProvider) {
-            tools.web_search = bedrockProvider.tools.webSearch_20250305();
+            tools.web_search =
+              bedrockProvider.tools.webSearch_20250305() as ToolSet[string];
           }
         }
         break;
