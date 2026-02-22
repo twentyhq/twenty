@@ -1,5 +1,6 @@
 import {
   IconBrandAnthropic,
+  IconBrandAws,
   IconBrandGoogle,
   IconBrandGroq,
   IconBrandMistral,
@@ -15,6 +16,7 @@ export const PROVIDER_CONFIG: Record<
 > = {
   OPENAI: { label: 'OpenAI', Icon: IconBrandOpenai },
   ANTHROPIC: { label: 'Anthropic', Icon: IconBrandAnthropic },
+  BEDROCK: { label: 'AWS Bedrock', Icon: IconBrandAws },
   XAI: { label: 'xAI', Icon: IconBrandXai },
   GOOGLE: { label: 'Google', Icon: IconBrandGoogle },
   GROQ: { label: 'Groq', Icon: IconBrandGroq },

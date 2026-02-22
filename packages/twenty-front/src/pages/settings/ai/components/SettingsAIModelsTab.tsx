@@ -39,7 +39,7 @@ export const SettingsAIModelsTab = () => {
     .map((model) => ({
       value: model.modelId,
       label: model.label,
-      Icon: PROVIDER_CONFIG[model.provider.toUpperCase()]?.Icon,
+      Icon: PROVIDER_CONFIG[model.inferenceProvider.toUpperCase()]?.Icon,
     }));
 
   const handleDefaultModelChange = async (value: string) => {
