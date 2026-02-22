@@ -30,8 +30,7 @@ export const GOOGLE_MODELS: AIModelConfig[] = [
   {
     modelId: 'gemini-3-flash-preview',
     label: 'Gemini 3 Flash',
-    description:
-      'Fast frontier-class Gemini model at low cost with 1M context',
+    description: 'Fast frontier-class Gemini model at low cost with 1M context',
     modelFamily: ModelFamily.GOOGLE,
     inferenceProvider: InferenceProvider.GOOGLE,
     inputCostPerMillionTokens: 0.5,
@@ -47,8 +46,7 @@ export const GOOGLE_MODELS: AIModelConfig[] = [
   {
     modelId: 'gemini-2.5-pro',
     label: 'Gemini 2.5 Pro',
-    description:
-      'Previous gen Gemini Pro superseded by 3.1 Pro',
+    description: 'Previous gen Gemini Pro superseded by 3.1 Pro',
     modelFamily: ModelFamily.GOOGLE,
     inferenceProvider: InferenceProvider.GOOGLE,
     inputCostPerMillionTokens: 1.25,
@@ -68,8 +66,7 @@ export const GOOGLE_MODELS: AIModelConfig[] = [
   {
     modelId: 'gemini-2.5-flash',
     label: 'Gemini 2.5 Flash',
-    description:
-      'Previous gen Flash superseded by Gemini 3 Flash',
+    description: 'Previous gen Flash superseded by Gemini 3 Flash',
     modelFamily: ModelFamily.GOOGLE,
     inferenceProvider: InferenceProvider.GOOGLE,
     inputCostPerMillionTokens: 0.3,
