@@ -92,7 +92,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
       await this.aiBillingService.calculateAndBillUsage(
         agent?.modelId ?? DEFAULT_SMART_MODEL,
-        usage,
+        { usage },
         workspaceId,
         agent?.id || null,
       );

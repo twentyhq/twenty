@@ -7,16 +7,16 @@ import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import {
+  InferenceProvider,
   ModelId,
-  ModelProvider,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 
 registerEnumType(FeatureFlagKey, {
   name: 'FeatureFlagKey',
 });
 
-registerEnumType(ModelProvider, {
-  name: 'ModelProvider',
+registerEnumType(InferenceProvider, {
+  name: 'InferenceProvider',
 });
 
 @ObjectType()
@@ -36,14 +36,14 @@ export class ClientAIModelConfig {
   @Field(() => String)
   label: string;
 
-  @Field(() => ModelProvider)
-  provider: ModelProvider;
+  @Field(() => InferenceProvider)
+  inferenceProvider: InferenceProvider;
 
   @Field(() => Number)
-  inputCostPer1kTokensInCredits: number;
+  inputCostPerMillionTokensInCredits: number;
 
   @Field(() => Number)
-  outputCostPer1kTokensInCredits: number;
+  outputCostPerMillionTokensInCredits: number;
 
   @Field(() => NativeModelCapabilities, { nullable: true })
   nativeCapabilities?: NativeModelCapabilities;

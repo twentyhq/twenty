@@ -679,12 +679,12 @@ export type CheckUserExistOutput = {
 export type ClientAiModelConfig = {
   __typename?: 'ClientAIModelConfig';
   deprecated?: Maybe<Scalars['Boolean']>;
-  inputCostPer1kTokensInCredits: Scalars['Float'];
+  inputCostPerMillionTokensInCredits: Scalars['Float'];
   label: Scalars['String'];
   modelId: Scalars['String'];
   nativeCapabilities?: Maybe<NativeModelCapabilities>;
-  outputCostPer1kTokensInCredits: Scalars['Float'];
-  provider: ModelProvider;
+  outputCostPerMillionTokensInCredits: Scalars['Float'];
+  inferenceProvider: InferenceProvider;
 };
 
 export type ClientConfig = {
@@ -2155,9 +2155,12 @@ export type MetadataEventWithQueryIds = {
   queryIds: Array<Scalars['String']>;
 };
 
-export enum ModelProvider {
+export enum InferenceProvider {
   ANTHROPIC = 'ANTHROPIC',
+  BEDROCK = 'BEDROCK',
+  GOOGLE = 'GOOGLE',
   GROQ = 'GROQ',
+  MISTRAL = 'MISTRAL',
   NONE = 'NONE',
   OPENAI = 'OPENAI',
   OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE',

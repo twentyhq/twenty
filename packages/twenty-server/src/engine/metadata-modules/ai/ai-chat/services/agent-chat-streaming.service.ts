@@ -16,8 +16,12 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
-import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-cents-to-billing-credits.util';
+import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-display-credits.util';
+import {
+  type AIModelConfig,
+  ModelFamily,
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-types.const';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
 import { AgentChatService } from './agent-chat.service';
@@ -130,19 +134,25 @@ export class AgentChatStreamingService {
                   const stepInput = part.usage?.inputTokens ?? 0;
                   const stepCached = part.usage?.cachedInputTokens ?? 0;
 
-                  // Anthropic excludes cached/created tokens from input_tokens,
-                  // reporting them separately as cache_creation_input_tokens
-                  const anthropicUsage = (
+                  // Anthropic/Bedrock exclude cached/created tokens from
+                  // input_tokens, reporting them separately
+                  const providerMeta = (
                     part as {
                       providerMetadata?: {
                         anthropic?: {
                           usage?: { cache_creation_input_tokens?: number };
                         };
+                        bedrock?: {
+                          usage?: { cacheWriteInputTokens?: number };
+                        };
                       };
                     }
-                  ).providerMetadata?.anthropic?.usage;
+                  ).providerMetadata;
                   const stepCacheCreation =
-                    anthropicUsage?.cache_creation_input_tokens ?? 0;
+                    providerMeta?.anthropic?.usage
+                      ?.cache_creation_input_tokens ??
+                    providerMeta?.bedrock?.usage?.cacheWriteInputTokens ??
+                    0;
 
                   totalCacheCreationTokens += stepCacheCreation;
                   lastStepConversationSize =
@@ -150,31 +160,16 @@ export class AgentChatStreamingService {
                 }
 
                 if (part.type === 'finish') {
-                  const inputTokens =
-                    (part.totalUsage?.inputTokens ?? 0) +
-                    (part.totalUsage?.cachedInputTokens ?? 0) +
-                    totalCacheCreationTokens;
-                  const outputTokens = part.totalUsage?.outputTokens ?? 0;
-                  const cachedInputTokens =
-                    part.totalUsage?.cachedInputTokens ?? 0;
-
-                  const inputCostInCents =
-                    (inputTokens / 1000) *
-                    modelConfig.inputCostPer1kTokensInCents;
-                  const outputCostInCents =
-                    (outputTokens / 1000) *
-                    modelConfig.outputCostPer1kTokensInCents;
-
-                  const inputCredits = Math.round(
-                    convertCentsToBillingCredits(inputCostInCents),
-                  );
-                  const outputCredits = Math.round(
-                    convertCentsToBillingCredits(outputCostInCents),
-                  );
+                  const { inputCredits, outputCredits, tokenCounts } =
+                    computeStreamCosts(
+                      modelConfig,
+                      part.totalUsage,
+                      totalCacheCreationTokens,
+                    );
 
                   streamUsage = {
-                    inputTokens,
-                    outputTokens,
+                    inputTokens: tokenCounts.totalInputTokens,
+                    outputTokens: tokenCounts.outputTokens,
                     inputCredits,
                     outputCredits,
                   };
@@ -182,9 +177,9 @@ export class AgentChatStreamingService {
                   return {
                     createdAt: new Date().toISOString(),
                     usage: {
-                      inputTokens,
-                      outputTokens,
-                      cachedInputTokens,
+                      inputTokens: tokenCounts.totalInputTokens,
+                      outputTokens: tokenCounts.outputTokens,
+                      cachedInputTokens: tokenCounts.cachedInputTokens,
                       inputCredits: toDisplayCredits(inputCredits),
                       outputCredits: toDisplayCredits(outputCredits),
                       conversationSize: lastStepConversationSize,
@@ -253,4 +248,68 @@ export class AgentChatStreamingService {
       throw error;
     }
   }
+}
+
+function computeStreamCosts(
+  modelConfig: AIModelConfig,
+  totalUsage:
+    | {
+        inputTokens?: number;
+        outputTokens?: number;
+        cachedInputTokens?: number;
+        reasoningTokens?: number;
+      }
+    | undefined,
+  cacheCreationTokens: number,
+) {
+  const rawInputTokens = totalUsage?.inputTokens ?? 0;
+  const outputTokens = totalUsage?.outputTokens ?? 0;
+  const cachedInputTokens = totalUsage?.cachedInputTokens ?? 0;
+  const reasoningTokens = totalUsage?.reasoningTokens ?? 0;
+
+  const excludesCachedTokens =
+    modelConfig.modelFamily === ModelFamily.ANTHROPIC;
+
+  const adjustedInputTokens = excludesCachedTokens
+    ? rawInputTokens
+    : rawInputTokens - cachedInputTokens;
+
+  const totalInputTokens = excludesCachedTokens
+    ? rawInputTokens + cachedInputTokens + cacheCreationTokens
+    : rawInputTokens + cacheCreationTokens;
+
+  const costInfo =
+    modelConfig.longContextCost &&
+    totalInputTokens > modelConfig.longContextCost.thresholdTokens
+      ? modelConfig.longContextCost
+      : modelConfig;
+
+  const inputRate = costInfo.inputCostPerMillionTokens;
+  const outputRate = costInfo.outputCostPerMillionTokens;
+  const cachedRate = costInfo.cachedInputCostPerMillionTokens ?? inputRate;
+  const cacheCreationRate =
+    costInfo.cacheCreationCostPerMillionTokens ?? inputRate;
+
+  const inputCostInDollars =
+    (adjustedInputTokens / 1_000_000) * inputRate +
+    (cachedInputTokens / 1_000_000) * cachedRate +
+    (cacheCreationTokens / 1_000_000) * cacheCreationRate;
+
+  const outputCostInDollars =
+    (outputTokens / 1_000_000) * outputRate +
+    (reasoningTokens / 1_000_000) * outputRate;
+
+  return {
+    inputCredits: Math.round(
+      convertDollarsToBillingCredits(inputCostInDollars),
+    ),
+    outputCredits: Math.round(
+      convertDollarsToBillingCredits(outputCostInDollars),
+    ),
+    tokenCounts: {
+      totalInputTokens,
+      outputTokens,
+      cachedInputTokens,
+    },
+  };
 }

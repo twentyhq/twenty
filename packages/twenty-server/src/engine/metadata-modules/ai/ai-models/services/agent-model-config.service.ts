@@ -6,7 +6,7 @@ import { ProviderOptions } from '@ai-sdk/provider-utils';
 import { ToolSet } from 'ai';
 
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
-import { ModelProvider } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+import { InferenceProvider } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { RegisteredAIModel } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 
@@ -18,11 +18,13 @@ export class AgentModelConfigService {
     model: RegisteredAIModel,
     agent: FlatAgentWithRoleId,
   ): ProviderOptions {
-    switch (model.provider) {
-      case ModelProvider.XAI:
+    switch (model.inferenceProvider) {
+      case InferenceProvider.XAI:
         return this.getXaiProviderOptions(agent);
-      case ModelProvider.ANTHROPIC:
+      case InferenceProvider.ANTHROPIC:
         return this.getAnthropicProviderOptions(model);
+      case InferenceProvider.BEDROCK:
+        return this.getBedrockProviderOptions(model);
       default:
         return {};
     }
@@ -38,13 +40,13 @@ export class AgentModelConfigService {
       return tools;
     }
 
-    switch (model.provider) {
-      case ModelProvider.ANTHROPIC:
+    switch (model.inferenceProvider) {
+      case InferenceProvider.ANTHROPIC:
         if (agent.modelConfiguration.webSearch?.enabled) {
           tools.web_search = anthropic.tools.webSearch_20250305();
         }
         break;
-      case ModelProvider.OPENAI:
+      case InferenceProvider.OPENAI:
         if (agent.modelConfiguration.webSearch?.enabled) {
           tools.web_search = openai.tools.webSearch();
         }
@@ -92,6 +94,21 @@ export class AgentModelConfigService {
 
     return {
       anthropic: {
+        thinking: {
+          type: 'enabled',
+          budgetTokens: AGENT_CONFIG.REASONING_BUDGET_TOKENS,
+        },
+      },
+    };
+  }
+
+  private getBedrockProviderOptions(model: RegisteredAIModel): ProviderOptions {
+    if (!model.doesSupportThinking) {
+      return {};
+    }
+
+    return {
+      bedrock: {
         thinking: {
           type: 'enabled',
           budgetTokens: AGENT_CONFIG.REASONING_BUDGET_TOKENS,
