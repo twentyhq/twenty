@@ -67,22 +67,18 @@ export const createJotaiCookieStorage = <ValueType>({
           : {}),
       };
 
-      const isNullish =
-        newValue === null ||
-        newValue === undefined ||
-        (typeof newValue === 'object' &&
-          newValue !== null &&
-          Object.keys(newValue).length === 1 &&
-          hasCustomCookieAttributes(newValue));
-
-      if (isNullish) {
-        cookieStorage.removeItem(cookieKey, cookieAttrs);
-        return;
-      }
-
       const valueToStore = hasCustomCookieAttributes(newValue)
         ? omit(newValue, ['cookieAttributes'])
         : newValue;
+
+      if (
+        !isDefined(valueToStore) ||
+        (typeof valueToStore === 'object' &&
+          Object.keys(valueToStore as object).length === 0)
+      ) {
+        cookieStorage.removeItem(cookieKey, cookieAttrs);
+        return;
+      }
 
       cookieStorage.setItem(
         cookieKey,

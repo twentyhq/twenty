@@ -12,6 +12,7 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledIconWrapper = styled.div`
@@ -47,11 +48,12 @@ export const useCommandMenuContextChips = () => {
     morphItems.map((morphItem) => morphItem.recordId),
   );
 
-  const recordIdentifiers = useRecoilValue(
-    recordStoreIdentifiersFamilySelector({
+  const recordIdentifiers = useFamilySelectorValueV2(
+    recordStoreIdentifiersFamilySelector,
+    {
       recordIds: allRecordIds,
       allowRequestsToTwentyIcons,
-    }),
+    },
   );
   const records = useRecoilValue(
     recordStoreRecordsSelector({

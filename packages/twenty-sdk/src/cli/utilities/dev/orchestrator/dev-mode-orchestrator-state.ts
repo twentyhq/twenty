@@ -40,8 +40,7 @@ export type OrchestratorStateFileStatus =
   | 'pending'
   | 'building'
   | 'uploading'
-  | 'success'
-  | 'error';
+  | 'success';
 
 export type OrchestratorStateEntityInfo = {
   name: string;
@@ -82,11 +81,10 @@ const FILE_STATUS_TRANSITION_MATRIX: Record<
   OrchestratorStateFileStatus,
   OrchestratorStateFileStatus[]
 > = {
-  pending: ['building', 'uploading', 'success', 'error'],
-  building: ['pending', 'uploading', 'success', 'error'],
-  uploading: ['pending', 'success', 'error'],
-  success: ['pending', 'building', 'uploading', 'error'],
-  error: ['pending', 'building', 'uploading', 'success'],
+  pending: ['building', 'uploading', 'success'],
+  building: ['pending', 'uploading', 'success'],
+  uploading: ['pending', 'success'],
+  success: ['pending', 'building', 'uploading'],
 };
 
 export class OrchestratorState {

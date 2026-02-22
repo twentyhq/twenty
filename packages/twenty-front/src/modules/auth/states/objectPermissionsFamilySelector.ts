@@ -1,11 +1,8 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { selectorFamily } from 'recoil';
+import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
 
-// Temporary bridge: reads from Jotai store for migrated state.
-// Will be fully migrated to Jotai in PR 6.
-export const objectPermissionsFamilySelector = selectorFamily<
+export const objectPermissionsFamilySelector = createFamilySelectorV2<
   {
     canRead: boolean;
     canUpdate: boolean;
@@ -16,10 +13,8 @@ export const objectPermissionsFamilySelector = selectorFamily<
   get:
     ({ objectNameSingular }) =>
     ({ get }) => {
-      const currentUserWorkspace = jotaiStore.get(
-        currentUserWorkspaceState.atom,
-      );
-      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+      const currentUserWorkspace = get(currentUserWorkspaceState);
+      const objectMetadataItems = get(objectMetadataItemsState);
 
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.nameSingular === objectNameSingular,

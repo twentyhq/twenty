@@ -16,10 +16,11 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useContext, useMemo } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useCallback, useContext, useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -105,31 +106,25 @@ export const useShouldActionBeRegisteredParams = ({
 
   const isSelectAll = contextStoreTargetedRecordsRule.mode === 'exclusion';
 
-  const getObjectReadPermission = useRecoilCallback(
-    ({ snapshot }) =>
-      (objectMetadataNameSingular: string) => {
-        return snapshot
-          .getLoadable(
-            objectPermissionsFamilySelector({
-              objectNameSingular: objectMetadataNameSingular,
-            }),
-          )
-          .getValue().canRead;
-      },
+  const getObjectReadPermission = useCallback(
+    (objectMetadataNameSingular: string) => {
+      return jotaiStore.get(
+        objectPermissionsFamilySelector.selectorFamily({
+          objectNameSingular: objectMetadataNameSingular,
+        }),
+      ).canRead;
+    },
     [],
   );
 
-  const getObjectWritePermission = useRecoilCallback(
-    ({ snapshot }) =>
-      (objectMetadataNameSingular: string) => {
-        return snapshot
-          .getLoadable(
-            objectPermissionsFamilySelector({
-              objectNameSingular: objectMetadataNameSingular,
-            }),
-          )
-          .getValue().canUpdate;
-      },
+  const getObjectWritePermission = useCallback(
+    (objectMetadataNameSingular: string) => {
+      return jotaiStore.get(
+        objectPermissionsFamilySelector.selectorFamily({
+          objectNameSingular: objectMetadataNameSingular,
+        }),
+      ).canUpdate;
+    },
     [],
   );
 

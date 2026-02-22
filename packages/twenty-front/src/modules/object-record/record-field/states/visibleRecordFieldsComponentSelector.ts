@@ -19,6 +19,9 @@ export const visibleRecordFieldsComponentSelector = createComponentSelector({
         }),
       );
 
+      // TODO: Temporary bridge - jotaiStore.get bypasses Recoil dependency tracking so this
+      // selector won't recompute when objectMetadataItemsState changes. Full migration
+      // requires migrating currentRecordFieldsComponentState to Jotai V2 first.
       const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
 
       const filteredVisibleAndReadableRecordFields = currentRecordFields.filter(

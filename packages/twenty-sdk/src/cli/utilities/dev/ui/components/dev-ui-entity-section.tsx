@@ -92,11 +92,7 @@ export const DevUiEntityLegend = (): React.ReactElement => {
         <Text color={DEV_UI_STATUS_CONFIG.done.color}>
           {DEV_UI_STATUS_CONFIG.done.icon}
         </Text>{' '}
-        success{' '}
-        <Text color={DEV_UI_STATUS_CONFIG.error.color}>
-          {DEV_UI_STATUS_CONFIG.error.icon}
-        </Text>{' '}
-        error
+        success
       </Text>
     </Box>
   );
