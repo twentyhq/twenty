@@ -326,6 +326,7 @@ export {
   IconSettings,
   IconSettings2,
   IconSettingsAutomation,
+  IconSettingsBolt,
   IconShare,
   IconShield,
   IconSitemap,

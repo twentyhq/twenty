@@ -15,7 +15,7 @@ import {
   H2Title,
   IconCpu,
   IconFileText,
-  IconSettings,
+  IconSettingsBolt,
   IconSparkles,
   IconTool,
 } from 'twenty-ui/display';
@@ -56,7 +56,7 @@ export const SettingsAI = () => {
     {
       id: SETTINGS_AI_TABS.TABS_IDS.MORE,
       title: t`More`,
-      Icon: IconSettings,
+      Icon: IconSettingsBolt,
     },
   ];
 
