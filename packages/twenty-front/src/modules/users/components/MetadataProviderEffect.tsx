@@ -283,7 +283,7 @@ export const MetadataProviderEffect = () => {
   ]);
 
   useEffect(() => {
-    if (!queryLoadingCoreViews && isDefined(queryDataCoreViews?.getCoreViews)) {
+    if (!queryLoadingCoreViews) {
       setLocalAreViewsLoaded(true);
     }
 
