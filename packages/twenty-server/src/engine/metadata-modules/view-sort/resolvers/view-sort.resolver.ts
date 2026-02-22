@@ -79,12 +79,12 @@ export class ViewSortResolver {
     @Args('input') deleteViewSortInput: DeleteViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
-    const deletedCoreViewSort = await this.viewSortService.deleteOne({
+    const deletedViewSort = await this.viewSortService.deleteOne({
       deleteViewSortInput,
       workspaceId,
     });
 
-    return isDefined(deletedCoreViewSort);
+    return isDefined(deletedViewSort);
   }
 
   @Mutation(() => Boolean)
@@ -93,11 +93,11 @@ export class ViewSortResolver {
     @Args('input') destroyViewSortInput: DestroyViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
-    const destroyedCoreViewSort = await this.viewSortService.destroyOne({
+    const destroyedViewSort = await this.viewSortService.destroyOne({
       destroyViewSortInput,
       workspaceId,
     });
 
-    return isDefined(destroyedCoreViewSort);
+    return isDefined(destroyedViewSort);
   }
 }

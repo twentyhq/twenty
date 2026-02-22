@@ -32,7 +32,7 @@ export const fromDestroyViewSortInputToFlatViewSortOrThrow = ({
 
   if (!isDefined(existingFlatViewSortToDestroy)) {
     throw new ViewSortException(
-      t`View sort to destroy not found`,
+      t`View sort not found`,
       ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
     );
   }

@@ -213,7 +213,6 @@ describe('View Sort Resolver', () => {
         ErrorCode.NOT_FOUND,
         generateViewSortExceptionMessage(
           ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_SORT_ID,
         ),
       );
     });
@@ -236,7 +235,7 @@ describe('View Sort Resolver', () => {
       const response = await makeMetadataAPIRequest(deleteOperation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.deleteCoreViewSort.id).toBe(viewSort.id);
+      expect(response.body.data.deleteCoreViewSort).toBe(true);
     });
 
     it('should throw an error when deleting non-existent view sort', async () => {
@@ -250,7 +249,6 @@ describe('View Sort Resolver', () => {
         ErrorCode.NOT_FOUND,
         generateViewSortExceptionMessage(
           ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_SORT_ID,
         ),
       );
     });
@@ -273,7 +271,7 @@ describe('View Sort Resolver', () => {
       const response = await makeMetadataAPIRequest(destroyOperation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.destroyCoreViewSort.id).toBe(viewSort.id);
+      expect(response.body.data.destroyCoreViewSort).toBe(true);
     });
 
     it('should throw an error when destroying non-existent view sort', async () => {
@@ -287,7 +285,6 @@ describe('View Sort Resolver', () => {
         ErrorCode.NOT_FOUND,
         generateViewSortExceptionMessage(
           ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_SORT_ID,
         ),
       );
     });

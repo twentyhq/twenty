@@ -36,7 +36,7 @@ export const fromUpdateViewSortInputToFlatViewSortToUpdateOrThrow = ({
 
   if (!isDefined(existingFlatViewSortToUpdate)) {
     throw new ViewSortException(
-      t`View sort to update not found`,
+      t`View sort not found`,
       ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
     );
   }
