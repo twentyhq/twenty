@@ -1,17 +1,19 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { AIChatThreadsList } from '@/ai/components/AIChatThreadsList';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
 import { NavigationMenuItemFolderContentDispatcherEffect } from '@/navigation-menu-item/components/NavigationMenuItemFolderContentDispatcher';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/hooks/useNavigationMenuItemsByFolder';
-import { MainNavigationDrawerFixedItems } from '@/navigation/components/MainNavigationDrawerFixedItems';
 import { MainNavigationDrawerScrollableItems } from '@/navigation/components/MainNavigationDrawerScrollableItems';
+import { MainNavigationDrawerTabsRow } from '@/navigation/components/MainNavigationDrawerTabsRow';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { currentFavoriteFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentFavoriteFolderIdStateV2';
 import { currentNavigationMenuItemFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdStateV2';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -21,8 +23,16 @@ const StyledScrollableContent = styled.div`
   min-height: 0;
 `;
 
+const StyledAIChatThreadsListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+`;
+
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const activeTab = useRecoilValueV2(navigationDrawerActiveTabState);
   const currentFavoriteFolderId = useRecoilValueV2(
     currentFavoriteFolderIdStateV2,
   );
@@ -55,11 +65,15 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
       title={currentWorkspace?.displayName ?? ''}
     >
       <NavigationDrawerFixedContent>
-        <MainNavigationDrawerFixedItems />
+        <MainNavigationDrawerTabsRow />
       </NavigationDrawerFixedContent>
 
       <NavigationDrawerScrollableContent>
-        {isNavigationMenuItemEditingEnabled ? (
+        {activeTab === 'chat' ? (
+          <StyledAIChatThreadsListWrapper>
+            <AIChatThreadsList />
+          </StyledAIChatThreadsListWrapper>
+        ) : isNavigationMenuItemEditingEnabled ? (
           <StyledScrollableContent>
             {openedFolder ? (
               <NavigationMenuItemFolderContentDispatcherEffect
