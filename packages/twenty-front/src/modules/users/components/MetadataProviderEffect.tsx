@@ -28,17 +28,27 @@ import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type WorkspaceMember,
+  ViewType as CoreViewType,
   useFindAllCoreViewsQuery,
   useFindAllRecordPageLayoutsQuery,
+  useFindFieldsWidgetCoreViewsQuery,
   useFindManyLogicFunctionsQuery,
   useGetCurrentUserQuery,
+  type WorkspaceMember,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+
+const INDEX_VIEW_TYPES = [
+  CoreViewType.TABLE,
+  CoreViewType.KANBAN,
+  CoreViewType.CALENDAR,
+];
+
+const FIELDS_WIDGET_VIEW_TYPES = [CoreViewType.FIELDS_WIDGET];
 
 export const MetadataProviderEffect = () => {
   const location = useLocation();
@@ -81,11 +91,35 @@ export const MetadataProviderEffect = () => {
     [store],
   );
 
-  const setCoreViews = useCallback(
-    (coreViews: CoreViewWithRelations[]) => {
+  const setIndexCoreViews = useCallback(
+    (indexViews: CoreViewWithRelations[]) => {
       const existingCoreViews = store.get(coreViewsState.atom);
-      if (!isDeeplyEqual(existingCoreViews, coreViews)) {
-        store.set(coreViewsState.atom, coreViews);
+
+      const existingFieldsWidgetViews = existingCoreViews.filter(
+        (view) => view.type === CoreViewType.FIELDS_WIDGET,
+      );
+
+      const mergedViews = [...indexViews, ...existingFieldsWidgetViews];
+
+      if (!isDeeplyEqual(existingCoreViews, mergedViews)) {
+        store.set(coreViewsState.atom, mergedViews);
+      }
+    },
+    [store],
+  );
+
+  const setFieldsWidgetCoreViews = useCallback(
+    (fieldsWidgetViews: CoreViewWithRelations[]) => {
+      const existingCoreViews = store.get(coreViewsState.atom);
+
+      const existingIndexViews = existingCoreViews.filter(
+        (view) => view.type !== CoreViewType.FIELDS_WIDGET,
+      );
+
+      const mergedViews = [...existingIndexViews, ...fieldsWidgetViews];
+
+      if (!isDeeplyEqual(existingCoreViews, mergedViews)) {
+        store.set(coreViewsState.atom, mergedViews);
       }
     },
     [store],
@@ -129,6 +163,13 @@ export const MetadataProviderEffect = () => {
   const { data: queryDataCoreViews, loading: queryLoadingCoreViews } =
     useFindAllCoreViewsQuery({
       skip: shouldSkip,
+      variables: { viewTypes: INDEX_VIEW_TYPES },
+    });
+
+  const { data: queryDataFieldsWidgetCoreViews } =
+    useFindFieldsWidgetCoreViewsQuery({
+      skip: shouldSkip,
+      variables: { viewTypes: FIELDS_WIDGET_VIEW_TYPES },
     });
   const { data: queryDataRecordPageLayouts } = useFindAllRecordPageLayoutsQuery(
     {
@@ -238,7 +279,7 @@ export const MetadataProviderEffect = () => {
     initializeFormatPreferences,
     setCurrentWorkspaceMembersWithDeleted,
     updateLocaleCatalog,
-    setCoreViews,
+    setIndexCoreViews,
   ]);
 
   useEffect(() => {
@@ -248,8 +289,18 @@ export const MetadataProviderEffect = () => {
 
     if (!isDefined(queryDataCoreViews?.getCoreViews)) return;
 
-    setCoreViews(queryDataCoreViews.getCoreViews);
-  }, [queryDataCoreViews, setCoreViews, queryLoadingCoreViews]);
+    setIndexCoreViews(queryDataCoreViews.getCoreViews);
+  }, [
+    queryDataCoreViews?.getCoreViews,
+    setIndexCoreViews,
+    queryLoadingCoreViews,
+  ]);
+
+  useEffect(() => {
+    if (!isDefined(queryDataFieldsWidgetCoreViews?.getCoreViews)) return;
+
+    setFieldsWidgetCoreViews(queryDataFieldsWidgetCoreViews.getCoreViews);
+  }, [queryDataFieldsWidgetCoreViews?.getCoreViews, setFieldsWidgetCoreViews]);
 
   useEffect(() => {
     if (!isDefined(queryDataRecordPageLayouts?.getPageLayouts)) return;

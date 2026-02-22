@@ -1,5 +1,6 @@
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
+import { convertCoreViewFieldGroupToViewFieldGroup } from '@/views/utils/convertCoreViewFieldGroupToViewFieldGroup';
 import { convertCoreViewFieldToViewField } from '@/views/utils/convertCoreViewFieldToViewField';
 import { convertCoreViewFilterGroupToViewFilterGroup } from '@/views/utils/convertCoreViewFilterGroupToViewFilterGroup';
 import { convertCoreViewFilterToViewFilter } from '@/views/utils/convertCoreViewFilterToViewFilter';
@@ -27,6 +28,9 @@ export const convertCoreViewToView = (
     isCompact: coreView.isCompact,
     viewFields: coreView.viewFields?.map((viewField) =>
       convertCoreViewFieldToViewField(viewField),
+    ),
+    viewFieldGroups: coreView.viewFieldGroups?.map((viewFieldGroup) =>
+      convertCoreViewFieldGroupToViewFieldGroup(viewFieldGroup),
     ),
     viewGroups: coreView.viewGroups?.map((viewGroup) =>
       convertCoreViewGroupToViewGroup(viewGroup),

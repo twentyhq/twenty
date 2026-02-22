@@ -18,6 +18,7 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { wrapToolsWithOutputSerialization } from 'src/engine/core-modules/tool-provider/output-serialization/wrap-tools-with-output-serialization.util';
@@ -36,6 +37,7 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import {
   extractCodeInterpreterFiles,
@@ -43,7 +45,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import {
   type AIModelConfig,
-  ModelProvider,
+  InferenceProvider,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -74,6 +76,7 @@ export class ChatExecutionService {
     private readonly agentActorContextService: AgentActorContextService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly systemPromptBuilder: SystemPromptBuilderService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async streamChat({
@@ -137,7 +140,7 @@ export class ChatExecutionService {
     // These are callable directly AND as fallback through execute_tool.
     const directTools: ToolSet = {
       ...wrapToolsWithOutputSerialization(preloadedTools),
-      ...this.getNativeWebSearchTool(registeredModel.provider),
+      ...this.getNativeWebSearchTool(registeredModel.inferenceProvider),
     };
 
     // ToolSet is constant for the entire conversation — no mutation.
@@ -192,9 +195,11 @@ export class ChatExecutionService {
       role: 'system',
       content: systemPrompt,
       providerOptions:
-        registeredModel.provider === ModelProvider.ANTHROPIC
+        registeredModel.inferenceProvider === InferenceProvider.ANTHROPIC
           ? { anthropic: { cacheControl: { type: 'ephemeral' } } }
-          : undefined,
+          : registeredModel.inferenceProvider === InferenceProvider.BEDROCK
+            ? { bedrock: { cacheControl: { type: 'ephemeral' } } }
+            : undefined,
     };
 
     const stream = streamText({
@@ -219,17 +224,19 @@ export class ChatExecutionService {
       },
     });
 
-    stream.usage
-      .then((usage) => {
+    Promise.all([stream.usage, stream.steps])
+      .then(([usage, steps]) => {
+        const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
+
         this.aiBillingService.calculateAndBillUsage(
           registeredModel.modelId,
-          usage,
+          { usage, cacheCreationTokens },
           workspace.id,
           null,
         );
       })
       .catch((error) => {
-        this.logger.error('Failed to bill usage:', error);
+        this.exceptionHandlerService.captureExceptions([error]);
       });
 
     return {
@@ -308,14 +315,28 @@ export class ChatExecutionService {
     return context;
   }
 
-  private getNativeWebSearchTool(provider: ModelProvider): ToolSet {
-    switch (provider) {
-      case ModelProvider.ANTHROPIC:
+  private getNativeWebSearchTool(
+    inferenceProvider: InferenceProvider,
+  ): ToolSet {
+    switch (inferenceProvider) {
+      case InferenceProvider.ANTHROPIC:
         return { web_search: anthropic.tools.webSearch_20250305() };
-      case ModelProvider.OPENAI:
+      case InferenceProvider.BEDROCK: {
+        const bedrockProvider =
+          this.aiModelRegistryService.getBedrockProvider();
+
+        if (bedrockProvider) {
+          return {
+            web_search:
+              bedrockProvider.tools.webSearch_20250305() as ToolSet[string],
+          };
+        }
+
+        return {};
+      }
+      case InferenceProvider.OPENAI:
         return { web_search: openai.tools.webSearch() };
-      case ModelProvider.GROQ:
-        // Type assertion needed due to @ai-sdk/groq tool type mismatch
+      case InferenceProvider.GROQ:
         return {
           web_search: groq.tools.browserSearch({}) as ToolSet[string],
         };

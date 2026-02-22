@@ -32,10 +32,7 @@ export const usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord =
       throw new Error('Only one record should be selected');
     }
 
-    const recordId: string = targetedRecordsRule.selectedRecordIds[0];
-
     const { pageLayoutId } = useRecordPageLayoutIdFromRecordStoreOrThrow({
-      id: recordId,
       targetObjectNameSingular: objectMetadataItem.nameSingular,
     });
 

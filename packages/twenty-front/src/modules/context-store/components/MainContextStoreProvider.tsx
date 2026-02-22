@@ -4,9 +4,9 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { ViewKey } from '@/views/types/ViewKey';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -49,6 +49,7 @@ export const MainContextStoreProvider = () => {
 
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
   const isCurrentUserLoaded = useRecoilValueV2(isCurrentUserLoadedState);
+  const coreViews = useRecoilValueV2(coreViewsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
@@ -62,10 +63,11 @@ export const MainContextStoreProvider = () => {
     objectMetadataItem?.namePlural ?? '',
   );
 
-  const indexViewId = useFamilySelectorValueV2(
-    coreIndexViewIdFromObjectMetadataItemFamilySelector,
-    { objectMetadataItemId: objectMetadataItem?.id ?? '' },
-  );
+  const indexViewId = coreViews.find(
+    (view) =>
+      view.objectMetadataId === objectMetadataItem?.id &&
+      view.key === ViewKey.Index,
+  )?.id;
 
   const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
   const showAuthModal = useShowAuthModal();

@@ -1,10 +1,10 @@
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconArrowDown, IconDotsVertical } from 'twenty-ui/display';
 
 const mockedPageInfo = {

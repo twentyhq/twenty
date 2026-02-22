@@ -60,7 +60,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
             configuration: {
               __typename: 'FieldsConfiguration',
               configurationType: WidgetConfigurationType.FIELDS,
-              sections: [],
+              viewId: null,
             },
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),

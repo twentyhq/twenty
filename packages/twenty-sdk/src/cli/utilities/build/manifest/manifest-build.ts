@@ -227,6 +227,7 @@ export const buildManifest = async (
           sourceComponentPath: relativeFilePath,
           builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtComponentChecksum: '',
+          isHeadless: rest.isHeadless ?? false,
         };
 
         frontComponents.push(config);

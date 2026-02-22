@@ -20,7 +20,7 @@ export const FrontComponentRenderer = ({
   const theme = useTheme();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { executionContext, frontComponentHostCommunicationApi } =
-    useFrontComponentExecutionContext();
+    useFrontComponentExecutionContext({ frontComponentId });
 
   const handleError = useCallback(
     (error?: Error) => {
