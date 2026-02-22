@@ -7,16 +7,17 @@ import {
   IconRobot,
   type IconComponent,
 } from 'twenty-ui/display';
-import { ModelFamily } from '~/generated-metadata/graphql';
 
+// Keyed by the server-side ModelFamily enum values (lowercase) since
+// the client config is fetched via REST, not GraphQL.
 export const MODEL_FAMILY_CONFIG: Record<
-  ModelFamily | 'FALLBACK',
+  string,
   { label: string; Icon: IconComponent }
 > = {
-  [ModelFamily.OPENAI]: { label: 'OpenAI', Icon: IconBrandOpenai },
-  [ModelFamily.ANTHROPIC]: { label: 'Anthropic', Icon: IconBrandAnthropic },
-  [ModelFamily.XAI]: { label: 'xAI', Icon: IconBrandXai },
-  [ModelFamily.GOOGLE]: { label: 'Google', Icon: IconBrandGoogle },
-  [ModelFamily.MISTRAL]: { label: 'Mistral', Icon: IconBrandMistral },
+  openai: { label: 'OpenAI', Icon: IconBrandOpenai },
+  anthropic: { label: 'Anthropic', Icon: IconBrandAnthropic },
+  xai: { label: 'xAI', Icon: IconBrandXai },
+  google: { label: 'Google', Icon: IconBrandGoogle },
+  mistral: { label: 'Mistral', Icon: IconBrandMistral },
   FALLBACK: { label: '', Icon: IconRobot },
 };
