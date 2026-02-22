@@ -54,6 +54,7 @@ export class ClientConfigService {
         return {
           modelId: registeredModel.modelId,
           label: builtInModel?.label || registeredModel.modelId,
+          modelFamily: builtInModel?.modelFamily,
           inferenceProvider: registeredModel.inferenceProvider,
           nativeCapabilities: builtInModel?.nativeCapabilities,
           inputCostPerMillionTokensInCredits: builtInModel

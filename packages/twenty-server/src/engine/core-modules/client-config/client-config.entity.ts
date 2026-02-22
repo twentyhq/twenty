@@ -8,6 +8,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import {
   InferenceProvider,
+  ModelFamily,
   ModelId,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 
@@ -17,6 +18,10 @@ registerEnumType(FeatureFlagKey, {
 
 registerEnumType(InferenceProvider, {
   name: 'InferenceProvider',
+});
+
+registerEnumType(ModelFamily, {
+  name: 'ModelFamily',
 });
 
 @ObjectType()
@@ -35,6 +40,9 @@ export class ClientAIModelConfig {
 
   @Field(() => String)
   label: string;
+
+  @Field(() => ModelFamily, { nullable: true })
+  modelFamily?: ModelFamily;
 
   @Field(() => InferenceProvider)
   inferenceProvider: InferenceProvider;

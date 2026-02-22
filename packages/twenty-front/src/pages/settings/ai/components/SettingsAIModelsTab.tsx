@@ -12,7 +12,7 @@ import { t } from '@lingui/core/macro';
 import { H2Title, IconBolt } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
-import { PROVIDER_CONFIG } from '~/pages/settings/ai/constants/SettingsAiModelProviders';
+import { MODEL_FAMILY_CONFIG } from '~/pages/settings/ai/constants/SettingsAiModelProviders';
 
 const VIRTUAL_MODEL_IDS: Set<string> = new Set([
   DEFAULT_SMART_MODEL,
@@ -39,7 +39,10 @@ export const SettingsAIModelsTab = () => {
     .map((model) => ({
       value: model.modelId,
       label: model.label,
-      Icon: PROVIDER_CONFIG[model.inferenceProvider.toUpperCase()]?.Icon,
+      Icon: (model.modelFamily
+        ? MODEL_FAMILY_CONFIG[model.modelFamily.toUpperCase()]
+        : MODEL_FAMILY_CONFIG.FALLBACK
+      ).Icon,
     }));
 
   const handleDefaultModelChange = async (value: string) => {

@@ -682,6 +682,7 @@ export type ClientAiModelConfig = {
   inferenceProvider: InferenceProvider;
   inputCostPerMillionTokensInCredits: Scalars['Float'];
   label: Scalars['String'];
+  modelFamily?: Maybe<ModelFamily>;
   modelId: Scalars['String'];
   nativeCapabilities?: Maybe<NativeModelCapabilities>;
   outputCostPerMillionTokensInCredits: Scalars['Float'];
@@ -2166,6 +2167,14 @@ export type MetadataEventWithQueryIds = {
   metadataEvent: MetadataEvent;
   queryIds: Array<Scalars['String']>;
 };
+
+export enum ModelFamily {
+  ANTHROPIC = 'ANTHROPIC',
+  GOOGLE = 'GOOGLE',
+  MISTRAL = 'MISTRAL',
+  OPENAI = 'OPENAI',
+  XAI = 'XAI'
+}
 
 export type Mutation = {
   __typename?: 'Mutation';
