@@ -1,10 +1,13 @@
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+import { IconSearch } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
-import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-
+import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
+import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
@@ -16,15 +19,20 @@ const StyledContainer = styled.div`
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
 `;
 
+const StyledRightActions = styled.div`
+  align-items: center;
+  display: flex;
+  margin-left: auto;
+`;
+
 const StyledNavigationDrawerCollapseButton = styled(
   NavigationDrawerCollapseButton,
 )<{ show?: boolean }>`
-  height: ${({ theme }) => theme.spacing(4)};
-  margin-left: auto;
+  height: ${({ theme }) => theme.spacing(6)};
   opacity: ${({ show }) => (show ? 1 : 0)};
   padding-right: ${({ theme }) => theme.spacing(1)};
   transition: opacity ${({ theme }) => theme.animation.duration.normal}s;
-  width: ${({ theme }) => theme.spacing(4)};
+  width: ${({ theme }) => theme.spacing(6)};
 `;
 
 type NavigationDrawerHeaderProps = {
@@ -35,7 +43,7 @@ export const NavigationDrawerHeader = ({
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
-
+  const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
   const isNavigationDrawerExpanded = useRecoilValueV2(
     isNavigationDrawerExpandedState,
   );
@@ -44,10 +52,19 @@ export const NavigationDrawerHeader = ({
     <StyledContainer>
       <MultiWorkspaceDropdownButton />
       {!isMobile && isNavigationDrawerExpanded && (
-        <StyledNavigationDrawerCollapseButton
-          direction="left"
-          show={showCollapseButton}
-        />
+        <StyledRightActions>
+          <LightIconButton
+            Icon={IconSearch}
+            accent="tertiary"
+            size="small"
+            onClick={openRecordsSearchPage}
+            aria-label={t`Search`}
+          />
+          <StyledNavigationDrawerCollapseButton
+            direction="left"
+            show={showCollapseButton}
+          />
+        </StyledRightActions>
       )}
     </StyledContainer>
   );
