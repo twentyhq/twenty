@@ -1,28 +1,30 @@
+import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
   type IconComponent,
   IconList,
+  IconMessageCirclePlus,
   IconSearch,
-  IconSettings,
 } from 'twenty-ui/display';
 import { NavigationBar } from 'twenty-ui/navigation';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
+type NavigationBarItemName = 'main' | 'search' | 'newChat';
 
 export const MobileNavigationBar = () => {
   const navigate = useNavigate();
@@ -35,7 +37,8 @@ export const MobileNavigationBar = () => {
     useRecoilStateV2(isNavigationDrawerExpandedState);
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
     useRecoilState(currentMobileNavigationDrawerState);
-  const { openSettingsMenu } = useOpenSettingsMenu();
+  const { createChatThread } = useCreateNewAIChatThread();
+  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
@@ -50,7 +53,7 @@ export const MobileNavigationBar = () => {
     : isCommandMenuOpened
       ? 'search'
       : isSettingsPage
-        ? 'settings'
+        ? 'main'
         : 'main';
 
   const items: {
@@ -93,14 +96,19 @@ export const MobileNavigationBar = () => {
         openRecordsSearchPage();
       },
     },
-    {
-      name: 'settings',
-      Icon: IconSettings,
-      onClick: () => {
-        closeCommandMenu();
-        openSettingsMenu();
-      },
-    },
+    ...(isAiEnabled
+      ? [
+          {
+            name: 'newChat' as const,
+            Icon: IconMessageCirclePlus,
+            onClick: () => {
+              setIsNavigationDrawerExpanded(false);
+              closeCommandMenu();
+              createChatThread();
+            },
+          },
+        ]
+      : []),
   ];
 
   return <NavigationBar activeItemName={activeItemName} items={items} />;
