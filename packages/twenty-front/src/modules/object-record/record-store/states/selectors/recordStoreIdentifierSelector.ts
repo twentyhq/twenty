@@ -1,9 +1,8 @@
 import { selectorFamily } from 'recoil';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsRecoilBridge } from '@/object-metadata/states/objectMetadataItemsRecoilBridge';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { uncapitalize } from 'twenty-shared/utils';
 
 export const recordStoreIdentifierFamilySelector = selectorFamily({
@@ -24,7 +23,7 @@ export const recordStoreIdentifierFamilySelector = selectorFamily({
         recordFromStore?.__typename ?? '',
       );
 
-      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = get(objectMetadataItemsRecoilBridge);
 
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.nameSingular === objectNameSingular,

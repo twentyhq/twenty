@@ -1,5 +1,5 @@
 import { type Decorator } from '@storybook/react-vite';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
@@ -53,7 +53,7 @@ const InternalTableStateLoaderEffect = ({
     contextStoreCurrentViewIdComponentState,
   );
 
-  const setCoreViews = useSetRecoilState(coreViewsState);
+  const setCoreViews = useSetRecoilStateV2(coreViewsState);
 
   const setRecordTableData = useSetRecordTableData({
     recordTableId,

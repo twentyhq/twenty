@@ -1,4 +1,3 @@
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -20,7 +19,7 @@ type NavigationMenuItemFolder = {
 };
 
 export const useNavigationMenuItemsByFolder = () => {
-  const coreViews = useRecoilValue(coreViewsState);
+  const coreViews = useRecoilValueV2(coreViewsState);
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =

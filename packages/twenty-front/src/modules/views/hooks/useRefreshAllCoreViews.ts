@@ -1,7 +1,8 @@
 import { FIND_ALL_CORE_VIEWS } from '@/views/graphql/queries/findAllCoreViews';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type FetchPolicy, useApolloClient } from '@apollo/client';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindAllCoreViewsQuery } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -11,32 +12,26 @@ export const useRefreshAllCoreViews = (
 ) => {
   const client = useApolloClient();
 
-  const refreshAllCoreViews = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async () => {
-        const result = await client.query<FindAllCoreViewsQuery>({
-          query: FIND_ALL_CORE_VIEWS,
-          variables: {},
-          fetchPolicy,
-        });
+  const refreshAllCoreViews = useCallback(async () => {
+    const result = await client.query<FindAllCoreViewsQuery>({
+      query: FIND_ALL_CORE_VIEWS,
+      variables: {},
+      fetchPolicy,
+    });
 
-        const currentCoreViews = snapshot
-          .getLoadable(coreViewsState)
-          .getValue();
+    const currentCoreViews = jotaiStore.get(coreViewsState.atom);
 
-        const coreViewsFromResult = result.data.getCoreViews;
+    const coreViewsFromResult = result.data.getCoreViews;
 
-        if (
-          isDefined(result.data?.getCoreViews) &&
-          !isDeeplyEqual(currentCoreViews, coreViewsFromResult)
-        ) {
-          set(coreViewsState, coreViewsFromResult);
-        }
+    if (
+      isDefined(result.data?.getCoreViews) &&
+      !isDeeplyEqual(currentCoreViews, coreViewsFromResult)
+    ) {
+      jotaiStore.set(coreViewsState.atom, coreViewsFromResult);
+    }
 
-        return result.data?.getCoreViews;
-      },
-    [client, fetchPolicy],
-  );
+    return result.data?.getCoreViews;
+  }, [client, fetchPolicy]);
 
   return {
     refreshAllCoreViews,

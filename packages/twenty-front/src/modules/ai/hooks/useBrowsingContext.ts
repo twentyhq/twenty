@@ -113,13 +113,11 @@ export const useGetBrowsingContext = () => {
             )
             .getValue();
 
-          const currentView = snapshot
-            .getLoadable(
-              coreViewFromViewIdFamilySelector({
-                viewId: currentViewId ?? '',
-              }),
-            )
-            .getValue();
+          const currentView = store.get(
+            coreViewFromViewIdFamilySelector.selectorFamily({
+              viewId: currentViewId ?? '',
+            }),
+          );
 
           if (!currentView) {
             return null;

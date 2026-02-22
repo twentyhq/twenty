@@ -17,12 +17,12 @@ import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunc
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useStore } from 'jotai';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
-import { useEffect, useState } from 'react';
+import { useStore } from 'jotai';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
@@ -31,8 +31,8 @@ import {
   type WorkspaceMember,
   useFindAllCoreViewsQuery,
   useFindAllRecordPageLayoutsQuery,
-  useGetCurrentUserQuery,
   useFindManyLogicFunctionsQuery,
+  useGetCurrentUserQuery,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
@@ -81,18 +81,14 @@ export const MetadataProviderEffect = () => {
     [store],
   );
 
-  const setCoreViews = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (coreViews: CoreViewWithRelations[]) => {
-        const existingCoreViews = snapshot
-          .getLoadable(coreViewsState)
-          .getValue();
-
-        if (!isDeeplyEqual(existingCoreViews, coreViews)) {
-          set(coreViewsState, coreViews);
-        }
-      },
-    [],
+  const setCoreViews = useCallback(
+    (coreViews: CoreViewWithRelations[]) => {
+      const existingCoreViews = store.get(coreViewsState.atom);
+      if (!isDeeplyEqual(existingCoreViews, coreViews)) {
+        store.set(coreViewsState.atom, coreViews);
+      }
+    },
+    [store],
   );
 
   const setRecordPageLayouts = useRecoilCallback(
@@ -134,7 +130,6 @@ export const MetadataProviderEffect = () => {
     useFindAllCoreViewsQuery({
       skip: shouldSkip,
     });
-
   const { data: queryDataRecordPageLayouts } = useFindAllRecordPageLayoutsQuery(
     {
       skip: shouldSkip,
@@ -247,14 +242,17 @@ export const MetadataProviderEffect = () => {
   ]);
 
   useEffect(() => {
-    if (!queryLoadingCoreViews) {
+    // Only mark views as loaded once the query has actually run and returned
+    // (queryDataCoreViews is undefined when the query is skipped, so we avoid
+    // setting localAreViewsLoaded=true prematurely before the query executes)
+    if (!queryLoadingCoreViews && isDefined(queryDataCoreViews)) {
       setLocalAreViewsLoaded(true);
     }
 
     if (!isDefined(queryDataCoreViews?.getCoreViews)) return;
 
     setCoreViews(queryDataCoreViews.getCoreViews);
-  }, [queryDataCoreViews?.getCoreViews, setCoreViews, queryLoadingCoreViews]);
+  }, [queryDataCoreViews, setCoreViews, queryLoadingCoreViews]);
 
   useEffect(() => {
     if (!isDefined(queryDataRecordPageLayouts?.getPageLayouts)) return;

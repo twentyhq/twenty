@@ -20,7 +20,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
   const [findManyCoreViewsLazy] = useFindManyCoreViewsLazyQuery();
 
   const refreshCoreViewsByObjectMetadataId = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set }) =>
       async (objectMetadataId: string) => {
         const result = await findManyCoreViewsLazy({
           variables: {
@@ -45,11 +45,11 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           return;
         }
 
-        const coreViewsForObjectMetadataId = snapshot
-          .getLoadable(
-            coreViewsByObjectMetadataIdFamilySelector(objectMetadataId),
-          )
-          .getValue();
+        const coreViewsForObjectMetadataId = jotaiStore.get(
+          coreViewsByObjectMetadataIdFamilySelector.selectorFamily(
+            objectMetadataId,
+          ),
+        );
 
         const coreViewsFromResult = result.data.getCoreViews;
 
@@ -57,8 +57,10 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           return;
         }
 
-        set(
-          coreViewsByObjectMetadataIdFamilySelector(objectMetadataId),
+        jotaiStore.set(
+          coreViewsByObjectMetadataIdFamilySelector.selectorFamily(
+            objectMetadataId,
+          ),
           coreViewsFromResult,
         );
 

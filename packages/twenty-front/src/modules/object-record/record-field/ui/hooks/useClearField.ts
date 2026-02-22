@@ -20,7 +20,7 @@ export const useClearField = () => {
   const [updateRecord] = useUpdateRecord();
 
   const clearField = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set }) =>
       () => {
         const objectMetadataItems = jotaiStore.get(
           objectMetadataItemsState.atom,

@@ -1,5 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { objectMetadataItemsRecoilBridge } from '@/object-metadata/states/objectMetadataItemsRecoilBridge';
 import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
 import { RecordFieldsComponentInstanceContext } from '@/object-record/record-field/states/context/RecordFieldsComponentInstanceContext';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
@@ -19,10 +18,7 @@ export const visibleRecordFieldsComponentSelector = createComponentSelector({
         }),
       );
 
-      // TODO: Temporary bridge - jotaiStore.get bypasses Recoil dependency tracking so this
-      // selector won't recompute when objectMetadataItemsState changes. Full migration
-      // requires migrating currentRecordFieldsComponentState to Jotai V2 first.
-      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = get(objectMetadataItemsRecoilBridge);
 
       const filteredVisibleAndReadableRecordFields = currentRecordFields.filter(
         (recordFieldToFilter) => {

@@ -27,7 +27,6 @@ import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/uti
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilValue } from 'recoil';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
@@ -100,7 +99,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const iconColors = getNavigationMenuItemIconColors(theme);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
-  const coreViews = useRecoilValue(coreViewsState);
+  const coreViews = useRecoilValueV2(coreViewsState);
   const views = coreViews.map(convertCoreViewToView);
   const location = useLocation();
   const navigate = useNavigate();

@@ -4,6 +4,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -28,7 +29,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
 
   const setAndPersistViewType = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ snapshot }) =>
       async (viewType: ViewType) => {
         const currentViewId = snapshot
           .getLoadable(
@@ -38,9 +39,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           )
           .getValue();
 
-        const existingCoreViews = snapshot
-          .getLoadable(coreViewsState)
-          .getValue();
+        const existingCoreViews = jotaiStore.get(coreViewsState.atom);
 
         if (!isDefined(currentViewId)) {
           throw new Error('No view id found');
@@ -75,7 +74,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             }
 
             setRecordIndexViewType(viewType);
-            set(coreViewsState, [
+            jotaiStore.set(coreViewsState.atom, [
               ...existingCoreViews.filter(
                 (coreView) => coreView.id !== currentView.id,
               ),
@@ -96,7 +95,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             updateCurrentViewParams.mainGroupByFieldMetadataId = null;
             await updateCurrentView(updateCurrentViewParams);
             setRecordIndexViewType(viewType);
-            set(coreViewsState, [
+            jotaiStore.set(coreViewsState.atom, [
               ...existingCoreViews.filter(
                 (coreView) => coreView.id !== currentView.id,
               ),
@@ -116,7 +115,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             const calendarFieldMetadataId = availableFieldsForCalendar[0].id;
 
             setRecordIndexViewType(viewType);
-            set(coreViewsState, [
+            jotaiStore.set(coreViewsState.atom, [
               ...existingCoreViews.filter(
                 (coreView) => coreView.id !== currentView.id,
               ),

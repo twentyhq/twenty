@@ -16,7 +16,7 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
         objectNamePlural: string;
         viewId: string;
       }) => {
-        const views = snapshot.getLoadable(coreViewsState).getValue();
+        const views = jotaiStore.get(coreViewsState.atom);
 
         const view = views.find(
           (view: CoreViewWithRelations) => view.id === viewId,

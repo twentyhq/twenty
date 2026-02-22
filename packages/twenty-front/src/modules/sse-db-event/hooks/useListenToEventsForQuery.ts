@@ -1,6 +1,6 @@
 import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQueryListenersState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import {
   type MetadataGqlOperationSignature,
@@ -16,12 +16,15 @@ export const useListenToEventsForQuery = ({
     | RecordGqlOperationSignature
     | MetadataGqlOperationSignature;
 }) => {
-  const operationSignatureRef = useRef(operationSignature);
-  operationSignatureRef.current = operationSignature;
-
   const changeQueryIdListenState = useRecoilCallback(
     ({ set, snapshot }) =>
-      (shouldListen: boolean, targetQueryId: string) => {
+      (
+        shouldListen: boolean,
+        targetQueryId: string,
+        targetOperationSignature:
+          | RecordGqlOperationSignature
+          | MetadataGqlOperationSignature,
+      ) => {
         const currentRequiredQueryListeners = getSnapshotValue(
           snapshot,
           requiredQueryListenersState,
@@ -41,7 +44,7 @@ export const useListenToEventsForQuery = ({
             ...currentRequiredQueryListeners,
             {
               queryId: targetQueryId,
-              operationSignature: operationSignatureRef.current,
+              operationSignature: targetOperationSignature,
             },
           ]);
         } else {
@@ -57,10 +60,10 @@ export const useListenToEventsForQuery = ({
   );
 
   useEffect(() => {
-    changeQueryIdListenState(true, queryId);
+    changeQueryIdListenState(true, queryId, operationSignature);
 
     return () => {
-      changeQueryIdListenState(false, queryId);
+      changeQueryIdListenState(false, queryId, operationSignature);
     };
-  }, [changeQueryIdListenState, queryId]);
+  }, [changeQueryIdListenState, queryId, operationSignature]);
 };

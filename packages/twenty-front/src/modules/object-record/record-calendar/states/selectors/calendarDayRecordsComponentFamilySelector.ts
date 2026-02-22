@@ -1,5 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { objectMetadataItemsRecoilBridge } from '@/object-metadata/states/objectMetadataItemsRecoilBridge';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
@@ -27,9 +26,7 @@ export const calendarDayRecordIdsComponentFamilySelector =
           recordIndexCalendarFieldMetadataIdState,
         );
 
-        const objectMetadataItems = jotaiStore.get(
-          objectMetadataItemsState.atom,
-        );
+        const objectMetadataItems = get(objectMetadataItemsRecoilBridge);
         const objectMetadataItem = objectMetadataItems.find(
           (objectMetadataItem) =>
             objectMetadataItem.fields.some(

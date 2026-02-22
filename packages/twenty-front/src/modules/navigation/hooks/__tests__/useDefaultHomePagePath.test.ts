@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, useEffect, type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -46,7 +46,7 @@ const renderHooks = ({
       const setCurrentUserWorkspace = useSetRecoilStateV2(
         currentUserWorkspaceState,
       );
-      const setCoreViews = useSetRecoilState(coreViewsState);
+      const setCoreViews = useSetRecoilStateV2(coreViewsState);
 
       useEffect(() => {
         if (withExistingView) {

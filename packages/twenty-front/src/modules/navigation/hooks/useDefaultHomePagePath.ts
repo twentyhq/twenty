@@ -5,6 +5,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import isEmpty from 'lodash.isempty';
@@ -42,18 +43,18 @@ export const useDefaultHomePagePath = () => {
     [readableAlphaSortedActiveNonSystemObjectMetadataItems],
   );
 
-  const getFirstView = useRecoilCallback(({ snapshot }) => {
-    return (objectMetadataItemId: string | undefined | null) => {
-      const views = snapshot
-        .getLoadable(coreViewsState)
-        .getValue()
+  const getFirstView = useCallback(
+    (objectMetadataItemId: string | undefined | null) => {
+      const views = jotaiStore
+        .get(coreViewsState.atom)
         .map(convertCoreViewToView);
 
       return views.find(
         (view) => view.objectMetadataId === objectMetadataItemId,
       );
-    };
-  }, []);
+    },
+    [],
+  );
 
   const firstObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
     const [firstObjectMetadataItem] =

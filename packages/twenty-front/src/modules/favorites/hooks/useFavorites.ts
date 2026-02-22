@@ -5,7 +5,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
@@ -13,7 +12,7 @@ import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValu
 
 export const useFavorites = () => {
   const { favorites } = usePrefetchedFavoritesData();
-  const favoriteViewsWithMinimalData = useRecoilValue(
+  const favoriteViewsWithMinimalData = useRecoilValueV2(
     favoriteViewsWithMinimalDataSelector,
   );
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);

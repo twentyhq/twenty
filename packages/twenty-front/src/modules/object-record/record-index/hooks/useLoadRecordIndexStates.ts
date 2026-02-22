@@ -173,77 +173,71 @@ export const useLoadRecordIndexStates = () => {
   );
 
   const loadRecordIndexStates = useRecoilCallback(
-    ({ snapshot }) =>
-      async (view: View, objectMetadataItem: ObjectMetadataItem) => {
-        const filterableFieldMetadataItems = jotaiStore.get(
-          availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
-            objectMetadataItemId: objectMetadataItem.id,
-          }),
+    () => async (view: View, objectMetadataItem: ObjectMetadataItem) => {
+      const filterableFieldMetadataItems = jotaiStore.get(
+        availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
+          objectMetadataItemId: objectMetadataItem.id,
+        }),
+      );
+
+      onViewFieldsChange(view.viewFields, objectMetadataItem);
+
+      setRecordGroupsFromViewGroups({
+        viewId: view.id,
+        mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId ?? '',
+        viewGroups: view.viewGroups,
+        objectMetadataItem,
+      });
+
+      setContextStoreTargetedRecordsRuleComponentState((prev) => ({
+        ...prev,
+        filters: mapViewFiltersToFilters(
+          view.viewFilters,
+          filterableFieldMetadataItems,
+        ),
+      }));
+
+      setRecordIndexViewType(view.type);
+      setRecordIndexOpenRecordIn(view.openRecordIn);
+      store.set(recordIndexOpenRecordInStateV2.atom, view.openRecordIn);
+
+      setRecordIndexCalendarFieldMetadataIdState(
+        view.calendarFieldMetadataId ?? null,
+      );
+
+      setRecordIndexShouldHideEmptyRecordGroups(view.shouldHideEmptyGroups);
+
+      if (isDefined(view.mainGroupByFieldMetadataId)) {
+        const recordIndexGroupFieldMetadataItemId =
+          view.mainGroupByFieldMetadataId;
+
+        const { fieldMetadataItem: recordIndexGroupFieldMetadataItem } =
+          getFieldMetadataItemByIdOrThrow(recordIndexGroupFieldMetadataItemId);
+
+        setRecordIndexGroupFieldMetadataItem(recordIndexGroupFieldMetadataItem);
+      }
+
+      const recordIndexGroupAggregateFieldMetadataItem =
+        objectMetadataItem.fields?.find(
+          (field) => field.id === view.kanbanAggregateOperationFieldMetadataId,
         );
 
-        onViewFieldsChange(view.viewFields, objectMetadataItem);
+      if (isDefined(view.kanbanAggregateOperation)) {
+        const convertedAggregateOperation =
+          convertAggregateOperationToExtendedAggregateOperation(
+            view.kanbanAggregateOperation,
+            recordIndexGroupAggregateFieldMetadataItem?.type,
+          );
 
-        setRecordGroupsFromViewGroups({
-          viewId: view.id,
-          mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId ?? '',
-          viewGroups: view.viewGroups,
-          objectMetadataItem,
-        });
+        setRecordIndexGroupAggregateOperation(convertedAggregateOperation);
+      }
 
-        setContextStoreTargetedRecordsRuleComponentState((prev) => ({
-          ...prev,
-          filters: mapViewFiltersToFilters(
-            view.viewFilters,
-            filterableFieldMetadataItems,
-          ),
-        }));
-
-        setRecordIndexViewType(view.type);
-        setRecordIndexOpenRecordIn(view.openRecordIn);
-        store.set(recordIndexOpenRecordInStateV2.atom, view.openRecordIn);
-
-        setRecordIndexCalendarFieldMetadataIdState(
-          view.calendarFieldMetadataId ?? null,
+      if (isDefined(recordIndexGroupAggregateFieldMetadataItem)) {
+        setRecordIndexGroupAggregateFieldMetadataItem(
+          recordIndexGroupAggregateFieldMetadataItem,
         );
-
-        setRecordIndexShouldHideEmptyRecordGroups(view.shouldHideEmptyGroups);
-
-        if (isDefined(view.mainGroupByFieldMetadataId)) {
-          const recordIndexGroupFieldMetadataItemId =
-            view.mainGroupByFieldMetadataId;
-
-          const { fieldMetadataItem: recordIndexGroupFieldMetadataItem } =
-            getFieldMetadataItemByIdOrThrow(
-              recordIndexGroupFieldMetadataItemId,
-            );
-
-          setRecordIndexGroupFieldMetadataItem(
-            recordIndexGroupFieldMetadataItem,
-          );
-        }
-
-        const recordIndexGroupAggregateFieldMetadataItem =
-          objectMetadataItem.fields?.find(
-            (field) =>
-              field.id === view.kanbanAggregateOperationFieldMetadataId,
-          );
-
-        if (isDefined(view.kanbanAggregateOperation)) {
-          const convertedAggregateOperation =
-            convertAggregateOperationToExtendedAggregateOperation(
-              view.kanbanAggregateOperation,
-              recordIndexGroupAggregateFieldMetadataItem?.type,
-            );
-
-          setRecordIndexGroupAggregateOperation(convertedAggregateOperation);
-        }
-
-        if (isDefined(recordIndexGroupAggregateFieldMetadataItem)) {
-          setRecordIndexGroupAggregateFieldMetadataItem(
-            recordIndexGroupAggregateFieldMetadataItem,
-          );
-        }
-      },
+      }
+    },
     [
       onViewFieldsChange,
       setRecordGroupsFromViewGroups,

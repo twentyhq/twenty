@@ -1,3 +1,4 @@
+import { useStore } from 'jotai';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
@@ -26,6 +27,8 @@ export const useUpdateCurrentView = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
   const setRecordIndexViewType = useSetRecoilState(recordIndexViewTypeState);
+
+  const store = useStore();
 
   const [updateOneCoreView] = useUpdateCoreViewMutation();
   const { refreshCoreViewsByObjectMetadataId } =
@@ -99,13 +102,11 @@ export const useUpdateCurrentView = () => {
           .getLoadable(currentViewIdCallbackState)
           .getValue();
 
-        const currentView = snapshot
-          .getLoadable(
-            coreViewFromViewIdFamilySelector({
-              viewId: currentViewId ?? '',
-            }),
-          )
-          .getValue();
+        const currentView = store.get(
+          coreViewFromViewIdFamilySelector.selectorFamily({
+            viewId: currentViewId ?? '',
+          }),
+        );
 
         if (!isDefined(currentView)) {
           return;
@@ -158,6 +159,7 @@ export const useUpdateCurrentView = () => {
       objectMetadataItem,
       refreshCoreViewsByObjectMetadataId,
       setRecordIndexViewType,
+      store,
       updateOneCoreView,
     ],
   );

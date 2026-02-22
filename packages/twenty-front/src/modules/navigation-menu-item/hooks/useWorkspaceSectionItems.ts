@@ -1,4 +1,3 @@
-import { useRecoilValue } from 'recoil';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
@@ -35,7 +34,7 @@ export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItemsByFolder } =
     useNavigationMenuItemsByFolder();
-  const coreViews = useRecoilValue(coreViewsState);
+  const coreViews = useRecoilValueV2(coreViewsState);
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const views = coreViews.map(convertCoreViewToView);

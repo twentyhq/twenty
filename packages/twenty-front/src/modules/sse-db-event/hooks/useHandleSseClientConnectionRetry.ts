@@ -59,7 +59,7 @@ export const useHandleSseClientConnectionRetry = () => {
 
         await sleep(waitTimeInMs);
       },
-    [],
+    [jotaiStore],
   );
 
   return { handleSseClientConnectionRetry };

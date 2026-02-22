@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
@@ -17,7 +16,7 @@ import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationM
 export const useSortedNavigationMenuItems = () => {
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
-  const coreViews = useRecoilValue(coreViewsState).map(convertCoreViewToView);
+  const coreViews = useRecoilValueV2(coreViewsState).map(convertCoreViewToView);
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const targetRecordIdentifiers = useMemo(() => {

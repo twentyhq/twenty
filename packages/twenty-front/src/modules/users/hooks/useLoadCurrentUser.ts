@@ -13,7 +13,6 @@ import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetReco
 import { coreViewsState } from '@/views/states/coreViewState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -41,7 +40,7 @@ export const useLoadCurrentUser = () => {
   );
   const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
-  const setCoreViews = useSetRecoilState(coreViewsState);
+  const setCoreViews = useSetRecoilStateV2(coreViewsState);
   const setWorkspaceAuthBypassProviders = useSetRecoilStateV2(
     workspaceAuthBypassProvidersState,
   );

@@ -109,7 +109,7 @@ export const useStepsOutputSchema = () => {
           set(shouldRecomputeOutputSchemaFamilyState(triggerKey), false);
         }
       },
-    [],
+    [store],
   );
 
   const markStepForRecomputation = useRecoilCallback(
@@ -127,7 +127,7 @@ export const useStepsOutputSchema = () => {
         );
         set(shouldRecomputeOutputSchemaFamilyState(stepKey), true);
       },
-    [store],
+    [],
   );
 
   const deleteStepsOutputSchema = useRecoilCallback(
@@ -148,7 +148,7 @@ export const useStepsOutputSchema = () => {
           set(shouldRecomputeOutputSchemaFamilyState(stepKey), true);
         });
       },
-    [store],
+    [],
   );
 
   return {
