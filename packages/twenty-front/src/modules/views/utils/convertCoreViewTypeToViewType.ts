@@ -8,6 +8,7 @@ export const convertCoreViewTypeToViewType = (
     [CoreViewType.KANBAN]: ViewType.Kanban,
     [CoreViewType.TABLE]: ViewType.Table,
     [CoreViewType.CALENDAR]: ViewType.Calendar,
+    [CoreViewType.FIELDS_WIDGET]: ViewType.FieldsWidget,
   };
 
   return (

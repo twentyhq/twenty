@@ -8,6 +8,7 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
     frontComponent {
       id
       name
+      isHeadless
     }
     label
     icon

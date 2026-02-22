@@ -20,6 +20,7 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
     builtComponentPath: frontComponentManifest.builtComponentPath,
     componentName: frontComponentManifest.componentName,
     builtComponentChecksum: frontComponentManifest.builtComponentChecksum,
+    isHeadless: frontComponentManifest.isHeadless ?? false,
     createdAt: now,
     updatedAt: now,
   };

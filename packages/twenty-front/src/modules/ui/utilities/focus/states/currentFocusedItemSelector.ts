@@ -1,8 +1,10 @@
 import { type FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
-import { selector } from 'recoil';
+import { createSelectorV2 } from '@/ui/utilities/state/jotai/utils/createSelectorV2';
 import { focusStackState } from './focusStackState';
 
-export const currentFocusedItemSelector = selector<FocusStackItem | undefined>({
+export const currentFocusedItemSelector = createSelectorV2<
+  FocusStackItem | undefined
+>({
   key: 'currentFocusedItemSelector',
   get: ({ get }) => {
     const focusStack = get(focusStackState);

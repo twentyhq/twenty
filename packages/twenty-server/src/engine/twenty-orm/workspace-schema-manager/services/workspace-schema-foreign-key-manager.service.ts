@@ -1,7 +1,15 @@
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaForeignKeyDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-foreign-key-definition.type';
-import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+
+const ALLOWED_FK_ACTIONS = new Set([
+  'CASCADE',
+  'SET NULL',
+  'RESTRICT',
+  'NO ACTION',
+  'SET DEFAULT',
+]);
 
 export class WorkspaceSchemaForeignKeyManagerService {
   async createForeignKey({
@@ -20,13 +28,19 @@ export class WorkspaceSchemaForeignKeyManagerService {
       [foreignKey.referencedColumnName],
     );
 
-    let sql = `ALTER TABLE "${schemaName}"."${foreignKey.tableName}" ADD CONSTRAINT "${foreignKeyName}" FOREIGN KEY ("${foreignKey.columnName}") REFERENCES "${schemaName}"."${foreignKey.referencedTableName}" ("${foreignKey.referencedColumnName}")`;
+    let sql = `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(foreignKey.tableName)} ADD CONSTRAINT ${escapeIdentifier(foreignKeyName)} FOREIGN KEY (${escapeIdentifier(foreignKey.columnName)}) REFERENCES ${escapeIdentifier(schemaName)}.${escapeIdentifier(foreignKey.referencedTableName)} (${escapeIdentifier(foreignKey.referencedColumnName)})`;
 
     if (foreignKey.onDelete) {
+      if (!ALLOWED_FK_ACTIONS.has(foreignKey.onDelete)) {
+        throw new Error(`Unsupported ON DELETE action: ${foreignKey.onDelete}`);
+      }
       sql += ` ON DELETE ${foreignKey.onDelete}`;
     }
 
     if (foreignKey.onUpdate) {
+      if (!ALLOWED_FK_ACTIONS.has(foreignKey.onUpdate)) {
+        throw new Error(`Unsupported ON UPDATE action: ${foreignKey.onUpdate}`);
+      }
       sql += ` ON UPDATE ${foreignKey.onUpdate}`;
     }
 
@@ -44,10 +58,7 @@ export class WorkspaceSchemaForeignKeyManagerService {
     tableName: string;
     foreignKeyName: string;
   }): Promise<void> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
-    const safeForeignKeyName = removeSqlDDLInjection(foreignKeyName);
-    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" DROP CONSTRAINT IF EXISTS "${safeForeignKeyName}"`;
+    const sql = `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} DROP CONSTRAINT IF EXISTS ${escapeIdentifier(foreignKeyName)}`;
 
     await queryRunner.query(sql);
   }
@@ -63,10 +74,7 @@ export class WorkspaceSchemaForeignKeyManagerService {
     tableName: string;
     foreignKeyName: string;
   }): Promise<void> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
-    const safeForeignKeyName = removeSqlDDLInjection(foreignKeyName);
-    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER CONSTRAINT "${safeForeignKeyName}" NOT DEFERRABLE`;
+    const sql = `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} ALTER CONSTRAINT ${escapeIdentifier(foreignKeyName)} NOT DEFERRABLE`;
 
     await queryRunner.query(sql);
   }
@@ -82,10 +90,7 @@ export class WorkspaceSchemaForeignKeyManagerService {
     tableName: string;
     foreignKeyName: string;
   }): Promise<void> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
-    const safeForeignKeyName = removeSqlDDLInjection(foreignKeyName);
-    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER CONSTRAINT "${safeForeignKeyName}" DEFERRABLE`;
+    const sql = `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} ALTER CONSTRAINT ${escapeIdentifier(foreignKeyName)} DEFERRABLE`;
 
     await queryRunner.query(sql);
   }
@@ -101,10 +106,7 @@ export class WorkspaceSchemaForeignKeyManagerService {
     tableName: string;
     columnName: string;
   }): Promise<string | undefined> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
-    const safeColumnName = removeSqlDDLInjection(columnName);
-
+    // Uses parameterized query ($1, $2, $3) — safe against injection
     const foreignKeys = await queryRunner.query(
       `
       SELECT
@@ -121,7 +123,7 @@ export class WorkspaceSchemaForeignKeyManagerService {
         AND tc.table_name = $2
         AND kcu.column_name = $3
     `,
-      [safeSchemaName, safeTableName, safeColumnName],
+      [schemaName, tableName, columnName],
     );
 
     return foreignKeys[0]?.constraint_name;

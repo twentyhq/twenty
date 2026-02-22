@@ -15,7 +15,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
@@ -26,17 +26,27 @@ import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type WorkspaceMember,
+  ViewType as CoreViewType,
   useFindAllCoreViewsQuery,
   useFindAllRecordPageLayoutsQuery,
-  useGetCurrentUserQuery,
+  useFindFieldsWidgetCoreViewsQuery,
   useFindManyLogicFunctionsQuery,
+  useGetCurrentUserQuery,
+  type WorkspaceMember,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+
+const INDEX_VIEW_TYPES = [
+  CoreViewType.TABLE,
+  CoreViewType.KANBAN,
+  CoreViewType.CALENDAR,
+];
+
+const FIELDS_WIDGET_VIEW_TYPES = [CoreViewType.FIELDS_WIDGET];
 
 export const MetadataProviderEffect = () => {
   const location = useLocation();
@@ -57,6 +67,8 @@ export const MetadataProviderEffect = () => {
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
   const isLoggedIn = useIsLogged();
 
+  const store = useStore();
+
   const updateLocaleCatalog = useRecoilCallback(
     ({ snapshot, set }) =>
       async (newLocale: keyof typeof APP_LOCALES) => {
@@ -68,22 +80,48 @@ export const MetadataProviderEffect = () => {
               localeCatalog: localeCatalog || enUS,
             };
             set(dateLocaleState, newValue);
-            jotaiStore.set(dateLocaleStateV2.atom, newValue);
+            store.set(dateLocaleStateV2.atom, newValue);
           });
+        }
+      },
+    [store],
+  );
+
+  const setIndexCoreViews = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (indexViews: CoreViewWithRelations[]) => {
+        const existingCoreViews = snapshot
+          .getLoadable(coreViewsState)
+          .getValue();
+
+        const existingFieldsWidgetViews = existingCoreViews.filter(
+          (view) => view.type === CoreViewType.FIELDS_WIDGET,
+        );
+
+        const mergedViews = [...indexViews, ...existingFieldsWidgetViews];
+
+        if (!isDeeplyEqual(existingCoreViews, mergedViews)) {
+          set(coreViewsState, mergedViews);
         }
       },
     [],
   );
 
-  const setCoreViews = useRecoilCallback(
+  const setFieldsWidgetCoreViews = useRecoilCallback(
     ({ set, snapshot }) =>
-      (coreViews: CoreViewWithRelations[]) => {
+      (fieldsWidgetViews: CoreViewWithRelations[]) => {
         const existingCoreViews = snapshot
           .getLoadable(coreViewsState)
           .getValue();
 
-        if (!isDeeplyEqual(existingCoreViews, coreViews)) {
-          set(coreViewsState, coreViews);
+        const existingIndexViews = existingCoreViews.filter(
+          (view) => view.type !== CoreViewType.FIELDS_WIDGET,
+        );
+
+        const mergedViews = [...existingIndexViews, ...fieldsWidgetViews];
+
+        if (!isDeeplyEqual(existingCoreViews, mergedViews)) {
+          set(coreViewsState, mergedViews);
         }
       },
     [],
@@ -127,6 +165,13 @@ export const MetadataProviderEffect = () => {
   const { data: queryDataCoreViews, loading: queryLoadingCoreViews } =
     useFindAllCoreViewsQuery({
       skip: shouldSkip,
+      variables: { viewTypes: INDEX_VIEW_TYPES },
+    });
+
+  const { data: queryDataFieldsWidgetCoreViews } =
+    useFindFieldsWidgetCoreViewsQuery({
+      skip: shouldSkip,
+      variables: { viewTypes: FIELDS_WIDGET_VIEW_TYPES },
     });
 
   const { data: queryDataRecordPageLayouts } = useFindAllRecordPageLayoutsQuery(
@@ -237,7 +282,7 @@ export const MetadataProviderEffect = () => {
     initializeFormatPreferences,
     setCurrentWorkspaceMembersWithDeleted,
     updateLocaleCatalog,
-    setCoreViews,
+    setIndexCoreViews,
   ]);
 
   useEffect(() => {
@@ -247,8 +292,18 @@ export const MetadataProviderEffect = () => {
 
     if (!isDefined(queryDataCoreViews?.getCoreViews)) return;
 
-    setCoreViews(queryDataCoreViews.getCoreViews);
-  }, [queryDataCoreViews?.getCoreViews, setCoreViews, queryLoadingCoreViews]);
+    setIndexCoreViews(queryDataCoreViews.getCoreViews);
+  }, [
+    queryDataCoreViews?.getCoreViews,
+    setIndexCoreViews,
+    queryLoadingCoreViews,
+  ]);
+
+  useEffect(() => {
+    if (!isDefined(queryDataFieldsWidgetCoreViews?.getCoreViews)) return;
+
+    setFieldsWidgetCoreViews(queryDataFieldsWidgetCoreViews.getCoreViews);
+  }, [queryDataFieldsWidgetCoreViews?.getCoreViews, setFieldsWidgetCoreViews]);
 
   useEffect(() => {
     if (!isDefined(queryDataRecordPageLayouts?.getPageLayouts)) return;

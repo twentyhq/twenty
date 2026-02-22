@@ -7,6 +7,7 @@ import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entitie
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
+import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-display-credits.util';
 
 export const formatBillingDatabaseProductToGraphqlDTO = (
   plan: BillingGetPlanResult,
@@ -42,7 +43,7 @@ const formatBillingDatabasePriceToMeteredPriceDTO = (
   return {
     tiers:
       billingPrice?.tiers?.map((tier) => ({
-        upTo: tier.up_to,
+        upTo: tier.up_to !== null ? toDisplayCredits(tier.up_to) : tier.up_to,
         flatAmount: tier.flat_amount,
         unitAmount: tier.unit_amount,
       })) ?? [],

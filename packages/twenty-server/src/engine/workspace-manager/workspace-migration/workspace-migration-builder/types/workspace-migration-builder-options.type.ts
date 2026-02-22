@@ -3,4 +3,5 @@ import { type InferDeletionFromMissingEntities } from 'src/engine/workspace-mana
 export type WorkspaceMigrationBuilderOptions = {
   inferDeletionFromMissingEntities?: InferDeletionFromMissingEntities;
   isSystemBuild: boolean;
+  applicationUniversalIdentifier: string;
 };

@@ -1,6 +1,7 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
+  IsBoolean,
   IsDateString,
   IsNotEmpty,
   IsOptional,
@@ -62,6 +63,10 @@ export class FrontComponentDTO {
   @IsDateString()
   @Field()
   updatedAt: Date;
+
+  @IsBoolean()
+  @Field()
+  isHeadless: boolean;
 
   @Field(() => ApplicationTokenPairDTO, { nullable: true })
   applicationTokenPair?: ApplicationTokenPairDTO;

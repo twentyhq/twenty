@@ -7,12 +7,12 @@ import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/to
 export const EXECUTE_TOOL_TOOL_NAME = 'execute_tool';
 
 export const executeToolInputSchema = z.object({
-  toolName: z.string().describe('Exact name of the tool to execute.'),
+  toolName: z
+    .string()
+    .describe('Exact tool name from get_tool_catalog. Do not guess.'),
   arguments: z
     .record(z.string(), z.unknown())
-    .describe(
-      'Arguments to pass to the tool. Must match the schema from learn_tools.',
-    ),
+    .describe('Arguments matching the schema returned by learn_tools.'),
 });
 
 export type ExecuteToolInput = z.infer<typeof executeToolInputSchema>;
@@ -30,9 +30,10 @@ export const createExecuteToolTool = (
   toolRegistry: ToolRegistryService,
   context: ToolContext,
   directTools?: ToolSet,
+  excludeTools?: Set<string>,
 ) => ({
   description:
-    'Execute a tool by name. Use learn_tools first to discover the correct schema, then call this with the tool name and arguments.',
+    'STEP 3: Execute a tool by name with arguments. You MUST call get_tool_catalog (step 1) and learn_tools (step 2) first to discover the tool name and its required input schema.',
   inputSchema: executeToolInputSchema,
   execute: async (
     parameters: ExecuteToolInput,
@@ -40,8 +41,16 @@ export const createExecuteToolTool = (
   ): Promise<ExecuteToolResult> => {
     const { toolName, arguments: args } = parameters;
 
-    // Native provider tools and preloaded tools are already in the ToolSet;
-    // dispatch directly if the LLM routes them through execute_tool.
+    if (excludeTools?.has(toolName)) {
+      return {
+        toolName,
+        error: {
+          message: `Tool "${toolName}" is not available in this context.`,
+          suggestion: 'Use get_tool_catalog to see which tools are available.',
+        },
+      };
+    }
+
     const directTool = directTools?.[toolName];
 
     if (directTool?.execute) {

@@ -7,6 +7,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { type MetadataUniversalFlatEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
 import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { METADATA_EVENTS_TO_EMIT } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/metadata-event-to-emit.constant';
 import {
   type CreateMetadataEvent,
   type DeleteMetadataEvent,
@@ -59,6 +60,18 @@ const buildUpdateMetadataEvent = <TMetadataName extends AllMetadataName>({
 };
 
 export const deriveMetadataEventsFromUpdateAction = ({
+  flatAction,
+  allFlatEntityMaps,
+}: DeriveMetadataEventsFromUpdateActionArgs): MetadataEvent[] => {
+  const events = deriveAllMetadataEventsFromUpdateAction({
+    flatAction,
+    allFlatEntityMaps,
+  });
+
+  return events.filter((event) => METADATA_EVENTS_TO_EMIT[event.metadataName]);
+};
+
+const deriveAllMetadataEventsFromUpdateAction = ({
   flatAction,
   allFlatEntityMaps,
 }: DeriveMetadataEventsFromUpdateActionArgs): MetadataEvent[] => {

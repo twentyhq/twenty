@@ -19,7 +19,7 @@ import { usePersistFieldFromFieldInputContext } from '@/object-record/record-fie
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
 import { useIcons } from 'twenty-ui/display';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
@@ -46,6 +46,7 @@ export const RecordInlineCell = ({
     isRecordFieldReadOnly: isReadOnly,
   } = useContext(FieldContext);
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
+  const store = useStore();
 
   const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
 
@@ -133,43 +134,41 @@ export const RecordInlineCell = ({
     closeInlineCell();
   };
 
-  const handleClickOutside = useRecoilCallback(
-    ({ snapshot }) =>
-      ({
-        event,
-        newValue,
-        skipPersist,
-      }: Parameters<FieldInputClickOutsideEvent>[0]) => {
-        const currentDropdownFocusId = snapshot
-          .getLoadable(activeDropdownFocusIdState)
-          .getValue();
+  const handleClickOutside = useCallback(
+    ({
+      event,
+      newValue,
+      skipPersist,
+    }: Parameters<FieldInputClickOutsideEvent>[0]) => {
+      const currentDropdownFocusId = store.get(activeDropdownFocusIdState.atom);
 
-        const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
-          recordId,
-          fieldMetadataId: fieldDefinition.fieldMetadataId,
-          componentType: 'inline-cell',
-          instanceId: scopeInstanceId,
-        });
+      const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
+        recordId,
+        fieldMetadataId: fieldDefinition.fieldMetadataId,
+        componentType: 'inline-cell',
+        instanceId: scopeInstanceId,
+      });
 
-        if (currentDropdownFocusId !== expectedDropdownFocusId) {
-          return;
-        }
+      if (currentDropdownFocusId !== expectedDropdownFocusId) {
+        return;
+      }
 
-        event?.preventDefault();
-        event?.stopImmediatePropagation();
+      event?.preventDefault();
+      event?.stopImmediatePropagation();
 
-        if (skipPersist !== true) {
-          persistFieldFromFieldInputContext(newValue);
-        }
+      if (skipPersist !== true) {
+        persistFieldFromFieldInputContext(newValue);
+      }
 
-        closeInlineCell();
-      },
+      closeInlineCell();
+    },
     [
       recordId,
       fieldDefinition.fieldMetadataId,
       scopeInstanceId,
       closeInlineCell,
       persistFieldFromFieldInputContext,
+      store,
     ],
   );
 

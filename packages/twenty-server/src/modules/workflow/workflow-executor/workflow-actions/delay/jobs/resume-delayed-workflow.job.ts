@@ -101,7 +101,7 @@ export class ResumeDelayedWorkflowJob {
           error:
             error instanceof Error
               ? error.message
-              : 'Unknown error during delay resume',
+              : `Error during delay resume: ${String(error)}`,
         });
       }
     }, authContext);

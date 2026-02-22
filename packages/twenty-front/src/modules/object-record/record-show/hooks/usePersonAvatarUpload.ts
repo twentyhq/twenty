@@ -1,8 +1,8 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useApolloClient } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import {
@@ -14,10 +14,10 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const usePersonAvatarUpload = (personRecordId: string) => {
-  const coreClient = useApolloCoreClient();
+  const apolloClient = useApolloClient();
   const [uploadImage] = useUploadImageMutation();
   const [uploadFilesFieldFile] = useUploadFilesFieldFileMutation({
-    client: coreClient,
+    client: apolloClient,
   });
   const { updateOneRecord } = useUpdateOneRecord();
 

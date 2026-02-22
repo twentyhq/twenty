@@ -14,6 +14,7 @@ export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
+export { CommandMenuPages } from './CommandMenuPages';
 export type { ActorMetadata } from './composite-types/actor.composite-type';
 export {
   FieldActorSource,
@@ -116,6 +117,7 @@ export type { IsNever } from './IsNever.type';
 export type { IsSerializedRelation } from './IsSerializedRelation.type';
 export type { LogicFunctionEvent } from './LogicFunctionEvent';
 export { MessageParticipantRole } from './MessageParticipantRole';
+export type { MetadataGqlOperationSignature } from './MetadataGqlOperationSignature';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NavigateOptions } from './NavigateOptions';
 export type { NonNullableRequired } from './NonNullableRequired';
@@ -137,13 +139,46 @@ export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { OrderBy } from './OrderBy';
 export type {
+  ChartRecordFilter,
+  ChartRecordFilterGroup,
+  ChartFilter,
+  UniversalChartFilter,
+} from './page-layout/chart-filter.type';
+export type { GridPosition } from './page-layout/grid-position.type';
+export type {
+  AggregateChartConfiguration,
+  GaugeChartConfiguration,
+  PieChartConfiguration,
+  BarChartConfiguration,
+  LineChartConfiguration,
+  ViewConfiguration,
+  FieldConfiguration,
+  FieldsConfiguration,
+  FieldRichTextConfiguration,
+  StandaloneRichTextConfiguration,
+  IframeConfiguration,
+  FrontComponentConfiguration,
+  TimelineConfiguration,
+  TasksConfiguration,
+  NotesConfiguration,
+  FilesConfiguration,
+  EmailsConfiguration,
+  CalendarConfiguration,
+  WorkflowConfiguration,
+  WorkflowVersionConfiguration,
+  WorkflowRunConfiguration,
+  PageLayoutWidgetConfiguration,
+} from './page-layout/page-layout-widget-configuration.type';
+export type {
   PageLayoutWidgetGridPosition,
   PageLayoutWidgetVerticalListPosition,
   PageLayoutWidgetCanvasPosition,
   PageLayoutWidgetPosition,
 } from './page-layout/page-layout-widget-position.type';
+export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/page-layout-widget-universal-configuration.type';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
+export type { RatioAggregateConfig } from './page-layout/ratio-aggregate-config.type';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export type { QueryCursorDirection } from './QueryCursorDirection';

@@ -300,7 +300,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       await this.rollbackForMetadata(context);
     } catch (error) {
       this.logger.error(
-        `Failed to rollback ${context.action.type} action for ${context.action.metadataName}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to rollback ${context.action.type} action for ${context.action.metadataName}: ${error instanceof Error ? error.message : String(error)}`,
         'BaseWorkspaceMigrationRunnerActionHandlerService',
       );
     }

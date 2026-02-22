@@ -4,7 +4,7 @@ import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/inte
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { SelectableListContextProvider } from '@/ui/layout/selectable-list/states/contexts/SelectableListContext';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
@@ -27,7 +27,7 @@ export const SelectableList = ({
 }: SelectableListProps) => {
   useSelectableListHotKeys(selectableListInstanceId, focusId, onSelect);
 
-  const setSelectableItemIds = useSetRecoilComponentState(
+  const setSelectableItemIds = useSetRecoilComponentStateV2(
     selectableItemIdsComponentState,
     selectableListInstanceId,
   );

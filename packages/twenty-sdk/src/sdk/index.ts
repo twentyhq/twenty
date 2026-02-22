@@ -24,6 +24,7 @@ export { OnDeleteAction } from './fields/on-delete-action';
 export { RelationType } from './fields/relation-type';
 export { validateFields } from './fields/validate-fields';
 export type {
+  FrontComponentCommandConfig,
   FrontComponentConfig,
   FrontComponentType,
 } from './front-component-config';
@@ -48,18 +49,40 @@ export type { RoutePayload } from './logic-functions/triggers/route-payload-type
 export { defineNavigationMenuItem } from './navigation-menu-items/define-navigation-menu-item';
 export { defineObject } from './objects/define-object';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
+export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS as STANDARD_OBJECT } from './objects/standard-object-ids';
+export { definePageLayout } from './page-layouts/define-page-layout';
+export type { PageLayoutConfig } from './page-layouts/page-layout-config';
+export {
+  AggregateOperations,
+  ObjectRecordGroupByDateGranularity,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
+export type { PageLayoutWidgetUniversalConfiguration } from 'twenty-shared/types';
 export { defineRole } from './roles/define-role';
 export { PermissionFlag } from './roles/permission-flag-type';
+export { defineSkill } from './skills/define-skill';
 export { defineView } from './views/define-view';
 export type { ViewConfig } from './views/view-config';
+
+// Action components for front components
+export { Action } from './action';
+export type { ActionProps } from './action';
+export { ActionLink } from './action';
+export type { ActionLinkProps } from './action';
+export { ActionOpenSidePanelPage } from './action';
+export type { ActionOpenSidePanelPageProps } from './action';
 
 // Front Component API exports
 export {
   navigate,
+  openSidePanelPage,
+  unmountFrontComponent,
   useFrontComponentExecutionContext,
   useUserId,
 } from './front-component-api';
 export type { FrontComponentExecutionContext } from './front-component-api';
+
+export { AppPath, CommandMenuPages } from 'twenty-shared/types';
 
 // Front Component Common exports
 export {

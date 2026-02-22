@@ -1,10 +1,11 @@
-import { type AppPath, type NavigateOptions } from 'twenty-shared/types';
+import {
+  type NavigateFunction,
+  type OpenSidePanelPageFunction,
+  type UnmountFrontComponentFunction,
+} from '../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 
 export type FrontComponentHostCommunicationApi = {
-  navigate: (
-    to: AppPath,
-    params?: Record<string, string | null>,
-    queryParams?: Record<string, unknown>,
-    options?: NavigateOptions,
-  ) => Promise<void>;
+  navigate: NavigateFunction;
+  openSidePanelPage: OpenSidePanelPageFunction;
+  unmountFrontComponent: UnmountFrontComponentFunction;
 };

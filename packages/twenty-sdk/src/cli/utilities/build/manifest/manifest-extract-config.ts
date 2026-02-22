@@ -6,9 +6,11 @@ export enum TargetFunction {
   DefineLogicFunction = 'defineLogicFunction',
   DefineObject = 'defineObject',
   DefineRole = 'defineRole',
+  DefineSkill = 'defineSkill',
   DefineFrontComponent = 'defineFrontComponent',
   DefineView = 'defineView',
   DefineNavigationMenuItem = 'defineNavigationMenuItem',
+  DefinePageLayout = 'definePageLayout',
 }
 
 export enum ManifestEntityKey {
@@ -17,10 +19,12 @@ export enum ManifestEntityKey {
   LogicFunctions = 'logicFunctions',
   Objects = 'objects',
   Roles = 'roles',
+  Skills = 'skills',
   FrontComponents = 'frontComponents',
   PublicAssets = 'publicAssets',
   Views = 'views',
   NavigationMenuItems = 'navigationMenuItems',
+  PageLayouts = 'pageLayouts',
 }
 
 export type EntityFilePaths = Record<ManifestEntityKey, string[]>;
@@ -34,10 +38,12 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   [TargetFunction.DefineLogicFunction]: ManifestEntityKey.LogicFunctions,
   [TargetFunction.DefineObject]: ManifestEntityKey.Objects,
   [TargetFunction.DefineRole]: ManifestEntityKey.Roles,
+  [TargetFunction.DefineSkill]: ManifestEntityKey.Skills,
   [TargetFunction.DefineFrontComponent]: ManifestEntityKey.FrontComponents,
   [TargetFunction.DefineView]: ManifestEntityKey.Views,
   [TargetFunction.DefineNavigationMenuItem]:
     ManifestEntityKey.NavigationMenuItems,
+  [TargetFunction.DefinePageLayout]: ManifestEntityKey.PageLayouts,
 };
 
 const computeIsTargetFunctionCall = (node: ts.Node): string | undefined => {

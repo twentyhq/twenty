@@ -1,7 +1,7 @@
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
-export const isDropdownOpenComponentState = createComponentState<boolean>({
+export const isDropdownOpenComponentState = createComponentStateV2<boolean>({
   key: 'isDropdownOpenComponentState',
   defaultValue: false,
   componentInstanceContext: DropdownComponentInstanceContext,
