@@ -19,6 +19,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import {
   AgentException,
   AgentExceptionCode,
@@ -185,18 +186,9 @@ export class AgentAsyncExecutorService {
         },
       });
 
-      const cacheCreationTokens = textResponse.steps.reduce((sum, step) => {
-        const meta = step.providerMetadata;
-        const stepTokens =
-          ((meta?.anthropic as Record<string, unknown>)
-            ?.cacheCreationInputTokens as number | undefined) ??
-          ((meta?.bedrock as Record<string, unknown>)?.cacheWriteInputTokens as
-            | number
-            | undefined) ??
-          0;
-
-        return sum + stepTokens;
-      }, 0);
+      const cacheCreationTokens = extractCacheCreationTokensFromSteps(
+        textResponse.steps,
+      );
 
       const agentSchema =
         agent?.responseFormat?.type === 'json'

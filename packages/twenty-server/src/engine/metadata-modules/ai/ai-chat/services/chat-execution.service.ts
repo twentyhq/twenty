@@ -37,6 +37,7 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import {
   extractCodeInterpreterFiles,
@@ -225,17 +226,7 @@ export class ChatExecutionService {
 
     Promise.all([stream.usage, stream.steps])
       .then(([usage, steps]) => {
-        const cacheCreationTokens = steps.reduce((sum, step) => {
-          const meta = step.providerMetadata;
-          const stepTokens =
-            ((meta?.anthropic as Record<string, unknown>)
-              ?.cacheCreationInputTokens as number | undefined) ??
-            ((meta?.bedrock as Record<string, unknown>)
-              ?.cacheWriteInputTokens as number | undefined) ??
-            0;
-
-          return sum + stepTokens;
-        }, 0);
+        const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
 
         this.aiBillingService.calculateAndBillUsage(
           registeredModel.modelId,

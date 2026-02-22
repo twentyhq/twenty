@@ -16,12 +16,11 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
+import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
+import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-display-credits.util';
-import {
-  type AIModelConfig,
-  ModelFamily,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-types.const';
+import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-types.const';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
 import { AgentChatService } from './agent-chat.service';
@@ -133,26 +132,16 @@ export class AgentChatStreamingService {
                 if (part.type === 'finish-step') {
                   const stepInput = part.usage?.inputTokens ?? 0;
                   const stepCached = part.usage?.cachedInputTokens ?? 0;
-
-                  // Anthropic/Bedrock exclude cached/created tokens from
-                  // input_tokens, reporting them separately
-                  const providerMeta = (
-                    part as {
-                      providerMetadata?: {
-                        anthropic?: {
-                          usage?: { cache_creation_input_tokens?: number };
-                        };
-                        bedrock?: {
-                          usage?: { cacheWriteInputTokens?: number };
-                        };
-                      };
-                    }
-                  ).providerMetadata;
-                  const stepCacheCreation =
-                    providerMeta?.anthropic?.usage
-                      ?.cache_creation_input_tokens ??
-                    providerMeta?.bedrock?.usage?.cacheWriteInputTokens ??
-                    0;
+                  const stepCacheCreation = extractCacheCreationTokens(
+                    (
+                      part as {
+                        providerMetadata?: Record<
+                          string,
+                          Record<string, unknown> | undefined
+                        >;
+                      }
+                    ).providerMetadata,
+                  );
 
                   totalCacheCreationTokens += stepCacheCreation;
                   lastStepConversationSize =
@@ -262,58 +251,25 @@ function computeStreamCosts(
     | undefined,
   cacheCreationTokens: number,
 ) {
-  const rawInputTokens = totalUsage?.inputTokens ?? 0;
-  const rawOutputTokens = totalUsage?.outputTokens ?? 0;
-  const cachedInputTokens = totalUsage?.cachedInputTokens ?? 0;
-  const reasoningTokens = totalUsage?.reasoningTokens ?? 0;
-
-  const isAnthropicFamily = modelConfig.modelFamily === ModelFamily.ANTHROPIC;
-
-  const adjustedInputTokens = isAnthropicFamily
-    ? rawInputTokens
-    : rawInputTokens - cachedInputTokens;
-
-  // Anthropic: outputTokens excludes reasoning; others include them
-  const adjustedOutputTokens = isAnthropicFamily
-    ? rawOutputTokens
-    : rawOutputTokens - reasoningTokens;
-
-  const totalInputTokens = isAnthropicFamily
-    ? rawInputTokens + cachedInputTokens + cacheCreationTokens
-    : rawInputTokens + cacheCreationTokens;
-
-  const costInfo =
-    modelConfig.longContextCost &&
-    totalInputTokens > modelConfig.longContextCost.thresholdTokens
-      ? modelConfig.longContextCost
-      : modelConfig;
-
-  const inputRate = costInfo.inputCostPerMillionTokens;
-  const outputRate = costInfo.outputCostPerMillionTokens;
-  const cachedRate = costInfo.cachedInputCostPerMillionTokens ?? inputRate;
-  const cacheCreationRate =
-    costInfo.cacheCreationCostPerMillionTokens ?? inputRate;
-
-  const inputCostInDollars =
-    (adjustedInputTokens / 1_000_000) * inputRate +
-    (cachedInputTokens / 1_000_000) * cachedRate +
-    (cacheCreationTokens / 1_000_000) * cacheCreationRate;
-
-  const outputCostInDollars =
-    (adjustedOutputTokens / 1_000_000) * outputRate +
-    (reasoningTokens / 1_000_000) * outputRate;
+  const breakdown = computeCostBreakdown(modelConfig, {
+    inputTokens: totalUsage?.inputTokens,
+    outputTokens: totalUsage?.outputTokens,
+    cachedInputTokens: totalUsage?.cachedInputTokens,
+    reasoningTokens: totalUsage?.reasoningTokens,
+    cacheCreationTokens,
+  });
 
   return {
     inputCredits: Math.round(
-      convertDollarsToBillingCredits(inputCostInDollars),
+      convertDollarsToBillingCredits(breakdown.inputCostInDollars),
     ),
     outputCredits: Math.round(
-      convertDollarsToBillingCredits(outputCostInDollars),
+      convertDollarsToBillingCredits(breakdown.outputCostInDollars),
     ),
     tokenCounts: {
-      totalInputTokens,
-      outputTokens: rawOutputTokens,
-      cachedInputTokens,
+      totalInputTokens: breakdown.tokenCounts.totalInputTokens,
+      outputTokens: totalUsage?.outputTokens ?? 0,
+      cachedInputTokens: breakdown.tokenCounts.cachedInputTokens,
     },
   };
 }
