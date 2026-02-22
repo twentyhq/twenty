@@ -4,18 +4,18 @@ import { useSetRecoilState } from 'recoil';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { NavigationDrawerWidthEffect } from '@/ui/navigation/components/NavigationDrawerWidthEffect';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
 } from '@/ui/navigation/states/navigationDrawerWidthState';
-import { NavigationDrawerWidthEffect } from '@/ui/navigation/components/NavigationDrawerWidthEffect';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -47,11 +47,13 @@ const StyledAnimatedContainer = styled.div<{
 const StyledContainer = styled.div<{
   isSettings?: boolean;
   isMobile?: boolean;
+  isExpanded?: boolean;
 }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: var(${NAVIGATION_DRAWER_WIDTH_VAR});
+  width: ${({ isExpanded }) =>
+    isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};
   gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
   padding: ${({ theme, isSettings, isMobile }) =>
@@ -72,7 +74,6 @@ export const NavigationDrawer = ({
   className,
   title,
 }: NavigationDrawerProps) => {
-  const [isHovered, setIsHovered] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
@@ -85,14 +86,6 @@ export const NavigationDrawer = ({
   const setTableWidthResizeIsActive = useSetRecoilState(
     tableWidthResizeIsActiveState,
   );
-
-  const handleHover = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
 
   const handleCollapse = () => {
     setIsNavigationDrawerExpanded(false);
@@ -122,15 +115,13 @@ export const NavigationDrawer = ({
         <StyledContainer
           isSettings={isSettingsDrawer}
           isMobile={isMobile}
-          onMouseEnter={handleHover}
-          onMouseLeave={handleMouseLeave}
+          isExpanded={isNavigationDrawerExpanded}
         >
           {isSettingsDrawer && title ? (
             !isMobile && <NavigationDrawerBackButton title={title} />
           ) : (
-            <NavigationDrawerHeader showCollapseButton={isHovered} />
+            <NavigationDrawerHeader showCollapseButton />
           )}
-
           {children}
         </StyledContainer>
 
