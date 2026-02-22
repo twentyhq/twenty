@@ -679,12 +679,12 @@ export type CheckUserExistOutput = {
 export type ClientAiModelConfig = {
   __typename?: 'ClientAIModelConfig';
   deprecated?: Maybe<Scalars['Boolean']>;
+  inferenceProvider: InferenceProvider;
   inputCostPerMillionTokensInCredits: Scalars['Float'];
   label: Scalars['String'];
   modelId: Scalars['String'];
   nativeCapabilities?: Maybe<NativeModelCapabilities>;
   outputCostPerMillionTokensInCredits: Scalars['Float'];
-  inferenceProvider: InferenceProvider;
 };
 
 export type ClientConfig = {
@@ -1883,6 +1883,18 @@ export enum IndexType {
   GIN = 'GIN'
 }
 
+export enum InferenceProvider {
+  ANTHROPIC = 'ANTHROPIC',
+  BEDROCK = 'BEDROCK',
+  GOOGLE = 'GOOGLE',
+  GROQ = 'GROQ',
+  MISTRAL = 'MISTRAL',
+  NONE = 'NONE',
+  OPENAI = 'OPENAI',
+  OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE',
+  XAI = 'XAI'
+}
+
 export type InitiateTwoFactorAuthenticationProvisioningOutput = {
   __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput';
   uri: Scalars['String'];
@@ -2154,18 +2166,6 @@ export type MetadataEventWithQueryIds = {
   metadataEvent: MetadataEvent;
   queryIds: Array<Scalars['String']>;
 };
-
-export enum InferenceProvider {
-  ANTHROPIC = 'ANTHROPIC',
-  BEDROCK = 'BEDROCK',
-  GOOGLE = 'GOOGLE',
-  GROQ = 'GROQ',
-  MISTRAL = 'MISTRAL',
-  NONE = 'NONE',
-  OPENAI = 'OPENAI',
-  OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE',
-  XAI = 'XAI'
-}
 
 export type Mutation = {
   __typename?: 'Mutation';
