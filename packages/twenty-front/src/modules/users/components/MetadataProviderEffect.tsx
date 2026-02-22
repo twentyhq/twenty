@@ -242,10 +242,7 @@ export const MetadataProviderEffect = () => {
   ]);
 
   useEffect(() => {
-    // Only mark views as loaded once the query has actually run and returned
-    // (queryDataCoreViews is undefined when the query is skipped, so we avoid
-    // setting localAreViewsLoaded=true prematurely before the query executes)
-    if (!queryLoadingCoreViews && isDefined(queryDataCoreViews)) {
+    if (!queryLoadingCoreViews && isDefined(queryDataCoreViews?.getCoreViews)) {
       setLocalAreViewsLoaded(true);
     }
 
@@ -265,6 +262,7 @@ export const MetadataProviderEffect = () => {
 
   useEffect(() => {
     if (localIsCurrentUserLoaded && localAreViewsLoaded) {
+      console.log('setting isCurrentUserLoaded to true');
       setIsCurrentUserLoaded(true);
     }
   }, [localIsCurrentUserLoaded, localAreViewsLoaded, setIsCurrentUserLoaded]);

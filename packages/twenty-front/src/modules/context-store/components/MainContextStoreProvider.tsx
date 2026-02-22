@@ -71,6 +71,7 @@ export const MainContextStoreProvider = () => {
   const shouldComputeContextStore =
     (isRecordIndexPage || isRecordShowPage || isSettingsPage) && !showAuthModal;
 
+
   if (!shouldComputeContextStore) {
     return null;
   }

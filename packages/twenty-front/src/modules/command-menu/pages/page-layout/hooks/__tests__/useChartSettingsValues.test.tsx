@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { RecoilRoot } from 'recoil';
 
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
@@ -89,7 +90,11 @@ const renderUseChartSettingsValues = (configuration: ChartConfiguration) => {
         configuration,
       }),
     {
-      wrapper: ({ children }) => <RecoilRoot>{children}</RecoilRoot>,
+      wrapper: ({ children }) => (
+        <JotaiProvider store={jotaiStore}>
+          <RecoilRoot>{children}</RecoilRoot>
+        </JotaiProvider>
+      ),
     },
   );
 };
@@ -418,7 +423,11 @@ describe('useChartSettingsValues', () => {
             configuration: config,
           }),
         {
-          wrapper: ({ children }) => <RecoilRoot>{children}</RecoilRoot>,
+          wrapper: ({ children }) => (
+        <JotaiProvider store={jotaiStore}>
+          <RecoilRoot>{children}</RecoilRoot>
+        </JotaiProvider>
+      ),
         },
       );
 

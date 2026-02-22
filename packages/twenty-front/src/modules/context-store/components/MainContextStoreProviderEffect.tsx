@@ -56,6 +56,7 @@ export const MainContextStoreProviderEffect = ({
     viewId: viewId ?? '',
   });
 
+
   useEffect(() => {
     if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem?.id) {
       setContextStoreCurrentObjectMetadataItemId(objectMetadataItem?.id);
