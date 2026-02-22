@@ -223,11 +223,24 @@ export class ChatExecutionService {
       },
     });
 
-    stream.usage
-      .then((usage) => {
+    Promise.all([stream.usage, stream.steps])
+      .then(([usage, steps]) => {
+        const cacheCreationTokens = steps.reduce((sum, step) => {
+          const meta = step.providerMetadata;
+
+          return (
+            sum +
+            ((meta?.anthropic as Record<string, unknown>)
+              ?.cacheCreationInputTokens ??
+              (meta?.bedrock as Record<string, unknown>)
+                ?.cacheWriteInputTokens ??
+              (0 as number))
+          );
+        }, 0);
+
         this.aiBillingService.calculateAndBillUsage(
           registeredModel.modelId,
-          { usage },
+          { usage, cacheCreationTokens },
           workspace.id,
           null,
         );
@@ -318,6 +331,18 @@ export class ChatExecutionService {
     switch (inferenceProvider) {
       case InferenceProvider.ANTHROPIC:
         return { web_search: anthropic.tools.webSearch_20250305() };
+      case InferenceProvider.BEDROCK: {
+        const bedrockProvider =
+          this.aiModelRegistryService.getBedrockProvider();
+
+        if (bedrockProvider) {
+          return {
+            web_search: bedrockProvider.tools.webSearch_20250305(),
+          };
+        }
+
+        return {};
+      }
       case InferenceProvider.OPENAI:
         return { web_search: openai.tools.webSearch() };
       case InferenceProvider.GROQ:

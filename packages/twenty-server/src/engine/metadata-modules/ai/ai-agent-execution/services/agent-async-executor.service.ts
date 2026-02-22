@@ -185,6 +185,18 @@ export class AgentAsyncExecutorService {
         },
       });
 
+      const cacheCreationTokens = textResponse.steps.reduce((sum, step) => {
+        const meta = step.providerMetadata;
+
+        return (
+          sum +
+          ((meta?.anthropic as Record<string, unknown>)
+            ?.cacheCreationInputTokens ??
+            (meta?.bedrock as Record<string, unknown>)?.cacheWriteInputTokens ??
+            (0 as number))
+        );
+      }, 0);
+
       const agentSchema =
         agent?.responseFormat?.type === 'json'
           ? agent.responseFormat.schema
@@ -194,6 +206,7 @@ export class AgentAsyncExecutorService {
         return {
           result: { response: textResponse.text },
           usage: textResponse.usage,
+          cacheCreationTokens,
         };
       }
 
@@ -222,6 +235,7 @@ export class AgentAsyncExecutorService {
             (textResponse.usage?.totalTokens ?? 0) +
             (output.usage?.totalTokens ?? 0),
         },
+        cacheCreationTokens,
       };
     } catch (error) {
       if (error instanceof AgentException) {

@@ -36,6 +36,9 @@ export const BEDROCK_MODELS: AIModelConfig[] = [
       'text/csv',
     ],
     doesSupportThinking: true,
+    nativeCapabilities: {
+      webSearch: true,
+    },
   },
   {
     modelId: 'anthropic.claude-sonnet-4-6',
@@ -68,5 +71,8 @@ export const BEDROCK_MODELS: AIModelConfig[] = [
       'text/csv',
     ],
     doesSupportThinking: true,
+    nativeCapabilities: {
+      webSearch: true,
+    },
   },
 ];

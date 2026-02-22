@@ -263,18 +263,22 @@ function computeStreamCosts(
   cacheCreationTokens: number,
 ) {
   const rawInputTokens = totalUsage?.inputTokens ?? 0;
-  const outputTokens = totalUsage?.outputTokens ?? 0;
+  const rawOutputTokens = totalUsage?.outputTokens ?? 0;
   const cachedInputTokens = totalUsage?.cachedInputTokens ?? 0;
   const reasoningTokens = totalUsage?.reasoningTokens ?? 0;
 
-  const excludesCachedTokens =
-    modelConfig.modelFamily === ModelFamily.ANTHROPIC;
+  const isAnthropicFamily = modelConfig.modelFamily === ModelFamily.ANTHROPIC;
 
-  const adjustedInputTokens = excludesCachedTokens
+  const adjustedInputTokens = isAnthropicFamily
     ? rawInputTokens
     : rawInputTokens - cachedInputTokens;
 
-  const totalInputTokens = excludesCachedTokens
+  // Anthropic: outputTokens excludes reasoning; others include them
+  const adjustedOutputTokens = isAnthropicFamily
+    ? rawOutputTokens
+    : rawOutputTokens - reasoningTokens;
+
+  const totalInputTokens = isAnthropicFamily
     ? rawInputTokens + cachedInputTokens + cacheCreationTokens
     : rawInputTokens + cacheCreationTokens;
 
@@ -296,7 +300,7 @@ function computeStreamCosts(
     (cacheCreationTokens / 1_000_000) * cacheCreationRate;
 
   const outputCostInDollars =
-    (outputTokens / 1_000_000) * outputRate +
+    (adjustedOutputTokens / 1_000_000) * outputRate +
     (reasoningTokens / 1_000_000) * outputRate;
 
   return {
@@ -308,7 +312,7 @@ function computeStreamCosts(
     ),
     tokenCounts: {
       totalInputTokens,
-      outputTokens,
+      outputTokens: rawOutputTokens,
       cachedInputTokens,
     },
   };

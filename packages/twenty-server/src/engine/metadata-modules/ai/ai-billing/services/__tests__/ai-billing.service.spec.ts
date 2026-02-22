@@ -133,7 +133,7 @@ describe('AIBillingService', () => {
       expect(costInDollars).toBeCloseTo(0.00963);
     });
 
-    it('should charge reasoning tokens at the output rate', () => {
+    it('should charge reasoning tokens at the output rate without double-counting for OpenAI', () => {
       const costInDollars = service.calculateCost('gpt-4o', {
         usage: {
           inputTokens: 1000,
@@ -143,11 +143,13 @@ describe('AIBillingService', () => {
         },
       });
 
+      // OpenAI: outputTokens (500) already includes reasoningTokens (500)
+      // adjustedOutput = 500 - 500 = 0
       // inputCost = (1000/1M * 2.5) = 0.0025
-      // outputCost = (500/1M * 10.0) = 0.005
+      // outputCost = (0/1M * 10.0) = 0.0
       // reasoningCost = (500/1M * 10.0) = 0.005
-      // total = 0.0125
-      expect(costInDollars).toBeCloseTo(0.0125);
+      // total = 0.0075
+      expect(costInDollars).toBeCloseTo(0.0075);
     });
 
     it('should fall back to input rate when cachedInputCostPerMillionTokens is undefined', () => {

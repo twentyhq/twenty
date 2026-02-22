@@ -52,8 +52,12 @@ export class AIBillingService {
     this.sendAiTokenUsageEvent(workspaceId, creditsUsed, modelId, agentId);
   }
 
-  // OpenAI/xAI/Groq: inputTokens includes cached tokens (cached is a subset)
-  // Anthropic: inputTokens excludes cached and cache creation tokens
+  // Input token semantics differ by model family:
+  //   Anthropic: inputTokens excludes cached and cache creation tokens
+  //   OpenAI/xAI/Groq/Google: inputTokens includes cached tokens
+  // Output token semantics also differ:
+  //   Anthropic: outputTokens excludes reasoning (thinking) tokens
+  //   OpenAI/xAI/Groq/Google: outputTokens includes reasoning tokens
   private computeCostFromUsage(
     model: AIModelConfig,
     billingInput: BillingUsageInput,
@@ -67,20 +71,25 @@ export class AIBillingService {
     };
 
     const rawInputTokens = safe(usage.inputTokens);
-    const outputTokens = safe(usage.outputTokens);
+    const rawOutputTokens = safe(usage.outputTokens);
     const reasoningTokens = safe(usage.reasoningTokens);
     const cachedInputTokens = safe(usage.cachedInputTokens);
     const safeCacheCreationTokens = safe(cacheCreationTokens);
 
-    const excludesCachedTokens = model.modelFamily === ModelFamily.ANTHROPIC;
+    const isAnthropicFamily = model.modelFamily === ModelFamily.ANTHROPIC;
 
-    const adjustedInputTokens = excludesCachedTokens
+    const adjustedInputTokens = isAnthropicFamily
       ? rawInputTokens
       : rawInputTokens - cachedInputTokens;
 
-    const totalInputTokens = excludesCachedTokens
-      ? adjustedInputTokens + cachedInputTokens + safeCacheCreationTokens
-      : adjustedInputTokens + cachedInputTokens + safeCacheCreationTokens;
+    // For Anthropic, outputTokens excludes reasoning; for others it includes them
+    const adjustedOutputTokens = isAnthropicFamily
+      ? rawOutputTokens
+      : rawOutputTokens - reasoningTokens;
+
+    const totalInputTokens = isAnthropicFamily
+      ? rawInputTokens + cachedInputTokens + safeCacheCreationTokens
+      : rawInputTokens + safeCacheCreationTokens;
 
     const costInfo =
       model.longContextCost &&
@@ -98,7 +107,7 @@ export class AIBillingService {
     const cachedInputCost = (cachedInputTokens / 1_000_000) * cachedRate;
     const cacheCreationCost =
       (safeCacheCreationTokens / 1_000_000) * cacheCreationRate;
-    const outputCost = (outputTokens / 1_000_000) * outputRate;
+    const outputCost = (adjustedOutputTokens / 1_000_000) * outputRate;
     const reasoningCost = (reasoningTokens / 1_000_000) * outputRate;
 
     const totalCost =
@@ -111,7 +120,7 @@ export class AIBillingService {
     this.logger.log(
       `Cost for ${model.modelId}: $${totalCost.toFixed(6)} ` +
         `(input: ${adjustedInputTokens}, cached: ${cachedInputTokens}, ` +
-        `cacheCreation: ${safeCacheCreationTokens}, output: ${outputTokens}, ` +
+        `cacheCreation: ${safeCacheCreationTokens}, output: ${adjustedOutputTokens}, ` +
         `reasoning: ${reasoningTokens})`,
     );
 

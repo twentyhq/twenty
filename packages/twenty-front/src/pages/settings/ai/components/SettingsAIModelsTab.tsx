@@ -40,7 +40,7 @@ export const SettingsAIModelsTab = () => {
       value: model.modelId,
       label: model.label,
       Icon: (model.modelFamily
-        ? MODEL_FAMILY_CONFIG[model.modelFamily.toUpperCase()]
+        ? MODEL_FAMILY_CONFIG[model.modelFamily]
         : MODEL_FAMILY_CONFIG.FALLBACK
       ).Icon,
     }));

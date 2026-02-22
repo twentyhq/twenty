@@ -7,12 +7,17 @@ import { ToolSet } from 'ai';
 
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { InferenceProvider } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
-import { RegisteredAIModel } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import {
+  AiModelRegistryService,
+  RegisteredAIModel,
+} from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 
 @Injectable()
 export class AgentModelConfigService {
-  constructor() {}
+  constructor(
+    private readonly aiModelRegistryService: AiModelRegistryService,
+  ) {}
 
   getProviderOptions(
     model: RegisteredAIModel,
@@ -46,6 +51,17 @@ export class AgentModelConfigService {
           tools.web_search = anthropic.tools.webSearch_20250305();
         }
         break;
+      case InferenceProvider.BEDROCK: {
+        if (agent.modelConfiguration.webSearch?.enabled) {
+          const bedrockProvider =
+            this.aiModelRegistryService.getBedrockProvider();
+
+          if (bedrockProvider) {
+            tools.web_search = bedrockProvider.tools.webSearch_20250305();
+          }
+        }
+        break;
+      }
       case InferenceProvider.OPENAI:
         if (agent.modelConfiguration.webSearch?.enabled) {
           tools.web_search = openai.tools.webSearch();

@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
+import {
+  createAmazonBedrock,
+  type AmazonBedrockProvider,
+} from '@ai-sdk/amazon-bedrock';
 import { anthropic } from '@ai-sdk/anthropic';
 import { google } from '@ai-sdk/google';
 import { groq } from '@ai-sdk/groq';
@@ -19,6 +22,7 @@ import {
   DEFAULT_FAST_MODEL,
   DEFAULT_SMART_MODEL,
   InferenceProvider,
+  ModelFamily,
   type AIModelConfig,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { ANTHROPIC_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/anthropic-models.const';
@@ -39,13 +43,19 @@ export interface RegisteredAIModel {
 @Injectable()
 export class AiModelRegistryService {
   private modelRegistry: Map<string, RegisteredAIModel> = new Map();
+  private bedrockProvider: AmazonBedrockProvider | null = null;
 
   constructor(private twentyConfigService: TwentyConfigService) {
     this.buildModelRegistry();
   }
 
+  getBedrockProvider(): AmazonBedrockProvider | null {
+    return this.bedrockProvider;
+  }
+
   private buildModelRegistry(): void {
     this.modelRegistry.clear();
+    this.bedrockProvider = null;
 
     const openaiApiKey = this.twentyConfigService.get('OPENAI_API_KEY');
 
@@ -181,7 +191,7 @@ export class AiModelRegistryService {
       'AWS_BEDROCK_SESSION_TOKEN',
     );
 
-    const bedrock = createAmazonBedrock({
+    this.bedrockProvider = createAmazonBedrock({
       region,
       ...(accessKeyId && secretAccessKey
         ? { accessKeyId, secretAccessKey, sessionToken }
@@ -192,7 +202,7 @@ export class AiModelRegistryService {
       this.modelRegistry.set(modelConfig.modelId, {
         modelId: modelConfig.modelId,
         inferenceProvider: InferenceProvider.BEDROCK,
-        model: bedrock(modelConfig.modelId),
+        model: this.bedrockProvider(modelConfig.modelId),
         doesSupportThinking: modelConfig.doesSupportThinking,
       });
     });
@@ -338,12 +348,27 @@ export class AiModelRegistryService {
       modelId: registeredModel.modelId,
       label: registeredModel.modelId,
       description: `Custom model: ${registeredModel.modelId}`,
+      modelFamily: this.inferModelFamily(registeredModel.inferenceProvider),
       inferenceProvider: registeredModel.inferenceProvider,
       inputCostPerMillionTokens: 0,
       outputCostPerMillionTokens: 0,
       contextWindowTokens: 128000,
       maxOutputTokens: 4096,
-    } as AIModelConfig;
+    };
+  }
+
+  private inferModelFamily(inferenceProvider: InferenceProvider): ModelFamily {
+    const providerToFamily: Partial<Record<InferenceProvider, ModelFamily>> = {
+      [InferenceProvider.OPENAI]: ModelFamily.OPENAI,
+      [InferenceProvider.ANTHROPIC]: ModelFamily.ANTHROPIC,
+      [InferenceProvider.BEDROCK]: ModelFamily.ANTHROPIC,
+      [InferenceProvider.GOOGLE]: ModelFamily.GOOGLE,
+      [InferenceProvider.MISTRAL]: ModelFamily.MISTRAL,
+      [InferenceProvider.XAI]: ModelFamily.XAI,
+      [InferenceProvider.GROQ]: ModelFamily.OPENAI,
+    };
+
+    return providerToFamily[inferenceProvider] ?? ModelFamily.OPENAI;
   }
 
   refreshRegistry(): void {
