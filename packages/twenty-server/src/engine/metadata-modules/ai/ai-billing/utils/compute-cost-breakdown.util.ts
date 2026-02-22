@@ -51,11 +51,11 @@ export const computeCostBreakdown = (
 
   const adjustedInputTokens = isAnthropicFamily
     ? rawInputTokens
-    : rawInputTokens - cachedInputTokens;
+    : Math.max(0, rawInputTokens - cachedInputTokens);
 
   const adjustedOutputTokens = isAnthropicFamily
     ? rawOutputTokens
-    : rawOutputTokens - reasoningTokens;
+    : Math.max(0, rawOutputTokens - reasoningTokens);
 
   const totalInputTokens = isAnthropicFamily
     ? rawInputTokens + cachedInputTokens + cacheCreationTokens
