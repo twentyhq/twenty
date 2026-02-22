@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import { isDefined } from 'class-validator';
+
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -53,7 +55,7 @@ export class ViewSortResolver {
     @Args('input') createViewSortInput: CreateViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    return await this.viewSortService.createOne({
+    return this.viewSortService.createOne({
       createViewSortInput,
       workspaceId,
     });
@@ -65,33 +67,37 @@ export class ViewSortResolver {
     @Args('input') updateViewSortInput: UpdateViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    return await this.viewSortService.updateOne({
+    return this.viewSortService.updateOne({
       updateViewSortInput,
       workspaceId,
     });
   }
 
-  @Mutation(() => ViewSortDTO)
+  @Mutation(() => Boolean)
   @UseGuards(DeleteViewSortPermissionGuard)
   async deleteCoreViewSort(
     @Args('input') deleteViewSortInput: DeleteViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ViewSortDTO> {
-    return await this.viewSortService.deleteOne({
+  ): Promise<boolean> {
+    const deletedCoreViewSort = await this.viewSortService.deleteOne({
       deleteViewSortInput,
       workspaceId,
     });
+
+    return isDefined(deletedCoreViewSort);
   }
 
-  @Mutation(() => ViewSortDTO)
+  @Mutation(() => Boolean)
   @UseGuards(DestroyViewSortPermissionGuard)
   async destroyCoreViewSort(
     @Args('input') destroyViewSortInput: DestroyViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ViewSortDTO> {
-    return await this.viewSortService.destroyOne({
+  ): Promise<boolean> {
+    const destroyedCoreViewSort = await this.viewSortService.destroyOne({
       destroyViewSortInput,
       workspaceId,
     });
+
+    return isDefined(destroyedCoreViewSort);
   }
 }

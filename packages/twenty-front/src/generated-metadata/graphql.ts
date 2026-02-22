@@ -2234,7 +2234,7 @@ export type Mutation = {
   deleteCoreViewFilter: CoreViewFilter;
   deleteCoreViewFilterGroup: Scalars['Boolean'];
   deleteCoreViewGroup: CoreViewGroup;
-  deleteCoreViewSort: CoreViewSort;
+  deleteCoreViewSort: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteEmailingDomain: Scalars['Boolean'];
@@ -2262,7 +2262,7 @@ export type Mutation = {
   destroyCoreViewFilter: CoreViewFilter;
   destroyCoreViewFilterGroup: Scalars['Boolean'];
   destroyCoreViewGroup: CoreViewGroup;
-  destroyCoreViewSort: CoreViewSort;
+  destroyCoreViewSort: Scalars['Boolean'];
   destroyPageLayout: Scalars['Boolean'];
   destroyPageLayoutTab: Scalars['Boolean'];
   destroyPageLayoutWidget: Scalars['Boolean'];
@@ -6596,7 +6596,7 @@ export type DeleteCoreViewSortMutationVariables = Exact<{
 }>;
 
 
-export type DeleteCoreViewSortMutation = { __typename?: 'Mutation', deleteCoreViewSort: { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string } };
+export type DeleteCoreViewSortMutation = { __typename?: 'Mutation', deleteCoreViewSort: boolean };
 
 export type DestroyCoreViewMutationVariables = Exact<{
   id: Scalars['String'];
@@ -6638,7 +6638,7 @@ export type DestroyCoreViewSortMutationVariables = Exact<{
 }>;
 
 
-export type DestroyCoreViewSortMutation = { __typename?: 'Mutation', destroyCoreViewSort: { __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string } };
+export type DestroyCoreViewSortMutation = { __typename?: 'Mutation', destroyCoreViewSort: boolean };
 
 export type UpdateCoreViewMutationVariables = Exact<{
   id: Scalars['String'];
@@ -14594,11 +14594,9 @@ export type DeleteCoreViewGroupMutationResult = Apollo.MutationResult<DeleteCore
 export type DeleteCoreViewGroupMutationOptions = Apollo.BaseMutationOptions<DeleteCoreViewGroupMutation, DeleteCoreViewGroupMutationVariables>;
 export const DeleteCoreViewSortDocument = gql`
     mutation DeleteCoreViewSort($input: DeleteViewSortInput!) {
-  deleteCoreViewSort(input: $input) {
-    ...ViewSortFragment
-  }
+  deleteCoreViewSort(input: $input)
 }
-    ${ViewSortFragmentFragmentDoc}`;
+    `;
 export type DeleteCoreViewSortMutationFn = Apollo.MutationFunction<DeleteCoreViewSortMutation, DeleteCoreViewSortMutationVariables>;
 
 /**
@@ -14788,11 +14786,9 @@ export type DestroyCoreViewGroupMutationResult = Apollo.MutationResult<DestroyCo
 export type DestroyCoreViewGroupMutationOptions = Apollo.BaseMutationOptions<DestroyCoreViewGroupMutation, DestroyCoreViewGroupMutationVariables>;
 export const DestroyCoreViewSortDocument = gql`
     mutation DestroyCoreViewSort($input: DestroyViewSortInput!) {
-  destroyCoreViewSort(input: $input) {
-    ...ViewSortFragment
-  }
+  destroyCoreViewSort(input: $input)
 }
-    ${ViewSortFragmentFragmentDoc}`;
+    `;
 export type DestroyCoreViewSortMutationFn = Apollo.MutationFunction<DestroyCoreViewSortMutation, DestroyCoreViewSortMutationVariables>;
 
 /**

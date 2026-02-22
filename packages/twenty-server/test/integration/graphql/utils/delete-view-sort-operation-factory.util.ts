@@ -1,5 +1,4 @@
 import gql from 'graphql-tag';
-import { VIEW_SORT_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
 
 export const deleteViewSortOperationFactory = ({
   viewSortId,
@@ -8,9 +7,7 @@ export const deleteViewSortOperationFactory = ({
 }) => ({
   query: gql`
     mutation DeleteCoreViewSort($input: DeleteViewSortInput!) {
-      deleteCoreViewSort(input: $input) {
-        ${VIEW_SORT_GQL_FIELDS}
-      }
+      deleteCoreViewSort(input: $input)
     }
   `,
   variables: {
