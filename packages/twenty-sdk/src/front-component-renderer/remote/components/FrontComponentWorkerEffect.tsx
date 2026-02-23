@@ -29,9 +29,6 @@ export const FrontComponentWorkerEffect = ({
   setThread,
   setError,
 }: FrontComponentWorkerEffectProps) => {
-  const applicationAccessTokenRef = useRef(applicationAccessToken);
-  applicationAccessTokenRef.current = applicationAccessToken;
-
   const frontComponentHostCommunicationApiRef = useRef(
     frontComponentHostCommunicationApi,
   );
@@ -87,7 +84,7 @@ export const FrontComponentWorkerEffect = ({
 
         await thread.imports.render(newReceiver.connection, {
           componentUrl,
-          applicationAccessToken: applicationAccessTokenRef.current,
+          applicationAccessToken,
           apiUrl,
         });
       } catch (error) {
@@ -107,7 +104,14 @@ export const FrontComponentWorkerEffect = ({
       setReceiver(null);
       worker.terminate();
     };
-  }, [componentUrl, apiUrl, setError, setReceiver, setThread]);
+  }, [
+    componentUrl,
+    applicationAccessToken,
+    apiUrl,
+    setError,
+    setReceiver,
+    setThread,
+  ]);
 
   return null;
 };
