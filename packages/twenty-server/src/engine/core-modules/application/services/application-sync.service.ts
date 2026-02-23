@@ -187,7 +187,6 @@ export class ApplicationSyncService {
           fromToAllFlatEntityMaps,
           workspaceId,
           additionalCacheDataMaps: { featureFlagsMap },
-          dependencyAllFlatEntityMaps: applicationFromAllFlatEntityMaps,
         },
       );
 

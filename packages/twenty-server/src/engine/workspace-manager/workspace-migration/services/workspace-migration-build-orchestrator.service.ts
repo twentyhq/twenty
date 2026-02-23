@@ -10,6 +10,7 @@ import {
   type WorkspaceMigrationOrchestratorFailedResult,
   type WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report.util';
 import { crossEntityTransversalValidation } from 'src/engine/workspace-manager/workspace-migration/utils/cross-entity-transversal-validation.util';
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
@@ -64,6 +65,42 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationWebhookActionsBuilderService: WorkspaceMigrationWebhookActionsBuilderService,
   ) {}
 
+  private setupOptimisticCache({
+    fromToAllFlatEntityMaps,
+    dependencyAllFlatEntityMaps,
+  }: Pick<
+    WorkspaceMigrationOrchestratorBuildArgs,
+    'fromToAllFlatEntityMaps' | 'dependencyAllFlatEntityMaps'
+  >): AllUniversalFlatEntityMaps {
+    if (isDefined(dependencyAllFlatEntityMaps)) {
+      return {
+        ...createEmptyAllFlatEntityMaps(),
+        ...dependencyAllFlatEntityMaps,
+      };
+    }
+    const allFromToFlatEntityMapsKeys = Object.keys(
+      fromToAllFlatEntityMaps,
+    ) as (keyof AllUniversalFlatEntityMaps)[];
+
+    return allFromToFlatEntityMapsKeys.reduce<AllUniversalFlatEntityMaps>(
+      (allFlatEntityMaps, currFlatMaps) => {
+        const fromToOccurence = fromToAllFlatEntityMaps[currFlatMaps];
+
+        if (!isDefined(fromToOccurence)) {
+          return allFlatEntityMaps;
+        }
+
+        return {
+          ...allFlatEntityMaps,
+          [currFlatMaps]: fromToOccurence.from,
+        };
+      },
+      {
+        ...createEmptyAllFlatEntityMaps(),
+      },
+    );
+  }
+
   public async buildWorkspaceMigration({
     workspaceId,
     buildOptions,
@@ -81,10 +118,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
     );
 
-    const optimisticAllFlatEntityMaps = {
-      ...createEmptyAllFlatEntityMaps(),
-      ...dependencyAllFlatEntityMaps,
-    };
+    const optimisticAllFlatEntityMaps = this.setupOptimisticCache({
+      fromToAllFlatEntityMaps,
+      dependencyAllFlatEntityMaps,
+    });
 
     const {
       flatObjectMetadataMaps,
