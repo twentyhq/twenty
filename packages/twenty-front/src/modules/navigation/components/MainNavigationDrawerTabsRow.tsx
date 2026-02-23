@@ -126,6 +126,8 @@ export const MainNavigationDrawerTabsRow = () => {
     return null;
   }
 
+  const isExpanded = isNavigationDrawerExpanded || isMobile;
+
   const handleTabClick = (tab: NavigationDrawerActiveTab) => () => {
     setActiveTab(tab);
   };
@@ -156,8 +158,8 @@ export const MainNavigationDrawerTabsRow = () => {
     isActive ? theme.font.color.primary : theme.font.color.tertiary;
 
   return (
-    <StyledRow isExpanded={isNavigationDrawerExpanded || isMobile}>
-      {(isNavigationDrawerExpanded || isMobile) && (
+    <StyledRow isExpanded={isExpanded}>
+      {isExpanded && (
         <StyledTabsPill role="tablist" aria-label={t`Navigation tabs`}>
           <StyledTabWrapper
             isActive={activeTab === 'home'}
@@ -193,9 +195,7 @@ export const MainNavigationDrawerTabsRow = () => {
           </StyledTabWrapper>
         </StyledTabsPill>
       )}
-      <StyledNewChatButtonWrapper
-        isExpanded={isNavigationDrawerExpanded || isMobile}
-      >
+      <StyledNewChatButtonWrapper isExpanded={isExpanded}>
         <StyledNewChatButton
           role="button"
           tabIndex={0}
@@ -204,7 +204,7 @@ export const MainNavigationDrawerTabsRow = () => {
           onKeyDown={handleNewChatKeyDown}
         >
           <IconMessageCirclePlus size={theme.icon.size.md} />
-          {(isNavigationDrawerExpanded || isMobile) && t`New chat`}
+          {isExpanded && t`New chat`}
         </StyledNewChatButton>
       </StyledNewChatButtonWrapper>
     </StyledRow>
