@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { isAppLoadingState } from '@/app/states/isAppLoadingState';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -11,15 +12,19 @@ import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const isAppLoading = useRecoilValueV2(isAppLoadingState);
+  const isLoggedIn = useIsLogged();
   const location = useLocation();
-  console.log('isAppLoading', isAppLoading);
 
   const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
 
-  return isAppLoading &&
+  const shouldShowLoader =
+    isAppLoading &&
+    isLoggedIn &&
     !isMatchingLocation(location, AppPath.Verify) &&
     !isMatchingLocation(location, AppPath.VerifyEmail) &&
-    !isMatchingLocation(location, AppPath.CreateWorkspace) ? (
+    !isMatchingLocation(location, AppPath.CreateWorkspace);
+
+  return shouldShowLoader ? (
     <UserOrMetadataLoader />
   ) : (
     <UserContext.Provider

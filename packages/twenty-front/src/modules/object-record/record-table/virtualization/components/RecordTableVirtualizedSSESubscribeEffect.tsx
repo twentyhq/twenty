@@ -22,7 +22,6 @@ export const RecordTableVirtualizedSSESubscribeEffect = () => {
     currentRecordSortsComponentState,
   );
 
-
   const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
   );
