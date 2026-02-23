@@ -9,6 +9,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
@@ -16,21 +17,19 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-type FrontComponentHostCommunicationApiWithoutAccessTokenRefresh = Omit<
-  FrontComponentHostCommunicationApi,
-  'requestAccessTokenRefresh'
->;
-
 export const useFrontComponentExecutionContext = ({
   frontComponentId,
 }: {
   frontComponentId: string;
 }): {
   executionContext: FrontComponentExecutionContext;
-  frontComponentHostCommunicationApi: FrontComponentHostCommunicationApiWithoutAccessTokenRefresh;
+  frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
 } => {
   const currentUser = useRecoilValueV2(currentUserState);
   const navigateApp = useNavigateApp();
+  const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
+    frontComponentId,
+  });
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const setCommandMenuSearchState = useSetRecoilState(commandMenuSearchState);
   const { getIcon } = useIcons();
@@ -117,9 +116,10 @@ export const useFrontComponentExecutionContext = ({
       closeCommandMenu();
     };
 
-  const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApiWithoutAccessTokenRefresh =
+  const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
+      requestAccessTokenRefresh,
       openSidePanelPage,
       enqueueSnackbar,
       unmountFrontComponent,

@@ -1,15 +1,11 @@
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
-import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import {
-  type FrontComponentHostCommunicationApi,
-  FrontComponentRenderer as SharedFrontComponentRenderer,
-} from 'twenty-sdk/front-component-renderer';
+import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useFindOneFrontComponentQuery } from '~/generated-metadata/graphql';
@@ -58,16 +54,6 @@ export const FrontComponentRenderer = ({
   const applicationTokenPair =
     data?.frontComponent?.applicationTokenPair ?? null;
 
-  const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
-    frontComponentId,
-  });
-
-  const composedFrontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
-    {
-      ...frontComponentHostCommunicationApi,
-      requestAccessTokenRefresh,
-    };
-
   if (
     loading ||
     !isDefined(data?.frontComponent) ||
@@ -83,9 +69,7 @@ export const FrontComponentRenderer = ({
       applicationAccessToken={applicationTokenPair.applicationAccessToken.token}
       apiUrl={REACT_APP_SERVER_BASE_URL}
       executionContext={executionContext}
-      frontComponentHostCommunicationApi={
-        composedFrontComponentHostCommunicationApi
-      }
+      frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
       onError={handleError}
     />
   );
