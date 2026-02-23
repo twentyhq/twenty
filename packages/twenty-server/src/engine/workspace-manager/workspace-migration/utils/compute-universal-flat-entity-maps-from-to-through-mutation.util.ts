@@ -13,7 +13,8 @@ export type ComputeUniversalFlatEntityMapsFromToArgs<
   flatEntityMaps: MetadataUniversalFlatEntityMaps<T>;
 } & FlatEntityToCreateDeleteUpdate<T>;
 
-export const computeUniversalFlatEntityMapsFromTo = <
+// Note: We don't load the whole application flat entity maps in the from for performances purposes
+export const computeUniversalFlatEntityMapsFromToThroughMutation = <
   T extends AllMetadataName,
 >({
   flatEntityMaps,
@@ -25,15 +26,12 @@ export const computeUniversalFlatEntityMapsFromTo = <
   to: MetadataUniversalFlatEntityMaps<T>;
 } => {
   const fromFlatEntityMaps =
-    flatEntityToDelete.length > 0
-      ? getSubUniversalFlatEntityByUniversalIdentifiersMapsOrThrow({
-          universalIdentifiers: [
-            ...flatEntityToDelete,
-            ...flatEntityToUpdate,
-          ].map(({ universalIdentifier }) => universalIdentifier),
-          universalFlatEntityMaps: flatEntityMaps,
-        })
-      : flatEntityMaps;
+    getSubUniversalFlatEntityByUniversalIdentifiersMapsOrThrow({
+      universalIdentifiers: [...flatEntityToDelete, ...flatEntityToUpdate].map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ),
+      universalFlatEntityMaps: flatEntityMaps,
+    });
 
   const toFlatEntityMaps: MetadataUniversalFlatEntityMaps<T> =
     structuredClone(fromFlatEntityMaps);

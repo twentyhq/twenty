@@ -20,17 +20,24 @@ import { CreateViewFieldGroupInput } from 'src/engine/metadata-modules/view-fiel
 import { DeleteViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/delete-view-field-group.input';
 import { DestroyViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/destroy-view-field-group.input';
 import { UpdateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/update-view-field-group.input';
+import { UpsertFieldsWidgetInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget.input';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
+import { FieldsWidgetUpsertService } from 'src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service';
 import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-group/services/view-field-group.service';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
+import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
+import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @MetadataResolver(() => ViewFieldGroupDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewFieldGroupResolver {
-  constructor(private readonly viewFieldGroupService: ViewFieldGroupService) {}
+  constructor(
+    private readonly viewFieldGroupService: ViewFieldGroupService,
+    private readonly fieldsWidgetUpsertService: FieldsWidgetUpsertService,
+  ) {}
 
   @Query(() => [ViewFieldGroupDTO])
   @UseGuards(NoPermissionGuard)
@@ -109,6 +116,18 @@ export class ViewFieldGroupResolver {
   ): Promise<ViewFieldGroupDTO> {
     return await this.viewFieldGroupService.destroyOne({
       destroyViewFieldGroupInput,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => ViewDTO)
+  @UseGuards(NoPermissionGuard)
+  async upsertFieldsWidget(
+    @Args('input') input: UpsertFieldsWidgetInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ViewEntity> {
+    return await this.fieldsWidgetUpsertService.upsertFieldsWidget({
+      input,
       workspaceId,
     });
   }
