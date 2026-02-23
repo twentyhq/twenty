@@ -1,10 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
 
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
@@ -23,10 +23,9 @@ export const RecordIndexPageHeaderIcon = ({
   );
   const { workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
-  const coreIndexViewId = useRecoilValue(
-    coreIndexViewIdFromObjectMetadataItemFamilySelector({
-      objectMetadataItemId: objectMetadataItem?.id ?? '',
-    }),
+  const coreIndexViewId = useFamilySelectorValueV2(
+    coreIndexViewIdFromObjectMetadataItemFamilySelector,
+    { objectMetadataItemId: objectMetadataItem?.id ?? '' },
   );
   const { getIcon } = useIcons();
   const ObjectIcon = getIcon(objectMetadataItem?.icon);
