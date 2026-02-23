@@ -6,6 +6,7 @@ import {
 import { type AppPath } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
@@ -26,6 +27,7 @@ export const useFrontComponentExecutionContext = ({
   const setCommandMenuSearchState = useSetRecoilState(commandMenuSearchState);
   const { getIcon } = useIcons();
   const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();
+  const { closeCommandMenu } = useCommandMenu();
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
     to,
@@ -63,11 +65,17 @@ export const useFrontComponentExecutionContext = ({
       unmountHeadlessFrontComponent(frontComponentId);
     };
 
+  const closeSidePanel: FrontComponentHostCommunicationApi['closeSidePanel'] =
+    async () => {
+      closeCommandMenu();
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
       openSidePanelPage,
       unmountFrontComponent,
+      closeSidePanel,
     };
 
   return {
