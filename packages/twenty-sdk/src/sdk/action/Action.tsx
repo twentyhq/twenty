@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 import {
   enqueueSnackbar,
@@ -10,13 +9,9 @@ import {
 
 export type ActionProps = {
   execute: () => void | Promise<void>;
-  notifyOnEnd?: {
-    message: string;
-    detailedMessage?: string;
-  };
 };
 
-export const Action = ({ execute, notifyOnEnd }: ActionProps) => {
+export const Action = ({ execute }: ActionProps) => {
   const [hasExecuted, setHasExecuted] = useState(false);
 
   const frontComponentId = useFrontComponentId();
@@ -31,15 +26,6 @@ export const Action = ({ execute, notifyOnEnd }: ActionProps) => {
     const run = async () => {
       try {
         await execute();
-
-        if (isDefined(notifyOnEnd)) {
-          await enqueueSnackbar({
-            message: notifyOnEnd.message,
-            variant: 'success',
-            detailedMessage: notifyOnEnd.detailedMessage,
-            dedupeKey: `${frontComponentId}-action-end`,
-          });
-        }
       } catch (error) {
         if (error instanceof Error) {
           await enqueueSnackbar({
@@ -55,7 +41,7 @@ export const Action = ({ execute, notifyOnEnd }: ActionProps) => {
     };
 
     run();
-  }, [execute, hasExecuted, notifyOnEnd, frontComponentId]);
+  }, [execute, hasExecuted, frontComponentId]);
 
   return null;
 };
