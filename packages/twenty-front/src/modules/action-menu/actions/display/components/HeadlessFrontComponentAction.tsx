@@ -1,9 +1,10 @@
-import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { isHeadlessFrontComponentMountedFamilySelector } from '@/front-components/selectors/isHeadlessFrontComponentMountedFamilySelector';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
+
+import { ActionDisplay } from './ActionDisplay';
 
 export const HeadlessFrontComponentAction = ({
   frontComponentId,
@@ -16,7 +17,7 @@ export const HeadlessFrontComponentAction = ({
 
   const { closeActionMenu } = useCloseActionMenu({
     closeSidePanelOnShowPageOptionsActionExecution: false,
-    closeSidePanelOnCommandMenuListActionExecution: true,
+    closeSidePanelOnCommandMenuListActionExecution: false,
   });
 
   const isMounted = useRecoilValue(
@@ -32,7 +33,7 @@ export const HeadlessFrontComponentAction = ({
       return;
     }
 
-    //closeActionMenu();
+    closeActionMenu();
     onClick();
   };
 
