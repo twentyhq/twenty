@@ -134,7 +134,7 @@ export const FieldsConfigurationGroupEditor = ({
             </StyledMenuItemDraggableWrapper>
           }
           disableClickForClickableComponent
-          dropdownPlacement="top-start"
+          dropdownPlacement="bottom-start"
           dropdownOffset={{ x: 32 }}
           onClose={handleCancelRename}
           dropdownComponents={
