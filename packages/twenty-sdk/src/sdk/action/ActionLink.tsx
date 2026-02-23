@@ -5,6 +5,7 @@ import { type AppPath } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
 import {
   enqueueSnackbar,
+  getFrontComponentActionErrorDedupeKey,
   navigate,
   unmountFrontComponent,
   useFrontComponentId,
@@ -43,7 +44,7 @@ export const ActionLink = <T extends AppPath>({
             message: 'Action failed',
             detailedMessage: error.message,
             variant: 'error',
-            dedupeKey: `${frontComponentId}-action-error`,
+            dedupeKey: getFrontComponentActionErrorDedupeKey(frontComponentId),
           });
         }
       } finally {

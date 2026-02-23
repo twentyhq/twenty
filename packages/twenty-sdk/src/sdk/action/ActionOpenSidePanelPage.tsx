@@ -1,5 +1,6 @@
 import {
   enqueueSnackbar,
+  getFrontComponentActionErrorDedupeKey,
   openSidePanelPage,
   unmountFrontComponent,
   useFrontComponentId,
@@ -50,7 +51,7 @@ export const ActionOpenSidePanelPage = ({
             message: 'Action failed',
             detailedMessage: error.message,
             variant: 'error',
-            dedupeKey: `${frontComponentId}-action-error`,
+            dedupeKey: getFrontComponentActionErrorDedupeKey(frontComponentId),
           });
         }
       } finally {

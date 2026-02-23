@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   enqueueSnackbar,
+  getFrontComponentActionErrorDedupeKey,
   unmountFrontComponent,
   useFrontComponentId,
 } from '../front-component-api';
@@ -45,7 +46,7 @@ export const Action = ({ execute, notifyOnEnd }: ActionProps) => {
             message: 'Action failed',
             detailedMessage: error.message,
             variant: 'error',
-            dedupeKey: `${frontComponentId}-action-error`,
+            dedupeKey: getFrontComponentActionErrorDedupeKey(frontComponentId),
           });
         }
       } finally {

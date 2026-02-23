@@ -74,9 +74,10 @@ export type { ActionOpenSidePanelPageProps } from './action';
 
 // Front Component API exports
 export {
+  enqueueSnackbar,
+  getFrontComponentActionErrorDedupeKey,
   navigate,
   openSidePanelPage,
-  enqueueSnackbar,
   unmountFrontComponent,
   useFrontComponentExecutionContext,
   useFrontComponentId,

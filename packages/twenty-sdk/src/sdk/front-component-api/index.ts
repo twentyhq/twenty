@@ -1,4 +1,5 @@
 export { setFrontComponentExecutionContext } from './context/frontComponentContext';
+export { getFrontComponentActionErrorDedupeKey } from './utils/getFrontComponentActionErrorDedupeKey';
 export { navigate } from './functions/navigate';
 export { openSidePanelPage } from './functions/openSidePanelPage';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
