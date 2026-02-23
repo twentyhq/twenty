@@ -2,6 +2,7 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { HeadlessFrontComponentAction } from '@/action-menu/actions/display/components/HeadlessFrontComponentAction';
 import { useOpenFrontComponentInCommandMenu } from '@/command-menu/hooks/useOpenFrontComponentInCommandMenu';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
@@ -76,11 +77,13 @@ const buildActionFromItem = ({
     isPinned,
     Icon,
     shouldBeRegistered: () => true,
-    component: (
-      <Action
+    component: isHeadless ? (
+      <HeadlessFrontComponentAction
+        frontComponentId={item.frontComponentId}
         onClick={handleClick}
-        closeSidePanelOnCommandMenuListActionExecution={isHeadless}
       />
+    ) : (
+      <Action onClick={handleClick} />
     ),
   };
 };

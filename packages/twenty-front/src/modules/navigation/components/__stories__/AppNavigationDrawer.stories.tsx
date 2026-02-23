@@ -1,7 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
 
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -26,7 +25,7 @@ const MobileNavigationDrawerStateSetterEffect = ({
   const setIsNavigationDrawerExpanded = useSetRecoilStateV2(
     isNavigationDrawerExpandedState,
   );
-  const setCurrentMobileNavigationDrawer = useSetRecoilState(
+  const setCurrentMobileNavigationDrawer = useSetRecoilStateV2(
     currentMobileNavigationDrawerState,
   );
 

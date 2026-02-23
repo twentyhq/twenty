@@ -12,8 +12,9 @@ import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSessi
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { AppPath } from 'twenty-shared/types';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
@@ -95,15 +96,14 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
   const { getBaseLicensedPriceByPlanKeyAndInterval } =
     useBaseLicensedPriceByPlanKeyAndInterval();
 
-  const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
+  const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilStateV2(
     billingCheckoutSessionState,
   );
 
-  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
+  const calendarBookingPageId = useRecoilValueV2(calendarBookingPageIdState);
 
-  const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useRecoilState(
-    verifyEmailRedirectPathState,
-  );
+  const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] =
+    useRecoilStateV2(verifyEmailRedirectPathState);
   if (isDefined(verifyEmailRedirectPath)) {
     setVerifyEmailRedirectPath(undefined);
   }

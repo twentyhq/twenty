@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-export const isImapSmtpCaldavEnabledState = createState<boolean>({
+export const isImapSmtpCaldavEnabledState = createStateV2<boolean>({
   key: 'isImapSmtpCaldavEnabled',
   defaultValue: false,
 });

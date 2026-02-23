@@ -6,7 +6,7 @@ import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/st
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValue } from 'recoil';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { useIcons } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
@@ -54,10 +54,9 @@ export const RecordTableColumnHead = ({
 }: RecordTableColumnHeadProps) => {
   const theme = useTheme();
 
-  const correspondingFieldMetadataItem = useRecoilValue(
-    fieldMetadataItemByIdSelector({
-      fieldMetadataItemId: recordField.fieldMetadataItemId,
-    }),
+  const correspondingFieldMetadataItem = useFamilySelectorValueV2(
+    fieldMetadataItemByIdSelector,
+    { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
   const { getIcon } = useIcons();
@@ -65,10 +64,9 @@ export const RecordTableColumnHead = ({
     correspondingFieldMetadataItem.foundFieldMetadataItem?.icon,
   );
 
-  const isLabelIdentifier = useRecoilValue(
-    isFieldMetadataItemLabelIdentifierSelector({
-      fieldMetadataItemId: recordField.fieldMetadataItemId,
-    }),
+  const isLabelIdentifier = useFamilySelectorValueV2(
+    isFieldMetadataItemLabelIdentifierSelector,
+    { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
   const shouldCompactRecordTableFirstColumn = useRecoilComponentValue(

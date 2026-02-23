@@ -13,6 +13,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilCallback } from 'recoil';
 
 export const useOpenRelationFromManyFieldInput = () => {
@@ -50,9 +51,9 @@ export const useOpenRelationFromManyFieldInput = () => {
             )
             .getValue() ?? [];
 
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+        const objectMetadataItems = jotaiStore.get(
+          objectMetadataItemsState.atom,
+        );
 
         const objectMetadataItem = objectMetadataItems.find(
           (objectMetadataItem) =>

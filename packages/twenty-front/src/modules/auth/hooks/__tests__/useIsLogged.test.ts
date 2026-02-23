@@ -1,14 +1,15 @@
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const isLogged = useIsLogged();
-      const setTokenPair = useSetRecoilState(tokenPairState);
+      const setTokenPair = useSetRecoilStateV2(tokenPairState);
 
       return {
         isLogged,

@@ -11,7 +11,6 @@ import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStat
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
 import {
   type IconComponent,
   IconList,
@@ -34,7 +33,7 @@ export const MobileNavigationBar = () => {
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilStateV2(isNavigationDrawerExpandedState);
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
-    useRecoilState(currentMobileNavigationDrawerState);
+    useRecoilStateV2(currentMobileNavigationDrawerState);
   const { openSettingsMenu } = useOpenSettingsMenu();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();

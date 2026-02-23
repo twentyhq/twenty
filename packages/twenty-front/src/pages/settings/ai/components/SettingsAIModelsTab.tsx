@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useRecoilState } from 'recoil';
 import styled from '@emotion/styled';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
@@ -13,6 +12,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { t } from '@lingui/core/macro';
 import {
@@ -39,7 +39,7 @@ const StyledSearchInput = styled(SettingsTextInput)`
 
 export const SettingsAIModelsTab = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
     currentWorkspaceState,
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();

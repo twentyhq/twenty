@@ -11,13 +11,13 @@ on:
 jobs:
   preview-environment:
     timeout-minutes: 310
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     steps:
       - name: Checkout PR
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.client_payload.pr_head_sha }}
-      
+
       - name: Run compose setup
         run: |
           echo "Patching docker-compose.yml..."
@@ -25,17 +25,17 @@ jobs:
           yq eval 'del(.services.server.image)' -i packages/twenty-docker/docker-compose.yml
           yq eval '.services.server.build.context = "../../"' -i packages/twenty-docker/docker-compose.yml
           yq eval '.services.server.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i packages/twenty-docker/docker-compose.yml
-          
+
           yq eval 'del(.services.worker.image)' -i packages/twenty-docker/docker-compose.yml
           yq eval '.services.worker.build.context = "../../"' -i packages/twenty-docker/docker-compose.yml
           yq eval '.services.worker.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i packages/twenty-docker/docker-compose.yml
-          
+
           echo "Adding SIGN_IN_PREFILLED environment variable to server service..."
           yq eval '.services.server.environment.SIGN_IN_PREFILLED = "${SIGN_IN_PREFILLED}"' -i packages/twenty-docker/docker-compose.yml
-          
+
           echo "Setting up .env file..."
           cp packages/twenty-docker/.env.example packages/twenty-docker/.env
-          
+
           echo "Generating secrets..."
           echo "" >> packages/twenty-docker/.env
           echo "# === Randomly generated secrets ===" >> packages/twenty-docker/.env
@@ -46,24 +46,24 @@ jobs:
           cd packages/twenty-docker/
           docker compose build
         working-directory: ./
-      
+
       - name: Create Tunnel
         id: expose-tunnel
         uses: codetalkio/expose-tunnel@v1.5.0
         with:
           service: bore.pub
           port: 3000
-      
+
       - name: Start services with correct SERVER_URL
         run: |
           cd packages/twenty-docker/
-          
+
           # Update the SERVER_URL with the tunnel URL
           echo "Setting SERVER_URL to ${{ steps.expose-tunnel.outputs.tunnel-url }}"
           sed -i '/SERVER_URL=/d' .env
           echo "" >> .env
           echo "SERVER_URL=${{ steps.expose-tunnel.outputs.tunnel-url }}" >> .env
-          
+
           # Start the services
           echo "Docker compose up..."
           docker compose up -d || {
@@ -71,7 +71,7 @@ jobs:
               docker compose logs
               exit 1
           }
-          
+
           echo "Waiting for services to be ready..."
           count=0
           while [ ! $(docker inspect --format='{{.State.Health.Status}}' twenty-db-1) = "healthy" ] || [ ! $(docker inspect --format='{{.State.Health.Status}}' twenty-server-1) = "healthy" ]; do
@@ -84,7 +84,7 @@ jobs:
               fi
               echo "Still waiting for services... ($count/60)"
           done
-          
+
           echo "All services are up and running!"
         working-directory: ./
 
@@ -104,7 +104,7 @@ jobs:
           echo "✅ Preview Environment Ready!"
           echo "🔗 Preview URL: ${{ steps.expose-tunnel.outputs.tunnel-url }}"
           echo "⏱️ This environment will be available for 5 hours"
-      
+
       - name: Post comment on PR
         uses: actions/github-script@v6
         with:
@@ -113,21 +113,21 @@ jobs:
             const COMMENT_MARKER = '<!-- PR_PREVIEW_ENV -->';
             const commentBody = `${COMMENT_MARKER}
             🚀 **Preview Environment Ready!**
-            
+
             Your preview environment is available at: ${{ steps.expose-tunnel.outputs.tunnel-url }}
-            
+
             This environment will automatically shut down when the PR is closed or after 5 hours.`;
-            
+
             // Get all comments
             const {data: comments} = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ github.event.client_payload.pr_number }},
             });
-            
+
             // Find our comment
             const botComment = comments.find(comment => comment.body.includes(COMMENT_MARKER));
-            
+
             if (botComment) {
               // Update existing comment
               await github.rest.issues.updateComment({
@@ -147,13 +147,13 @@ jobs:
               });
               console.log('Created new comment');
             }
-      
+
       - name: Keep tunnel alive for 5 hours
         run: timeout 300m sleep 18000 # Stop on whichever we reach first (300m or 5hour sleep)
-      
+
       - name: Cleanup
         if: always()
         run: |
           cd packages/twenty-docker/
           docker compose down -v
-        working-directory: ./ 
+        working-directory: ./

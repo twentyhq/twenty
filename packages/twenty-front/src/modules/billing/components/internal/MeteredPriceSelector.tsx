@@ -7,6 +7,7 @@ import {
   type MeteredBillingPrice,
 } from '@/billing/types/billing-price-tiers.type';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -14,7 +15,6 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -48,7 +48,7 @@ export const MeteredPriceSelector = ({
   const { currentMeteredBillingPrice } = useCurrentMetered();
   const { formatNumber } = useNumberFormat();
 
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
     currentWorkspaceState,
   );
 

@@ -1,8 +1,8 @@
-import { useRecoilValue } from 'recoil';
-
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
@@ -10,14 +10,15 @@ import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/Objec
 export const useObjectMetadataItem = ({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
-  const objectMetadataItem = useRecoilValue(
-    objectMetadataItemFamilySelector({
+  const objectMetadataItem = useFamilySelectorValueV2(
+    objectMetadataItemFamilySelector,
+    {
       objectName: objectNameSingular,
       objectNameType: 'singular',
-    }),
+    },
   );
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   if (!isDefined(objectMetadataItem)) {
     throw new ObjectMetadataItemNotFoundError(

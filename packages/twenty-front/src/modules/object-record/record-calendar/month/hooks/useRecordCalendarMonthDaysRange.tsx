@@ -9,6 +9,7 @@ import {
   format,
   startOfWeek,
 } from 'date-fns';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useRecoilValue } from 'recoil';
 
 import { type Temporal } from 'temporal-polyfill';
@@ -23,7 +24,7 @@ import { dateLocaleState } from '~/localization/states/dateLocaleState';
 export const useRecordCalendarMonthDaysRange = (
   selectedDate: Temporal.PlainDate,
 ) => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
   const dateLocale = useRecoilValue(dateLocaleState);
 
   if (!currentWorkspaceMember) {

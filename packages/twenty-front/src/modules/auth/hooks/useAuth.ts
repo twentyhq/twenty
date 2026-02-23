@@ -4,14 +4,9 @@ import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
   useRecoilCallback,
-  useRecoilValue,
-  useSetRecoilState,
 } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 
-import { billingState } from '@/client-config/states/billingState';
-import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { supportChatState } from '@/client-config/states/supportChatState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useCheckUserExistsLazyQuery,
@@ -28,11 +23,19 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
+import { metadataStoreState } from '@/app/states/metadataStoreState';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
@@ -40,6 +43,7 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { coreViewsState } from '@/views/states/coreViewState';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import {
   countAvailableWorkspaces,
@@ -47,11 +51,8 @@ import {
 } from '@/auth/utils/availableWorkspacesUtils';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
-import { apiConfigState } from '@/client-config/states/apiConfigState';
-import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
@@ -71,17 +72,19 @@ import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
 export const useAuth = () => {
-  const setTokenPair = useSetRecoilState(tokenPairState);
-  const setLoginToken = useSetRecoilState(loginTokenState);
-  const setIsAppEffectRedirectEnabled = useSetRecoilState(
+  const setTokenPair = useSetRecoilStateV2(tokenPairState);
+  const setLoginToken = useSetRecoilStateV2(loginTokenState);
+  const setIsAppEffectRedirectEnabled = useSetRecoilStateV2(
     isAppEffectRedirectEnabledState,
   );
 
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
-  const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-  const isEmailVerificationRequired = useRecoilValue(
+  const isCaptchaScriptLoaded = useRecoilValueV2(isCaptchaScriptLoadedState);
+  const isMultiWorkspaceEnabled = useRecoilValueV2(
+    isMultiWorkspaceEnabledState,
+  );
+  const isEmailVerificationRequired = useRecoilValueV2(
     isEmailVerificationRequiredState,
   );
   const { loadCurrentUser } = useLoadCurrentUser();
@@ -89,7 +92,7 @@ export const useAuth = () => {
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
   const { createWorkspace } = useSignUpInNewWorkspace();
 
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
+  const setSignInUpStep = useSetRecoilStateV2(signInUpStepState);
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
@@ -106,7 +109,7 @@ export const useAuth = () => {
     useVerifyEmailAndGetWorkspaceAgnosticTokenMutation();
   const [getAuthTokensFromOtp] = useGetAuthTokensFromOtpMutation();
 
-  const workspacePublicData = useRecoilValue(workspacePublicDataState);
+  const workspacePublicData = useRecoilValueV2(workspacePublicDataState);
 
   const { setLastAuthenticateWorkspaceDomain } =
     useLastAuthenticatedWorkspaceDomain();
@@ -123,7 +126,7 @@ export const useAuth = () => {
   const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
 
   const clearSession = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ snapshot }) =>
       async () => {
         const sseClient = getSnapshotValue(snapshot, sseClientState);
 
@@ -131,53 +134,23 @@ export const useAuth = () => {
 
         const emptySnapshot = snapshot_UNSTABLE();
 
-        const authProvidersValue = snapshot
-          .getLoadable(workspaceAuthProvidersState)
-          .getValue();
-        const billing = snapshot.getLoadable(billingState).getValue();
-        const isDeveloperDefaultSignInPrefilled = snapshot
-          .getLoadable(isDeveloperDefaultSignInPrefilledState)
-          .getValue();
-        const supportChat = snapshot.getLoadable(supportChatState).getValue();
-        const captcha = snapshot.getLoadable(captchaState).getValue();
-        const clientConfigApiStatus = snapshot
-          .getLoadable(clientConfigApiStatusState)
-          .getValue();
-        const isCurrentUserLoaded = snapshot
-          .getLoadable(isCurrentUserLoadedState)
-          .getValue();
-        const isMultiWorkspaceEnabled = snapshot
-          .getLoadable(isMultiWorkspaceEnabledState)
-          .getValue();
-        const domainConfiguration = snapshot
-          .getLoadable(domainConfigurationState)
-          .getValue();
-        const apiConfig = snapshot.getLoadable(apiConfigState).getValue();
-        const sentryConfig = snapshot.getLoadable(sentryConfigState).getValue();
-        const workspacePublicData = snapshot
-          .getLoadable(workspacePublicDataState)
-          .getValue();
-        const lastAuthenticatedMethod = snapshot
-          .getLoadable(lastAuthenticatedMethodState)
-          .getValue();
+        const authProvidersValue = jotaiStore.get(
+          workspaceAuthProvidersState.atom,
+        );
+        const domainConfigurationValue = jotaiStore.get(
+          domainConfigurationState.atom,
+        );
+        const workspacePublicDataValue = jotaiStore.get(
+          workspacePublicDataState.atom,
+        );
+        const lastAuthenticatedMethod = jotaiStore.get(
+          lastAuthenticatedMethodState.atom,
+        );
+        const isCaptchaScriptLoadedValue = jotaiStore.get(
+          isCaptchaScriptLoadedState.atom,
+        );
 
-        const initialSnapshot = emptySnapshot.map(({ set }) => {
-          set(workspaceAuthProvidersState, authProvidersValue);
-          set(billingState, billing);
-          set(
-            isDeveloperDefaultSignInPrefilledState,
-            isDeveloperDefaultSignInPrefilled,
-          );
-          set(supportChatState, supportChat);
-          set(captchaState, captcha);
-          set(apiConfigState, apiConfig);
-          set(sentryConfigState, sentryConfig);
-          set(workspacePublicDataState, workspacePublicData);
-          set(clientConfigApiStatusState, clientConfigApiStatus);
-          set(isCurrentUserLoadedState, isCurrentUserLoaded);
-          set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
-          set(domainConfigurationState, domainConfiguration);
-          set(isCaptchaScriptLoadedState, isCaptchaScriptLoaded);
+        const initialSnapshot = emptySnapshot.map(() => {
           return undefined;
         });
 
@@ -186,7 +159,53 @@ export const useAuth = () => {
 
         goToRecoilSnapshot(initialSnapshot);
 
-        set(lastAuthenticatedMethodState, lastAuthenticatedMethod);
+        jotaiStore.set(workspaceAuthProvidersState.atom, authProvidersValue);
+        jotaiStore.set(workspacePublicDataState.atom, workspacePublicDataValue);
+        jotaiStore.set(metadataStoreState.atomFamily('objects'), {
+          current: [],
+          draft: [],
+          status: 'empty',
+        });
+        jotaiStore.set(metadataStoreState.atomFamily('views'), {
+          current: [],
+          draft: [],
+          status: 'empty',
+        });
+        jotaiStore.set(metadataStoreState.atomFamily('pageLayouts'), {
+          current: [],
+          draft: [],
+          status: 'empty',
+        });
+        jotaiStore.set(metadataStoreState.atomFamily('logicFunctions'), {
+          current: [],
+          draft: [],
+          status: 'empty',
+        });
+        jotaiStore.set(domainConfigurationState.atom, domainConfigurationValue);
+        jotaiStore.set(
+          isCaptchaScriptLoadedState.atom,
+          isCaptchaScriptLoadedValue,
+        );
+        jotaiStore.set(
+          lastAuthenticatedMethodState.atom,
+          lastAuthenticatedMethod,
+        );
+
+        // Reset user-data Jotai states that were migrated from Recoil
+        // (Recoil snapshot reset no longer handles these since they are Jotai V2)
+        jotaiStore.set(tokenPairState.atom, null);
+        jotaiStore.set(currentUserState.atom, null);
+        jotaiStore.set(currentWorkspaceState.atom, null);
+        jotaiStore.set(currentUserWorkspaceState.atom, null);
+        jotaiStore.set(currentWorkspaceMemberState.atom, null);
+        jotaiStore.set(currentWorkspaceMembersState.atom, []);
+        jotaiStore.set(availableWorkspacesState.atom, {
+          availableWorkspacesForSignIn: [],
+          availableWorkspacesForSignUp: [],
+        });
+        jotaiStore.set(loginTokenState.atom, null);
+        jotaiStore.set(signInUpStepState.atom, SignInUpStep.Init);
+        jotaiStore.set(coreViewsState.atom, []);
 
         await client.clearStore();
         setLastAuthenticateWorkspaceDomain(null);
@@ -199,7 +218,6 @@ export const useAuth = () => {
       setLastAuthenticateWorkspaceDomain,
       loadMockedObjectMetadataItems,
       navigate,
-      isCaptchaScriptLoaded,
     ],
   );
 
