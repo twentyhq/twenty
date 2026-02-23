@@ -2,6 +2,9 @@ import { ApolloError, useApolloClient } from '@apollo/client';
 import { type GraphQLFormattedError } from 'graphql';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+
+import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import {
   FindOneFrontComponentDocument,
   type FindOneFrontComponentQuery,
@@ -28,17 +31,13 @@ export const useRequestApplicationTokenRefresh = ({
   const apolloClient = useApolloClient();
   const [renewApplicationToken] = useRenewApplicationTokenMutation();
 
-  const requestAccessTokenRefresh = useCallback(async (): Promise<string> => {
-    const cachedData = apolloClient.cache.readQuery<FindOneFrontComponentQuery>(
-      {
-        query: FindOneFrontComponentDocument,
-        variables: { id: frontComponentId },
-      },
+  const [applicationTokenPair, setApplicationTokenPair] =
+    useRecoilComponentState(
+      frontComponentApplicationTokenPairComponentState,
+      frontComponentId,
     );
 
-    const applicationTokenPair =
-      cachedData?.frontComponent?.applicationTokenPair;
-
+  const requestAccessTokenRefresh = useCallback(async (): Promise<string> => {
     const refetchApplicationAccessToken = async (): Promise<string> => {
       const refetchResult = await apolloClient.query<
         FindOneFrontComponentQuery,
@@ -55,6 +54,8 @@ export const useRequestApplicationTokenRefresh = ({
       if (!isDefined(refetchedTokenPair)) {
         throw new Error('Failed to regenerate application token pair');
       }
+
+      setApplicationTokenPair(refetchedTokenPair);
 
       return refetchedTokenPair.applicationAccessToken.token;
     };
@@ -89,25 +90,7 @@ export const useRequestApplicationTokenRefresh = ({
         throw new Error('Failed to renew application token');
       }
 
-      apolloClient.cache.updateQuery<FindOneFrontComponentQuery>(
-        {
-          query: FindOneFrontComponentDocument,
-          variables: { id: frontComponentId },
-        },
-        (existingData) => {
-          if (!isDefined(existingData?.frontComponent)) {
-            return existingData;
-          }
-
-          return {
-            ...existingData,
-            frontComponent: {
-              ...existingData.frontComponent,
-              applicationTokenPair: renewedTokenPair,
-            },
-          };
-        },
-      );
+      setApplicationTokenPair(renewedTokenPair);
 
       return renewedTokenPair.applicationAccessToken.token;
     } catch (error) {
@@ -120,7 +103,13 @@ export const useRequestApplicationTokenRefresh = ({
 
       throw error;
     }
-  }, [apolloClient, frontComponentId, renewApplicationToken]);
+  }, [
+    apolloClient,
+    frontComponentId,
+    renewApplicationToken,
+    applicationTokenPair,
+    setApplicationTokenPair,
+  ]);
 
   return { requestAccessTokenRefresh };
 };

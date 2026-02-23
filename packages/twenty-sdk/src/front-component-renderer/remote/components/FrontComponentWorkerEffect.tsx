@@ -57,11 +57,15 @@ export const FrontComponentWorkerEffect = ({
         requestAccessTokenRefresh: () =>
           frontComponentHostCommunicationApiRef.current.requestAccessTokenRefresh(),
         openSidePanelPage: (...args) =>
-          frontComponentHostCommunicationApiRef.current.openSidePanelPage(...args),
+          frontComponentHostCommunicationApiRef.current.openSidePanelPage(
+            ...args,
+          ),
         unmountFrontComponent: () =>
           frontComponentHostCommunicationApiRef.current.unmountFrontComponent(),
         enqueueSnackbar: (...args) =>
-          frontComponentHostCommunicationApiRef.current.enqueueSnackbar(...args),
+          frontComponentHostCommunicationApiRef.current.enqueueSnackbar(
+            ...args,
+          ),
         closeSidePanel: () =>
           frontComponentHostCommunicationApiRef.current.closeSidePanel(),
       };
