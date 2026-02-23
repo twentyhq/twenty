@@ -16,6 +16,7 @@ import {
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -109,6 +110,7 @@ export const NavigationDrawer = ({
       <NavigationDrawerWidthEffect />
       <StyledAnimatedContainer
         className={className}
+        data-click-outside-id={NAVIGATION_DRAWER_CLICK_OUTSIDE_ID}
         isExpanded={isNavigationDrawerExpanded}
         isResizing={isResizing}
       >

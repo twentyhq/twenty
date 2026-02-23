@@ -16,6 +16,7 @@ import {
 } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -117,6 +118,9 @@ export const MainNavigationDrawerTabsRow = () => {
   );
   const { createChatThread } = useCreateNewAIChatThread();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const setIsNavigationDrawerExpanded = useSetRecoilStateV2(
+    isNavigationDrawerExpandedState,
+  );
 
   if (!isAiEnabled) {
     return null;
@@ -134,10 +138,17 @@ export const MainNavigationDrawerTabsRow = () => {
       }
     };
 
+  const handleNewChatClick = () => {
+    if (isMobile) {
+      setIsNavigationDrawerExpanded(false);
+    }
+    createChatThread();
+  };
+
   const handleNewChatKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      createChatThread();
+      handleNewChatClick();
     }
   };
 
@@ -189,7 +200,7 @@ export const MainNavigationDrawerTabsRow = () => {
           role="button"
           tabIndex={0}
           aria-label={t`New chat`}
-          onClick={() => createChatThread()}
+          onClick={handleNewChatClick}
           onKeyDown={handleNewChatKeyDown}
         >
           <IconMessageCirclePlus size={theme.icon.size.md} />
