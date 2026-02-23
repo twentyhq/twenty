@@ -4,6 +4,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -33,6 +34,10 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
       'Missing mock object metadata item with name singular "company"',
     );
   }
+
+  afterEach(() => {
+    jotaiStore.set(coreViewsState.atom, []);
+  });
 
   const mockViewFilterGroup: ViewFilterGroup = {
     __typename: 'ViewFilterGroup',
@@ -67,6 +72,8 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
   } satisfies CoreViewWithRelations;
 
   it('should apply view filter groups from current view', () => {
+    jotaiStore.set(coreViewsState.atom, [mockCoreView]);
+
     const { result } = renderHook(
       () => {
         const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
@@ -88,9 +95,6 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
           contextStoreCurrentViewId: mockView.id,
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(coreViewsState, [mockCoreView]);
-          },
         }),
       },
     );
@@ -118,6 +122,8 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
   });
 
   it('should not apply view filter groups when current view is not found', () => {
+    jotaiStore.set(coreViewsState.atom, []);
+
     const { result } = renderHook(
       () => {
         const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
@@ -145,8 +151,6 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
               }),
               mockView.id,
             );
-
-            snapshot.set(coreViewsState, []);
           },
         }),
       },
@@ -160,6 +164,10 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
   });
 
   it('should handle view with empty view filter groups', () => {
+    jotaiStore.set(coreViewsState.atom, [
+      { ...mockCoreView, viewFilterGroups: [] },
+    ]);
+
     const { result } = renderHook(
       () => {
         const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
@@ -187,10 +195,6 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
               }),
               mockView.id,
             );
-
-            snapshot.set(coreViewsState, [
-              { ...mockCoreView, viewFilterGroups: [] },
-            ]);
           },
         }),
       },

@@ -3,13 +3,13 @@
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -17,7 +17,7 @@ const StyledContentContainer = styled.div`
 `;
 
 export const SignInUpSSOIdentityProviderSelection = () => {
-  const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
+  const workspaceAuthProviders = useRecoilValueV2(workspaceAuthProvidersState);
 
   const { redirectToSSOLoginPage } = useSSO();
 

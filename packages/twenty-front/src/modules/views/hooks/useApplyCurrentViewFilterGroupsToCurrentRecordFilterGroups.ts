@@ -5,6 +5,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -22,17 +23,17 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
     const currentRecordFilterGroupsCallbackState =
       useRecoilComponentCallbackState(currentRecordFilterGroupsComponentState);
 
+    const store = useStore();
+
     const applyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
       useRecoilCallback(
         ({ snapshot }) =>
           () => {
-            const currentView = snapshot
-              .getLoadable(
-                coreViewFromViewIdFamilySelector({
-                  viewId: currentViewId ?? '',
-                }),
-              )
-              .getValue();
+            const currentView = store.get(
+              coreViewFromViewIdFamilySelector.selectorFamily({
+                viewId: currentViewId ?? '',
+              }),
+            );
 
             if (isDefined(currentView)) {
               const currentRecordFilterGroups = snapshot
@@ -55,6 +56,7 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
           currentViewId,
           setCurrentRecordFilterGroups,
           currentRecordFilterGroupsCallbackState,
+          store,
         ],
       );
 

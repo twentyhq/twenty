@@ -29,7 +29,7 @@ export const getRelativeDateDisplayValue = (
     const timeZoneAbbreviation =
       getRelativeDateFilterTimeZoneAbbreviation(relativeDate);
 
-    unitFormatted = `${unitFormatted ?? ''} ${shouldDisplayTimeZoneAbbreviation ? `(${timeZoneAbbreviation})` : ''}`;
+    unitFormatted = `${unitFormatted ?? ''}${shouldDisplayTimeZoneAbbreviation ? ` (${timeZoneAbbreviation})` : ''}`;
   }
 
   return [directionFormatted, amountFormatted, unitFormatted]

@@ -679,12 +679,13 @@ export type CheckUserExistOutput = {
 export type ClientAiModelConfig = {
   __typename?: 'ClientAIModelConfig';
   deprecated?: Maybe<Scalars['Boolean']>;
-  inputCostPer1kTokensInCredits: Scalars['Float'];
+  inferenceProvider: InferenceProvider;
+  inputCostPerMillionTokensInCredits: Scalars['Float'];
   label: Scalars['String'];
+  modelFamily?: Maybe<ModelFamily>;
   modelId: Scalars['String'];
   nativeCapabilities?: Maybe<NativeModelCapabilities>;
-  outputCostPer1kTokensInCredits: Scalars['Float'];
-  provider: ModelProvider;
+  outputCostPerMillionTokensInCredits: Scalars['Float'];
 };
 
 export type ClientConfig = {
@@ -1883,6 +1884,18 @@ export enum IndexType {
   GIN = 'GIN'
 }
 
+export enum InferenceProvider {
+  ANTHROPIC = 'ANTHROPIC',
+  BEDROCK = 'BEDROCK',
+  GOOGLE = 'GOOGLE',
+  GROQ = 'GROQ',
+  MISTRAL = 'MISTRAL',
+  NONE = 'NONE',
+  OPENAI = 'OPENAI',
+  OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE',
+  XAI = 'XAI'
+}
+
 export type InitiateTwoFactorAuthenticationProvisioningOutput = {
   __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput';
   uri: Scalars['String'];
@@ -2155,12 +2168,11 @@ export type MetadataEventWithQueryIds = {
   queryIds: Array<Scalars['String']>;
 };
 
-export enum ModelProvider {
+export enum ModelFamily {
   ANTHROPIC = 'ANTHROPIC',
-  GROQ = 'GROQ',
-  NONE = 'NONE',
+  GOOGLE = 'GOOGLE',
+  MISTRAL = 'MISTRAL',
   OPENAI = 'OPENAI',
-  OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE',
   XAI = 'XAI'
 }
 
@@ -2333,6 +2345,7 @@ export type Mutation = {
   /** @deprecated Use uploadFilesFieldFile instead */
   uploadFile: SignedFile;
   uploadFilesFieldFile: FileWithSignedUrl;
+  uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl;
   uploadImage: SignedFile;
   uploadWorkflowFile: FileWithSignedUrl;
   uploadWorkspaceLogo: FileWithSignedUrl;
@@ -3148,6 +3161,12 @@ export type MutationUploadFileArgs = {
 
 export type MutationUploadFilesFieldFileArgs = {
   fieldMetadataId: Scalars['String'];
+  file: Scalars['Upload'];
+};
+
+
+export type MutationUploadFilesFieldFileByUniversalIdentifierArgs = {
+  fieldMetadataUniversalIdentifier: Scalars['String'];
   file: Scalars['Upload'];
 };
 

@@ -15,13 +15,13 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { ViewType } from '@/views/types/ViewType';
 import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const instanceId = 'entity-options-instance';
 
@@ -31,13 +31,12 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
   component: ObjectOptionsDropdownContent,
   decorators: [
     (Story) => {
-      const setObjectMetadataItems = useSetRecoilState(
-        objectMetadataItemsState,
-      );
-
       useEffect(() => {
-        setObjectMetadataItems(generatedMockObjectMetadataItems);
-      }, [setObjectMetadataItems]);
+        jotaiStore.set(
+          objectMetadataItemsState.atom,
+          generatedMockObjectMetadataItems,
+        );
+      }, []);
 
       return (
         <RecordComponentInstanceContextsWrapper

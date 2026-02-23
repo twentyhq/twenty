@@ -24,6 +24,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ai-sdk/amazon-bedrock@npm:^3.0.83":
+  version: 3.0.83
+  resolution: "@ai-sdk/amazon-bedrock@npm:3.0.83"
+  dependencies:
+    "@ai-sdk/anthropic": "npm:2.0.66"
+    "@ai-sdk/provider": "npm:2.0.1"
+    "@ai-sdk/provider-utils": "npm:3.0.21"
+    "@smithy/eventstream-codec": "npm:^4.0.1"
+    "@smithy/util-utf8": "npm:^4.0.0"
+    aws4fetch: "npm:^1.0.20"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/66072ecf1bc3183f6028fe8bf5f99a8d03986bdffc5836b8508193de58df701058bdc98b3724e9dc47ed0a924edc150712b0c8a6595c0f3a52ba4d30b9029b63
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/anthropic@npm:2.0.66":
+  version: 2.0.66
+  resolution: "@ai-sdk/anthropic@npm:2.0.66"
+  dependencies:
+    "@ai-sdk/provider": "npm:2.0.1"
+    "@ai-sdk/provider-utils": "npm:3.0.21"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/9137e26280efe245986b3a0ea469bb075e46d3e45050faa608b13f289575dd044e5271c56abaad0f9532f543fbe5681d25141674bd5d47fcd5520c5173cd23fe
+  languageName: node
+  linkType: hard
+
 "@ai-sdk/anthropic@npm:^2.0.17":
   version: 2.0.17
   resolution: "@ai-sdk/anthropic@npm:2.0.17"
@@ -48,6 +76,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ai-sdk/google@npm:^2.0.54":
+  version: 2.0.54
+  resolution: "@ai-sdk/google@npm:2.0.54"
+  dependencies:
+    "@ai-sdk/provider": "npm:2.0.1"
+    "@ai-sdk/provider-utils": "npm:3.0.21"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/d1f244924b6f0484c2c683b189f4e64c8667814b16291fad12935432e7e89d5921351d69ab1971457fabb51e7239eb2f56a1da6ff2f46a86e4ce23b0bb12f019
+  languageName: node
+  linkType: hard
+
 "@ai-sdk/groq@npm:^2.0.34":
   version: 2.0.34
   resolution: "@ai-sdk/groq@npm:2.0.34"
@@ -57,6 +97,18 @@ __metadata:
   peerDependencies:
     zod: ^3.25.76 || ^4.1.8
   checksum: 10c0/1e1ad69db49e1b06f18f2e7181f8a094afc275bb9cd96edc614303ff0a86945ba0c25adcf3d2ccbf398eb275d9348fc6224ba8af60009a9a9e23bb25dc718a5f
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/mistral@npm:^2.0.28":
+  version: 2.0.28
+  resolution: "@ai-sdk/mistral@npm:2.0.28"
+  dependencies:
+    "@ai-sdk/provider": "npm:2.0.1"
+    "@ai-sdk/provider-utils": "npm:3.0.21"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/dd993fe477da8e053c68e162a52f0fcbf7671b2a0f8dd4b9a9db57fe780f17cd7ef2b08512e85b0b97a5622f57e085000c56aab102cf381bba1e0e5043c67306
   languageName: node
   linkType: hard
 
@@ -94,6 +146,19 @@ __metadata:
   peerDependencies:
     zod: ^3.25.76 || ^4.1.8
   checksum: 10c0/bbc92b088e76a1e98d28f8c20d02b899eb7ba23e8ba575c05383fcaf9c50e98e20ffa5a0a94a935cc1b2fee61c2411cc41de11a2a625b4c1647659603f91c29d
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/provider-utils@npm:3.0.21":
+  version: 3.0.21
+  resolution: "@ai-sdk/provider-utils@npm:3.0.21"
+  dependencies:
+    "@ai-sdk/provider": "npm:2.0.1"
+    "@standard-schema/spec": "npm:^1.0.0"
+    eventsource-parser: "npm:^3.0.6"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/272645109b4990c1367d46fd8982ee3436f88f4f5ec96d78f98c928052dcee6e9a7df326558d908d73901a5c0a84b3374c31722bb78579c2efd3417afb2100fb
   languageName: node
   linkType: hard
 
@@ -20797,7 +20862,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@smithy/eventstream-codec@npm:^4.2.8":
+"@smithy/eventstream-codec@npm:^4.0.1, @smithy/eventstream-codec@npm:^4.2.8":
   version: 4.2.8
   resolution: "@smithy/eventstream-codec@npm:4.2.8"
   dependencies:
@@ -21339,7 +21404,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@smithy/util-utf8@npm:^4.2.0":
+"@smithy/util-utf8@npm:^4.0.0, @smithy/util-utf8@npm:^4.2.0":
   version: 4.2.0
   resolution: "@smithy/util-utf8@npm:4.2.0"
   dependencies:
@@ -24162,7 +24227,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.kebabcase@npm:^4.1.7":
+"@types/lodash.kebabcase@npm:^4.1.7, @types/lodash.kebabcase@npm:^4.1.9":
   version: 4.1.9
   resolution: "@types/lodash.kebabcase@npm:4.1.9"
   dependencies:
@@ -29263,6 +29328,13 @@ __metadata:
   version: 1.13.1
   resolution: "aws4@npm:1.13.1"
   checksum: 10c0/c40a90b998853b92f9d0198e9992f4a94c81f29b02ca02b75952efaef07ff0660e756c7ebd04ff674edfa36c29406abaa8aad84f23dbc8b362d31979a631d3fe
+  languageName: node
+  linkType: hard
+
+"aws4fetch@npm:^1.0.20":
+  version: 1.0.20
+  resolution: "aws4fetch@npm:1.0.20"
+  checksum: 10c0/a4eac7bd0d1c3e611c17ed1ef41ac0b48c0a8e74a985ad968c071e74d94586d3572edc943b43fa5ca756c686ea73baa2f48e264d657bb8c2e95c8e0037d48a87
   languageName: node
   linkType: hard
 
@@ -58672,6 +58744,7 @@ __metadata:
     "@types/fs-extra": "npm:^11.0.0"
     "@types/inquirer": "npm:^9.0.0"
     "@types/lodash.camelcase": "npm:^4.3.7"
+    "@types/lodash.kebabcase": "npm:^4.1.9"
     "@types/node": "npm:^24.0.0"
     "@types/react": "npm:18.2.66"
     "@types/react-dom": "npm:18.2.22"
@@ -58691,6 +58764,7 @@ __metadata:
     inquirer: "npm:^10.0.0"
     jsonc-parser: "npm:^3.2.0"
     lodash.camelcase: "npm:^4.3.0"
+    lodash.kebabcase: "npm:^4.1.1"
     playwright: "npm:^1.56.1"
     preact: "npm:^10.28.3"
     react: "npm:^18.2.0"
@@ -58716,8 +58790,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
+    "@ai-sdk/amazon-bedrock": "npm:^3.0.83"
     "@ai-sdk/anthropic": "npm:^2.0.17"
+    "@ai-sdk/google": "npm:^2.0.54"
     "@ai-sdk/groq": "npm:^2.0.34"
+    "@ai-sdk/mistral": "npm:^2.0.28"
     "@ai-sdk/openai": "npm:^2.0.30"
     "@ai-sdk/provider-utils": "npm:^3.0.9"
     "@ai-sdk/xai": "npm:^2.0.19"

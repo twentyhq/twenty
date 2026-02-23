@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { type ConfigVariable } from '~/generated-metadata/graphql';
 import { ConfigVariableDatabaseInput } from './ConfigVariableDatabaseInput';
@@ -26,7 +26,7 @@ export const ConfigVariableValueInput = ({
   disabled,
 }: ConfigVariableValueInputProps) => {
   const { t } = useLingui();
-  const isConfigVariablesInDbEnabled = useRecoilValue(
+  const isConfigVariablesInDbEnabled = useRecoilValueV2(
     isConfigVariablesInDbEnabledState,
   );
 

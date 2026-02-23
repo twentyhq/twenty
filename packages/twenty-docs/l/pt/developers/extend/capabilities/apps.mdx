@@ -46,13 +46,13 @@ yarn twenty app:dev
 O gerador de estrutura oferece suporte a três modos para controlar quais arquivos de exemplo são incluídos:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Padrão (exhaustivo): todos os exemplos (objeto, campo, função de lógica, componente de front-end, visualização, item do menu de navegação, habilidade)
 npx create-twenty-app@latest my-app
 
-# Minimal: only core files (application-config.ts and default-role.ts)
+# Mínimo: apenas arquivos principais (application-config.ts e default-role.ts)
 npx create-twenty-app@latest my-app --minimal
 
-# Interactive: select which examples to include
+# Interativo: selecione quais exemplos incluir
 npx create-twenty-app@latest my-app --interactive
 ```
 
@@ -103,26 +103,26 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Pasta de recursos públicos (imagens, fontes, etc.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Obrigatório - configuração principal da aplicação
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Papel padrão para funções de lógica
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # Exemplo de definição de objeto personalizado
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # Exemplo de definição de campo independente
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Exemplo de função de lógica
+  │   └── post-install.ts               # Função de lógica de pós-instalação
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # Exemplo de componente de front-end
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # Exemplo de definição de visualização salva
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  │   └── example-navigation-menu-item.ts # Exemplo de link de navegação da barra lateral
   └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+      └── example-skill.ts                # Exemplo de definição de habilidade de agente de IA
 ```
 
 Com `--minimal`, apenas os arquivos principais são criados (`application-config.ts`, `roles/default-role.ts` e `logic-functions/post-install.ts`). Com `--interactive`, você escolhe quais arquivos de exemplo incluir.
@@ -151,7 +151,7 @@ O SDK detecta entidades analisando seus arquivos TypeScript em busca de chamadas
 | `defineField()`              | Extensões de campos para objetos existentes |
 | `defineView()`               | Definições de visualizações salvas          |
 | `defineNavigationMenuItem()` | Definições de itens do menu de navegação    |
-| `defineSkill()`              | AI agent skill definitions                  |
+| `defineSkill()`              | Definições de habilidades de agente de IA   |
 
 <Note>
   **A nomeação de arquivos é flexível.** A detecção de entidades é baseada em AST — o SDK varre seus arquivos fonte em busca do padrão `export default define<Entity>({...})`. Você pode organizar seus arquivos e pastas como quiser. Agrupar por tipo de entidade (por exemplo, `logic-functions/`, `roles/`) é apenas uma convenção para organização do código, não um requisito.
@@ -173,7 +173,7 @@ export default defineObject({
 Comandos posteriores adicionarão mais arquivos e pastas:
 
 * `yarn twenty app:dev` vai gerar automaticamente um cliente de API tipado em `node_modules/twenty-sdk/generated` (cliente Twenty tipado + tipos do espaço de trabalho).
-* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
+* `yarn twenty entity:add` adicionará arquivos de definição de entidade em `src/` para seus objetos, funções, componentes de front-end, papéis e habilidades personalizados, entre outros.
 
 ## Autenticação
 
@@ -226,7 +226,7 @@ O SDK fornece funções utilitárias para definir as entidades do seu app. Confo
 | `defineField()`              | Estender objetos existentes com campos adicionais            |
 | `defineView()`               | Define visualizações salvas para objetos                     |
 | `defineNavigationMenuItem()` | Define links de navegação da barra lateral                   |
-| `defineSkill()`              | Define AI agent skills                                       |
+| `defineSkill()`              | Define habilidades de agente de IA                           |
 
 Essas funções validam sua configuração em tempo de compilação e oferecem autocompletar na IDE e segurança de tipos.
 
@@ -748,7 +748,7 @@ Você pode criar novos componentes de front-end de duas formas:
 
 ### Habilidades
 
-Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+As habilidades definem instruções e capacidades reutilizáveis que os agentes de IA podem usar no seu espaço de trabalho. Use `defineSkill()` para definir habilidades com validação integrada:
 
 ```typescript
 // src/skills/example-skill.ts
@@ -770,16 +770,16 @@ export default defineSkill({
 
 Pontos-chave:
 
-* `name` is a unique identifier string for the skill (kebab-case recommended).
-* `label` is the human-readable display name shown in the UI.
-* `content` contains the skill instructions — this is the text the AI agent uses.
-* `icon` (optional) sets the icon displayed in the UI.
-* `description` (optional) provides additional context about the skill's purpose.
+* `name` é uma string de identificador exclusivo para a habilidade (recomenda-se kebab-case).
+* `label` é o nome de exibição legível por humanos mostrado na UI.
+* `content` contém as instruções da habilidade — este é o texto que o agente de IA usa.
+* `icon` (opcional) define o ícone exibido na UI.
+* `description` (opcional) fornece contexto adicional sobre a finalidade da habilidade.
 
-You can create new skills in two ways:
+Você pode criar novas habilidades de duas formas:
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
-* **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
+* **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar uma nova habilidade.
+* **Manual**: Crie um novo arquivo e use `defineSkill()`, seguindo o mesmo padrão.
 
 ### Cliente tipado gerado
 
@@ -806,6 +806,53 @@ Notas:
 * Você não precisa passar a URL ou a chave de API para o cliente gerado. Ele lê `TWENTY_API_URL` e `TWENTY_API_KEY` de process.env em tempo de execução.
 * As permissões da chave de API são determinadas pelo papel referenciado no seu `application-config.ts` via `defaultRoleUniversalIdentifier`. Este é o papel padrão usado pelas funções de lógica do seu app.
 * Os aplicativos podem definir papéis para seguir o princípio do menor privilégio. Conceda apenas as permissões de que suas funções precisam e, em seguida, aponte `defaultRoleUniversalIdentifier` para o identificador universal desse papel.
+
+#### Carregamento de ficheiros
+
+O cliente `Twenty` gerado inclui um método `uploadFile` para anexar ficheiros a campos do tipo ficheiro nos objetos do seu espaço de trabalho. Como os clientes GraphQL padrão não suportam nativamente o carregamento de ficheiros multipart, o cliente fornece este método dedicado que implementa, nos bastidores, a [especificação de pedidos multipart do GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+
+```typescript
+import Twenty from '~/generated';
+import * as fs from 'fs';
+
+const client = new Twenty();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await client.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+A assinatura do método:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| Parâmetro                          | Tipo     | Descrição                                                                |
+| ---------------------------------- | -------- | ------------------------------------------------------------------------ |
+| `fileBuffer`                       | `Buffer` | O conteúdo bruto do arquivo                                              |
+| `filename`                         | `string` | O nome do arquivo (usado para armazenamento e exibição)                  |
+| `contentType`                      | `string` | Tipo MIME do arquivo (padrão para `application/octet-stream` se omitido) |
+| `fieldMetadataUniversalIdentifier` | `string` | O `universalIdentifier` do campo do tipo arquivo no seu objeto           |
+
+Pontos-chave:
+
+* O método envia o arquivo para o **endpoint de metadados** (não para o endpoint GraphQL principal), onde a mutação de upload é resolvida.
+* Ele usa o `universalIdentifier` do campo (não o ID específico do espaço de trabalho), de modo que seu código de upload funcione em qualquer espaço de trabalho onde seu app esteja instalado — consistente com a forma como os apps referenciam campos em qualquer outro lugar.
+* A `url` retornada é um URL assinado que você pode usar para acessar o arquivo enviado.
 
 ### Exemplo Hello World
 

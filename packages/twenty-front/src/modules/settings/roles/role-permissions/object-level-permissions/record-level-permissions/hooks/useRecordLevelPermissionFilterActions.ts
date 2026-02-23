@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { useRecoilValue } from 'recoil';
 import {
   FieldMetadataType,
   RecordFilterGroupLogicalOperator,
@@ -25,6 +24,7 @@ import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 
 type UseRecordLevelPermissionFilterActionsProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -42,10 +42,11 @@ export const useRecordLevelPermissionFilterActions = ({
   const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
     useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
-  const availableFieldMetadataItemsForFilter = useRecoilValue(
-    availableFieldMetadataItemsForFilterFamilySelector({
+  const availableFieldMetadataItemsForFilter = useFamilySelectorValueV2(
+    availableFieldMetadataItemsForFilterFamilySelector,
+    {
       objectMetadataItemId: objectMetadataItem.id,
-    }),
+    },
   );
 
   const rootRecordFilterGroup = useRecoilComponentValue(

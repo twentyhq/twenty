@@ -41,9 +41,7 @@ export const useGetBrowsingContext = () => {
           )
           .getValue();
 
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+        const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
         const objectMetadataItem = objectMetadataItems.find(
           (item) => item.id === objectMetadataItemId,
@@ -115,13 +113,11 @@ export const useGetBrowsingContext = () => {
             )
             .getValue();
 
-          const currentView = snapshot
-            .getLoadable(
-              coreViewFromViewIdFamilySelector({
-                viewId: currentViewId ?? '',
-              }),
-            )
-            .getValue();
+          const currentView = store.get(
+            coreViewFromViewIdFamilySelector.selectorFamily({
+              viewId: currentViewId ?? '',
+            }),
+          );
 
           if (!currentView) {
             return null;

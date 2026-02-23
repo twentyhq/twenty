@@ -5,7 +5,6 @@ import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-f
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,7 +18,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
 
   const navigate = useNavigateApp();
   const { origin } = useOrigin();
-  const loginToken = useRecoilValue(loginTokenState);
+  const loginToken = useRecoilValueV2(loginTokenState);
   const qrCode = useRecoilValueV2(qrCodeState);
   const setQrCodeState = useSetRecoilStateV2(qrCodeState);
 

@@ -1,9 +1,9 @@
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const useLastVisitedView = () => {
-  const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
+  const lastVisitedViewPerObjectMetadataItem = useRecoilValueV2(
     lastVisitedViewPerObjectMetadataItemState,
   );
 
