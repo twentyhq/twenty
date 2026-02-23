@@ -2,7 +2,6 @@ import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirec
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { enrichObjectMetadataItemsWithPermissions } from '@/object-metadata/utils/enrichObjectMetadataItemsWithPermissions';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
@@ -59,10 +58,6 @@ export const useRefreshObjectMetadataItems = (
         newObjectMetadataItems.length > 0
       ) {
         jotaiStore.set(objectMetadataItemsState.atom, newObjectMetadataItems);
-      }
-
-      if (jotaiStore.get(shouldAppBeLoadingState.atom) === true) {
-        jotaiStore.set(shouldAppBeLoadingState.atom, false);
       }
 
       if (jotaiStore.get(isAppEffectRedirectEnabledState.atom) === false) {

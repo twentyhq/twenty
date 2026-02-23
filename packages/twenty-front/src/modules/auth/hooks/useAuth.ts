@@ -35,7 +35,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
+import { metadataStoreState } from '@/app/states/metadataStoreState';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
@@ -137,9 +137,6 @@ export const useAuth = () => {
         const authProvidersValue = jotaiStore.get(
           workspaceAuthProvidersState.atom,
         );
-        const isCurrentUserLoadedValue = jotaiStore.get(
-          isCurrentUserLoadedState.atom,
-        );
         const domainConfigurationValue = jotaiStore.get(
           domainConfigurationState.atom,
         );
@@ -164,7 +161,26 @@ export const useAuth = () => {
 
         jotaiStore.set(workspaceAuthProvidersState.atom, authProvidersValue);
         jotaiStore.set(workspacePublicDataState.atom, workspacePublicDataValue);
-        jotaiStore.set(isCurrentUserLoadedState.atom, isCurrentUserLoadedValue);
+        jotaiStore.set(metadataStoreState.atomFamily('objects'), {
+          current: [],
+          draft: [],
+          status: 'empty',
+        });
+        jotaiStore.set(metadataStoreState.atomFamily('views'), {
+          current: [],
+          draft: [],
+          status: 'empty',
+        });
+        jotaiStore.set(metadataStoreState.atomFamily('pageLayouts'), {
+          current: [],
+          draft: [],
+          status: 'empty',
+        });
+        jotaiStore.set(metadataStoreState.atomFamily('logicFunctions'), {
+          current: [],
+          draft: [],
+          status: 'empty',
+        });
         jotaiStore.set(domainConfigurationState.atom, domainConfigurationValue);
         jotaiStore.set(
           isCaptchaScriptLoadedState.atom,

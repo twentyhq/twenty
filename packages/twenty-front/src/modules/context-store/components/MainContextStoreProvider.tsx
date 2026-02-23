@@ -1,9 +1,10 @@
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
+import { metadataStoreState } from '@/app/states/metadataStoreState';
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
@@ -48,7 +49,7 @@ export const MainContextStoreProvider = () => {
   const viewIdQueryParam = searchParams.get('viewId');
 
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
-  const isCurrentUserLoaded = useRecoilValueV2(isCurrentUserLoadedState);
+  const viewsEntry = useFamilyRecoilValueV2(metadataStoreState, 'views');
   const coreViews = useRecoilValueV2(coreViewsState);
 
   const objectMetadataItem = objectMetadataItems.find(
@@ -75,7 +76,7 @@ export const MainContextStoreProvider = () => {
   const shouldComputeContextStore =
     (isRecordIndexPage || isRecordShowPage || isSettingsPage) &&
     !showAuthModal &&
-    isCurrentUserLoaded;
+    viewsEntry.status === 'loaded';
 
   if (!shouldComputeContextStore) {
     return null;

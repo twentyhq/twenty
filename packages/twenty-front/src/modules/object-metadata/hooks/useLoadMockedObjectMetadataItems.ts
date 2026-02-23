@@ -1,6 +1,5 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -18,10 +17,6 @@ export const useLoadMockedObjectMetadataItems = () => {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-    }
-
-    if (jotaiStore.get(shouldAppBeLoadingState.atom) === true) {
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
     }
 
     if (jotaiStore.get(isAppEffectRedirectEnabledState.atom) === false) {
