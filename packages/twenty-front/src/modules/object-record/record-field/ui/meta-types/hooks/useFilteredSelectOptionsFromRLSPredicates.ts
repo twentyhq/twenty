@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { objectMetadataItemsByNameSingularMapSelector } from '@/object-metadata/states/objectMetadataItemsByNameSingularMapSelector';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -106,12 +106,12 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
   objectMetadataNameSingular: string | undefined;
   options: SelectOption[];
 }): { filteredOptions: SelectOption[]; canSelectEmpty: boolean } => {
-  const objectMetadataItemsByNameSingularMap = useRecoilValue(
-    objectMetadataItemsByNameSingularMapSelector,
-  );
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const objectMetadataId = objectMetadataNameSingular
-    ? objectMetadataItemsByNameSingularMap.get(objectMetadataNameSingular)?.id
+    ? objectMetadataItems.find(
+        (item) => item.nameSingular === objectMetadataNameSingular,
+      )?.id
     : undefined;
 
   const objectPermissions = useObjectPermissionsForObject(
