@@ -29,13 +29,13 @@ export const FrontComponentWorkerEffect = ({
   setThread,
   setError,
 }: FrontComponentWorkerEffectProps) => {
-  const frontComponentHostCommunicationApiRef = useRef(
-    frontComponentHostCommunicationApi,
-  );
-  frontComponentHostCommunicationApiRef.current =
-    frontComponentHostCommunicationApi;
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
+    if (isInitializedRef.current) {
+      return;
+    }
+
     const newReceiver = new RemoteReceiver({ retain, release });
 
     const worker = createRemoteWorker();
@@ -44,65 +44,36 @@ export const FrontComponentWorkerEffect = ({
       const workerError =
         event.error ?? new Error(event.message || 'Unknown worker error');
 
+      console.error('[FrontComponentRenderer] Worker error:', workerError);
       setError(workerError);
     };
-
-    const stableFrontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
-      {
-        navigate: (...args) =>
-          frontComponentHostCommunicationApiRef.current.navigate(...args),
-        requestAccessTokenRefresh: () =>
-          frontComponentHostCommunicationApiRef.current.requestAccessTokenRefresh(),
-        openSidePanelPage: (...args) =>
-          frontComponentHostCommunicationApiRef.current.openSidePanelPage(
-            ...args,
-          ),
-        unmountFrontComponent: () =>
-          frontComponentHostCommunicationApiRef.current.unmountFrontComponent(),
-        enqueueSnackbar: (...args) =>
-          frontComponentHostCommunicationApiRef.current.enqueueSnackbar(
-            ...args,
-          ),
-        closeSidePanel: () =>
-          frontComponentHostCommunicationApiRef.current.closeSidePanel(),
-      };
 
     const thread = new ThreadWebWorker<
       WorkerExports,
       FrontComponentHostCommunicationApi
     >(worker, {
-      exports: stableFrontComponentHostCommunicationApi,
+      exports: frontComponentHostCommunicationApi,
     });
 
     setThread(thread);
+
+    thread.imports
+      .render(newReceiver.connection, {
+        componentUrl,
+        applicationAccessToken,
+        apiUrl,
+      })
+      .catch((error: Error) => {
+        setError(error);
+      });
+
     setReceiver(newReceiver);
-    let isEffectCancelled = false;
-
-    const initializeAndRender = async () => {
-      try {
-        await thread.imports.initializeHostCommunicationApi();
-
-        await thread.imports.render(newReceiver.connection, {
-          componentUrl,
-          applicationAccessToken,
-          apiUrl,
-        });
-      } catch (error) {
-        if (isEffectCancelled) {
-          return;
-        }
-
-        setError(error instanceof Error ? error : new Error(String(error)));
-      }
-    };
-
-    void initializeAndRender();
+    isInitializedRef.current = true;
 
     return () => {
-      isEffectCancelled = true;
       setThread(null);
-      setReceiver(null);
       worker.terminate();
+      isInitializedRef.current = false;
     };
   }, [
     componentUrl,
@@ -111,6 +82,7 @@ export const FrontComponentWorkerEffect = ({
     setError,
     setReceiver,
     setThread,
+    frontComponentHostCommunicationApi,
   ]);
 
   return null;
