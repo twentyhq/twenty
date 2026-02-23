@@ -32,6 +32,7 @@ import { GROQ_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/
 import { MISTRAL_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/mistral-models.const';
 import { OPENAI_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/openai-models.const';
 import { XAI_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/xai-models.const';
+import { parseCommaList } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 
 export interface RegisteredAIModel {
   modelId: string;
@@ -369,6 +370,87 @@ export class AiModelRegistryService {
     };
 
     return providerToFamily[inferenceProvider] ?? ModelFamily.OPENAI;
+  }
+
+  isModelAdminAllowed(modelId: string): boolean {
+    if (modelId === DEFAULT_FAST_MODEL || modelId === DEFAULT_SMART_MODEL) {
+      return true;
+    }
+
+    const autoEnable = this.twentyConfigService.get(
+      'AI_AUTO_ENABLE_NEW_MODELS',
+    );
+    const disabledIds = parseCommaList(
+      this.twentyConfigService.get('AI_DISABLED_MODEL_IDS'),
+    );
+    const enabledIds = parseCommaList(
+      this.twentyConfigService.get('AI_ENABLED_MODEL_IDS'),
+    );
+
+    return autoEnable ? !disabledIds.has(modelId) : enabledIds.has(modelId);
+  }
+
+  getAdminFilteredModels(): RegisteredAIModel[] {
+    return this.getAvailableModels().filter((model) =>
+      this.isModelAdminAllowed(model.modelId),
+    );
+  }
+
+  getAllModelsWithStatus(): Array<{
+    modelConfig: AIModelConfig;
+    isAvailable: boolean;
+    isAdminEnabled: boolean;
+  }> {
+    return AI_MODELS.map((model) => ({
+      modelConfig: model,
+      isAvailable: this.modelRegistry.has(model.modelId),
+      isAdminEnabled: this.isModelAdminAllowed(model.modelId),
+    }));
+  }
+
+  async setModelAdminEnabled(modelId: string, enabled: boolean): Promise<void> {
+    const isKnownModel = AI_MODELS.some((model) => model.modelId === modelId);
+
+    if (!isKnownModel) {
+      throw new AgentException(
+        `Unknown model ID: ${modelId}`,
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+
+    const autoEnable = this.twentyConfigService.get(
+      'AI_AUTO_ENABLE_NEW_MODELS',
+    );
+    const disabledIds = parseCommaList(
+      this.twentyConfigService.get('AI_DISABLED_MODEL_IDS'),
+    );
+    const enabledIds = parseCommaList(
+      this.twentyConfigService.get('AI_ENABLED_MODEL_IDS'),
+    );
+
+    if (autoEnable) {
+      if (enabled) {
+        disabledIds.delete(modelId);
+      } else {
+        disabledIds.add(modelId);
+      }
+
+      await this.twentyConfigService.set(
+        'AI_DISABLED_MODEL_IDS',
+        [...disabledIds].join(','),
+      );
+    } else {
+      if (enabled) {
+        enabledIds.add(modelId);
+      } else {
+        enabledIds.delete(modelId);
+      }
+
+      await this.twentyConfigService.set(
+        'AI_ENABLED_MODEL_IDS',
+        [...enabledIds].join(','),
+      );
+    }
   }
 
   refreshRegistry(): void {

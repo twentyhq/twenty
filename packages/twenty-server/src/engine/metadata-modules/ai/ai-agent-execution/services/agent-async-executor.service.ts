@@ -30,7 +30,9 @@ import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entiti
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -47,6 +49,8 @@ export class AgentAsyncExecutorService {
     private readonly toolRegistry: ToolRegistryService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   private extractRoleIds(
@@ -108,6 +112,28 @@ export class AgentAsyncExecutorService {
     authContext?: WorkspaceAuthContext;
   }): Promise<AgentExecutionResult> {
     try {
+      if (agent) {
+        const agentModelId = agent.modelId;
+
+        if (!this.aiModelRegistryService.isModelAdminAllowed(agentModelId)) {
+          throw new AgentException(
+            'The selected model has been disabled by the administrator.',
+            AgentExceptionCode.AGENT_EXECUTION_FAILED,
+          );
+        }
+
+        const workspace = await this.workspaceRepository.findOneBy({
+          id: agent.workspaceId,
+        });
+
+        if (workspace && !isModelAllowedByWorkspace(agentModelId, workspace)) {
+          throw new AgentException(
+            'The selected model is not available in this workspace.',
+            AgentExceptionCode.AGENT_EXECUTION_FAILED,
+          );
+        }
+      }
+
       const registeredModel =
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 

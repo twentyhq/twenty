@@ -38,6 +38,10 @@ export type CurrentWorkspace = Pick<
   | 'smartModel'
   | 'aiAdditionalInstructions'
   | 'editableProfileFields'
+  | 'autoEnableNewAiModels'
+  | 'disabledAiModelIds'
+  | 'enabledAiModelIds'
+  | 'useRecommendedModels'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
   workspaceCustomApplication: Pick<Application, 'id'> | null;

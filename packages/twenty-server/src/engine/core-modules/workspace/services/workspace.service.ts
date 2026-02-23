@@ -37,6 +37,10 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import {
+  isModelAllowedByWorkspace,
+  parseCommaList,
+} from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
@@ -86,6 +90,10 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     fastModel: PermissionFlagType.WORKSPACE,
     smartModel: PermissionFlagType.WORKSPACE,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
+    autoEnableNewAiModels: PermissionFlagType.AI_SETTINGS,
+    disabledAiModelIds: PermissionFlagType.AI_SETTINGS,
+    enabledAiModelIds: PermissionFlagType.AI_SETTINGS,
+    useRecommendedModels: PermissionFlagType.AI_SETTINGS,
   };
 
   constructor(
@@ -214,6 +222,52 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         'Password auth is not enabled in the system.',
         WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
       );
+    }
+
+    if (payload.smartModel || payload.fastModel) {
+      const effectiveWorkspace = {
+        useRecommendedModels:
+          payload.useRecommendedModels ?? workspace.useRecommendedModels,
+        autoEnableNewAiModels:
+          payload.autoEnableNewAiModels ?? workspace.autoEnableNewAiModels,
+        disabledAiModelIds:
+          payload.disabledAiModelIds ?? workspace.disabledAiModelIds,
+        enabledAiModelIds:
+          payload.enabledAiModelIds ?? workspace.enabledAiModelIds,
+      };
+
+      const modelsToValidate = [payload.smartModel, payload.fastModel].filter(
+        isDefined,
+      );
+
+      for (const modelId of modelsToValidate) {
+        const autoEnable = this.twentyConfigService.get(
+          'AI_AUTO_ENABLE_NEW_MODELS',
+        );
+        const disabledIds = parseCommaList(
+          this.twentyConfigService.get('AI_DISABLED_MODEL_IDS'),
+        );
+        const enabledIds = parseCommaList(
+          this.twentyConfigService.get('AI_ENABLED_MODEL_IDS'),
+        );
+        const isAdminAllowed = autoEnable
+          ? !disabledIds.has(modelId)
+          : enabledIds.has(modelId);
+
+        if (!isAdminAllowed) {
+          throw new WorkspaceException(
+            'Selected model has been disabled by the administrator',
+            WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+          );
+        }
+
+        if (!isModelAllowedByWorkspace(modelId, effectiveWorkspace)) {
+          throw new WorkspaceException(
+            'Selected model is not available in this workspace',
+            WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+          );
+        }
+      }
     }
 
     let updatedWorkspace: WorkspaceEntity;

@@ -35,6 +35,7 @@ import { AgentRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/ai-a
 import type { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 
 @Controller('rest/agent-chat')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
@@ -64,11 +65,28 @@ export class AgentChatController {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Res() response: Response,
   ) {
-    const availableModels = this.aiModelRegistryService.getAvailableModels();
+    const availableModels =
+      this.aiModelRegistryService.getAdminFilteredModels();
 
     if (availableModels.length === 0) {
       throw new AgentException(
         'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY).',
+        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+      );
+    }
+
+    const resolvedModelId = workspace.smartModel;
+
+    if (!this.aiModelRegistryService.isModelAdminAllowed(resolvedModelId)) {
+      throw new AgentException(
+        'The selected model has been disabled by the administrator.',
+        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+      );
+    }
+
+    if (!isModelAllowedByWorkspace(resolvedModelId, workspace)) {
+      throw new AgentException(
+        'The selected model is not available in this workspace.',
         AgentExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }

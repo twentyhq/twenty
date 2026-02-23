@@ -1,0 +1,85 @@
+import { useCallback, useMemo } from 'react';
+
+import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
+import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useRecoilValue } from 'recoil';
+import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
+
+const VIRTUAL_MODEL_IDS: Set<string> = new Set([
+  DEFAULT_SMART_MODEL,
+  DEFAULT_FAST_MODEL,
+]);
+
+const isVirtualModel = (modelId: string) => VIRTUAL_MODEL_IDS.has(modelId);
+
+export const useWorkspaceAiModelAvailability = () => {
+  const aiModels = useRecoilValueV2(aiModelsState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
+  const useRecommendedModels = currentWorkspace?.useRecommendedModels ?? true;
+  const autoEnableNewAiModels = currentWorkspace?.autoEnableNewAiModels ?? true;
+  const disabledAiModelIds = currentWorkspace?.disabledAiModelIds ?? [];
+  const enabledAiModelIds = currentWorkspace?.enabledAiModelIds ?? [];
+
+  const isModelEnabled = useCallback(
+    (modelId: string, model?: ClientAiModelConfig): boolean => {
+      if (isVirtualModel(modelId)) {
+        return true;
+      }
+
+      if (useRecommendedModels) {
+        return model?.isRecommended === true;
+      }
+
+      return autoEnableNewAiModels
+        ? !disabledAiModelIds.includes(modelId)
+        : enabledAiModelIds.includes(modelId);
+    },
+    [
+      useRecommendedModels,
+      autoEnableNewAiModels,
+      disabledAiModelIds,
+      enabledAiModelIds,
+    ],
+  );
+
+  const realModels = useMemo(
+    () =>
+      aiModels.filter(
+        (model) => !isVirtualModel(model.modelId) && !model.deprecated,
+      ),
+    [aiModels],
+  );
+
+  const enabledModels = useMemo(
+    () => realModels.filter((model) => isModelEnabled(model.modelId, model)),
+    [realModels, isModelEnabled],
+  );
+
+  const allModelsWithAvailability = useMemo(
+    () =>
+      realModels.map((model) => ({
+        ...model,
+        isEnabled: isModelEnabled(model.modelId, model),
+      })),
+    [realModels, isModelEnabled],
+  );
+
+  return {
+    isModelEnabled,
+    enabledModels,
+    realModels,
+    allModelsWithAvailability,
+    useRecommendedModels,
+    autoEnableNewAiModels,
+    disabledAiModelIds,
+    enabledAiModelIds,
+  };
+};
+
+export type AiModelWithAvailability = ClientAiModelConfig & {
+  isEnabled: boolean;
+};
