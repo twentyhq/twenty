@@ -6,8 +6,11 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -33,6 +36,7 @@ export class GenerateApiKeyCommand extends CommandRunner {
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly apiKeyService: ApiKeyService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super();
   }
@@ -74,6 +78,17 @@ export class GenerateApiKeyCommand extends CommandRunner {
     _passedParams: string[],
     options: GenerateApiKeyCommandOptions,
   ): Promise<void> {
+    const nodeEnv = this.twentyConfigService.get('NODE_ENV');
+
+    if (
+      nodeEnv !== NodeEnvironment.DEVELOPMENT &&
+      nodeEnv !== NodeEnvironment.TEST
+    ) {
+      throw new Error(
+        'This command is only available in development or test environments',
+      );
+    }
+
     const expiresAt = addDays(
       new Date(),
       options.expiresIn ?? NEVER_EXPIRE_DAYS,
