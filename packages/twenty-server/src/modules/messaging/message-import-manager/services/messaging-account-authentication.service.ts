@@ -49,6 +49,11 @@ export class MessagingAccountAuthenticationService {
       };
     }
 
+    // Service accounts mint JWT tokens on demand — no refresh needed
+    if (connectedAccount.refreshToken === 'SERVICE_ACCOUNT') {
+      return { accessToken: '', refreshToken: 'SERVICE_ACCOUNT' };
+    }
+
     return await this.refreshAccessTokenForOAuthProvider({
       connectedAccount,
       workspaceId,

@@ -139,6 +139,16 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GOOGLE_AUTH,
+    description:
+      'Google Workspace service account key JSON for domain-wide delegation',
+    type: ConfigVariableType.STRING,
+    isSensitive: true,
+  })
+  @IsOptional()
+  GOOGLE_SERVICE_ACCOUNT_KEY_JSON: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
     isSensitive: false,
     description: 'Callback URL for Google authentication',
     type: ConfigVariableType.STRING,

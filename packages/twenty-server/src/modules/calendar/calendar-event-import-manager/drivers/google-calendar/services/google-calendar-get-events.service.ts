@@ -22,7 +22,7 @@ export class GoogleCalendarGetEventsService {
   public async getCalendarEvents(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'provider' | 'refreshToken' | 'handle' | 'id'
     >,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {

@@ -3,12 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { google, type Auth } from 'googleapis';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { GoogleServiceAccountManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-service-account-manager.service';
 
 @Injectable()
 export class GoogleOAuth2ClientManagerService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly logger: Logger,
+    private readonly googleServiceAccountManagerService: GoogleServiceAccountManagerService,
   ) {}
 
   public async getOAuth2Client(
@@ -38,5 +40,13 @@ export class GoogleOAuth2ClientManagerService {
 
       throw error;
     }
+  }
+
+  public async getServiceAccountClient(
+    targetEmail: string,
+  ): Promise<Auth.OAuth2Client> {
+    return this.googleServiceAccountManagerService.getImpersonatedClient(
+      targetEmail,
+    );
   }
 }

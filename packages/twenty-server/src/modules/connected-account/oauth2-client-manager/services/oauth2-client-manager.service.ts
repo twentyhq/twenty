@@ -19,9 +19,22 @@ export class OAuth2ClientManagerService {
   public async getGoogleOAuth2Client(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken'
+      'provider' | 'refreshToken' | 'handle'
     >,
   ): Promise<Auth.OAuth2Client> {
+    if (connectedAccount.refreshToken === 'SERVICE_ACCOUNT') {
+      if (!isDefined(connectedAccount.handle)) {
+        throw new CustomError(
+          'Handle (email) is required for service account connected accounts',
+          OAuth2ClientManagerExceptionCode.REFRESH_TOKEN_REQUIRED,
+        );
+      }
+
+      return this.googleOAuth2ClientManagerService.getServiceAccountClient(
+        connectedAccount.handle,
+      );
+    }
+
     if (!isDefined(connectedAccount.refreshToken)) {
       throw new CustomError(
         'Refresh token is required',

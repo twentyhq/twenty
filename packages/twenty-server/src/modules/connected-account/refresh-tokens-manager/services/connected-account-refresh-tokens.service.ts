@@ -38,6 +38,11 @@ export class ConnectedAccountRefreshTokensService {
   ): Promise<ConnectedAccountTokens> {
     const { refreshToken, accessToken } = connectedAccount;
 
+    // Service accounts mint JWT tokens on demand — no refresh needed
+    if (refreshToken === 'SERVICE_ACCOUNT') {
+      return { accessToken: '', refreshToken: 'SERVICE_ACCOUNT' };
+    }
+
     if (!refreshToken) {
       throw new ConnectedAccountRefreshAccessTokenException(
         `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
