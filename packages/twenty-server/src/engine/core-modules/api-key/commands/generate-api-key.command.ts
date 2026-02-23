@@ -12,8 +12,8 @@ import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 type GenerateApiKeyCommandOptions = {
   workspaceId: string;
@@ -107,7 +107,7 @@ export class GenerateApiKeyCommand extends CommandRunner {
     const adminRole = await this.roleRepository.findOne({
       where: {
         workspaceId: workspace.id,
-        label: ADMIN_ROLE_LABEL,
+        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
       },
     });
 
@@ -144,6 +144,6 @@ export class GenerateApiKeyCommand extends CommandRunner {
       return;
     }
 
-    process.stdout.write(`TOKEN:${tokenResult.token}\n`);
+    console.log(`TOKEN:${tokenResult.token}\n`);
   }
 }
