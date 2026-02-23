@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
@@ -26,7 +26,7 @@ const StyledContainer = styled.div`
 `;
 
 export const FormatPreferencesSettings = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
   const { formatPreferences, updateFormatPreference } = useFormatPreferences();
 
   if (!isDefined(currentWorkspaceMember)) return null;

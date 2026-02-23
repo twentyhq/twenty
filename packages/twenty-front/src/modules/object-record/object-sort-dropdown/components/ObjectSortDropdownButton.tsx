@@ -30,8 +30,8 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { findByProperty } from 'twenty-shared/utils';
 import { IconX, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -54,10 +54,11 @@ export const ObjectSortDropdownButton = () => {
     objectSortDropdownSearchInputComponentState,
   );
 
-  const sortableFieldMetadataItems = useRecoilValue(
-    availableFieldMetadataItemsForSortFamilySelector({
+  const sortableFieldMetadataItems = useFamilySelectorValueV2(
+    availableFieldMetadataItemsForSortFamilySelector,
+    {
       objectMetadataItemId: objectMetadataItem.id,
-    }),
+    },
   );
 
   const { getIcon } = useIcons();

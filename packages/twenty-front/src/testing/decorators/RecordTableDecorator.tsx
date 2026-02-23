@@ -1,11 +1,13 @@
 import { type Decorator } from '@storybook/react-vite';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -51,7 +53,7 @@ const InternalTableStateLoaderEffect = ({
     contextStoreCurrentViewIdComponentState,
   );
 
-  const setCoreViews = useSetRecoilState(coreViewsState);
+  const setCoreViews = useSetRecoilStateV2(coreViewsState);
 
   const setRecordTableData = useSetRecordTableData({
     recordTableId,
@@ -142,10 +144,11 @@ const InternalTableContextProviders = ({
     ]),
   );
 
-  const labelIdentifierFieldMetadataItem = useRecoilValue(
-    labelIdentifierFieldMetadataItemSelector({
+  const labelIdentifierFieldMetadataItem = useFamilySelectorValueV2(
+    labelIdentifierFieldMetadataItemSelector,
+    {
       objectMetadataItemId: objectMetadataItem.id,
-    }),
+    },
   );
 
   const triggerEvent = 'CLICK';
@@ -202,7 +205,7 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
   const { recordTableObjectNameSingular: objectNameSingular } =
     context.parameters;
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>

@@ -1,4 +1,4 @@
-import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
@@ -8,62 +8,38 @@ import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorksp
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
-import { recordPageLayoutsState } from '@/page-layout/states/recordPageLayoutsState';
-import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
-import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
-import { useStore } from 'jotai';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
-import { useEffect, useState } from 'react';
+import { useStore } from 'jotai';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  ViewType as CoreViewType,
-  useFindAllCoreViewsQuery,
-  useFindAllRecordPageLayoutsQuery,
-  useFindFieldsWidgetCoreViewsQuery,
-  useFindManyLogicFunctionsQuery,
   useGetCurrentUserQuery,
   type WorkspaceMember,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
-
-const INDEX_VIEW_TYPES = [
-  CoreViewType.TABLE,
-  CoreViewType.KANBAN,
-  CoreViewType.CALENDAR,
-];
-
-const FIELDS_WIDGET_VIEW_TYPES = [CoreViewType.FIELDS_WIDGET];
 
 export const MetadataProviderEffect = () => {
   const location = useLocation();
 
-  const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilState(
-    isCurrentUserLoadedState,
+  const currentUser = useRecoilValueV2(currentUserState);
+
+  const setCurrentUser = useSetRecoilStateV2(currentUserState);
+  const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
+  const setCurrentUserWorkspace = useSetRecoilStateV2(
+    currentUserWorkspaceState,
   );
-
-  const [localIsCurrentUserLoaded, setLocalIsCurrentUserLoaded] =
-    useState(false);
-  const [localAreViewsLoaded, setLocalAreViewsLoaded] = useState(false);
-
-  const setCurrentUser = useSetRecoilState(currentUserState);
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
-  const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
-  const setLogicFunctions = useSetRecoilState(logicFunctionsState);
+  const setAvailableWorkspaces = useSetRecoilStateV2(availableWorkspacesState);
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
   const isLoggedIn = useIsLogged();
 
@@ -87,73 +63,19 @@ export const MetadataProviderEffect = () => {
     [store],
   );
 
-  const setIndexCoreViews = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (indexViews: CoreViewWithRelations[]) => {
-        const existingCoreViews = snapshot
-          .getLoadable(coreViewsState)
-          .getValue();
-
-        const existingFieldsWidgetViews = existingCoreViews.filter(
-          (view) => view.type === CoreViewType.FIELDS_WIDGET,
-        );
-
-        const mergedViews = [...indexViews, ...existingFieldsWidgetViews];
-
-        if (!isDeeplyEqual(existingCoreViews, mergedViews)) {
-          set(coreViewsState, mergedViews);
-        }
-      },
-    [],
-  );
-
-  const setFieldsWidgetCoreViews = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (fieldsWidgetViews: CoreViewWithRelations[]) => {
-        const existingCoreViews = snapshot
-          .getLoadable(coreViewsState)
-          .getValue();
-
-        const existingIndexViews = existingCoreViews.filter(
-          (view) => view.type !== CoreViewType.FIELDS_WIDGET,
-        );
-
-        const mergedViews = [...existingIndexViews, ...fieldsWidgetViews];
-
-        if (!isDeeplyEqual(existingCoreViews, mergedViews)) {
-          set(coreViewsState, mergedViews);
-        }
-      },
-    [],
-  );
-
-  const setRecordPageLayouts = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (recordPageLayouts: PageLayout[]) => {
-        const existingRecordPageLayouts = snapshot
-          .getLoadable(recordPageLayoutsState)
-          .getValue();
-
-        if (!isDeeplyEqual(existingRecordPageLayouts, recordPageLayouts)) {
-          set(recordPageLayoutsState, recordPageLayouts);
-        }
-      },
-    [],
-  );
-
-  const setCurrentWorkspaceMember = useSetRecoilState(
+  const setCurrentWorkspaceMember = useSetRecoilStateV2(
     currentWorkspaceMemberState,
   );
-  const setCurrentWorkspaceMembers = useSetRecoilState(
+  const setCurrentWorkspaceMembers = useSetRecoilStateV2(
     currentWorkspaceMembersState,
   );
-  const setCurrentWorkspaceMembersWithDeleted = useSetRecoilState(
+  const setCurrentWorkspaceMembersWithDeleted = useSetRecoilStateV2(
     currentWorkspaceDeletedMembersState,
   );
 
   const shouldSkip =
     !isLoggedIn ||
-    isCurrentUserLoaded ||
+    isDefined(currentUser) ||
     isMatchingLocation(location, AppPath.Verify) ||
     isMatchingLocation(location, AppPath.VerifyEmail);
 
@@ -162,40 +84,10 @@ export const MetadataProviderEffect = () => {
       skip: shouldSkip,
     });
 
-  const { data: queryDataCoreViews, loading: queryLoadingCoreViews } =
-    useFindAllCoreViewsQuery({
-      skip: shouldSkip,
-      variables: { viewTypes: INDEX_VIEW_TYPES },
-    });
-
-  const { data: queryDataFieldsWidgetCoreViews } =
-    useFindFieldsWidgetCoreViewsQuery({
-      skip: shouldSkip,
-      variables: { viewTypes: FIELDS_WIDGET_VIEW_TYPES },
-    });
-
-  const { data: queryDataRecordPageLayouts } = useFindAllRecordPageLayoutsQuery(
-    {
-      skip: shouldSkip,
-    },
-  );
-
-  const { data: logicFunctionsData } = useFindManyLogicFunctionsQuery({
-    skip: !isLoggedIn,
-  });
-
   useEffect(() => {
-    if (isDefined(logicFunctionsData?.findManyLogicFunctions)) {
-      setLogicFunctions(logicFunctionsData.findManyLogicFunctions);
+    if (userQueryLoading || !isDefined(userQueryData?.currentUser)) {
+      return;
     }
-  }, [logicFunctionsData?.findManyLogicFunctions, setLogicFunctions]);
-
-  useEffect(() => {
-    if (!userQueryLoading) {
-      setLocalIsCurrentUserLoaded(true);
-    }
-
-    if (!isDefined(userQueryData?.currentUser)) return;
 
     setCurrentUser(userQueryData.currentUser);
 
@@ -250,7 +142,6 @@ export const MetadataProviderEffect = () => {
 
       updateLocaleCatalog(updatedWorkspaceMember.locale);
 
-      // Initialize format preferences from workspace member
       initializeFormatPreferences(updatedWorkspaceMember);
 
       dynamicActivate(
@@ -278,47 +169,10 @@ export const MetadataProviderEffect = () => {
     setAvailableWorkspaces,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
-    setIsCurrentUserLoaded,
     initializeFormatPreferences,
     setCurrentWorkspaceMembersWithDeleted,
     updateLocaleCatalog,
-    setIndexCoreViews,
   ]);
-
-  useEffect(() => {
-    if (!queryLoadingCoreViews) {
-      setLocalAreViewsLoaded(true);
-    }
-
-    if (!isDefined(queryDataCoreViews?.getCoreViews)) return;
-
-    setIndexCoreViews(queryDataCoreViews.getCoreViews);
-  }, [
-    queryDataCoreViews?.getCoreViews,
-    setIndexCoreViews,
-    queryLoadingCoreViews,
-  ]);
-
-  useEffect(() => {
-    if (!isDefined(queryDataFieldsWidgetCoreViews?.getCoreViews)) return;
-
-    setFieldsWidgetCoreViews(queryDataFieldsWidgetCoreViews.getCoreViews);
-  }, [queryDataFieldsWidgetCoreViews?.getCoreViews, setFieldsWidgetCoreViews]);
-
-  useEffect(() => {
-    if (!isDefined(queryDataRecordPageLayouts?.getPageLayouts)) return;
-
-    const transformedPageLayouts =
-      queryDataRecordPageLayouts.getPageLayouts.map(transformPageLayout);
-
-    setRecordPageLayouts(transformedPageLayouts);
-  }, [queryDataRecordPageLayouts?.getPageLayouts, setRecordPageLayouts]);
-
-  useEffect(() => {
-    if (localIsCurrentUserLoaded && localAreViewsLoaded) {
-      setIsCurrentUserLoaded(true);
-    }
-  }, [localIsCurrentUserLoaded, localAreViewsLoaded, setIsCurrentUserLoaded]);
 
   return null;
 };

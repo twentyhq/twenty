@@ -5,7 +5,7 @@ import { useFilteredAvailableWorkspaces } from '@/ui/navigation/navigation-drawe
 import { AvailableWorkspaceItem } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/AvailableWorkspaceItem';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const WorkspacesForSignUp = ({
   searchValue,
@@ -14,8 +14,8 @@ export const WorkspacesForSignUp = ({
 }) => {
   const { t } = useLingui();
 
-  const availableWorkspaces = useRecoilValue(availableWorkspacesState);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const availableWorkspaces = useRecoilValueV2(availableWorkspacesState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
 
   const { searchAvailableWorkspaces } = useFilteredAvailableWorkspaces();
 

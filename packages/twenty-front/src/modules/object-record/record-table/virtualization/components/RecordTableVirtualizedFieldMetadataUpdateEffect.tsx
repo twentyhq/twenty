@@ -5,8 +5,8 @@ import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record
 import { lastProcessedFieldMetadataUpdateIdComponentState } from '@/object-record/record-table/virtualization/states/lastProcessedFieldMetadataUpdateIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 
 export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
@@ -18,7 +18,7 @@ export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
     visibleRecordFieldsComponentSelector,
   );
 
-  const lastFieldMetadataItemUpdate = useRecoilValue(
+  const lastFieldMetadataItemUpdate = useRecoilValueV2(
     lastFieldMetadataItemUpdateState,
   );
 

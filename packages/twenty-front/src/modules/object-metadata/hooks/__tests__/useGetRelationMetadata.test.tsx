@@ -1,19 +1,30 @@
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
-import { type ReactNode, useEffect } from 'react';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { type ReactNode } from 'react';
+import { Provider as JotaiProvider } from 'jotai';
+import { RecoilRoot } from 'recoil';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider addTypename={false}>{children}</MockedProvider>
-  </RecoilRoot>
+  <JotaiProvider store={jotaiStore}>
+    <RecoilRoot>
+      <MockedProvider addTypename={false}>{children}</MockedProvider>
+    </RecoilRoot>
+  </JotaiProvider>
 );
 
 describe('useGetRelationMetadata', () => {
+  beforeEach(() => {
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+  });
+
   it('should return correct properties', async () => {
     const objectMetadata = generatedMockObjectMetadataItems.find(
       (item) => item.nameSingular === 'person',
@@ -22,21 +33,10 @@ describe('useGetRelationMetadata', () => {
       (field) => field.name === 'pointOfContactForOpportunities',
     )!;
 
-    const { result } = renderHook(
-      () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-
-        useEffect(() => {
-          setMetadataItems(generatedMockObjectMetadataItems);
-        }, [setMetadataItems]);
-
-        return useGetRelationMetadata();
-      },
-      {
-        wrapper: Wrapper,
-        initialProps: {},
-      },
-    );
+    const { result } = renderHook(() => useGetRelationMetadata(), {
+      wrapper: Wrapper,
+      initialProps: {},
+    });
 
     const {
       relationFieldMetadataItem,

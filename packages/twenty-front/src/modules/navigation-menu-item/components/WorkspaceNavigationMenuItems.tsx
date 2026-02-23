@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { IconLink, IconPlus, IconTool, useIcons } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -42,23 +42,19 @@ const StyledRightIconsContainer = styled.div`
 export const WorkspaceNavigationMenuItems = () => {
   const items = useWorkspaceSectionItems();
   const store = useStore();
-  const enterEditMode = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const prefetchNavigationMenuItems = snapshot
-          .getLoadable(prefetchNavigationMenuItemsState)
-          .getValue();
-        const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
-          prefetchNavigationMenuItems,
-        );
-        store.set(
-          navigationMenuItemsDraftStateV2.atom,
-          workspaceNavigationMenuItems,
-        );
-        store.set(isNavigationMenuInEditModeStateV2.atom, true);
-      },
-    [store],
-  );
+  const enterEditMode = () => {
+    const prefetchNavigationMenuItems = jotaiStore.get(
+      prefetchNavigationMenuItemsState.atom,
+    );
+    const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
+      prefetchNavigationMenuItems,
+    );
+    store.set(
+      navigationMenuItemsDraftStateV2.atom,
+      workspaceNavigationMenuItems,
+    );
+    store.set(isNavigationMenuInEditModeStateV2.atom, true);
+  };
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
