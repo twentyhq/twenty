@@ -1,6 +1,6 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
+import { type ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
 
 export type MetadataValidationRelatedMetadataNames<T extends AllMetadataName> =
   Extract<

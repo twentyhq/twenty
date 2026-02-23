@@ -13,7 +13,7 @@ type MetadataSerializedRelationProperties = {
 };
 
 export type MetadataSerializedRelatedMetadataName<T extends AllMetadataName> =
-  keyof (typeof ALL_METADATA_SERIALIZED_RELATION)[T]
+  keyof (typeof ALL_METADATA_SERIALIZED_RELATION)[T];
 
 export const ALL_METADATA_SERIALIZED_RELATION = {
   agent: {},

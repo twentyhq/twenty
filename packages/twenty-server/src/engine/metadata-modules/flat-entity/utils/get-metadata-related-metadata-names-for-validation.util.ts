@@ -2,7 +2,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import {
   ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION,
-  MetadataRelatedMetadataNameForValidation,
+  type MetadataRelatedMetadataNameForValidation,
 } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
 
 export const getMetadataRelatedMetadataNamesForValidation = <
