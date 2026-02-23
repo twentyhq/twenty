@@ -50,7 +50,9 @@ export const useNavigateCommandMenu = () => {
           .getValue();
 
         if (isCommandMenuClosing) {
-          commandMenuCloseAnimationCompleteCleanup();
+          commandMenuCloseAnimationCompleteCleanup({
+            emitSidePanelCloseEvent: false,
+          });
         }
 
         if (isCommandMenuOpened) {

@@ -43,7 +43,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
 
   const commandMenuCloseAnimationCompleteCleanup = useRecoilCallback(
     ({ snapshot, set }) =>
-      () => {
+      (options?: { emitSidePanelCloseEvent?: boolean }) => {
         closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
 
         resetContextStoreStates(COMMAND_MENU_COMPONENT_INSTANCE_ID);
@@ -115,7 +115,9 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         resetSelectedItem();
         set(hasUserSelectedCommandState, false);
 
-        emitSidePanelCloseEvent();
+        if (options?.emitSidePanelCloseEvent !== false) {
+          emitSidePanelCloseEvent();
+        }
         set(isCommandMenuClosingState, false);
         store.set(
           activeTabIdComponentState.atomFamily({
