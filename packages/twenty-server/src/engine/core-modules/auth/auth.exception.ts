@@ -19,6 +19,8 @@ export const AuthExceptionCode = appendCommonExceptionCode({
   FORBIDDEN_EXCEPTION: 'FORBIDDEN_EXCEPTION',
   INSUFFICIENT_SCOPES: 'INSUFFICIENT_SCOPES',
   UNAUTHENTICATED: 'UNAUTHENTICATED',
+  APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED:
+    'APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED',
   INVALID_DATA: 'INVALID_DATA',
   OAUTH_ACCESS_DENIED: 'OAUTH_ACCESS_DENIED',
   SSO_AUTH_FAILED: 'SSO_AUTH_FAILED',
@@ -56,6 +58,7 @@ const getAuthExceptionUserFriendlyMessage = (
     case AuthExceptionCode.INSUFFICIENT_SCOPES:
       return msg`Insufficient permissions.`;
     case AuthExceptionCode.UNAUTHENTICATED:
+    case AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED:
       return msg`You must be authenticated to perform this action.`;
     case AuthExceptionCode.OAUTH_ACCESS_DENIED:
       return msg`OAuth access was denied.`;

@@ -15,13 +15,16 @@ import {
   type RenewApplicationTokenMutationVariables,
 } from '~/generated-metadata/graphql';
 
-const hasUnauthenticatedGraphqlError = (
+const APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_SUB_CODE =
+  'APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED';
+
+const hasApplicationRefreshTokenInvalidOrExpiredSubCode = (
   errors: ReadonlyArray<GraphQLFormattedError>,
 ): boolean =>
   errors.some(
     (error) =>
-      error.extensions?.code === 'UNAUTHENTICATED' ||
-      error.message === 'Unauthorized',
+      error.extensions?.subCode ===
+      APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_SUB_CODE,
   );
 
 type UseRequestApplicationTokenRefreshArgs = {
@@ -88,7 +91,11 @@ export const useRequestApplicationTokenRefresh = ({
           });
 
           if (isDefined(renewResult.errors) && renewResult.errors.length > 0) {
-            if (hasUnauthenticatedGraphqlError(renewResult.errors)) {
+            if (
+              hasApplicationRefreshTokenInvalidOrExpiredSubCode(
+                renewResult.errors,
+              )
+            ) {
               return await refetchFrontComponentForNewTokenPair();
             }
 
@@ -111,8 +118,9 @@ export const useRequestApplicationTokenRefresh = ({
         } catch (error) {
           if (
             error instanceof ApolloError &&
-            // lets find a better way to write this -- in short if the refresh token is expired we should refetch the front component for a new token pair
-            hasUnauthenticatedGraphqlError(error.graphQLErrors)
+            hasApplicationRefreshTokenInvalidOrExpiredSubCode(
+              error.graphQLErrors,
+            )
           ) {
             return await refetchFrontComponentForNewTokenPair();
           }
