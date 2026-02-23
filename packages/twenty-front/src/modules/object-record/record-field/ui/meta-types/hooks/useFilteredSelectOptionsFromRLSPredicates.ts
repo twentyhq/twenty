@@ -137,9 +137,14 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
         predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY,
     );
 
+    const hasIsNotEmptyPredicate = selectPredicates.some(
+      (predicate) =>
+        predicate.operand === RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+    );
+
     return {
       filteredOptions: filterOptionsByPredicates(options, selectPredicates),
-      canSelectEmpty: hasIsEmptyPredicate,
+      canSelectEmpty: hasIsEmptyPredicate && !hasIsNotEmptyPredicate,
     };
   }, [
     objectMetadataId,

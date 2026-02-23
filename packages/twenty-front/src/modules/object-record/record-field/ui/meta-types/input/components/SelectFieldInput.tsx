@@ -46,7 +46,7 @@ export const SelectFieldInput = () => {
   );
   const clearField = useClearField();
 
-  const selectedOption = fieldDefinition.metadata.options.find(
+  const selectedOption = selectOptions.find(
     (option) => option.value === fieldValue,
   );
   // handlers
