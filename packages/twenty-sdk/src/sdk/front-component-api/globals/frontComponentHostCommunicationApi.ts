@@ -26,11 +26,14 @@ export type EnqueueSnackbarFunction = (
   params: EnqueueSnackbarParams,
 ) => Promise<void>;
 
+export type CloseSidePanelFunction = () => Promise<void>;
+
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
   openSidePanelPage?: OpenSidePanelPageFunction;
   unmountFrontComponent?: UnmountFrontComponentFunction;
   enqueueSnackbar?: EnqueueSnackbarFunction;
+  closeSidePanel?: CloseSidePanelFunction;
 };
 
 declare global {

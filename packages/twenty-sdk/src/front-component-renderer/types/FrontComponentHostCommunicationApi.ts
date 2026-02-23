@@ -1,4 +1,5 @@
 import {
+  type CloseSidePanelFunction,
   type EnqueueSnackbarFunction,
   type NavigateFunction,
   type OpenSidePanelPageFunction,
@@ -10,4 +11,5 @@ export type FrontComponentHostCommunicationApi = {
   openSidePanelPage: OpenSidePanelPageFunction;
   unmountFrontComponent: UnmountFrontComponentFunction;
   enqueueSnackbar: EnqueueSnackbarFunction;
+  closeSidePanel: CloseSidePanelFunction;
 };

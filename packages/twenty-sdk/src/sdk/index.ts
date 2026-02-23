@@ -76,6 +76,7 @@ export type { ActionOpenSidePanelPageProps } from './action';
 export {
   enqueueSnackbar,
   getFrontComponentActionErrorDedupeKey,
+  closeSidePanel,
   navigate,
   openSidePanelPage,
   unmountFrontComponent,

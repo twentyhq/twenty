@@ -6,6 +6,7 @@ import {
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
@@ -34,6 +35,7 @@ export const useFrontComponentExecutionContext = ({
     enqueueInfoSnackBar,
     enqueueWarningSnackBar,
   } = useSnackBar();
+  const { closeCommandMenu } = useCommandMenu();
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
     to,
@@ -104,12 +106,18 @@ export const useFrontComponentExecutionContext = ({
       unmountHeadlessFrontComponent(frontComponentId);
     };
 
+  const closeSidePanel: FrontComponentHostCommunicationApi['closeSidePanel'] =
+    async () => {
+      closeCommandMenu();
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
       openSidePanelPage,
       enqueueSnackbar,
       unmountFrontComponent,
+      closeSidePanel,
     };
 
   return {

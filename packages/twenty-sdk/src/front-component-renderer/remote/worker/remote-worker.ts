@@ -97,6 +97,7 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
       hostApi.unmountFrontComponent;
     frontComponentHostCommunicationApi.enqueueSnackbar =
       hostApi.enqueueSnackbar;
+    frontComponentHostCommunicationApi.closeSidePanel = hostApi.closeSidePanel;
   };
 
 const updateContext: WorkerExports['updateContext'] = async (
