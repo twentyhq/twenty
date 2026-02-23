@@ -22,5 +22,5 @@ export const getDomainValidationSchema = () =>
         },
       )
       .max(256),
-    z.string(''),
+    z.literal(''),
   ]);
