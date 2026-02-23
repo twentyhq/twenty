@@ -18,7 +18,8 @@ import {
   type RecordFilterGroup,
 } from 'twenty-shared/utils';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -38,7 +39,7 @@ type BuildRowLevelPermissionRecordFilterArgs = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   objectMetadata: FlatObjectMetadata;
   roleId: string | undefined;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
 };
 
 export const buildRowLevelPermissionRecordFilter = ({
@@ -68,7 +69,10 @@ export const buildRowLevelPermissionRecordFilter = ({
     return null;
   }
 
-  const workspaceMember = authContext.workspaceMember;
+  const isUserContext = isUserAuthContext(authContext);
+  const workspaceMember = isUserContext
+    ? authContext.workspaceMember
+    : undefined;
 
   const recordFilters = predicates
     .map((predicate) => {
@@ -236,7 +240,9 @@ export const buildRowLevelPermissionRecordFilter = ({
     recordFilterGroups,
     fields: fieldMetadataItems,
     filterValueDependencies: {
-      currentWorkspaceMemberId: authContext.workspaceMemberId,
+      currentWorkspaceMemberId: isUserContext
+        ? authContext.workspaceMemberId
+        : undefined,
     },
   });
 };

@@ -48,7 +48,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
@@ -73,7 +73,7 @@ export class DataArgProcessor {
     shouldBackfillPositionIfUndefined = true,
   }: {
     partialRecordInputs: Partial<ObjectRecord>[] | undefined;
-    authContext: AuthContext;
+    authContext: WorkspaceAuthContext;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     shouldBackfillPositionIfUndefined?: boolean;

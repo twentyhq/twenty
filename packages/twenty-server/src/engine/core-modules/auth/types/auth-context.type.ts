@@ -6,7 +6,7 @@ import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/w
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-export type AuthContext = {
+export type RawAuthContext = {
   user?: UserEntity | null | undefined;
   apiKey?: ApiKeyEntity | null | undefined;
   workspaceMemberId?: string;
@@ -21,6 +21,9 @@ export type AuthContext = {
     impersonatedUserWorkspaceId?: string;
   };
 };
+
+// @deprecated Use WorkspaceAuthContext instead
+export type AuthContext = RawAuthContext;
 
 export type SerializableAuthContext = {
   userId?: string;

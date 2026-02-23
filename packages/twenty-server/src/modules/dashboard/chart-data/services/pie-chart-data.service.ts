@@ -7,7 +7,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -31,7 +31,7 @@ type GetPieChartDataParams = {
   workspaceId: string;
   objectMetadataId: string;
   configuration: PieChartConfigurationDTO;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
 };
 
 @Injectable()

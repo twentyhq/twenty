@@ -9,7 +9,7 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   PermissionsException,
@@ -35,14 +35,14 @@ export class WorkspaceSelectQueryBuilder<
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
   internalContext: WorkspaceInternalContext;
-  authContext: AuthContext;
+  authContext: WorkspaceAuthContext;
   featureFlagMap: FeatureFlagMap;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     objectRecordsPermissions: ObjectsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
-    authContext: AuthContext,
+    authContext: WorkspaceAuthContext,
     featureFlagMap: FeatureFlagMap,
   ) {
     super(queryBuilder);

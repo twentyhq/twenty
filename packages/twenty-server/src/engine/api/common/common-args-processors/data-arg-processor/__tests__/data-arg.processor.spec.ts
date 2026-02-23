@@ -3,7 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { DataArgProcessor } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -27,12 +27,13 @@ describe('DataArgProcessor', () => {
 
   const mockWorkspaceId = '20202020-1234-1234-1234-123456789012';
 
-  const createMockAuthContext = (): AuthContext =>
+  const createMockAuthContext = (): WorkspaceAuthContext =>
     ({
+      type: 'system',
       workspace: {
         id: mockWorkspaceId,
       },
-    }) as AuthContext;
+    }) as unknown as WorkspaceAuthContext;
 
   const createFlatFieldMetadataMaps = (
     fieldNames: string[],
