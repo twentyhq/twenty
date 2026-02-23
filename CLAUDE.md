@@ -201,3 +201,60 @@ When running in CI, the dev environment is **not** pre-configured. Dependencies 
 - `tsconfig.base.json` - Base TypeScript configuration
 - `package.json` - Root package with workspace definitions
 - `.cursor/rules/` - Detailed development guidelines and best practices
+
+---
+
+## Foundry Migration
+
+This fork includes an active migration effort to extract all data from Palantir Foundry (`tob.palantirfoundry.com`) and land it in the same PostgreSQL instance that Twenty uses, inside a separate `foundry` schema.
+
+### Current State (2026-02-23)
+
+- **Phase 1 (Schema extraction): DONE.** The Ontology Manager JSON was exported from Foundry's UI and parsed into PostgreSQL DDL.
+- **Phase 2 (Data extraction): IN PROGRESS.** Next step is writing a streaming extraction script that reads from Foundry's API and inserts directly into the PostgreSQL `foundry` schema — no intermediate local files.
+- **Phases 3–5: PENDING.** Special data handling (time series, media, attachments), verification, and logic re-implementation.
+
+### Migration Plan
+
+1. **Schema extraction** — Export Foundry Ontology Manager JSON, generate PostgreSQL DDL (CREATE TABLE, FK constraints, junction tables). **Done.**
+2. **Data extraction** — Stream data from Foundry's REST API (`readTable` or `loadObjectSet`) directly into a `foundry` schema in the PostgreSQL database. No local file storage.
+3. **Special data** — Time series (materialize via FoundryTS, store in PostgreSQL), media/attachments (download to external storage, store references in PostgreSQL).
+4. **Load & verify** — Apply FK constraints, verify row counts, spot-check data integrity.
+5. **Twenty integration** — Selectively map relevant Foundry object types to Twenty objects (standard or custom) and migrate them from the `foundry` schema into Twenty's workspace tables. This is a separate step done after all data is safely in PostgreSQL.
+
+### Key Research Document
+
+`docs/foundry-migration-guide.md` is the essential reference for this migration. It covers:
+- How Foundry's Ontology semantic layer works (object types, properties, link types, actions)
+- How backing datasets relate to object types
+- Five methods for extracting data (REST API, readTable, S3-compatible, Foundry SQL, Data Connection)
+- Foundry-to-PostgreSQL type mapping table
+- What metadata is and isn't accessible via API
+- Limitations and gotchas (rate limits, auth, time series, media sets)
+
+### `foundry-audit/` Folder Contents
+
+All Foundry data extraction artifacts live here:
+
+| File | Description |
+|------|-------------|
+| `ontology.json` | **Source of truth.** Full Ontology Manager JSON export (7.6 MB). Contains all 341 object types, 349 relations, 407 action types, property definitions, datasource mappings, and backing dataset RIDs. |
+| `generate_ddl.py` | Python script that parses `ontology.json` and generates the three SQL files below. Filters out example, deprecated, and test types (36 excluded, 305 included). Rerunnable. |
+| `foundry_ddl.sql` | 305 `CREATE TABLE` statements with typed columns and primary keys. |
+| `foundry_fk.sql` | 291 `ALTER TABLE … ADD CONSTRAINT FOREIGN KEY` statements from one-to-many link types. |
+| `foundry_junction.sql` | 15 junction tables for many-to-many link types. |
+| `foundry_ddl_report.md` | Summary report: what was generated, what was excluded (with reasons), skipped constraints, intermediary links, and the type mapping table. |
+| `FOUNDRY-AUDIT-REPORT.md` | Earlier audit report generated from MCP API data. Numbers don't perfectly match the JSON export. Still useful for context on functions, integrations, pipeline architecture, and risk assessment — but take with a grain of salt. |
+
+### Credentials
+
+- **Foundry bearer token**: `.env` (`FOUNDRY_TOKEN`) — Palantir user-generated token for `tob.palantirfoundry.com`
+- **PostgreSQL**: `deploy/.env` — user `twenty`, runs in Docker on the deployment server
+- **Twenty API + CF Access**: `deploy/.env` — API key, CF Access client ID/secret for `crm.tob.sh`
+
+### Architectural Decisions
+
+- **Separate `foundry` schema**: All migrated data goes into a `foundry` schema, completely isolated from Twenty's internal tables (`public`, `core`, `metadata`). This avoids any interference with Twenty's workspace-scoped architecture.
+- **Stream, don't store locally**: Data flows directly from Foundry API → PostgreSQL. No intermediate CSV/Parquet files on disk.
+- **Filter at source**: 36 object types (example/demo, deprecated, test) are excluded from DDL and extraction. The remaining 305 types with 4,808 columns are included.
+- **Media/attachments stored externally**: Binary files (images, PDFs, audio, video) are downloaded to external storage (S3 or filesystem). PostgreSQL stores only the reference paths/metadata as JSONB.
