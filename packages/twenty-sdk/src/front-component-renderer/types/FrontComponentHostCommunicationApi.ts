@@ -3,10 +3,9 @@ import {
   type EnqueueSnackbarFunction,
   type NavigateFunction,
   type OpenSidePanelPageFunction,
+  type RequestAccessTokenRefreshFunction,
   type UnmountFrontComponentFunction,
 } from '../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
-
-type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type FrontComponentHostCommunicationApi = {
   navigate: NavigateFunction;
