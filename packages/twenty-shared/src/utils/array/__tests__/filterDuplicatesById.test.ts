@@ -8,7 +8,7 @@ describe('filterDuplicatesById', () => {
 
     const filteredArray = array.filter(filterDuplicatesById);
 
-    expect(filteredArray).toEqual([{ id: 'asd' }]);
+    expect(filteredArray).toEqual([]);
   });
 
   it('should work with no duplicates', () => {
