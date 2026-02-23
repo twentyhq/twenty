@@ -32,11 +32,9 @@ const StyledRightActions = styled.div<{ isExpanded: boolean }>`
 
 const StyledNavigationDrawerCollapseButton = styled(
   NavigationDrawerCollapseButton,
-)<{ show?: boolean }>`
+)`
   height: ${({ theme }) => theme.spacing(6)};
-  opacity: ${({ show }) => (show ? 1 : 0)};
   padding-right: ${({ theme }) => theme.spacing(1)};
-  transition: opacity ${({ theme }) => theme.animation.duration.normal}s;
   width: ${({ theme }) => theme.spacing(6)};
 `;
 
@@ -68,11 +66,8 @@ export const NavigationDrawerHeader = ({
             onClick={openRecordsSearchPage}
             aria-label={t`Search`}
           />
-          {isNavigationDrawerExpanded && (
-            <StyledNavigationDrawerCollapseButton
-              direction="left"
-              show={showCollapseControl}
-            />
+          {isNavigationDrawerExpanded && showCollapseControl && (
+            <StyledNavigationDrawerCollapseButton direction="left" />
           )}
         </StyledRightActions>
       )}
