@@ -1,7 +1,6 @@
-import { useCallback } from 'react';
-import { useRecoilState } from 'recoil';
-
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useCallback } from 'react';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
@@ -15,7 +14,7 @@ import {
 } from 'twenty-ui/display';
 
 export const useColorScheme = () => {
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilStateV2(
     currentWorkspaceMemberState,
   );
 

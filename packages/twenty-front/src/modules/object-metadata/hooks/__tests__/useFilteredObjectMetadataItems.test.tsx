@@ -1,5 +1,6 @@
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
@@ -10,6 +11,7 @@ import {
 } from '@/object-metadata/hooks/__mocks__/useFilteredObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isDefined } from 'twenty-shared/utils';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -27,17 +29,22 @@ const mocks = [
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot
-    initializeState={({ set }) =>
-      set(objectMetadataItemsState, generatedMockObjectMetadataItems)
-    }
-  >
-    <MockedProvider mocks={mocks} addTypename={false}>
-      {children}
-    </MockedProvider>
-  </RecoilRoot>
-);
+const Wrapper = ({ children }: { children: ReactNode }) => {
+  jotaiStore.set(
+    objectMetadataItemsState.atom,
+    generatedMockObjectMetadataItems,
+  );
+
+  return (
+    <JotaiProvider store={jotaiStore}>
+      <RecoilRoot>
+        <MockedProvider mocks={mocks} addTypename={false}>
+          {children}
+        </MockedProvider>
+      </RecoilRoot>
+    </JotaiProvider>
+  );
+};
 
 describe('useFilteredObjectMetadataItems', () => {
   it('should findActiveObjectMetadataItemByNamePlural', async () => {

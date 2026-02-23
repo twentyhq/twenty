@@ -1,12 +1,3 @@
-import { useEffect, useState } from 'react';
-import {
-  matchPath,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
-
 import {
   setSessionId,
   useEventTracker,
@@ -15,6 +6,15 @@ import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksO
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useEffect, useState } from 'react';
+import {
+  matchPath,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
+import { useRecoilCallback } from 'recoil';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -92,7 +92,7 @@ export const PageChangeEffect = () => {
   const { executeTasksOnAnyLocationChange } =
     useExecuteTasksOnAnyLocationChange();
 
-  const isAppEffectRedirectEnabled = useRecoilValue(
+  const isAppEffectRedirectEnabled = useRecoilValueV2(
     isAppEffectRedirectEnabledState,
   );
 
@@ -365,7 +365,7 @@ export const PageChangeEffect = () => {
   }, [eventTracker, location.pathname]);
 
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
-  const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
+  const isCaptchaScriptLoaded = useRecoilValueV2(isCaptchaScriptLoadedState);
 
   useEffect(() => {
     if (isCaptchaScriptLoaded && isCaptchaRequiredForPath(location.pathname)) {

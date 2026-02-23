@@ -9,7 +9,7 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledCommandMenuContainer = styled.div<{ isMobile: boolean }>`
   max-height: ${({ theme, isMobile }) => {
@@ -35,7 +35,7 @@ export const CommandMenuContainer = ({
   );
   const isMobile = useIsMobile();
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,

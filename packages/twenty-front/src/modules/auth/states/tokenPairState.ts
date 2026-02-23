@@ -1,18 +1,12 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 import { type AuthTokenPair } from '~/generated-metadata/graphql';
-import { cookieStorageEffect } from '~/utils/recoil/cookieStorageEffect';
 
-export const tokenPairState = createState<AuthTokenPair | null>({
+export const tokenPairState = createStateV2<AuthTokenPair | null>({
   key: 'tokenPairState',
   defaultValue: null,
-  effects: [
-    cookieStorageEffect(
-      'tokenPair',
-      {},
-      {
-        validateInitFn: (payload: AuthTokenPair) =>
-          Boolean(payload['accessOrWorkspaceAgnosticToken']),
-      },
-    ),
-  ],
+  useCookieStorage: {
+    cookieKey: 'tokenPair',
+    validateInitFn: (payload: AuthTokenPair) =>
+      Boolean(payload['accessOrWorkspaceAgnosticToken']),
+  },
 });

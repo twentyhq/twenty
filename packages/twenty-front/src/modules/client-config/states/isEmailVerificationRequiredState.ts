@@ -1,5 +1,5 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
-export const isEmailVerificationRequiredState = createState<boolean>({
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+export const isEmailVerificationRequiredState = createStateV2<boolean>({
   key: 'isEmailVerificationRequired',
   defaultValue: false,
 });

@@ -1,4 +1,4 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 export enum SignInUpStep {
   Init = 'init',
   Email = 'email',
@@ -10,7 +10,7 @@ export enum SignInUpStep {
   TwoFactorAuthenticationProvision = 'TwoFactorAuthenticationProvision',
 }
 
-export const signInUpStepState = createState<SignInUpStep>({
+export const signInUpStepState = createStateV2<SignInUpStep>({
   key: 'signInUpStepState',
   defaultValue: SignInUpStep.Init,
 });

@@ -14,6 +14,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useR
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   useFindManyAgentsQuery,
@@ -64,8 +65,10 @@ export const SettingsRoleAssignment = ({
       null,
     );
 
-  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMembers = useRecoilValueV2(
+    currentWorkspaceMembersState,
+  );
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
   const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
 
   const roleMaps = buildRoleMaps(settingsAllRoles);

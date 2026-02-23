@@ -1,13 +1,15 @@
-import { useEffect } from 'react';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
@@ -24,12 +26,17 @@ export const PrefetchRunNavigationMenuItemQueriesEffect = () => {
 
   const showAuthModal = useShowAuthModal();
   const isSettingsPage = useIsSettingsPage();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
   const isWorkspaceActive =
     currentWorkspace?.activationStatus === WorkspaceActivationStatus.ACTIVE;
 
-  const setIsPrefetchNavigationMenuItemsLoaded = useSetRecoilState(
-    prefetchIsLoadedFamilyState(PrefetchKey.AllNavigationMenuItems),
+  const setIsPrefetchNavigationMenuItemsLoaded = useSetFamilyRecoilStateV2(
+    prefetchIsLoadedFamilyState,
+    PrefetchKey.AllNavigationMenuItems,
+  );
+
+  const setNavigationMenuItemsState = useSetRecoilStateV2(
+    prefetchNavigationMenuItemsState,
   );
 
   const { data, loading } = useFindManyNavigationMenuItemsQuery({
@@ -41,29 +48,27 @@ export const PrefetchRunNavigationMenuItemQueriesEffect = () => {
     fetchPolicy: 'cache-and-network',
   });
 
-  const setPrefetchNavigationMenuItemsState = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (navigationMenuItems: NavigationMenuItem[]) => {
-        const existingNavigationMenuItems = snapshot
-          .getLoadable(prefetchNavigationMenuItemsState)
-          .getValue();
-
-        if (!isDeeplyEqual(existingNavigationMenuItems, navigationMenuItems)) {
-          set(prefetchNavigationMenuItemsState, navigationMenuItems);
-        }
-      },
-    [],
+  const setPrefetchNavigationMenuItemsStateIfChanged = useCallback(
+    (navigationMenuItems: NavigationMenuItem[]) => {
+      const existingNavigationMenuItems = jotaiStore.get(
+        prefetchNavigationMenuItemsState.atom,
+      );
+      if (!isDeeplyEqual(existingNavigationMenuItems, navigationMenuItems)) {
+        setNavigationMenuItemsState(navigationMenuItems);
+      }
+    },
+    [setNavigationMenuItemsState],
   );
 
   useEffect(() => {
     if (!loading && isDefined(data?.navigationMenuItems)) {
-      setPrefetchNavigationMenuItemsState(data.navigationMenuItems);
+      setPrefetchNavigationMenuItemsStateIfChanged(data.navigationMenuItems);
       setIsPrefetchNavigationMenuItemsLoaded(true);
     }
   }, [
     data,
     loading,
-    setPrefetchNavigationMenuItemsState,
+    setPrefetchNavigationMenuItemsStateIfChanged,
     setIsPrefetchNavigationMenuItemsLoaded,
   ]);
 

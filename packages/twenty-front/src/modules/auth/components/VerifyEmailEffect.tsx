@@ -12,11 +12,12 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 export const VerifyEmailEffect = () => {
   const {
@@ -29,7 +30,7 @@ export const VerifyEmailEffect = () => {
   const [searchParams] = useSearchParams();
   const [isError, setIsError] = useState(false);
 
-  const setVerifyEmailRedirectPath = useSetRecoilState(
+  const setVerifyEmailRedirectPath = useSetRecoilStateV2(
     verifyEmailRedirectPathState,
   );
 
@@ -41,7 +42,7 @@ export const VerifyEmailEffect = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { verifyLoginToken } = useVerifyLogin();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
-  const clientConfigApiStatus = useRecoilValue(clientConfigApiStatusState);
+  const clientConfigApiStatus = useRecoilValueV2(clientConfigApiStatusState);
 
   const { t } = useLingui();
   useEffect(() => {

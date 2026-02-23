@@ -13,7 +13,6 @@ import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffec
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { HeadlessFrontComponentMountRoot } from '@/front-components/components/HeadlessFrontComponentMountRoot';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
-import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
@@ -26,6 +25,8 @@ import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { EagerMetadataLoadEffect } from '@/users/components/EagerMetadataLoadEffect';
+import { LazyMetadataLoadEffect } from '@/users/components/LazyMetadataLoadEffect';
 import { MetadataProviderEffect } from '@/users/components/MetadataProviderEffect';
 import { UserProvider } from '@/users/components/UserProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
@@ -42,6 +43,8 @@ export const AppRouterProviders = () => {
       <BaseThemeProvider>
         <ClientConfigProviderEffect />
         <MetadataProviderEffect />
+        <EagerMetadataLoadEffect />
+        <LazyMetadataLoadEffect />
         <WorkspaceProviderEffect />
         <ClientConfigProvider>
           <CaptchaProvider>
@@ -51,7 +54,6 @@ export const AppRouterProviders = () => {
                 <AuthProvider>
                   <ApolloCoreProvider>
                     <SSEProvider>
-                      <ObjectMetadataItemsLoadEffect />
                       <ObjectMetadataItemsProvider>
                         <PrefetchDataProvider>
                           <UserThemeProviderEffect />
