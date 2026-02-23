@@ -1,18 +1,13 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { IconComment } from 'twenty-ui/display';
 
+import { NavigationDrawerAIChatThreadDateSection } from '@/ai/components/NavigationDrawerAIChatThreadDateSection';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { useAIChatThreadClick } from '@/ai/hooks/useAIChatThreadClick';
 import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import {
-  type AgentChatThread,
-  useGetChatThreadsQuery,
-} from '~/generated-metadata/graphql';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { useGetChatThreadsQuery } from '~/generated-metadata/graphql';
 
 const DATE_GROUP_KEYS = ['today', 'yesterday', 'older'] as const;
 
@@ -26,31 +21,6 @@ const StyledScrollableList = styled.div`
   width: ${({ theme }) => `calc(100% - ${theme.spacing(2)})`};
 `;
 
-const StyledDateSection = styled.section`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledThreadList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(0.5)};
-`;
-
-const StyledDateHeader = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(0, 2)};
-`;
-
-const StyledThreadTimestamp = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding-right: ${({ theme }) => theme.spacing(0.5)};
-`;
-
 export const NavigationDrawerAIChatThreadsList = () => {
   const { t } = useLingui();
   const currentThreadId = useRecoilValueV2(currentAIChatThreadStateV2);
@@ -60,6 +30,17 @@ export const NavigationDrawerAIChatThreadsList = () => {
 
   const { data: { chatThreads = [] } = {}, loading } = useGetChatThreadsQuery();
   const groupedThreads = groupThreadsByDate(chatThreads);
+
+  const getDateGroupTitle = (key: (typeof DATE_GROUP_KEYS)[number]): string => {
+    switch (key) {
+      case 'today':
+        return t`Today`;
+      case 'yesterday':
+        return t`Yesterday`;
+      case 'older':
+        return t`Older`;
+    }
+  };
 
   if (loading === true) {
     return <AIChatSkeletonLoader />;
@@ -71,38 +52,14 @@ export const NavigationDrawerAIChatThreadsList = () => {
         const threads = groupedThreads[key];
         if (threads.length === 0) return null;
 
-        const title =
-          key === 'today'
-            ? t`Today`
-            : key === 'yesterday'
-              ? t`Yesterday`
-              : t`Older`;
-
         return (
-          <StyledDateSection key={key}>
-            <StyledDateHeader>{title}</StyledDateHeader>
-            <StyledThreadList>
-              {threads.map((thread: AgentChatThread) => {
-                const isActive = currentThreadId === thread.id;
-                const timestamp = beautifyPastDateRelativeToNow(
-                  thread.updatedAt ?? thread.createdAt,
-                );
-                return (
-                  <NavigationDrawerItem
-                    key={thread.id}
-                    label={thread.title || t`Untitled`}
-                    Icon={IconComment}
-                    active={isActive}
-                    onClick={() => handleThreadClick(thread)}
-                    alwaysShowRightOptions
-                    rightOptions={
-                      <StyledThreadTimestamp>{timestamp}</StyledThreadTimestamp>
-                    }
-                  />
-                );
-              })}
-            </StyledThreadList>
-          </StyledDateSection>
+          <NavigationDrawerAIChatThreadDateSection
+            key={key}
+            title={getDateGroupTitle(key)}
+            threads={threads}
+            currentThreadId={currentThreadId}
+            onThreadClick={handleThreadClick}
+          />
         );
       })}
     </StyledScrollableList>
