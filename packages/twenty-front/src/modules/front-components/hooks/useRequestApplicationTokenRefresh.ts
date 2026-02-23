@@ -60,7 +60,7 @@ export const useRequestApplicationTokenRefresh = ({
     };
 
     if (!isDefined(applicationTokenPair)) {
-      return await refetchFrontComponentForNewTokenPair();
+      throw new Error('Application token pair not defined, should not happen');
     }
 
     try {
