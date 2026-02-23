@@ -10,8 +10,8 @@ import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-contex
 import { AgentProfileResolverService } from 'src/modules/agent-profile/services/agent-profile-resolver.service';
 
 @Injectable()
-@WorkspaceQueryHook(`policy.createOne`)
-export class PolicyCreateOnePreQueryHook
+@WorkspaceQueryHook(`person.createOne`)
+export class PersonCreateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
@@ -23,17 +23,13 @@ export class PolicyCreateOnePreQueryHook
     _objectName: string,
     payload: CreateOneResolverArgs,
   ): Promise<CreateOneResolverArgs> {
-    if (!isDefined(payload.data.submittedDate)) {
-      payload.data.submittedDate = new Date().toISOString();
-    }
-
     const workspace = authContext.workspace;
 
     if (!isDefined(workspace) || !isDefined(authContext.workspaceMemberId)) {
       return payload;
     }
 
-    if (isDefined(payload.data.agentId)) {
+    if (isDefined(payload.data.assignedAgentId)) {
       return payload;
     }
 
@@ -48,7 +44,7 @@ export class PolicyCreateOnePreQueryHook
       return payload;
     }
 
-    payload.data.agentId = agentProfileId;
+    payload.data.assignedAgentId = agentProfileId;
 
     return payload;
   }

@@ -7,7 +7,6 @@ import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-re
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { AgentProfileResolverService } from 'src/modules/agent-profile/services/agent-profile-resolver.service';
 
 @Injectable()
@@ -24,6 +23,14 @@ export class PolicyCreateManyPreQueryHook
     _objectName: string,
     payload: CreateManyResolverArgs,
   ): Promise<CreateManyResolverArgs> {
+    const now = new Date().toISOString();
+
+    for (const record of payload.data) {
+      if (!isDefined(record.submittedDate)) {
+        record.submittedDate = now;
+      }
+    }
+
     const workspace = authContext.workspace;
 
     if (!isDefined(workspace) || !isDefined(authContext.workspaceMemberId)) {
@@ -42,6 +49,7 @@ export class PolicyCreateManyPreQueryHook
       await this.agentProfileResolverService.resolveAgentProfileId(
         workspace.id,
         authContext.workspaceMemberId,
+        authContext,
       );
 
     if (!isDefined(agentProfileId)) {

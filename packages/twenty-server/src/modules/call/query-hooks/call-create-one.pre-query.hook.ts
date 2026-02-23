@@ -23,6 +23,10 @@ export class CallCreateOnePreQueryHook
     _objectName: string,
     payload: CreateOneResolverArgs,
   ): Promise<CreateOneResolverArgs> {
+    if (!isDefined(payload.data.callDate)) {
+      payload.data.callDate = new Date().toISOString();
+    }
+
     const workspace = authContext.workspace;
 
     if (!isDefined(workspace) || !isDefined(authContext.workspaceMemberId)) {
@@ -37,6 +41,7 @@ export class CallCreateOnePreQueryHook
       await this.agentProfileResolverService.resolveAgentProfileId(
         workspace.id,
         authContext.workspaceMemberId,
+        authContext,
       );
 
     if (!isDefined(agentProfileId)) {

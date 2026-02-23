@@ -419,9 +419,15 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     workspaceId: string,
     user: UserEntity,
   ): Promise<void> {
-    const agentObjectMetadata = await this.objectMetadataRepository.findOne({
+    let agentObjectMetadata = await this.objectMetadataRepository.findOne({
       where: { nameSingular: 'agent', workspaceId, isActive: true },
     });
+
+    if (!agentObjectMetadata) {
+      agentObjectMetadata = await this.objectMetadataRepository.findOne({
+        where: { nameSingular: 'agentProfile', workspaceId, isActive: true },
+      });
+    }
 
     if (!agentObjectMetadata) {
       this.logger.log(
@@ -492,7 +498,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       const agentRepository =
         await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
-          'agent',
+          agentObjectMetadata.nameSingular,
           { shouldBypassPermissionChecks: true },
         );
 

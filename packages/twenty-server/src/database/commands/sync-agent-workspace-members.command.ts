@@ -42,10 +42,15 @@ export class SyncAgentWorkspaceMembersCommand extends ActiveOrSuspendedWorkspace
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const agentObjectMetadata =
-      await this.objectMetadataRepository.findOne({
-        where: { nameSingular: 'agent', workspaceId, isActive: true },
+    let agentObjectMetadata = await this.objectMetadataRepository.findOne({
+      where: { nameSingular: 'agent', workspaceId, isActive: true },
+    });
+
+    if (!agentObjectMetadata) {
+      agentObjectMetadata = await this.objectMetadataRepository.findOne({
+        where: { nameSingular: 'agentProfile', workspaceId, isActive: true },
       });
+    }
 
     if (!agentObjectMetadata) {
       this.logger.log(
@@ -87,12 +92,11 @@ export class SyncAgentWorkspaceMembersCommand extends ActiveOrSuspendedWorkspace
 
     const foreignKeyColumn = `${workspaceMemberRelationField.name}Id`;
 
-    const agentRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        'agent',
-        { shouldBypassPermissionChecks: true },
-      );
+    const agentRepository = await this.globalWorkspaceOrmManager.getRepository(
+      workspaceId,
+      agentObjectMetadata.nameSingular,
+      { shouldBypassPermissionChecks: true },
+    );
 
     const workspaceMemberRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -108,9 +112,7 @@ export class SyncAgentWorkspaceMembersCommand extends ActiveOrSuspendedWorkspace
       .getMany();
 
     if (unlinkedAgents.length === 0) {
-      this.logger.log(
-        `No unlinked agents found in workspace ${workspaceId}`,
-      );
+      this.logger.log(`No unlinked agents found in workspace ${workspaceId}`);
 
       return;
     }
@@ -124,10 +126,7 @@ export class SyncAgentWorkspaceMembersCommand extends ActiveOrSuspendedWorkspace
 
     for (const member of workspaceMembers) {
       if (isDefined(member.userEmail)) {
-        workspaceMemberByEmail.set(
-          member.userEmail.toLowerCase(),
-          member,
-        );
+        workspaceMemberByEmail.set(member.userEmail.toLowerCase(), member);
       }
     }
 

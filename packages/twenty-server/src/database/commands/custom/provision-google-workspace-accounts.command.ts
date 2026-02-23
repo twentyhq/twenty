@@ -2,7 +2,10 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { ConnectedAccountProvider, FieldMetadataType } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -68,9 +71,15 @@ export class ProvisionGoogleWorkspaceAccountsCommand extends ActiveOrSuspendedWo
     }
 
     // Find Agent object metadata
-    const agentObjectMetadata = await this.objectMetadataRepository.findOne({
+    let agentObjectMetadata = await this.objectMetadataRepository.findOne({
       where: { nameSingular: 'agent', workspaceId, isActive: true },
     });
+
+    if (!agentObjectMetadata) {
+      agentObjectMetadata = await this.objectMetadataRepository.findOne({
+        where: { nameSingular: 'agentProfile', workspaceId, isActive: true },
+      });
+    }
 
     if (!agentObjectMetadata) {
       this.logger.log(
@@ -114,12 +123,11 @@ export class ProvisionGoogleWorkspaceAccountsCommand extends ActiveOrSuspendedWo
     const foreignKeyColumn = `${workspaceMemberRelationField.name}Id`;
 
     // Load agents with their emails
-    const agentRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        'agent',
-        { shouldBypassPermissionChecks: true },
-      );
+    const agentRepository = await this.globalWorkspaceOrmManager.getRepository(
+      workspaceId,
+      agentObjectMetadata.nameSingular,
+      { shouldBypassPermissionChecks: true },
+    );
 
     const agents = await agentRepository
       .createQueryBuilder('agent')
@@ -159,8 +167,7 @@ export class ProvisionGoogleWorkspaceAccountsCommand extends ActiveOrSuspendedWo
         { shouldBypassPermissionChecks: true },
       );
 
-    const existingConnectedAccounts =
-      await connectedAccountRepository.find();
+    const existingConnectedAccounts = await connectedAccountRepository.find();
 
     const existingHandles = new Set(
       existingConnectedAccounts.map((account) => account.handle?.toLowerCase()),
@@ -265,8 +272,7 @@ export class ProvisionGoogleWorkspaceAccountsCommand extends ActiveOrSuspendedWo
           visibility: MessageChannelVisibility.SHARE_EVERYTHING,
           syncStatus: MessageChannelSyncStatus.ONGOING,
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          pendingGroupEmailsAction:
-            MessageChannelPendingGroupEmailsAction.NONE,
+          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
         });
 
         this.logger.log(

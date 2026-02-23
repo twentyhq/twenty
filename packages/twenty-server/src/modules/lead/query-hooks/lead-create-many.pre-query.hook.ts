@@ -3,15 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
-import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AgentProfileResolverService } from 'src/modules/agent-profile/services/agent-profile-resolver.service';
 
 @Injectable()
-@WorkspaceQueryHook(`policy.createOne`)
-export class PolicyCreateOnePreQueryHook
+@WorkspaceQueryHook(`lead.createMany`)
+export class LeadCreateManyPreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
@@ -21,19 +21,19 @@ export class PolicyCreateOnePreQueryHook
   async execute(
     authContext: AuthContext,
     _objectName: string,
-    payload: CreateOneResolverArgs,
-  ): Promise<CreateOneResolverArgs> {
-    if (!isDefined(payload.data.submittedDate)) {
-      payload.data.submittedDate = new Date().toISOString();
-    }
-
+    payload: CreateManyResolverArgs,
+  ): Promise<CreateManyResolverArgs> {
     const workspace = authContext.workspace;
 
     if (!isDefined(workspace) || !isDefined(authContext.workspaceMemberId)) {
       return payload;
     }
 
-    if (isDefined(payload.data.agentId)) {
+    const recordsWithoutAgent = payload.data.filter(
+      (record) => !isDefined(record.assignedAgentId),
+    );
+
+    if (recordsWithoutAgent.length === 0) {
       return payload;
     }
 
@@ -48,7 +48,9 @@ export class PolicyCreateOnePreQueryHook
       return payload;
     }
 
-    payload.data.agentId = agentProfileId;
+    for (const record of recordsWithoutAgent) {
+      record.assignedAgentId = agentProfileId;
+    }
 
     return payload;
   }
