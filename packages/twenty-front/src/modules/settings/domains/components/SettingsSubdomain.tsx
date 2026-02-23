@@ -35,15 +35,11 @@ export const SettingsSubdomain = () => {
         <Controller
           name="subdomain"
           control={control}
-          render={({
-            field: { onChange, onBlur, value },
-            fieldState: { error },
-          }) => (
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
             <>
               <TextInput
                 value={value}
                 type="text"
-                onBlur={onBlur}
                 onChange={onChange}
                 error={error?.message}
                 disabled={!!currentWorkspace?.customDomain}
