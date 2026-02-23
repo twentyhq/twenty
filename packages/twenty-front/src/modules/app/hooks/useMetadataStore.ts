@@ -4,11 +4,12 @@ import {
   type MetadataKey,
   type MetadataLoadEntry,
 } from '@/app/states/metadataStoreState';
-import { isAppLoadingState } from '@/app/states/isAppLoadingState';
+import { isAppMetadataReadyState } from '@/app/states/isAppMetadataReadyState';
 import { createStore, useStore } from 'jotai';
+import { useCallback } from 'react';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type JotaiStore = ReturnType<typeof createStore>;
-import { useCallback } from 'react';
 
 const EMPTY_ENTRY: MetadataLoadEntry = {
   current: [],
@@ -16,24 +17,25 @@ const EMPTY_ENTRY: MetadataLoadEntry = {
   status: 'empty',
 };
 
-const PAIRED_KEYS: MetadataKey[] = ['objects', 'views'];
-
-const INDEPENDENT_KEYS: MetadataKey[] = ALL_METADATA_KEYS.filter(
-  (key) => !PAIRED_KEYS.includes(key),
-);
-
-// Views reference objects via objectMetadataId — both drafts must agree on IDs.
-const areDraftsConsistent = (
-  objectsDraft: object[],
+const areViewsConsistentWithObjects = (
   viewsDraft: object[],
+  objectsCurrent: object[],
 ): boolean => {
   const objectIds = new Set(
-    objectsDraft.map((item) => (item as { id: string }).id),
+    objectsCurrent.map((item) => (item as { id: string }).id),
   );
 
   return viewsDraft.every((view) =>
     objectIds.has((view as { objectMetadataId: string }).objectMetadataId),
   );
+};
+
+export const resetMetadataStore = (store: JotaiStore) => {
+  for (const key of ALL_METADATA_KEYS) {
+    store.set(metadataStoreState.atomFamily(key), EMPTY_ENTRY);
+  }
+
+  store.set(isAppMetadataReadyState.atom, false);
 };
 
 const promoteEntry = (store: JotaiStore, key: MetadataKey) => {
@@ -46,19 +48,20 @@ const promoteEntry = (store: JotaiStore, key: MetadataKey) => {
   });
 };
 
-export const resetMetadataStore = (store: JotaiStore) => {
-  for (const key of ALL_METADATA_KEYS) {
-    store.set(metadataStoreState.atomFamily(key), EMPTY_ENTRY);
-  }
-
-  store.set(isAppLoadingState.atom, true);
-};
-
 export const useMetadataStore = () => {
   const store = useStore();
 
   const updateDraft = useCallback(
     (key: MetadataKey, data: object[]) => {
+      const currentEntry = store.get(metadataStoreState.atomFamily(key));
+
+      if (
+        currentEntry.status === 'loaded' &&
+        isDeeplyEqual(currentEntry.current, data)
+      ) {
+        return;
+      }
+
       store.set(metadataStoreState.atomFamily(key), (prev) => ({
         ...prev,
         draft: data,
@@ -68,35 +71,31 @@ export const useMetadataStore = () => {
     [store],
   );
 
-  // Objects and views are a paired gate: they must both be draft_pending
-  // and consistent before either is promoted. Other keys promote independently.
-  // Returns true if at least one entry was promoted.
   const applyChanges = useCallback((): boolean => {
-    const objectsEntry = store.get(metadataStoreState.atomFamily('objects'));
-    const viewsEntry = store.get(metadataStoreState.atomFamily('views'));
-
     let promoted = false;
 
-    if (
-      objectsEntry.status === 'draft_pending' &&
-      viewsEntry.status === 'draft_pending'
-    ) {
-      if (!areDraftsConsistent(objectsEntry.draft, viewsEntry.draft)) {
-        store.set(metadataStoreState.atomFamily('objects'), EMPTY_ENTRY);
-        store.set(metadataStoreState.atomFamily('views'), EMPTY_ENTRY);
-        return false;
+    for (const key of ALL_METADATA_KEYS) {
+      if (key === 'views') {
+        continue;
       }
 
-      promoteEntry(store, 'objects');
-      promoteEntry(store, 'views');
-      promoted = true;
-    }
-
-    for (const key of INDEPENDENT_KEYS) {
       const entry = store.get(metadataStoreState.atomFamily(key));
 
       if (entry.status === 'draft_pending') {
         promoteEntry(store, key);
+        promoted = true;
+      }
+    }
+
+    const viewsEntry = store.get(metadataStoreState.atomFamily('views'));
+
+    if (viewsEntry.status === 'draft_pending') {
+      const objectsEntry = store.get(metadataStoreState.atomFamily('objects'));
+
+      if (
+        areViewsConsistentWithObjects(viewsEntry.draft, objectsEntry.current)
+      ) {
+        promoteEntry(store, 'views');
         promoted = true;
       }
     }

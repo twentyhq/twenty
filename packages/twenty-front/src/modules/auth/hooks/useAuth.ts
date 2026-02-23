@@ -327,10 +327,8 @@ export const useAuth = () => {
       handleSetAuthTokens(authTokens);
 
       setIsAppEffectRedirectEnabled(false);
+      resetMetadataStore(jotaiStore);
 
-      // TODO: We can't parallelize this yet because when loadCurrentUser is loaded
-      // then MetadataGater updates its children and PrefetchDataProvider is then triggered
-      // which requires the correct metadata to be loaded (not the mocks)
       await loadCurrentUser();
       await refreshObjectMetadataItems();
     },

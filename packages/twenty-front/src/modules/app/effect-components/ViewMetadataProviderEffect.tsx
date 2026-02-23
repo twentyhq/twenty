@@ -1,9 +1,9 @@
 import { useMetadataStore } from '@/app/hooks/useMetadataStore';
-import { metadataStoreState } from '@/app/states/metadataStoreState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -25,9 +25,8 @@ const INDEX_VIEW_TYPES = [
 export const ViewMetadataProviderEffect = () => {
   const location = useLocation();
   const isLoggedIn = useIsLogged();
+  const currentUser = useRecoilValueV2(currentUserState);
   const store = useStore();
-
-  const viewsEntry = useFamilyRecoilValueV2(metadataStoreState, 'views');
 
   const { updateDraft, applyChanges } = useMetadataStore();
 
@@ -36,7 +35,7 @@ export const ViewMetadataProviderEffect = () => {
     isMatchingLocation(location, AppPath.VerifyEmail);
 
   const { data: queryDataCoreViews } = useFindAllCoreViewsQuery({
-    skip: !isLoggedIn || viewsEntry.status !== 'empty' || isOnAuthPath,
+    skip: !isLoggedIn || isOnAuthPath,
     variables: { viewTypes: INDEX_VIEW_TYPES },
   });
 
@@ -55,7 +54,6 @@ export const ViewMetadataProviderEffect = () => {
     [store],
   );
 
-  // When logged in, wait for query data then draft + apply
   useEffect(() => {
     if (!isLoggedIn) {
       return;
@@ -70,22 +68,12 @@ export const ViewMetadataProviderEffect = () => {
     applyChanges();
   }, [
     isLoggedIn,
+    currentUser,
     queryDataCoreViews?.getCoreViews,
     setIndexCoreViews,
     updateDraft,
     applyChanges,
   ]);
-
-  // When not logged in, views aren't fetched — promote an empty array
-  // so the metadata store can reach 'loaded' status
-  useEffect(() => {
-    if (isLoggedIn || viewsEntry.status !== 'empty') {
-      return;
-    }
-
-    updateDraft('views', []);
-    applyChanges();
-  }, [isLoggedIn, viewsEntry.status, updateDraft, applyChanges]);
 
   return null;
 };

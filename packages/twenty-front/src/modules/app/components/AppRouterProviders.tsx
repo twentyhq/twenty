@@ -1,7 +1,7 @@
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { MetadataGater } from '@/app/components/MetadataGater';
-import { IsAppLoadingEffect } from '@/app/effect-components/IsAppLoadingEffect';
+import { IsAppMetadataReadyEffect } from '@/app/effect-components/IsAppMetadataReadyEffect';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { MetadataProviderEffect } from '@/app/effect-components/MetadataProviderEffect';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
@@ -16,7 +16,7 @@ import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffec
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { HeadlessFrontComponentMountRoot } from '@/front-components/components/HeadlessFrontComponentMountRoot';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
-import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
 import { SupportChatEffect } from '@/support/components/SupportChatEffect';
@@ -44,7 +44,7 @@ export const AppRouterProviders = () => {
         <ClientConfigProviderEffect />
         <MetadataProviderEffect />
         <LazyMetadataLoadEffect />
-        <IsAppLoadingEffect />
+        <IsAppMetadataReadyEffect />
         <WorkspaceProviderEffect />
         <ClientConfigProvider>
           <CaptchaProvider>
@@ -54,7 +54,7 @@ export const AppRouterProviders = () => {
                 <AuthProvider>
                   <ApolloCoreProvider>
                     <SSEProvider>
-                      <ObjectMetadataItemsProvider>
+                      <PreComputedChipGeneratorsProvider>
                         <PrefetchDataProvider>
                           <UserThemeProviderEffect />
                           <SnackBarProvider>
@@ -81,7 +81,7 @@ export const AppRouterProviders = () => {
                           <SupportChatEffect />
                         </PrefetchDataProvider>
                         <PageChangeEffect />
-                      </ObjectMetadataItemsProvider>
+                      </PreComputedChipGeneratorsProvider>
                     </SSEProvider>
                   </ApolloCoreProvider>
                 </AuthProvider>

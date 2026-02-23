@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { isAppLoadingState } from '@/app/states/isAppLoadingState';
+import { isAppMetadataReadyState } from '@/app/states/isAppMetadataReadyState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -12,7 +12,7 @@ import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader'
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const MetadataGater = ({ children }: React.PropsWithChildren) => {
-  const isAppLoading = useRecoilValueV2(isAppLoadingState);
+  const isAppMetadataReady = useRecoilValueV2(isAppMetadataReadyState);
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
   const isLoggedIn = useIsLogged();
   const location = useLocation();
@@ -25,7 +25,7 @@ export const MetadataGater = ({ children }: React.PropsWithChildren) => {
     isMatchingLocation(location, AppPath.CreateWorkspace);
 
   const shouldShowLoader =
-    (isAppLoading && isLoggedIn && !isOnExcludedPath) ||
+    (!isAppMetadataReady && isLoggedIn && !isOnExcludedPath) ||
     objectMetadataItems.length === 0;
 
   if (shouldShowLoader) {
