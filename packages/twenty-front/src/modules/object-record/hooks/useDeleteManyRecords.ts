@@ -17,7 +17,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
@@ -36,7 +36,7 @@ export const useDeleteManyRecords = ({
   objectNameSingular,
 }: useDeleteManyRecordProps) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const apiConfig = useRecoilValue(apiConfigState);
+  const apiConfig = useRecoilValueV2(apiConfigState);
 
   const mutationPageSize =
     apiConfig?.mutationMaximumAffectedRecords ?? DEFAULT_MUTATION_BATCH_SIZE;

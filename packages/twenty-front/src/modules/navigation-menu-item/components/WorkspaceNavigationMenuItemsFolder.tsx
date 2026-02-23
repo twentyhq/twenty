@@ -5,7 +5,6 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronDown,
@@ -41,6 +40,7 @@ import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/compo
 import { currentNavigationMenuItemFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdStateV2';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { ViewKey } from '@/views/types/ViewKey';
@@ -100,8 +100,8 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const coreViews = useRecoilValue(coreViewsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const coreViews = useRecoilValueV2(coreViewsState);
   const views = coreViews.map(convertCoreViewToView);
   const location = useLocation();
   const navigate = useNavigate();

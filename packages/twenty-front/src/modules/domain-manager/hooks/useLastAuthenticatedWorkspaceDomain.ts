@@ -1,10 +1,11 @@
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticatedWorkspaceDomainState';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 export const useLastAuthenticatedWorkspaceDomain = () => {
-  const domainConfiguration = useRecoilValue(domainConfigurationState);
-  const setLastAuthenticatedWorkspaceDomain = useSetRecoilState(
+  const domainConfiguration = useRecoilValueV2(domainConfigurationState);
+  const setLastAuthenticatedWorkspaceDomain = useSetRecoilStateV2(
     lastAuthenticatedWorkspaceDomainState,
   );
   const setLastAuthenticateWorkspaceDomainWithCookieAttributes = (

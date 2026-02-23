@@ -23,7 +23,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -65,7 +65,7 @@ jobs:
   ci-website-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     needs: [changed-files-check, website-build]
     steps:
       - name: Fail job if any needs failed

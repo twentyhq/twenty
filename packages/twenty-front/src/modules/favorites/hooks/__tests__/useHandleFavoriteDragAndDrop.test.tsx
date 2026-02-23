@@ -1,7 +1,6 @@
 import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
@@ -11,6 +10,7 @@ import { createFolderDroppableId } from '@/favorites/utils/createFolderDroppable
 import { createFolderHeaderDroppableId } from '@/favorites/utils/createFolderHeaderDroppableId';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import {
@@ -32,33 +32,27 @@ describe('useHandleFavoriteDragAndDrop', () => {
     announce: jest.fn(),
   };
 
-  const setupHook = () => {
-    return renderHook(
-      () => {
-        const setPrefetchFavorites = useSetRecoilState(prefetchFavoritesState);
-        setPrefetchFavorites(initialFavorites as Favorite[]);
-
-        const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState,
-        );
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-
-        setCurrentWorkspaceMember(mockWorkspaceMember);
-        setMetadataItems(generatedMockObjectMetadataItems);
-
-        return {
-          hook: useHandleFavoriteDragAndDrop(),
-        };
-      },
-      { wrapper: Wrapper },
+  beforeEach(() => {
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
     );
+    jotaiStore.set(prefetchFavoritesState.atom, initialFavorites as Favorite[]);
+  });
+
+  const setupHook = () => {
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockWorkspaceMember);
+
+    return renderHook(() => useHandleFavoriteDragAndDrop(), {
+      wrapper: Wrapper,
+    });
   };
 
   it('should not update when destination is null', () => {
     const { result } = setupHook();
 
     act(() => {
-      result.current.hook.handleFavoriteDragAndDrop(
+      result.current.handleFavoriteDragAndDrop(
         {
           source: { index: 0, droppableId: createFolderDroppableId('1') },
           destination: null,
@@ -78,7 +72,7 @@ describe('useHandleFavoriteDragAndDrop', () => {
     const folderOneId = createFolderDroppableId('1');
 
     act(() => {
-      result.current.hook.handleFavoriteDragAndDrop(
+      result.current.handleFavoriteDragAndDrop(
         {
           source: { index: 0, droppableId: folderOneId },
           destination: { index: 0, droppableId: folderOneId },
@@ -98,7 +92,7 @@ describe('useHandleFavoriteDragAndDrop', () => {
     const folderOneId = createFolderDroppableId('1');
 
     act(() => {
-      result.current.hook.handleFavoriteDragAndDrop(
+      result.current.handleFavoriteDragAndDrop(
         {
           source: { index: 0, droppableId: folderOneId },
           destination: { index: 2, droppableId: folderOneId },
@@ -117,7 +111,7 @@ describe('useHandleFavoriteDragAndDrop', () => {
     const { result } = setupHook();
 
     act(() => {
-      result.current.hook.handleFavoriteDragAndDrop(
+      result.current.handleFavoriteDragAndDrop(
         {
           source: { index: 0, droppableId: createFolderDroppableId('1') },
           destination: { index: 0, droppableId: createFolderDroppableId('2') },
@@ -136,7 +130,7 @@ describe('useHandleFavoriteDragAndDrop', () => {
     const { result } = setupHook();
 
     act(() => {
-      result.current.hook.handleFavoriteDragAndDrop(
+      result.current.handleFavoriteDragAndDrop(
         {
           source: { index: 0, droppableId: createFolderDroppableId('1') },
           destination: {
@@ -158,7 +152,7 @@ describe('useHandleFavoriteDragAndDrop', () => {
     const { result } = setupHook();
 
     act(() => {
-      result.current.hook.handleFavoriteDragAndDrop(
+      result.current.handleFavoriteDragAndDrop(
         {
           source: { index: 0, droppableId: createFolderDroppableId('1') },
           destination: {

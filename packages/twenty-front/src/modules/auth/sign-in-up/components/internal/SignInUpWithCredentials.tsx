@@ -19,10 +19,11 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledForm = styled.form`
   align-items: center;
@@ -39,13 +40,15 @@ export const SignInUpWithCredentials = ({
   const { t } = useLingui();
   const form = useFormContext<Form>();
 
-  const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
+  const [signInUpStep, setSignInUpStep] = useRecoilStateV2(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);
-  const captcha = useRecoilValue(captchaState);
-  const isRequestingCaptchaToken = useRecoilValue(
+  const captcha = useRecoilValueV2(captchaState);
+  const isRequestingCaptchaToken = useRecoilValueV2(
     isRequestingCaptchaTokenState,
   );
-  const lastAuthenticatedMethod = useRecoilValue(lastAuthenticatedMethodState);
+  const lastAuthenticatedMethod = useRecoilValueV2(
+    lastAuthenticatedMethodState,
+  );
   const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
   const {

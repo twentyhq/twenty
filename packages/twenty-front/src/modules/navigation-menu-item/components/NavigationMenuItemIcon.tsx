@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -8,12 +7,13 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
 import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
+import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
@@ -27,7 +27,7 @@ export const NavigationMenuItemIcon = ({
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
     navigationMenuItem.objectNameSingular ?? '',
   );

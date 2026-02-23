@@ -11,6 +11,7 @@ import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { SettingsPath, type ViewFilterOperand } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
@@ -33,7 +34,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const [searchParams] = useSearchParams();
   const fromAgentId = searchParams.get('fromAgent');
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
 
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),

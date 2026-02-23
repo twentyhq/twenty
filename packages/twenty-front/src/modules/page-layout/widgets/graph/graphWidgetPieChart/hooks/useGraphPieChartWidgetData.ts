@@ -64,7 +64,8 @@ export const useGraphPieChartWidgetData = ({
     : new Map();
 
   const groupByField = objectMetadataItem?.fields?.find(
-    (field) => field.id === configuration.groupByFieldMetadataId,
+    (field: { id: string }) =>
+      field.id === configuration.groupByFieldMetadataId,
   );
 
   const selectFieldOptions =

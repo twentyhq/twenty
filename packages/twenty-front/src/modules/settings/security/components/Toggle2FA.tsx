@@ -1,6 +1,5 @@
-import { useRecoilState } from 'recoil';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
@@ -10,7 +9,7 @@ import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 
 export const Toggle2FA = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
     currentWorkspaceState,
   );
 

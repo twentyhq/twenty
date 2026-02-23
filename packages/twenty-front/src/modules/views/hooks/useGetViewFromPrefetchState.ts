@@ -1,21 +1,17 @@
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const useGetViewFromPrefetchState = () => {
-  const getViewFromPrefetchState = useRecoilCallback(
-    ({ snapshot }) =>
-      (viewId: string) => {
-        const view = snapshot
-          .getLoadable(
-            coreViewFromViewIdFamilySelector({
-              viewId: viewId,
-            }),
-          )
-          .getValue();
+  const store = useStore();
 
-        return view;
-      },
-    [],
+  const getViewFromPrefetchState = useCallback(
+    (viewId: string) => {
+      return store.get(
+        coreViewFromViewIdFamilySelector.selectorFamily({ viewId }),
+      );
+    },
+    [store],
   );
 
   return {

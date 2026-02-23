@@ -4,6 +4,7 @@ import { type SelectOption } from 'twenty-ui/input';
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { MODEL_FAMILY_CONFIG } from '~/pages/settings/ai/constants/SettingsAiModelProviders';
 
 export const useAiModelOptions = (
   includeDeprecated = false,
@@ -18,9 +19,19 @@ export const useAiModelOptions = (
         model.modelId === DEFAULT_FAST_MODEL ||
         model.modelId === DEFAULT_SMART_MODEL
           ? model.label
-          : `${model.label} (${model.provider})`,
+          : `${model.label} (${getModelFamilyLabel(model.modelFamily) ?? model.inferenceProvider})`,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
+};
+
+const getModelFamilyLabel = (
+  modelFamily: string | null | undefined,
+): string | undefined => {
+  if (!modelFamily) {
+    return undefined;
+  }
+
+  return MODEL_FAMILY_CONFIG[modelFamily]?.label || modelFamily;
 };
 
 export const useAiModelLabel = (
@@ -47,5 +58,5 @@ export const useAiModelLabel = (
     return model.label;
   }
 
-  return `${model.label} (${model.provider})`;
+  return `${model.label} (${getModelFamilyLabel(model.modelFamily) ?? model.inferenceProvider})`;
 };

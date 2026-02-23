@@ -151,7 +151,7 @@ export class BillingSubscriptionService {
       workspaceId,
     });
 
-    if (subscriptionToCancel) {
+    if (isDefined(subscriptionToCancel)) {
       await this.stripeSubscriptionService.cancelSubscription(
         subscriptionToCancel.stripeSubscriptionId,
       );

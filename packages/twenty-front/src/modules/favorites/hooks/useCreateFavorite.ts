@@ -3,10 +3,10 @@ import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavig
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphql';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 import { usePrefetchedFavoritesFoldersData } from './usePrefetchedFavoritesFoldersData';
 
@@ -14,7 +14,7 @@ export const useCreateFavorite = () => {
   const { favorites, currentWorkspaceMemberId } = usePrefetchedFavoritesData();
   const { favoriteFolders } = usePrefetchedFavoritesFoldersData();
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const { createOneRecord: createOneFavorite } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Favorite,

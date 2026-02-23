@@ -6,7 +6,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ActionMenuContextProvider = ({
@@ -23,7 +23,7 @@ export const ActionMenuContextProvider = ({
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const objectMetadataItem =
     objectMetadataItemOverride ??

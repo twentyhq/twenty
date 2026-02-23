@@ -1,4 +1,3 @@
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
@@ -9,6 +8,7 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 
 type CommandMenuObjectMenuItemProps = {
@@ -28,10 +28,9 @@ export const CommandMenuObjectMenuItem = ({
   dragIndex,
 }: CommandMenuObjectMenuItemProps) => {
   const { getIcon } = useIcons();
-  const defaultViewId = useRecoilValue(
-    coreIndexViewIdFromObjectMetadataItemFamilySelector({
-      objectMetadataItemId: objectMetadataItem.id,
-    }),
+  const defaultViewId = useFamilySelectorValueV2(
+    coreIndexViewIdFromObjectMetadataItemFamilySelector,
+    { objectMetadataItemId: objectMetadataItem.id },
   );
   const Icon = getIcon(objectMetadataItem.icon);
   const iconColor = getStandardObjectIconColor(objectMetadataItem.nameSingular);

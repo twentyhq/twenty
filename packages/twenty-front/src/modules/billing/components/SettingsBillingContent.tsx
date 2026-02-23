@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCreditsSection } from '@/billing/components/SettingsBillingCreditsSection';
@@ -16,13 +15,14 @@ import {
   useBillingPortalSessionQuery,
 } from '~/generated-metadata/graphql';
 import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const SettingsBillingContent = () => {
   const { t } = useLingui();
 
   const { redirect } = useRedirect();
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
 
   const subscriptions = currentWorkspace?.billingSubscriptions;
 

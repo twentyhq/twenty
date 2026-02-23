@@ -807,6 +807,53 @@ Poznámky:
 * Oprávnění klíče API jsou určena rolí odkazovanou ve vašem `application-config.ts` prostřednictvím `defaultRoleUniversalIdentifier`. Toto je výchozí role používaná logickými funkcemi vaší aplikace.
 * Aplikace mohou definovat role podle principu nejmenších oprávnění. Udělte pouze oprávnění, která vaše funkce potřebují, a poté nastavte `defaultRoleUniversalIdentifier` na univerzální identifikátor této role.
 
+#### Nahrávání souborů
+
+Vygenerovaný klient `Twenty` obsahuje metodu `uploadFile` pro připojování souborů k polím typu souboru u objektů ve vašem pracovním prostoru. Protože standardní klienti GraphQL nativně nepodporují nahrávání souborů pomocí multipart, klient poskytuje tuto speciální metodu, která interně implementuje [specifikaci multipart požadavků GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+
+```typescript
+import Twenty from '~/generated';
+import * as fs from 'fs';
+
+const client = new Twenty();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await client.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+Signatura metody:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| Parametr                           | Typ      | Popis                                                                       |
+| ---------------------------------- | -------- | --------------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Surový obsah souboru                                                        |
+| `filename`                         | `string` | Název souboru (používá se pro ukládání a zobrazení)                         |
+| `contentType`                      | `string` | Typ MIME souboru (pokud je vynechán, výchozí je `application/octet-stream`) |
+| `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` pole typu souboru ve vašem objektu                    |
+
+Hlavní body:
+
+* Metoda odešle soubor na **koncový bod metadat** (nikoli na hlavní koncový bod GraphQL), kde se provede mutace nahrání.
+* Používá `universalIdentifier` pole (nikoli jeho ID specifické pro pracovní prostor), takže váš kód pro nahrávání funguje ve všech pracovních prostorech, kde je vaše aplikace nainstalována — v souladu s tím, jak aplikace odkazují na pole všude jinde.
+* Vrácená hodnota `url` je podepsaná adresa URL, kterou můžete použít k přístupu k nahranému souboru.
+
 ### Příklad Hello World
 
 Prozkoumejte minimalistický end-to-end příklad, který demonstruje objekty, logické funkce, frontendové komponenty a více spouštěčů [zde](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):

@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot, type MutableSnapshot } from 'recoil';
+import { RecoilRoot } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { DateFormat } from '@/localization/constants/DateFormat';
@@ -8,6 +9,7 @@ import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useFormatPreferences } from '@/localization/hooks/useFormatPreferences';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { detectDateFormat } from '@/localization/utils/detection/detectDateFormat';
 import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
@@ -73,18 +75,29 @@ const mockInitialPreferences = {
   calendarStartDay: CalendarStartDay.MONDAY,
 };
 
-const Wrapper = ({ children }: { children: ReactNode }) => {
-  const initializeState = ({ set }: MutableSnapshot) => {
-    set(currentWorkspaceMemberState, mockCurrentWorkspaceMember);
-    set(workspaceMemberFormatPreferencesState, mockInitialPreferences);
+const createWrapper =
+  () =>
+  ({ children }: { children: ReactNode }) => {
+    return (
+      <JotaiProvider store={jotaiStore}>
+        <RecoilRoot>{children}</RecoilRoot>
+      </JotaiProvider>
+    );
   };
-
-  return <RecoilRoot initializeState={initializeState}>{children}</RecoilRoot>;
-};
 
 describe('useFormatPreferences', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    jotaiStore.set(
+      workspaceMemberFormatPreferencesState.atom,
+      mockInitialPreferences,
+    );
+
+    jotaiStore.set(
+      currentWorkspaceMemberState.atom,
+      mockCurrentWorkspaceMember,
+    );
 
     mockUseUpdateOneRecord.mockReturnValue({
       updateOneRecord: mockUpdateOneRecord,
@@ -106,7 +119,7 @@ describe('useFormatPreferences', () => {
 
   it('should return format preferences and update functions', () => {
     const { result } = renderHook(() => useFormatPreferences(), {
-      wrapper: Wrapper,
+      wrapper: createWrapper(),
     });
 
     expect(result.current).toHaveProperty('formatPreferences');
@@ -123,7 +136,7 @@ describe('useFormatPreferences', () => {
 
   it('should return current format preferences', () => {
     const { result } = renderHook(() => useFormatPreferences(), {
-      wrapper: Wrapper,
+      wrapper: createWrapper(),
     });
 
     expect(result.current.formatPreferences).toEqual(mockInitialPreferences);
@@ -131,7 +144,7 @@ describe('useFormatPreferences', () => {
 
   it('should update single format preference successfully', async () => {
     const { result } = renderHook(() => useFormatPreferences(), {
-      wrapper: Wrapper,
+      wrapper: createWrapper(),
     });
 
     const newTimeZone = 'Europe/London';
@@ -152,7 +165,7 @@ describe('useFormatPreferences', () => {
 
   it('should handle SYSTEM values by detecting actual format', async () => {
     const { result } = renderHook(() => useFormatPreferences(), {
-      wrapper: Wrapper,
+      wrapper: createWrapper(),
     });
 
     mockDetectTimeZone.mockReturnValue('America/Chicago');
@@ -174,7 +187,7 @@ describe('useFormatPreferences', () => {
 
   it('should update multiple format preferences successfully', async () => {
     const { result } = renderHook(() => useFormatPreferences(), {
-      wrapper: Wrapper,
+      wrapper: createWrapper(),
     });
 
     const updates = {
@@ -198,17 +211,10 @@ describe('useFormatPreferences', () => {
   });
 
   it('should not update preferences when user is not logged in', async () => {
-    const { result } = renderHook(() => useFormatPreferences(), {
-      wrapper: ({ children }: { children: ReactNode }) => {
-        const initializeState = ({ set }: MutableSnapshot) => {
-          set(currentWorkspaceMemberState, null);
-          set(workspaceMemberFormatPreferencesState, mockInitialPreferences);
-        };
+    jotaiStore.set(currentWorkspaceMemberState.atom, null);
 
-        return (
-          <RecoilRoot initializeState={initializeState}>{children}</RecoilRoot>
-        );
-      },
+    const { result } = renderHook(() => useFormatPreferences(), {
+      wrapper: createWrapper(),
     });
 
     await act(async () => {
@@ -220,7 +226,7 @@ describe('useFormatPreferences', () => {
 
   it('should handle update errors gracefully', async () => {
     const { result } = renderHook(() => useFormatPreferences(), {
-      wrapper: Wrapper,
+      wrapper: createWrapper(),
     });
 
     const error = new Error('Update failed');
@@ -238,7 +244,7 @@ describe('useFormatPreferences', () => {
 
   it('should initialize format preferences from workspace member', () => {
     const { result } = renderHook(() => useFormatPreferences(), {
-      wrapper: Wrapper,
+      wrapper: createWrapper(),
     });
 
     act(() => {
@@ -250,7 +256,7 @@ describe('useFormatPreferences', () => {
 
   it('should not initialize format preferences when workspace member is null', () => {
     const { result } = renderHook(() => useFormatPreferences(), {
-      wrapper: Wrapper,
+      wrapper: createWrapper(),
     });
 
     act(() => {

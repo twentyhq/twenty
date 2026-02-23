@@ -16,8 +16,8 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { useSetRecoilState } from 'recoil';
 import { userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
@@ -42,7 +42,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
         instanceId,
       );
 
-      const setCoreViews = useSetRecoilState(coreViewsState);
+      const setCoreViews = useSetRecoilStateV2(coreViewsState);
 
       const mockCoreView = mockedCoreViewsData[0];
 

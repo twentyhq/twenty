@@ -46,13 +46,13 @@ yarn twenty app:dev
 İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için üç modu destekler:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Varsayılan (kapsamlı): tüm örnekler (nesne, alan, mantık fonksiyonu, ön bileşen, görünüm, gezinme menüsü öğesi, yetenek)
 npx create-twenty-app@latest my-app
 
-# Minimal: only core files (application-config.ts and default-role.ts)
+# Minimal: yalnızca çekirdek dosyalar (application-config.ts ve default-role.ts)
 npx create-twenty-app@latest my-app --minimal
 
-# Interactive: select which examples to include
+# Etkileşimli: dahil edilecek örnekleri seçin
 npx create-twenty-app@latest my-app --interactive
 ```
 
@@ -103,26 +103,26 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  public/                           # Genel varlıklar klasörü (görseller, yazı tipleri vb.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts           # Gerekli - ana uygulama yapılandırması
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts               # Mantık fonksiyonları için varsayılan rol
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts             # Örnek özel nesne tanımı
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts              # Örnek bağımsız alan tanımı
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                # Örnek mantık fonksiyonu
+  │   └── post-install.ts               # Kurulum sonrası mantık fonksiyonu
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx               # Örnek ön bileşen
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                # Örnek kaydedilmiş görünüm tanımı
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  │   └── example-navigation-menu-item.ts # Örnek kenar çubuğu gezinme bağlantısı
   └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+      └── example-skill.ts                # Örnek yapay zekâ ajanı yetenek tanımı
 ```
 
 `--minimal` ile yalnızca çekirdek dosyalar oluşturulur (`application-config.ts`, `roles/default-role.ts` ve `logic-functions/post-install.ts`). `--interactive` ile hangi örnek dosyaların dahil edileceğini siz seçersiniz.
@@ -151,7 +151,7 @@ SDK, TypeScript dosyalarınızı **`export default define<Entity>({...})`** ça�
 | `defineField()`              | Mevcut nesneler için alan genişletmeleri |
 | `defineView()`               | Kaydedilmiş görünüm tanımları            |
 | `defineNavigationMenuItem()` | Gezinme menüsü öğesi tanımları           |
-| `defineSkill()`              | AI agent skill definitions               |
+| `defineSkill()`              | Yapay zekâ ajanı yetenek tanımları       |
 
 <Note>
   **Dosya adlandırma esnektir.** Varlık algılama AST tabanlıdır — SDK, kaynak dosyalarınızı `export default define<Entity>({...})` desenini bulmak için tarar. Dosyalarınızı ve klasörlerinizi dilediğiniz gibi düzenleyebilirsiniz. Varlık türüne göre gruplama (örn. `logic-functions/`, `roles/`) bir gereklilik değil, yalnızca kod organizasyonu için bir gelenektir.
@@ -173,7 +173,7 @@ export default defineObject({
 İlerideki komutlar daha fazla dosya ve klasör ekleyecektir:
 
 * `yarn twenty app:dev`, `node_modules/twenty-sdk/generated` içinde tipli bir API istemcisini otomatik olarak oluşturur (tipli Twenty istemcisi + çalışma alanı türleri).
-* `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
+* `yarn twenty entity:add`, özel nesneleriniz, fonksiyonlarınız, ön bileşenleriniz, rolleriniz, yetenekleriniz ve daha fazlası için `src/` altında varlık tanım dosyaları ekler.
 
 ## Kimlik Doğrulama
 
@@ -226,7 +226,7 @@ SDK, uygulama varlıklarınızı tanımlamak için yardımcı fonksiyonlar sağl
 | `defineField()`              | Mevcut nesneleri ek alanlarla genişletin                                  |
 | `defineView()`               | Nesneler için kaydedilmiş görünümler tanımlayın                           |
 | `defineNavigationMenuItem()` | Kenar çubuğu gezinme bağlantılarını tanımlayın                            |
-| `defineSkill()`              | Define AI agent skills                                                    |
+| `defineSkill()`              | Yapay zekâ ajanı yeteneklerini tanımlayın                                 |
 
 Bu fonksiyonlar, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
 
@@ -748,7 +748,7 @@ Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
 
 ### Beceriler
 
-Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+Yetenekler, yapay zekâ ajanlarının çalışma alanınızda kullanabileceği yeniden kullanılabilir yönergeleri ve kabiliyetleri tanımlar. Yerleşik doğrulamayla yetenekleri tanımlamak için `defineSkill()` kullanın:
 
 ```typescript
 // src/skills/example-skill.ts
@@ -770,16 +770,16 @@ export default defineSkill({
 
 Önemli noktalar:
 
-* `name` is a unique identifier string for the skill (kebab-case recommended).
-* `label` is the human-readable display name shown in the UI.
-* `content` contains the skill instructions — this is the text the AI agent uses.
-* `icon` (optional) sets the icon displayed in the UI.
-* `description` (optional) provides additional context about the skill's purpose.
+* `name`, yetenek için benzersiz bir tanımlayıcı dizedir (kebab-case önerilir).
+* `label`, UI'de gösterilen, insan tarafından okunabilir addır.
+* `content`, yetenek yönergelerini içerir — bu, yapay zekâ ajanının kullandığı metindir.
+* `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
+* `description` (isteğe bağlı), yeteneğin amacı hakkında ek bağlam sağlar.
 
-You can create new skills in two ways:
+Yeni yetenekleri iki şekilde oluşturabilirsiniz:
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
-* **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
+* **Şablondan**: `yarn twenty entity:add` komutunu çalıştırın ve yeni bir yetenek ekleme seçeneğini seçin.
+* **Manuel**: Yeni bir dosya oluşturun ve aynı deseni izleyerek `defineSkill()` kullanın.
 
 ### Oluşturulmuş türlendirilmiş istemci
 
@@ -806,6 +806,53 @@ Notlar:
 * Oluşturulan istemciye URL veya API anahtarı geçirmeniz gerekmez. Çalışma zamanında `TWENTY_API_URL` ve `TWENTY_API_KEY` değerlerini process.env üzerinden okur.
 * API anahtarının izinleri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` aracılığıyla referans verilen role göre belirlenir. Bu, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan roldür.
 * Uygulamalar, en az ayrıcalık ilkesini izlemek için roller tanımlayabilir. Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri verin ve ardından `defaultRoleUniversalIdentifier` değerini o rolün evrensel tanımlayıcısına yönlendirin.
+
+#### Dosya yükleme
+
+Oluşturulan `Twenty` istemcisi, çalışma alanı nesnelerinizdeki dosya türündeki alanlara dosya eklemek için bir `uploadFile` yöntemi içerir. Standart GraphQL istemcileri çok parçalı dosya yüklemelerini yerel olarak desteklemediğinden, istemci arka planda [GraphQL çok parçalı istek belirtimi](https://github.com/jaydenseric/graphql-multipart-request-spec) uygulayan bu özel yöntemi sağlar.
+
+```typescript
+import Twenty from '~/generated';
+import * as fs from 'fs';
+
+const client = new Twenty();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await client.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+Yöntem imzası:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| Parametre                          | Tür      | Açıklama                                                                                   |
+| ---------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| `fileBuffer`                       | `Buffer` | Dosyanın ham içeriği                                                                       |
+| `filename`                         | `string` | Dosyanın adı (depolama ve görüntüleme için kullanılır)                                     |
+| `contentType`                      | `string` | Dosyanın MIME türü (belirtilmezse varsayılan olarak `application/octet-stream` kullanılır) |
+| `fieldMetadataUniversalIdentifier` | `string` | Nesnenizdeki dosya türü alanının `universalIdentifier` değeri                              |
+
+Önemli noktalar:
+
+* Yöntem dosyayı, yükleme mutasyonunun çözümlendiği **metadata endpoint**'e (ana GraphQL endpoint'ine değil) gönderir.
+* Alan için `universalIdentifier` kullanılır (çalışma alanına özgü kimliği değil), böylece yükleme kodunuz uygulamanızın yüklü olduğu herhangi bir çalışma alanında çalışır — uygulamaların başka her yerde alanlara nasıl atıfta bulunduğuyla tutarlıdır.
+* Döndürülen `url`, yüklenen dosyaya erişmek için kullanabileceğiniz imzalı bir URL'dir.
 
 ### Hello World örneği
 

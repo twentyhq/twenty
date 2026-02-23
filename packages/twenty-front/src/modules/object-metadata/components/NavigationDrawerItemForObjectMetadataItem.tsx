@@ -13,10 +13,11 @@ import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navig
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
@@ -47,14 +48,13 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
-  const lastVisitedViewPerObjectMetadataItem = useRecoilValue(
+  const lastVisitedViewPerObjectMetadataItem = useRecoilValueV2(
     lastVisitedViewPerObjectMetadataItemState,
   );
 
-  const views = useRecoilValue(
-    coreViewsFromObjectMetadataItemFamilySelector({
-      objectMetadataItemId: objectMetadataItem.id,
-    }),
+  const views = useFamilySelectorValueV2(
+    coreViewsFromObjectMetadataItemFamilySelector,
+    { objectMetadataItemId: objectMetadataItem.id },
   );
 
   const contextStoreCurrentViewId = useRecoilComponentValue(

@@ -5,7 +5,6 @@ import { getActivityTargetFieldNameForObject } from '@/activities/utils/getActiv
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
@@ -16,6 +15,7 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 type UpdateActivityTargetFromCellProps = {
   recordPickerInstanceId: string;
@@ -79,9 +79,9 @@ export const useUpdateActivityTargetFromCell = ({
             ? 'task'
             : 'note';
 
-        const objectMetadataItems = snapshot
-          .getLoadable<ObjectMetadataItem[]>(objectMetadataItemsState)
-          .getValue();
+        const objectMetadataItems = jotaiStore.get(
+          objectMetadataItemsState.atom,
+        );
 
         const pickedObjectMetadataItem = objectMetadataItems.find(
           (objectMetadataItem) =>

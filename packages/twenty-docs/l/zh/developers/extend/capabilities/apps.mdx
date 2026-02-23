@@ -46,13 +46,13 @@ yarn twenty app:dev
 The scaffolder supports three modes for controlling which example files are included:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# 默认（完整）：所有示例（对象、字段、逻辑函数、前端组件、视图、导航菜单项、技能）
 npx create-twenty-app@latest my-app
 
-# Minimal: only core files (application-config.ts and default-role.ts)
+# 最小化：仅核心文件（application-config.ts 和 default-role.ts）
 npx create-twenty-app@latest my-app --minimal
 
-# Interactive: select which examples to include
+# 交互式：选择要包含的示例
 npx create-twenty-app@latest my-app --interactive
 ```
 
@@ -806,6 +806,53 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 * 你无需向生成的客户端传递 URL 或 API 密钥。 它会在运行时从 process.env 读取 `TWENTY_API_URL` 和 `TWENTY_API_KEY`。
 * API 密钥的权限由 `application-config.ts` 中通过 `defaultRoleUniversalIdentifier` 引用的角色决定。 这是你的应用逻辑函数使用的默认角色。
 * 应用可以定义角色以遵循最小权限原则。 仅授予函数所需的权限，然后将 `defaultRoleUniversalIdentifier` 指向该角色的通用标识符。
+
+#### 上传文件
+
+生成的 `Twenty` 客户端包含一个 `uploadFile` 方法，用于将文件附加到工作区对象的文件类型字段。 由于标准 GraphQL 客户端不原生支持多部分文件上传，该客户端提供了一个专用方法，在底层实现了 [GraphQL 多部分请求规范](https://github.com/jaydenseric/graphql-multipart-request-spec)。
+
+```typescript
+import Twenty from '~/generated';
+import * as fs from 'fs';
+
+const client = new Twenty();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await client.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+方法签名：
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| 参数                                 | 类型       | 描述                                               |
+| ---------------------------------- | -------- | ------------------------------------------------ |
+| `fileBuffer`                       | `Buffer` | 原始文件内容                                           |
+| `filename`                         | `string` | 文件名称（用于存储和显示）                                    |
+| `contentType`                      | `string` | 文件的 MIME 类型（如果省略，默认为 `application/octet-stream`） |
+| `fieldMetadataUniversalIdentifier` | `string` | 你的对象上文件类型字段的 `universalIdentifier`               |
+
+关键点：
+
+* 该方法将文件发送到**元数据端点**（而不是主 GraphQL 端点），在那里处理上传变更操作。
+* 它使用该字段的 `universalIdentifier`（而不是其工作区特定的 ID），因此你的上传代码可以在安装了你的应用的任何工作区中使用——这与应用在其他地方引用字段的方式保持一致。
+* 返回的 `url` 是一个签名 URL，你可以用它来访问已上传的文件。
 
 ### Hello World 示例
 

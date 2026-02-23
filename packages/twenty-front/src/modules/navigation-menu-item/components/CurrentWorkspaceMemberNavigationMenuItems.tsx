@@ -6,7 +6,6 @@ import { NavigationSections } from '@/navigation-menu-item/constants/NavigationS
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { IconFolder, IconFolderOpen, IconHeartOff } from 'twenty-ui/display';
 
 import { LightIconButton } from 'twenty-ui/input';
@@ -44,6 +43,7 @@ import { currentNavigationMenuItemFolderIdStateV2 } from '@/ui/navigation/naviga
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -64,7 +64,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
   isWorkspaceFolder = false,
 }: CurrentWorkspaceMemberNavigationMenuItemsProps) => {
   const { t } = useLingui();
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
