@@ -2,6 +2,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
@@ -77,7 +78,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
   const { closeDropdown } = useCloseDropdown();
 
   const handleOpenRecord = useRecoilCallback(
-    ({ snapshot, reset }) =>
+    ({ snapshot, reset, set }) =>
       () => {
         const tabIdToOpen =
           activeTabIdInRightDrawer === 'home'
@@ -94,6 +95,8 @@ export const RecordShowRightDrawerOpenRecordButton = ({
         if (parentView?.parentViewObjectNameSingular !== objectNameSingular) {
           reset(parentViewState);
         }
+
+        set(commandMenuNavigationStackState, []);
 
         navigate(AppPath.RecordShowPage, {
           objectNameSingular,
