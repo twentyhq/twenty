@@ -10,7 +10,7 @@ export const ActionListItem = ({
   action,
   onClick,
   to,
-  disabled,
+  disabled = false,
 }: {
   action: ActionDisplayProps;
   onClick?: () => void;
