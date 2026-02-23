@@ -18,6 +18,7 @@ import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states
 import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
 import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/utils/getObjectMetadataIdsInDraft';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
@@ -131,20 +132,9 @@ export const useHandleAddToNavigationDrop = () => {
         }
         case NavigationMenuItemType.OBJECT: {
           const views = coreViews.map(convertCoreViewToView);
-          const objectMetadataIdsInWorkspace = currentDraft.reduce<Set<string>>(
-            (ids, item) => {
-              const view = isDefined(item.viewId)
-                ? views.find((v) => v.id === item.viewId)
-                : undefined;
-              if (isDefined(view)) {
-                ids.add(view.objectMetadataId);
-              }
-              if (isDefined(item.targetObjectMetadataId)) {
-                ids.add(item.targetObjectMetadataId);
-              }
-              return ids;
-            },
-            new Set(),
+          const objectMetadataIdsInWorkspace = getObjectMetadataIdsInDraft(
+            currentDraft,
+            views,
           );
           if (objectMetadataIdsInWorkspace.has(payload.objectMetadataId)) {
             return;
