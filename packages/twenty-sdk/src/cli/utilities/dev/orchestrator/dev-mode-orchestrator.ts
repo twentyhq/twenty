@@ -13,6 +13,7 @@ import {
 } from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
 import { SyncApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
 import { UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
+import { serializeError } from '@/cli/utilities/error/serialize-error';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
@@ -143,10 +144,11 @@ export class DevModeOrchestrator {
       await this.runSyncPipeline();
     } catch (error) {
       this.state.addEvent({
-        message: `Sync failed with error ${JSON.stringify(error, null, 2)}`,
+        message: `Sync failed with error: ${serializeError(error)}`,
         status: 'error',
       });
       this.state.updatePipeline({ status: 'error' });
+      this.state.updateAllEntitiesStatus('error');
     } finally {
       this.state.updatePipeline({ isSyncing: false });
     }

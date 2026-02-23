@@ -8,6 +8,13 @@ export type MetadataKey =
   | 'pageLayouts'
   | 'logicFunctions';
 
+export const ALL_METADATA_KEYS: MetadataKey[] = [
+  'objects',
+  'views',
+  'pageLayouts',
+  'logicFunctions',
+];
+
 export type MetadataLoadEntry = {
   current: object[];
   draft: object[];

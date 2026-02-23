@@ -1,5 +1,5 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
+import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import {
@@ -39,7 +39,7 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
           objectMetadataItemsState.atom,
           generatedMockObjectMetadataItems,
         );
-        jotaiStore.set(shouldAppBeLoadingState.atom, false);
+        jotaiStore.set(isAppMetadataReadyState.atom, true);
         snapshot.set(
           pageLayoutPersistedComponentState.atomFamily({
             instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,

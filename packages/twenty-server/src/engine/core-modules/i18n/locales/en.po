@@ -1135,6 +1135,11 @@ msgstr "Environment variable CLOUDFLARE_API_KEY must be defined to use this feat
 msgid "Error"
 msgstr "Error"
 
+#. js-lingui-id: b3ictS
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Exactly one of \"groups\" or \"fields\" must be provided"
+msgstr "Exactly one of \"groups\" or \"fields\" must be provided"
+
 #. js-lingui-id: ksMwKk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Exactly one of workflow version or front component is required"
@@ -1420,6 +1425,16 @@ msgstr "FieldMetadataId is required to create a view sort."
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
 msgstr "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
+
+#. js-lingui-id: 9HjeLQ
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Fields widget has no associated view"
+msgstr "Fields widget has no associated view"
+
+#. js-lingui-id: 8sAaBn
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Fields widget not found"
+msgstr "Fields widget not found"
 
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
@@ -4546,6 +4561,11 @@ msgstr "View kanban aggregate field metadata not found"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 msgid "View not found"
 msgstr "View not found"
+
+#. js-lingui-id: BHDATQ
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "View not found after upsert"
+msgstr "View not found after upsert"
 
 #. js-lingui-id: yheEin
 #: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts

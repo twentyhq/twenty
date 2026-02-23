@@ -65,6 +65,11 @@ export class ApplicationManifestMigrationService {
 
     const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
 
+    const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
+      applicationIds: [ownerFlatApplication.id],
+      fromAllFlatEntityMaps: existingAllFlatEntityMaps,
+    });
+
     const toAllUniversalFlatEntityMaps =
       computeApplicationManifestAllUniversalFlatEntityMaps({
         manifest,
@@ -72,19 +77,14 @@ export class ApplicationManifestMigrationService {
         now,
       });
 
-    const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
-      applicationIds: [ownerFlatApplication.id],
+    const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
+      applicationIds:
+        ownerFlatApplication.universalIdentifier ===
+        TWENTY_STANDARD_APPLICATION.universalIdentifier
+          ? [twentyStandardFlatApplication.id]
+          : [ownerFlatApplication.id, twentyStandardFlatApplication.id],
       fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
-
-    const dependencyAllFlatEntityMaps =
-      ownerFlatApplication.universalIdentifier ===
-      TWENTY_STANDARD_APPLICATION.universalIdentifier
-        ? undefined
-        : getApplicationSubAllFlatEntityMaps({
-            applicationIds: [twentyStandardFlatApplication.id],
-            fromAllFlatEntityMaps: existingAllFlatEntityMaps,
-          });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(

@@ -20,6 +20,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
+// TODO completely deprecate this file once we've created the twenty-standard twenty-app manifest
 @Injectable()
 export class TwentyStandardApplicationService {
   constructor(
