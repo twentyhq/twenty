@@ -50,10 +50,11 @@ export const FrontComponentRenderer = ({
     variables: { id: frontComponentId },
     onError: handleError,
     onCompleted: (completedData) => {
-      const tokenPair =
-        completedData.frontComponent?.applicationTokenPair ?? null;
+      const tokenPair = completedData.frontComponent?.applicationTokenPair;
 
-      setApplicationTokenPair(tokenPair);
+      if (isDefined(tokenPair)) {
+        setApplicationTokenPair(tokenPair);
+      }
     },
   });
 
