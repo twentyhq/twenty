@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
 import { type JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+import tsConfig from './tsconfig.json' with { type: 'json' };
 
-import testTokens from './test/integration/constants/test-tokens.json';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+import testTokens from './test/integration/constants/test-tokens.json' with { type: 'json' };
 
 // Load .env vars at jest boot time
 if (process.env.NODE_ENV === 'test') {
@@ -14,8 +15,6 @@ if (process.env.NODE_ENV === 'test') {
 
 const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
-
-const tsConfig = require('./tsconfig.json');
 
 const jestConfig: JestConfigWithTsJest = {
   // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string

@@ -1,15 +1,15 @@
 import {
-  BadRequestException,
-  InternalServerErrorException,
-  NotFoundException,
-  UnauthorizedException,
+    BadRequestException,
+    InternalServerErrorException,
+    NotFoundException,
+    UnauthorizedException,
 } from '@nestjs/common';
 
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-  CommonQueryRunnerExceptionCode,
-  type CommonQueryRunnerException,
+    CommonQueryRunnerExceptionCode,
+    type CommonQueryRunnerException,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
 export const commonQueryRunnerToRestApiExceptionHandler = (
@@ -21,6 +21,7 @@ export const commonQueryRunnerToRestApiExceptionHandler = (
     case CommonQueryRunnerExceptionCode.INVALID_ARGS_LAST:
     case CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
     case CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA:
+    case CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER:
     case CommonQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT:
     case CommonQueryRunnerExceptionCode.INVALID_CURSOR:
     case CommonQueryRunnerExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:

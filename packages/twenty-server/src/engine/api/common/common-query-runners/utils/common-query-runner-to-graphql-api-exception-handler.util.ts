@@ -1,14 +1,14 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-  type CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
+    type CommonQueryRunnerException,
+    CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import {
-  AuthenticationError,
-  InternalServerError,
-  NotFoundError,
-  UserInputError,
+    AuthenticationError,
+    InternalServerError,
+    NotFoundError,
+    UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export const commonQueryRunnerToGraphqlApiExceptionHandler = (
@@ -22,6 +22,7 @@ export const commonQueryRunnerToGraphqlApiExceptionHandler = (
     case CommonQueryRunnerExceptionCode.INVALID_ARGS_LAST:
     case CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
     case CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA:
+    case CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER:
     case CommonQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT:
     case CommonQueryRunnerExceptionCode.INVALID_CURSOR:
     case CommonQueryRunnerExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:

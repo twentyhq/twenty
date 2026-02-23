@@ -7,7 +7,7 @@ import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 
 import { DataArgProcessor } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor';
-import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
+import { FilterArgProcessor } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg.processor';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -59,7 +59,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly workspaceQueryHookService: WorkspaceQueryHookService;
   @Inject()
-  protected readonly queryRunnerArgsFactory: QueryRunnerArgsFactory;
+  protected readonly filterArgProcessor: FilterArgProcessor;
   @Inject()
   protected readonly dataArgProcessor: DataArgProcessor;
   @Inject()

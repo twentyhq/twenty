@@ -195,6 +195,18 @@ export const failingFilterInputByFieldMetadataType: {
       restFilterInput: 'dateField[eq]:"[]"',
       restErrorMessage: 'invalid input syntax for type date',
     },
+    {
+      gqlFilterInput: { dateField: { eq: null } },
+      gqlErrorMessage: 'invalid input syntax for type date: "null"',
+      restFilterInput: 'dateField[eq]:"null"',
+      restErrorMessage: 'invalid input syntax for type date',
+    },
+    {
+      gqlFilterInput: { dateField: { eq: 2 } },
+      gqlErrorMessage: 'invalid input syntax for type date: "2"',
+      restFilterInput: 'dateField[eq]:2',
+      restErrorMessage: 'invalid input syntax for type date',
+    },
   ],
   [FieldMetadataType.BOOLEAN]: [
     {

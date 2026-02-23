@@ -614,14 +614,13 @@ export const successfulFilterInputByFieldMetadataType: {
     // },
   ],
   [FieldMetadataType.DATE]: [
-    // TODO - fix this ? not working
-    // {
-    //   gqlFilterInput: { dateField: { eq: '2025-01-01' } },
-    //   restFilterInput: 'dateField[eq]=2025-01-01',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateField === '2025-01-01';
-    //   },
-    // },
+    {
+      gqlFilterInput: { dateField: { eq: '2025-01-01' } },
+      restFilterInput: 'dateField[eq]=2025-01-01',
+      validateFilter: (record: Record<string, any>) => {
+        return record.dateField === '2025-01-01';
+      },
+    },
     {
       gqlFilterInput: { dateField: { neq: '2005-01-01' } },
       restFilterInput: 'dateField[neq]:"2005-01-01"',
@@ -643,14 +642,13 @@ export const successfulFilterInputByFieldMetadataType: {
         return record.dateField >= '2005-01-01';
       },
     },
-    // TODO - fix this ? not working
-    // {
-    //   gqlFilterInput: { dateField: { in: ['2025-01-01'] } },
-    //   restFilterInput: 'dateField[in]=2025-01-01',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateField === '2025-01-01';
-    //   },
-    // },
+    {
+      gqlFilterInput: { dateField: { in: ['2025-01-01'] } },
+      restFilterInput: 'dateField[in]=2025-01-01',
+      validateFilter: (record: Record<string, any>) => {
+        return record.dateField === '2025-01-01';
+      },
+    },
     {
       gqlFilterInput: { dateField: { lt: '2125-01-01' } },
       restFilterInput: 'dateField[lt]:"2125-01-01"',
@@ -667,7 +665,7 @@ export const successfulFilterInputByFieldMetadataType: {
     },
     {
       gqlFilterInput: { dateField: { is: 'NOT_NULL' } },
-      restFilterInput: 'dateField[is]:"NOT_NULL"',
+      restFilterInput: 'dateField[is]:NOT_NULL',
       validateFilter: (record: Record<string, any>) => {
         return isDefined(record.dateField);
       },
@@ -679,22 +677,6 @@ export const successfulFilterInputByFieldMetadataType: {
         return record.dateField === null;
       },
     },
-    // TODO - fix this, should be returning or not be allowed
-    // {
-    //   gqlFilterInput: { dateField: { eq: null } },
-    //   restFilterInput: 'dateField[eq]=null',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateField === null;
-    //   },
-    // },
-    // TODO - why float are allowed ?
-    // {
-    //   gqlFilterInput: { dateField: { eq: 2 } },
-    //   restFilterInput: 'dateField[eq]=2',
-    //   validateFilter: (record: Record<string, any>) => {
-    //     return record.dateField === 2;
-    //   },
-    // },
   ],
   [FieldMetadataType.BOOLEAN]: [
     // {

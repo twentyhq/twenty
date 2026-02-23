@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import isEmpty from 'lodash.isempty';
 import {
@@ -11,6 +11,7 @@ import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
+import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -39,6 +40,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
   FindDuplicatesQueryArgs,
   CommonFindDuplicatesOutputItem[]
 > {
+  @Inject()
+  private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory;
+
   protected readonly operationName = CommonQueryNames.FIND_DUPLICATES;
 
   async run(
