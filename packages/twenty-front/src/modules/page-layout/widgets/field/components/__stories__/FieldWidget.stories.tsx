@@ -365,8 +365,11 @@ export const TextFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         companyObjectMetadataItem.id,
@@ -460,8 +463,11 @@ export const AddressFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         companyObjectMetadataItem.id,
@@ -558,8 +564,11 @@ export const NumberFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         companyObjectMetadataItem.id,
@@ -653,8 +662,11 @@ export const LinkFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         companyObjectMetadataItem.id,
@@ -748,8 +760,11 @@ export const ManyToOneRelationFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         companyObjectMetadataItem.id,
@@ -854,8 +869,11 @@ export const OneToManyRelationFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         companyObjectMetadataItem.id,
@@ -951,8 +969,11 @@ export const BooleanFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         companyObjectMetadataItem.id,
@@ -1045,8 +1066,11 @@ export const CurrencyFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         companyObjectMetadataItem.id,
@@ -1139,8 +1163,11 @@ export const EmailsFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         personObjectMetadataItem.id,
@@ -1234,8 +1261,11 @@ export const PhonesFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         personObjectMetadataItem.id,
@@ -1329,8 +1359,11 @@ export const SelectFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         opportunityObjectMetadataItem.id,
@@ -1429,8 +1462,11 @@ export const MultiSelectFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         companyObjectMetadataItem.id,
@@ -1528,8 +1564,11 @@ export const TimelineActivityRelationFieldWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         timelineActivityObjectMetadataItem.id,
@@ -1633,8 +1672,11 @@ export const ManyToOneRelationCardWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         companyObjectMetadataItem.id,
@@ -1747,8 +1789,11 @@ export const OneToManyRelationCardWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         companyObjectMetadataItem.id,
@@ -1843,8 +1888,11 @@ export const TimelineActivityRelationCardWidget: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         timelineActivityObjectMetadataItem.id,
@@ -2010,8 +2058,11 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
     };
 
     const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(shouldAppBeLoadingState.atom, false);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         companyObjectMetadataItem.id,

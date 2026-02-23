@@ -114,6 +114,7 @@ export class CreateAppCommand {
         includeExampleFrontComponent: false,
         includeExampleView: false,
         includeExampleNavigationMenuItem: false,
+        includeExampleSkill: false,
       };
     }
 
@@ -125,6 +126,7 @@ export class CreateAppCommand {
         includeExampleFrontComponent: true,
         includeExampleView: true,
         includeExampleNavigationMenuItem: true,
+        includeExampleSkill: true,
       };
     }
 
@@ -164,6 +166,11 @@ export class CreateAppCommand {
             value: 'navigationMenuItem',
             checked: true,
           },
+          {
+            name: 'Example skill (AI agent skill definition)',
+            value: 'skill',
+            checked: true,
+          },
         ],
       },
     ]);
@@ -189,6 +196,7 @@ export class CreateAppCommand {
       includeExampleView: includeView,
       includeExampleNavigationMenuItem:
         selectedExamples.includes('navigationMenuItem'),
+      includeExampleSkill: selectedExamples.includes('skill'),
     };
   }
 

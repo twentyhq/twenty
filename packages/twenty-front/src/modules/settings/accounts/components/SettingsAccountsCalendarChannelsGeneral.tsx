@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
 import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { H2Title } from 'twenty-ui/display';
 import {
   CalendarChannelVisibility,
@@ -21,7 +21,7 @@ const StyledGeneralContainer = styled.div`
 `;
 
 export const SettingsAccountsCalendarChannelsGeneral = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
 
   const exampleStartDate = new Date();
   const exampleEndDate = min([

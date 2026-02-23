@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useSetRecoilState } from 'recoil';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
@@ -28,7 +29,7 @@ const StyledContainer = styled.div`
 export const LocalePicker = () => {
   const { t } = useLingui();
   const store = useStore();
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilStateV2(
     currentWorkspaceMemberState,
   );
   const setDateLocale = useSetRecoilState(dateLocaleState);

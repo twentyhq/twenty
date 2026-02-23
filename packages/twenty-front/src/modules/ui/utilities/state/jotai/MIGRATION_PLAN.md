@@ -41,14 +41,14 @@ Before starting the PRs below, these Jotai V2 utilities need to be created (if n
 - [x] `createFamilyStateV2()` — global atom family
 - [x] `createSelectorV2()` — global derived atom
 - [x] `createComponentStateV2()` — instance-scoped atom
-- [ ] `createComponentFamilyStateV2()` — instance-scoped atom family
+- [x] `createComponentFamilyStateV2()` — instance-scoped atom family
 - [ ] `createComponentSelectorV2()` — instance-scoped derived atom
 - [ ] `createComponentFamilySelectorV2()` — instance-scoped derived atom family
 - [ ] `createFamilySelectorV2()` — global derived atom family (for raw selectorFamily replacements)
 
 ---
 
-## PR 1: UI Utilities — Focus, Hotkeys, Loading, Pointer Events, Scroll
+## PR 1: UI Utilities — Focus, Hotkeys, Loading, Pointer Events, Scroll ✅ DONE
 
 Low-level utilities used across the entire app. No dependencies on other app states.
 
@@ -78,7 +78,7 @@ ui/utilities/focus/states/currentGlobalHotkeysConfigSelector.ts
 
 ---
 
-## PR 2: UI Layout — Selectable List, Modal, Tab List, Table
+## PR 2: UI Layout — Selectable List, Modal, Tab List, Table ✅ DONE
 
 Core layout primitives used by record-table, record-board, and many other modules.
 
@@ -99,7 +99,7 @@ ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelect
 
 ---
 
-## PR 3: UI Navigation, Theme, Input, Feedback, Field
+## PR 3: UI Navigation, Theme, Input, Feedback, Field ✅ DONE
 
 ### States (12 files)
 ```
@@ -120,7 +120,7 @@ ui/field/display/states/filePreviewState.ts
 
 ---
 
-## PR 4: Auth, Domain Manager, App, Captcha, Chrome Extension
+## PR 4: Auth, Domain Manager, App, Captcha, Chrome Extension ✅ DONE
 
 Core authentication and app-level states. Very widely imported (~195 external imports for auth).
 
@@ -163,7 +163,7 @@ auth/states/objectPermissionsFamilySelector.ts
 
 ---
 
-## PR 5: Client Config
+## PR 5: Client Config ✅ DONE
 
 26 simple global states, mostly boolean feature flags. Low risk.
 

@@ -1,7 +1,7 @@
 import { type FieldManifest } from '@/application/fieldManifestType';
 import type { FieldMetadataType } from '@/types';
 
-type DistributiveOmit<T, K extends keyof any> = T extends any
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
   ? Omit<T, K>
   : never;
 

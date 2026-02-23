@@ -1,8 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
+import { RecoilRoot } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const updateOneRecordMock = jest.fn();
@@ -30,11 +33,17 @@ const workspaceMember: Omit<
 
 describe('useColorScheme', () => {
   it('should update color scheme', async () => {
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <JotaiProvider store={jotaiStore}>
+        <RecoilRoot>{children}</RecoilRoot>
+      </JotaiProvider>
+    );
+
     const { result } = renderHook(
       () => {
         const colorScheme = useColorScheme();
 
-        const setCurrentWorkspaceMember = useSetRecoilState(
+        const setCurrentWorkspaceMember = useSetRecoilStateV2(
           currentWorkspaceMemberState,
         );
 
@@ -43,7 +52,7 @@ describe('useColorScheme', () => {
         return colorScheme;
       },
       {
-        wrapper: RecoilRoot,
+        wrapper: Wrapper,
       },
     );
 

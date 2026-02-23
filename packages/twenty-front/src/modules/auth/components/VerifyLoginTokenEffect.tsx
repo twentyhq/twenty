@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -17,7 +17,7 @@ export const VerifyLoginTokenEffect = () => {
   const navigate = useNavigateApp();
   const { verifyLoginToken } = useVerifyLogin();
 
-  const { isSaved: clientConfigLoaded } = useRecoilValue(
+  const { isSaved: clientConfigLoaded } = useRecoilValueV2(
     clientConfigApiStatusState,
   );
 

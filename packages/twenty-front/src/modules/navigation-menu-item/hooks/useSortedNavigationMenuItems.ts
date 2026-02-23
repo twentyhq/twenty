@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
@@ -10,14 +9,15 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
 
 export const useSortedNavigationMenuItems = () => {
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
-  const coreViews = useRecoilValue(coreViewsState).map(convertCoreViewToView);
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const coreViews = useRecoilValueV2(coreViewsState).map(convertCoreViewToView);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const targetRecordIdentifiers = useMemo(() => {
     const identifiersMap = new Map<string, ObjectRecordIdentifier>();

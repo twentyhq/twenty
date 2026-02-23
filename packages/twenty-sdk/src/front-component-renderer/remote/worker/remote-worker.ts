@@ -17,9 +17,9 @@ import { installStylePropertyOnRemoteElements } from '@/front-component-renderer
 import { patchRemoteElementSetAttribute } from '@/front-component-renderer/remote/utils/patchRemoteElementSetAttribute';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/sdk/front-component-api/constants/HtmlTagToRemoteComponent';
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
-import { setNavigate } from '@/sdk/front-component-api/functions/navigate';
+import { frontComponentHostCommunicationApi } from '@/sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 
-import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
+import { type FrontComponentExecutionContext } from '@/sdk/front-component-api';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
@@ -89,7 +89,15 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
   async () => {
     const hostApi =
       ThreadWebWorker.self.import<FrontComponentHostCommunicationApi>();
-    setNavigate(hostApi.navigate);
+
+    frontComponentHostCommunicationApi.navigate = hostApi.navigate;
+    frontComponentHostCommunicationApi.openSidePanelPage =
+      hostApi.openSidePanelPage;
+    frontComponentHostCommunicationApi.unmountFrontComponent =
+      hostApi.unmountFrontComponent;
+    frontComponentHostCommunicationApi.enqueueSnackbar =
+      hostApi.enqueueSnackbar;
+    frontComponentHostCommunicationApi.closeSidePanel = hostApi.closeSidePanel;
   };
 
 const updateContext: WorkerExports['updateContext'] = async (

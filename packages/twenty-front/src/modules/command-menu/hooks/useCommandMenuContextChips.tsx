@@ -2,7 +2,7 @@ import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/C
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifiersSelector';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
@@ -12,6 +12,8 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledIconWrapper = styled.div`
   background: ${({ theme }) => theme.background.primary};
@@ -26,11 +28,11 @@ export const useCommandMenuContextChips = () => {
     commandMenuNavigationStackState,
   );
 
-  const allowRequestsToTwentyIcons = useRecoilValue(
+  const allowRequestsToTwentyIcons = useRecoilValueV2(
     allowRequestsToTwentyIconsState,
   );
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const { navigateCommandMenuHistory } = useCommandMenuHistory();
 
@@ -46,11 +48,12 @@ export const useCommandMenuContextChips = () => {
     morphItems.map((morphItem) => morphItem.recordId),
   );
 
-  const recordIdentifiers = useRecoilValue(
-    recordStoreIdentifiersFamilySelector({
+  const recordIdentifiers = useFamilySelectorValueV2(
+    recordStoreIdentifiersFamilySelector,
+    {
       recordIds: allRecordIds,
       allowRequestsToTwentyIcons,
-    }),
+    },
   );
   const records = useRecoilValue(
     recordStoreRecordsSelector({

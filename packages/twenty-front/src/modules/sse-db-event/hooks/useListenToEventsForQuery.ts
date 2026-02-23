@@ -18,7 +18,13 @@ export const useListenToEventsForQuery = ({
 }) => {
   const changeQueryIdListenState = useRecoilCallback(
     ({ set, snapshot }) =>
-      (shouldListen: boolean, queryId: string) => {
+      (
+        shouldListen: boolean,
+        targetQueryId: string,
+        targetOperationSignature:
+          | RecordGqlOperationSignature
+          | MetadataGqlOperationSignature,
+      ) => {
         const currentRequiredQueryListeners = getSnapshotValue(
           snapshot,
           requiredQueryListenersState,
@@ -26,7 +32,7 @@ export const useListenToEventsForQuery = ({
 
         const listeningForThisQueryIsActive =
           currentRequiredQueryListeners.some(
-            (listener) => listener.queryId === queryId,
+            (listener) => listener.queryId === targetQueryId,
           );
 
         if (shouldListen === listeningForThisQueryIsActive) {
@@ -36,25 +42,28 @@ export const useListenToEventsForQuery = ({
         if (shouldListen) {
           set(requiredQueryListenersState, [
             ...currentRequiredQueryListeners,
-            { queryId, operationSignature },
+            {
+              queryId: targetQueryId,
+              operationSignature: targetOperationSignature,
+            },
           ]);
         } else {
           set(
             requiredQueryListenersState,
             currentRequiredQueryListeners.filter(
-              (listener) => listener.queryId !== queryId,
+              (listener) => listener.queryId !== targetQueryId,
             ),
           );
         }
       },
-    [operationSignature],
+    [],
   );
 
   useEffect(() => {
-    changeQueryIdListenState(true, queryId);
+    changeQueryIdListenState(true, queryId, operationSignature);
 
     return () => {
-      changeQueryIdListenState(false, queryId);
+      changeQueryIdListenState(false, queryId, operationSignature);
     };
-  }, [changeQueryIdListenState, queryId]);
+  }, [changeQueryIdListenState, queryId, operationSignature]);
 };

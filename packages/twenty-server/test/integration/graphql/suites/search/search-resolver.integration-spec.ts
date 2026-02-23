@@ -21,6 +21,7 @@ import {
   TEST_PET_ID_2,
   TEST_PET_ID_3,
   TEST_PET_ID_4,
+  TEST_PET_ID_5,
 } from 'test/integration/constants/test-pet-ids.constants';
 import { createManyOperation } from 'test/integration/graphql/utils/create-many-operation.util';
 import { search } from 'test/integration/graphql/utils/search.util';
@@ -145,6 +146,7 @@ describe('SearchResolver', () => {
     { id: TEST_PET_ID_2, name: 'searchInput2' },
     { id: TEST_PET_ID_3, name: 'Café' },
     { id: TEST_PET_ID_4, name: 'Naïve' },
+    { id: TEST_PET_ID_5, name: '示例商业线索' },
   ];
 
   const [
@@ -159,7 +161,7 @@ describe('SearchResolver', () => {
     multiPhonePerson,
   ] = persons;
   const [cafeCorp, naiveCorp] = companies;
-  const [searchInput1Pet, searchInput2Pet, cafePet, naivePet] = pets;
+  const [searchInput1Pet, searchInput2Pet, cafePet, naivePet, cjkPet] = pets;
 
   beforeAll(async () => {
     // TODO refactor not a good practice, or should at least restore afterwards
@@ -236,6 +238,7 @@ describe('SearchResolver', () => {
             cafeCorp.id,
             searchInput1Pet.id,
             searchInput2Pet.id,
+            cjkPet.id,
             cafePet.id,
             naivePet.id,
           ],
@@ -297,6 +300,7 @@ describe('SearchResolver', () => {
           orderedRecordIds: [
             searchInput1Pet.id,
             searchInput2Pet.id,
+            cjkPet.id,
             cafePet.id,
             naivePet.id,
           ],
@@ -331,6 +335,7 @@ describe('SearchResolver', () => {
             cafeCorp.id,
             searchInput1Pet.id,
             searchInput2Pet.id,
+            cjkPet.id,
             cafePet.id,
             naivePet.id,
           ],
@@ -1292,6 +1297,34 @@ describe('SearchResolver', () => {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
                 company: naiveCorp.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should find CJK records via ILIKE fallback when tsvector tokenization fails',
+      context: {
+        input: {
+          searchInput: '商业',
+          excludedObjectNameSingulars: [
+            'workspaceMember',
+            'employmentHistory',
+            'petCareAgreement',
+          ],
+          includedObjectNameSingulars: ['pet'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [cjkPet.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0, tsRankCD: 0 },
+              lastRecordIdsPerObject: {
+                pet: cjkPet.id,
               },
             },
           },

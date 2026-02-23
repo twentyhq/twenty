@@ -3,6 +3,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
@@ -45,8 +46,8 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -83,8 +84,8 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -121,8 +122,8 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -159,8 +160,8 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -197,8 +198,8 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -235,8 +236,8 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -273,8 +274,8 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
           },
           configuration: {
             __typename: 'FieldsConfiguration',
-            configurationType: 'FIELDS',
-            sections: [],
+            configurationType: WidgetConfigurationType.FIELDS,
+            viewId: null,
           },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),

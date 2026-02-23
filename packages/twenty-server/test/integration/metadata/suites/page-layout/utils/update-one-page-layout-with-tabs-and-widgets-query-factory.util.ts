@@ -13,13 +13,17 @@ const DEFAULT_PAGE_LAYOUT_GQL_FIELDS = `
   name
   type
   objectMetadataId
+  defaultTabToFocusOnMobileAndSidePanelId
   createdAt
   updatedAt
   deletedAt
   tabs {
     id
+    applicationId
     title
+    icon
     position
+    layoutMode
     pageLayoutId
     createdAt
     updatedAt

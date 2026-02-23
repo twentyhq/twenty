@@ -23,6 +23,7 @@ import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -78,9 +79,9 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
             .getLoadable(recordStoreFamilyState(recordId))
             .getValue();
 
-          const objectMetadataItems = snapshot
-            .getLoadable(objectMetadataItemsState)
-            .getValue();
+          const objectMetadataItems = jotaiStore.get(
+            objectMetadataItemsState.atom,
+          );
 
           const activityTargetObjectRecords = getActivityTargetObjectRecords({
             activityRecord: activity as Task | Note,

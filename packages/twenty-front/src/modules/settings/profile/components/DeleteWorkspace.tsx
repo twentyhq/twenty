@@ -1,8 +1,8 @@
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -14,7 +14,7 @@ const DELETE_WORKSPACE_MODAL_ID = 'delete-workspace-modal';
 
 export const DeleteWorkspace = () => {
   const [deleteCurrentWorkspace] = useDeleteCurrentWorkspaceMutation();
-  const currentUser = useRecoilValue(currentUserState);
+  const currentUser = useRecoilValueV2(currentUserState);
   const userEmail = currentUser?.email;
   const { t } = useLingui();
   const { openModal } = useModal();

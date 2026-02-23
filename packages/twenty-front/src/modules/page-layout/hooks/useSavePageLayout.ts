@@ -6,11 +6,13 @@ import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayo
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { reInjectDynamicRelationWidgetsFromDraft } from '@/page-layout/utils/reInjectDynamicRelationWidgetsFromDraft';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -55,8 +57,16 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
             result.response.data?.updatePageLayoutWithTabsAndWidgets;
 
           if (isDefined(updatedPageLayout)) {
-            const pageLayoutToPersist: PageLayout =
+            const serverLayout: PageLayout =
               transformPageLayout(updatedPageLayout);
+
+            const pageLayoutToPersist =
+              serverLayout.type === PageLayoutType.RECORD_PAGE
+                ? reInjectDynamicRelationWidgetsFromDraft(
+                    serverLayout,
+                    pageLayoutDraft,
+                  )
+                : serverLayout;
 
             set(pageLayoutPersistedCallbackState, pageLayoutToPersist);
             set(

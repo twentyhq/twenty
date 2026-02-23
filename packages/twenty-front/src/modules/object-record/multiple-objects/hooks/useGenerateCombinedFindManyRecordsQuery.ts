@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
@@ -17,7 +17,7 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
 }: {
   operationSignatures: RecordGqlOperationSignature[];
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   if (!isNonEmptyArray(operationSignatures)) {

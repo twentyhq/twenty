@@ -9,9 +9,9 @@ import { lastFieldMetadataItemUpdateState } from '@/object-metadata/states/lastF
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { useSetRecoilState } from 'recoil';
 import { CrudOperationType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -29,7 +29,7 @@ export const useUpdateOneFieldMetadataItem = () => {
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const setLastFieldMetadataItemUpdate = useSetRecoilState(
+  const setLastFieldMetadataItemUpdate = useSetRecoilStateV2(
     lastFieldMetadataItemUpdateState,
   );
 

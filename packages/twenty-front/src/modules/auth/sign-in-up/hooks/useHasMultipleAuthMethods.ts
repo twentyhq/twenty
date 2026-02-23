@@ -1,8 +1,8 @@
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const useHasMultipleAuthMethods = () => {
-  const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
+  const workspaceAuthProviders = useRecoilValueV2(workspaceAuthProvidersState);
 
   if (!workspaceAuthProviders) {
     return false;

@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
 import isEmpty from 'lodash.isempty';
@@ -30,8 +31,8 @@ export const NameField = ({
   onNameUpdate,
 }: NameFieldProps) => {
   const { t } = useLingui();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
 
   const [displayName, setDisplayName] = useState(
     currentWorkspace?.displayName ?? '',
