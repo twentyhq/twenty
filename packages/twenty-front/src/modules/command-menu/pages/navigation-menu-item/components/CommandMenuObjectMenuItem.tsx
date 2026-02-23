@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
@@ -5,6 +6,8 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
+import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -27,17 +30,24 @@ export const CommandMenuObjectMenuItem = ({
   variant,
   dragIndex,
 }: CommandMenuObjectMenuItemProps) => {
+  const { t } = useLingui();
   const { getIcon } = useIcons();
+  const { currentDraft } = useDraftNavigationMenuItems();
+  const { objectMetadataIdsInWorkspace } =
+    useNavigationMenuObjectMetadataFromDraft(currentDraft);
+  const isAlreadyInNavbar = objectMetadataIdsInWorkspace.has(
+    objectMetadataItem.id,
+  );
   const defaultViewId = useFamilySelectorValueV2(
     coreIndexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );
   const Icon = getIcon(objectMetadataItem.icon);
   const iconColor = getStandardObjectIconColor(objectMetadataItem.nameSingular);
-  const isDisabled = !isDefined(defaultViewId);
+  const isDisabled = isAlreadyInNavbar || !isDefined(defaultViewId);
 
   const handleClick = () => {
-    if (!defaultViewId) {
+    if (isDisabled || !defaultViewId) {
       return;
     }
     onSelect(objectMetadataItem, defaultViewId);
@@ -71,6 +81,7 @@ export const CommandMenuObjectMenuItem = ({
           id={objectMetadataItem.id}
           onClick={handleClick}
           disabled={isDisabled}
+          description={isAlreadyInNavbar ? t`Already in navbar` : undefined}
         />
       )}
     </SelectableListItem>

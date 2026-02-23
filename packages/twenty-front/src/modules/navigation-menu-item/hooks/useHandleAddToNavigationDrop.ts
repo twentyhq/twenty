@@ -130,6 +130,25 @@ export const useHandleAddToNavigationDrop = () => {
           return;
         }
         case NavigationMenuItemType.OBJECT: {
+          const views = coreViews.map(convertCoreViewToView);
+          const objectMetadataIdsInWorkspace = currentDraft.reduce<Set<string>>(
+            (ids, item) => {
+              const view = isDefined(item.viewId)
+                ? views.find((v) => v.id === item.viewId)
+                : undefined;
+              if (isDefined(view)) {
+                ids.add(view.objectMetadataId);
+              }
+              if (isDefined(item.targetObjectMetadataId)) {
+                ids.add(item.targetObjectMetadataId);
+              }
+              return ids;
+            },
+            new Set(),
+          );
+          if (objectMetadataIdsInWorkspace.has(payload.objectMetadataId)) {
+            return;
+          }
           const objectMetadataItem = objectMetadataItems.find(
             (item) => item.id === payload.objectMetadataId,
           );

@@ -41,8 +41,11 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
   const setAddMenuItemInsertionContext = useSetRecoilStateV2(
     addMenuItemInsertionContextStateV2,
   );
-  const { views, objectMetadataIdsWithIndexView } =
-    useNavigationMenuObjectMetadataFromDraft(currentDraft);
+  const {
+    views,
+    objectMetadataIdsWithIndexView,
+    objectMetadataIdsInWorkspace,
+  } = useNavigationMenuObjectMetadataFromDraft(currentDraft);
 
   const objectMetadataIdsWithDisplayableViews = new Set(
     views
@@ -62,6 +65,9 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
     objectMetadataItem: ObjectMetadataItem,
     defaultViewId: string,
   ) => {
+    if (objectMetadataIdsInWorkspace.has(objectMetadataItem.id)) {
+      return;
+    }
     addObjectToDraft(
       objectMetadataItem.id,
       defaultViewId,
