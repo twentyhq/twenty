@@ -1,5 +1,3 @@
-import { useRecoilCallback } from 'recoil';
-
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -16,6 +14,7 @@ import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
+import { useRecoilCallback } from 'recoil';
 import { useLocation } from 'react-router-dom';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
@@ -29,10 +28,11 @@ import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
-export const MetadataProviderEffect = () => {
+export const UserMetadataProviderEffect = () => {
   const location = useLocation();
-
+  const isLoggedIn = useIsLogged();
   const currentUser = useRecoilValueV2(currentUserState);
+  const store = useStore();
 
   const setCurrentUser = useSetRecoilStateV2(currentUserState);
   const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
@@ -40,10 +40,21 @@ export const MetadataProviderEffect = () => {
     currentUserWorkspaceState,
   );
   const setAvailableWorkspaces = useSetRecoilStateV2(availableWorkspacesState);
-  const { initializeFormatPreferences } = useInitializeFormatPreferences();
-  const isLoggedIn = useIsLogged();
+  const setCurrentWorkspaceMember = useSetRecoilStateV2(
+    currentWorkspaceMemberState,
+  );
+  const setCurrentWorkspaceMembers = useSetRecoilStateV2(
+    currentWorkspaceMembersState,
+  );
+  const setCurrentWorkspaceMembersWithDeleted = useSetRecoilStateV2(
+    currentWorkspaceDeletedMembersState,
+  );
 
-  const store = useStore();
+  const { initializeFormatPreferences } = useInitializeFormatPreferences();
+
+  const isOnAuthPath =
+    isMatchingLocation(location, AppPath.Verify) ||
+    isMatchingLocation(location, AppPath.VerifyEmail);
 
   const updateLocaleCatalog = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -63,25 +74,12 @@ export const MetadataProviderEffect = () => {
     [store],
   );
 
-  const setCurrentWorkspaceMember = useSetRecoilStateV2(
-    currentWorkspaceMemberState,
-  );
-  const setCurrentWorkspaceMembers = useSetRecoilStateV2(
-    currentWorkspaceMembersState,
-  );
-  const setCurrentWorkspaceMembersWithDeleted = useSetRecoilStateV2(
-    currentWorkspaceDeletedMembersState,
-  );
-
-  const shouldSkip =
-    !isLoggedIn ||
-    isDefined(currentUser) ||
-    isMatchingLocation(location, AppPath.Verify) ||
-    isMatchingLocation(location, AppPath.VerifyEmail);
+  const shouldSkipUserQuery =
+    !isLoggedIn || isDefined(currentUser) || isOnAuthPath;
 
   const { data: userQueryData, loading: userQueryLoading } =
     useGetCurrentUserQuery({
-      skip: shouldSkip,
+      skip: shouldSkipUserQuery,
     });
 
   useEffect(() => {

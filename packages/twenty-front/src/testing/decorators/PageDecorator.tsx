@@ -16,10 +16,11 @@ import { ClientConfigProviderEffect } from '@/client-config/components/ClientCon
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+import { MetadataGater } from '@/app/components/MetadataGater';
+import { MetadataProviderEffect } from '@/app/effect-components/MetadataProviderEffect';
+import { IsAppLoadingEffect } from '@/app/effect-components/IsAppLoadingEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { MetadataProviderEffect } from '@/users/components/MetadataProviderEffect';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
-import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
@@ -89,8 +90,9 @@ const Providers = () => {
               <ClientConfigProviderEffect />
               <ClientConfigProvider>
                 <MetadataProviderEffect />
+                <IsAppLoadingEffect />
                 <WorkspaceProviderEffect />
-                <UserProvider>
+                <MetadataGater>
                   <ApolloCoreClientMockedProvider>
                     <ObjectMetadataItemsLoadEffect />
                     <ObjectMetadataItemsProvider>
@@ -108,7 +110,7 @@ const Providers = () => {
                     </ObjectMetadataItemsProvider>
                     <MainContextStoreProvider />
                   </ApolloCoreClientMockedProvider>
-                </UserProvider>
+                </MetadataGater>
               </ClientConfigProvider>
             </I18nProvider>
           </ApolloProvider>

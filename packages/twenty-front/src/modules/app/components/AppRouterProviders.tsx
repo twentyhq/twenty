@@ -1,6 +1,9 @@
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
+import { MetadataGater } from '@/app/components/MetadataGater';
+import { IsAppLoadingEffect } from '@/app/effect-components/IsAppLoadingEffect';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
+import { MetadataProviderEffect } from '@/app/effect-components/MetadataProviderEffect';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
@@ -25,10 +28,7 @@ import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
-import { EagerMetadataLoadEffect } from '@/users/components/EagerMetadataLoadEffect';
 import { LazyMetadataLoadEffect } from '@/users/components/LazyMetadataLoadEffect';
-import { MetadataProviderEffect } from '@/users/components/MetadataProviderEffect';
-import { UserProvider } from '@/users/components/UserProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
@@ -43,14 +43,14 @@ export const AppRouterProviders = () => {
       <BaseThemeProvider>
         <ClientConfigProviderEffect />
         <MetadataProviderEffect />
-        <EagerMetadataLoadEffect />
         <LazyMetadataLoadEffect />
+        <IsAppLoadingEffect />
         <WorkspaceProviderEffect />
         <ClientConfigProvider>
           <CaptchaProvider>
             <ChromeExtensionSidecarEffect />
             <ChromeExtensionSidecarProvider>
-              <UserProvider>
+              <MetadataGater>
                 <AuthProvider>
                   <ApolloCoreProvider>
                     <SSEProvider>
@@ -85,7 +85,7 @@ export const AppRouterProviders = () => {
                     </SSEProvider>
                   </ApolloCoreProvider>
                 </AuthProvider>
-              </UserProvider>
+              </MetadataGater>
             </ChromeExtensionSidecarProvider>
           </CaptchaProvider>
         </ClientConfigProvider>

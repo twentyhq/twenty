@@ -6,8 +6,5 @@ type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
   : never;
 
 export type ObjectFieldManifest<
-  T extends FieldMetadataType = Exclude<
-    FieldMetadataType,
-    FieldMetadataType.RELATION
-  >,
+  T extends FieldMetadataType = FieldMetadataType,
 > = DistributiveOmit<FieldManifest<T>, 'objectUniversalIdentifier'>;

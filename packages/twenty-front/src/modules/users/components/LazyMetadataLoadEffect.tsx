@@ -1,7 +1,6 @@
-import { metadataStoreState } from '@/app/states/metadataStoreState';
+import { useMetadataStore } from '@/app/hooks/useMetadataStore';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { recordPageLayoutsState } from '@/page-layout/states/recordPageLayoutsState';
-import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -29,6 +28,7 @@ export const LazyMetadataLoadEffect = () => {
   const store = useStore();
 
   const setLogicFunctions = useSetRecoilState(logicFunctionsState);
+  const { updateDraft, applyChanges } = useMetadataStore();
 
   const isOnAuthPath =
     isMatchingLocation(location, AppPath.Verify) ||
@@ -67,7 +67,7 @@ export const LazyMetadataLoadEffect = () => {
 
   const setRecordPageLayouts = useRecoilCallback(
     ({ set, snapshot }) =>
-      (recordPageLayouts: PageLayout[]) => {
+      (recordPageLayouts: unknown[]) => {
         const existingRecordPageLayouts = snapshot
           .getLoadable(recordPageLayoutsState)
           .getValue();
@@ -75,14 +75,8 @@ export const LazyMetadataLoadEffect = () => {
         if (!isDeeplyEqual(existingRecordPageLayouts, recordPageLayouts)) {
           set(recordPageLayoutsState, recordPageLayouts);
         }
-
-        store.set(metadataStoreState.atomFamily('pageLayouts'), {
-          current: recordPageLayouts,
-          draft: [],
-          status: 'loaded',
-        });
       },
-    [store],
+    [],
   );
 
   useEffect(() => {
@@ -102,7 +96,14 @@ export const LazyMetadataLoadEffect = () => {
       queryDataRecordPageLayouts.getPageLayouts.map(transformPageLayout);
 
     setRecordPageLayouts(transformedPageLayouts);
-  }, [queryDataRecordPageLayouts?.getPageLayouts, setRecordPageLayouts]);
+    updateDraft('pageLayouts', transformedPageLayouts);
+    applyChanges();
+  }, [
+    queryDataRecordPageLayouts?.getPageLayouts,
+    setRecordPageLayouts,
+    updateDraft,
+    applyChanges,
+  ]);
 
   useEffect(() => {
     if (!isDefined(logicFunctionsData?.findManyLogicFunctions)) {
@@ -110,13 +111,14 @@ export const LazyMetadataLoadEffect = () => {
     }
 
     setLogicFunctions(logicFunctionsData.findManyLogicFunctions);
-
-    store.set(metadataStoreState.atomFamily('logicFunctions'), {
-      current: logicFunctionsData.findManyLogicFunctions,
-      draft: [],
-      status: 'loaded',
-    });
-  }, [logicFunctionsData?.findManyLogicFunctions, setLogicFunctions, store]);
+    updateDraft('logicFunctions', logicFunctionsData.findManyLogicFunctions);
+    applyChanges();
+  }, [
+    logicFunctionsData?.findManyLogicFunctions,
+    setLogicFunctions,
+    updateDraft,
+    applyChanges,
+  ]);
 
   return null;
 };
