@@ -1,4 +1,4 @@
-import { type ToolCallOptions, type ToolSet } from 'ai';
+import { type ToolExecutionOptions, type ToolSet } from 'ai';
 import { z } from 'zod';
 
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -37,7 +37,7 @@ export const createExecuteToolTool = (
   inputSchema: executeToolInputSchema,
   execute: async (
     parameters: ExecuteToolInput,
-    options: ToolCallOptions,
+    options: ToolExecutionOptions,
   ): Promise<ExecuteToolResult> => {
     const { toolName, arguments: args } = parameters;
 

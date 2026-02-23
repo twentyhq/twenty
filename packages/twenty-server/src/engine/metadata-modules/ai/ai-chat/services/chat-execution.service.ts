@@ -202,9 +202,11 @@ export class ChatExecutionService {
             : undefined,
     };
 
+    const modelMessages = await convertToModelMessages(processedMessages);
+
     const stream = streamText({
       model: registeredModel.model,
-      messages: [systemMessage, ...convertToModelMessages(processedMessages)],
+      messages: [systemMessage, ...modelMessages],
       tools: activeTools,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
