@@ -14,7 +14,7 @@ import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/b
 import { buildCompositeValueFromSubField } from '@/object-record/record-table/utils/buildValueFromFilter';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefined } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { RelationType } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
@@ -31,7 +31,7 @@ export const useBuildRecordInputFromRLSPredicates = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
 
   const { record: currentWorkspaceMemberRecord } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,

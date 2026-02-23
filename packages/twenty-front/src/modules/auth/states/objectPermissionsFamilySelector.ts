@@ -1,8 +1,8 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { selectorFamily } from 'recoil';
+import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
 
-export const objectPermissionsFamilySelector = selectorFamily<
+export const objectPermissionsFamilySelector = createFamilySelectorV2<
   {
     canRead: boolean;
     canUpdate: boolean;

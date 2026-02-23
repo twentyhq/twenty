@@ -1,7 +1,6 @@
-import { cookieStorageEffect } from '~/utils/recoil/cookieStorageEffect';
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-export const lastAuthenticatedWorkspaceDomainState = createState<
+export const lastAuthenticatedWorkspaceDomainState = createStateV2<
   | {
       workspaceUrl: string;
       workspaceId: string;
@@ -13,9 +12,10 @@ export const lastAuthenticatedWorkspaceDomainState = createState<
 >({
   key: 'lastAuthenticateWorkspaceDomain',
   defaultValue: null,
-  effects: [
-    cookieStorageEffect('lastAuthenticateWorkspaceDomain', {
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365), // 1 year
-    }),
-  ],
+  useCookieStorage: {
+    cookieKey: 'lastAuthenticateWorkspaceDomain',
+    attributes: {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+    },
+  },
 });

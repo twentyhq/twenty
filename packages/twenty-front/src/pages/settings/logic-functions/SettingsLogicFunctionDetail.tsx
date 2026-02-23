@@ -21,7 +21,7 @@ import {
 } from 'twenty-ui/display';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { SettingsLogicFunctionCodeEditorTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab';
 
 const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
@@ -30,7 +30,7 @@ export const SettingsLogicFunctionDetail = () => {
   const { logicFunctionId = '', applicationId = '' } = useParams();
 
   const navigate = useNavigate();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
 
   const { data, loading: applicationLoading } = useFindOneApplicationQuery({
     variables: { id: applicationId },

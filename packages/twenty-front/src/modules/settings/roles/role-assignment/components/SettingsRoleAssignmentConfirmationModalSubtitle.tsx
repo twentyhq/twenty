@@ -4,8 +4,8 @@ import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '
 
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
 import { Avatar } from 'twenty-ui/display';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledSettingsCardContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(6)};
@@ -20,7 +20,9 @@ export const SettingsRoleAssignmentConfirmationModalSubtitle = ({
   selectedRoleTarget,
   onRoleClick,
 }: SettingsRoleAssignmentConfirmationModalSubtitleProps) => {
-  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useRecoilValueV2(
+    currentWorkspaceMembersState,
+  );
 
   const enrichedSelectedWorkspaceMember = currentWorkspaceMembers.find(
     (member) => member.id === selectedRoleTarget.id,

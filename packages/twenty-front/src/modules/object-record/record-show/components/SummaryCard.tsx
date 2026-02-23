@@ -14,6 +14,7 @@ import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -43,7 +44,7 @@ export const SummaryCard = ({
       fieldName: 'createdAt',
     }),
   );
-  const allowRequestsToTwentyIcons = useRecoilValue(
+  const allowRequestsToTwentyIcons = useRecoilValueV2(
     allowRequestsToTwentyIconsState,
   );
   const isFilesFieldMigrated = useIsFeatureEnabled(

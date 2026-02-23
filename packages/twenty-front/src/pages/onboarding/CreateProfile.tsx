@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
@@ -68,10 +69,10 @@ export const CreateProfile = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilStateV2(
     currentWorkspaceMemberState,
   );
-  const setCurrentUser = useSetRecoilState(currentUserState);
+  const setCurrentUser = useSetRecoilStateV2(currentUserState);
   const { updateOneRecord } = useUpdateOneRecord();
 
   // Form

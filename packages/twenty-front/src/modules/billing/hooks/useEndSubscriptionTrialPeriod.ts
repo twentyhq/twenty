@@ -1,16 +1,16 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useEndSubscriptionTrialPeriodMutation } from '~/generated-metadata/graphql';
 
 export const useEndSubscriptionTrialPeriod = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [endSubscriptionTrialPeriod] = useEndSubscriptionTrialPeriodMutation();
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
     currentWorkspaceState,
   );
   const [isLoading, setIsLoading] = useState(false);

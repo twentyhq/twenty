@@ -48,4 +48,29 @@ export class FilesFieldResolver {
       fieldMetadataId,
     });
   }
+
+  @Mutation(() => FileWithSignedUrlDto)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  async uploadFilesFieldFileByUniversalIdentifier(
+    @AuthWorkspace()
+    { id: workspaceId }: WorkspaceEntity,
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename }: FileUpload,
+    @Args({
+      name: 'fieldMetadataUniversalIdentifier',
+      type: () => String,
+      nullable: false,
+    })
+    fieldMetadataUniversalIdentifier: string,
+  ): Promise<FileWithSignedUrlDto> {
+    const stream = createReadStream();
+    const buffer = await streamToBuffer(stream);
+
+    return await this.filesFieldService.uploadFile({
+      file: buffer,
+      filename,
+      workspaceId,
+      fieldMetadataUniversalIdentifier,
+    });
+  }
 }

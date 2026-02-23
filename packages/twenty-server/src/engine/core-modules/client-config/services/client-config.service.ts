@@ -12,12 +12,12 @@ import {
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-cents-to-billing-credits.util';
+import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import {
   AI_MODELS,
   DEFAULT_FAST_MODEL,
   DEFAULT_SMART_MODEL,
-  ModelProvider,
+  InferenceProvider,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -54,16 +54,17 @@ export class ClientConfigService {
         return {
           modelId: registeredModel.modelId,
           label: builtInModel?.label || registeredModel.modelId,
-          provider: registeredModel.provider,
+          modelFamily: builtInModel?.modelFamily,
+          inferenceProvider: registeredModel.inferenceProvider,
           nativeCapabilities: builtInModel?.nativeCapabilities,
-          inputCostPer1kTokensInCredits: builtInModel
-            ? convertCentsToBillingCredits(
-                builtInModel.inputCostPer1kTokensInCents,
+          inputCostPerMillionTokensInCredits: builtInModel
+            ? convertDollarsToBillingCredits(
+                builtInModel.inputCostPerMillionTokens,
               )
             : 0,
-          outputCostPer1kTokensInCredits: builtInModel
-            ? convertCentsToBillingCredits(
-                builtInModel.outputCostPer1kTokensInCents,
+          outputCostPerMillionTokensInCredits: builtInModel
+            ? convertDollarsToBillingCredits(
+                builtInModel.outputCostPerMillionTokens,
               )
             : 0,
           deprecated: builtInModel?.deprecated,
@@ -96,16 +97,16 @@ export class ClientConfigService {
         {
           modelId: DEFAULT_SMART_MODEL,
           label: `Smart (${defaultPerformanceModelLabel})`,
-          provider: ModelProvider.NONE,
-          inputCostPer1kTokensInCredits: 0,
-          outputCostPer1kTokensInCredits: 0,
+          inferenceProvider: InferenceProvider.NONE,
+          inputCostPerMillionTokensInCredits: 0,
+          outputCostPerMillionTokensInCredits: 0,
         },
         {
           modelId: DEFAULT_FAST_MODEL,
           label: `Fast (${defaultSpeedModelLabel})`,
-          provider: ModelProvider.NONE,
-          inputCostPer1kTokensInCredits: 0,
-          outputCostPer1kTokensInCredits: 0,
+          inferenceProvider: InferenceProvider.NONE,
+          inputCostPerMillionTokensInCredits: 0,
+          outputCostPerMillionTokensInCredits: 0,
         },
       );
     }

@@ -26,14 +26,14 @@ import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 import { isAttachmentPreviewEnabledStateV2 } from '@/client-config/states/isAttachmentPreviewEnabledStateV2';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { getClientConfig } from '@/client-config/utils/getClientConfig';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 type UseClientConfigResult = {
   data: { clientConfig: ClientConfig } | undefined;
@@ -45,35 +45,35 @@ type UseClientConfigResult = {
 
 export const useClientConfig = (): UseClientConfigResult => {
   const setIsAnalyticsEnabled = useSetRecoilStateV2(isAnalyticsEnabledState);
-  const setDomainConfiguration = useSetRecoilState(domainConfigurationState);
+  const setDomainConfiguration = useSetRecoilStateV2(domainConfigurationState);
   const setAuthProviders = useSetRecoilStateV2(authProvidersState);
   const setAiModels = useSetRecoilStateV2(aiModelsState);
 
-  const setIsDeveloperDefaultSignInPrefilled = useSetRecoilState(
+  const setIsDeveloperDefaultSignInPrefilled = useSetRecoilStateV2(
     isDeveloperDefaultSignInPrefilledState,
   );
-  const setIsMultiWorkspaceEnabled = useSetRecoilState(
+  const setIsMultiWorkspaceEnabled = useSetRecoilStateV2(
     isMultiWorkspaceEnabledState,
   );
-  const setIsEmailVerificationRequired = useSetRecoilState(
+  const setIsEmailVerificationRequired = useSetRecoilStateV2(
     isEmailVerificationRequiredState,
   );
 
-  const setBilling = useSetRecoilState(billingState);
-  const setSupportChat = useSetRecoilState(supportChatState);
+  const setBilling = useSetRecoilStateV2(billingState);
+  const setSupportChat = useSetRecoilStateV2(supportChatState);
 
-  const setSentryConfig = useSetRecoilState(sentryConfigState);
-  const [clientConfigApiStatus, setClientConfigApiStatus] = useRecoilState(
+  const setSentryConfig = useSetRecoilStateV2(sentryConfigState);
+  const [clientConfigApiStatus, setClientConfigApiStatus] = useRecoilStateV2(
     clientConfigApiStatusState,
   );
 
-  const setCaptcha = useSetRecoilState(captchaState);
+  const setCaptcha = useSetRecoilStateV2(captchaState);
 
   const setChromeExtensionId = useSetRecoilStateV2(chromeExtensionIdState);
 
-  const setApiConfig = useSetRecoilState(apiConfigState);
+  const setApiConfig = useSetRecoilStateV2(apiConfigState);
 
-  const setCanManageFeatureFlags = useSetRecoilState(
+  const setCanManageFeatureFlags = useSetRecoilStateV2(
     canManageFeatureFlagsState,
   );
 
@@ -81,56 +81,54 @@ export const useClientConfig = (): UseClientConfigResult => {
     labPublicFeatureFlagsStateV2,
   );
 
-  const setMicrosoftMessagingEnabled = useSetRecoilState(
+  const setMicrosoftMessagingEnabled = useSetRecoilStateV2(
     isMicrosoftMessagingEnabledState,
   );
 
-  const setMicrosoftCalendarEnabled = useSetRecoilState(
+  const setMicrosoftCalendarEnabled = useSetRecoilStateV2(
     isMicrosoftCalendarEnabledState,
   );
 
-  const setGoogleMessagingEnabled = useSetRecoilState(
+  const setGoogleMessagingEnabled = useSetRecoilStateV2(
     isGoogleMessagingEnabledState,
   );
 
-  const setGoogleCalendarEnabled = useSetRecoilState(
+  const setGoogleCalendarEnabled = useSetRecoilStateV2(
     isGoogleCalendarEnabledState,
   );
 
-  const setIsAttachmentPreviewEnabled = useSetRecoilState(
+  const setIsAttachmentPreviewEnabled = useSetRecoilStateV2(
     isAttachmentPreviewEnabledState,
   );
 
-  const setIsConfigVariablesInDbEnabled = useSetRecoilState(
+  const setIsConfigVariablesInDbEnabled = useSetRecoilStateV2(
     isConfigVariablesInDbEnabledState,
   );
 
-  const setCalendarBookingPageId = useSetRecoilState(
+  const setCalendarBookingPageId = useSetRecoilStateV2(
     calendarBookingPageIdState,
   );
 
-  const setIsImapSmtpCaldavEnabled = useSetRecoilState(
+  const setIsImapSmtpCaldavEnabled = useSetRecoilStateV2(
     isImapSmtpCaldavEnabledState,
   );
-  const setIsEmailingDomainsEnabled = useSetRecoilState(
+  const setIsEmailingDomainsEnabled = useSetRecoilStateV2(
     isEmailingDomainsEnabledState,
   );
 
-  const setAllowRequestsToTwentyIcons = useSetRecoilState(
+  const setAllowRequestsToTwentyIcons = useSetRecoilStateV2(
     allowRequestsToTwentyIconsState,
   );
 
-  const setIsCloudflareIntegrationEnabled = useSetRecoilState(
+  const setIsCloudflareIntegrationEnabled = useSetRecoilStateV2(
     isCloudflareIntegrationEnabledState,
   );
 
-  const setIsClickHouseConfigured = useSetRecoilState(
+  const setIsClickHouseConfigured = useSetRecoilStateV2(
     isClickHouseConfiguredState,
   );
 
   const setAppVersion = useSetRecoilStateV2(appVersionState);
-
-  const store = useStore();
 
   const fetchClientConfig = useCallback(async () => {
     setClientConfigApiStatus((prev) => ({
@@ -193,7 +191,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setGoogleMessagingEnabled(clientConfig?.isGoogleMessagingEnabled);
       setGoogleCalendarEnabled(clientConfig?.isGoogleCalendarEnabled);
       setIsAttachmentPreviewEnabled(clientConfig?.isAttachmentPreviewEnabled);
-      store.set(
+      jotaiStore.set(
         isAttachmentPreviewEnabledStateV2.atom,
         clientConfig?.isAttachmentPreviewEnabled,
       );
@@ -254,7 +252,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     setSentryConfig,
     setSupportChat,
     setAllowRequestsToTwentyIcons,
-    store,
   ]);
 
   return {

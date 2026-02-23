@@ -1,7 +1,6 @@
-import { useRecoilValue } from 'recoil';
-
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import {
@@ -24,7 +23,7 @@ export const useFindManyRecordsQuery = ({
     objectNameSingular,
   });
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 

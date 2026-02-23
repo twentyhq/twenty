@@ -1,0 +1,81 @@
+import {
+  type AIModelConfig,
+  InferenceProvider,
+  ModelFamily,
+} from './ai-models-types.const';
+
+export const GOOGLE_MODELS: AIModelConfig[] = [
+  // Active models
+  {
+    modelId: 'gemini-3.1-pro-preview',
+    label: 'Gemini 3.1 Pro',
+    description:
+      'Most advanced Gemini model for reasoning, coding, and agentic workflows',
+    modelFamily: ModelFamily.GOOGLE,
+    inferenceProvider: InferenceProvider.GOOGLE,
+    inputCostPerMillionTokens: 2.0,
+    outputCostPerMillionTokens: 12.0,
+    cachedInputCostPerMillionTokens: 0.2,
+    longContextCost: {
+      inputCostPerMillionTokens: 4.0,
+      outputCostPerMillionTokens: 18.0,
+      cachedInputCostPerMillionTokens: 0.4,
+      thresholdTokens: 200_000,
+    },
+    contextWindowTokens: 1048576,
+    maxOutputTokens: 65536,
+    supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
+    doesSupportThinking: true,
+  },
+  {
+    modelId: 'gemini-3-flash-preview',
+    label: 'Gemini 3 Flash',
+    description: 'Fast frontier-class Gemini model at low cost with 1M context',
+    modelFamily: ModelFamily.GOOGLE,
+    inferenceProvider: InferenceProvider.GOOGLE,
+    inputCostPerMillionTokens: 0.5,
+    outputCostPerMillionTokens: 3.0,
+    cachedInputCostPerMillionTokens: 0.05,
+    contextWindowTokens: 1048576,
+    maxOutputTokens: 65536,
+    supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
+    doesSupportThinking: true,
+  },
+
+  // Deprecated models - kept for backward compatibility with existing agents
+  {
+    modelId: 'gemini-2.5-pro',
+    label: 'Gemini 2.5 Pro',
+    description: 'Previous gen Gemini Pro superseded by 3.1 Pro',
+    modelFamily: ModelFamily.GOOGLE,
+    inferenceProvider: InferenceProvider.GOOGLE,
+    inputCostPerMillionTokens: 1.25,
+    outputCostPerMillionTokens: 10.0,
+    cachedInputCostPerMillionTokens: 0.315,
+    longContextCost: {
+      inputCostPerMillionTokens: 2.5,
+      outputCostPerMillionTokens: 15.0,
+      thresholdTokens: 200_000,
+    },
+    contextWindowTokens: 1048576,
+    maxOutputTokens: 65536,
+    supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
+    doesSupportThinking: true,
+    deprecated: true,
+  },
+  {
+    modelId: 'gemini-2.5-flash',
+    label: 'Gemini 2.5 Flash',
+    description: 'Previous gen Flash superseded by Gemini 3 Flash',
+    modelFamily: ModelFamily.GOOGLE,
+    inferenceProvider: InferenceProvider.GOOGLE,
+    inputCostPerMillionTokens: 0.3,
+    outputCostPerMillionTokens: 2.5,
+    cachedInputCostPerMillionTokens: 0.075,
+    contextWindowTokens: 1048576,
+    maxOutputTokens: 65536,
+    supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
+    doesSupportThinking: true,
+    deprecated: true,
+  },
+];

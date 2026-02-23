@@ -1,8 +1,8 @@
 import { type PublicWorkspaceDataOutput } from '~/generated-metadata/graphql';
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
 export const workspacePublicDataState =
-  createState<PublicWorkspaceDataOutput | null>({
+  createStateV2<PublicWorkspaceDataOutput | null>({
     key: 'workspacePublicDataState',
     defaultValue: null,
   });

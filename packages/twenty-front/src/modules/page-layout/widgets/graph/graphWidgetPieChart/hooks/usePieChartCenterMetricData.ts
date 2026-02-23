@@ -40,7 +40,8 @@ export const usePieChartCenterMetricData = ({
   });
 
   const groupByField = objectMetadataItem.fields.find(
-    (field) => field.id === configuration.groupByFieldMetadataId,
+    (field: { id: string }) =>
+      field.id === configuration.groupByFieldMetadataId,
   );
 
   const centerMetricFilter = useMemo(() => {

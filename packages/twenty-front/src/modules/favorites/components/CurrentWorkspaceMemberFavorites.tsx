@@ -12,6 +12,7 @@ import { getFavoriteSecondaryLabel } from '@/favorites/utils/getFavoriteSecondar
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { type ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -31,7 +32,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { IconFolder, IconFolderOpen, IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
@@ -51,7 +51,7 @@ export const CurrentWorkspaceMemberFavorites = ({
   isGroup,
 }: CurrentWorkspaceMemberFavoritesProps) => {
   const { t } = useLingui();
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
   const { isDragging } = useContext(FavoritesDragContext);

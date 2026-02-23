@@ -6,6 +6,7 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
@@ -17,7 +18,6 @@ import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdow
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
@@ -60,10 +60,11 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
     objectId: objectMetadataId ?? null,
   });
 
-  const availableFieldMetadataItemsForFilter = useRecoilValue(
-    availableFieldMetadataItemsForFilterFamilySelector({
+  const availableFieldMetadataItemsForFilter = useFamilySelectorValueV2(
+    availableFieldMetadataItemsForFilterFamilySelector,
+    {
       objectMetadataItemId: objectMetadataItem.id,
-    }),
+    },
   );
 
   const currentRecordFilterGroups = useRecoilComponentValue(

@@ -1,7 +1,7 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 import { type Support, SupportDriver } from '~/generated-metadata/graphql';
 
-export const supportChatState = createState<Support>({
+export const supportChatState = createStateV2<Support>({
   key: 'supportChatState',
   defaultValue: {
     supportDriver: SupportDriver.NONE,

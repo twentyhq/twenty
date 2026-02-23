@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { IconLink, IconPlus, IconTool, useIcons } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
@@ -31,6 +30,7 @@ import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetReco
 import { useStore } from 'jotai';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledRightIconsContainer = styled.div`
@@ -42,23 +42,19 @@ const StyledRightIconsContainer = styled.div`
 export const WorkspaceNavigationMenuItems = () => {
   const items = useWorkspaceSectionItems();
   const store = useStore();
-  const enterEditMode = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const prefetchNavigationMenuItems = snapshot
-          .getLoadable(prefetchNavigationMenuItemsState)
-          .getValue();
-        const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
-          prefetchNavigationMenuItems,
-        );
-        store.set(
-          navigationMenuItemsDraftStateV2.atom,
-          workspaceNavigationMenuItems,
-        );
-        store.set(isNavigationMenuInEditModeStateV2.atom, true);
-      },
-    [store],
-  );
+  const enterEditMode = () => {
+    const prefetchNavigationMenuItems = jotaiStore.get(
+      prefetchNavigationMenuItemsState.atom,
+    );
+    const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
+      prefetchNavigationMenuItems,
+    );
+    store.set(
+      navigationMenuItemsDraftStateV2.atom,
+      workspaceNavigationMenuItems,
+    );
+    store.set(isNavigationMenuInEditModeStateV2.atom, true);
+  };
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );

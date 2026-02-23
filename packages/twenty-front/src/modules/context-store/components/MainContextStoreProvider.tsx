@@ -1,13 +1,16 @@
+import { metadataStoreState } from '@/app/states/metadataStoreState';
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { coreViewsState } from '@/views/states/coreViewState';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { ViewKey } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const getViewId = (
@@ -45,7 +48,9 @@ export const MainContextStoreProvider = () => {
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('viewId');
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const viewsEntry = useFamilyRecoilValueV2(metadataStoreState, 'views');
+  const coreViews = useRecoilValueV2(coreViewsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
@@ -59,17 +64,19 @@ export const MainContextStoreProvider = () => {
     objectMetadataItem?.namePlural ?? '',
   );
 
-  const indexViewId = useRecoilValue(
-    coreIndexViewIdFromObjectMetadataItemFamilySelector({
-      objectMetadataItemId: objectMetadataItem?.id ?? '',
-    }),
-  );
+  const indexViewId = coreViews.find(
+    (view) =>
+      view.objectMetadataId === objectMetadataItem?.id &&
+      view.key === ViewKey.INDEX,
+  )?.id;
 
   const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
   const showAuthModal = useShowAuthModal();
 
   const shouldComputeContextStore =
-    (isRecordIndexPage || isRecordShowPage || isSettingsPage) && !showAuthModal;
+    (isRecordIndexPage || isRecordShowPage || isSettingsPage) &&
+    !showAuthModal &&
+    viewsEntry.status === 'loaded';
 
   if (!shouldComputeContextStore) {
     return null;

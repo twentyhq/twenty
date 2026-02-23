@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
@@ -14,6 +14,8 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -47,7 +49,7 @@ const RelationFieldValueSetterEffect = () => {
     'recordTableId',
   );
 
-  const [, setObjectMetadataItems] = useRecoilState(objectMetadataItemsState);
+  const [, setObjectMetadataItems] = useRecoilStateV2(objectMetadataItemsState);
 
   useEffect(() => {
     setEntity(mockPerformance.entityValue);
@@ -125,10 +127,11 @@ const meta: Meta = {
         ]),
       );
 
-      const labelIdentifierFieldMetadataItem = useRecoilValue(
-        labelIdentifierFieldMetadataItemSelector({
+      const labelIdentifierFieldMetadataItem = useFamilySelectorValueV2(
+        labelIdentifierFieldMetadataItemSelector,
+        {
           objectMetadataItemId: mockPerformance.objectMetadataItem.id,
-        }),
+        },
       );
 
       return (

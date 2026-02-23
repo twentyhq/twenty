@@ -1,9 +1,9 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { selectorFamily } from 'recoil';
+import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
 import { isDefined } from 'twenty-shared/utils';
 
-export const labelIdentifierFieldMetadataItemSelector = selectorFamily({
+export const labelIdentifierFieldMetadataItemSelector = createFamilySelectorV2({
   key: 'labelIdentifierFieldMetadataItemSelector',
   get:
     ({ objectMetadataItemId }: { objectMetadataItemId: string }) =>
@@ -18,14 +18,11 @@ export const labelIdentifierFieldMetadataItemSelector = selectorFamily({
         return undefined;
       }
 
-      const labelIdentifierFieldMetadataItem = objectMetadataItem.fields.find(
-        (fieldMetadataItemToFind) =>
-          isLabelIdentifierField({
-            fieldMetadataItem: fieldMetadataItemToFind,
-            objectMetadataItem: objectMetadataItem,
-          }),
+      return objectMetadataItem.fields.find((fieldMetadataItemToFind) =>
+        isLabelIdentifierField({
+          fieldMetadataItem: fieldMetadataItemToFind,
+          objectMetadataItem: objectMetadataItem,
+        }),
       );
-
-      return labelIdentifierFieldMetadataItem;
     },
 });

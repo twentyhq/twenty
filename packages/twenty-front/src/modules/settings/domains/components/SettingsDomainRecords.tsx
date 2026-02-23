@@ -1,7 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
@@ -9,13 +8,14 @@ import {
   type DomainRecord,
   type DomainValidRecords,
 } from '~/generated-metadata/graphql';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const SettingsDomainRecords = ({
   records,
 }: {
   records: DomainValidRecords['records'];
 }) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
 
   const rowsDefinitions = [
     { name: 'Domain Setup', validationType: 'redirection' as const },

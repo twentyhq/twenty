@@ -1,5 +1,3 @@
-import { useRecoilCallback, useRecoilValue } from 'recoil';
-
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -12,7 +10,10 @@ import {
 } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
+import { useCallback } from 'react';
 import {
   OnboardingStatus,
   PermissionFlagType,
@@ -62,37 +63,33 @@ const getNextOnboardingStatus = ({
 };
 
 export const useSetNextOnboardingStatus = () => {
-  const currentUser = useRecoilValue(currentUserState);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
+  const currentUser = useRecoilValueV2(currentUserState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const calendarBookingPageId = useRecoilValueV2(calendarBookingPageIdState);
   const permissionMap = usePermissionFlagMap();
   const isAccountSyncEnabled =
     permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS];
 
-  return useRecoilCallback(
-    ({ set }) =>
-      () => {
-        const nextOnboardingStatus = getNextOnboardingStatus({
-          currentUser,
-          currentWorkspace,
-          calendarBookingPageId,
-          isAccountSyncEnabled,
-        });
-        set(currentUserState, (current) => {
-          if (isDefined(current)) {
-            return {
-              ...current,
-              onboardingStatus: nextOnboardingStatus,
-            };
-          }
-          return current;
-        });
-      },
-    [
+  return useCallback(() => {
+    const nextOnboardingStatus = getNextOnboardingStatus({
       currentUser,
       currentWorkspace,
       calendarBookingPageId,
       isAccountSyncEnabled,
-    ],
-  );
+    });
+    jotaiStore.set(currentUserState.atom, (current) => {
+      if (isDefined(current)) {
+        return {
+          ...current,
+          onboardingStatus: nextOnboardingStatus,
+        };
+      }
+      return current;
+    });
+  }, [
+    currentUser,
+    currentWorkspace,
+    calendarBookingPageId,
+    isAccountSyncEnabled,
+  ]);
 };

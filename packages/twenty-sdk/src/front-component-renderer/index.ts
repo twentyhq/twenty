@@ -112,7 +112,7 @@ export type {
   HtmlThProperties,
 } from './remote/generated/remote-elements';
 export { createRemoteWorker } from './remote/worker/utils/createRemoteWorker';
-export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
+export type { FrontComponentExecutionContext } from '../sdk/front-component-api';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
 export type { HostToWorkerRenderContext } from './types/HostToWorkerRenderContext';
 export type { PropertySchema } from './types/PropertySchema';

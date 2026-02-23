@@ -7,6 +7,7 @@ import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,7 +15,7 @@ export const useActivityTargetObjectRecords = (
   activityRecordId?: string,
   activityTargets?: Nullable<NoteTarget[] | TaskTarget[]>,
 ) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const activity = useRecoilValue(
     recordStoreFamilyState(activityRecordId ?? ''),
