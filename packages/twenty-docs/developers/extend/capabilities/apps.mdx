@@ -793,6 +793,51 @@ Notes:
 - The API key's permissions are determined by the role referenced in your `application-config.ts` via `defaultRoleUniversalIdentifier`. This is the default role used by logic functions of your application.
 - Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `defaultRoleUniversalIdentifier` to that role's universal identifier.
 
+#### Uploading files
+
+The generated `Twenty` client includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. Because standard GraphQL clients do not support multipart file uploads natively, the client provides this dedicated method that implements the [GraphQL multipart request specification](https://github.com/jaydenseric/graphql-multipart-request-spec) under the hood.
+
+```typescript
+import Twenty from '~/generated';
+import * as fs from 'fs';
+
+const client = new Twenty();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await client.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+The method signature:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fileBuffer` | `Buffer` | The raw file contents |
+| `filename` | `string` | The name of the file (used for storage and display) |
+| `contentType` | `string` | MIME type of the file (defaults to `application/octet-stream` if omitted) |
+| `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object |
+
+Key points:
+- The method sends the file to the **metadata endpoint** (not the main GraphQL endpoint), where the upload mutation is resolved.
+- It uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed — consistent with how apps reference fields everywhere else.
+- The returned `url` is a signed URL you can use to access the uploaded file.
 
 ### Hello World example
 

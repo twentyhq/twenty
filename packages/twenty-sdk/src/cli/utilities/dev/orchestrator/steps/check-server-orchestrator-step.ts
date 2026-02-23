@@ -33,10 +33,10 @@ export class CheckServerOrchestratorStep {
       if (!step.output.errorLogged) {
         step.output = { isReady: false, errorLogged: true };
         step.status = 'error';
-        this.state.updatePipeline({ status: 'error' });
         this.state.applyStepEvents([
           { message: 'Cannot reach server', status: 'error' },
         ]);
+        this.state.updatePipeline({ status: 'error' });
       }
 
       return false;
@@ -46,10 +46,10 @@ export class CheckServerOrchestratorStep {
       if (!step.output.errorLogged) {
         step.output = { isReady: false, errorLogged: true };
         step.status = 'error';
-        this.state.updatePipeline({ status: 'error' });
         this.state.applyStepEvents([
           { message: 'Authentication failed', status: 'error' },
         ]);
+        this.state.updatePipeline({ status: 'error' });
       }
 
       return false;

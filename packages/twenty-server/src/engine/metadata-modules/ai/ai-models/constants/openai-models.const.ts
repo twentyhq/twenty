@@ -1,15 +1,54 @@
-import { type AIModelConfig, ModelProvider } from './ai-models-types.const';
+import {
+  type AIModelConfig,
+  InferenceProvider,
+  ModelFamily,
+} from './ai-models-types.const';
 
 export const OPENAI_MODELS: AIModelConfig[] = [
   // Active models
   {
+    modelId: 'gpt-5.2',
+    label: 'GPT-5.2',
+    description:
+      'Most advanced OpenAI model for coding, agentic tasks, and complex reasoning',
+    modelFamily: ModelFamily.OPENAI,
+    inferenceProvider: InferenceProvider.OPENAI,
+    inputCostPerMillionTokens: 1.75,
+    outputCostPerMillionTokens: 14.0,
+    cachedInputCostPerMillionTokens: 0.175,
+    contextWindowTokens: 400000,
+    maxOutputTokens: 128000,
+    supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
+    doesSupportThinking: true,
+    nativeCapabilities: {
+      webSearch: true,
+    },
+  },
+  {
+    modelId: 'gpt-5-mini',
+    label: 'GPT-5 Mini',
+    description: 'Fast and cost-efficient GPT-5 variant for well-defined tasks',
+    modelFamily: ModelFamily.OPENAI,
+    inferenceProvider: InferenceProvider.OPENAI,
+    inputCostPerMillionTokens: 0.25,
+    outputCostPerMillionTokens: 2.0,
+    cachedInputCostPerMillionTokens: 0.025,
+    contextWindowTokens: 128000,
+    maxOutputTokens: 32768,
+    supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
+    nativeCapabilities: {
+      webSearch: true,
+    },
+  },
+  {
     modelId: 'gpt-4.1',
     label: 'GPT-4.1',
-    description:
-      'Advanced model excelling in coding, instruction following, and long-context comprehension',
-    provider: ModelProvider.OPENAI,
-    inputCostPer1kTokensInCents: 0.2,
-    outputCostPer1kTokensInCents: 0.8,
+    description: 'Strong model with 1M context, cost-effective output pricing',
+    modelFamily: ModelFamily.OPENAI,
+    inferenceProvider: InferenceProvider.OPENAI,
+    inputCostPerMillionTokens: 2.0,
+    outputCostPerMillionTokens: 8.0,
+    cachedInputCostPerMillionTokens: 0.5,
     contextWindowTokens: 1047576,
     maxOutputTokens: 32768,
     supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
@@ -20,11 +59,12 @@ export const OPENAI_MODELS: AIModelConfig[] = [
   {
     modelId: 'gpt-4.1-mini',
     label: 'GPT-4.1 Mini',
-    description:
-      'Fast and cost-efficient version of GPT-4.1 optimized for low latency',
-    provider: ModelProvider.OPENAI,
-    inputCostPer1kTokensInCents: 0.04,
-    outputCostPer1kTokensInCents: 0.16,
+    description: 'Budget-friendly model with 1M context for lightweight tasks',
+    modelFamily: ModelFamily.OPENAI,
+    inferenceProvider: InferenceProvider.OPENAI,
+    inputCostPerMillionTokens: 0.4,
+    outputCostPerMillionTokens: 1.6,
+    cachedInputCostPerMillionTokens: 0.1,
     contextWindowTokens: 1047576,
     maxOutputTokens: 32768,
     supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
@@ -32,14 +72,18 @@ export const OPENAI_MODELS: AIModelConfig[] = [
       webSearch: true,
     },
   },
+
+  // Deprecated models - kept for backward compatibility with existing agents
   {
     modelId: 'o3',
     label: 'o3',
     description:
-      'Powerful reasoning model excelling in complex queries, coding, math, and science',
-    provider: ModelProvider.OPENAI,
-    inputCostPer1kTokensInCents: 0.2,
-    outputCostPer1kTokensInCents: 0.8,
+      'Reasoning model for complex queries, coding, math, and science',
+    modelFamily: ModelFamily.OPENAI,
+    inferenceProvider: InferenceProvider.OPENAI,
+    inputCostPerMillionTokens: 2.0,
+    outputCostPerMillionTokens: 8.0,
+    cachedInputCostPerMillionTokens: 0.5,
     contextWindowTokens: 200000,
     maxOutputTokens: 100000,
     supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
@@ -47,15 +91,18 @@ export const OPENAI_MODELS: AIModelConfig[] = [
     nativeCapabilities: {
       webSearch: true,
     },
+    deprecated: true,
   },
   {
     modelId: 'o4-mini',
     label: 'o4-mini',
     description:
-      'Cost-effective reasoning model excelling in math, coding, and visual tasks',
-    provider: ModelProvider.OPENAI,
-    inputCostPer1kTokensInCents: 0.11,
-    outputCostPer1kTokensInCents: 0.44,
+      'Cost-effective reasoning model for math, coding, and visual tasks',
+    modelFamily: ModelFamily.OPENAI,
+    inferenceProvider: InferenceProvider.OPENAI,
+    inputCostPerMillionTokens: 1.1,
+    outputCostPerMillionTokens: 4.4,
+    cachedInputCostPerMillionTokens: 0.275,
     contextWindowTokens: 200000,
     maxOutputTokens: 100000,
     supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
@@ -63,17 +110,18 @@ export const OPENAI_MODELS: AIModelConfig[] = [
     nativeCapabilities: {
       webSearch: true,
     },
+    deprecated: true,
   },
-
-  // Deprecated models - kept for backward compatibility with existing agents
   {
     modelId: 'gpt-4o',
     label: 'GPT-4o',
     description:
-      'Most advanced multimodal model with strong reasoning, vision, and coding capabilities',
-    provider: ModelProvider.OPENAI,
-    inputCostPer1kTokensInCents: 0.25,
-    outputCostPer1kTokensInCents: 1.0,
+      'Previous generation multimodal model with strong reasoning and vision',
+    modelFamily: ModelFamily.OPENAI,
+    inferenceProvider: InferenceProvider.OPENAI,
+    inputCostPerMillionTokens: 2.5,
+    outputCostPerMillionTokens: 10.0,
+    cachedInputCostPerMillionTokens: 1.25,
     contextWindowTokens: 128000,
     maxOutputTokens: 16384,
     supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
@@ -85,11 +133,12 @@ export const OPENAI_MODELS: AIModelConfig[] = [
   {
     modelId: 'gpt-4o-mini',
     label: 'GPT-4o Mini',
-    description:
-      'Fast and cost-efficient model for lightweight tasks and high-volume operations',
-    provider: ModelProvider.OPENAI,
-    inputCostPer1kTokensInCents: 0.015,
-    outputCostPer1kTokensInCents: 0.06,
+    description: 'Previous generation fast model for lightweight tasks',
+    modelFamily: ModelFamily.OPENAI,
+    inferenceProvider: InferenceProvider.OPENAI,
+    inputCostPerMillionTokens: 0.15,
+    outputCostPerMillionTokens: 0.6,
+    cachedInputCostPerMillionTokens: 0.075,
     contextWindowTokens: 128000,
     maxOutputTokens: 16384,
     supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
@@ -101,17 +150,14 @@ export const OPENAI_MODELS: AIModelConfig[] = [
   {
     modelId: 'gpt-4-turbo',
     label: 'GPT-4 Turbo',
-    description:
-      'Previous generation high-performance model with vision capabilities',
-    provider: ModelProvider.OPENAI,
-    inputCostPer1kTokensInCents: 1.0,
-    outputCostPer1kTokensInCents: 3.0,
+    description: 'Legacy high-performance model with vision capabilities',
+    modelFamily: ModelFamily.OPENAI,
+    inferenceProvider: InferenceProvider.OPENAI,
+    inputCostPerMillionTokens: 10.0,
+    outputCostPerMillionTokens: 30.0,
     contextWindowTokens: 128000,
     maxOutputTokens: 4096,
     supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
-    nativeCapabilities: {
-      webSearch: false,
-    },
     deprecated: true,
   },
 ];

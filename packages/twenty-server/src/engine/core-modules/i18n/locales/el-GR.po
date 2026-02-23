@@ -1421,6 +1421,11 @@ msgstr "Το FieldMetadataId είναι απαραίτητο για τη δημ�
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "Το FieldMetadataId είναι απαραίτητο για τη δημιουργία ενός είδους παραγγελίας προβολής."
 
+#. js-lingui-id: VgGXR3
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
+msgstr ""
+
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
