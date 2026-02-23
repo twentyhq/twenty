@@ -54,15 +54,13 @@ const render: WorkerExports['render'] = async (
   document.body.append(root);
   installStyleBridge(root);
 
-  if (isDefined(renderContext.apiUrl)) {
-    setWorkerEnv({
-      TWENTY_API_URL: renderContext.apiUrl,
-    });
-  }
-
-  if (isDefined(renderContext.applicationAccessToken)) {
+  if (
+    isDefined(renderContext.applicationAccessToken) &&
+    isDefined(renderContext.apiUrl)
+  ) {
     setWorkerEnv({
       TWENTY_APP_ACCESS_TOKEN: renderContext.applicationAccessToken,
+      TWENTY_API_URL: renderContext.apiUrl,
     });
   }
 
