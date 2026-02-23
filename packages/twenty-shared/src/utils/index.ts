@@ -9,6 +9,7 @@
 
 export { applyDiff } from './applyDiff';
 export { compareArraysOfObjectsByProperty } from './array/compareArraysOfObjectsByProperty';
+export { filterDuplicatesById } from './array/filterDuplicatesById';
 export { filterOutByProperty } from './array/filterOutByProperty';
 export { findById } from './array/findById';
 export { findByProperty } from './array/findByProperty';
@@ -125,7 +126,6 @@ export {
   relationFilterValueSchemaObject,
   jsonRelationFilterValueSchema,
 } from './filter/utils/validation-schemas/jsonRelationFilterValueSchema';
-export { filterDuplicatesById } from './filterDuplicatesById';
 export { formatToShortNumber } from './format/formatToShortNumber';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
