@@ -30,7 +30,7 @@ import { type ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -86,7 +86,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   );
 
   const location = useLocation();
-  const navigate = useNavigate();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilStateV2(isNavigationDrawerExpandedState);
   const setNavigationDrawerExpandedMemorized = useSetRecoilStateV2(
@@ -248,7 +247,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
             setIsNavigationDrawerExpanded(true);
             setNavigationMemorizedUrl(location.pathname + location.search);
-            navigate(getSettingsPath(SettingsPath.ProfilePage));
             closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
           }}
         >
