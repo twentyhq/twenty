@@ -1,9 +1,8 @@
 /* @license Enterprise */
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import {
   type RowLevelPermissionPredicate,
   RowLevelPermissionPredicateOperand,
@@ -106,7 +105,7 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
   objectMetadataNameSingular: string | undefined;
   options: SelectOption[];
 }): { filteredOptions: SelectOption[]; canSelectEmpty: boolean } => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const objectMetadataId = objectMetadataNameSingular
     ? objectMetadataItems.find(
