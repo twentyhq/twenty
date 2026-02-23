@@ -96,23 +96,7 @@ export const NavigationDrawerAIChatThreadsList = () => {
                     onClick={() => handleThreadClick(thread)}
                     alwaysShowRightOptions
                     rightOptions={
-                      <StyledThreadTimestamp
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          handleThreadClick(thread);
-                        }}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(event) => {
-                          if (event.key === 'Enter' || event.key === ' ') {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            handleThreadClick(thread);
-                          }
-                        }}
-                      >
-                        {timestamp}
-                      </StyledThreadTimestamp>
+                      <StyledThreadTimestamp>{timestamp}</StyledThreadTimestamp>
                     }
                   />
                 );
