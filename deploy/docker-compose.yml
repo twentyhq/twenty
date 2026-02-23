@@ -1,0 +1,92 @@
+name: crm-stack
+
+services:
+  db:
+    image: postgres:16
+    ports:
+      - "127.0.0.1:5435:5432"
+    environment:
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD}
+      POSTGRES_USER: ${PG_DATABASE_USER}
+      POSTGRES_DB: default
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_DATABASE_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+
+  redis:
+    image: redis:7
+    command: redis-server --maxmemory-policy noeviction
+    volumes:
+      - redis-data:/data
+    restart: always
+
+  twenty-server:
+    image: ${IMAGE}:${TAG}
+    ports:
+      - "3003:3000"
+    volumes:
+      - twenty-storage:/app/packages/twenty-server/.local-storage
+    environment:
+      NODE_PORT: 3000
+      SERVER_URL: ${SERVER_URL}
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER}:${PG_DATABASE_PASSWORD}@db:5432/default
+      REDIS_URL: redis://redis:6379
+      APP_SECRET: ${APP_SECRET}
+      DISABLE_DB_MIGRATIONS: "false"
+      DISABLE_CRON_JOBS_REGISTRATION: "false"
+      SERVERLESS_TYPE: DISABLED
+      IS_MULTIWORKSPACE_ENABLED: "false"
+      STORAGE_TYPE: local
+      EMAIL_DRIVER: ${EMAIL_DRIVER:-smtp}
+      EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST}
+      EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-587}
+      EMAIL_SMTP_USER: ${EMAIL_SMTP_USER}
+      EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD}
+      EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://localhost:3000/healthz
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: always
+
+  twenty-worker:
+    image: ${IMAGE}:${TAG}
+    command: ["yarn", "worker:prod"]
+    volumes:
+      - twenty-storage:/app/packages/twenty-server/.local-storage
+    environment:
+      SERVER_URL: ${SERVER_URL}
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER}:${PG_DATABASE_PASSWORD}@db:5432/default
+      REDIS_URL: redis://redis:6379
+      APP_SECRET: ${APP_SECRET}
+      DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_CRON_JOBS_REGISTRATION: "true"
+      SERVERLESS_TYPE: DISABLED
+      STORAGE_TYPE: local
+      EMAIL_DRIVER: ${EMAIL_DRIVER:-smtp}
+      EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST}
+      EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-587}
+      EMAIL_SMTP_USER: ${EMAIL_SMTP_USER}
+      EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD}
+      EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
+    depends_on:
+      twenty-server:
+        condition: service_healthy
+    restart: always
+
+volumes:
+  postgres-data:
+  redis-data:
+  twenty-storage:
