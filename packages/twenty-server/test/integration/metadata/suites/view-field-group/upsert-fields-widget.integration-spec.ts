@@ -1,7 +1,7 @@
 import {
-    VIEW_FIELD_GQL_FIELDS,
-    VIEW_FIELD_GROUP_GQL_FIELDS,
-    VIEW_GQL_FIELDS,
+  VIEW_FIELD_GQL_FIELDS,
+  VIEW_FIELD_GROUP_GQL_FIELDS,
+  VIEW_GQL_FIELDS,
 } from 'test/integration/constants/view-gql-fields.constants';
 import { findCoreViewFieldGroups } from 'test/integration/metadata/suites/view-field-group/utils/find-core-view-field-groups.util';
 import { upsertFieldsWidget } from 'test/integration/metadata/suites/view-field-group/utils/upsert-fields-widget.util';
@@ -109,7 +109,7 @@ describe('upsertFieldsWidget', () => {
       expect(createdGroup!.name).toBe('Test Group');
     });
 
-    it('should soft-delete groups not included in the input', async () => {
+    it('should hard-delete groups not included in the input', async () => {
       // First, create a group via upsert
       const groupToDeleteId = uuidv4();
       const groupToKeepId = uuidv4();
@@ -174,15 +174,14 @@ describe('upsertFieldsWidget', () => {
         },
       });
 
-      // Verify the omitted group was soft-deleted (raw SQL needed: GQL API excludes soft-deleted records)
+      // Verify the omitted group was hard-deleted (row should be completely gone)
       const deletedGroup = await global.testDataSource.query(
-        `SELECT id, "deletedAt" FROM core."viewFieldGroup"
+        `SELECT id FROM core."viewFieldGroup"
          WHERE id = $1`,
         [groupToDeleteId],
       );
 
-      expect(deletedGroup.length).toBe(1);
-      expect(deletedGroup[0].deletedAt).not.toBeNull();
+      expect(deletedGroup.length).toBe(0);
 
       // Verify the kept group is still active
       const { data: keptGroupData } = await findCoreViewFieldGroups({
@@ -264,7 +263,7 @@ describe('upsertFieldsWidget', () => {
       expect(data.upsertFieldsWidget.id).toBeDefined();
     });
 
-    it('should soft-delete all existing groups when using flat fields', async () => {
+    it('should hard-delete all existing groups when using flat fields', async () => {
       // First create a group via upsert
       const groupId = uuidv4();
       const targetField = testSetup.viewFields[0];

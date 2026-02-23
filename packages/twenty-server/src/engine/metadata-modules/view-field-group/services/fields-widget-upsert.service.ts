@@ -186,6 +186,7 @@ export class FieldsWidgetUpsertService {
 
     const groupsToCreate: FlatViewFieldGroup[] = [];
     const groupsToUpdate: FlatViewFieldGroup[] = [];
+    const groupsToDelete: FlatViewFieldGroup[] = [];
 
     for (const inputGroup of inputGroups) {
       const existingGroup = existingGroups.find((g) => g.id === inputGroup.id);
@@ -215,11 +216,7 @@ export class FieldsWidgetUpsertService {
 
     for (const existingGroup of existingGroups) {
       if (!inputGroupIds.has(existingGroup.id)) {
-        groupsToUpdate.push({
-          ...existingGroup,
-          deletedAt: now,
-          updatedAt: now,
-        });
+        groupsToDelete.push(existingGroup);
       }
     }
 
@@ -292,7 +289,7 @@ export class FieldsWidgetUpsertService {
           allFlatEntityOperationByMetadataName: {
             viewFieldGroup: {
               flatEntityToCreate: groupsToCreate,
-              flatEntityToDelete: [],
+              flatEntityToDelete: groupsToDelete,
               flatEntityToUpdate: groupsToUpdate,
             },
             viewField: {
@@ -330,13 +327,7 @@ export class FieldsWidgetUpsertService {
   }): Promise<void> {
     const now = new Date().toISOString();
 
-    const groupsToUpdate: FlatViewFieldGroup[] = existingGroups.map(
-      (group) => ({
-        ...group,
-        deletedAt: now,
-        updatedAt: now,
-      }),
-    );
+    const groupsToDelete: FlatViewFieldGroup[] = [...existingGroups];
 
     const viewFieldsToUpdate = existingViewFields.flatMap((existingField) => {
       const inputField = inputFields.find(
@@ -374,8 +365,8 @@ export class FieldsWidgetUpsertService {
           allFlatEntityOperationByMetadataName: {
             viewFieldGroup: {
               flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: groupsToUpdate,
+              flatEntityToDelete: groupsToDelete,
+              flatEntityToUpdate: [],
             },
             viewField: {
               flatEntityToCreate: [],
