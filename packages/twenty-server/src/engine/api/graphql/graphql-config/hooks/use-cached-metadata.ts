@@ -90,7 +90,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       const cachedResponse = await config.cacheGetter(cacheKey);
 
       if (!cachedResponse) {
-        const responseBody = await response.json();
+        const responseBody = await response.clone().json();
 
         if (responseBody.errors) {
           return;
