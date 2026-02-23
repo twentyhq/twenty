@@ -32,9 +32,11 @@ const validManifest: Manifest = {
   fields: [],
   logicFunctions: [],
   roles: [],
+  skills: [],
   publicAssets: [],
   views: [],
   navigationMenuItems: [],
+  pageLayouts: [],
 };
 
 describe('manifestValidate', () => {

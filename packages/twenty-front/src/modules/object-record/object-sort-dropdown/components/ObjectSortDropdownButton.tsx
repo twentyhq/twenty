@@ -27,9 +27,11 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { findByProperty } from 'twenty-shared/utils';
 import { IconX, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -52,10 +54,11 @@ export const ObjectSortDropdownButton = () => {
     objectSortDropdownSearchInputComponentState,
   );
 
-  const sortableFieldMetadataItems = useRecoilValue(
-    availableFieldMetadataItemsForSortFamilySelector({
+  const sortableFieldMetadataItems = useFamilySelectorValueV2(
+    availableFieldMetadataItemsForSortFamilySelector,
+    {
       objectMetadataItemId: objectMetadataItem.id,
-    }),
+    },
   );
 
   const { getIcon } = useIcons();
@@ -138,7 +141,7 @@ export const ObjectSortDropdownButton = () => {
     setIsRecordSortDirectionMenuUnfolded(false);
   };
 
-  const isDropdownOpen = useRecoilComponentValue(
+  const isDropdownOpen = useRecoilComponentValueV2(
     isDropdownOpenComponentState,
     OBJECT_SORT_DROPDOWN_ID,
   );
@@ -150,12 +153,12 @@ export const ObjectSortDropdownButton = () => {
     ...hiddenFieldMetadataItemsSorted.map((item) => item.id),
   ];
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useRecoilComponentValueV2(
     selectedItemIdComponentState,
     OBJECT_SORT_DROPDOWN_ID,
   );
 
-  const setSelectedItemId = useSetRecoilComponentState(
+  const setSelectedItemId = useSetRecoilComponentStateV2(
     selectedItemIdComponentState,
     OBJECT_SORT_DROPDOWN_ID,
   );

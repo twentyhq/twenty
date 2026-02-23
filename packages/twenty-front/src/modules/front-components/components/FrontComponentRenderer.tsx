@@ -24,7 +24,7 @@ export const FrontComponentRenderer = ({
   const theme = useTheme();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { executionContext, frontComponentHostCommunicationApi } =
-    useFrontComponentExecutionContext();
+    useFrontComponentExecutionContext({ frontComponentId });
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -64,7 +64,7 @@ export const FrontComponentRenderer = ({
 
   const composedFrontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
-      navigate: frontComponentHostCommunicationApi.navigate,
+      ...frontComponentHostCommunicationApi,
       requestAccessTokenRefresh,
     };
 

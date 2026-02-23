@@ -1,11 +1,18 @@
-import { type AppPath, type NavigateOptions } from 'twenty-shared/types';
+import {
+  type CloseSidePanelFunction,
+  type EnqueueSnackbarFunction,
+  type NavigateFunction,
+  type OpenSidePanelPageFunction,
+  type UnmountFrontComponentFunction,
+} from '../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
+
+type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type FrontComponentHostCommunicationApi = {
-  navigate: (
-    to: AppPath,
-    params?: Record<string, string | null>,
-    queryParams?: Record<string, unknown>,
-    options?: NavigateOptions,
-  ) => Promise<void>;
-  requestAccessTokenRefresh: () => Promise<string>;
+  navigate: NavigateFunction;
+  requestAccessTokenRefresh: RequestAccessTokenRefreshFunction;
+  openSidePanelPage: OpenSidePanelPageFunction;
+  unmountFrontComponent: UnmountFrontComponentFunction;
+  enqueueSnackbar: EnqueueSnackbarFunction;
+  closeSidePanel: CloseSidePanelFunction;
 };

@@ -1,6 +1,6 @@
 import { type PageLayoutCommandMenuPage } from '@/command-menu/pages/page-layout/types/PageLayoutCommandMenuPage';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { t } from '@lingui/core/macro';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getPageLayoutPageTitle = (page: PageLayoutCommandMenuPage) => {

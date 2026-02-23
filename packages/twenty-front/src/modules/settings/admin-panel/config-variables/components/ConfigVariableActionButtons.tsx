@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import {
@@ -29,7 +29,7 @@ export const ConfigVariableActionButtons = ({
   onReset,
 }: ConfigVariableActionButtonsProps) => {
   const { t } = useLingui();
-  const isConfigVariablesInDbEnabled = useRecoilValue(
+  const isConfigVariablesInDbEnabled = useRecoilValueV2(
     isConfigVariablesInDbEnabledState,
   );
   const isFromDatabase = variable.source === ConfigSource.DATABASE;

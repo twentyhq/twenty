@@ -14,6 +14,7 @@ Apps let you build and manage Twenty customizations **as code**. Instead of conf
 **What you can do today:**
 - Define custom objects and fields as code (managed data model)
 - Build logic functions with custom triggers
+- Define skills for AI agents
 - Deploy the same app across multiple workspaces
 
 ## Prerequisites
@@ -26,7 +27,7 @@ Apps let you build and manage Twenty customizations **as code**. Instead of conf
 Create a new app using the official scaffolder, then authenticate and start developing:
 
 ```bash filename="Terminal"
-# Scaffold a new app
+# Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
@@ -41,6 +42,19 @@ yarn twenty auth:login
 yarn twenty app:dev
 ```
 
+The scaffolder supports three modes for controlling which example files are included:
+
+```bash filename="Terminal"
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+npx create-twenty-app@latest my-app
+
+# Minimal: only core files (application-config.ts and default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+
+# Interactive: select which examples to include
+npx create-twenty-app@latest my-app --interactive
+```
+
 From here you can:
 
 ```bash filename="Terminal"
@@ -52,6 +66,9 @@ yarn twenty function:logs
 
 # Execute a function by name
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
+
+# Execute the post-install function
+yarn twenty function:execute --postInstall
 
 # Uninstall the application from the current workspace
 yarn twenty app:uninstall
@@ -69,9 +86,9 @@ When you run `npx create-twenty-app@latest my-twenty-app`, the scaffolder:
 - Copies a minimal base application into `my-twenty-app/`
 - Adds a local `twenty-sdk` dependency and Yarn 4 configuration
 - Creates config files and scripts wired to the `twenty` CLI
-- Generates a default application config and a default function role
+- Generates core files (application config, default function role, post-install function) plus example files based on the scaffolding mode
 
-A freshly scaffolded app looks like this:
+A freshly scaffolded app with the default `--exhaustive` mode looks like this:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -90,11 +107,24 @@ my-twenty-app/
   ├── application-config.ts           # Required - main application configuration
   ├── roles/
   │   └── default-role.ts               # Default role for logic functions
+  ├── objects/
+  │   └── example-object.ts             # Example custom object definition
+  ├── fields/
+  │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
-  │   └── hello-world.ts                # Example logic function
-  └── front-components/
-      └── hello-world.tsx               # Example front component
+  │   ├── hello-world.ts                # Example logic function
+  │   └── post-install.ts               # Post-install logic function
+  ├── front-components/
+  │   └── hello-world.tsx               # Example front component
+  ├── views/
+  │   └── example-view.ts                # Example saved view definition
+  ├── navigation-menu-items/
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  └── skills/
+      └── example-skill.ts                # Example AI agent skill definition
 ```
+
+With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
 
 At a high level:
 
@@ -118,6 +148,9 @@ The SDK detects entities by parsing your TypeScript files for **`export default 
 | `defineFrontComponent()` | Front component definitions |
 | `defineRole()` | Role definitions |
 | `defineField()` | Field extensions for existing objects |
+| `defineView()` | Saved view definitions |
+| `defineNavigationMenuItem()` | Navigation menu item definitions |
+| `defineSkill()` | AI agent skill definitions |
 
 <Note>
 **File naming is flexible.** Entity detection is AST-based — the SDK scans your source files for the `export default define<Entity>({...})` pattern. You can organize your files and folders however you like. Grouping by entity type (e.g., `logic-functions/`, `roles/`) is just a convention for code organization, not a requirement.
@@ -138,7 +171,7 @@ export default defineObject({
 Later commands will add more files and folders:
 
 - `yarn twenty app:dev` will auto-generate a typed API client in `node_modules/twenty-sdk/generated` (typed Twenty client + workspace types).
-- `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+- `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## Authentication
 
@@ -189,6 +222,9 @@ The SDK provides helper functions for defining your app entities. As described i
 | `defineFrontComponent()` | Define front components for custom UI |
 | `defineRole()` | Configure role permissions and object access |
 | `defineField()` | Extend existing objects with additional fields |
+| `defineView()` | Define saved views for objects |
+| `defineNavigationMenuItem()` | Define sidebar navigation links |
+| `defineSkill()` | Define AI agent skills |
 
 These functions validate your configuration at build time and provide IDE autocompletion and type safety.
 
@@ -289,6 +325,7 @@ Every app has a single `application-config.ts` file that describes:
 - **Who the app is**: identifiers, display name, and description.
 - **How its functions run**: which role they use for permissions.
 - **(Optional) variables**: key–value pairs exposed to your functions as environment variables.
+- **(Optional) post-install function**: a logic function that runs after the app is installed.
 
 Use `defineApplication()` to define your application configuration:
 
@@ -296,6 +333,7 @@ Use `defineApplication()` to define your application configuration:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -311,6 +349,7 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -318,6 +357,7 @@ Notes:
 - `universalIdentifier` fields are deterministic IDs you own; generate them once and keep them stable across syncs.
 - `applicationVariables` become environment variables for your functions (for example, `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
 - `defaultRoleUniversalIdentifier` must match the role file (see below).
+- `postInstallLogicFunctionUniversalIdentifier` (optional) points to a logic function that runs automatically after the app is installed. See [Post-install functions](#post-install-functions).
 
 #### Roles and permissions
 
@@ -449,6 +489,54 @@ Common trigger types:
 Notes:
 - The `triggers` array is optional. Functions without triggers can be used as utility functions called by other functions.
 - You can mix multiple trigger types in a single function.
+
+### Post-install functions
+
+A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
+
+When you scaffold a new app with `create-twenty-app`, a post-install function is generated for you at `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+The function is wired into your app by referencing its universal identifier in `application-config.ts`:
+
+```typescript
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
+
+export default defineApplication({
+  // ...
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+});
+```
+
+You can also manually execute the post-install function at any time using the CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Key points:
+- Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
+- The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
+- The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
+- Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
 
 ### Route trigger payload
 
@@ -646,6 +734,40 @@ You can create new front components in two ways:
 - **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new front component.
 - **Manual**: Create a new `*.front-component.tsx` file and use `defineFrontComponent()`.
 
+### Skills
+
+Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
+
+```typescript
+// src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Key points:
+- `name` is a unique identifier string for the skill (kebab-case recommended).
+- `label` is the human-readable display name shown in the UI.
+- `content` contains the skill instructions — this is the text the AI agent uses.
+- `icon` (optional) sets the icon displayed in the UI.
+- `description` (optional) provides additional context about the skill's purpose.
+
+You can create new skills in two ways:
+
+- **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
+- **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
+
 ### Generated typed client
 
 The typed client is auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/generated` based on your workspace schema. Use it in your functions:
@@ -671,6 +793,51 @@ Notes:
 - The API key's permissions are determined by the role referenced in your `application-config.ts` via `defaultRoleUniversalIdentifier`. This is the default role used by logic functions of your application.
 - Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `defaultRoleUniversalIdentifier` to that role's universal identifier.
 
+#### Uploading files
+
+The generated `Twenty` client includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. Because standard GraphQL clients do not support multipart file uploads natively, the client provides this dedicated method that implements the [GraphQL multipart request specification](https://github.com/jaydenseric/graphql-multipart-request-spec) under the hood.
+
+```typescript
+import Twenty from '~/generated';
+import * as fs from 'fs';
+
+const client = new Twenty();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await client.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+The method signature:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fileBuffer` | `Buffer` | The raw file contents |
+| `filename` | `string` | The name of the file (used for storage and display) |
+| `contentType` | `string` | MIME type of the file (defaults to `application/octet-stream` if omitted) |
+| `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object |
+
+Key points:
+- The method sends the file to the **metadata endpoint** (not the main GraphQL endpoint), where the upload mutation is resolved.
+- It uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed — consistent with how apps reference fields everywhere else.
+- The returned `url` is a signed URL you can use to access the uploaded file.
 
 ### Hello World example
 

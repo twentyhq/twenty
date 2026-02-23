@@ -1,8 +1,8 @@
 import { useRecoilValue } from 'recoil';
 
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useEffect } from 'react';
+import { CommandMenuPages } from 'twenty-shared/types';
 
 type CommandMenuTopBarInputFocusEffectProps = {
   inputRef: React.RefObject<HTMLInputElement>;

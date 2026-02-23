@@ -8,6 +8,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -28,12 +29,12 @@ import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/Com
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
@@ -72,11 +73,11 @@ const meta: Meta<typeof CommandMenu> = {
   component: CommandMenuRouter,
   decorators: [
     (Story) => {
-      const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-      const setCurrentUserWorkspace = useSetRecoilState(
+      const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
+      const setCurrentUserWorkspace = useSetRecoilStateV2(
         currentUserWorkspaceState,
       );
-      const setCurrentWorkspaceMember = useSetRecoilState(
+      const setCurrentWorkspaceMember = useSetRecoilStateV2(
         currentWorkspaceMemberState,
       );
       const setIsCommandMenuOpened = useSetRecoilState(
@@ -138,7 +139,7 @@ export const LimitedPermissions: Story = {
   },
   decorators: [
     (Story) => {
-      const setCurrentUserWorkspace = useSetRecoilState(
+      const setCurrentUserWorkspace = useSetRecoilStateV2(
         currentUserWorkspaceState,
       );
       setCurrentUserWorkspace(

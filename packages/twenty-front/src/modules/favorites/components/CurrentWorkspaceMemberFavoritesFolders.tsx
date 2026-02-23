@@ -11,14 +11,16 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolderPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
   const { sortedFavorites: favorites } = useFavorites();
   const { favoritesByFolder } = useFavoritesByFolder();
 
@@ -29,12 +31,12 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
 
   const { t } = useLingui();
 
-  const {
-    toggleNavigationSection,
-    isNavigationSectionOpenState,
-    openNavigationSection,
-  } = useNavigationSection('Favorites');
-  const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
+  const { toggleNavigationSection, openNavigationSection } =
+    useNavigationSection('Favorites');
+  const isNavigationSectionOpen = useFamilyRecoilValueV2(
+    isNavigationSectionOpenFamilyState,
+    'Favorites',
+  );
 
   const toggleNewFolder = () => {
     openNavigationSection();

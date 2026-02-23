@@ -1,9 +1,13 @@
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
 import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
+import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-navigation-menu-item-template';
 import { convertToLabel } from '@/cli/utilities/entity/entity-label';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
+import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
+import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
+import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
@@ -13,10 +17,13 @@ import { SyncableEntity } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { getFieldBaseFile } from '@/cli/utilities/entity/entity-field-template';
+import { v4 } from 'uuid';
 
 const APP_FOLDER = 'src';
 
 export class EntityAddCommand {
+  private lastObjectUniversalIdentifier: string | undefined;
+
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
       const entity = entityType ?? (await this.getEntity());
@@ -46,6 +53,10 @@ export class EntityAddCommand {
         chalk.green(`✓ Created ${entityName}:`),
         chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, filePath)),
       );
+
+      if (entity === SyncableEntity.Object) {
+        await this.promptAndCreateViewAndNavigationMenuItem(name, path);
+      }
     } catch (error) {
       console.error(
         chalk.red(`Add new entity failed:`),
@@ -61,10 +72,14 @@ export class EntityAddCommand {
         const entityData = await this.getObjectData();
 
         const name = entityData.nameSingular;
+        const objectUniversalIdentifier = v4();
+
+        this.lastObjectUniversalIdentifier = objectUniversalIdentifier;
 
         const file = getObjectBaseFile({
           data: entityData,
           name,
+          universalIdentifier: objectUniversalIdentifier,
         });
 
         return { name, file };
@@ -113,9 +128,140 @@ export class EntityAddCommand {
         return { name, file };
       }
 
+      case SyncableEntity.Skill: {
+        const name = await this.getEntityName(entity);
+
+        const file = getSkillBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.View: {
+        const entityData = await this.getViewData();
+
+        const name = entityData.name;
+
+        const file = getViewBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.NavigationMenuItem: {
+        const name = await this.getEntityName(entity);
+
+        const file = getNavigationMenuItemBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.PageLayout: {
+        const name = await this.getEntityName(entity);
+
+        const file = getPageLayoutBaseFile({
+          name,
+        });
+        return { name, file };
+      }
+
       default:
         assertUnreachable(entity);
     }
+  }
+
+  private async promptAndCreateViewAndNavigationMenuItem(
+    objectName: string,
+    customPath?: string,
+  ): Promise<void> {
+    const { createViewAndNavItem } = await inquirer.prompt<{
+      createViewAndNavItem: boolean;
+    }>([
+      {
+        type: 'confirm',
+        name: 'createViewAndNavItem',
+        message:
+          'Also create a view and navigation menu item for this object? (recommended)',
+        default: true,
+      },
+    ]);
+
+    if (!createViewAndNavItem || !this.lastObjectUniversalIdentifier) {
+      return;
+    }
+
+    const viewUniversalIdentifier = v4();
+
+    const viewFile = getViewBaseFile({
+      name: `all-${kebabcase(objectName)}`,
+      universalIdentifier: viewUniversalIdentifier,
+      objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
+    });
+
+    const viewFolderPath = customPath
+      ? join(CURRENT_EXECUTION_DIRECTORY, customPath)
+      : join(
+          CURRENT_EXECUTION_DIRECTORY,
+          APP_FOLDER,
+          this.getFolderName(SyncableEntity.View),
+        );
+
+    await fs.ensureDir(viewFolderPath);
+
+    const viewFileName = `all-${kebabcase(objectName)}.ts`;
+    const viewFilePath = join(viewFolderPath, viewFileName);
+
+    if (await fs.pathExists(viewFilePath)) {
+      const { overwrite } = await this.handleFileExist();
+
+      if (!overwrite) {
+        return;
+      }
+    }
+
+    await fs.writeFile(viewFilePath, viewFile);
+
+    console.log(
+      chalk.green(`✓ Created view:`),
+      chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, viewFilePath)),
+    );
+
+    const navFile = getNavigationMenuItemBaseFile({
+      name: objectName,
+      viewUniversalIdentifier,
+    });
+
+    const navFolderPath = customPath
+      ? join(CURRENT_EXECUTION_DIRECTORY, customPath)
+      : join(
+          CURRENT_EXECUTION_DIRECTORY,
+          APP_FOLDER,
+          this.getFolderName(SyncableEntity.NavigationMenuItem),
+        );
+
+    await fs.ensureDir(navFolderPath);
+
+    const navFileName = `${kebabcase(objectName)}.ts`;
+    const navFilePath = join(navFolderPath, navFileName);
+
+    if (await fs.pathExists(navFilePath)) {
+      const { overwrite } = await this.handleFileExist();
+
+      if (!overwrite) {
+        return;
+      }
+    }
+
+    await fs.writeFile(navFilePath, navFile);
+
+    console.log(
+      chalk.green(`✓ Created navigation menu item:`),
+      chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, navFilePath)),
+    );
   }
 
   private async getEntity() {
@@ -281,6 +427,39 @@ export class EntityAddCommand {
         default: (answers: any) => {
           return convertToLabel(answers.namePlural);
         },
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+    ]);
+  }
+
+  private async getViewData() {
+    return inquirer.prompt<{
+      name: string;
+      objectUniversalIdentifier: string;
+    }>([
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Enter a name for your view:',
+        default: '',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'objectUniversalIdentifier',
+        message:
+          'Enter the universalIdentifier of the object this view belongs to:',
+        default: 'fill-later',
         validate: (input: string) => {
           if (!input || input.trim().length === 0) {
             return 'Please enter a non empty string';

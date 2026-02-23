@@ -10,10 +10,11 @@ import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRol
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   useFindManyAgentsQuery,
@@ -64,8 +65,10 @@ export const SettingsRoleAssignment = ({
       null,
     );
 
-  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMembers = useRecoilValueV2(
+    currentWorkspaceMembersState,
+  );
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
   const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
 
   const roleMaps = buildRoleMaps(settingsAllRoles);
@@ -85,7 +88,7 @@ export const SettingsRoleAssignment = ({
     setSelectRoleTarget(null);
   };
 
-  const isModalOpened = useRecoilComponentValue(
+  const isModalOpened = useRecoilComponentValueV2(
     isModalOpenedComponentState,
     ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID,
   );

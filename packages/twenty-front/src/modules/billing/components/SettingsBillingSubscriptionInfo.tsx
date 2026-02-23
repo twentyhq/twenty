@@ -29,8 +29,8 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useMemo, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   H2Title,
@@ -144,7 +144,7 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const [cancelSwitchMeteredPrice] = useCancelSwitchMeteredPriceMutation();
 
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
 
   const isTrialPeriod = subscriptionStatus === SubscriptionStatus.Trialing;
 

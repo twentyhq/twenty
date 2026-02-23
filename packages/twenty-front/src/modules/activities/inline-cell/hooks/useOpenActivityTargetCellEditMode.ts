@@ -1,5 +1,6 @@
 import { type ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
@@ -24,14 +25,13 @@ export const useOpenActivityTargetCellEditMode = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openActivityTargetCellEditMode = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       ({
         recordPickerInstanceId,
         activityTargetObjectRecords,
       }: OpenActivityTargetCellEditModeProps) => {
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue()
+        const objectMetadataItems = jotaiStore
+          .get(objectMetadataItemsState.atom)
           .filter(
             (objectMetadataItem) =>
               objectMetadataItem.isSearchable &&

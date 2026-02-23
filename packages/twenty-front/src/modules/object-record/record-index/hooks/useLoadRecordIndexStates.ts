@@ -4,6 +4,7 @@ import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-met
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -14,23 +15,26 @@ import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/obje
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { type View } from '@/views/types/View';
 import { type ViewField } from '@/views/types/ViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
+import { useStore } from 'jotai';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLoadRecordIndexStates = () => {
+  const store = useStore();
+
   const setContextStoreTargetedRecordsRuleComponentState =
     useSetRecoilComponentState(contextStoreTargetedRecordsRuleComponentState);
 
@@ -69,24 +73,20 @@ export const useLoadRecordIndexStates = () => {
     ({ set, snapshot }) =>
       (viewFields: ViewField[], objectMetadataItem: ObjectMetadataItem) => {
         const activeFieldMetadataItems = objectMetadataItem.fields.filter(
-          ({ isActive, isSystem }) => isActive && !isSystem,
+          (field) => field.isActive && !isHiddenSystemField(field),
         );
 
-        const filterableFieldMetadataItems = snapshot
-          .getLoadable(
-            availableFieldMetadataItemsForFilterFamilySelector({
-              objectMetadataItemId: objectMetadataItem.id,
-            }),
-          )
-          .getValue();
+        const filterableFieldMetadataItems = jotaiStore.get(
+          availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
+            objectMetadataItemId: objectMetadataItem.id,
+          }),
+        );
 
-        const sortableFieldMetadataItems = snapshot
-          .getLoadable(
-            availableFieldMetadataItemsForSortFamilySelector({
-              objectMetadataItemId: objectMetadataItem.id,
-            }),
-          )
-          .getValue();
+        const sortableFieldMetadataItems = jotaiStore.get(
+          availableFieldMetadataItemsForSortFamilySelector.selectorFamily({
+            objectMetadataItemId: objectMetadataItem.id,
+          }),
+        );
 
         const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
           activeFieldMetadataItems
@@ -173,79 +173,71 @@ export const useLoadRecordIndexStates = () => {
   );
 
   const loadRecordIndexStates = useRecoilCallback(
-    ({ snapshot }) =>
-      async (view: View, objectMetadataItem: ObjectMetadataItem) => {
-        const filterableFieldMetadataItems = snapshot
-          .getLoadable(
-            availableFieldMetadataItemsForFilterFamilySelector({
-              objectMetadataItemId: objectMetadataItem.id,
-            }),
-          )
-          .getValue();
+    () => async (view: View, objectMetadataItem: ObjectMetadataItem) => {
+      const filterableFieldMetadataItems = jotaiStore.get(
+        availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
+          objectMetadataItemId: objectMetadataItem.id,
+        }),
+      );
 
-        onViewFieldsChange(view.viewFields, objectMetadataItem);
+      onViewFieldsChange(view.viewFields, objectMetadataItem);
 
-        setRecordGroupsFromViewGroups({
-          viewId: view.id,
-          mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId ?? '',
-          viewGroups: view.viewGroups,
-          objectMetadataItem,
-        });
+      setRecordGroupsFromViewGroups({
+        viewId: view.id,
+        mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId ?? '',
+        viewGroups: view.viewGroups,
+        objectMetadataItem,
+      });
 
-        setContextStoreTargetedRecordsRuleComponentState((prev) => ({
-          ...prev,
-          filters: mapViewFiltersToFilters(
-            view.viewFilters,
-            filterableFieldMetadataItems,
-          ),
-        }));
+      setContextStoreTargetedRecordsRuleComponentState((prev) => ({
+        ...prev,
+        filters: mapViewFiltersToFilters(
+          view.viewFilters,
+          filterableFieldMetadataItems,
+        ),
+      }));
 
-        setRecordIndexViewType(view.type);
-        setRecordIndexOpenRecordIn(view.openRecordIn);
-        jotaiStore.set(recordIndexOpenRecordInStateV2.atom, view.openRecordIn);
+      setRecordIndexViewType(view.type);
+      setRecordIndexOpenRecordIn(view.openRecordIn);
+      store.set(recordIndexOpenRecordInStateV2.atom, view.openRecordIn);
 
-        setRecordIndexCalendarFieldMetadataIdState(
-          view.calendarFieldMetadataId ?? null,
+      setRecordIndexCalendarFieldMetadataIdState(
+        view.calendarFieldMetadataId ?? null,
+      );
+
+      setRecordIndexShouldHideEmptyRecordGroups(view.shouldHideEmptyGroups);
+
+      if (isDefined(view.mainGroupByFieldMetadataId)) {
+        const recordIndexGroupFieldMetadataItemId =
+          view.mainGroupByFieldMetadataId;
+
+        const { fieldMetadataItem: recordIndexGroupFieldMetadataItem } =
+          getFieldMetadataItemByIdOrThrow(recordIndexGroupFieldMetadataItemId);
+
+        setRecordIndexGroupFieldMetadataItem(recordIndexGroupFieldMetadataItem);
+      }
+
+      const recordIndexGroupAggregateFieldMetadataItem =
+        objectMetadataItem.fields?.find(
+          (field) => field.id === view.kanbanAggregateOperationFieldMetadataId,
         );
 
-        setRecordIndexShouldHideEmptyRecordGroups(view.shouldHideEmptyGroups);
-
-        if (isDefined(view.mainGroupByFieldMetadataId)) {
-          const recordIndexGroupFieldMetadataItemId =
-            view.mainGroupByFieldMetadataId;
-
-          const { fieldMetadataItem: recordIndexGroupFieldMetadataItem } =
-            getFieldMetadataItemByIdOrThrow(
-              recordIndexGroupFieldMetadataItemId,
-            );
-
-          setRecordIndexGroupFieldMetadataItem(
-            recordIndexGroupFieldMetadataItem,
-          );
-        }
-
-        const recordIndexGroupAggregateFieldMetadataItem =
-          objectMetadataItem.fields?.find(
-            (field) =>
-              field.id === view.kanbanAggregateOperationFieldMetadataId,
+      if (isDefined(view.kanbanAggregateOperation)) {
+        const convertedAggregateOperation =
+          convertAggregateOperationToExtendedAggregateOperation(
+            view.kanbanAggregateOperation,
+            recordIndexGroupAggregateFieldMetadataItem?.type,
           );
 
-        if (isDefined(view.kanbanAggregateOperation)) {
-          const convertedAggregateOperation =
-            convertAggregateOperationToExtendedAggregateOperation(
-              view.kanbanAggregateOperation,
-              recordIndexGroupAggregateFieldMetadataItem?.type,
-            );
+        setRecordIndexGroupAggregateOperation(convertedAggregateOperation);
+      }
 
-          setRecordIndexGroupAggregateOperation(convertedAggregateOperation);
-        }
-
-        if (isDefined(recordIndexGroupAggregateFieldMetadataItem)) {
-          setRecordIndexGroupAggregateFieldMetadataItem(
-            recordIndexGroupAggregateFieldMetadataItem,
-          );
-        }
-      },
+      if (isDefined(recordIndexGroupAggregateFieldMetadataItem)) {
+        setRecordIndexGroupAggregateFieldMetadataItem(
+          recordIndexGroupAggregateFieldMetadataItem,
+        );
+      }
+    },
     [
       onViewFieldsChange,
       setRecordGroupsFromViewGroups,
@@ -258,6 +250,7 @@ export const useLoadRecordIndexStates = () => {
       setRecordIndexGroupAggregateOperation,
       getFieldMetadataItemByIdOrThrow,
       setRecordIndexGroupFieldMetadataItem,
+      store,
     ],
   );
 

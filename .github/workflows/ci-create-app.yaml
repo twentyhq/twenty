@@ -25,7 +25,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     strategy:
       matrix:
         task: [lint, typecheck, test]
@@ -50,7 +50,7 @@ jobs:
   ci-create-app-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     needs: [changed-files-check, create-app-test]
     steps:
       - name: Fail job if any needs failed

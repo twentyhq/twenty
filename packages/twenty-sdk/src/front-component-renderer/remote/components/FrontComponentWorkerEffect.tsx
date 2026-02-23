@@ -56,6 +56,14 @@ export const FrontComponentWorkerEffect = ({
           frontComponentHostCommunicationApiRef.current.navigate(...args),
         requestAccessTokenRefresh: () =>
           frontComponentHostCommunicationApiRef.current.requestAccessTokenRefresh(),
+        openSidePanelPage: (...args) =>
+          frontComponentHostCommunicationApiRef.current.openSidePanelPage(...args),
+        unmountFrontComponent: () =>
+          frontComponentHostCommunicationApiRef.current.unmountFrontComponent(),
+        enqueueSnackbar: (...args) =>
+          frontComponentHostCommunicationApiRef.current.enqueueSnackbar(...args),
+        closeSidePanel: () =>
+          frontComponentHostCommunicationApiRef.current.closeSidePanel(),
       };
 
     const thread = new ThreadWebWorker<
@@ -64,6 +72,7 @@ export const FrontComponentWorkerEffect = ({
     >(worker, {
       exports: stableFrontComponentHostCommunicationApi,
     });
+
     setThread(thread);
     setReceiver(newReceiver);
     let isEffectCancelled = false;

@@ -1,10 +1,10 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import {
@@ -23,26 +23,41 @@ jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: () => ({ records: initialFavorites }),
 }));
 
+jest.mock(
+  '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData',
+  () => ({
+    usePrefetchedNavigationMenuItemsData: () => ({
+      navigationMenuItems: [],
+      workspaceNavigationMenuItems: [],
+      currentWorkspaceMemberId: '1',
+    }),
+  }),
+);
+
+jest.mock('@/favorites/hooks/usePrefetchedFavoritesFoldersData', () => ({
+  usePrefetchedFavoritesFoldersData: () => ({
+    favoriteFolders: [],
+  }),
+}));
+
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 
 describe('useCreateFavorite', () => {
-  it('should create favorite successfully', async () => {
-    const { result } = renderHook(
-      () => {
-        const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState,
-        );
-        setCurrentWorkspaceMember(mockWorkspaceMember);
-
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(generatedMockObjectMetadataItems);
-
-        return useCreateFavorite();
-      },
-      { wrapper: Wrapper },
+  beforeEach(() => {
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
     );
+  });
+
+  it('should create favorite successfully', async () => {
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockWorkspaceMember);
+
+    const { result } = renderHook(() => useCreateFavorite(), {
+      wrapper: Wrapper,
+    });
 
     result.current.createFavorite(
       favoriteTargetObjectRecord,

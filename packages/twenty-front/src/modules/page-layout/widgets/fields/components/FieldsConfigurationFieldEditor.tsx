@@ -15,7 +15,7 @@ export const FieldsConfigurationFieldEditor = ({
   onToggleVisibility,
 }: FieldsConfigurationFieldEditorProps) => {
   const { getIcon } = useIcons();
-  const isVisible = field.conditionalDisplay !== false;
+  const isVisible = field.isVisible ?? true;
   const FieldIcon = getIcon(fieldMetadata.icon);
 
   return (

@@ -11,7 +11,11 @@ import {
 import { createTypecheckPlugin } from '@/cli/utilities/build/common/typecheck-plugin';
 import * as esbuild from 'esbuild';
 import path from 'path';
-import { OUTPUT_DIR, NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
+import {
+  OUTPUT_DIR,
+  NODE_ESM_CJS_BANNER,
+  GENERATED_DIR,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
@@ -199,7 +203,7 @@ const createSdkGeneratedResolverPlugin = (appPath: string): esbuild.Plugin => ({
         appPath,
         'node_modules',
         'twenty-sdk',
-        'generated',
+        GENERATED_DIR,
         'index.ts',
       ),
     }));

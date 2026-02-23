@@ -1,41 +1,42 @@
 import { InMemoryCache, type NormalizedCacheObject } from '@apollo/client';
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 
+import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { appVersionState } from '@/client-config/states/appVersionState';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { AppPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
-
-import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { appVersionState } from '@/client-config/states/appVersionState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line twenty/no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
 
   const navigate = useNavigate();
-  const setTokenPair = useSetRecoilState(tokenPairState);
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+  const setTokenPair = useSetRecoilStateV2(tokenPairState);
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
     currentWorkspaceState,
   );
   const appVersion = useRecoilValueV2(appVersionState);
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilStateV2(
     currentWorkspaceMemberState,
   );
-  const setCurrentUser = useSetRecoilState(currentUserState);
-  const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
+  const setCurrentUser = useSetRecoilStateV2(currentUserState);
+  const setCurrentUserWorkspace = useSetRecoilStateV2(
+    currentUserWorkspaceState,
+  );
 
   const setPreviousUrl = useSetRecoilStateV2(previousUrlState);
   const location = useLocation();
@@ -66,8 +67,6 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         setTokenPair(tokenPair);
       },
       onUnauthenticatedError: () => {
-        // eslint-disable-next-line no-console
-        console.log('onUnauthenticatedError, resetting state');
         setTokenPair(null);
         setCurrentUser(null);
         setCurrentWorkspaceMember(null);

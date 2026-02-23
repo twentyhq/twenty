@@ -1,4 +1,3 @@
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -12,7 +11,7 @@ export const useNavigationMenuItemsDraftState = () => {
   const isNavigationMenuInEditMode = useRecoilValueV2(
     isNavigationMenuInEditModeStateV2,
   );
-  const prefetchNavigationMenuItems = useRecoilValue(
+  const prefetchNavigationMenuItems = useRecoilValueV2(
     prefetchNavigationMenuItemsState,
   );
   const navigationMenuItemsDraft = useRecoilValueV2(

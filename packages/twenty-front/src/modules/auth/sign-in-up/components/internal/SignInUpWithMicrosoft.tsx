@@ -9,9 +9,10 @@ import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
 
@@ -25,10 +26,9 @@ export const SignInUpWithMicrosoft = ({
   const theme = useTheme();
   const { t } = useLingui();
 
-  const signInUpStep = useRecoilValue(signInUpStepState);
-  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useRecoilState(
-    lastAuthenticatedMethodState,
-  );
+  const signInUpStep = useRecoilValueV2(signInUpStepState);
+  const [lastAuthenticatedMethod, setLastAuthenticatedMethod] =
+    useRecoilStateV2(lastAuthenticatedMethodState);
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
   const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 

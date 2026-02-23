@@ -1,13 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IsIn, IsNotEmpty } from 'class-validator';
+import { type WorkflowVersionConfiguration } from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { PageLayoutWidgetConfigurationBase } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configurationt-base.type';
 
 @ObjectType('WorkflowVersionConfiguration')
 export class WorkflowVersionConfigurationDTO
-  implements PageLayoutWidgetConfigurationBase
+  implements WorkflowVersionConfiguration
 {
   @Field(() => WidgetConfigurationType)
   @IsIn([WidgetConfigurationType.WORKFLOW_VERSION])

@@ -19,6 +19,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import {
   AgentException,
   AgentExceptionCode,
@@ -185,6 +186,10 @@ export class AgentAsyncExecutorService {
         },
       });
 
+      const cacheCreationTokens = extractCacheCreationTokensFromSteps(
+        textResponse.steps,
+      );
+
       const agentSchema =
         agent?.responseFormat?.type === 'json'
           ? agent.responseFormat.schema
@@ -194,6 +199,7 @@ export class AgentAsyncExecutorService {
         return {
           result: { response: textResponse.text },
           usage: textResponse.usage,
+          cacheCreationTokens,
         };
       }
 
@@ -222,6 +228,7 @@ export class AgentAsyncExecutorService {
             (textResponse.usage?.totalTokens ?? 0) +
             (output.usage?.totalTokens ?? 0),
         },
+        cacheCreationTokens,
       };
     } catch (error) {
       if (error instanceof AgentException) {

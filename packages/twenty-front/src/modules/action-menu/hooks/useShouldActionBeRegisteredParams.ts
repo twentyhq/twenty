@@ -16,9 +16,11 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useContext, useMemo } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useCallback, useContext, useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -29,8 +31,8 @@ export const useShouldActionBeRegisteredParams = ({
 }): ShouldBeRegisteredFunctionParams => {
   const { sortedFavorites: favorites } = useFavorites();
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
@@ -47,7 +49,7 @@ export const useShouldActionBeRegisteredParams = ({
       return false;
     }
 
-    if (isNavigationMenuItemEnabled && isDefined(objectMetadataItem)) {
+    if (isNavigationMenuItemEditingEnabled && isDefined(objectMetadataItem)) {
       const foundNavigationMenuItem = navigationMenuItems?.find(
         (item) =>
           item.targetRecordId === recordId &&
@@ -62,7 +64,7 @@ export const useShouldActionBeRegisteredParams = ({
     return !!foundFavorite;
   }, [
     recordId,
-    isNavigationMenuItemEnabled,
+    isNavigationMenuItemEditingEnabled,
     objectMetadataItem,
     navigationMenuItems,
     favorites,
@@ -104,31 +106,25 @@ export const useShouldActionBeRegisteredParams = ({
 
   const isSelectAll = contextStoreTargetedRecordsRule.mode === 'exclusion';
 
-  const getObjectReadPermission = useRecoilCallback(
-    ({ snapshot }) =>
-      (objectMetadataNameSingular: string) => {
-        return snapshot
-          .getLoadable(
-            objectPermissionsFamilySelector({
-              objectNameSingular: objectMetadataNameSingular,
-            }),
-          )
-          .getValue().canRead;
-      },
+  const getObjectReadPermission = useCallback(
+    (objectMetadataNameSingular: string) => {
+      return jotaiStore.get(
+        objectPermissionsFamilySelector.selectorFamily({
+          objectNameSingular: objectMetadataNameSingular,
+        }),
+      ).canRead;
+    },
     [],
   );
 
-  const getObjectWritePermission = useRecoilCallback(
-    ({ snapshot }) =>
-      (objectMetadataNameSingular: string) => {
-        return snapshot
-          .getLoadable(
-            objectPermissionsFamilySelector({
-              objectNameSingular: objectMetadataNameSingular,
-            }),
-          )
-          .getValue().canUpdate;
-      },
+  const getObjectWritePermission = useCallback(
+    (objectMetadataNameSingular: string) => {
+      return jotaiStore.get(
+        objectPermissionsFamilySelector.selectorFamily({
+          objectNameSingular: objectMetadataNameSingular,
+        }),
+      ).canUpdate;
+    },
     [],
   );
 
@@ -136,7 +132,7 @@ export const useShouldActionBeRegisteredParams = ({
     forceRegisteredActionsByKeyState,
   );
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
 
   const isFeatureFlagEnabled = (featureFlagKey: FeatureFlagKey) => {
     const featureFlag = currentWorkspace?.featureFlags?.find(

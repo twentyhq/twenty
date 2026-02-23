@@ -1,4 +1,3 @@
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -9,6 +8,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
 
@@ -19,8 +19,8 @@ type NavigationMenuItemFolder = {
 };
 
 export const useNavigationMenuItemsByFolder = () => {
-  const coreViews = useRecoilValue(coreViewsState);
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const coreViews = useRecoilValueV2(coreViewsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();

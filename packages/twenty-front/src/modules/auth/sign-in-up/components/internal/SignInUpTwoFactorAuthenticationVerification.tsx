@@ -18,11 +18,12 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 const StyledMainContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -186,8 +187,8 @@ export const SignInUpTOTPVerification = () => {
   const navigate = useNavigateApp();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { isCaptchaReady } = useCaptcha();
-  const loginToken = useRecoilValue(loginTokenState);
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
+  const loginToken = useRecoilValueV2(loginTokenState);
+  const setSignInUpStep = useSetRecoilStateV2(signInUpStepState);
   const { t } = useLingui();
 
   const { form } = useTwoFactorAuthenticationForm();

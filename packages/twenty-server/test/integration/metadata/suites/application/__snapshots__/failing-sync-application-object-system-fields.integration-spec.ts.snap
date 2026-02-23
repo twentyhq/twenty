@@ -1,0 +1,391 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Sync application should fail due to object system fields integrity should fail when trying to delete a system field after a successful sync 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_MUTATION_NOT_ALLOWED",
+              "message": "System fields cannot be deleted",
+              "userFriendlyMessage": "System fields cannot be deleted",
+            },
+            {
+              "code": "FIELD_MUTATION_NOT_ALLOWED",
+              "message": "Cannot delete, please update the label identifier field first",
+              "userFriendlyMessage": "Cannot delete, please update the label identifier field first",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "id",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "delete",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail due to object system fields integrity should fail when trying to update a system field after a successful sync 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_MUTATION_NOT_ALLOWED",
+              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: label",
+              "userFriendlyMessage": "System fields cannot be updated",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "id",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail due to object system fields integrity when object has createdAt field with wrong type (TEXT instead of DATE_TIME) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "title",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Field to create related object not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "createdAt",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Names are not synced with labels",
+              "userFriendlyMessage": "Names are not synced with labels",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "namePlural": "wrongCreatedAtObjects",
+            "nameSingular": "wrongCreatedAtObject",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "objectMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 2 fieldMetadatas, 1 objectMetadata",
+    "summary": {
+      "fieldMetadata": 2,
+      "objectMetadata": 1,
+      "totalErrors": 3,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail due to object system fields integrity when object has id field with wrong type (TEXT instead of UUID) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_SYSTEM_FIELD",
+              "message": "System field id has invalid type: expected UUID, got TEXT",
+              "userFriendlyMessage": "System field id has invalid type",
+              "value": "TEXT",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field createdAt is missing",
+              "userFriendlyMessage": "System field createdAt is missing",
+              "value": "createdAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field updatedAt is missing",
+              "userFriendlyMessage": "System field updatedAt is missing",
+              "value": "updatedAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field deletedAt is missing",
+              "userFriendlyMessage": "System field deletedAt is missing",
+              "value": "deletedAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field createdBy is missing",
+              "userFriendlyMessage": "System field createdBy is missing",
+              "value": "createdBy",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field updatedBy is missing",
+              "userFriendlyMessage": "System field updatedBy is missing",
+              "value": "updatedBy",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field position is missing",
+              "userFriendlyMessage": "System field position is missing",
+              "value": "position",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field searchVector is missing",
+              "userFriendlyMessage": "System field searchVector is missing",
+              "value": "searchVector",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "namePlural": "wrongIdTypeObjects",
+            "nameSingular": "wrongIdTypeObject",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "objectMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 objectMetadata",
+    "summary": {
+      "objectMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail due to object system fields integrity when object has position field with wrong type (TEXT instead of POSITION) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field id is missing",
+              "userFriendlyMessage": "System field id is missing",
+              "value": "id",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field createdAt is missing",
+              "userFriendlyMessage": "System field createdAt is missing",
+              "value": "createdAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field updatedAt is missing",
+              "userFriendlyMessage": "System field updatedAt is missing",
+              "value": "updatedAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field deletedAt is missing",
+              "userFriendlyMessage": "System field deletedAt is missing",
+              "value": "deletedAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field createdBy is missing",
+              "userFriendlyMessage": "System field createdBy is missing",
+              "value": "createdBy",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field updatedBy is missing",
+              "userFriendlyMessage": "System field updatedBy is missing",
+              "value": "updatedBy",
+            },
+            {
+              "code": "INVALID_SYSTEM_FIELD",
+              "message": "System field position has invalid type: expected POSITION, got TEXT",
+              "userFriendlyMessage": "System field position has invalid type",
+              "value": "TEXT",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field searchVector is missing",
+              "userFriendlyMessage": "System field searchVector is missing",
+              "value": "searchVector",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "namePlural": "wrongPositionObjects",
+            "nameSingular": "wrongPositionObject",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "objectMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 objectMetadata",
+    "summary": {
+      "objectMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail due to object system fields integrity when object is created without any system fields (missing all 8 system fields) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field id is missing",
+              "userFriendlyMessage": "System field id is missing",
+              "value": "id",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field createdAt is missing",
+              "userFriendlyMessage": "System field createdAt is missing",
+              "value": "createdAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field updatedAt is missing",
+              "userFriendlyMessage": "System field updatedAt is missing",
+              "value": "updatedAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field deletedAt is missing",
+              "userFriendlyMessage": "System field deletedAt is missing",
+              "value": "deletedAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field createdBy is missing",
+              "userFriendlyMessage": "System field createdBy is missing",
+              "value": "createdBy",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field updatedBy is missing",
+              "userFriendlyMessage": "System field updatedBy is missing",
+              "value": "updatedBy",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field position is missing",
+              "userFriendlyMessage": "System field position is missing",
+              "value": "position",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field searchVector is missing",
+              "userFriendlyMessage": "System field searchVector is missing",
+              "value": "searchVector",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "namePlural": "noSystemFieldsObjects",
+            "nameSingular": "noSystemFieldsObject",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "objectMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 objectMetadata",
+    "summary": {
+      "objectMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

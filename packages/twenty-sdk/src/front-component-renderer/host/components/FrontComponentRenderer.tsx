@@ -1,8 +1,8 @@
 import { FrontComponentErrorEffect } from '@/front-component-renderer/remote/components/FrontComponentErrorEffect';
 import { FrontComponentUpdateContextEffect } from '@/front-component-renderer/remote/components/FrontComponentUpdateContextEffect';
-import { type FrontComponentExecutionContext } from '@/front-component-renderer/types/FrontComponentExecutionContext';
 import { type FrontComponentHostCommunicationApi } from '@/front-component-renderer/types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '@/front-component-renderer/types/WorkerExports';
+import { type FrontComponentExecutionContext } from '@/sdk/front-component-api';
 import { type ThreadWebWorker } from '@quilted/threads';
 import {
   type RemoteReceiver,
@@ -41,6 +41,8 @@ export const FrontComponentRenderer = ({
     FrontComponentHostCommunicationApi
   > | null>(null);
   const [error, setError] = useState<Error | null>(null);
+  const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
+    useState(false);
 
   return (
     <>
@@ -82,11 +84,14 @@ export const FrontComponentRenderer = ({
           <FrontComponentUpdateContextEffect
             thread={thread}
             executionContext={executionContext}
+            onExecutionContextInitialized={() =>
+              setIsExecutionContextInitialized(true)
+            }
           />
         </>
       )}
 
-      {isDefined(receiver) && (
+      {isDefined(receiver) && isExecutionContextInitialized && (
         <ThemeProvider theme={theme}>
           <RemoteRootRenderer
             receiver={receiver}

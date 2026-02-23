@@ -14,9 +14,12 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useStore } from 'jotai';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 
 export const useGetBrowsingContext = () => {
+  const store = useStore();
+
   const getBrowsingContext = useRecoilCallback(
     ({ snapshot }) =>
       (): BrowsingContext | null => {
@@ -38,9 +41,7 @@ export const useGetBrowsingContext = () => {
           )
           .getValue();
 
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+        const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
         const objectMetadataItem = objectMetadataItems.find(
           (item) => item.id === objectMetadataItemId,
@@ -84,13 +85,11 @@ export const useGetBrowsingContext = () => {
           if (isDefined(pageLayoutId)) {
             const tabListInstanceId =
               getTabListInstanceIdFromPageLayoutId(pageLayoutId);
-            const activeTabId = snapshot
-              .getLoadable(
-                activeTabIdComponentState.atomFamily({
-                  instanceId: tabListInstanceId,
-                }),
-              )
-              .getValue();
+            const activeTabId = store.get(
+              activeTabIdComponentState.atomFamily({
+                instanceId: tabListInstanceId,
+              }),
+            );
 
             return {
               ...recordContext,
@@ -114,13 +113,11 @@ export const useGetBrowsingContext = () => {
             )
             .getValue();
 
-          const currentView = snapshot
-            .getLoadable(
-              coreViewFromViewIdFamilySelector({
-                viewId: currentViewId ?? '',
-              }),
-            )
-            .getValue();
+          const currentView = store.get(
+            coreViewFromViewIdFamilySelector.selectorFamily({
+              viewId: currentViewId ?? '',
+            }),
+          );
 
           if (!currentView) {
             return null;
@@ -154,7 +151,7 @@ export const useGetBrowsingContext = () => {
 
         return null;
       },
-    [],
+    [store],
   );
 
   return { getBrowsingContext };

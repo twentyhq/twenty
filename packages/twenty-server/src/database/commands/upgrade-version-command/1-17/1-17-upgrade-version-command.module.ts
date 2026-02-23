@@ -7,10 +7,10 @@ import { FixMorphRelationFieldNamesCommand } from 'src/database/commands/upgrade
 import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-identify-webhook-metadata.command';
 import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
+import { MigrateDateTimeIsFilterValuesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-date-time-is-filter-values.command';
 import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
 import { MigrateSendEmailRecipientsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-send-email-recipients.command';
 import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
-import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-workflow-code-steps.command';
 import { SeedWorkflowV1_16Command } from 'src/database/commands/upgrade-version-command/1-17/1-17-seed-workflow-v1-16.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -24,9 +24,9 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
@@ -49,6 +49,7 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
       NoteTargetWorkspaceEntity,
       TaskTargetWorkspaceEntity,
       FileEntity,
+      ViewFilterEntity,
       LogicFunctionEntity,
     ]),
     DataSourceModule,
@@ -62,7 +63,6 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     ApplicationModule,
     UserWorkspaceModule,
     WorkspaceMigrationModule,
-    LogicFunctionModule,
     RecordPositionModule,
     GlobalWorkspaceDataSourceModule,
   ],
@@ -75,7 +75,7 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     DeleteFileRecordsAndUpdateTableCommand,
     MigrateSendEmailRecipientsCommand,
-    MigrateWorkflowCodeStepsCommand,
+    MigrateDateTimeIsFilterValuesCommand,
     SeedWorkflowV1_16Command,
     BackfillApplicationPackageFilesCommand,
   ],
@@ -87,8 +87,8 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     IdentifyWebhookMetadataCommand,
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     MigrateSendEmailRecipientsCommand,
+    MigrateDateTimeIsFilterValuesCommand,
     DeleteFileRecordsAndUpdateTableCommand,
-    MigrateWorkflowCodeStepsCommand,
     SeedWorkflowV1_16Command,
     BackfillApplicationPackageFilesCommand,
   ],

@@ -3,6 +3,8 @@ import { join } from 'path';
 import { v4 } from 'uuid';
 import { ASSETS_DIR } from 'twenty-shared/application';
 
+import { type ExampleOptions } from '@/types/scaffolding-options';
+
 const SRC_FOLDER = 'src';
 
 export const copyBaseApplicationProject = async ({
@@ -10,11 +12,13 @@ export const copyBaseApplicationProject = async ({
   appDisplayName,
   appDescription,
   appDirectory,
+  exampleOptions,
 }: {
   appName: string;
   appDisplayName: string;
   appDescription: string;
   appDirectory: string;
+  exampleOptions: ExampleOptions;
 }) => {
   await fs.copy(join(__dirname, './constants/base-application'), appDirectory);
 
@@ -37,16 +41,66 @@ export const copyBaseApplicationProject = async ({
     fileName: 'default-role.ts',
   });
 
-  await createDefaultFrontComponent({
-    appDirectory: sourceFolderPath,
-    fileFolder: 'front-components',
-    fileName: 'hello-world.tsx',
-  });
+  if (exampleOptions.includeExampleObject) {
+    await createExampleObject({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'objects',
+      fileName: 'example-object.ts',
+    });
+  }
 
-  await createDefaultFunction({
+  if (exampleOptions.includeExampleField) {
+    await createExampleField({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'fields',
+      fileName: 'example-field.ts',
+    });
+  }
+
+  if (exampleOptions.includeExampleLogicFunction) {
+    await createDefaultFunction({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'logic-functions',
+      fileName: 'hello-world.ts',
+    });
+  }
+
+  if (exampleOptions.includeExampleFrontComponent) {
+    await createDefaultFrontComponent({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'front-components',
+      fileName: 'hello-world.tsx',
+    });
+  }
+
+  if (exampleOptions.includeExampleView) {
+    await createExampleView({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'views',
+      fileName: 'example-view.ts',
+    });
+  }
+
+  if (exampleOptions.includeExampleNavigationMenuItem) {
+    await createExampleNavigationMenuItem({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'navigation-menu-items',
+      fileName: 'example-navigation-menu-item.ts',
+    });
+  }
+
+  if (exampleOptions.includeExampleSkill) {
+    await createExampleSkill({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'skills',
+      fileName: 'example-skill.ts',
+    });
+  }
+
+  await createDefaultPostInstallFunction({
     appDirectory: sourceFolderPath,
     fileFolder: 'logic-functions',
-    fileName: 'hello-world.ts',
+    fileName: 'post-install.ts',
   });
 
   await createApplicationConfig({
@@ -196,7 +250,6 @@ const handler = async (): Promise<{ message: string }> => {
   return { message: 'Hello, World!' };
 };
 
-// Logic function handler - rename and implement your logic
 export default defineLogicFunction({
   universalIdentifier: '${universalIdentifier}',
   name: 'hello-world-logic-function',
@@ -208,6 +261,200 @@ export default defineLogicFunction({
     httpMethod: 'GET',
     isAuthRequired: false,
   },
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createDefaultPostInstallFunction = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineLogicFunction } from 'twenty-sdk';
+
+export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '${universalIdentifier}';
+
+const handler = async (): Promise<void> => {
+  console.log('Post install logic function executed successfully!');
+};
+
+export default defineLogicFunction({
+  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createExampleObject = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const objectUniversalIdentifier = v4();
+  const nameFieldUniversalIdentifier = v4();
+
+  const content = `import { defineObject, FieldType } from 'twenty-sdk';
+
+export const EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER =
+  '${objectUniversalIdentifier}';
+
+export const NAME_FIELD_UNIVERSAL_IDENTIFIER =
+  '${nameFieldUniversalIdentifier}';
+
+export default defineObject({
+  universalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  nameSingular: 'exampleItem',
+  namePlural: 'exampleItems',
+  labelSingular: 'Example item',
+  labelPlural: 'Example items',
+  description: 'A sample custom object',
+  icon: 'IconBox',
+  labelIdentifierFieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  fields: [
+    {
+      universalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      description: 'Name of the example item',
+      icon: 'IconAbc',
+    },
+  ],
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createExampleField = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineField, FieldType } from 'twenty-sdk';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
+
+export default defineField({
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: '${universalIdentifier}',
+  type: FieldType.NUMBER,
+  name: 'priority',
+  label: 'Priority',
+  description: 'Priority level for the example item (1-10)',
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createExampleView = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineView } from 'twenty-sdk';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
+
+export default defineView({
+  universalIdentifier: '${universalIdentifier}',
+  name: 'example-view',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createExampleNavigationMenuItem = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineNavigationMenuItem } from 'twenty-sdk';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '${universalIdentifier}',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  position: 0,
+  // Link to a view:
+  // viewUniversalIdentifier: '...',
+  // Or link to an object:
+  // targetObjectUniversalIdentifier: '...',
+  // Or link to an external URL:
+  // link: 'https://example.com',
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createExampleSkill = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineSkill } from 'twenty-sdk';
+
+export const EXAMPLE_SKILL_UNIVERSAL_IDENTIFIER =
+  '${universalIdentifier}';
+
+export default defineSkill({
+  universalIdentifier: EXAMPLE_SKILL_UNIVERSAL_IDENTIFIER,
+  name: 'example-skill',
+  label: 'Example Skill',
+  description: 'A sample skill for your application',
+  icon: 'IconBrain',
+  content: 'Add your skill instructions here. Skills provide context and capabilities to AI agents.',
 });
 `;
 
@@ -230,12 +477,14 @@ const createApplicationConfig = async ({
 }) => {
   const content = `import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '${v4()}',
   displayName: '${displayName}',
   description: '${description ?? ''}',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 `;
 

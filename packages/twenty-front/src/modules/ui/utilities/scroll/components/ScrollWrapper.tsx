@@ -5,7 +5,7 @@ import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/sta
 import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollBottomComponentState';
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 
 const StyledScrollWrapper = styled.div`
   &.scroll-wrapper-x-enabled {
@@ -35,17 +35,17 @@ export const ScrollWrapper = ({
   defaultEnableXScroll = true,
   defaultEnableYScroll = true,
 }: ScrollWrapperProps) => {
-  const setScrollTop = useSetRecoilComponentState(
+  const setScrollTop = useSetRecoilComponentStateV2(
     scrollWrapperScrollTopComponentState,
     componentInstanceId,
   );
 
-  const setScrollLeft = useSetRecoilComponentState(
+  const setScrollLeft = useSetRecoilComponentStateV2(
     scrollWrapperScrollLeftComponentState,
     componentInstanceId,
   );
 
-  const setScrollBottom = useSetRecoilComponentState(
+  const setScrollBottom = useSetRecoilComponentStateV2(
     scrollWrapperScrollBottomComponentState,
     componentInstanceId,
   );

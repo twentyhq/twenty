@@ -5,7 +5,9 @@ import { type FrontComponentManifest } from './frontComponentManifestType';
 import { type LogicFunctionManifest } from './logicFunctionManifestType';
 import { type NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 import { type ObjectManifest } from './objectManifestType';
+import { type PageLayoutManifest } from './pageLayoutManifestType';
 import { type RoleManifest } from './roleManifestType';
+import { type SkillManifest } from './skillManifestType';
 import { type ViewManifest } from './viewManifestType';
 
 export type Manifest = {
@@ -15,7 +17,9 @@ export type Manifest = {
   logicFunctions: LogicFunctionManifest[];
   frontComponents: FrontComponentManifest[];
   roles: RoleManifest[];
+  skills: SkillManifest[];
   publicAssets: AssetManifest[];
   views: ViewManifest[];
   navigationMenuItems: NavigationMenuItemManifest[];
+  pageLayouts: PageLayoutManifest[];
 };

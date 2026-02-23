@@ -4,7 +4,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
@@ -26,7 +26,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set }) =>
       ({
         objectMetadataItem,
         recordId,
@@ -34,9 +34,8 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
         objectMetadataItem: ObjectMetadataItem;
         recordId: string;
       }) => {
-        const objectMetadataItems = getSnapshotValue(
-          snapshot,
-          objectMetadataItemsState,
+        const objectMetadataItems = jotaiStore.get(
+          objectMetadataItemsState.atom,
         );
 
         const workflowRunRecord = getRecordFromCache<WorkflowRun>({

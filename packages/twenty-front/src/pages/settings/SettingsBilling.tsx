@@ -1,7 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SettingsBillingContent } from '@/billing/components/SettingsBillingContent';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -11,7 +10,7 @@ import { usePlans } from '@/billing/hooks/usePlans';
 export const SettingsBilling = () => {
   const { t } = useLingui();
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
 
   const { isPlansLoaded } = usePlans();
 

@@ -416,6 +416,39 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  messageChannelMessageAssociationMessageFolder: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'messageChannelMessageAssociationMessageFolder'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'messageChannelMessageAssociationMessageFolder',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.messageChannelMessageAssociationMessageFolder
+            .universalIdentifier,
+        nameSingular: 'messageChannelMessageAssociationMessageFolder',
+        namePlural: 'messageChannelMessageAssociationMessageFolders',
+        labelSingular: 'Message Channel Message Association Message Folder',
+        labelPlural: 'Message Channel Message Association Message Folders',
+        description:
+          'Join table linking message channel message associations to message folders',
+        icon: 'IconFolder',
+        isSystem: true,
+        isAuditLogged: false,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   messageParticipant: ({
     now,
     workspaceId,

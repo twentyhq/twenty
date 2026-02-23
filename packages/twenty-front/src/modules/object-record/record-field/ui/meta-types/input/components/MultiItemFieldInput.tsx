@@ -17,7 +17,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -77,7 +77,7 @@ export const MultiItemFieldInput = <T,>({
     RecordFieldComponentInstanceContext,
   );
 
-  const currentFocusedItem = useRecoilValue(currentFocusedItemSelector);
+  const currentFocusedItem = useRecoilValueV2(currentFocusedItemSelector);
 
   useListenClickOutside({
     refs: [containerRef],

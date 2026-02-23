@@ -7,9 +7,9 @@ import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLast
 import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 
 type MainContextStoreProviderEffectProps = {
   viewId?: string;
@@ -52,11 +52,9 @@ export const MainContextStoreProviderEffect = ({
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const view = useRecoilValue(
-    coreViewFromViewIdFamilySelector({
-      viewId: viewId ?? '',
-    }),
-  );
+  const view = useFamilySelectorValueV2(coreViewFromViewIdFamilySelector, {
+    viewId: viewId ?? '',
+  });
 
   useEffect(() => {
     if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem?.id) {

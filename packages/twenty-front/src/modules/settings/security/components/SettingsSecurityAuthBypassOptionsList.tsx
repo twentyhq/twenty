@@ -5,7 +5,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
 import { capitalize } from 'twenty-shared/utils';
 import { IconGoogle, IconMicrosoft, IconPassword } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
@@ -14,6 +13,7 @@ import {
   useUpdateWorkspaceMutation,
 } from '~/generated-metadata/graphql';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -27,7 +27,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const authProviders = useRecoilValueV2(authProvidersState);
 
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
     currentWorkspaceState,
   );
 

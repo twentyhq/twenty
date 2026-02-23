@@ -3,7 +3,6 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { type ToolCallOptions, type ToolSet, jsonSchema } from 'ai';
 
 import {
-  type CodeExecutionStreamEmitter,
   type NativeToolProvider,
   type ToolProvider,
   type ToolProviderContext,
@@ -146,13 +145,12 @@ export class ToolRegistryService {
     roleId: string,
     options?: { userId?: string; userWorkspaceId?: string },
   ): Promise<ToolIndexEntry[]> {
-    const context = this.buildContext(
+    const context = this.buildContextFromToolContext({
       workspaceId,
       roleId,
-      undefined,
-      options?.userId,
-      options?.userWorkspaceId,
-    );
+      userId: options?.userId,
+      userWorkspaceId: options?.userWorkspaceId,
+    });
 
     return this.getCatalog(context);
   }
@@ -161,13 +159,7 @@ export class ToolRegistryService {
     names: string[],
     context: ToolContext,
   ): Promise<ToolSet> {
-    const fullContext = this.buildContext(
-      context.workspaceId,
-      context.roleId,
-      context.onCodeExecutionUpdate,
-      context.userId,
-      context.userWorkspaceId,
-    );
+    const fullContext = this.buildContextFromToolContext(context);
 
     const index = await this.getCatalog(fullContext);
     const nameSet = new Set(names);
@@ -192,13 +184,7 @@ export class ToolRegistryService {
   ): Promise<
     Array<{ name: string; description?: string; inputSchema?: object }>
   > {
-    const fullContext = this.buildContext(
-      context.workspaceId,
-      context.roleId,
-      context.onCodeExecutionUpdate,
-      context.userId,
-      context.userWorkspaceId,
-    );
+    const fullContext = this.buildContextFromToolContext(context);
 
     const index = await this.getCatalog(fullContext);
     const nameSet = new Set(names);
@@ -236,13 +222,7 @@ export class ToolRegistryService {
     _options: ToolCallOptions,
   ): Promise<ExecuteToolResult> {
     try {
-      const fullContext = this.buildContext(
-        context.workspaceId,
-        context.roleId,
-        context.onCodeExecutionUpdate,
-        context.userId,
-        context.userWorkspaceId,
-      );
+      const fullContext = this.buildContextFromToolContext(context);
 
       const index = await this.getCatalog(fullContext);
       const entry = index.find((indexEntry) => indexEntry.name === toolName);
@@ -342,24 +322,21 @@ export class ToolRegistryService {
     return toolSet;
   }
 
-  private buildContext(
-    workspaceId: string,
-    roleId: string,
-    onCodeExecutionUpdate?: CodeExecutionStreamEmitter,
-    userId?: string,
-    userWorkspaceId?: string,
+  private buildContextFromToolContext(
+    context: ToolContext,
   ): ToolProviderContext {
     const rolePermissionConfig: RolePermissionConfig = {
-      unionOf: [roleId],
+      unionOf: [context.roleId],
     };
 
     return {
-      workspaceId,
-      roleId,
+      workspaceId: context.workspaceId,
+      roleId: context.roleId,
       rolePermissionConfig,
-      userId,
-      userWorkspaceId,
-      onCodeExecutionUpdate,
+      authContext: context.authContext,
+      userId: context.userId,
+      userWorkspaceId: context.userWorkspaceId,
+      onCodeExecutionUpdate: context.onCodeExecutionUpdate,
     };
   }
 }

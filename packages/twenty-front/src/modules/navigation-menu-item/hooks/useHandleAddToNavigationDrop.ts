@@ -1,6 +1,6 @@
 import type { DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolder, IconLink, useIcons } from 'twenty-ui/display';
 
@@ -20,7 +20,7 @@ import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/s
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -40,7 +40,7 @@ export const useHandleAddToNavigationDrop = () => {
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const coreViews = useRecoilValue(coreViewsState);
+  const coreViews = useRecoilValueV2(coreViewsState);
   const { getIcon } = useIcons();
   const setSelectedNavigationMenuItemInEditMode = useSetRecoilStateV2(
     selectedNavigationMenuItemInEditModeStateV2,
@@ -51,6 +51,8 @@ export const useHandleAddToNavigationDrop = () => {
   const setOpenNavigationMenuItemFolderIds = useSetRecoilStateV2(
     openNavigationMenuItemFolderIdsStateV2,
   );
+
+  const store = useStore();
 
   const handleAddToNavigationDrop = useRecoilCallback(
     () => (result: DropResult, _provided: ResponderProvided) => {
@@ -64,8 +66,7 @@ export const useHandleAddToNavigationDrop = () => {
       }
 
       const payload =
-        jotaiStore.get(addToNavPayloadRegistryStateV2.atom).get(draggableId) ??
-        null;
+        store.get(addToNavPayloadRegistryStateV2.atom).get(draggableId) ?? null;
       if (!payload) {
         return;
       }
@@ -202,6 +203,7 @@ export const useHandleAddToNavigationDrop = () => {
       setOpenNavigationMenuItemFolderIds,
       setIsNavigationMenuInEditMode,
       setSelectedNavigationMenuItemInEditMode,
+      store,
       workspaceNavigationMenuItems,
     ],
   );
