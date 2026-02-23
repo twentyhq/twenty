@@ -17,7 +17,7 @@ import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks_
 
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MetadataGater } from '@/app/components/MetadataGater';
-import { MetadataProviderEffect } from '@/app/effect-components/MetadataProviderEffect';
+import { MetadataProviderEffects } from '@/app/effect-components/MetadataProviderEffect';
 import { IsAppMetadataReadyEffect } from '@/app/effect-components/IsAppMetadataReadyEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
@@ -88,7 +88,7 @@ const Providers = () => {
               <ApolloStorybookDevLogEffect />
               <ClientConfigProviderEffect />
               <ClientConfigProvider>
-                <MetadataProviderEffect />
+                <MetadataProviderEffects />
                 <IsAppMetadataReadyEffect />
                 <WorkspaceProviderEffect />
                 <MetadataGater>

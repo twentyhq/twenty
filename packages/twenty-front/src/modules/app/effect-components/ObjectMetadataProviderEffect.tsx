@@ -7,7 +7,7 @@ import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefres
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useStore } from 'jotai';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
@@ -21,39 +21,37 @@ export const ObjectMetadataProviderEffect = () => {
   const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
   const { updateDraft, applyChanges } = useMetadataStore();
 
-  const isLoadingRef = useRef(false);
-
   useEffect(() => {
     if (isLoggedIn && !isDefined(currentUser)) {
       return;
     }
 
-    if (isLoadingRef.current) {
-      return;
-    }
+    let cancelled = false;
 
     const shouldLoadReal =
       isLoggedIn && isWorkspaceActiveOrSuspended(currentWorkspace);
 
-    isLoadingRef.current = true;
-
     const loadObjectMetadata = async () => {
-      try {
-        if (!shouldLoadReal) {
-          await loadMockedObjectMetadataItems();
-        } else {
-          await refreshObjectMetadataItems();
-        }
-
-        const loadedItems = store.get(objectMetadataItemsState.atom);
-        updateDraft('objects', loadedItems);
-        applyChanges();
-      } finally {
-        isLoadingRef.current = false;
+      if (!shouldLoadReal) {
+        await loadMockedObjectMetadataItems();
+      } else {
+        await refreshObjectMetadataItems();
       }
+
+      if (cancelled) {
+        return;
+      }
+
+      const loadedItems = store.get(objectMetadataItemsState.atom);
+      updateDraft('objects', loadedItems);
+      applyChanges();
     };
 
     loadObjectMetadata();
+
+    return () => {
+      cancelled = true;
+    };
   }, [
     currentUser,
     currentWorkspace,

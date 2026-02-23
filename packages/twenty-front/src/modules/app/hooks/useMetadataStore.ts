@@ -5,7 +5,7 @@ import {
   type MetadataLoadEntry,
 } from '@/app/states/metadataStoreState';
 import { isAppMetadataReadyState } from '@/app/states/isAppMetadataReadyState';
-import { createStore, useStore } from 'jotai';
+import { type createStore, useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 

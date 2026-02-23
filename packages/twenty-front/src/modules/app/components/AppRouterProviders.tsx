@@ -3,7 +3,7 @@ import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { MetadataGater } from '@/app/components/MetadataGater';
 import { IsAppMetadataReadyEffect } from '@/app/effect-components/IsAppMetadataReadyEffect';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
-import { MetadataProviderEffect } from '@/app/effect-components/MetadataProviderEffect';
+import { MetadataProviderEffects } from '@/app/effect-components/MetadataProviderEffect';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
@@ -42,7 +42,7 @@ export const AppRouterProviders = () => {
     <ApolloProvider>
       <BaseThemeProvider>
         <ClientConfigProviderEffect />
-        <MetadataProviderEffect />
+        <MetadataProviderEffects />
         <LazyMetadataLoadEffect />
         <IsAppMetadataReadyEffect />
         <WorkspaceProviderEffect />
