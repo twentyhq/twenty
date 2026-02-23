@@ -1,3 +1,4 @@
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
@@ -5,13 +6,15 @@ import { focusedRecordBoardCardIndexesComponentState } from '@/object-record/rec
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
 type NavigationDirection = 'up' | 'down' | 'left' | 'right';
 
 export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
+  const store = useStore();
   const { focusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
   const focusedBoardCardIndexesState = useRecoilComponentCallbackState(
@@ -19,41 +22,38 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
     recordBoardId,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
+  const visibleRecordGroupIds = useRecoilComponentFamilySelectorValueV2(
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Kanban,
   );
 
-  const recordIdsByGroupState = useRecoilComponentCallbackState(
+  const recordIdsByGroupState = useRecoilComponentFamilyStateCallbackStateV2(
     recordIndexRecordIdsByGroupComponentFamilyState,
   );
 
   const focusFirstAvailableRecord = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        if (visibleRecordGroupIds.length === 0) {
-          return;
-        }
+    () => () => {
+      if (visibleRecordGroupIds.length === 0) {
+        return;
+      }
 
-        const firstColumnWithRecords = visibleRecordGroupIds.findIndex(
-          (groupId) => {
-            const recordIdsInGroup = snapshot
-              .getLoadable(recordIdsByGroupState(groupId))
-              .getValue();
-            return (
-              Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0
-            );
-          },
-        );
+      const firstColumnWithRecords = visibleRecordGroupIds.findIndex(
+        (groupId) => {
+          const recordIdsInGroup = store.get(
+            recordIdsByGroupState(groupId),
+          ) as string[];
+          return Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0;
+        },
+      );
 
-        if (firstColumnWithRecords !== -1) {
-          focusBoardCard({
-            columnIndex: firstColumnWithRecords,
-            rowIndex: 0,
-          });
-        }
-      },
-    [visibleRecordGroupIds, recordIdsByGroupState, focusBoardCard],
+      if (firstColumnWithRecords !== -1) {
+        focusBoardCard({
+          columnIndex: firstColumnWithRecords,
+          rowIndex: 0,
+        });
+      }
+    },
+    [store, visibleRecordGroupIds, recordIdsByGroupState, focusBoardCard],
   );
 
   const moveHorizontally = useRecoilCallback(
@@ -92,9 +92,9 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
 
         while (!foundColumnWithRecords) {
           const currentGroupId = visibleRecordGroupIds[newColumnIndex];
-          const recordIdsInGroup = snapshot
-            .getLoadable(recordIdsByGroupState(currentGroupId))
-            .getValue();
+          const recordIdsInGroup = store.get(
+            recordIdsByGroupState(currentGroupId),
+          ) as string[];
 
           if (Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0) {
             foundColumnWithRecords = true;
@@ -120,9 +120,9 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
         }
 
         const currentGroupId = visibleRecordGroupIds[newColumnIndex];
-        const recordIdsInGroup = snapshot
-          .getLoadable(recordIdsByGroupState(currentGroupId))
-          .getValue();
+        const recordIdsInGroup = store.get(
+          recordIdsByGroupState(currentGroupId),
+        ) as string[];
 
         let newRowIndex = focusedBoardCardIndexes.rowIndex;
         if (newRowIndex >= recordIdsInGroup.length) {
@@ -135,6 +135,7 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
         });
       },
     [
+      store,
       focusedBoardCardIndexesState,
       visibleRecordGroupIds,
       recordIdsByGroupState,
@@ -159,9 +160,9 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
 
         const currentGroupId =
           visibleRecordGroupIds[focusedBoardCardIndexes.columnIndex];
-        const recordIdsInGroup = snapshot
-          .getLoadable(recordIdsByGroupState(currentGroupId))
-          .getValue();
+        const recordIdsInGroup = store.get(
+          recordIdsByGroupState(currentGroupId),
+        ) as string[];
 
         if (!Array.isArray(recordIdsInGroup) || recordIdsInGroup.length === 0) {
           focusFirstAvailableRecord();
@@ -189,6 +190,7 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
         });
       },
     [
+      store,
       focusedBoardCardIndexesState,
       visibleRecordGroupIds,
       recordIdsByGroupState,

@@ -26,7 +26,7 @@ import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValue } from 'recoil';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import {
   filterOutByProperty,
   findByProperty,
@@ -122,8 +122,9 @@ export const RecordTableRecordGroupSection = () => {
 
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const recordGroup = useRecoilValue(
-    recordGroupDefinitionFamilyState(currentRecordGroupId),
+  const recordGroup = useFamilyRecoilValueV2(
+    recordGroupDefinitionFamilyState,
+    currentRecordGroupId,
   );
 
   const recordIndexAggregateDisplayValueForGroupValue =

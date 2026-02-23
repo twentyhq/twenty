@@ -9,6 +9,8 @@ import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-ind
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useStore } from 'jotai';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import {
   DragDropContext,
@@ -27,10 +29,13 @@ export const RecordBoardDragDropContext = ({
     currentRecordSortsComponentState,
   );
 
-  const recordBoardSelectedRecordIdsSelector = useRecoilComponentCallbackState(
-    recordBoardSelectedRecordIdsComponentSelector,
-    recordBoardId,
-  );
+  const recordBoardSelectedRecordIdsAtom =
+    useRecoilComponentSelectorCallbackStateV2(
+      recordBoardSelectedRecordIdsComponentSelector,
+      recordBoardId,
+    );
+
+  const store = useStore();
 
   const originalDragSelectionCallbackState = useRecoilComponentCallbackState(
     originalDragSelectionComponentState,
@@ -44,16 +49,14 @@ export const RecordBoardDragDropContext = ({
   const { openModal } = useModal();
 
   const handleDragStart = useRecoilCallback(
-    ({ snapshot }) =>
-      (start: DragStart) => {
-        const currentSelectedRecordIds = getSnapshotValue(
-          snapshot,
-          recordBoardSelectedRecordIdsSelector,
-        );
+    () => (start: DragStart) => {
+      const currentSelectedRecordIds = store.get(
+        recordBoardSelectedRecordIdsAtom,
+      );
 
-        startRecordDrag(start, currentSelectedRecordIds);
-      },
-    [recordBoardSelectedRecordIdsSelector, startRecordDrag],
+      startRecordDrag(start, currentSelectedRecordIds);
+    },
+    [recordBoardSelectedRecordIdsAtom, startRecordDrag, store],
   );
 
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(

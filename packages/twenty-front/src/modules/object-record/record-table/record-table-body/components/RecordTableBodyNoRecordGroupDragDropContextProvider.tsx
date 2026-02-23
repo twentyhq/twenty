@@ -7,8 +7,8 @@ import { type ReactNode } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useStore } from 'jotai';
 
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
 import { useProcessTableWithoutGroupRecordDrop } from '@/object-record/record-drag/hooks/useProcessTableWithoutGroupRecordDrop';
@@ -22,10 +22,12 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
 }) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const selectedRowIdsSelector = useRecoilComponentCallbackState(
+  const selectedRowIdsAtom = useRecoilComponentSelectorCallbackStateV2(
     selectedRowIdsComponentSelector,
     recordTableId,
   );
+
+  const store = useStore();
 
   const { startRecordDrag } = useStartRecordDrag();
   const { endRecordDrag } = useEndRecordDrag();
@@ -33,16 +35,14 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
     useProcessTableWithoutGroupRecordDrop();
 
   const handleDragStart = useRecoilCallback(
-    ({ snapshot }) =>
-      (start: DragStart) => {
-        const currentSelectedRecordIds = getSnapshotValue(
-          snapshot,
-          selectedRowIdsSelector,
-        );
+    () => (start: DragStart) => {
+      const currentSelectedRecordIds = store.get(
+        selectedRowIdsAtom,
+      ) as string[];
 
-        startRecordDrag(start, currentSelectedRecordIds);
-      },
-    [selectedRowIdsSelector, startRecordDrag],
+      startRecordDrag(start, currentSelectedRecordIds);
+    },
+    [selectedRowIdsAtom, startRecordDrag, store],
   );
 
   const handleDragEnd = useRecoilCallback(

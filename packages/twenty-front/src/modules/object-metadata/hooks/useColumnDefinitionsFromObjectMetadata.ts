@@ -28,13 +28,12 @@ export const useColumnDefinitionsFromObjectMetadata = (
   );
 
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] = useMemo(() => {
-    const activeFieldMetadataItems =
-      objectMetadataItem.readableFields.filter(
-        (field) =>
-          field.isActive &&
-          (!isHiddenSystemField(field) ||
-            field.id === objectMetadataItem.labelIdentifierFieldMetadataId),
-      );
+    const activeFieldMetadataItems = objectMetadataItem.readableFields.filter(
+      (field) =>
+        field.isActive &&
+        (!isHiddenSystemField(field) ||
+          field.id === objectMetadataItem.labelIdentifierFieldMetadataId),
+    );
 
     return activeFieldMetadataItems
       .map((field, index) =>

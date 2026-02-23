@@ -18,13 +18,6 @@ export const IsAppMetadataReadyEffect = () => {
   const viewsEntry = useFamilyRecoilValueV2(metadataStoreState, 'views');
   const setIsAppMetadataReady = useSetRecoilStateV2(isAppMetadataReadyState);
 
-  console.log('objectsEntry', objectsEntry);
-  console.log('viewsEntry', viewsEntry);
-  console.log('isLoggedIn', isLoggedIn);
-  console.log('currentUser', currentUser);
-  console.log('currentWorkspace', currentWorkspace);
-  console.log('setIsAppMetadataReady', setIsAppMetadataReady);
-
   useEffect(() => {
     const hasActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
 

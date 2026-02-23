@@ -5,21 +5,26 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { lastSelectedRowIndexComponentState } from '@/object-record/record-table/record-table-row/states/lastSelectedRowIndexComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSetCurrentRowSelected = () => {
   const { recordId, rowIndex } = useRecordTableRowContextOrThrow();
-  const isRowSelectedFamilyState = useRecoilComponentCallbackState(
+
+  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
     isRowSelectedComponentFamilyState,
   );
 
-  const recordIndexAllRecordIdsState = useRecoilComponentCallbackState(
+  const recordIndexAllRecordIdsAtom = useRecoilComponentSelectorCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
   );
 
   const lastSelectedRowIndexComponentCallbackState =
     useRecoilComponentCallbackState(lastSelectedRowIndexComponentState);
+
+  const store = useStore();
 
   const setCurrentRowSelected = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -30,13 +35,9 @@ export const useSetCurrentRowSelected = () => {
         newSelectedState: boolean;
         shouldSelectRange?: boolean;
       }) => {
-        const allRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRecordIdsState,
-        );
+        const allRecordIds = store.get(recordIndexAllRecordIdsAtom);
 
-        const isCurrentRowSelected = getSnapshotValue(
-          snapshot,
+        const isCurrentRowSelected = store.get(
           isRowSelectedFamilyState(recordId),
         );
 
@@ -51,7 +52,10 @@ export const useSetCurrentRowSelected = () => {
           const shouldSelect = !isCurrentRowSelected;
 
           for (let i = startIndex; i <= endIndex; i++) {
-            set(isRowSelectedFamilyState(allRecordIds[i]), shouldSelect);
+            store.set(
+              isRowSelectedFamilyState(allRecordIds[i]),
+              shouldSelect,
+            );
           }
 
           set(lastSelectedRowIndexComponentCallbackState, rowIndex);
@@ -59,7 +63,7 @@ export const useSetCurrentRowSelected = () => {
         }
 
         if (isCurrentRowSelected !== newSelectedState) {
-          set(isRowSelectedFamilyState(recordId), newSelectedState);
+          store.set(isRowSelectedFamilyState(recordId), newSelectedState);
 
           set(
             lastSelectedRowIndexComponentCallbackState,
@@ -68,11 +72,12 @@ export const useSetCurrentRowSelected = () => {
         }
       },
     [
-      recordIndexAllRecordIdsState,
+      recordIndexAllRecordIdsAtom,
       isRowSelectedFamilyState,
       recordId,
       lastSelectedRowIndexComponentCallbackState,
       rowIndex,
+      store,
     ],
   );
 

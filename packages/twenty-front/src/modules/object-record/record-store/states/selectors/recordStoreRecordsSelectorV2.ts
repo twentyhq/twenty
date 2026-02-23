@@ -7,13 +7,15 @@ type RecordStoreRecordsFamilyKey = {
   recordIds: string[];
 };
 
-export const recordStoreRecordsSelectorV2 =
-  createFamilySelectorV2<ObjectRecord[], RecordStoreRecordsFamilyKey>({
-    key: 'recordStoreRecordsSelectorV2',
-    get:
-      ({ recordIds }: RecordStoreRecordsFamilyKey) =>
-      ({ get }) =>
-        recordIds
-          .map((recordId) => get(recordStoreFamilyState, recordId))
-          .filter(isDefined),
-  });
+export const recordStoreRecordsSelectorV2 = createFamilySelectorV2<
+  ObjectRecord[],
+  RecordStoreRecordsFamilyKey
+>({
+  key: 'recordStoreRecordsSelectorV2',
+  get:
+    ({ recordIds }: RecordStoreRecordsFamilyKey) =>
+    ({ get }) =>
+      recordIds
+        .map((recordId) => get(recordStoreFamilyState, recordId))
+        .filter(isDefined),
+});

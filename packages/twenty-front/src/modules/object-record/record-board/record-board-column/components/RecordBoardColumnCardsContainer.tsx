@@ -11,6 +11,7 @@ import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-bo
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -33,7 +34,7 @@ export const RecordBoardColumnCardsContainer = ({
 }: RecordBoardColumnCardsContainerProps) => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const recordIds = useRecoilComponentFamilyValue(
+  const recordIds = useRecoilComponentFamilyValueV2(
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
   );

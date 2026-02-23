@@ -18,6 +18,7 @@ import { selectedRowIdsComponentSelector } from '@/object-record/record-table/st
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
@@ -29,10 +30,12 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
 
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const allRecordIdsWithoutGroupCallbackSelector =
-    useRecoilComponentCallbackState(allRecordIdsWithoutGroupsComponentSelector);
+  const allRecordIdsWithoutGroupAtom =
+    useRecoilComponentSelectorCallbackStateV2(
+      allRecordIdsWithoutGroupsComponentSelector,
+    );
 
-  const selectedRowIdsSelector = useRecoilComponentCallbackState(
+  const selectedRowIdsAtom = useRecoilComponentSelectorCallbackStateV2(
     selectedRowIdsComponentSelector,
   );
 
@@ -59,24 +62,20 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
           return;
         }
 
-        const allSparseRecordIds = getSnapshotValue(
-          snapshot,
-          allRecordIdsWithoutGroupCallbackSelector,
-        );
+        const allSparseRecordIds = store.get(
+          allRecordIdsWithoutGroupAtom,
+        ) as string[];
 
         const draggedRecordId = tableRecordDropResult.draggableId;
-        const selectedRecordIds = getSnapshotValue(
-          snapshot,
-          selectedRowIdsSelector,
-        );
+        const selectedRecordIds = store.get(selectedRowIdsAtom) as string[];
 
         const isDroppedAfterList =
           tableRecordDropResult.destination.index + 1 >=
           allSparseRecordIds.length;
 
         const recordsWithPosition: RecordWithPosition[] = allSparseRecordIds
-          .filter(isDefined)
-          .map((recordId) => {
+          .filter((recordId): recordId is string => isDefined(recordId))
+          .map((recordId: string) => {
             const record = store.get(
               recordStoreFamilyState.atomFamily(recordId),
             ) as { position?: number } | null | undefined;
@@ -168,13 +167,13 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
       },
     [
       objectNameSingular,
-      selectedRowIdsSelector,
+      selectedRowIdsAtom,
       store,
       updateOneRecord,
       openModal,
       currentRecordSorts,
       originalDragSelectionCallbackState,
-      allRecordIdsWithoutGroupCallbackSelector,
+      allRecordIdsWithoutGroupAtom,
       triggerTableWithoutGroupDragAndDropOptimisticUpdate,
     ],
   );

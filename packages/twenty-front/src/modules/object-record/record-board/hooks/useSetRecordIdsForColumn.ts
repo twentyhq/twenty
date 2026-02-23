@@ -1,3 +1,4 @@
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 
 import { emptyRecordGroupByIdComponentFamilyState } from '@/object-record/record-group/states/emptyRecordGroupByIdComponentFamilyState';
@@ -6,18 +7,21 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
+  const store = useStore();
+
   const recordGroupFieldMetadataState = useRecoilComponentCallbackState(
     recordIndexGroupFieldMetadataItemComponentState,
     recordBoardId,
   );
 
   const recordIndexRecordIdsByGroupFamilyState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentFamilyStateCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
       recordBoardId,
     );
@@ -29,13 +33,11 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
   const setRecordIdsForColumn = useRecoilCallback(
     ({ set, snapshot }) =>
       (currentRecordGroupId: string, records: ObjectRecord[]) => {
-        const recordGroup = getSnapshotValue(
-          snapshot,
-          recordGroupDefinitionFamilyState(currentRecordGroupId),
+        const recordGroup = store.get(
+          recordGroupDefinitionFamilyState.atomFamily(currentRecordGroupId),
         );
 
-        const existingRecordGroupRowIds = getSnapshotValue(
-          snapshot,
+        const existingRecordGroupRowIds = store.get(
           recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
         );
 
@@ -56,7 +58,7 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
           .map((record) => record.id);
 
         if (!isDeeplyEqual(existingRecordGroupRowIds, recordGroupRowIds)) {
-          set(
+          store.set(
             recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
             recordGroupRowIds,
           );
@@ -80,6 +82,7 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
       recordIndexRecordIdsByGroupFamilyState,
       recordGroupFieldMetadataState,
       emptyRecordGroupByIdCallbackState,
+      store,
     ],
   );
 

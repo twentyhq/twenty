@@ -11,7 +11,9 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
+import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { forwardRef, type ReactNode } from 'react';
 
@@ -40,7 +42,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
   ) => {
     const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-    const currentRowSelected = useRecoilComponentFamilyValue(
+    const currentRowSelected = useRecoilComponentFamilyValueV2(
       isRowSelectedComponentFamilyState,
       recordId,
     );
@@ -60,9 +62,9 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
       focusIndex + 1,
     );
 
-    const isNextRecordIdFirstOfGroup = useRecoilComponentFamilyValue(
+    const isNextRecordIdFirstOfGroup = useRecoilComponentFamilySelectorValueV2(
       isRecordIdFirstOfGroupComponentFamilySelector,
-      nextRecordId,
+      nextRecordId ?? '',
     );
 
     const isFocused = useRecoilComponentFamilyValue(

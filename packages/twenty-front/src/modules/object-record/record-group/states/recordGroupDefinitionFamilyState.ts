@@ -1,10 +1,10 @@
+import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { atomFamily } from 'recoil';
 
-export const recordGroupDefinitionFamilyState = atomFamily<
+export const recordGroupDefinitionFamilyState = createFamilyStateV2<
   RecordGroupDefinition | undefined,
   RecordGroupDefinition['id']
 >({
   key: 'recordGroupDefinitionFamilyState',
-  default: undefined,
+  defaultValue: undefined,
 });

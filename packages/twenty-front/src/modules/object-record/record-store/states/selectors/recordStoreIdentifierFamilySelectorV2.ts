@@ -11,36 +11,38 @@ type RecordStoreIdentifierFamilyKey = {
   isFilesFieldMigrated?: boolean;
 };
 
-export const recordStoreIdentifierFamilySelectorV2 =
-  createFamilySelectorV2<ObjectRecordIdentifier | null, RecordStoreIdentifierFamilyKey>({
-    key: 'recordStoreIdentifierFamilySelectorV2',
-    get:
-      ({
-        recordId,
+export const recordStoreIdentifierFamilySelectorV2 = createFamilySelectorV2<
+  ObjectRecordIdentifier | null,
+  RecordStoreIdentifierFamilyKey
+>({
+  key: 'recordStoreIdentifierFamilySelectorV2',
+  get:
+    ({
+      recordId,
+      allowRequestsToTwentyIcons,
+      isFilesFieldMigrated,
+    }: RecordStoreIdentifierFamilyKey) =>
+    ({ get }) => {
+      const recordFromStore = get(recordStoreFamilyState, recordId);
+      const objectNameSingular = uncapitalize(
+        recordFromStore?.__typename ?? '',
+      );
+
+      const objectMetadataItems = get(objectMetadataItemsState);
+
+      const objectMetadataItem = objectMetadataItems.find(
+        (item) => item.nameSingular === objectNameSingular,
+      );
+
+      if (!objectMetadataItem || !recordFromStore) {
+        return null;
+      }
+
+      return getObjectRecordIdentifier({
+        objectMetadataItem: objectMetadataItem,
+        record: recordFromStore,
         allowRequestsToTwentyIcons,
         isFilesFieldMigrated,
-      }: RecordStoreIdentifierFamilyKey) =>
-      ({ get }) => {
-        const recordFromStore = get(recordStoreFamilyState, recordId);
-        const objectNameSingular = uncapitalize(
-          recordFromStore?.__typename ?? '',
-        );
-
-        const objectMetadataItems = get(objectMetadataItemsState);
-
-        const objectMetadataItem = objectMetadataItems.find(
-          (item) => item.nameSingular === objectNameSingular,
-        );
-
-        if (!objectMetadataItem || !recordFromStore) {
-          return null;
-        }
-
-        return getObjectRecordIdentifier({
-          objectMetadataItem: objectMetadataItem,
-          record: recordFromStore,
-          allowRequestsToTwentyIcons,
-          isFilesFieldMigrated,
-        });
-      },
-  });
+      });
+    },
+});

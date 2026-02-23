@@ -28,6 +28,8 @@ import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useStore } from 'jotai';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -52,9 +54,12 @@ export const useTriggerInitialRecordTableDataLoad = () => {
   const isRecordTableInitialLoadingCallbackState =
     useRecoilComponentCallbackState(isRecordTableInitialLoadingComponentState);
 
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
+  const recordIndexAllRecordIdsAtom = useRecoilComponentSelectorCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
+    recordTableId,
   );
+
+  const store = useStore();
 
   const recordIdByRealIndexCallbackSelector =
     useRecoilComponentFamilyCallbackState(
@@ -132,10 +137,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
           'hidden',
         );
 
-        const currentRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRecordIdsSelector,
-        );
+        const currentRecordIds = store.get(recordIndexAllRecordIdsAtom);
 
         let records: ObjectRecord[] | null = null;
         let totalCount = 0;
@@ -196,7 +198,8 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       isInitializingVirtualTableDataLoadingCallbackState,
       resetTableFocuses,
       resetVirtualizedRowTreadmill,
-      recordIndexAllRecordIdsSelector,
+      recordIndexAllRecordIdsAtom,
+      store,
       showAuthModal,
       dataPagesLoadedCallbackState,
       isRecordTableInitialLoadingCallbackState,

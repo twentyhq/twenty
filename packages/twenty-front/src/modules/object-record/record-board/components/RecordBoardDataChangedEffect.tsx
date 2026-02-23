@@ -11,6 +11,8 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorCallbackStateV2';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,7 +26,7 @@ export const RecordBoardDataChangedEffect = () => {
     useGetShouldInitializeRecordBoardForUpdateInputs();
 
   const recordGroupFromGroupValueCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentFamilySelectorCallbackStateV2(
       recordGroupFromGroupValueComponentFamilySelector,
     );
   const recordIndexGroupFieldMetadataItemCallbackState =
@@ -32,7 +34,7 @@ export const RecordBoardDataChangedEffect = () => {
       recordIndexGroupFieldMetadataItemComponentState,
     );
   const recordIndexRecordIdsByGroupCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentFamilyStateCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
@@ -88,8 +90,7 @@ export const RecordBoardDataChangedEffect = () => {
                   recordIndexGroupFieldMetadataItem.name
                 ];
 
-              const recordGroupDefinitionFromGroupValue = getSnapshotValue(
-                snapshot,
+              const recordGroupDefinitionFromGroupValue = store.get(
                 recordGroupFromGroupValueCallbackState({ recordGroupValue }),
               );
 
@@ -97,8 +98,7 @@ export const RecordBoardDataChangedEffect = () => {
                 return;
               }
 
-              const recordIdsForGroup = getSnapshotValue(
-                snapshot,
+              const recordIdsForGroup = store.get(
                 recordIndexRecordIdsByGroupCallbackState(
                   recordGroupDefinitionFromGroupValue.id,
                 ),

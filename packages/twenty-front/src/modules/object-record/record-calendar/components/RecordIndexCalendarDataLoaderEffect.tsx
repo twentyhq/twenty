@@ -7,6 +7,7 @@ import { recordCalendarSelectedDateComponentState } from '@/object-record/record
 import { recordCalendarSelectedRecordIdsComponentSelector } from '@/object-record/record-calendar/states/selectors/recordCalendarSelectedRecordIdsComponentSelector';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useEffect } from 'react';
@@ -16,7 +17,7 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
     RecordCalendarComponentInstanceContext,
   );
 
-  const selectedRecordIds = useRecoilComponentValue(
+  const selectedRecordIds = useRecoilComponentSelectorValueV2(
     recordCalendarSelectedRecordIdsComponentSelector,
     recordCalendarId,
   );

@@ -10,6 +10,7 @@ import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/ut
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import {
   combineFilters,
@@ -67,7 +68,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     additionalFieldMetadataId: recordGroupFieldMetadata?.id,
   });
 
-  const recordGroupDefinitions = useRecoilComponentValue(
+  const recordGroupDefinitions = useRecoilComponentSelectorValueV2(
     recordGroupDefinitionsComponentSelector,
   );
 

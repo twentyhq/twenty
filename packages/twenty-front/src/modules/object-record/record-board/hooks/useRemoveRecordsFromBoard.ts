@@ -5,6 +5,8 @@ import { useStore } from 'jotai';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorCallbackStateV2';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,17 +19,17 @@ export const useRemoveRecordsFromBoard = () => {
     );
 
   const recordGroupFromGroupValueFamilyCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentFamilySelectorCallbackStateV2(
       recordGroupFromGroupValueComponentFamilySelector,
     );
 
   const recordIndexRecordIdsByGroupFamilyCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentFamilyStateCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
   const removeRecordsFromBoard = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ snapshot }) =>
       ({ recordIdsToRemove }: { recordIdsToRemove: string[] }) => {
         const recordIdsToRemoveByGroup = new Map<string, string[]>();
 
@@ -53,8 +55,7 @@ export const useRemoveRecordsFromBoard = () => {
             recordIndexGroupFieldMetadataItem.name
           ] as string | undefined;
 
-          const recordGroupDefinitionFromGroupValue = getSnapshotValue(
-            snapshot,
+          const recordGroupDefinitionFromGroupValue = store.get(
             recordGroupFromGroupValueFamilyCallbackState({ recordGroupValue }),
           );
 
@@ -75,17 +76,16 @@ export const useRemoveRecordsFromBoard = () => {
           groupId,
           recordIdsToRemoveInGroup,
         ] of recordIdsToRemoveByGroup) {
-          const currentRecordIdsForGroup = getSnapshotValue(
-            snapshot,
+          const currentRecordIdsForGroup = store.get(
             recordIndexRecordIdsByGroupFamilyCallbackState(groupId),
-          );
+          ) as string[];
 
           const recordIdsWithoutRemovedRecords =
             currentRecordIdsForGroup.filter(
               (recordId) => !recordIdsToRemoveInGroup.includes(recordId),
             );
 
-          set(
+          store.set(
             recordIndexRecordIdsByGroupFamilyCallbackState(groupId),
             recordIdsWithoutRemovedRecords,
           );

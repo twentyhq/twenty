@@ -1,3 +1,5 @@
+import { useStore } from 'jotai';
+
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MILLISECONDS_TO_AVOID_REACT_FREEZE } from '@/object-record/record-board/constants/RecordBoardFetchMoreThrottlingWaitTimeInMillisecondsToAvoidReactFreeze';
 import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/constants/RecordBoardQueryPageSize';
@@ -15,6 +17,8 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
@@ -23,7 +27,8 @@ import { sortByProperty } from '~/utils/array/sortByProperty';
 import { sleep } from '~/utils/sleep';
 
 export const useTriggerRecordBoardFetchMore = () => {
-  const recordGroupDefinitions = useRecoilComponentValue(
+  const store = useStore();
+  const recordGroupDefinitions = useRecoilComponentSelectorValueV2(
     recordGroupDefinitionsComponentSelector,
   );
 
@@ -54,7 +59,7 @@ export const useTriggerRecordBoardFetchMore = () => {
     });
 
   const recordIndexRecordIdsByGroupCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentFamilyStateCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
@@ -172,16 +177,15 @@ export const useTriggerRecordBoardFetchMore = () => {
             continue;
           }
 
-          const currentRecordIds = getSnapshotValue(
-            snapshot,
+          const currentRecordIds = store.get(
             recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
-          );
+          ) as string[];
 
           const newRecordIds = currentRecordIds.concat(
             newRecords.map((record) => record.id),
           );
 
-          set(
+          store.set(
             recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
             newRecordIds,
           );
@@ -212,6 +216,7 @@ export const useTriggerRecordBoardFetchMore = () => {
         cleanStateBeforeExit();
       },
     [
+      store,
       objectMetadataItem,
       recordGroupDefinitions,
       upsertRecordsInStore,

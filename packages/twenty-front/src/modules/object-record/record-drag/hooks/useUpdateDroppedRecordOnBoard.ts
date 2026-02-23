@@ -8,9 +8,8 @@ import { type RecordGroupDefinition } from '@/object-record/record-group/types/R
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
@@ -22,18 +21,18 @@ export const useUpdateDroppedRecordOnBoard = () => {
     useContext(RecordBoardContext);
 
   const recordIndexRecordIdsByGroupCallbackFamilyState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentFamilyStateCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const recordGroupDefinitions = useRecoilComponentValue(
+  const recordGroupDefinitions = useRecoilComponentSelectorValueV2(
     recordGroupDefinitionsComponentSelector,
   );
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const updateDroppedRecordOnBoard = useRecoilCallback(
-    ({ snapshot, set }) =>
+    () =>
       (
         {
           recordId,
@@ -85,20 +84,18 @@ export const useUpdateDroppedRecordOnBoard = () => {
           return;
         }
 
-        const currentRecordIdsInInitialRecordGroup = getSnapshotValue(
-          snapshot,
+        const currentRecordIdsInInitialRecordGroup = store.get(
           recordIndexRecordIdsByGroupCallbackFamilyState(initialRecordGroupId),
-        );
+        ) as string[];
 
         const positionOfDroppedRecordInInitialRecordIds =
           currentRecordIdsInInitialRecordGroup.findIndex(
             (id) => id === recordId,
           );
 
-        let currentRecordIdsInTargetRecordGroup = getSnapshotValue(
-          snapshot,
+        let currentRecordIdsInTargetRecordGroup = store.get(
           recordIndexRecordIdsByGroupCallbackFamilyState(targetRecordGroupId),
-        );
+        ) as string[];
 
         if (positionOfDroppedRecordInInitialRecordIds === -1) {
           throw new Error(
@@ -115,7 +112,7 @@ export const useUpdateDroppedRecordOnBoard = () => {
         if (movingInsideSameRecordGroup) {
           currentRecordIdsInTargetRecordGroup = newInitialGroupRecordIds;
         } else {
-          set(
+          store.set(
             recordIndexRecordIdsByGroupCallbackFamilyState(
               initialRecordGroupId,
             ),
@@ -138,7 +135,7 @@ export const useUpdateDroppedRecordOnBoard = () => {
 
         newTargetRecordGroupWithIds.sort(sortByProperty('position', 'asc'));
 
-        set(
+        store.set(
           recordIndexRecordIdsByGroupCallbackFamilyState(targetRecordGroupId),
           newTargetRecordGroupWithIds.map((record) => record.id),
         );

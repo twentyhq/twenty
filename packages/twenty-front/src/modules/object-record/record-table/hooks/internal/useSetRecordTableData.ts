@@ -1,7 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import {
+  NO_RECORD_GROUP_FAMILY_KEY,
+  recordIndexAllRecordIdsComponentSelector,
+} from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
@@ -16,6 +19,8 @@ import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/reco
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useStore } from 'jotai';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -30,17 +35,17 @@ export const useSetRecordTableData = ({
   recordTableId,
 }: useSetRecordTableDataProps) => {
   const recordIndexRecordIdsByGroupFamilyState =
-    useRecoilComponentFamilyCallbackState(
+    useRecoilComponentFamilyStateCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
+    );
+
+  const recordIndexAllRecordIdsSelector =
+    useRecoilComponentSelectorCallbackStateV2(
+      recordIndexAllRecordIdsComponentSelector,
       recordTableId,
     );
 
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
-    recordIndexAllRecordIdsComponentSelector,
-    recordTableId,
-  );
-
-  const isRowSelectedFamilyState = useRecoilComponentFamilyCallbackState(
+  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
@@ -100,12 +105,11 @@ export const useSetRecordTableData = ({
           }
         }
 
-        const currentRowIds = getSnapshotValue(
-          snapshot,
-          currentRecordGroupId
-            ? recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId)
-            : recordIndexAllRecordIdsSelector,
-        );
+        const currentRowIds = currentRecordGroupId
+          ? (store.get(
+              recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
+            ) as string[])
+          : (store.get(recordIndexAllRecordIdsSelector) as string[]);
 
         const hasUserSelectedAllRows = getSnapshotValue(
           snapshot,
@@ -121,17 +125,22 @@ export const useSetRecordTableData = ({
 
           if (hasUserSelectedAllRows) {
             for (const rowId of recordIds) {
-              set(isRowSelectedFamilyState(rowId), true);
+              store.set(isRowSelectedFamilyState(rowId), true);
             }
           }
 
           if (isDefined(currentRecordGroupId)) {
-            set(
+            store.set(
               recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
               recordIds,
             );
           } else {
-            set(recordIndexAllRecordIdsSelector, recordIds);
+            store.set(
+              recordIndexRecordIdsByGroupFamilyState(
+                NO_RECORD_GROUP_FAMILY_KEY,
+              ),
+              recordIds,
+            );
           }
 
           const isTableInitialLoading = getSnapshotValue(

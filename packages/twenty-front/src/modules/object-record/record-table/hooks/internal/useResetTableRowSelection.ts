@@ -5,12 +5,14 @@ import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionM
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { lastSelectedRowIndexComponentState } from '@/object-record/record-table/record-table-row/states/lastSelectedRowIndexComponentState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { lastSelectedRowIndexComponentState } from '@/object-record/record-table/record-table-row/states/lastSelectedRowIndexComponentState';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useStore } from 'jotai';
 
 export const useResetTableRowSelection = (recordTableId?: string) => {
   const recordTableIdFromContext = useAvailableComponentInstanceIdOrThrow(
@@ -18,12 +20,12 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
+  const recordIndexAllRecordIdsAtom = useRecoilComponentSelectorCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
     recordTableIdFromContext,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentCallbackState(
+  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
     isRowSelectedComponentFamilyState,
     recordTableIdFromContext,
   );
@@ -40,21 +42,18 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
     );
 
   const { closeDropdown } = useCloseDropdown();
+  const store = useStore();
 
   const resetTableRowSelection = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       () => {
-        const allRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRecordIdsSelector,
-        );
+        const allRecordIds = store.get(recordIndexAllRecordIdsAtom);
 
         for (const recordId of allRecordIds) {
-          set(isRowSelectedFamilyState(recordId), false);
+          store.set(isRowSelectedFamilyState(recordId), false);
         }
 
         set(hasUserSelectedAllRowsState, false);
-
         set(lastSelectedRowIndexComponentCallbackState, null);
 
         closeDropdown(
@@ -64,12 +63,13 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
         );
       },
     [
-      recordIndexAllRecordIdsSelector,
+      recordIndexAllRecordIdsAtom,
       hasUserSelectedAllRowsState,
       lastSelectedRowIndexComponentCallbackState,
       isRowSelectedFamilyState,
       closeDropdown,
       recordTableIdFromContext,
+      store,
     ],
   );
 

@@ -14,6 +14,7 @@ import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 import { useEffect } from 'react';
@@ -64,7 +65,9 @@ export const RecordBoardQueryEffect = () => {
   const { triggerRecordBoardInitialQuery } =
     useTriggerRecordBoardInitialQuery();
 
-  const recordGroupdIds = useRecoilComponentValue(recordGroupIdsComponentState);
+  const recordGroupdIds = useRecoilComponentValueV2(
+    recordGroupIdsComponentState,
+  );
   const recordGroupIdsHaveChanged = !isDeeplyEqual(
     [...recordGroupdIds].sort(),
     [...lastRecordGroupIds].sort(),

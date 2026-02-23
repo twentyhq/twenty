@@ -11,6 +11,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
@@ -36,11 +37,11 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     recordIndexId,
   );
 
-  const selectedRowIds = useRecoilComponentValue(
+  const selectedRowIds = useRecoilComponentSelectorValueV2(
     selectedRowIdsComponentSelector,
     recordIndexId,
   );
-  const unselectedRowIds = useRecoilComponentValue(
+  const unselectedRowIds = useRecoilComponentSelectorValueV2(
     unselectedRowIdsComponentSelector,
     recordIndexId,
   );

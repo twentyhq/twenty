@@ -8,7 +8,8 @@ import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useStore } from 'jotai';
 
 export const useTriggerActionMenuDropdown = ({
   recordTableId,
@@ -19,7 +20,7 @@ export const useTriggerActionMenuDropdown = ({
     ActionMenuComponentInstanceContext,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentCallbackState(
+  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
@@ -34,11 +35,11 @@ export const useTriggerActionMenuDropdown = ({
     );
 
   const { openDropdown } = useOpenDropdown();
-
   const { closeCommandMenu } = useCommandMenu();
+  const store = useStore();
 
   const triggerActionMenuDropdown = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       (event: React.MouseEvent, recordId: string) => {
         event.preventDefault();
 
@@ -47,13 +48,10 @@ export const useTriggerActionMenuDropdown = ({
           y: event.pageY,
         });
 
-        const isRowSelected = getSnapshotValue(
-          snapshot,
-          isRowSelectedFamilyState(recordId),
-        );
+        const isRowSelected = store.get(isRowSelectedFamilyState(recordId));
 
         if (isRowSelected !== true) {
-          set(isRowSelectedFamilyState(recordId), true);
+          store.set(isRowSelectedFamilyState(recordId), true);
         }
 
         closeCommandMenu();
@@ -68,6 +66,7 @@ export const useTriggerActionMenuDropdown = ({
       closeCommandMenu,
       openDropdown,
       actionMenuDropdownId,
+      store,
     ],
   );
 

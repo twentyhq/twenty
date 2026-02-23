@@ -4,8 +4,9 @@ import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/get
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useStore } from 'jotai';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarSelectedRecordIdsComponentSelector } from './recordCalendarSelectedRecordIdsComponentSelector';
@@ -17,42 +18,40 @@ export const useRecordCalendarSelection = (recordCalendarId?: string) => {
   );
 
   const isRecordCalendarCardSelectedFamilyState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentFamilyStateCallbackStateV2(
       isRecordCalendarCardSelectedComponentFamilyState,
       recordCalendarId,
     );
 
-  const recordCalendarSelectedRecordIdsSelector =
-    useRecoilComponentCallbackState(
+  const recordCalendarSelectedRecordIdsAtom =
+    useRecoilComponentSelectorCallbackStateV2(
       recordCalendarSelectedRecordIdsComponentSelector,
       recordCalendarId,
     );
 
   const { closeDropdown } = useCloseDropdown();
+  const store = useStore();
 
   const dropdownId = getActionMenuDropdownIdFromActionMenuId(
     getActionMenuIdFromRecordIndexId(instanceIdFromProps),
   );
 
   const resetRecordSelection = useRecoilCallback(
-    ({ snapshot, set }) =>
-      () => {
-        closeDropdown(dropdownId);
+    () => () => {
+      closeDropdown(dropdownId);
 
-        const recordIds = getSnapshotValue(
-          snapshot,
-          recordCalendarSelectedRecordIdsSelector,
-        );
+      const recordIds = store.get(recordCalendarSelectedRecordIdsAtom);
 
-        for (const recordId of recordIds) {
-          set(isRecordCalendarCardSelectedFamilyState(recordId), false);
-        }
-      },
+      for (const recordId of recordIds) {
+        store.set(isRecordCalendarCardSelectedFamilyState(recordId), false);
+      }
+    },
     [
       closeDropdown,
       dropdownId,
-      recordCalendarSelectedRecordIdsSelector,
+      recordCalendarSelectedRecordIdsAtom,
       isRecordCalendarCardSelectedFamilyState,
+      store,
     ],
   );
 

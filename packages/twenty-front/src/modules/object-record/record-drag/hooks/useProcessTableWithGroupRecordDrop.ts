@@ -16,7 +16,9 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 export const useProcessTableWithGroupRecordDrop = () => {
@@ -28,15 +30,16 @@ export const useProcessTableWithGroupRecordDrop = () => {
 
   const { openModal } = useModal();
 
-  const recordIdsByGroupFamilyState = useRecoilComponentCallbackState(
-    recordIndexRecordIdsByGroupComponentFamilyState,
-  );
+  const recordIdsByGroupFamilyState =
+    useRecoilComponentFamilyStateCallbackStateV2(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+    );
 
   const currentRecordSortsCallbackState = useRecoilComponentCallbackState(
     currentRecordSortsComponentState,
   );
 
-  const selectedRowIdsSelector = useRecoilComponentCallbackState(
+  const selectedRowIdsAtom = useRecoilComponentSelectorCallbackStateV2(
     selectedRowIdsComponentSelector,
     recordTableId,
   );
@@ -59,9 +62,8 @@ export const useProcessTableWithGroupRecordDrop = () => {
         if (!result.destination) return;
 
         const destinationRecordGroupId = result.destination.droppableId;
-        const destinationRecordGroup = getSnapshotValue(
-          snapshot,
-          recordGroupDefinitionFamilyState(destinationRecordGroupId),
+        const destinationRecordGroup = store.get(
+          recordGroupDefinitionFamilyState.atomFamily(destinationRecordGroupId),
         );
 
         if (!isDefined(destinationRecordGroup)) {
@@ -88,7 +90,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
 
         const selectedRecordIds = isDraggingRecord
           ? originalDragSelection
-          : getSnapshotValue(snapshot, selectedRowIdsSelector);
+          : (store.get(selectedRowIdsAtom) as string[]);
 
         const currentRecordSorts = snapshot
           .getLoadable(currentRecordSortsCallbackState)
@@ -101,10 +103,9 @@ export const useProcessTableWithGroupRecordDrop = () => {
 
         processGroupDrop({
           groupDropResult: result,
-          snapshot,
           store,
           selectedRecordIds,
-          recordIdsByGroupFamilyState: recordIdsByGroupFamilyState,
+          recordIdsByGroupFamilyState,
           onUpdateRecord: ({ recordId, position }) => {
             updateOneRecord({
               objectNameSingular,
@@ -123,7 +124,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
       objectMetadataItem.fields,
       originalDragSelectionCallbackState,
       isDraggingRecordCallbackState,
-      selectedRowIdsSelector,
+      selectedRowIdsAtom,
       currentRecordSortsCallbackState,
       recordIdsByGroupFamilyState,
       groupFieldMetadata?.id,

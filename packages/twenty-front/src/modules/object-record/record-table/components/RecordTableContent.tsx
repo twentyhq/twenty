@@ -13,11 +13,12 @@ import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-ta
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 
 const StyledTableContainer = styled.div`
@@ -56,15 +57,18 @@ export const RecordTableContent = ({
     handleDragSelectionEnd();
   };
 
-  const isRowSelectedCallbackFamilyState =
-    useRecoilComponentFamilyCallbackState(isRowSelectedComponentFamilyState);
+  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
+    isRowSelectedComponentFamilyState,
+    recordTableId,
+  );
+
+  const store = useStore();
 
   const handleDragSelectionChange = useRecoilCallback(
-    ({ set }) =>
-      (rowId: string, selected: boolean) => {
-        set(isRowSelectedCallbackFamilyState(rowId), selected);
-      },
-    [isRowSelectedCallbackFamilyState],
+    () => (rowId: string, selected: boolean) => {
+      store.set(isRowSelectedFamilyState(rowId), selected);
+    },
+    [isRowSelectedFamilyState, store],
   );
 
   const recordTableScrollWrapperId = `record-table-scroll-${recordTableId}`;

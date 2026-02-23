@@ -3,8 +3,8 @@ import { useProcessTableWithGroupRecordDrop } from '@/object-record/record-drag/
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useStore } from 'jotai';
 import {
   DragDropContext,
   type DragStart,
@@ -20,10 +20,12 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
 }) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const selectedRowIdsSelector = useRecoilComponentCallbackState(
+  const selectedRowIdsAtom = useRecoilComponentSelectorCallbackStateV2(
     selectedRowIdsComponentSelector,
     recordTableId,
   );
+
+  const store = useStore();
 
   const { startRecordDrag } = useStartRecordDrag();
   const { endRecordDrag } = useEndRecordDrag();
@@ -32,16 +34,14 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
     useProcessTableWithGroupRecordDrop();
 
   const handleDragStart = useRecoilCallback(
-    ({ snapshot }) =>
-      (start: DragStart) => {
-        const currentSelectedRecordIds = getSnapshotValue(
-          snapshot,
-          selectedRowIdsSelector,
-        );
+    () => (start: DragStart) => {
+      const currentSelectedRecordIds = store.get(
+        selectedRowIdsAtom,
+      ) as string[];
 
-        startRecordDrag(start, currentSelectedRecordIds);
-      },
-    [selectedRowIdsSelector, startRecordDrag],
+      startRecordDrag(start, currentSelectedRecordIds);
+    },
+    [selectedRowIdsAtom, startRecordDrag, store],
   );
 
   const handleDragEnd = useRecoilCallback(

@@ -7,7 +7,7 @@ import { processGroupDrop } from '@/object-record/record-drag/utils/processGroup
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useUpdateDroppedRecordOnBoard } from '@/object-record/record-drag/hooks/useUpdateDroppedRecordOnBoard';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { useContext } from 'react';
 
 export const useProcessBoardCardDrop = () => {
@@ -15,32 +15,30 @@ export const useProcessBoardCardDrop = () => {
   const { selectFieldMetadataItem } = useContext(RecordBoardContext);
 
   const recordIndexRecordIdsByGroupCallbackFamilyState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentFamilyStateCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
   const { updateDroppedRecordOnBoard } = useUpdateDroppedRecordOnBoard();
 
   const processBoardCardDrop = useRecoilCallback(
-    ({ snapshot }) =>
-      (boardCardDropResult: DropResult, selectedRecordIds: string[]) => {
-        if (!selectFieldMetadataItem) return;
+    () => (boardCardDropResult: DropResult, selectedRecordIds: string[]) => {
+      if (!selectFieldMetadataItem) return;
 
-        processGroupDrop({
-          groupDropResult: boardCardDropResult,
-          snapshot,
-          store,
-          selectedRecordIds,
-          recordIdsByGroupFamilyState:
-            recordIndexRecordIdsByGroupCallbackFamilyState,
-          onUpdateRecord: ({ recordId, position }, targetRecordGroupValue) => {
-            updateDroppedRecordOnBoard(
-              { recordId, position },
-              targetRecordGroupValue,
-            );
-          },
-        });
-      },
+      processGroupDrop({
+        groupDropResult: boardCardDropResult,
+        store,
+        selectedRecordIds,
+        recordIdsByGroupFamilyState:
+          recordIndexRecordIdsByGroupCallbackFamilyState,
+        onUpdateRecord: ({ recordId, position }, targetRecordGroupValue) => {
+          updateDroppedRecordOnBoard(
+            { recordId, position },
+            targetRecordGroupValue,
+          );
+        },
+      });
+    },
     [
       store,
       selectFieldMetadataItem,

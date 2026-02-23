@@ -143,7 +143,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
             existingView.shouldHideEmptyGroups
           ) {
             const view = convertCoreViewToView(coreView);
-            set(
+            jotaiStore.set(
               recordIndexShouldHideEmptyRecordGroupsComponentState.atomFamily({
                 instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
                   objectMetadataItem.namePlural,

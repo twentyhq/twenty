@@ -1,12 +1,13 @@
+import { useStore } from 'jotai';
+
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorCallbackStateV2';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { type ViewType } from '@/views/types/ViewType';
 import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
@@ -29,13 +30,15 @@ export const useReorderRecordGroups = ({
   recordIndexId,
   viewType,
 }: UseReorderRecordGroupsParams) => {
+  const store = useStore();
   const { setRecordGroups } = useSetRecordGroups();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackState(
-    visibleRecordGroupIdsComponentFamilySelector,
-    recordIndexId,
-  );
+  const visibleRecordGroupIdsFamilySelector =
+    useRecoilComponentFamilySelectorCallbackStateV2(
+      visibleRecordGroupIdsComponentFamilySelector,
+      recordIndexId,
+    );
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
 
@@ -44,10 +47,9 @@ export const useReorderRecordGroups = ({
   );
 
   const reorderRecordGroups = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       ({ fromIndex, toIndex }: ReorderRecordGroupsParams) => {
-        const visibleRecordGroupIds = getSnapshotValue(
-          snapshot,
+        const visibleRecordGroupIds = store.get(
           visibleRecordGroupIdsFamilySelector(viewType),
         );
 
@@ -67,10 +69,9 @@ export const useReorderRecordGroups = ({
 
         const updatedRecordGroups = reorderedVisibleRecordGroupIds.reduce<
           RecordGroupDefinition[]
-        >((acc, recordGroupId, index) => {
-          const recordGroupDefinition = getSnapshotValue(
-            snapshot,
-            recordGroupDefinitionFamilyState(recordGroupId),
+        >((acc, recordGroupId, reorderIndex) => {
+          const recordGroupDefinition = store.get(
+            recordGroupDefinitionFamilyState.atomFamily(recordGroupId),
           );
 
           if (!isDefined(recordGroupDefinition)) {
@@ -81,7 +82,7 @@ export const useReorderRecordGroups = ({
             ...acc,
             {
               ...recordGroupDefinition,
-              position: index,
+              position: reorderIndex,
             },
           ];
         }, []);
@@ -106,6 +107,7 @@ export const useReorderRecordGroups = ({
       recordIndexId,
       saveViewGroups,
       setRecordGroups,
+      store,
       viewType,
       visibleRecordGroupIdsFamilySelector,
     ],

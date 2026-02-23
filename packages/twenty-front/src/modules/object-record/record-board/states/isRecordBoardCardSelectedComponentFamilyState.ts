@@ -1,8 +1,8 @@
+import { createComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilyStateV2';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
 
 export const isRecordBoardCardSelectedComponentFamilyState =
-  createComponentFamilyState<boolean, string>({
+  createComponentFamilyStateV2<boolean, string>({
     key: 'isRecordBoardCardSelectedComponentFamilyState',
     defaultValue: false,
     componentInstanceContext: RecordBoardComponentInstanceContext,

@@ -1,6 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
@@ -8,6 +9,8 @@ import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/reco
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useStore } from 'jotai';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 export const useLoadRecordsToVirtualRows = () => {
@@ -21,17 +24,20 @@ export const useLoadRecordsToVirtualRows = () => {
       dataLoadingStatusByRealIndexComponentFamilySelector,
     );
 
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
-    recordIndexAllRecordIdsComponentSelector,
-  );
+  const recordIndexRecordIdsByGroupFamilyState =
+    useRecoilComponentFamilyStateCallbackStateV2(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+    );
 
   const hasUserSelectedAllRowsCallbackState = useRecoilComponentCallbackState(
     hasUserSelectedAllRowsComponentState,
   );
 
-  const isRowSelectedCallbackState = useRecoilComponentCallbackState(
+  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
     isRowSelectedComponentFamilyState,
   );
+
+  const store = useStore();
 
   const loadRecordsToVirtualRows = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -65,9 +71,8 @@ export const useLoadRecordsToVirtualRows = () => {
           );
         }
 
-        const currentAllRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRecordIdsSelector,
+        const currentAllRecordIds = store.get(
+          recordIndexRecordIdsByGroupFamilyState(NO_RECORD_GROUP_FAMILY_KEY),
         );
 
         const recordIds = records.map((record) => record.id);
@@ -78,18 +83,22 @@ export const useLoadRecordsToVirtualRows = () => {
           newAllRecordIds[i + startingRealIndex] = recordIds[i];
 
           if (hasUserSelectedAllRows) {
-            set(isRowSelectedCallbackState(recordIds[i]), true);
+            store.set(isRowSelectedFamilyState(recordIds[i]), true);
           }
         }
 
-        set(recordIndexAllRecordIdsSelector, newAllRecordIds);
+        store.set(
+          recordIndexRecordIdsByGroupFamilyState(NO_RECORD_GROUP_FAMILY_KEY),
+          newAllRecordIds,
+        );
       },
     [
       recordIdByRealIndexCallbackSelector,
       dataLoadingStatusByRealIndexCallbackSelector,
-      recordIndexAllRecordIdsSelector,
-      isRowSelectedCallbackState,
+      recordIndexRecordIdsByGroupFamilyState,
+      isRowSelectedFamilyState,
       hasUserSelectedAllRowsCallbackState,
+      store,
     ],
   );
 

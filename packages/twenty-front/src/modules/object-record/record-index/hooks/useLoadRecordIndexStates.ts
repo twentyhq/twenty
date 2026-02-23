@@ -23,6 +23,7 @@ import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { type View } from '@/views/types/View';
 import { type ViewField } from '@/views/types/ViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -57,9 +58,10 @@ export const useLoadRecordIndexStates = () => {
       recordIndexGroupAggregateFieldMetadataItemComponentState,
     );
 
-  const setRecordIndexShouldHideEmptyRecordGroups = useSetRecoilComponentState(
-    recordIndexShouldHideEmptyRecordGroupsComponentState,
-  );
+  const setRecordIndexShouldHideEmptyRecordGroups =
+    useSetRecoilComponentStateV2(
+      recordIndexShouldHideEmptyRecordGroupsComponentState,
+    );
 
   const setRecordIndexCalendarFieldMetadataIdState = useSetRecoilStateV2(
     recordIndexCalendarFieldMetadataIdState,
