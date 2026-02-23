@@ -2,8 +2,6 @@ import { type FrontComponentExecutionContext } from '../types/FrontComponentExec
 
 type Listener = () => void;
 
-// State is stored on globalThis so the worker's SDK instance and each
-// front component's bundled SDK copy share the same backing store.
 const CONTEXT_KEY = '__twentySdkExecutionContext__';
 const LISTENERS_KEY = '__twentySdkContextListeners__';
 
