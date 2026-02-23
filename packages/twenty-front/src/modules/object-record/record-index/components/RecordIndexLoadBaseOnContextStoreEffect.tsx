@@ -2,9 +2,9 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordIndexLoadBaseOnContextStoreEffect = () => {
@@ -17,11 +17,9 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     undefined,
   );
 
-  const view = useRecoilValue(
-    coreViewFromViewIdFamilySelector({
-      viewId: contextStoreCurrentViewId ?? '',
-    }),
-  );
+  const view = useFamilySelectorValueV2(coreViewFromViewIdFamilySelector, {
+    viewId: contextStoreCurrentViewId ?? '',
+  });
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 

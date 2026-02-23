@@ -14,6 +14,7 @@ import { In, Repository } from 'typeorm';
 
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -59,6 +60,7 @@ export class CleanerWorkspaceService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly i18nService: I18nService,
@@ -304,7 +306,11 @@ export class CleanerWorkspaceService {
               userWorkspace.userId,
             );
           }
-
+          if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+            await this.billingSubscriptionService.deleteSubscriptions(
+              workspace.id,
+            );
+          }
           await this.workspaceRepository.delete(workspace.id);
         }
       }

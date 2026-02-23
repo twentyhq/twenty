@@ -6,11 +6,14 @@ import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestr
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { getIsDevelopmentEnvironment } from '~/utils/getIsDevelopmentEnvironment';
 import { sleep } from '~/utils/sleep';
 
 export const useHandleSseClientConnectionRetry = () => {
+  const jotaiStore = useStore();
+
   const handleSseClientConnectionRetry = useRecoilCallback(
     ({ snapshot, set }) =>
       async (retryCount: number, initialTokenForSseClient: string) => {
@@ -24,7 +27,7 @@ export const useHandleSseClientConnectionRetry = () => {
           return;
         }
 
-        const tokenPair = getSnapshotValue(snapshot, tokenPairState);
+        const tokenPair = jotaiStore.get(tokenPairState.atom);
         const currentAppToken =
           tokenPair?.accessOrWorkspaceAgnosticToken?.token;
 
@@ -56,7 +59,7 @@ export const useHandleSseClientConnectionRetry = () => {
 
         await sleep(waitTimeInMs);
       },
-    [],
+    [jotaiStore],
   );
 
   return { handleSseClientConnectionRetry };

@@ -3,25 +3,30 @@ import { renderHook } from '@testing-library/react';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
-  onInitializeRecoilSnapshot: (snapshot) => {
-    snapshot.set(currentWorkspaceMemberState, {
+  onInitializeRecoilSnapshot: () => {
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+  },
+});
+
+describe('useFindManyRecords', () => {
+  it('should work as expected', async () => {
+    jotaiStore.set(currentWorkspaceMemberState.atom, {
       id: '32219445-f587-4c40-b2b1-6d3205ed96da',
       name: { firstName: 'John', lastName: 'Connor' },
       locale: 'en',
       colorScheme: 'Light',
       userEmail: 'userEmail',
     });
-    snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-  },
-});
 
-describe('useFindManyRecords', () => {
-  it('should work as expected', async () => {
     const onCompleted = jest.fn();
 
     const { result } = renderHook(

@@ -1,23 +1,20 @@
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
-import { useRecoilValue } from 'recoil';
 
 export const useViewOrDefaultViewFromPrefetchedViews = ({
   objectMetadataItemId,
 }: {
   objectMetadataItemId: string;
 }) => {
-  const indexViewId = useRecoilValue(
-    coreIndexViewIdFromObjectMetadataItemFamilySelector({
-      objectMetadataItemId,
-    }),
+  const indexViewId = useFamilySelectorValueV2(
+    coreIndexViewIdFromObjectMetadataItemFamilySelector,
+    { objectMetadataItemId },
   );
 
-  const indexView = useRecoilValue(
-    coreViewFromViewIdFamilySelector({
-      viewId: indexViewId ?? '',
-    }),
-  );
+  const indexView = useFamilySelectorValueV2(coreViewFromViewIdFamilySelector, {
+    viewId: indexViewId ?? '',
+  });
 
   return { view: indexView };
 };

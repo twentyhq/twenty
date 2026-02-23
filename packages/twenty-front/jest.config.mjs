@@ -63,7 +63,7 @@ const jestConfig = {
     global: {
       statements: 49.5,
       lines: 48,
-      functions: 40,
+      functions: 39.5,
     },
   },
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],

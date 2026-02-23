@@ -1,4 +1,5 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldRelationFromManyValue,
@@ -36,9 +37,9 @@ export const useOpenJunctionRelationFieldInput = () => {
         recordId: string;
         prefix?: string;
       }) => {
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+        const objectMetadataItems = jotaiStore.get(
+          objectMetadataItemsState.atom,
+        );
 
         const sourceObjectMetadataId = objectMetadataItems.find(
           (item) =>

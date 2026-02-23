@@ -14,7 +14,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -44,10 +44,9 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const isLabelIdentifier = useRecoilValue(
-    isFieldMetadataItemLabelIdentifierSelector({
-      fieldMetadataItemId: recordField.fieldMetadataItemId,
-    }),
+  const isLabelIdentifier = useFamilySelectorValueV2(
+    isFieldMetadataItemLabelIdentifierSelector,
+    { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
   const secondVisibleRecordField = visibleRecordFields[1];
@@ -125,10 +124,9 @@ export const RecordTableColumnHeadDropdownMenu = ({
     openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
   };
 
-  const { isFilterable, isSortable } = useRecoilValue(
-    isFieldMetadataItemFilterableAndSortableSelector({
-      fieldMetadataItemId: recordField.fieldMetadataItemId,
-    }),
+  const { isFilterable, isSortable } = useFamilySelectorValueV2(
+    isFieldMetadataItemFilterableAndSortableSelector,
+    { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
   const showSeparator =

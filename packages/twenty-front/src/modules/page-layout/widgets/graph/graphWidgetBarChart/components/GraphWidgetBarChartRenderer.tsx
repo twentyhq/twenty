@@ -11,10 +11,10 @@ import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { AxisNameDisplay } from '~/generated-metadata/graphql';
@@ -81,14 +81,14 @@ export const GraphWidgetBarChartRenderer = () => {
     configuration.omitNullValues,
   );
 
-  const indexViewId = useRecoilValue(
-    coreIndexViewIdFromObjectMetadataItemFamilySelector({
-      objectMetadataItemId: objectMetadataItem.id,
-    }),
+  const indexViewId = useFamilySelectorValueV2(
+    coreIndexViewIdFromObjectMetadataItemFamilySelector,
+    { objectMetadataItemId: objectMetadataItem.id },
   );
 
   const primaryGroupByField = objectMetadataItem.fields.find(
-    (field) => field.id === configuration.primaryAxisGroupByFieldMetadataId,
+    (field: { id: string }) =>
+      field.id === configuration.primaryAxisGroupByFieldMetadataId,
   );
   const canRedirectToFilteredView =
     isFilteredViewRedirectionSupported(primaryGroupByField);

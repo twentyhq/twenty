@@ -16,7 +16,7 @@ permissions:
 jobs:
   changed-files:
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     outputs:
       any_changed: ${{ steps.changed-files.outputs.any_changed }}
     steps:

@@ -1421,6 +1421,11 @@ msgstr "建立檢視群組需要 FieldMetadataId。"
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "建立檢視排序需要 FieldMetadataId。"
 
+#. js-lingui-id: VgGXR3
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
+msgstr ""
+
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."

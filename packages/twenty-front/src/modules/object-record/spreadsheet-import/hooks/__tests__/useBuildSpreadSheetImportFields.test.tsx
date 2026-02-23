@@ -1,10 +1,12 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { RecoilRoot } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -13,9 +15,11 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
-    <RecoilRoot>
-      <JestObjectMetadataItemSetter>{children}</JestObjectMetadataItemSetter>
-    </RecoilRoot>
+    <JotaiProvider store={jotaiStore}>
+      <RecoilRoot>
+        <JestObjectMetadataItemSetter>{children}</JestObjectMetadataItemSetter>
+      </RecoilRoot>
+    </JotaiProvider>
   );
 };
 
@@ -33,6 +37,7 @@ describe('useBuildSpreadSheetImportFields', () => {
       getIcons: () => ({}),
     });
     jest.clearAllMocks();
+    jotaiStore.set(objectMetadataItemsState.atom, []);
   });
 
   const createMockFieldMetadataItem = (
@@ -76,17 +81,9 @@ describe('useBuildSpreadSheetImportFields', () => {
     }) as ObjectMetadataItem;
 
   it('should build importFields for basic field types', () => {
-    const { result } = renderHook(
-      () => {
-        const setObjectMetadataItems = useSetRecoilState(
-          objectMetadataItemsState,
-        );
-        setObjectMetadataItems([]);
-
-        return useBuildSpreadsheetImportFields();
-      },
-      { wrapper: Wrapper },
-    );
+    const { result } = renderHook(() => useBuildSpreadsheetImportFields(), {
+      wrapper: Wrapper,
+    });
 
     const fieldMetadataItems: FieldMetadataItem[] = [
       createMockFieldMetadataItem({
@@ -137,17 +134,9 @@ describe('useBuildSpreadSheetImportFields', () => {
   });
 
   it('should build importFields for select types', () => {
-    const { result } = renderHook(
-      () => {
-        const setObjectMetadataItems = useSetRecoilState(
-          objectMetadataItemsState,
-        );
-        setObjectMetadataItems([]);
-
-        return useBuildSpreadsheetImportFields();
-      },
-      { wrapper: Wrapper },
-    );
+    const { result } = renderHook(() => useBuildSpreadsheetImportFields(), {
+      wrapper: Wrapper,
+    });
 
     const fieldMetadataItems: FieldMetadataItem[] = [
       createMockFieldMetadataItem({
@@ -227,17 +216,9 @@ describe('useBuildSpreadSheetImportFields', () => {
   });
 
   it('should build importFields for composite types (full name)', () => {
-    const { result } = renderHook(
-      () => {
-        const setObjectMetadataItems = useSetRecoilState(
-          objectMetadataItemsState,
-        );
-        setObjectMetadataItems([]);
-
-        return useBuildSpreadsheetImportFields();
-      },
-      { wrapper: Wrapper },
-    );
+    const { result } = renderHook(() => useBuildSpreadsheetImportFields(), {
+      wrapper: Wrapper,
+    });
 
     const fieldMetadataItems: FieldMetadataItem[] = [
       createMockFieldMetadataItem({
@@ -269,17 +250,9 @@ describe('useBuildSpreadSheetImportFields', () => {
   });
 
   it('should filter out ACTOR fields', () => {
-    const { result } = renderHook(
-      () => {
-        const setObjectMetadataItems = useSetRecoilState(
-          objectMetadataItemsState,
-        );
-        setObjectMetadataItems([]);
-
-        return useBuildSpreadsheetImportFields();
-      },
-      { wrapper: Wrapper },
-    );
+    const { result } = renderHook(() => useBuildSpreadsheetImportFields(), {
+      wrapper: Wrapper,
+    });
 
     const fieldMetadataItems: FieldMetadataItem[] = [
       createMockFieldMetadataItem({
@@ -304,17 +277,9 @@ describe('useBuildSpreadSheetImportFields', () => {
   });
 
   it('should return empty array for unsupported field types', () => {
-    const { result } = renderHook(
-      () => {
-        const setObjectMetadataItems = useSetRecoilState(
-          objectMetadataItemsState,
-        );
-        setObjectMetadataItems([]);
-
-        return useBuildSpreadsheetImportFields();
-      },
-      { wrapper: Wrapper },
-    );
+    const { result } = renderHook(() => useBuildSpreadsheetImportFields(), {
+      wrapper: Wrapper,
+    });
 
     const fieldMetadataItems: FieldMetadataItem[] = [
       createMockFieldMetadataItem({
@@ -336,96 +301,99 @@ describe('useBuildSpreadSheetImportFields', () => {
   });
 
   it('should build importFields for relation field type', () => {
-    const { result } = renderHook(
-      () => {
-        const setObjectMetadataItems = useSetRecoilState(
-          objectMetadataItemsState,
-        );
-
-        const targetObjectMetadata = createMockObjectMetadataItem({
-          id: 'target-object-id',
-          nameSingular: 'company',
-          namePlural: 'companies',
-          labelSingular: 'Company',
-          labelPlural: 'Companies',
-          fields: [
-            createMockFieldMetadataItem({
-              id: 'company-id-field',
-              name: 'id',
-              label: 'ID',
-              type: FieldMetadataType.UUID,
-            }),
-            createMockFieldMetadataItem({
-              id: 'company-name-field',
-              name: 'name',
-              label: 'Name',
-              type: FieldMetadataType.TEXT,
-            }),
-            createMockFieldMetadataItem({
-              id: 'company-email-field',
-              name: 'emails',
-              label: 'Emails',
-              type: FieldMetadataType.EMAILS,
-            }),
+    const targetObjectMetadata = createMockObjectMetadataItem({
+      id: 'target-object-id',
+      nameSingular: 'company',
+      namePlural: 'companies',
+      labelSingular: 'Company',
+      labelPlural: 'Companies',
+      fields: [
+        createMockFieldMetadataItem({
+          id: 'company-id-field',
+          name: 'id',
+          label: 'ID',
+          type: FieldMetadataType.UUID,
+        }),
+        createMockFieldMetadataItem({
+          id: 'company-name-field',
+          name: 'name',
+          label: 'Name',
+          type: FieldMetadataType.TEXT,
+        }),
+        createMockFieldMetadataItem({
+          id: 'company-email-field',
+          name: 'emails',
+          label: 'Emails',
+          type: FieldMetadataType.EMAILS,
+        }),
+      ],
+      indexMetadatas: [
+        {
+          id: 'primary-key-index',
+          name: 'primaryKeyIndex',
+          createdAt: '2023-01-01',
+          updatedAt: '2023-01-01',
+          isUnique: true,
+          indexFieldMetadatas: [
+            {
+              id: 'index-field-1',
+              fieldMetadataId: 'company-id-field',
+              createdAt: '2023-01-01',
+              updatedAt: '2023-01-01',
+              order: 0,
+            },
           ],
-          indexMetadatas: [
+        },
+        {
+          id: 'unique-name-index',
+          name: 'uniqueNameIndex',
+          createdAt: '2023-01-01',
+          updatedAt: '2023-01-01',
+          isUnique: true,
+          indexFieldMetadatas: [
             {
-              id: 'primary-key-index',
-              name: 'primaryKeyIndex',
+              id: 'index-field-2',
+              fieldMetadataId: 'company-name-field',
               createdAt: '2023-01-01',
               updatedAt: '2023-01-01',
-              isUnique: true,
-              indexFieldMetadatas: [
-                {
-                  id: 'index-field-1',
-                  fieldMetadataId: 'company-id-field',
-                  createdAt: '2023-01-01',
-                  updatedAt: '2023-01-01',
-                  order: 0,
-                },
-              ],
+              order: 0,
             },
+          ],
+        },
+        {
+          id: 'unique-email-index',
+          name: 'uniqueEmailIndex',
+          createdAt: '2023-01-01',
+          updatedAt: '2023-01-01',
+          isUnique: true,
+          indexFieldMetadatas: [
             {
-              id: 'unique-name-index',
-              name: 'uniqueNameIndex',
+              id: 'index-field-3',
+              fieldMetadataId: 'company-email-field',
               createdAt: '2023-01-01',
               updatedAt: '2023-01-01',
-              isUnique: true,
-              indexFieldMetadatas: [
-                {
-                  id: 'index-field-2',
-                  fieldMetadataId: 'company-name-field',
-                  createdAt: '2023-01-01',
-                  updatedAt: '2023-01-01',
-                  order: 0,
-                },
-              ],
+              order: 0,
             },
-            {
-              id: 'unique-email-index',
-              name: 'uniqueEmailIndex',
-              createdAt: '2023-01-01',
-              updatedAt: '2023-01-01',
-              isUnique: true,
-              indexFieldMetadatas: [
-                {
-                  id: 'index-field-3',
-                  fieldMetadataId: 'company-email-field',
-                  createdAt: '2023-01-01',
-                  updatedAt: '2023-01-01',
-                  order: 0,
-                },
-              ],
-            },
-          ] as IndexMetadataItem[],
-        });
+          ],
+        },
+      ] as IndexMetadataItem[],
+    });
 
-        setObjectMetadataItems([targetObjectMetadata]);
-
-        return useBuildSpreadsheetImportFields();
-      },
-      { wrapper: Wrapper },
+    const RelationTestWrapper = ({ children }: { children: ReactNode }) => (
+      <JotaiProvider store={jotaiStore}>
+        <RecoilRoot>
+          <JestObjectMetadataItemSetter
+            objectMetadataItems={[targetObjectMetadata]}
+          >
+            {children}
+          </JestObjectMetadataItemSetter>
+        </RecoilRoot>
+      </JotaiProvider>
     );
+
+    const { result } = renderHook(() => useBuildSpreadsheetImportFields(), {
+      wrapper: RelationTestWrapper,
+    });
 
     const fieldMetadataItems: FieldMetadataItem[] = [
       createMockFieldMetadataItem({

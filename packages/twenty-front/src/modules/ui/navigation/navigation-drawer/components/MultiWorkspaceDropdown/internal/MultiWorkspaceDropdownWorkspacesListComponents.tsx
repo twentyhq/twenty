@@ -5,9 +5,9 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { multiWorkspaceDropdownStateV2 } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownStateV2';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useState } from 'react';
 import { IconChevronLeft } from 'twenty-ui/display';
 
 import { WorkspacesForSignIn } from './components/WorkspacesForSignIn';
@@ -17,7 +17,7 @@ import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState
 export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const { t } = useLingui();
 
-  const availableWorkspaces = useRecoilValue(availableWorkspacesState);
+  const availableWorkspaces = useRecoilValueV2(availableWorkspacesState);
 
   const setMultiWorkspaceDropdownState = useSetRecoilStateV2(
     multiWorkspaceDropdownStateV2,

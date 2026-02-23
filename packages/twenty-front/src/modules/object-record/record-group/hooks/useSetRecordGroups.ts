@@ -5,6 +5,7 @@ import { recordGroupIdsComponentState } from '@/object-record/record-group/state
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
@@ -27,9 +28,9 @@ export const useSetRecordGroups = () => {
         recordIndexId: string;
         objectMetadataItemId: string;
       }) => {
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+        const objectMetadataItems = jotaiStore.get(
+          objectMetadataItemsState.atom,
+        );
 
         const objectMetadataItem = objectMetadataItems.find(
           (objectMetadataItem) =>

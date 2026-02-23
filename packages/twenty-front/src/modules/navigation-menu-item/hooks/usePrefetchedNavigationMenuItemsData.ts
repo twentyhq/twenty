@@ -4,7 +4,7 @@ import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/n
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilValue } from 'recoil';
+
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -16,9 +16,11 @@ type PrefetchedNavigationMenuItemsData = {
 
 export const usePrefetchedNavigationMenuItemsData =
   (): PrefetchedNavigationMenuItemsData => {
-    const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+    const currentWorkspaceMember = useRecoilValueV2(
+      currentWorkspaceMemberState,
+    );
     const currentWorkspaceMemberId = currentWorkspaceMember?.id;
-    const prefetchNavigationMenuItems = useRecoilValue(
+    const prefetchNavigationMenuItems = useRecoilValueV2(
       prefetchNavigationMenuItemsState,
     );
     const isNavigationMenuInEditMode = useRecoilValueV2(

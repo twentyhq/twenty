@@ -3,6 +3,7 @@ import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandleSseClientConnectionRetry';
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { createClient } from 'graphql-sse';
@@ -14,7 +15,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 export const SSEClientEffect = () => {
   const isLoggedIn = useIsLogged();
   const [sseClient, setSseClient] = useRecoilState(sseClientState);
-  const [tokenPair] = useRecoilState(tokenPairState);
+  const tokenPair = useRecoilValueV2(tokenPairState);
 
   const handleSSEClientConnected = useRecoilCallback(
     ({ snapshot, set }) =>

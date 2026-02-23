@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -16,6 +15,7 @@ import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSo
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
@@ -28,7 +28,7 @@ const StyledOrphanNavigationMenuItemsContainer = styled.div`
 `;
 
 export const CurrentWorkspaceMemberOrphanNavigationMenuItems = () => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
   const currentPath = useLocation().pathname;

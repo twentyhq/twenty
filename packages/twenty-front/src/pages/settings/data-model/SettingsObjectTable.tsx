@@ -21,7 +21,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/display';
@@ -63,7 +62,7 @@ export const SettingsObjectTable = ({
   const { totalCountByObjectMetadataItemNamePlural } =
     useCombinedGetTotalCount();
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
 
   const allObjectSettingsArray = useMemo(
     () =>

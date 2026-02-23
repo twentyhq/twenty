@@ -807,6 +807,53 @@ Notizen:
 * Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, auf die in Ihrer `application-config.ts` über `defaultRoleUniversalIdentifier` verwiesen wird. Dies ist die Standardrolle, die von den Logikfunktionen Ihrer Anwendung verwendet wird.
 * Anwendungen können Rollen definieren, um das Least-Privilege-Prinzip einzuhalten. Gewähren Sie nur die Berechtigungen, die Ihre Funktionen benötigen, und verweisen Sie dann mit `defaultRoleUniversalIdentifier` auf den universellen Bezeichner dieser Rolle.
 
+#### Dateien hochladen
+
+Der generierte `Twenty`-Client enthält eine Methode `uploadFile`, um Dateien an Felder des Typs Datei in Ihren Arbeitsbereichsobjekten anzuhängen. Da Standard-GraphQL-Clients Multipart-Datei-Uploads nicht nativ unterstützen, stellt der Client diese dedizierte Methode bereit, die unter der Haube die [GraphQL-Multipart-Anfragespezifikation](https://github.com/jaydenseric/graphql-multipart-request-spec) implementiert.
+
+```typescript
+import Twenty from '~/generated';
+import * as fs from 'fs';
+
+const client = new Twenty();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await client.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+Die Methodensignatur:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| Parameter                          | Typ      | Beschreibung                                                                    |
+| ---------------------------------- | -------- | ------------------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Der Rohinhalt der Datei                                                         |
+| `filename`                         | `string` | Der Name der Datei (wird für Speicherung und Anzeige verwendet)                 |
+| `contentType`                      | `string` | MIME-Typ der Datei (standardmäßig `application/octet-stream`, wenn weggelassen) |
+| `fieldMetadataUniversalIdentifier` | `string` | Der `universalIdentifier` des Dateityp-Felds in Ihrem Objekt                    |
+
+Hauptpunkte:
+
+* Die Methode sendet die Datei an den **metadata endpoint** (nicht den main GraphQL endpoint), wo die Upload-Mutation ausgeführt wird.
+* Sie verwendet den `universalIdentifier` des Feldes (nicht dessen arbeitsbereichsspezifische ID), sodass Ihr Upload-Code in jedem Arbeitsbereich funktioniert, in dem Ihre App installiert ist — im Einklang damit, wie Apps Felder überall sonst referenzieren.
+* Die zurückgegebene `url` ist eine signierte URL, mit der Sie auf die hochgeladene Datei zugreifen können.
+
 ### Hello-World-Beispiel
 
 Ein minimales End-to-End-Beispiel, das Objekte, Logikfunktionen, Frontend-Komponenten und mehrere Trigger demonstriert, finden Sie [hier](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):

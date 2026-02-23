@@ -4,10 +4,10 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { hasInitializedCurrentRecordSortsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordSortsComponentFamilyState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordSortEffect = () => {
@@ -17,10 +17,9 @@ export const ViewBarRecordSortEffect = () => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const currentView = useRecoilValue(
-    coreViewFromViewIdFamilySelector({
-      viewId: currentViewId ?? '',
-    }),
+  const currentView = useFamilySelectorValueV2(
+    coreViewFromViewIdFamilySelector,
+    { viewId: currentViewId ?? '' },
   );
 
   const [

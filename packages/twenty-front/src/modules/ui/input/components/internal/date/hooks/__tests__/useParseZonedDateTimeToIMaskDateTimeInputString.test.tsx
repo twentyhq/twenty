@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { RecoilRoot } from 'recoil';
 import { Temporal } from 'temporal-polyfill';
 
@@ -6,6 +7,7 @@ import { DateFormat } from '@/localization/constants/DateFormat';
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useParseZonedDateTimeToIMaskDateTimeInputString } from '@/ui/input/components/internal/date/hooks/useParseZonedDateTimeToIMaskDateTimeInputString';
 import { CalendarStartDay } from 'twenty-shared/constants';
 
@@ -21,21 +23,20 @@ describe('useParseZonedDateTimeToIMaskDateTimeInputString', () => {
 
   const createWrapper =
     (dateFormat: DateFormat) =>
-    ({ children }: { children: React.ReactNode }) => (
-      <RecoilRoot
-        initializeState={(snapshot) => {
-          snapshot.set(workspaceMemberFormatPreferencesState, {
-            timeZone: 'Pacific/Auckland',
-            dateFormat,
-            timeFormat: TimeFormat.HOUR_24,
-            numberFormat: NumberFormat.COMMAS_AND_DOT,
-            calendarStartDay: CalendarStartDay.MONDAY,
-          });
-        }}
-      >
-        {children}
-      </RecoilRoot>
-    );
+    ({ children }: { children: React.ReactNode }) => {
+      jotaiStore.set(workspaceMemberFormatPreferencesState.atom, {
+        timeZone: 'Pacific/Auckland',
+        dateFormat,
+        timeFormat: TimeFormat.HOUR_24,
+        numberFormat: NumberFormat.COMMAS_AND_DOT,
+        calendarStartDay: CalendarStartDay.MONDAY,
+      });
+      return (
+        <JotaiProvider store={jotaiStore}>
+          <RecoilRoot>{children}</RecoilRoot>
+        </JotaiProvider>
+      );
+    };
 
   it('should format with day first format (DD/MM/YYYY, HH:mm)', () => {
     const { result } = renderHook(
