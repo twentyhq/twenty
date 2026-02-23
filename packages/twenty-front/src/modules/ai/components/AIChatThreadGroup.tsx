@@ -18,7 +18,7 @@ const StyledDateGroup = styled.div`
 const StyledDateHeader = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: 600;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
