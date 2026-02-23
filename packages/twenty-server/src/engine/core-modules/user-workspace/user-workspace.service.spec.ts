@@ -463,6 +463,12 @@ describe('UserWorkspaceService', () => {
       objectMetadataId: 'agent-object-id',
       relationTargetObjectMetadataId: 'wm-object-id',
     };
+    const emailsField = {
+      id: 'emails-field-id',
+      name: 'emails',
+      type: FieldMetadataType.EMAILS,
+      objectMetadataId: 'agent-object-id',
+    };
 
     it('should link agent to workspace member when emails match on createWorkspaceMember', async () => {
       const workspaceMemberRecord = { id: 'wm-id', userId: user.id };
@@ -506,7 +512,8 @@ describe('UserWorkspaceService', () => {
         .mockResolvedValueOnce(workspaceMemberObjectMetadata as any);
       jest
         .spyOn(fieldMetadataRepository, 'findOne')
-        .mockResolvedValue(userRelationField as any);
+        .mockResolvedValueOnce(userRelationField as any)
+        .mockResolvedValueOnce(emailsField as any);
 
       await service.createWorkspaceMember(workspaceId, user);
 
@@ -576,7 +583,8 @@ describe('UserWorkspaceService', () => {
         .mockResolvedValueOnce(workspaceMemberObjectMetadata as any);
       jest
         .spyOn(fieldMetadataRepository, 'findOne')
-        .mockResolvedValue(userRelationField as any);
+        .mockResolvedValueOnce(userRelationField as any)
+        .mockResolvedValueOnce(emailsField as any);
 
       await service.createWorkspaceMember(workspaceId, user);
 
@@ -634,7 +642,8 @@ describe('UserWorkspaceService', () => {
         .mockResolvedValueOnce(workspaceMemberObjectMetadata as any);
       jest
         .spyOn(fieldMetadataRepository, 'findOne')
-        .mockResolvedValue(userRelationField as any);
+        .mockResolvedValueOnce(userRelationField as any)
+        .mockResolvedValueOnce(emailsField as any);
 
       await service.addUserToWorkspaceIfUserNotInWorkspace(user, workspace);
 

@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
@@ -46,6 +47,8 @@ import { assert } from 'src/utils/assert';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
+  private readonly logger = new Logger(UserWorkspaceService.name);
+
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -150,7 +153,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       );
     }, authContext);
 
-    await this.linkWorkspaceMemberToMatchingAgent(workspaceId, user);
+    try {
+      await this.linkWorkspaceMemberToMatchingAgent(workspaceId, user);
+    } catch (error) {
+      this.logger.error(
+        `Failed to link workspace member to agent for user ${user.email} in workspace ${workspaceId}`,
+        error instanceof Error ? error.stack : error,
+      );
+    }
   }
 
   async addUserToWorkspaceIfUserNotInWorkspace(
@@ -198,7 +208,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       });
     } else {
       // On subsequent logins, try to link if not already linked
-      await this.linkWorkspaceMemberToMatchingAgent(workspace.id, user);
+      try {
+        await this.linkWorkspaceMemberToMatchingAgent(workspace.id, user);
+      } catch (error) {
+        this.logger.error(
+          `Failed to link workspace member to agent for user ${user.email} in workspace ${workspace.id}`,
+          error instanceof Error ? error.stack : error,
+        );
+      }
     }
   }
 
@@ -406,7 +423,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       where: { nameSingular: 'agent', workspaceId, isActive: true },
     });
 
-    if (!agentObjectMetadata) return;
+    if (!agentObjectMetadata) {
+      this.logger.log(
+        `No agent object metadata found in workspace ${workspaceId}, skipping agent linking`,
+      );
+
+      return;
+    }
 
     const workspaceMemberObjectMetadata =
       await this.objectMetadataRepository.findOne({
@@ -417,7 +440,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         },
       });
 
-    if (!workspaceMemberObjectMetadata) return;
+    if (!workspaceMemberObjectMetadata) {
+      this.logger.warn(
+        `No workspaceMember object metadata found in workspace ${workspaceId}`,
+      );
+
+      return;
+    }
 
     const userRelationField = await this.fieldMetadataRepository.findOne({
       where: {
@@ -429,8 +458,32 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       },
     });
 
-    if (!userRelationField) return;
+    if (!userRelationField) {
+      this.logger.warn(
+        `No relation field from Agent to WorkspaceMember found in workspace ${workspaceId}`,
+      );
 
+      return;
+    }
+
+    const emailsField = await this.fieldMetadataRepository.findOne({
+      where: {
+        objectMetadataId: agentObjectMetadata.id,
+        type: FieldMetadataType.EMAILS,
+        workspaceId,
+        isActive: true,
+      },
+    });
+
+    if (!emailsField) {
+      this.logger.warn(
+        `No EMAILS field found on Agent object in workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    const emailColumnName = `${emailsField.name}PrimaryEmail`;
     const userForeignKeyColumn = `${userRelationField.name}Id`;
 
     const authContext = buildSystemAuthContext(workspaceId);
@@ -454,21 +507,37 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         where: { userId: user.id },
       });
 
-      if (!workspaceMember) return;
+      if (!workspaceMember) {
+        this.logger.warn(
+          `No workspace member found for user ${user.email} in workspace ${workspaceId}`,
+        );
+
+        return;
+      }
 
       const agent = await agentRepository
         .createQueryBuilder('agent')
-        .where('LOWER(agent."emailsPrimaryEmail") = LOWER(:email)', {
+        .where(`LOWER(agent."${emailColumnName}") = LOWER(:email)`, {
           email: user.email,
         })
         .andWhere(`agent."${userForeignKeyColumn}" IS NULL`)
         .getOne();
 
-      if (!agent) return;
+      if (!agent) {
+        this.logger.log(
+          `No unlinked agent found matching email ${user.email} in workspace ${workspaceId}`,
+        );
+
+        return;
+      }
 
       await agentRepository.update(
         { id: (agent as Record<string, unknown>).id as string },
         { [userForeignKeyColumn]: workspaceMember.id },
+      );
+
+      this.logger.log(
+        `Successfully linked agent ${(agent as Record<string, unknown>).id} to workspace member ${workspaceMember.id} for user ${user.email}`,
       );
     }, authContext);
   }
