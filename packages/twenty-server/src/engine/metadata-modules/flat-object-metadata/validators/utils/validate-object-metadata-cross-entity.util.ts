@@ -114,6 +114,12 @@ export const validateObjectMetadataCrossEntity = ({
         }),
       );
     }
+
+    if (updateFailedFlatEntityValidations.errors.length > 0) {
+      metadataValidationErrors.objectMetadata.push(
+        updateFailedFlatEntityValidations,
+      );
+    }
   }
 
   return metadataValidationErrors;
