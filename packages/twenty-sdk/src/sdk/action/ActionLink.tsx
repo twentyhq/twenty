@@ -3,7 +3,13 @@ import { useEffect, useState } from 'react';
 import { type NavigateOptions } from 'react-router-dom';
 import { type AppPath } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
-import { navigate, unmountFrontComponent } from '../front-component-api';
+import {
+  enqueueSnackbar,
+  getFrontComponentActionErrorDedupeKey,
+  navigate,
+  unmountFrontComponent,
+  useFrontComponentId,
+} from '../front-component-api';
 
 export type ActionLinkProps<T extends AppPath> = {
   to: T;
@@ -20,6 +26,8 @@ export const ActionLink = <T extends AppPath>({
 }: ActionLinkProps<T>) => {
   const [hasExecuted, setHasExecuted] = useState(false);
 
+  const frontComponentId = useFrontComponentId();
+
   useEffect(() => {
     if (hasExecuted) {
       return;
@@ -30,13 +38,22 @@ export const ActionLink = <T extends AppPath>({
     const run = async () => {
       try {
         await navigate(to, params, queryParams, options);
+      } catch (error) {
+        if (error instanceof Error) {
+          await enqueueSnackbar({
+            message: 'Action failed',
+            detailedMessage: error.message,
+            variant: 'error',
+            dedupeKey: getFrontComponentActionErrorDedupeKey(frontComponentId),
+          });
+        }
       } finally {
         await unmountFrontComponent();
       }
     };
 
     run();
-  }, [to, params, queryParams, options, hasExecuted]);
+  }, [to, params, queryParams, options, hasExecuted, frontComponentId]);
 
   return null;
 };

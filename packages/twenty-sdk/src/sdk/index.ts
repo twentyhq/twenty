@@ -74,16 +74,23 @@ export type { ActionOpenSidePanelPageProps } from './action';
 
 // Front Component API exports
 export {
+  enqueueSnackbar,
+  getFrontComponentActionErrorDedupeKey,
   closeSidePanel,
   navigate,
   openSidePanelPage,
   unmountFrontComponent,
   useFrontComponentExecutionContext,
+  useFrontComponentId,
   useUserId,
 } from './front-component-api';
 export type { FrontComponentExecutionContext } from './front-component-api';
 
 export { AppPath, CommandMenuPages } from 'twenty-shared/types';
+export type {
+  EnqueueSnackbarParams,
+  SnackBarVariant,
+} from 'twenty-shared/types';
 
 // Front Component Common exports
 export {

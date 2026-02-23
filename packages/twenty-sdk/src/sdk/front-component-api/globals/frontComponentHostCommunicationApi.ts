@@ -1,6 +1,7 @@
 import {
   type AppPath,
   type CommandMenuPages,
+  type EnqueueSnackbarParams,
   type NavigateOptions,
 } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
@@ -21,12 +22,17 @@ export type OpenSidePanelPageFunction = (params: {
 
 export type UnmountFrontComponentFunction = () => Promise<void>;
 
+export type EnqueueSnackbarFunction = (
+  params: EnqueueSnackbarParams,
+) => Promise<void>;
+
 export type CloseSidePanelFunction = () => Promise<void>;
 
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
   openSidePanelPage?: OpenSidePanelPageFunction;
   unmountFrontComponent?: UnmountFrontComponentFunction;
+  enqueueSnackbar?: EnqueueSnackbarFunction;
   closeSidePanel?: CloseSidePanelFunction;
 };
 
