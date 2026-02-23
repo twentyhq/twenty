@@ -8,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MetadataEventEmitter } from 'src/engine/metadata-event-emitter/metadata-event-emitter';
-import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import {
   FlatEntityMapsException,
@@ -19,6 +18,7 @@ import { FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -76,14 +76,13 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const allMetadataNameToCompare = Object.keys(
       allFlatEntityOperationByMetadataName,
     ) as AllMetadataName[];
-    const allDependencyMetadataName = allMetadataNameToCompare.flatMap(
-      (metadataName) =>
-        Object.keys(
-          ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION[metadataName],
-        ) as AllMetadataName[],
-    );
     const allMetadataNameCacheToCompute = [
-      ...new Set([...allMetadataNameToCompare, ...allDependencyMetadataName]),
+      ...new Set([
+        ...allMetadataNameToCompare,
+        ...allMetadataNameToCompare.flatMap(
+          getMetadataRelatedMetadataNamesForValidation,
+        ),
+      ]),
     ];
     const allFlatEntityMapsCacheKeysToCompute =
       allMetadataNameCacheToCompute.map(getMetadataFlatEntityMapsKey);
@@ -95,7 +94,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         'flatApplicationMaps',
       ]);
 
-    const initialAccumulator = allDependencyMetadataName.reduce<
+    const initialAccumulator = allMetadataNameCacheToCompute.reduce<
       Partial<AllFlatEntityMaps>
     >(
       (allFlatEntityMaps, metadataName) => ({
