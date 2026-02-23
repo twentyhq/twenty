@@ -1,11 +1,11 @@
-import { VIEW_FIELD_GROUP_FRAGMENT } from '@/views/graphql/fragments/viewFieldGroupFragment';
+import { VIEW_FRAGMENT } from '@/views/graphql/fragments/viewFragment';
 import { gql } from '@apollo/client';
 
 export const UPSERT_FIELDS_WIDGET = gql`
-  ${VIEW_FIELD_GROUP_FRAGMENT}
+  ${VIEW_FRAGMENT}
   mutation UpsertFieldsWidget($input: UpsertFieldsWidgetInput!) {
     upsertFieldsWidget(input: $input) {
-      ...ViewFieldGroupFragment
+      ...ViewFragment
     }
   }
 `;

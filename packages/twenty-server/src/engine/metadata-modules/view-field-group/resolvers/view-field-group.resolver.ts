@@ -26,6 +26,8 @@ import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-gro
 import { FieldsWidgetUpsertService } from 'src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service';
 import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-group/services/view-field-group.service';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
+import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
+import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @MetadataResolver(() => ViewFieldGroupDTO)
@@ -118,12 +120,12 @@ export class ViewFieldGroupResolver {
     });
   }
 
-  @Mutation(() => [ViewFieldGroupDTO])
+  @Mutation(() => ViewDTO)
   @UseGuards(NoPermissionGuard)
   async upsertFieldsWidget(
     @Args('input') input: UpsertFieldsWidgetInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ViewFieldGroupDTO[]> {
+  ): Promise<ViewEntity> {
     return await this.fieldsWidgetUpsertService.upsertFieldsWidget({
       input,
       workspaceId,

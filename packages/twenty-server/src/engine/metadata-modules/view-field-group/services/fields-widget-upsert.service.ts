@@ -1,27 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
-import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { type FlatViewFieldGroupMaps } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group-maps.type';
+import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { type UpsertFieldsWidgetFieldInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget-field.input';
 import { UpsertFieldsWidgetGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget-group.input';
 import { UpsertFieldsWidgetInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget.input';
-import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import {
   ViewFieldGroupException,
   ViewFieldGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-field-group/exceptions/view-field-group.exception';
-import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -31,6 +33,8 @@ export class FieldsWidgetUpsertService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    @InjectRepository(ViewEntity)
+    private readonly viewRepository: Repository<ViewEntity>,
   ) {}
 
   async upsertFieldsWidget({
@@ -39,8 +43,18 @@ export class FieldsWidgetUpsertService {
   }: {
     input: UpsertFieldsWidgetInput;
     workspaceId: string;
-  }): Promise<ViewFieldGroupDTO[]> {
-    const { widgetId, groups: inputGroups } = input;
+  }): Promise<ViewEntity> {
+    const hasGroups = isDefined(input.groups);
+    const hasFields = isDefined(input.fields);
+
+    if (hasGroups === hasFields) {
+      throw new ViewFieldGroupException(
+        t`Exactly one of "groups" or "fields" must be provided`,
+        ViewFieldGroupExceptionCode.INVALID_VIEW_FIELD_GROUP_DATA,
+      );
+    }
+
+    const { widgetId } = input;
 
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -108,6 +122,65 @@ export class FieldsWidgetUpsertService {
         (field) => !isDefined(field.deletedAt) && field.viewId === viewId,
       );
 
+    if (hasGroups) {
+      await this.upsertFieldsWidgetWithGroups({
+        inputGroups: input.groups!,
+        existingGroups,
+        existingViewFields,
+        viewId,
+        workspaceId,
+        applicationId: workspaceCustomFlatApplication.id,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        flatViewMaps,
+        flatViewFieldGroupMaps,
+      });
+    } else {
+      await this.upsertFieldsWidgetWithFields({
+        inputFields: input.fields!,
+        existingGroups,
+        existingViewFields,
+        workspaceId,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      });
+    }
+
+    const view = await this.viewRepository.findOne({
+      where: { id: viewId, workspaceId, deletedAt: IsNull() },
+    });
+
+    if (!isDefined(view)) {
+      throw new ViewFieldGroupException(
+        t`View not found after upsert`,
+        ViewFieldGroupExceptionCode.VIEW_NOT_FOUND,
+      );
+    }
+
+    return view;
+  }
+
+  private async upsertFieldsWidgetWithGroups({
+    inputGroups,
+    existingGroups,
+    existingViewFields,
+    viewId,
+    workspaceId,
+    applicationId,
+    applicationUniversalIdentifier,
+    flatViewMaps,
+    flatViewFieldGroupMaps,
+  }: {
+    inputGroups: UpsertFieldsWidgetGroupInput[];
+    existingGroups: FlatViewFieldGroup[];
+    existingViewFields: FlatViewField[];
+    viewId: string;
+    workspaceId: string;
+    applicationId: string;
+    applicationUniversalIdentifier: string;
+    flatViewMaps: FlatViewMaps;
+    flatViewFieldGroupMaps: FlatViewFieldGroupMaps;
+  }): Promise<void> {
     const now = new Date().toISOString();
     const inputGroupIds = new Set(inputGroups.map((g) => g.id));
 
@@ -123,9 +196,8 @@ export class FieldsWidgetUpsertService {
             inputGroup,
             viewId,
             workspaceId,
-            applicationId: workspaceCustomFlatApplication.id,
-            applicationUniversalIdentifier:
-              workspaceCustomFlatApplication.universalIdentifier,
+            applicationId,
+            applicationUniversalIdentifier,
             now,
             flatViewMaps,
           }),
@@ -231,8 +303,7 @@ export class FieldsWidgetUpsertService {
           },
           workspaceId,
           isSystemBuild: false,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
+          applicationUniversalIdentifier,
         },
       );
 
@@ -242,19 +313,88 @@ export class FieldsWidgetUpsertService {
         'Multiple validation errors occurred while upserting fields widget',
       );
     }
+  }
 
-    const { flatViewFieldGroupMaps: recomputedFlatViewFieldGroupMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+  private async upsertFieldsWidgetWithFields({
+    inputFields,
+    existingGroups,
+    existingViewFields,
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    inputFields: UpsertFieldsWidgetFieldInput[];
+    existingGroups: FlatViewFieldGroup[];
+    existingViewFields: FlatViewField[];
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
+    const now = new Date().toISOString();
+
+    const groupsToUpdate: FlatViewFieldGroup[] = existingGroups.map(
+      (group) => ({
+        ...group,
+        deletedAt: now,
+        updatedAt: now,
+      }),
+    );
+
+    const viewFieldsToUpdate = existingViewFields.flatMap((existingField) => {
+      const inputField = inputFields.find(
+        (f) => f.viewFieldId === existingField.id,
+      );
+
+      if (!isDefined(inputField)) {
+        return [];
+      }
+
+      const hasChanged =
+        existingField.isVisible !== inputField.isVisible ||
+        existingField.position !== inputField.position ||
+        existingField.viewFieldGroupId !== null;
+
+      if (!hasChanged) {
+        return [];
+      }
+
+      return [
         {
+          ...existingField,
+          isVisible: inputField.isVisible,
+          position: inputField.position,
+          viewFieldGroupId: null,
+          viewFieldGroupUniversalIdentifier: null,
+          updatedAt: now,
+        },
+      ];
+    });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            viewFieldGroup: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: groupsToUpdate,
+            },
+            viewField: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: viewFieldsToUpdate,
+            },
+          },
           workspaceId,
-          flatMapsKeys: ['flatViewFieldGroupMaps'],
+          isSystemBuild: false,
+          applicationUniversalIdentifier,
         },
       );
 
-    return findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityIds: inputGroups.map((g) => g.id),
-      flatEntityMaps: recomputedFlatViewFieldGroupMaps,
-    }).map(fromFlatViewFieldGroupToViewFieldGroupDto);
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while upserting fields widget',
+      );
+    }
   }
 
   private buildGroupToCreate({

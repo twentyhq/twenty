@@ -1,16 +1,16 @@
+import { UPSERT_FIELDS_WIDGET } from '@/page-layout/graphql/mutations/upsertFieldsWidget';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
-import { UPSERT_FIELDS_WIDGET } from '@/page-layout/graphql/mutations/upsertFieldsWidget';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { useMutation } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { type CoreViewFieldGroup } from '~/generated-metadata/graphql';
+import { type ViewFragmentFragment } from '~/generated-metadata/graphql';
 
 type UpsertFieldsWidgetInput = {
   widgetId: string;
-  groups: {
+  groups?: {
     id: string;
     name: string;
     position: number;
@@ -21,10 +21,15 @@ type UpsertFieldsWidgetInput = {
       position: number;
     }[];
   }[];
+  fields?: {
+    viewFieldId: string;
+    isVisible: boolean;
+    position: number;
+  }[];
 };
 
 type UpsertFieldsWidgetResult = {
-  upsertFieldsWidget: CoreViewFieldGroup[];
+  upsertFieldsWidget: ViewFragmentFragment;
 };
 
 type UseSaveFieldsWidgetGroupsParams = {
