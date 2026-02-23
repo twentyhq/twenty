@@ -1,14 +1,10 @@
 /* @license Enterprise */
 
-import {
-  FieldMetadataType,
-  RecordFilterGroupLogicalOperator,
-} from 'twenty-shared/types';
+import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useGetDefaultFieldMetadataItemForFilter';
@@ -60,13 +56,8 @@ export const useRecordLevelPermissionFilterActions = ({
   const getDefaultFieldMetadataItemForRLS = () => {
     const availableFieldMetadataItemsForRls =
       availableFieldMetadataItemsForFilter.filter((fieldMetadataItem) => {
-        return (
-          RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
-            fieldMetadataItem.type,
-          ) ||
-          (fieldMetadataItem.type === FieldMetadataType.RELATION &&
-            fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
-              CoreObjectNameSingular.WorkspaceMember)
+        return RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
+          fieldMetadataItem.type,
         );
       });
 

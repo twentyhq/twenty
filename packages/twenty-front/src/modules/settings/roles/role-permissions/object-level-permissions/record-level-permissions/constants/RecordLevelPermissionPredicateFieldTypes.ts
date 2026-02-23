@@ -14,4 +14,5 @@ export const RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES = [
   FieldMetadataType.EMAILS,
   FieldMetadataType.FULL_NAME,
   FieldMetadataType.ADDRESS,
+  FieldMetadataType.RELATION,
 ];

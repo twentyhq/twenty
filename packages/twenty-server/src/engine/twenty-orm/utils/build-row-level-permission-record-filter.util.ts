@@ -107,22 +107,45 @@ export const buildRowLevelPermissionRecordFilter = ({
           return null;
         }
 
-        const rawWorkspaceMemberValue = Object.entries(workspaceMember).find(
-          ([key]) => key === workspaceMemberFieldMetadata.name,
-        )?.[1];
+        if (workspaceMemberFieldMetadata.type === FieldMetadataType.RELATION) {
+          const joinColumnName = (
+            workspaceMemberFieldMetadata.settings as {
+              joinColumnName?: string;
+            } | null
+          )?.joinColumnName;
 
-        const workspaceMemberSubFieldName =
-          predicate.workspaceMemberSubFieldName;
+          if (!isDefined(joinColumnName)) {
+            return null;
+          }
 
-        if (
-          isDefined(workspaceMemberSubFieldName) &&
-          isDefined(rawWorkspaceMemberValue) &&
-          isCompositeFieldMetadataType(workspaceMemberFieldMetadata.type) &&
-          typeof rawWorkspaceMemberValue === 'object'
-        ) {
-          predicateValue = rawWorkspaceMemberValue[workspaceMemberSubFieldName];
+          const fkValue = Object.entries(workspaceMember).find(
+            ([key]) => key === joinColumnName,
+          )?.[1];
+
+          if (!isDefined(fkValue) || typeof fkValue !== 'string') {
+            return null;
+          }
+
+          predicateValue = { selectedRecordIds: [fkValue] };
         } else {
-          predicateValue = rawWorkspaceMemberValue;
+          const rawWorkspaceMemberValue = Object.entries(workspaceMember).find(
+            ([key]) => key === workspaceMemberFieldMetadata.name,
+          )?.[1];
+
+          const workspaceMemberSubFieldName =
+            predicate.workspaceMemberSubFieldName;
+
+          if (
+            isDefined(workspaceMemberSubFieldName) &&
+            isDefined(rawWorkspaceMemberValue) &&
+            isCompositeFieldMetadataType(workspaceMemberFieldMetadata.type) &&
+            typeof rawWorkspaceMemberValue === 'object'
+          ) {
+            predicateValue =
+              rawWorkspaceMemberValue[workspaceMemberSubFieldName];
+          } else {
+            predicateValue = rawWorkspaceMemberValue;
+          }
         }
 
         if (!isDefined(predicateValue)) {
