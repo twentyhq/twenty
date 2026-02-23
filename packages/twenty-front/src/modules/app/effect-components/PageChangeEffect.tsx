@@ -7,14 +7,13 @@ import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirec
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   matchPath,
   useLocation,
   useNavigate,
   useParams,
 } from 'react-router-dom';
-import { useRecoilCallback } from 'recoil';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -36,6 +35,7 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
@@ -98,19 +98,13 @@ export const PageChangeEffect = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const closeCommandMenuUnlessOnEditPage = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const currentPage = snapshot
-          .getLoadable(commandMenuPageState)
-          .getValue();
-        if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
-          return;
-        }
-        closeCommandMenu();
-      },
-    [closeCommandMenu],
-  );
+  const closeCommandMenuUnlessOnEditPage = useCallback(() => {
+    const currentPage = jotaiStore.get(commandMenuPageState.atom);
+    if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
+      return;
+    }
+    closeCommandMenu();
+  }, [closeCommandMenu]);
 
   const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
 

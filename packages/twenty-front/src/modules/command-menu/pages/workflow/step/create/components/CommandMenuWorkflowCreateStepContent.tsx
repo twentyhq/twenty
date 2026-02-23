@@ -18,7 +18,7 @@ import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { prepareIfElseStepWithNewBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/prepareIfElseStepWithNewBranch';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
@@ -36,7 +36,7 @@ export const CommandMenuWorkflowCreateStepContent = () => {
 
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
   const { closeRightClickMenu } = useCloseRightClickMenu();
-  const setCommandMenuNavigationStack = useSetRecoilState(
+  const setCommandMenuNavigationStack = useSetRecoilStateV2(
     commandMenuNavigationStackState,
   );
 

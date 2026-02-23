@@ -1,6 +1,6 @@
-import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
+import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
 
-export const isRecordIndexBoardColumnLoadingFamilyState = createFamilyState<
+export const isRecordIndexBoardColumnLoadingFamilyState = createFamilyStateV2<
   boolean,
   string | undefined
 >({

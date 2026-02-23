@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import { useActivityTargetsForTargetableObjects } from '@/activities/hooks/useActivityTargetsForTargetableObjects';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { type Note } from '@/activities/types/Note';
@@ -7,7 +9,7 @@ import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,14 +26,16 @@ export const useActivities = <T extends Task | Note>({
   skip?: boolean;
   limit: number;
 }) => {
-  const updateActivitiesInStore = useRecoilCallback(
-    ({ set }) =>
-      (activityTargets: (TaskTarget | NoteTarget)[]) => {
-        for (const activityTarget of activityTargets) {
-          const activity = activityTarget[objectNameSingular];
-          set(recordStoreFamilyState(activity.id), activity);
-        }
-      },
+  const updateActivitiesInStore = useCallback(
+    (activityTargets: (TaskTarget | NoteTarget)[]) => {
+      for (const activityTarget of activityTargets) {
+        const activity = activityTarget[objectNameSingular];
+        jotaiStore.set(
+          recordStoreFamilyState.atomFamily(activity.id),
+          activity,
+        );
+      }
+    },
     [objectNameSingular],
   );
 

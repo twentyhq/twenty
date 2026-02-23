@@ -18,8 +18,10 @@ export const recordStoreIdentifierFamilySelector = selectorFamily({
       allowRequestsToTwentyIcons: boolean;
       isFilesFieldMigrated?: boolean;
     }) =>
-    ({ get }) => {
-      const recordFromStore = get(recordStoreFamilyState(recordId));
+    () => {
+      const recordFromStore = jotaiStore.get(
+        recordStoreFamilyState.atomFamily(recordId),
+      );
       const objectNameSingular = uncapitalize(
         recordFromStore?.__typename ?? '',
       );

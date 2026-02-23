@@ -11,8 +11,8 @@ import { type LinkOutputSchema } from '@/workflow/workflow-variables/types/LinkO
 import { type FieldOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
@@ -63,7 +63,7 @@ export const useVariableDropdown = ({
   const setWorkflowDiagram = useSetRecoilComponentState(
     workflowDiagramComponentState,
   );
-  const setCommandMenuNavigationStack = useSetRecoilState(
+  const setCommandMenuNavigationStack = useSetRecoilStateV2(
     commandMenuNavigationStackState,
   );
 

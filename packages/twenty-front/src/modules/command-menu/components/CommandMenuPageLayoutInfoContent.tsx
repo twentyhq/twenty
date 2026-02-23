@@ -13,8 +13,8 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -27,8 +27,8 @@ export const CommandMenuPageLayoutInfoContent = ({
 }) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
-  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuPage = useRecoilValueV2(commandMenuPageState);
+  const commandMenuPageInfo = useRecoilValueV2(commandMenuPageInfoState);
 
   const [shouldFocusTitleInput, setShouldFocusTitleInput] =
     useRecoilComponentState(

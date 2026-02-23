@@ -9,12 +9,12 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { commandMenuShouldFocusTitleInputComponentState } from '@/command-menu/states/commandMenuShouldFocusTitleInputComponentState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useStore } from 'jotai';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { type CommandMenuPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
@@ -36,57 +36,49 @@ export const useNavigateCommandMenu = () => {
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const store = useStore();
+  const openCommandMenu = useCallback(() => {
+    const isCommandMenuOpened = jotaiStore.get(
+      isCommandMenuOpenedStateV2.atom,
+    );
 
-  const openCommandMenu = useRecoilCallback(
-    ({ snapshot, set }) =>
-      () => {
-        const isCommandMenuOpened = snapshot
-          .getLoadable(isCommandMenuOpenedState)
-          .getValue();
+    const isCommandMenuClosing = jotaiStore.get(
+      isCommandMenuClosingState.atom,
+    );
 
-        const isCommandMenuClosing = snapshot
-          .getLoadable(isCommandMenuClosingState)
-          .getValue();
+    if (isCommandMenuClosing) {
+      commandMenuCloseAnimationCompleteCleanup();
+    }
 
-        if (isCommandMenuClosing) {
-          commandMenuCloseAnimationCompleteCleanup();
-        }
+    if (isCommandMenuOpened) {
+      return;
+    }
 
-        if (isCommandMenuOpened) {
-          return;
-        }
-
-        pushFocusItemToFocusStack({
-          focusId: SIDE_PANEL_FOCUS_ID,
-          component: {
-            type: FocusComponentType.SIDE_PANEL,
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          },
-          globalHotkeysConfig: {
-            enableGlobalHotkeysConflictingWithKeyboard: false,
-          },
-        });
-
-        copyContextStoreStates({
-          instanceIdToCopyFrom: MAIN_CONTEXT_STORE_INSTANCE_ID,
-          instanceIdToCopyTo: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-        });
-
-        set(isCommandMenuOpenedState, true);
-        store.set(isCommandMenuOpenedStateV2.atom, true);
-        set(hasUserSelectedCommandState, false);
+    pushFocusItemToFocusStack({
+      focusId: SIDE_PANEL_FOCUS_ID,
+      component: {
+        type: FocusComponentType.SIDE_PANEL,
+        instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
       },
-    [
-      copyContextStoreStates,
-      commandMenuCloseAnimationCompleteCleanup,
-      pushFocusItemToFocusStack,
-      store,
-    ],
-  );
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+
+    copyContextStoreStates({
+      instanceIdToCopyFrom: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      instanceIdToCopyTo: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+    });
+
+    jotaiStore.set(isCommandMenuOpenedStateV2.atom, true);
+    jotaiStore.set(hasUserSelectedCommandState.atom, false);
+  }, [
+    copyContextStoreStates,
+    commandMenuCloseAnimationCompleteCleanup,
+    pushFocusItemToFocusStack,
+  ]);
 
   const navigateCommandMenu = useRecoilCallback(
-    ({ snapshot, set }) => {
+    ({ set }) => {
       return ({
         page,
         pageTitle,
@@ -102,8 +94,8 @@ export const useNavigateCommandMenu = () => {
         const computedPageId = pageId || v4();
 
         openCommandMenu();
-        set(commandMenuPageState, page);
-        set(commandMenuPageInfoState, {
+        jotaiStore.set(commandMenuPageState.atom, page);
+        jotaiStore.set(commandMenuPageInfoState.atom, {
           title: pageTitle,
           Icon: pageIcon,
           instanceId: computedPageId,
@@ -118,16 +110,16 @@ export const useNavigateCommandMenu = () => {
           );
         }
 
-        const isCommandMenuClosing = snapshot
-          .getLoadable(isCommandMenuClosingState)
-          .getValue();
+        const isCommandMenuClosing = jotaiStore.get(
+          isCommandMenuClosingState.atom,
+        );
 
         const currentNavigationStack = isCommandMenuClosing
           ? []
-          : snapshot.getLoadable(commandMenuNavigationStackState).getValue();
+          : jotaiStore.get(commandMenuNavigationStackState.atom);
 
         if (resetNavigationStack) {
-          set(commandMenuNavigationStackState, [
+          jotaiStore.set(commandMenuNavigationStackState.atom, [
             {
               page,
               pageTitle,
@@ -137,9 +129,12 @@ export const useNavigateCommandMenu = () => {
             },
           ]);
 
-          set(commandMenuNavigationMorphItemsByPageState, new Map());
+          jotaiStore.set(
+            commandMenuNavigationMorphItemsByPageState.atom,
+            new Map(),
+          );
         } else {
-          set(commandMenuNavigationStackState, [
+          jotaiStore.set(commandMenuNavigationStackState.atom, [
             ...currentNavigationStack,
             {
               page,

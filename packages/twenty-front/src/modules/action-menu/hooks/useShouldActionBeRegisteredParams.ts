@@ -16,11 +16,11 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useContext, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -71,7 +71,7 @@ export const useShouldActionBeRegisteredParams = ({
   ]);
 
   const selectedRecord =
-    useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
+    useFamilyRecoilValueV2(recordStoreFamilyState, recordId ?? '') || undefined;
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem?.id ?? '',
@@ -128,7 +128,7 @@ export const useShouldActionBeRegisteredParams = ({
     [],
   );
 
-  const forceRegisteredActionsByKey = useRecoilValue(
+  const forceRegisteredActionsByKey = useRecoilValueV2(
     forceRegisteredActionsByKeyState,
   );
 

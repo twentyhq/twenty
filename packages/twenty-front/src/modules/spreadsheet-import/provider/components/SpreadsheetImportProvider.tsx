@@ -1,13 +1,14 @@
 import { useTheme } from '@emotion/react';
 import React from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { SPREADSHEET_IMPORT_MODAL_ID } from '@/spreadsheet-import/constants/SpreadsheetImportModalId';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { matchColumnsState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 const SpreadsheetImport = React.lazy(() =>
   import('./SpreadsheetImport').then((module) => ({
@@ -34,11 +35,10 @@ type SpreadsheetImportProviderProps = React.PropsWithChildren;
 export const SpreadsheetImportProvider = (
   props: SpreadsheetImportProviderProps,
 ) => {
-  const [spreadsheetImportDialog, setSpreadsheetImportDialog] = useRecoilState(
-    spreadsheetImportDialogState,
-  );
+  const [spreadsheetImportDialog, setSpreadsheetImportDialog] =
+    useRecoilStateV2(spreadsheetImportDialogState);
 
-  const setMatchColumnsState = useSetRecoilState(matchColumnsState);
+  const setMatchColumnsState = useSetRecoilStateV2(matchColumnsState);
 
   const { closeModal } = useModal();
 

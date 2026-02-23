@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { IconLink } from 'twenty-ui/display';
 
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
@@ -19,7 +18,7 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 export const CommandMenuLinkInfo = () => {
   const theme = useTheme();
   const { t } = useLingui();
-  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuPageInfo = useRecoilValueV2(commandMenuPageInfoState);
   const [shouldFocusTitleInput, setShouldFocusTitleInput] =
     useRecoilComponentState(
       commandMenuShouldFocusTitleInputComponentState,

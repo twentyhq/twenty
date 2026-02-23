@@ -1,5 +1,6 @@
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -27,17 +28,20 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     );
 
   const setIsPageLayoutInEditMode = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       (value: boolean) => {
         set(isPageLayoutInEditModeState, value);
 
         set(contextStoreIsFullTabWidgetInEditModeState, value);
 
-        set(currentPageLayoutIdState, value ? pageLayoutId : null);
+        jotaiStore.set(
+          currentPageLayoutIdState.atom,
+          value ? pageLayoutId : null,
+        );
 
-        const isCommandMenuOpened = snapshot
-          .getLoadable(isCommandMenuOpenedState)
-          .getValue();
+        const isCommandMenuOpened = jotaiStore.get(
+          isCommandMenuOpenedStateV2.atom,
+        );
 
         if (isCommandMenuOpened) {
           set(

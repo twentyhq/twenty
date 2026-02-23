@@ -23,8 +23,8 @@ export const calendarDayRecordIdsComponentFamilySelector =
     get:
       ({ instanceId, familyKey: { day, timeZone } }) =>
       ({ get }) => {
-        const calendarFieldMetadataId = get(
-          recordIndexCalendarFieldMetadataIdState,
+        const calendarFieldMetadataId = jotaiStore.get(
+          recordIndexCalendarFieldMetadataIdState.atom,
         );
 
         const objectMetadataItems = jotaiStore.get(
@@ -58,7 +58,9 @@ export const calendarDayRecordIdsComponentFamilySelector =
         );
 
         const recordIds = allRecordIds.filter((recordId) => {
-          const record = get(recordStoreFamilyState(recordId));
+          const record = jotaiStore.get(
+            recordStoreFamilyState.atomFamily(recordId),
+          );
           const recordDate = record?.[fieldMetadataItem.name];
 
           if (!isNonEmptyString(recordDate)) {
@@ -80,8 +82,12 @@ export const calendarDayRecordIdsComponentFamilySelector =
           hasObjectMetadataItemPositionField(objectMetadataItem)
         ) {
           return recordIds.sort((a, b) => {
-            const recordA = get(recordStoreFamilyState(a));
-            const recordB = get(recordStoreFamilyState(b));
+            const recordA = jotaiStore.get(
+              recordStoreFamilyState.atomFamily(a),
+            );
+            const recordB = jotaiStore.get(
+              recordStoreFamilyState.atomFamily(b),
+            );
 
             const positionA = recordA?.position;
             const positionB = recordB?.position;

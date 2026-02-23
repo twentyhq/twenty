@@ -15,6 +15,7 @@ import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowReq
 import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
+
 const StyledIconWrapper = styled.div`
   background: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -24,7 +25,7 @@ const StyledIconWrapper = styled.div`
 `;
 
 export const useCommandMenuContextChips = () => {
-  const commandMenuNavigationStack = useRecoilValue(
+  const commandMenuNavigationStack = useRecoilValueV2(
     commandMenuNavigationStackState,
   );
 
@@ -38,7 +39,7 @@ export const useCommandMenuContextChips = () => {
 
   const theme = useTheme();
 
-  const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+  const commandMenuNavigationMorphItemsByPage = useRecoilValueV2(
     commandMenuNavigationMorphItemsByPageState,
   );
 

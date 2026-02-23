@@ -10,6 +10,7 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilCallback } from 'recoil';
 
 export const useSetGlobalCommandMenuContext = () => {
@@ -68,13 +69,13 @@ export const useSetGlobalCommandMenuContext = () => {
           ContextStoreViewType.Table,
         );
 
-        set(commandMenuPageInfoState, {
+        jotaiStore.set(commandMenuPageInfoState.atom, {
           title: undefined,
           Icon: undefined,
           instanceId: '',
         });
 
-        set(hasUserSelectedCommandState, false);
+        jotaiStore.set(hasUserSelectedCommandState.atom, false);
       };
     },
     [copyContextStoreStates],

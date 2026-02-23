@@ -15,7 +15,7 @@ import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useClo
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
@@ -33,7 +33,7 @@ export const CommandMenuWorkflowEditStepTypeContent = () => {
 
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
   const { closeRightClickMenu } = useCloseRightClickMenu();
-  const setCommandMenuNavigationStack = useSetRecoilState(
+  const setCommandMenuNavigationStack = useSetRecoilStateV2(
     commandMenuNavigationStackState,
   );
 

@@ -75,9 +75,9 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
             )
             .getValue();
 
-          const activity = snapshot
-            .getLoadable(recordStoreFamilyState(recordId))
-            .getValue();
+          const activity = jotaiStore.get(
+            recordStoreFamilyState.atomFamily(recordId),
+          );
 
           const objectMetadataItems = jotaiStore.get(
             objectMetadataItemsState.atom,

@@ -26,8 +26,8 @@ import { getNodeIterationCount } from '@/workflow/workflow-diagram/workflow-node
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Position } from '@xyflow/react';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useContext } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { IconCheck, IconX, useIcons } from 'twenty-ui/display';
@@ -101,7 +101,7 @@ export const WorkflowRunDiagramStepNode = ({
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const setCommandMenuNavigationStack = useSetRecoilState(
+  const setCommandMenuNavigationStack = useSetRecoilStateV2(
     commandMenuNavigationStackState,
   );
 

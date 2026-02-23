@@ -10,7 +10,6 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
@@ -23,9 +22,9 @@ import { emitSidePanelCloseEvent } from '@/ui/layout/right-drawer/utils/emitSide
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowLogicFunctionTabListComponentId';
 import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
-import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -39,8 +38,6 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
 
   const { closeDropdown } = useCloseDropdown();
 
-  const store = useStore();
-
   const commandMenuCloseAnimationCompleteCleanup = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
@@ -49,9 +46,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         resetContextStoreStates(COMMAND_MENU_COMPONENT_INSTANCE_ID);
         resetContextStoreStates(COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID);
 
-        const currentPage = snapshot
-          .getLoadable(commandMenuPageState)
-          .getValue();
+        const currentPage = jotaiStore.get(commandMenuPageState.atom);
 
         const isPageLayoutEditingPage =
           currentPage === CommandMenuPages.PageLayoutWidgetTypeSelect ||
@@ -73,9 +68,9 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
             targetedRecordsRule.selectedRecordIds.length === 1
           ) {
             const recordId = targetedRecordsRule.selectedRecordIds[0];
-            const record = snapshot
-              .getLoadable(recordStoreFamilyState(recordId))
-              .getValue();
+            const record = jotaiStore.get(
+              recordStoreFamilyState.atomFamily(recordId),
+            );
 
             if (isDefined(record) && isDefined(record.pageLayoutId)) {
               set(
@@ -100,34 +95,38 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
           }
         }
 
-        set(viewableRecordIdState, null);
-        set(commandMenuPageState, CommandMenuPages.Root);
-        set(commandMenuPageInfoState, {
+        jotaiStore.set(viewableRecordIdState.atom, null);
+        jotaiStore.set(commandMenuPageState.atom, CommandMenuPages.Root);
+        jotaiStore.set(commandMenuPageInfoState.atom, {
           title: undefined,
           Icon: undefined,
           instanceId: '',
         });
-        set(isCommandMenuOpenedState, false);
-        store.set(isCommandMenuOpenedStateV2.atom, false);
-        set(commandMenuSearchState, '');
-        set(commandMenuNavigationMorphItemsByPageState, new Map());
-        set(commandMenuNavigationStackState, []);
+        jotaiStore.set(isCommandMenuOpenedStateV2.atom, false);
+        jotaiStore.set(commandMenuSearchState.atom, '');
+        jotaiStore.set(
+          commandMenuNavigationMorphItemsByPageState.atom,
+          new Map(),
+        );
+        jotaiStore.set(commandMenuNavigationStackState.atom, []);
         resetSelectedItem();
-        set(hasUserSelectedCommandState, false);
+        jotaiStore.set(hasUserSelectedCommandState.atom, false);
 
         emitSidePanelCloseEvent();
-        set(isCommandMenuClosingState, false);
-        store.set(
+        jotaiStore.set(isCommandMenuClosingState.atom, false);
+        jotaiStore.set(
           activeTabIdComponentState.atomFamily({
             instanceId: WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
           }),
           WorkflowLogicFunctionTabId.CODE,
         );
 
-        for (const [pageId, morphItems] of snapshot
-          .getLoadable(commandMenuNavigationMorphItemsByPageState)
-          .getValue()) {
-          store.set(
+        const morphItemsByPage = jotaiStore.get(
+          commandMenuNavigationMorphItemsByPageState.atom,
+        );
+
+        for (const [pageId, morphItems] of morphItemsByPage) {
+          jotaiStore.set(
             activeTabIdComponentState.atomFamily({
               instanceId: getShowPageTabListComponentId({
                 pageId,
@@ -138,7 +137,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
           );
         }
       },
-    [closeDropdown, resetContextStoreStates, resetSelectedItem, store],
+    [closeDropdown, resetContextStoreStates, resetSelectedItem],
   );
 
   return {

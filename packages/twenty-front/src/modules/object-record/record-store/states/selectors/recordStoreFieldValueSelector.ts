@@ -4,6 +4,7 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { RelationType, type ObjectRecord } from 'twenty-shared/types';
 import {
   computeMorphRelationFieldName,
@@ -26,9 +27,11 @@ export const recordStoreFieldValueSelector = selectorFamily({
         'type' | 'metadata'
       >;
     }) =>
-    ({ get }) => {
+    () => {
       if (!isFieldMorphRelation(fieldDefinition)) {
-        return get(recordStoreFamilyState(recordId))?.[fieldName];
+        return jotaiStore.get(
+          recordStoreFamilyState.atomFamily(recordId),
+        )?.[fieldName];
       }
 
       const morphRelations = fieldDefinition.metadata.morphRelations;
@@ -51,7 +54,9 @@ export const recordStoreFieldValueSelector = selectorFamily({
         });
         return {
           objectNameSingular: morphRelation.targetObjectMetadata.nameSingular,
-          value: get(recordStoreFamilyState(recordId))?.[computedFieldName],
+          value: jotaiStore.get(
+            recordStoreFamilyState.atomFamily(recordId),
+          )?.[computedFieldName],
         };
       });
 

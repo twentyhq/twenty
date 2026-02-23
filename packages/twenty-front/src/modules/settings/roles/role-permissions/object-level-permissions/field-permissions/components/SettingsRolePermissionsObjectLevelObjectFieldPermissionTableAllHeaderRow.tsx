@@ -7,9 +7,9 @@ import { useRestrictReadOnAllFieldsOfObject } from '@/settings/roles/role-permis
 import { useRestrictUpdateOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRestrictUpdateOnAllFieldsOfObject';
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
 import { Label } from 'twenty-ui/display';
 
 const StyledSectionHeader = styled.div`
@@ -40,8 +40,9 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
   }) => {
     const { t } = useLingui();
 
-    const [settingsDraftRole] = useRecoilState(
-      settingsDraftRoleFamilyState(roleId),
+    const settingsDraftRole = useFamilyRecoilValueV2(
+      settingsDraftRoleFamilyState,
+      roleId,
     );
 
     const { cannotAllowFieldReadRestrict, cannotAllowFieldUpdateRestrict } =

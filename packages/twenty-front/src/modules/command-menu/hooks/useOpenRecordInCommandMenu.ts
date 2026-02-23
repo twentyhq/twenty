@@ -15,7 +15,6 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CommandMenuPages } from 'twenty-shared/types';
 
@@ -48,20 +47,20 @@ export const useOpenRecordInCommandMenu = () => {
         isNewRecord?: boolean;
         resetNavigationStack?: boolean;
       }) => {
-        const navigationStack = getSnapshotValue(
-          snapshot,
-          commandMenuNavigationStackState,
+        const navigationStack = jotaiStore.get(
+          commandMenuNavigationStackState.atom,
         );
 
         const currentNavigationStackItem = navigationStack.at(-1);
 
         if (isDefined(currentNavigationStackItem)) {
-          const currentRecordId = getSnapshotValue(
-            snapshot,
-            viewableRecordIdComponentState.atomFamily({
-              instanceId: currentNavigationStackItem.pageId,
-            }),
-          );
+          const currentRecordId = snapshot
+            .getLoadable(
+              viewableRecordIdComponentState.atomFamily({
+                instanceId: currentNavigationStackItem.pageId,
+              }),
+            )
+            .getValue();
 
           if (currentRecordId === recordId) {
             return;
@@ -82,7 +81,7 @@ export const useOpenRecordInCommandMenu = () => {
           }),
           recordId,
         );
-        set(viewableRecordIdState, recordId);
+        jotaiStore.set(viewableRecordIdState.atom, recordId);
 
         const objectMetadataItem = jotaiStore.get(
           objectMetadataItemFamilySelector.selectorFamily({
@@ -154,9 +153,9 @@ export const useOpenRecordInCommandMenu = () => {
             .getValue(),
         );
 
-        const currentMorphItems = snapshot
-          .getLoadable(commandMenuNavigationMorphItemsByPageState)
-          .getValue();
+        const currentMorphItems = jotaiStore.get(
+          commandMenuNavigationMorphItemsByPageState.atom,
+        );
 
         const morphItemToAdd = {
           objectMetadataId: objectMetadataItem.id,
@@ -166,7 +165,10 @@ export const useOpenRecordInCommandMenu = () => {
         const newMorphItemsMap = new Map(currentMorphItems);
         newMorphItemsMap.set(pageComponentInstanceId, [morphItemToAdd]);
 
-        set(commandMenuNavigationMorphItemsByPageState, newMorphItemsMap);
+        jotaiStore.set(
+          commandMenuNavigationMorphItemsByPageState.atom,
+          newMorphItemsMap,
+        );
 
         const Icon = objectMetadataItem?.icon
           ? getIcon(objectMetadataItem.icon)

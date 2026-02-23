@@ -1,6 +1,7 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { commandMenuWidthState } from '@/command-menu/states/commandMenuWidthState';
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -323,9 +324,8 @@ export const WorkflowDiagramCanvasBase = ({
 
         let adjustedContainerWidth = baseContainerWidth;
 
-        const commandMenuWidth = getSnapshotValue(
-          snapshot,
-          commandMenuWidthState,
+        const commandMenuWidth = jotaiStore.get(
+          commandMenuWidthState.atom,
         );
 
         if (!isInRightDrawer && isCommandMenuOpened) {

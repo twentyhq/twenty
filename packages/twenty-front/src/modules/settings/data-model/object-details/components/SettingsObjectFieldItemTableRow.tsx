@@ -13,8 +13,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { useMemo } from 'react';
-import { useRecoilState } from 'recoil';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -139,10 +139,9 @@ export const SettingsObjectFieldItemTableRow = ({
 
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
 
-  const [, setActiveSettingsObjectFields] = useRecoilState(
-    settingsObjectFieldsFamilyState({
-      objectMetadataItemId: objectMetadataItem.id,
-    }),
+  const setActiveSettingsObjectFields = useSetFamilyRecoilStateV2(
+    settingsObjectFieldsFamilyState,
+    { objectMetadataItemId: objectMetadataItem.id },
   );
 
   const handleToggleField = () => {

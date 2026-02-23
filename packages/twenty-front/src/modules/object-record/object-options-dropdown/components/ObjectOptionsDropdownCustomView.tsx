@@ -19,8 +19,8 @@ import { ViewKey } from '@/views/types/ViewKey';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
@@ -67,7 +67,7 @@ export const ObjectOptionsDropdownCustomView = ({
 
   const isDefaultView = currentView?.key === ViewKey.Index;
 
-  const recordIndexCalendarLayout = useRecoilValue(
+  const recordIndexCalendarLayout = useRecoilValueV2(
     recordIndexCalendarLayoutState,
   );
 

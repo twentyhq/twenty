@@ -5,11 +5,11 @@ import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQuery
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { ApolloError, useMutation } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useCallback, useEffect } from 'react';
 import {
   compareArraysOfObjectsByProperty,
   isDefined,
@@ -21,8 +21,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const SSEQuerySubscribeEffect = () => {
-  const sseEventStreamId = useRecoilValue(sseEventStreamIdState);
-  const sseEventStreamReady = useRecoilValue(sseEventStreamReadyState);
+  const sseEventStreamId = useRecoilValueV2(sseEventStreamIdState);
+  const sseEventStreamReady = useRecoilValueV2(sseEventStreamReadyState);
 
   const [addQueryToEventStream] = useMutation<
     boolean,
@@ -34,25 +34,22 @@ export const SSEQuerySubscribeEffect = () => {
     { input: RemoveQueryFromEventStreamInput }
   >(REMOVE_QUERY_FROM_EVENT_STREAM_MUTATION);
 
-  const requiredQueryListeners = useRecoilValue(requiredQueryListenersState);
-  const activeQueryListeners = useRecoilValue(activeQueryListenersState);
+  const requiredQueryListeners = useRecoilValueV2(requiredQueryListenersState);
+  const activeQueryListeners = useRecoilValueV2(activeQueryListenersState);
 
-  const updateQueryListeners = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async () => {
-        if (!isDefined(sseEventStreamId)) {
-          return;
-        }
+  const updateQueryListeners = useCallback(
+    async () => {
+      if (!isDefined(sseEventStreamId)) {
+        return;
+      }
 
-        const requiredQueryListeners = getSnapshotValue(
-          snapshot,
-          requiredQueryListenersState,
-        );
+      const requiredQueryListeners = jotaiStore.get(
+        requiredQueryListenersState.atom,
+      );
 
-        const activeQueryListeners = getSnapshotValue(
-          snapshot,
-          activeQueryListenersState,
-        );
+      const activeQueryListeners = jotaiStore.get(
+        activeQueryListenersState.atom,
+      );
 
         const queryListenersToAdd = requiredQueryListeners.filter(
           (listener) =>
@@ -99,8 +96,8 @@ export const SSEQuerySubscribeEffect = () => {
             switch (subCode) {
               case 'EVENT_STREAM_DOES_NOT_EXIST':
               case 'EVENT_STREAM_ALREADY_EXISTS': {
-                set(activeQueryListenersState, []);
-                set(shouldDestroyEventStreamState, true);
+                jotaiStore.set(activeQueryListenersState.atom, []);
+                jotaiStore.set(shouldDestroyEventStreamState.atom, true);
                 return;
               }
               default: {
@@ -112,8 +109,8 @@ export const SSEQuerySubscribeEffect = () => {
           }
         }
 
-        set(activeQueryListenersState, requiredQueryListeners);
-      },
+      jotaiStore.set(activeQueryListenersState.atom, requiredQueryListeners);
+    },
     [addQueryToEventStream, removeQueryFromEventStream, sseEventStreamId],
   );
 

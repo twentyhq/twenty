@@ -7,8 +7,8 @@ import { suggestedFieldsByColumnHeaderState } from '@/spreadsheet-import/steps/c
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { spreadsheetImportBuildFieldOptions } from '@/spreadsheet-import/utils/spreadsheetImportBuildFieldOptions';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { IconForbid } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
@@ -37,7 +37,7 @@ export const TemplateColumn = ({
   onChange,
 }: TemplateColumnProps) => {
   const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
-  const suggestedFieldsByColumnHeader = useRecoilValue(
+  const suggestedFieldsByColumnHeader = useRecoilValueV2(
     suggestedFieldsByColumnHeaderState,
   );
 

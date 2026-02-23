@@ -14,7 +14,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { Key } from 'ts-key-enum';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -30,11 +30,11 @@ export const useCommandMenuHotKeys = () => {
 
   const { setGlobalCommandMenuContext } = useSetGlobalCommandMenuContext();
 
-  const commandMenuSearch = useRecoilValue(commandMenuSearchState);
+  const commandMenuSearch = useRecoilValueV2(commandMenuSearchState);
 
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
+  const commandMenuPage = useRecoilValueV2(commandMenuPageState);
 
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 

@@ -5,9 +5,9 @@ import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRo
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { t } from '@lingui/core/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
@@ -282,8 +282,9 @@ const MarketplaceRoleEffect = ({
   ) => void;
 }) => {
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
-  const setDraftRole = useSetRecoilState(
-    settingsDraftRoleFamilyState(defaultRole.id),
+  const setDraftRole = useSetFamilyRecoilStateV2(
+    settingsDraftRoleFamilyState,
+    defaultRole.id,
   );
 
   const { resolvedRole, objectMetadataItemsFromMarketplaceApp } =

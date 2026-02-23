@@ -1,5 +1,6 @@
 import { useStore } from 'jotai';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -26,7 +27,7 @@ export const useUpdateCurrentView = () => {
   );
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
-  const setRecordIndexViewType = useSetRecoilState(recordIndexViewTypeState);
+  const setRecordIndexViewType = useSetRecoilStateV2(recordIndexViewTypeState);
 
   const store = useStore();
 

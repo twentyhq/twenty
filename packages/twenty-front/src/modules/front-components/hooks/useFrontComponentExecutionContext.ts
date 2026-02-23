@@ -1,4 +1,4 @@
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
@@ -27,7 +27,7 @@ export const useFrontComponentExecutionContext = ({
   const currentUser = useRecoilValueV2(currentUserState);
   const navigateApp = useNavigateApp();
   const { navigateCommandMenu } = useNavigateCommandMenu();
-  const setCommandMenuSearchState = useSetRecoilState(commandMenuSearchState);
+  const setCommandMenuSearchState = useSetRecoilStateV2(commandMenuSearchState);
   const { getIcon } = useIcons();
   const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();
   const {

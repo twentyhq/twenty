@@ -11,7 +11,8 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { Key } from 'ts-key-enum';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -57,12 +58,13 @@ export const SettingsDevelopersApiKeysNew = () => {
 
   const [createApiKey] = useCreateApiKeyMutation();
 
-  const setApiKeyTokenCallback = useRecoilCallback(
-    ({ set }) =>
-      (apiKeyId: string, token: string) => {
-        set(apiKeyTokenFamilyState(apiKeyId), token);
-      },
-    [],
+  const jotaiStore = useStore();
+
+  const setApiKeyTokenCallback = useCallback(
+    (apiKeyId: string, token: string) => {
+      jotaiStore.set(apiKeyTokenFamilyState.atomFamily(apiKeyId), token);
+    },
+    [jotaiStore],
   );
 
   const handleSave = async () => {

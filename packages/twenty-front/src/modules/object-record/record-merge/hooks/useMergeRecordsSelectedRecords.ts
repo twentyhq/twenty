@@ -2,6 +2,7 @@ import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/state
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useRecoilValue } from 'recoil';
 
 export const useMergeRecordsSelectedRecords = () => {
@@ -9,7 +10,7 @@ export const useMergeRecordsSelectedRecords = () => {
     CommandMenuPageComponentInstanceContext,
   )?.instanceId;
 
-  const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+  const commandMenuNavigationMorphItemsByPage = useRecoilValueV2(
     commandMenuNavigationMorphItemsByPageState,
   );
 

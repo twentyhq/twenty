@@ -1,8 +1,9 @@
 import { EXECUTE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/executeOneLogicFunction';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { LogicFunctionExecutionStatus } from '~/generated-metadata/graphql';
 import { sleep } from '~/utils/sleep';
@@ -37,8 +38,13 @@ export const useExecuteLogicFunction = ({
     { input: ExecuteOneLogicFunctionInput }
   >(EXECUTE_ONE_LOGIC_FUNCTION);
 
-  const [logicFunctionTestData, setLogicFunctionTestData] = useRecoilState(
-    logicFunctionTestDataFamilyState(logicFunctionId),
+  const logicFunctionTestData = useFamilyRecoilValueV2(
+    logicFunctionTestDataFamilyState,
+    logicFunctionId,
+  );
+  const setLogicFunctionTestData = useSetFamilyRecoilStateV2(
+    logicFunctionTestDataFamilyState,
+    logicFunctionId,
   );
 
   const executeLogicFunction = async () => {

@@ -10,9 +10,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
@@ -29,7 +29,7 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   const { updateCurrentView } = useUpdateCurrentView();
   const { navigateToDateFieldSettings } = useGetAvailableFieldsForCalendar();
 
-  const setRecordIndexCalendarFieldMetadataId = useSetRecoilState(
+  const setRecordIndexCalendarFieldMetadataId = useSetRecoilStateV2(
     recordIndexCalendarFieldMetadataIdState,
   );
   const availableFieldsForCalendar = objectMetadataItem.fields.filter((field) =>

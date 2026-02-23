@@ -11,7 +11,6 @@ import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValu
 import { UserContext } from '@/users/contexts/UserContext';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { ViewFilterOperand, type FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
   isDefined,
@@ -22,12 +21,12 @@ import {
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Temporal } from 'temporal-polyfill';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
 export const ObjectFilterDropdownDateTimeInput = () => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useRecoilValue(dateLocaleState);
+  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
   const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
 
   const { userTimezone } = useUserTimezone();

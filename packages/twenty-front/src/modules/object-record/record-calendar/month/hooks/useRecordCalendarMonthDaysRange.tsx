@@ -10,14 +10,13 @@ import {
   startOfWeek,
 } from 'date-fns';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilValue } from 'recoil';
 
 import { type Temporal } from 'temporal-polyfill';
 import {
   turnJSDateToPlainDate,
   turnPlainDateToShiftedDateInSystemTimeZone,
 } from 'twenty-shared/utils';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 
 // TODO: we could refactor this to use Temporal.PlainDate directly
 // But it would require recoding the utils here, not really worth it for now
@@ -25,7 +24,7 @@ export const useRecordCalendarMonthDaysRange = (
   selectedDate: Temporal.PlainDate,
 ) => {
   const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
-  const dateLocale = useRecoilValue(dateLocaleState);
+  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
 
   if (!currentWorkspaceMember) {
     throw new Error('Current workspace member not found');

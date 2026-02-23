@@ -22,9 +22,9 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconBaselineDensitySmall,
@@ -61,8 +61,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     [updateCurrentView],
   );
 
-  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
-  const recordIndexCalendarLayout = useRecoilValue(
+  const recordIndexOpenRecordIn = useRecoilValueV2(recordIndexOpenRecordInState);
+  const recordIndexCalendarLayout = useRecoilValueV2(
     recordIndexCalendarLayoutState,
   );
   const recordGroupFieldMetadata = useRecoilComponentValue(

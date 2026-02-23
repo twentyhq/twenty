@@ -3,12 +3,12 @@ import {
   type Meta,
   type StoryObj,
 } from '@storybook/react-vite';
-import { useSetRecoilState } from 'recoil';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -28,7 +28,7 @@ import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -80,10 +80,7 @@ const meta: Meta<typeof CommandMenu> = {
       const setCurrentWorkspaceMember = useSetRecoilStateV2(
         currentWorkspaceMemberState,
       );
-      const setIsCommandMenuOpened = useSetRecoilState(
-        isCommandMenuOpenedState,
-      );
-      const setCommandMenuNavigationStack = useSetRecoilState(
+      const setCommandMenuNavigationStack = useSetRecoilStateV2(
         commandMenuNavigationStackState,
       );
 
@@ -91,7 +88,7 @@ const meta: Meta<typeof CommandMenu> = {
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
 
-      setIsCommandMenuOpened(true);
+      jotaiStore.set(isCommandMenuOpenedStateV2.atom, true);
       setCommandMenuNavigationStack([
         {
           page: CommandMenuPages.Root,

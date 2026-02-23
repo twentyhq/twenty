@@ -18,7 +18,8 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useRecoilCallback } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrowserMaximize } from 'twenty-ui/display';
@@ -35,9 +36,10 @@ export const RecordShowRightDrawerOpenRecordButton = ({
   objectNameSingular,
   recordId,
 }: RecordShowRightDrawerOpenRecordButtonProps) => {
-  const record = useRecoilValue<ObjectRecord | null | undefined>(
-    recordStoreFamilyState(recordId),
-  );
+  const record = useFamilyRecoilValueV2(
+    recordStoreFamilyState,
+    recordId,
+  ) as ObjectRecord | null | undefined;
   const { closeCommandMenu } = useCommandMenu();
 
   const commandMenuPageComponentInstance = useComponentInstanceStateContext(

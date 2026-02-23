@@ -4,11 +4,11 @@ import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas
 import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
-import { useRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { IconApi, IconBrandGraphql } from 'twenty-ui/display';
@@ -37,7 +37,7 @@ const StyledForm = styled.form`
 export const PlaygroundSetupForm = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
-  const [playgroundApiKey, setPlaygroundApiKey] = useRecoilState(
+  const [playgroundApiKey, setPlaygroundApiKey] = useRecoilStateV2(
     playgroundApiKeyState,
   );
 

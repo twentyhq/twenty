@@ -1,15 +1,15 @@
 import { RestPlayground } from '@/settings/playground/components/RestPlayground';
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, http } from 'msw';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { action } from 'storybook/actions';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const PlaygroundApiKeySetterEffect = () => {
-  const setPlaygroundApiKey = useSetRecoilState(playgroundApiKeyState);
+  const setPlaygroundApiKey = useSetRecoilStateV2(playgroundApiKeyState);
 
   useEffect(() => {
     setPlaygroundApiKey('test-api-key-123');

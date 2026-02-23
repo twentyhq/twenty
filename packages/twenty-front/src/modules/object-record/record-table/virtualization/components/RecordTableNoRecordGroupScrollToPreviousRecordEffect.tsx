@@ -7,9 +7,9 @@ import { useTriggerFetchPages } from '@/object-record/record-table/virtualizatio
 import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
 
 export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
@@ -18,7 +18,7 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const [lastShowPageRecordId, setLastShowPageRecordId] = useRecoilState(
+  const [lastShowPageRecordId, setLastShowPageRecordId] = useRecoilStateV2(
     lastShowPageRecordIdState,
   );
 

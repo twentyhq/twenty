@@ -8,8 +8,8 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type StartNodeCreationParams } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useCallback, useContext } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useStartNodeCreation = () => {
@@ -28,7 +28,7 @@ export const useStartNodeCreation = () => {
     workflowVisualizerWorkflowIdComponentState,
   );
 
-  const setCommandMenuNavigationStack = useSetRecoilState(
+  const setCommandMenuNavigationStack = useSetRecoilStateV2(
     commandMenuNavigationStackState,
   );
 

@@ -19,8 +19,8 @@ import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -35,7 +35,7 @@ export const CommandMenuWorkflowStepInfo = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
 
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
+  const commandMenuPage = useRecoilValueV2(commandMenuPageState);
 
   const workflowId = useCommandMenuWorkflowIdOrThrow();
 

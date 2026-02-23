@@ -7,6 +7,7 @@ import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/cons
 import { useSetGlobalCommandMenuContext } from '@/command-menu/hooks/useSetGlobalCommandMenuContext';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -47,9 +48,15 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   },
   contextStoreNumberOfSelectedRecords: 2,
   contextStoreCurrentViewType: ContextStoreViewType.Table,
-  onInitializeRecoilSnapshot: (snapshot) => {
-    snapshot.set(recordStoreFamilyState(peopleMock[0].id), peopleMock[0]);
-    snapshot.set(recordStoreFamilyState(peopleMock[1].id), peopleMock[1]);
+  onInitializeRecoilSnapshot: (_snapshot) => {
+    jotaiStore.set(
+      recordStoreFamilyState.atomFamily(peopleMock[0].id),
+      peopleMock[0],
+    );
+    jotaiStore.set(
+      recordStoreFamilyState.atomFamily(peopleMock[1].id),
+      peopleMock[1],
+    );
   },
 });
 
@@ -100,12 +107,6 @@ describe('useSetGlobalCommandMenuContext', () => {
           }),
         );
 
-        const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
-
-        const hasUserSelectedCommand = useRecoilValue(
-          hasUserSelectedCommandState,
-        );
-
         return {
           setGlobalCommandMenuContext,
           targetedRecordsRule,
@@ -113,8 +114,6 @@ describe('useSetGlobalCommandMenuContext', () => {
           filters,
           filterGroups,
           currentViewType,
-          commandMenuPageInfo,
-          hasUserSelectedCommand,
           anyFieldFilterValue,
         };
       },
@@ -131,12 +130,16 @@ describe('useSetGlobalCommandMenuContext', () => {
     expect(result.current.filters).toEqual([]);
     expect(result.current.anyFieldFilterValue).toEqual('');
     expect(result.current.currentViewType).toBe(ContextStoreViewType.Table);
-    expect(result.current.commandMenuPageInfo).toEqual({
+    const commandMenuPageInfo = jotaiStore.get(commandMenuPageInfoState.atom);
+    expect(commandMenuPageInfo).toEqual({
       title: undefined,
       Icon: undefined,
       instanceId: '',
     });
-    expect(result.current.hasUserSelectedCommand).toBe(false);
+    const hasUserSelectedCommand = jotaiStore.get(
+      hasUserSelectedCommandState.atom,
+    );
+    expect(hasUserSelectedCommand).toBe(false);
 
     act(() => {
       result.current.setGlobalCommandMenuContext();
@@ -150,12 +153,18 @@ describe('useSetGlobalCommandMenuContext', () => {
     expect(result.current.filters).toEqual([]);
     expect(result.current.anyFieldFilterValue).toEqual('');
     expect(result.current.currentViewType).toBe(ContextStoreViewType.Table);
-    expect(result.current.commandMenuPageInfo).toEqual({
+    const commandMenuPageInfoAfter = jotaiStore.get(
+      commandMenuPageInfoState.atom,
+    );
+    expect(commandMenuPageInfoAfter).toEqual({
       title: undefined,
       Icon: undefined,
       instanceId: '',
     });
-    expect(result.current.hasUserSelectedCommand).toBe(false);
+    const hasUserSelectedCommandAfter = jotaiStore.get(
+      hasUserSelectedCommandState.atom,
+    );
+    expect(hasUserSelectedCommandAfter).toBe(false);
   });
 
   it('should call copyContextStoreStates with correct parameters', () => {

@@ -3,6 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -19,9 +20,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
   const resetPageLayoutEditMode = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
-        const pageLayoutId = snapshot
-          .getLoadable(currentPageLayoutIdState)
-          .getValue();
+        const pageLayoutId = jotaiStore.get(currentPageLayoutIdState.atom);
 
         if (isDefined(pageLayoutId)) {
           const pageLayoutPersisted = snapshot
@@ -77,7 +76,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
             {},
           );
 
-          set(currentPageLayoutIdState, null);
+          jotaiStore.set(currentPageLayoutIdState.atom, null);
         }
 
         set(

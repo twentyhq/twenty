@@ -9,6 +9,7 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilCallback } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
@@ -45,9 +46,9 @@ export const useOpenRecordFromIndexView = () => {
   const openRecordFromIndexView = useRecoilCallback(
     ({ snapshot, set }) =>
       ({ recordId }: { recordId: string }) => {
-        const recordIndexOpenRecordIn = snapshot
-          .getLoadable(recordIndexOpenRecordInState)
-          .getValue();
+        const recordIndexOpenRecordIn = jotaiStore.get(
+          recordIndexOpenRecordInState.atom,
+        );
 
         const parentViewFilters = snapshot
           .getLoadable(currentRecordFilters)

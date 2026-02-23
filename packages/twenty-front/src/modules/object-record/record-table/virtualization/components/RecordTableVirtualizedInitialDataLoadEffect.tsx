@@ -1,5 +1,3 @@
-import { useRecoilValue } from 'recoil';
-
 import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 
@@ -12,6 +10,7 @@ import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/re
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import isEmpty from 'lodash.isempty';
 import { useEffect } from 'react';
@@ -32,8 +31,9 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
     isInitializingVirtualTableDataLoadingComponentState,
   );
 
-  const isFetchingMoreRecords = useRecoilValue(
-    isFetchingMoreRecordsFamilyState(recordTableId),
+  const isFetchingMoreRecords = useFamilyRecoilValueV2(
+    isFetchingMoreRecordsFamilyState,
+    recordTableId,
   );
 
   const { triggerInitialRecordTableDataLoad } =

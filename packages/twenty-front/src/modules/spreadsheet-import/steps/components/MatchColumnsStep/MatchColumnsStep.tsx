@@ -28,9 +28,9 @@ import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetCo
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { type SpreadsheetImportField } from '@/spreadsheet-import/types/SpreadsheetImportField';
+import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
@@ -81,8 +81,9 @@ export const MatchColumnsStep = ({
   const dataExample = data.slice(0, 2);
   const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
   const [isLoading, setIsLoading] = useState(false);
-  const [columns, setColumns] = useRecoilState(
-    initialComputedColumnsSelector(headerValues),
+  const [columns, setColumns] = useFamilySelectorStateV2(
+    initialComputedColumnsSelector,
+    headerValues,
   );
 
   const { matchColumnsStepHook } = useSpreadsheetImportInternal();

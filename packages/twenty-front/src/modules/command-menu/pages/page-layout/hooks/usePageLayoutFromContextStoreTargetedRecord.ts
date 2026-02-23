@@ -1,7 +1,7 @@
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValue } from 'recoil';
 
 export const usePageLayoutIdFromContextStoreTargetedRecord = () => {
   const targetedRecordsRule = useRecoilComponentValue(
@@ -19,7 +19,10 @@ export const usePageLayoutIdFromContextStoreTargetedRecord = () => {
 
   const recordId: string = targetedRecordsRule.selectedRecordIds[0];
 
-  const record = useRecoilValue(recordStoreFamilyState(recordId));
+  const record = useFamilyRecoilValueV2(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   return { pageLayoutId: record?.pageLayoutId };
 };

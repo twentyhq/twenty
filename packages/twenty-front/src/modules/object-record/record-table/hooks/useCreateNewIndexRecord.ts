@@ -17,6 +17,7 @@ import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInS
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilCallback } from 'recoil';
@@ -83,9 +84,9 @@ export const useCreateNewIndexRecord = ({
           ...recordInput,
         };
 
-        const recordIndexOpenRecordIn = snapshot
-          .getLoadable(recordIndexOpenRecordInState)
-          .getValue();
+        const recordIndexOpenRecordIn = jotaiStore.get(
+          recordIndexOpenRecordInState.atom,
+        );
 
         const createdRecord = await createOneRecord({
           id: recordId,

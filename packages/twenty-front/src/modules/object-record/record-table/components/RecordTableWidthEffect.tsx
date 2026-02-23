@@ -2,9 +2,9 @@ import { recordTableWidthComponentState } from '@/object-record/record-table/sta
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableWidthEffect = () => {
@@ -12,7 +12,7 @@ export const RecordTableWidthEffect = () => {
     recordTableWidthComponentState,
   );
 
-  const tableWidthResizeIsActive = useRecoilValue(
+  const tableWidthResizeIsActive = useRecoilValueV2(
     tableWidthResizeIsActiveState,
   );
 

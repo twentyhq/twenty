@@ -15,6 +15,7 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
@@ -113,9 +114,9 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
         if ((isFirstColumnCell && !isEmpty) || isNavigating) {
           leaveTableFocus();
 
-          const openRecordIn = snapshot
-            .getLoadable(recordIndexOpenRecordInState)
-            .getValue();
+          const openRecordIn = jotaiStore.get(
+            recordIndexOpenRecordInState.atom,
+          );
 
           if (openRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
             activateRecordTableRow(cellPosition.row);

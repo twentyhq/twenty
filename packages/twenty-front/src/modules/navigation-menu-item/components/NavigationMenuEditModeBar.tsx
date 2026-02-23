@@ -14,7 +14,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconCheck, useIcons } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -42,7 +41,7 @@ export const NavigationMenuEditModeBar = () => {
   const { getIcon } = useIcons();
   const [isSaving, setIsSaving] = useState(false);
   const { closeCommandMenu } = useCommandMenu();
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
+  const commandMenuPage = useRecoilValueV2(commandMenuPageState);
   const { enqueueErrorSnackBar } = useSnackBar();
   const setNavigationMenuItemsDraft = useSetRecoilStateV2(
     navigationMenuItemsDraftStateV2,

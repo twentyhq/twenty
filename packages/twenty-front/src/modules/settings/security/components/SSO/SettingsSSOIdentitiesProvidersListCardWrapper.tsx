@@ -5,14 +5,14 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/security/components/SSO/SettingsSSOIdentityProviderRowRightContainer';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { SettingsPath } from 'twenty-shared/types';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {
   const navigate = useNavigateSettings();
 
-  const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
+  const SSOIdentitiesProviders = useRecoilValueV2(SSOIdentitiesProvidersState);
 
   return (
     <SettingsListCard

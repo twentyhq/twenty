@@ -59,7 +59,6 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
@@ -124,9 +123,9 @@ export const useAuth = () => {
   const navigate = useNavigate();
 
   const clearSession = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       async () => {
-        const sseClient = getSnapshotValue(snapshot, sseClientState);
+        const sseClient = jotaiStore.get(sseClientState.atom);
 
         sseClient?.dispose();
 

@@ -1,15 +1,17 @@
 import { useCallback, useMemo } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import { v4 } from 'uuid';
 
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
@@ -56,7 +58,9 @@ export const ActivityRichTextEditor = ({
   activityId,
   activityObjectNameSingular,
 }: ActivityRichTextEditorProps) => {
-  const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
+  const [activityInStore] = useAtom(
+    recordStoreFamilyState.atomFamily(activityId),
+  );
 
   const cache = useApolloCoreClient().cache;
   const activity = activityInStore as Task | Note | null;
@@ -122,7 +126,7 @@ export const ActivityRichTextEditor = ({
     }
   }, 300);
 
-  const [canCreateActivity, setCanCreateActivity] = useRecoilState(
+  const [canCreateActivity, setCanCreateActivity] = useRecoilStateV2(
     canCreateActivityState,
   );
 
@@ -145,46 +149,46 @@ export const ActivityRichTextEditor = ({
     [canCreateActivity, persistBodyDebounced, setCanCreateActivity],
   );
 
-  const handleBodyChange = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async (newStringifiedBody: string) => {
-        const oldActivity = snapshot
-          .getLoadable(recordStoreFamilyState(activityId))
-          .getValue();
+  const handleBodyChange = useCallback(
+    async (newStringifiedBody: string) => {
+      const oldActivity = jotaiStore.get(
+        recordStoreFamilyState.atomFamily(activityId),
+      );
 
-        set(recordStoreFamilyState(activityId), (oldActivity) => {
-          return {
-            ...oldActivity,
-            id: activityId,
-            bodyV2: {
+      jotaiStore.set(
+        recordStoreFamilyState.atomFamily(activityId),
+        (prev: typeof oldActivity) => ({
+          ...prev,
+          id: activityId,
+          bodyV2: {
+            blocknote: newStringifiedBody,
+            markdown: null,
+          },
+          __typename: 'Activity',
+        }),
+      );
+
+      modifyRecordFromCache({
+        recordId: activityId,
+        fieldModifiers: {
+          bodyV2: () => {
+            return {
               blocknote: newStringifiedBody,
               markdown: null,
-            },
-            __typename: 'Activity',
-          };
-        });
-
-        modifyRecordFromCache({
-          recordId: activityId,
-          fieldModifiers: {
-            bodyV2: () => {
-              return {
-                blocknote: newStringifiedBody,
-                markdown: null,
-              };
-            },
+            };
           },
-          cache,
-          objectMetadataItem: objectMetadataItemActivity,
-        });
+        },
+        cache,
+        objectMetadataItem: objectMetadataItemActivity,
+      });
 
-        handlePersistBody(newStringifiedBody);
+      handlePersistBody(newStringifiedBody);
 
-        await syncAttachments(
-          newStringifiedBody,
-          oldActivity?.bodyV2.blocknote,
-        );
-      },
+      await syncAttachments(
+        newStringifiedBody,
+        oldActivity?.bodyV2.blocknote,
+      );
+    },
     [
       activityId,
       cache,

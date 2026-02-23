@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
@@ -9,7 +9,8 @@ import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistor
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconList, IconSearch } from 'twenty-ui/display';
 
@@ -26,20 +27,10 @@ const renderHooks = () => {
       const commandMenuHistory = useCommandMenuHistory();
       const commandMenuCloseAnimationCompleteCleanup =
         useCommandMenuCloseAnimationCompleteCleanup();
-      const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
-      const commandMenuNavigationStack = useRecoilValue(
-        commandMenuNavigationStackState,
-      );
-      const commandMenuPage = useRecoilValue(commandMenuPageState);
-      const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
 
       return {
         commandMenu,
         commandMenuHistory,
-        isCommandMenuOpened,
-        commandMenuNavigationStack,
-        commandMenuPage,
-        commandMenuPageInfo,
         commandMenuCloseAnimationCompleteCleanup,
       };
     },
@@ -72,7 +63,7 @@ describe('useCommandMenuHistory', () => {
       });
     });
 
-    expect(result.current.commandMenuNavigationStack).toEqual([
+    expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toEqual([
       {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
@@ -91,7 +82,7 @@ describe('useCommandMenuHistory', () => {
       result.current.commandMenuHistory.goBackFromCommandMenu();
     });
 
-    expect(result.current.commandMenuNavigationStack).toEqual([
+    expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toEqual([
       {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
@@ -99,8 +90,10 @@ describe('useCommandMenuHistory', () => {
         pageId: '1',
       },
     ]);
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
-    expect(result.current.commandMenuPageInfo).toEqual({
+    expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
+      CommandMenuPages.SearchRecords,
+    );
+    expect(jotaiStore.get(commandMenuPageInfoState.atom)).toEqual({
       title: 'Search',
       Icon: IconSearch,
       instanceId: '1',
@@ -111,14 +104,16 @@ describe('useCommandMenuHistory', () => {
       result.current.commandMenuCloseAnimationCompleteCleanup.commandMenuCloseAnimationCompleteCleanup();
     });
 
-    expect(result.current.commandMenuNavigationStack).toEqual([]);
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
-    expect(result.current.commandMenuPageInfo).toEqual({
+    expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toEqual([]);
+    expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
+      CommandMenuPages.Root,
+    );
+    expect(jotaiStore.get(commandMenuPageInfoState.atom)).toEqual({
       title: undefined,
       instanceId: '',
       Icon: undefined,
     });
-    expect(result.current.isCommandMenuOpened).toBe(false);
+    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(false);
   });
 
   it('should navigate to a page in history', () => {
@@ -137,8 +132,10 @@ describe('useCommandMenuHistory', () => {
       result.current.commandMenuHistory.navigateCommandMenuHistory(0);
     });
 
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
-    expect(result.current.commandMenuPageInfo).toEqual({
+    expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
+      CommandMenuPages.SearchRecords,
+    );
+    expect(jotaiStore.get(commandMenuPageInfoState.atom)).toEqual({
       title: 'Search',
       Icon: IconSearch,
       instanceId: '1',

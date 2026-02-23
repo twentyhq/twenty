@@ -1,5 +1,3 @@
-import { useRecoilState } from 'recoil';
-
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { useRefreshShowPageFindManyActivitiesQueries } from '@/activities/hooks/useRefreshShowPageFindManyActivitiesQueries';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
@@ -30,7 +28,7 @@ export const useUpsertActivity = ({
     activityObjectNameSingular,
   });
 
-  const [, setIsUpsertingActivityInDB] = useRecoilState(
+  const [, setIsUpsertingActivityInDB] = useRecoilStateV2(
     isUpsertingActivityInDBState,
   );
 

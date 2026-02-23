@@ -6,11 +6,11 @@ import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-ta
 import { hasAggregateOperationForViewFieldFamilySelector } from '@/object-record/record-table/record-table-footer/states/hasAggregateOperationForViewFieldFamilySelector';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { IconChevronDown } from 'twenty-ui/display';
 
 const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
@@ -68,10 +68,9 @@ export const RecordTableColumnAggregateFooterValueCell = ({
     RecordTableColumnAggregateFooterCellContext,
   );
 
-  const hasAggregateOperationForViewField = useRecoilValue(
-    hasAggregateOperationForViewFieldFamilySelector({
-      viewFieldId,
-    }),
+  const hasAggregateOperationForViewField = useFamilySelectorValueV2(
+    hasAggregateOperationForViewFieldFamilySelector,
+    { viewFieldId },
   );
 
   const hasRecordGroups = useRecoilComponentValue(

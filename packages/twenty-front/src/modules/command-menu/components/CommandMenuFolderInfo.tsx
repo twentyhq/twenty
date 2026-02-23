@@ -1,7 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
@@ -27,7 +26,7 @@ export const CommandMenuFolderInfo = () => {
   const theme = useTheme();
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuPageInfo = useRecoilValueV2(commandMenuPageInfoState);
   const [shouldFocusTitleInput, setShouldFocusTitleInput] =
     useRecoilComponentState(
       commandMenuShouldFocusTitleInputComponentState,

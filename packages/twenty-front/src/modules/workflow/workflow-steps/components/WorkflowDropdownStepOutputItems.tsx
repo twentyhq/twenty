@@ -22,7 +22,8 @@ import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItem
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { searchVariableThroughOutputSchemaV2 } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchemaV2';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import {
   type FilterableAndTSVectorFieldType,
   type StepFilter,
@@ -61,27 +62,26 @@ export const WorkflowDropdownStepOutputItems = ({
 
   const { getInitialFilterValue } = useGetInitialFilterValue();
 
-  const updateStepFilter = useRecoilCallback(
-    ({ snapshot }) =>
-      ({
+  const jotaiStore = useStore();
+
+  const updateStepFilter = useCallback(
+    ({
+      rawVariableName,
+      isFullRecord,
+    }: {
+      rawVariableName: string;
+      isFullRecord: boolean;
+    }) => {
+      const stepId = extractRawVariableNamePart({
         rawVariableName,
-        isFullRecord,
-      }: {
-        rawVariableName: string;
-        isFullRecord: boolean;
-      }) => {
-        const stepId = extractRawVariableNamePart({
-          rawVariableName,
-          part: 'stepId',
-        });
-        const [currentStepOutputSchema] = snapshot
-          .getLoadable(
-            stepsOutputSchemaFamilySelector({
-              workflowVersionId,
-              stepIds: [stepId],
-            }),
-          )
-          .getValue();
+        part: 'stepId',
+      });
+      const [currentStepOutputSchema] = jotaiStore.get(
+        stepsOutputSchemaFamilySelector.selectorFamily({
+          workflowVersionId,
+          stepIds: [stepId],
+        }),
+      );
 
         const { variableType, fieldMetadataId, compositeFieldSubFieldName } =
           searchVariableThroughOutputSchemaV2({
@@ -124,8 +124,9 @@ export const WorkflowDropdownStepOutputItems = ({
             operand: defaultOperand,
           },
         });
-      },
+    },
     [
+      jotaiStore,
       workflowVersionId,
       step.type,
       getFieldMetadataItemByIdOrThrow,

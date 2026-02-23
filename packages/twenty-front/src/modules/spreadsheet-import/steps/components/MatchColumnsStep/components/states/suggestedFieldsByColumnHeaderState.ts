@@ -1,7 +1,7 @@
 import { type SpreadsheetImportField } from '@/spreadsheet-import/types';
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-export const suggestedFieldsByColumnHeaderState = createState({
+export const suggestedFieldsByColumnHeaderState = createStateV2({
   key: 'suggestedFieldsByColumnHeaderState',
   defaultValue: {} as Record<string, SpreadsheetImportField[]>,
 });

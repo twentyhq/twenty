@@ -7,6 +7,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
@@ -50,7 +51,7 @@ export const useRunWorkflowRecordActions = ({
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
   const runWorkflowVersionOnSelectedRecords = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       async (
         selectedRecordIds: string[],
         activeWorkflowVersion: Pick<
@@ -83,7 +84,7 @@ export const useRunWorkflowRecordActions = ({
           const objectNamePlural = objectMetadataItem.namePlural;
           const selectedRecords = limitedSelectedRecordIds
             .map((recordId) =>
-              snapshot.getLoadable(recordStoreFamilyState(recordId)).getValue(),
+              jotaiStore.get(recordStoreFamilyState.atomFamily(recordId)),
             )
             .filter(isDefined);
 
@@ -96,9 +97,9 @@ export const useRunWorkflowRecordActions = ({
           });
         } else {
           for (const selectedRecordId of limitedSelectedRecordIds) {
-            const selectedRecord = snapshot
-              .getLoadable(recordStoreFamilyState(selectedRecordId))
-              .getValue();
+            const selectedRecord = jotaiStore.get(
+              recordStoreFamilyState.atomFamily(selectedRecordId),
+            );
 
             if (!isDefined(selectedRecord)) {
               continue;

@@ -1,6 +1,7 @@
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useStore } from 'jotai';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -8,12 +9,11 @@ import { type ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 export const useUpdateObjectViewOptions = () => {
   const store = useStore();
 
-  const setRecordIndexOpenRecordIn = useSetRecoilState(
+  const setRecordIndexOpenRecordIn = useSetRecoilStateV2(
     recordIndexOpenRecordInState,
   );
 

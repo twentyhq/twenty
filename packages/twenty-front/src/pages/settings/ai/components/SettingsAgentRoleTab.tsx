@@ -2,12 +2,12 @@ import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui/display';
@@ -50,8 +50,9 @@ export const SettingsAgentRoleTab = ({
   const { data: rolesData } = useGetRolesQuery();
   const [createRole] = useCreateOneRoleMutation();
   const [assignRoleToAgent] = useAssignRoleToAgentMutation();
-  const setSettingsDraftRole = useSetRecoilState(
-    settingsDraftRoleFamilyState(formValues.role || ''),
+  const setSettingsDraftRole = useSetFamilyRecoilStateV2(
+    settingsDraftRoleFamilyState,
+    formValues.role || '',
   );
 
   const selectedRole = rolesData?.getRoles?.find(

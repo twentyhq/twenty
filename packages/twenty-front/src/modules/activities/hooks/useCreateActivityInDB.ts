@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { isNonEmptyArray } from '@sniptt/guards';
 
 import { type ActivityForEditor } from '@/activities/types/ActivityForEditor';
@@ -57,9 +58,8 @@ export const useCreateActivityInDB = ({
 
   const cache = useApolloCoreClient().cache;
 
-  const createActivityInDB = useRecoilCallback(
-    ({ set }) =>
-      async (activityToCreate: ActivityForEditor) => {
+  const createActivityInDB = useCallback(
+    async (activityToCreate: ActivityForEditor) => {
         const createdActivity = await createOneActivity?.({
           ...activityToCreate,
           updatedAt: new Date().toISOString(),
@@ -97,10 +97,13 @@ export const useCreateActivityInDB = ({
           objectMetadataItem: objectMetadataItemActivity,
         });
 
-        set(recordStoreFamilyState(createdActivity.id), {
-          ...createdActivity,
-          activityTargets: activityTargetsToCreate,
-        });
+        jotaiStore.set(
+          recordStoreFamilyState.atomFamily(createdActivity.id),
+          {
+            ...createdActivity,
+            activityTargets: activityTargetsToCreate,
+          },
+        );
       },
     [
       cache,
