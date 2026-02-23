@@ -127,7 +127,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       applicationUniversalIdentifier ===
       TWENTY_STANDARD_APPLICATION.universalIdentifier;
 
-    const dependencyAllFlatEntityMaps = allDependencyMetadataName.reduce(
+    const dependencyAllFlatEntityMaps = allMetadataNameCacheToCompute.reduce(
       (allFlatEntityMaps, metadataName) => {
         const metadataFlatEntityMapsKey =
           getMetadataFlatEntityMapsKey(metadataName);
