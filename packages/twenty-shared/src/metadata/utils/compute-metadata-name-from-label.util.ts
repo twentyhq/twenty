@@ -19,6 +19,7 @@ export const computeMetadataNameFromLabel = ({
     trim: true,
     separator: '_',
     allowedChars: 'a-zA-Z0-9',
+    lowercase: false,
   });
 
   if (formattedString === '') {
