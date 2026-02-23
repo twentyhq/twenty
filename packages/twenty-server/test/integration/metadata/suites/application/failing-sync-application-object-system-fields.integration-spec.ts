@@ -140,8 +140,7 @@ const failingSyncApplicationSystemFieldsTestCases: SyncApplicationTestingContext
       },
     },
     {
-      title:
-        'when object has createdAt field with wrong type (TEXT instead of DATE_TIME)',
+      title: 'when object miss default fields',
       context: {
         manifest: buildBaseManifest(
           buildObjectWithLabelField({
@@ -150,16 +149,6 @@ const failingSyncApplicationSystemFieldsTestCases: SyncApplicationTestingContext
             labelSingular: 'Wrong CreatedAt Object',
             labelPlural: 'Wrong CreatedAt Objects',
             description: 'Object with wrong createdAt field type',
-            additionalFields: [
-              {
-                universalIdentifier: uuidv4(),
-                type: FieldMetadataType.TEXT,
-                name: 'createdAt',
-                label: 'Created At',
-                description: 'Created at field with wrong type',
-                icon: 'IconCalendar',
-              },
-            ],
           }),
         ),
       },
