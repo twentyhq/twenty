@@ -35,7 +35,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import { resetMetadataStore } from '@/app/hooks/useMetadataStore';
+import { useReloadWorkspaceMetadata } from '@/metadata-store/hooks/useReloadWorkspaceMetadata';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
@@ -58,8 +58,6 @@ import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
@@ -89,7 +87,8 @@ export const useAuth = () => {
   );
   const { loadCurrentUser } = useLoadCurrentUser();
 
-  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
+  const { reloadWorkspaceMetadata, resetToMockedMetadata } =
+    useReloadWorkspaceMetadata();
   const { createWorkspace } = useSignUpInNewWorkspace();
 
   const setSignInUpStep = useSetRecoilStateV2(signInUpStepState);
@@ -123,7 +122,6 @@ export const useAuth = () => {
   const [, setSearchParams] = useSearchParams();
 
   const navigate = useNavigate();
-  const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
 
   const clearSession = useRecoilCallback(
     ({ snapshot }) =>
@@ -161,7 +159,6 @@ export const useAuth = () => {
 
         jotaiStore.set(workspaceAuthProvidersState.atom, authProvidersValue);
         jotaiStore.set(workspacePublicDataState.atom, workspacePublicDataValue);
-        resetMetadataStore(jotaiStore);
         jotaiStore.set(domainConfigurationState.atom, domainConfigurationValue);
         jotaiStore.set(
           isCaptchaScriptLoadedState.atom,
@@ -190,14 +187,14 @@ export const useAuth = () => {
 
         await client.clearStore();
         setLastAuthenticateWorkspaceDomain(null);
-        await loadMockedObjectMetadataItems();
+        await resetToMockedMetadata();
         navigate(AppPath.SignInUp);
       },
     [
       goToRecoilSnapshot,
       client,
       setLastAuthenticateWorkspaceDomain,
-      loadMockedObjectMetadataItems,
+      resetToMockedMetadata,
       navigate,
     ],
   );
@@ -325,17 +322,15 @@ export const useAuth = () => {
   const handleLoadWorkspaceAfterAuthentication = useCallback(
     async (authTokens: AuthTokenPair) => {
       handleSetAuthTokens(authTokens);
-
       setIsAppEffectRedirectEnabled(false);
-      resetMetadataStore(jotaiStore);
 
       await loadCurrentUser();
-      await refreshObjectMetadataItems();
+      await reloadWorkspaceMetadata();
     },
     [
       loadCurrentUser,
       handleSetAuthTokens,
-      refreshObjectMetadataItems,
+      reloadWorkspaceMetadata,
       setIsAppEffectRedirectEnabled,
     ],
   );

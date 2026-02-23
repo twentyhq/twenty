@@ -1,9 +1,9 @@
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
-import { MetadataGater } from '@/app/components/MetadataGater';
-import { IsAppMetadataReadyEffect } from '@/app/effect-components/IsAppMetadataReadyEffect';
+import { MetadataGater } from '@/metadata-store/components/MetadataGater';
+import { IsAppMetadataReadyEffect } from '@/metadata-store/effect-components/IsAppMetadataReadyEffect';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
-import { MetadataProviderEffects } from '@/app/effect-components/MetadataProviderEffect';
+import { MetadataProviderInitialEffects } from '@/metadata-store/effect-components/MetadataProviderInitialEffects';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
@@ -42,7 +42,7 @@ export const AppRouterProviders = () => {
     <ApolloProvider>
       <BaseThemeProvider>
         <ClientConfigProviderEffect />
-        <MetadataProviderEffects />
+        <MetadataProviderInitialEffects />
         <LazyMetadataLoadEffect />
         <IsAppMetadataReadyEffect />
         <WorkspaceProviderEffect />

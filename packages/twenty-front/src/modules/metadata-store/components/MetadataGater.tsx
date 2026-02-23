@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { isAppMetadataReadyState } from '@/app/states/isAppMetadataReadyState';
+import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';

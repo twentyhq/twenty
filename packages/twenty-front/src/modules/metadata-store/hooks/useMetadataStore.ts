@@ -3,8 +3,8 @@ import {
   metadataStoreState,
   type MetadataKey,
   type MetadataLoadEntry,
-} from '@/app/states/metadataStoreState';
-import { isAppMetadataReadyState } from '@/app/states/isAppMetadataReadyState';
+} from '@/metadata-store/states/metadataStoreState';
+import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { type createStore, useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';

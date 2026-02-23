@@ -45,6 +45,7 @@ export const createStateV2 = <ValueType>({
       useCookieStorage.cookieKey,
       defaultValue,
       storage,
+      { getOnInit: true },
     ) as StateAtom<ValueType>;
   } else if (useLocalStorage) {
     baseAtom = atomWithStorage<ValueType>(

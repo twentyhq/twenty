@@ -1,63 +1,50 @@
-import { useMetadataStore } from '@/app/hooks/useMetadataStore';
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { currentUserState } from '@/auth/states/currentUserState';
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useStore } from 'jotai';
-import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useEffect, useState } from 'react';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
-export const ObjectMetadataProviderEffect = () => {
-  const isLoggedIn = useIsLogged();
-  const currentUser = useRecoilValueV2(currentUserState);
+export const ObjectMetadataProviderInitialEffect = () => {
+  const isCurrentUserLoaded = useRecoilValueV2(isCurrentUserLoadedState);
   const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
   const store = useStore();
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
   const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
   const { updateDraft, applyChanges } = useMetadataStore();
 
   useEffect(() => {
-    if (isLoggedIn && !isDefined(currentUser)) {
-      return;
-    }
+    if (isInitialized) return;
+    if (!isCurrentUserLoaded) return;
 
-    let cancelled = false;
-
-    const shouldLoadReal =
-      isLoggedIn && isWorkspaceActiveOrSuspended(currentWorkspace);
+    const shouldLoadReal = isWorkspaceActiveOrSuspended(currentWorkspace);
 
     const loadObjectMetadata = async () => {
-      if (!shouldLoadReal) {
-        await loadMockedObjectMetadataItems();
-      } else {
+      if (shouldLoadReal) {
         await refreshObjectMetadataItems();
-      }
-
-      if (cancelled) {
-        return;
+      } else {
+        await loadMockedObjectMetadataItems();
       }
 
       const loadedItems = store.get(objectMetadataItemsState.atom);
       updateDraft('objects', loadedItems);
       applyChanges();
+      setIsInitialized(true);
     };
 
     loadObjectMetadata();
-
-    return () => {
-      cancelled = true;
-    };
   }, [
-    currentUser,
+    isInitialized,
+    isCurrentUserLoaded,
     currentWorkspace,
-    isLoggedIn,
-    loadMockedObjectMetadataItems,
     refreshObjectMetadataItems,
+    loadMockedObjectMetadataItems,
     store,
     updateDraft,
     applyChanges,

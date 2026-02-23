@@ -13,7 +13,7 @@ import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { isAppMetadataReadyState } from '@/app/states/isAppMetadataReadyState';
+import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
