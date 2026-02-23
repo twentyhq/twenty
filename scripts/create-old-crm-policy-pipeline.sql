@@ -58,4 +58,4 @@ INSERT INTO core."ingestionFieldMapping" ("pipelineId", "sourceFieldPath", "targ
   (:pipeline_id, '_productId',      'productId',       NULL,             NULL,            :workspace_id),
   (:pipeline_id, '_agentId',        'agentId',         NULL,             NULL,            :workspace_id),
   (:pipeline_id, '_submittedDate',  'submittedDate',   NULL,             NULL,            :workspace_id),
-  (:pipeline_id, 'vendor_name',     'leadSourceName',  NULL,             'sanitizeNull',  :workspace_id);
+  (:pipeline_id, '_leadSourceId',   'leadSourceId',    NULL,             NULL,            :workspace_id);

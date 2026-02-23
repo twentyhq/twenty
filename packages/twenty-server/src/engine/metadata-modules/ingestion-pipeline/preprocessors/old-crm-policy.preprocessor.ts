@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { IngestionPipelineEntity } from 'src/engine/metadata-modules/ingestion-pipeline/entities/ingestion-pipeline.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
@@ -43,6 +41,7 @@ export class OldCrmPolicyPreprocessor {
   private carrierCache = new Map<string, string | null>();
   private productCache = new Map<string, string | null>();
   private agentCache = new Map<string, string | null>();
+  private leadSourceCache = new Map<string, string | null>();
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -90,6 +89,11 @@ export class OldCrmPolicyPreprocessor {
     // Resolve agent by name (fuzzy)
     const agentId = payload.member_name
       ? await this.findAgentByName(payload.member_name, workspaceId)
+      : null;
+
+    // Resolve lead source from vendor_name
+    const leadSourceId = payload.vendor_name
+      ? await this.findOrCreateLeadSource(payload.vendor_name, workspaceId)
       : null;
 
     // Map status
@@ -141,6 +145,7 @@ export class OldCrmPolicyPreprocessor {
       _carrierId: carrierId,
       _productId: productId,
       _submittedDate: submittedDate,
+      _leadSourceId: leadSourceId,
     };
   }
 
@@ -333,6 +338,54 @@ export class OldCrmPolicyPreprocessor {
         `Failed to create product "${trimmedName}": ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
       this.productCache.set(trimmedName, null);
+
+      return null;
+    }
+  }
+
+  private async findOrCreateLeadSource(
+    name: string,
+    workspaceId: string,
+  ): Promise<string | null> {
+    const trimmedName = name.trim();
+
+    if (!trimmedName) return null;
+
+    const cached = this.leadSourceCache.get(trimmedName);
+
+    if (cached !== undefined) return cached;
+
+    const leadSourceRepo = await this.globalWorkspaceOrmManager.getRepository(
+      workspaceId,
+      'leadSource',
+      { shouldBypassPermissionChecks: true },
+    );
+
+    const existing = await leadSourceRepo.findOne({
+      where: { name: trimmedName },
+    });
+
+    if (existing) {
+      const id = (existing as Record<string, unknown>).id as string;
+
+      this.leadSourceCache.set(trimmedName, id);
+
+      return id;
+    }
+
+    try {
+      const created = await leadSourceRepo.save({ name: trimmedName });
+      const id = (created as Record<string, unknown>).id as string;
+
+      this.logger.log(`Created Lead Source: ${trimmedName}`);
+      this.leadSourceCache.set(trimmedName, id);
+
+      return id;
+    } catch (error) {
+      this.logger.error(
+        `Failed to create Lead Source "${trimmedName}": ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
+      this.leadSourceCache.set(trimmedName, null);
 
       return null;
     }
