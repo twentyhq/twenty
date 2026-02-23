@@ -27,12 +27,13 @@ export const SelectFieldInput = () => {
 
   const { onCancel, onSubmit } = useContext(FieldInputEventContext);
 
-  const selectOptions = useFilteredSelectOptionsFromRLSPredicates({
-    fieldMetadataId: fieldDefinition.fieldMetadataId,
-    objectMetadataNameSingular:
-      fieldDefinition.metadata.objectMetadataNameSingular,
-    options: fieldDefinition.metadata.options,
-  });
+  const { filteredOptions: selectOptions, canSelectEmpty } =
+    useFilteredSelectOptionsFromRLSPredicates({
+      fieldMetadataId: fieldDefinition.fieldMetadataId,
+      objectMetadataNameSingular:
+        fieldDefinition.metadata.objectMetadataNameSingular,
+      options: fieldDefinition.metadata.options,
+    });
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -104,7 +105,9 @@ export const SelectFieldInput = () => {
       defaultOption={selectedOption}
       onFilterChange={setFilteredOptions}
       onClear={
-        fieldDefinition.metadata.isNullable ? handleClearField : undefined
+        fieldDefinition.metadata.isNullable && canSelectEmpty
+          ? handleClearField
+          : undefined
       }
       clearLabel={fieldDefinition.label}
       onAddSelectOption={handleAddSelectOption}

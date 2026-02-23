@@ -105,7 +105,7 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
   fieldMetadataId: string;
   objectMetadataNameSingular: string | undefined;
   options: SelectOption[];
-}): SelectOption[] => {
+}): { filteredOptions: SelectOption[]; canSelectEmpty: boolean } => {
   const objectMetadataItemsByNameSingularMap = useRecoilValue(
     objectMetadataItemsByNameSingularMapSelector,
   );
@@ -120,7 +120,7 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
 
   return useMemo(() => {
     if (!isDefined(objectMetadataId)) {
-      return options;
+      return { filteredOptions: options, canSelectEmpty: true };
     }
 
     const selectPredicates =
@@ -128,7 +128,19 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
         (predicate) => predicate.fieldMetadataId === fieldMetadataId,
       );
 
-    return filterOptionsByPredicates(options, selectPredicates);
+    if (selectPredicates.length === 0) {
+      return { filteredOptions: options, canSelectEmpty: true };
+    }
+
+    const hasIsEmptyPredicate = selectPredicates.some(
+      (predicate) =>
+        predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY,
+    );
+
+    return {
+      filteredOptions: filterOptionsByPredicates(options, selectPredicates),
+      canSelectEmpty: hasIsEmptyPredicate,
+    };
   }, [
     objectMetadataId,
     objectPermissions.rowLevelPermissionPredicates,

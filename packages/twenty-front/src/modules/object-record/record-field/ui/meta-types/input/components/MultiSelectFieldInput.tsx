@@ -21,12 +21,13 @@ export const MultiSelectFieldInput = () => {
 
   const { onSubmit } = useContext(FieldInputEventContext);
 
-  const selectOptions = useFilteredSelectOptionsFromRLSPredicates({
-    fieldMetadataId: fieldDefinition.fieldMetadataId,
-    objectMetadataNameSingular:
-      fieldDefinition.metadata.objectMetadataNameSingular,
-    options: fieldDefinition.metadata.options,
-  });
+  const { filteredOptions: selectOptions } =
+    useFilteredSelectOptionsFromRLSPredicates({
+      fieldMetadataId: fieldDefinition.fieldMetadataId,
+      objectMetadataNameSingular:
+        fieldDefinition.metadata.objectMetadataNameSingular,
+      options: fieldDefinition.metadata.options,
+    });
 
   const handleOptionSelected = (newDraftValue: FieldMultiSelectValue) => {
     setDraftValue(newDraftValue);
