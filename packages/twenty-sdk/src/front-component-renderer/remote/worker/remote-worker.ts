@@ -95,6 +95,7 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
       hostApi.openSidePanelPage;
     frontComponentHostCommunicationApi.unmountFrontComponent =
       hostApi.unmountFrontComponent;
+    frontComponentHostCommunicationApi.closeSidePanel = hostApi.closeSidePanel;
   };
 
 const updateContext: WorkerExports['updateContext'] = async (

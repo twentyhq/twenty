@@ -74,6 +74,7 @@ export type { ActionOpenSidePanelPageProps } from './action';
 
 // Front Component API exports
 export {
+  closeSidePanel,
   navigate,
   openSidePanelPage,
   unmountFrontComponent,

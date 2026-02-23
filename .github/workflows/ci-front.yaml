@@ -115,7 +115,7 @@ jobs:
           path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
   merge-reports-and-check-coverage:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     needs: front-sb-test
     env:
       PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
@@ -169,7 +169,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     env:
       TASK_CACHE_KEY: front-task-${{ matrix.task }}
     strategy:
@@ -235,7 +235,7 @@ jobs:
           path: packages/twenty-front/build
           retention-days: 1
   e2e-test:
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     needs: [changed-files-check-e2e, front-build]
     if: |
       always() &&
@@ -345,7 +345,7 @@ jobs:
   ci-front-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     needs:
       [
         changed-files-check,
@@ -362,7 +362,7 @@ jobs:
   ci-e2e-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     needs: [changed-files-check-e2e, e2e-test]
     steps:
       - name: Fail job if any needs failed

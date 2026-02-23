@@ -13,7 +13,7 @@ import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/c
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -29,7 +29,7 @@ export const SignInBackgroundMockContainer = () => {
   const recordIndexId = 'sign-up-mock-record-table-id';
   const viewBarId = 'companies-mock';
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const objectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,

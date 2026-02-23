@@ -16,6 +16,8 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
+
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { Avatar } from 'twenty-ui/display';
 import {
   FeatureFlagKey,
@@ -34,7 +36,7 @@ export const CommandMenuRecordInfo = ({
     viewableRecordNameSingularComponentState,
     commandMenuPageInstanceId,
   );
-  const allowRequestsToTwentyIcons = useRecoilValue(
+  const allowRequestsToTwentyIcons = useRecoilValueV2(
     allowRequestsToTwentyIconsState,
   );
 

@@ -1,14 +1,13 @@
-import { selectorFamily } from 'recoil';
-
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
 
 type ObjectMetadataItemSelector = {
   objectName: string;
   objectNameType: 'singular' | 'plural';
 };
 
-export const objectMetadataItemFamilySelector = selectorFamily<
+export const objectMetadataItemFamilySelector = createFamilySelectorV2<
   ObjectMetadataItem | null,
   ObjectMetadataItemSelector
 >({

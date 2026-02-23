@@ -6,8 +6,8 @@ import { detectDateFormat } from '@/localization/utils/detection/detectDateForma
 import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
 import { detectTimeFormat } from '@/localization/utils/detection/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { createState } from '@/ui/utilities/state/utils/createState';
 
 export type WorkspaceMemberFormatPreferences = {
   timeZone: string;
@@ -18,7 +18,7 @@ export type WorkspaceMemberFormatPreferences = {
 };
 
 export const workspaceMemberFormatPreferencesState =
-  createState<WorkspaceMemberFormatPreferences>({
+  createStateV2<WorkspaceMemberFormatPreferences>({
     key: 'workspaceMemberFormatPreferencesState',
     defaultValue: {
       timeZone: detectTimeZone(),

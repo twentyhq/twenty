@@ -4,7 +4,6 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -23,6 +22,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -30,24 +30,16 @@ import { RelationManyToOneFieldInput } from '@/object-record/record-field/ui/met
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
 
 const RelationWorkspaceSetterEffect = () => {
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState,
-  );
   const setRecordFieldInputLayoutDirectionLoading = useSetRecoilComponentState(
     recordFieldInputLayoutDirectionLoadingComponentState,
     'relation-to-one-field-input-123-Relation',
   );
 
   useEffect(() => {
-    setCurrentWorkspace(mockCurrentWorkspace);
-    setCurrentWorkspaceMember(mockedWorkspaceMemberData);
+    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
     setRecordFieldInputLayoutDirectionLoading(false);
-  }, [
-    setCurrentWorkspace,
-    setCurrentWorkspaceMember,
-    setRecordFieldInputLayoutDirectionLoading,
-  ]);
+  }, [setRecordFieldInputLayoutDirectionLoading]);
 
   return <></>;
 };

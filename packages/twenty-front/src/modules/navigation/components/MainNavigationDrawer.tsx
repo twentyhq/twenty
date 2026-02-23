@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { NavigationDrawerAIChatThreadsList } from '@/ai/components/NavigationDrawerAIChatThreadsList';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -31,8 +30,8 @@ const StyledAIChatThreadsListWrapper = styled.div`
 `;
 
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const activeTab = useRecoilValueV2(navigationDrawerActiveTabState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
   const currentFavoriteFolderId = useRecoilValueV2(
     currentFavoriteFolderIdStateV2,
   );

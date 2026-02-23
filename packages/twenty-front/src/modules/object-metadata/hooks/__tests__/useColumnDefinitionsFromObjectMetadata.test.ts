@@ -6,6 +6,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   SubscriptionInterval,
   SubscriptionStatus,
@@ -18,8 +19,14 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
   componentInstanceId: 'instanceId',
   contextStoreCurrentObjectMetadataNameSingular: 'company',
-  onInitializeRecoilSnapshot: ({ set }) => {
-    set(currentWorkspaceState, {
+  onInitializeRecoilSnapshot: () => {
+    // Recoil state initialization removed - using Jotai instead
+  },
+});
+
+describe('useColumnDefinitionsFromObjectMetadata', () => {
+  it('should return expected definitions', () => {
+    jotaiStore.set(currentWorkspaceState.atom, {
       workspaceCustomApplication: {
         id: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
       },
@@ -65,11 +72,7 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
       fastModel: DEFAULT_FAST_MODEL,
       smartModel: DEFAULT_SMART_MODEL,
     });
-  },
-});
 
-describe('useColumnDefinitionsFromObjectMetadata', () => {
-  it('should return expected definitions', () => {
     const companyObjectMetadata = generatedMockObjectMetadataItems.find(
       (item) => item.nameSingular === 'company',
     );

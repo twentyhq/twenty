@@ -14,8 +14,8 @@ import { WEBHOOK_TRIGGER_HTTP_METHOD_OPTIONS } from '@/workflow/workflow-trigger
 import { getWebhookTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getWebhookTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -57,7 +57,7 @@ export const WorkflowEditTriggerWebhookForm = ({
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
 
   const onBlur = () => {
     setErrorMessagesVisible(true);

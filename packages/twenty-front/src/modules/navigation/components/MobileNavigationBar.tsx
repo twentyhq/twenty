@@ -14,7 +14,6 @@ import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStat
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
 import {
   type IconComponent,
   IconList,
@@ -36,7 +35,7 @@ export const MobileNavigationBar = () => {
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilStateV2(isNavigationDrawerExpandedState);
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
-    useRecoilState(currentMobileNavigationDrawerState);
+    useRecoilStateV2(currentMobileNavigationDrawerState);
   const { createChatThread } = useCreateNewAIChatThread();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const { alphaSortedActiveNonSystemObjectMetadataItems } =

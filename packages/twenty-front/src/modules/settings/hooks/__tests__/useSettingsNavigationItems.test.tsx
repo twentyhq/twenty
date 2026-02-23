@@ -3,7 +3,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { type MutableSnapshot, RecoilRoot } from 'recoil';
+import { RecoilRoot } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   type Billing,
@@ -15,8 +15,13 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { messages } from '~/locales/generated/en';
 
@@ -45,24 +50,21 @@ const mockBilling: Billing = {
   __typename: 'Billing',
 };
 
-const initializeState = ({ set }: MutableSnapshot) => {
-  set(currentUserState, mockCurrentUser);
-  set(billingState, mockBilling);
-};
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider>
-    <RecoilRoot initializeState={initializeState}>
-      <MemoryRouter>
-        <I18nProvider i18n={i18n}>
-          <SnackBarComponentInstanceContext.Provider
-            value={{ instanceId: 'test-scope-id' }}
-          >
-            {children}
-          </SnackBarComponentInstanceContext.Provider>
-        </I18nProvider>
-      </MemoryRouter>
-    </RecoilRoot>
+    <JotaiProvider store={jotaiStore}>
+      <RecoilRoot>
+        <MemoryRouter>
+          <I18nProvider i18n={i18n}>
+            <SnackBarComponentInstanceContext.Provider
+              value={{ instanceId: 'test-scope-id' }}
+            >
+              {children}
+            </SnackBarComponentInstanceContext.Provider>
+          </I18nProvider>
+        </MemoryRouter>
+      </RecoilRoot>
+    </JotaiProvider>
   </MockedProvider>
 );
 
@@ -70,7 +72,19 @@ jest.mock('@/settings/roles/hooks/usePermissionFlagMap', () => ({
   usePermissionFlagMap: jest.fn(),
 }));
 
+jest.mock('@/domain-manager/hooks/useRedirectToWorkspaceDomain', () => ({
+  useRedirectToWorkspaceDomain: jest.fn().mockImplementation(() => ({
+    redirectToWorkspaceDomain: jest.fn(),
+  })),
+}));
+
 describe('useSettingsNavigationItems', () => {
+  beforeEach(() => {
+    resetJotaiStore();
+    jotaiStore.set(currentUserState.atom, mockCurrentUser);
+    jotaiStore.set(billingState.atom, mockBilling);
+  });
+
   it('should hide workspace settings when no permissions', () => {
     (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
       [PermissionFlagType.WORKSPACE]: false,

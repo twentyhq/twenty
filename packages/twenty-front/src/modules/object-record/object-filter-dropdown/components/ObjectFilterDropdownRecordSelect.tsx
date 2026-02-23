@@ -20,8 +20,8 @@ import {
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
-import { useRecoilValue } from 'recoil';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,
@@ -43,7 +43,7 @@ export const ObjectFilterDropdownRecordSelect = ({
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const allowRequestsToTwentyIcons = useRecoilValue(
+  const allowRequestsToTwentyIcons = useRecoilValueV2(
     allowRequestsToTwentyIconsState,
   );
 

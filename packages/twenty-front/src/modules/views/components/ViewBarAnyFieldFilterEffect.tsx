@@ -4,10 +4,10 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { hasInitializedAnyFieldFilterComponentFamilyState } from '@/views/states/hasInitializedAnyFieldFilterComponentFamilyState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarAnyFieldFilterEffect = () => {
@@ -17,10 +17,9 @@ export const ViewBarAnyFieldFilterEffect = () => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const currentView = useRecoilValue(
-    coreViewFromViewIdFamilySelector({
-      viewId: currentViewId ?? '',
-    }),
+  const currentView = useFamilySelectorValueV2(
+    coreViewFromViewIdFamilySelector,
+    { viewId: currentViewId ?? '' },
   );
 
   const [hasInitializedAnyFieldFilter, setHasInitializedAnyFieldFilter] =

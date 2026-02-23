@@ -2,8 +2,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import { Avatar } from 'twenty-ui/display';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 type SettingsItemTypeTagProps = {
   item: {
@@ -27,7 +27,7 @@ export const SettingsItemTypeTag = ({
   item: { isCustom, isRemote, applicationId },
 }: SettingsItemTypeTagProps) => {
   const theme = useTheme();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
   const itemTagInfo = getItemTagInfo({
     item: { isCustom, isRemote, applicationId },
     workspaceCustomApplicationId:

@@ -13,7 +13,8 @@ import { type ApolloError } from '@apollo/client';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconKey } from 'twenty-ui/display';
 import { useGetSsoIdentityProvidersQuery } from '~/generated-metadata/graphql';
@@ -28,7 +29,7 @@ const StyledLink = styled(Link, {
 export const SettingsSSOIdentitiesProvidersListCard = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
 
   const { t } = useLingui();
 

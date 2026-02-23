@@ -21,10 +21,13 @@ export type OpenSidePanelPageFunction = (params: {
 
 export type UnmountFrontComponentFunction = () => Promise<void>;
 
+export type CloseSidePanelFunction = () => Promise<void>;
+
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
   openSidePanelPage?: OpenSidePanelPageFunction;
   unmountFrontComponent?: UnmountFrontComponentFunction;
+  closeSidePanel?: CloseSidePanelFunction;
 };
 
 declare global {

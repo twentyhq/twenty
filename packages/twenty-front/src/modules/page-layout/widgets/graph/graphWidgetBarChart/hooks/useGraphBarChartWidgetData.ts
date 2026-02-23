@@ -96,7 +96,7 @@ export const useGraphBarChartWidgetData = ({
     : configuration.primaryAxisGroupByFieldMetadataId;
 
   const colorDeterminingField = objectMetadataItem?.fields?.find(
-    (field) => field.id === colorDeterminingFieldId,
+    (field: { id: string }) => field.id === colorDeterminingFieldId,
   );
 
   const selectFieldOptions = useMemo((): FieldMetadataItemOption[] | null => {

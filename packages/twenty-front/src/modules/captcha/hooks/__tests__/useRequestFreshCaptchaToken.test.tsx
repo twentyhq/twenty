@@ -1,13 +1,22 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
 
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { captchaState } from '@/client-config/states/captchaState';
-import { CaptchaDriverType } from '~/generated-metadata/graphql';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { type Captcha, CaptchaDriverType } from '~/generated-metadata/graphql';
 
 jest.mock('@/captcha/utils/isCaptchaRequiredForPath');
+
+const createWrapper = ({ children }: { children: ReactNode }) => (
+  <JotaiProvider store={jotaiStore}>
+    <RecoilRoot>{children}</RecoilRoot>
+  </JotaiProvider>
+);
 
 describe('useRequestFreshCaptchaToken', () => {
   const mockGrecaptchaExecute = jest.fn();
@@ -47,7 +56,7 @@ describe('useRequestFreshCaptchaToken', () => {
     (isCaptchaRequiredForPath as jest.Mock).mockReturnValue(false);
 
     const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
-      wrapper: RecoilRoot,
+      wrapper: createWrapper,
     });
 
     await act(async () => {
@@ -61,7 +70,7 @@ describe('useRequestFreshCaptchaToken', () => {
 
   it('should not request a token if captcha provider is undefined', async () => {
     const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
-      wrapper: RecoilRoot,
+      wrapper: createWrapper,
     });
 
     await act(async () => {
@@ -74,20 +83,14 @@ describe('useRequestFreshCaptchaToken', () => {
   });
 
   it('should request a token from Google reCAPTCHA when provider is GOOGLE_RECAPTCHA', async () => {
+    jotaiStore.set(isRequestingCaptchaTokenState.atom, false);
+    jotaiStore.set(captchaState.atom, {
+      provider: CaptchaDriverType.GOOGLE_RECAPTCHA,
+      siteKey: 'google-site-key',
+    } as Captcha);
+
     const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
-      wrapper: ({ children }) => (
-        <RecoilRoot
-          initializeState={({ set }) => {
-            set(captchaState, {
-              provider: CaptchaDriverType.GOOGLE_RECAPTCHA,
-              siteKey: 'google-site-key',
-            });
-            set(isRequestingCaptchaTokenState, false);
-          }}
-        >
-          {children}
-        </RecoilRoot>
-      ),
+      wrapper: createWrapper,
     });
 
     await act(async () => {
@@ -104,20 +107,14 @@ describe('useRequestFreshCaptchaToken', () => {
   });
 
   it('should request a token from Turnstile when provider is TURNSTILE', async () => {
+    jotaiStore.set(isRequestingCaptchaTokenState.atom, false);
+    jotaiStore.set(captchaState.atom, {
+      provider: CaptchaDriverType.TURNSTILE,
+      siteKey: 'turnstile-site-key',
+    } as Captcha);
+
     const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
-      wrapper: ({ children }) => (
-        <RecoilRoot
-          initializeState={({ set }) => {
-            set(captchaState, {
-              provider: CaptchaDriverType.TURNSTILE,
-              siteKey: 'turnstile-site-key',
-            });
-            set(isRequestingCaptchaTokenState, false);
-          }}
-        >
-          {children}
-        </RecoilRoot>
-      ),
+      wrapper: createWrapper,
     });
 
     await act(async () => {

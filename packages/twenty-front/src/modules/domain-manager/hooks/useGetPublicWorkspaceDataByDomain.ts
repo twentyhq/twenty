@@ -4,28 +4,31 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
-import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { isDefined } from 'twenty-shared/utils';
 import { useGetPublicWorkspaceDataByDomainQuery } from '~/generated-metadata/graphql';
 
 export const useGetPublicWorkspaceDataByDomain = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useRecoilValueV2(
+    isMultiWorkspaceEnabledState,
+  );
   const { origin } = useOrigin();
-  const setWorkspaceAuthProviders = useSetRecoilState(
+  const setWorkspaceAuthProviders = useSetRecoilStateV2(
     workspaceAuthProvidersState,
   );
-  const setWorkspaceAuthBypassProviders = useSetRecoilState(
+  const setWorkspaceAuthBypassProviders = useSetRecoilStateV2(
     workspaceAuthBypassProvidersState,
   );
-  const workspacePublicData = useRecoilValue(workspacePublicDataState);
+  const workspacePublicData = useRecoilValueV2(workspacePublicDataState);
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
-  const setWorkspacePublicDataState = useSetRecoilState(
+  const setWorkspacePublicDataState = useSetRecoilStateV2(
     workspacePublicDataState,
   );
-  const clientConfigApiStatus = useRecoilValue(clientConfigApiStatusState);
+  const clientConfigApiStatus = useRecoilValueV2(clientConfigApiStatusState);
 
   const { loading, data, error } = useGetPublicWorkspaceDataByDomainQuery({
     variables: {
