@@ -807,6 +807,53 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 * تُحدَّد أذونات مفتاح واجهة برمجة التطبيقات بواسطة الدور المشار إليه في `application-config.ts` عبر `defaultRoleUniversalIdentifier`. هذا هو الدور الافتراضي الذي تستخدمه الوظائف المنطقية في تطبيقك.
 * يمكن للتطبيقات تعريف أدوار لاتباع مبدأ أقل الامتياز. امنح فقط الأذونات التي تحتاجها وظائفك، ثم وجّه `defaultRoleUniversalIdentifier` إلى المعرّف الشامل لذلك الدور.
 
+#### رفع الملفات
+
+يتضمن العميل `Twenty` المُولَّد طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع ملف ضمن كائنات مساحة العمل الخاصة بك. نظرًا لأن عملاء GraphQL القياسيون لا يدعمون تحميل الملفات متعددة الأجزاء افتراضيًا، يوفر العميل هذه الطريقة المخصصة التي تطبق [مواصفة طلب GraphQL متعدد الأجزاء](https://github.com/jaydenseric/graphql-multipart-request-spec) في الخلفية.
+
+```typescript
+import Twenty from '~/generated';
+import * as fs from 'fs';
+
+const client = new Twenty();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await client.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+توقيع الطريقة:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| المعلمة                            | النوع    | الوصف                                                                              |
+| ---------------------------------- | -------- | ---------------------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | المحتوى الخام للملف                                                                |
+| `filename`                         | `string` | اسم الملف (يُستخدم للتخزين والعرض)                                                 |
+| `contentType`                      | `string` | نوع MIME للملف (القيمة الافتراضية هي `application/octet-stream` إذا لم يتم تحديده) |
+| `fieldMetadataUniversalIdentifier` | `string` | قيمة `universalIdentifier` لحقل نوع الملف في كائنك                                 |
+
+النقاط الرئيسية:
+
+* ترسل هذه الطريقة الملف إلى **نقطة نهاية البيانات الوصفية** (وليست نقطة النهاية الرئيسية لـ GraphQL)، حيث تُنفَّذ عملية الرفع.
+* تستخدم `universalIdentifier` الخاص بالحقل (وليس المعرّف الخاص بمساحة العمل)، ليعمل كود الرفع لديك عبر أي مساحة عمل مُثبَّت فيها تطبيقك — بما يتماشى مع كيفية إشارة التطبيقات إلى الحقول في كل مكان آخر.
+* العنوان `url` المُعاد هو عنوان URL موقّع يمكنك استخدامه للوصول إلى الملف المرفوع.
+
 ### مثال Hello World
 
 استكشف مثالًا بسيطًا شاملًا من البداية إلى النهاية يوضح الكائنات والوظائف المنطقية والمكوّنات الأمامية ومشغّلات متعددة [هنا](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):

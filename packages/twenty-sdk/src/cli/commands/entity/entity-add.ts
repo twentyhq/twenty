@@ -17,10 +17,13 @@ import { SyncableEntity } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { getFieldBaseFile } from '@/cli/utilities/entity/entity-field-template';
+import { v4 } from 'uuid';
 
 const APP_FOLDER = 'src';
 
 export class EntityAddCommand {
+  private lastObjectUniversalIdentifier: string | undefined;
+
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
       const entity = entityType ?? (await this.getEntity());
@@ -50,6 +53,10 @@ export class EntityAddCommand {
         chalk.green(`✓ Created ${entityName}:`),
         chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, filePath)),
       );
+
+      if (entity === SyncableEntity.Object) {
+        await this.promptAndCreateViewAndNavigationMenuItem(name, path);
+      }
     } catch (error) {
       console.error(
         chalk.red(`Add new entity failed:`),
@@ -65,10 +72,14 @@ export class EntityAddCommand {
         const entityData = await this.getObjectData();
 
         const name = entityData.nameSingular;
+        const objectUniversalIdentifier = v4();
+
+        this.lastObjectUniversalIdentifier = objectUniversalIdentifier;
 
         const file = getObjectBaseFile({
           data: entityData,
           name,
+          universalIdentifier: objectUniversalIdentifier,
         });
 
         return { name, file };
@@ -161,6 +172,96 @@ export class EntityAddCommand {
       default:
         assertUnreachable(entity);
     }
+  }
+
+  private async promptAndCreateViewAndNavigationMenuItem(
+    objectName: string,
+    customPath?: string,
+  ): Promise<void> {
+    const { createViewAndNavItem } = await inquirer.prompt<{
+      createViewAndNavItem: boolean;
+    }>([
+      {
+        type: 'confirm',
+        name: 'createViewAndNavItem',
+        message:
+          'Also create a view and navigation menu item for this object? (recommended)',
+        default: true,
+      },
+    ]);
+
+    if (!createViewAndNavItem || !this.lastObjectUniversalIdentifier) {
+      return;
+    }
+
+    const viewUniversalIdentifier = v4();
+
+    const viewFile = getViewBaseFile({
+      name: `all-${kebabcase(objectName)}`,
+      universalIdentifier: viewUniversalIdentifier,
+      objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
+    });
+
+    const viewFolderPath = customPath
+      ? join(CURRENT_EXECUTION_DIRECTORY, customPath)
+      : join(
+          CURRENT_EXECUTION_DIRECTORY,
+          APP_FOLDER,
+          this.getFolderName(SyncableEntity.View),
+        );
+
+    await fs.ensureDir(viewFolderPath);
+
+    const viewFileName = `all-${kebabcase(objectName)}.ts`;
+    const viewFilePath = join(viewFolderPath, viewFileName);
+
+    if (await fs.pathExists(viewFilePath)) {
+      const { overwrite } = await this.handleFileExist();
+
+      if (!overwrite) {
+        return;
+      }
+    }
+
+    await fs.writeFile(viewFilePath, viewFile);
+
+    console.log(
+      chalk.green(`✓ Created view:`),
+      chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, viewFilePath)),
+    );
+
+    const navFile = getNavigationMenuItemBaseFile({
+      name: objectName,
+      viewUniversalIdentifier,
+    });
+
+    const navFolderPath = customPath
+      ? join(CURRENT_EXECUTION_DIRECTORY, customPath)
+      : join(
+          CURRENT_EXECUTION_DIRECTORY,
+          APP_FOLDER,
+          this.getFolderName(SyncableEntity.NavigationMenuItem),
+        );
+
+    await fs.ensureDir(navFolderPath);
+
+    const navFileName = `${kebabcase(objectName)}.ts`;
+    const navFilePath = join(navFolderPath, navFileName);
+
+    if (await fs.pathExists(navFilePath)) {
+      const { overwrite } = await this.handleFileExist();
+
+      if (!overwrite) {
+        return;
+      }
+    }
+
+    await fs.writeFile(navFilePath, navFile);
+
+    console.log(
+      chalk.green(`✓ Created navigation menu item:`),
+      chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, navFilePath)),
+    );
   }
 
   private async getEntity() {

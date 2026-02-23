@@ -4,8 +4,9 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import {
+  InferenceProvider,
+  ModelFamily,
   type ModelId,
-  ModelProvider,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 
 import { ClientConfigController } from './client-config.controller';
@@ -52,9 +53,10 @@ describe('ClientConfigController', () => {
           {
             modelId: 'gpt-4o' as ModelId,
             label: 'GPT-4o',
-            provider: ModelProvider.OPENAI,
-            inputCostPer1kTokensInCredits: 2.5,
-            outputCostPer1kTokensInCredits: 10.0,
+            modelFamily: ModelFamily.OPENAI,
+            inferenceProvider: InferenceProvider.OPENAI,
+            inputCostPerMillionTokensInCredits: 2500000,
+            outputCostPerMillionTokensInCredits: 10000000,
           },
         ],
         authProviders: {
