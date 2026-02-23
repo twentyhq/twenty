@@ -1,8 +1,9 @@
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
@@ -21,12 +22,13 @@ export type MorphPersistManyToOneProps = {
 export const useMorphPersistManyToOne = ({
   objectMetadataNameSingular,
 }: MorphPersistManyToOneProps) => {
+  const store = useStore();
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const { updateOneRecord } = useUpdateOneRecord();
 
   const persistMorphManyToOne = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       async ({
         recordId,
         fieldDefinition,
@@ -81,14 +83,12 @@ export const useMorphPersistManyToOne = ({
           targetObjectMetadataNamePlural: targetObjectMetadataItem.namePlural,
         });
 
-        const currentValue: unknown = snapshot
-          .getLoadable(
-            recordStoreFamilySelector({
-              recordId,
-              fieldName: computedFieldName,
-            }),
-          )
-          .getValue();
+        const currentValue: unknown = store.get(
+          recordStoreFamilySelectorV2.selectorFamily({
+            recordId,
+            fieldName: computedFieldName,
+          }),
+        );
 
         if (
           isDefined(currentValue) &&
@@ -115,7 +115,7 @@ export const useMorphPersistManyToOne = ({
 
         return;
       },
-    [objectMetadataItems, updateOneRecord, objectMetadataNameSingular],
+    [objectMetadataItems, objectMetadataNameSingular, store, updateOneRecord],
   );
 
   return { persistMorphManyToOne };

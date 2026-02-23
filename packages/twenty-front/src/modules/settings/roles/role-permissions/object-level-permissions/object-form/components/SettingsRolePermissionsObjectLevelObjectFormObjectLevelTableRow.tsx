@@ -71,9 +71,9 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
     roleId,
   }: SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRowProps) => {
     const settingsDraftRole = useFamilyRecoilValueV2(
-    settingsDraftRoleFamilyState,
-    roleId,
-  );
+      settingsDraftRoleFamilyState,
+      roleId,
+    );
 
     const label = permission.label;
 

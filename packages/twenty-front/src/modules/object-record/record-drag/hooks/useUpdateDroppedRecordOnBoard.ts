@@ -1,3 +1,6 @@
+import { useStore } from 'jotai';
+
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { extractRecordPositions } from '@/object-record/record-drag/utils/extractRecordPositions';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
@@ -14,6 +17,7 @@ import { findByProperty, isDefined } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const useUpdateDroppedRecordOnBoard = () => {
+  const store = useStore();
   const { updateOneRecord, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 
@@ -37,10 +41,9 @@ export const useUpdateDroppedRecordOnBoard = () => {
         }: { recordId: string; position?: number },
         targetRecordGroupValue: RecordGroupDefinition['value'],
       ) => {
-        const initialRecord = getSnapshotValue(
-          snapshot,
-          recordStoreFamilyState(recordId),
-        );
+        const initialRecord = store.get(
+          recordStoreFamilyState.atomFamily(recordId),
+        ) as Record<string, unknown> | null | undefined;
 
         if (!isDefined(newPosition)) {
           return;
@@ -50,8 +53,9 @@ export const useUpdateDroppedRecordOnBoard = () => {
           return;
         }
 
-        const initialRecordGroupValue =
-          initialRecord[selectFieldMetadataItem.name];
+        const initialRecordGroupValue = initialRecord[
+          selectFieldMetadataItem.name
+        ] as string | undefined;
 
         const initialRecordGroup = recordGroupDefinitions.find(
           findByProperty('value', initialRecordGroupValue),
@@ -121,7 +125,7 @@ export const useUpdateDroppedRecordOnBoard = () => {
 
         const targetGroupRecordsWithIds = extractRecordPositions(
           currentRecordIdsInTargetRecordGroup,
-          snapshot,
+          store,
         );
 
         const newTargetRecordGroupWithIds = [
@@ -143,14 +147,18 @@ export const useUpdateDroppedRecordOnBoard = () => {
           partialRecords: [
             {
               ...initialRecord,
+              id: recordId,
+              __typename:
+                (initialRecord as { __typename?: string })?.__typename ??
+                'Record',
               [selectFieldMetadataItem.name]: targetRecordGroupValue,
               position: newPosition,
-            },
+            } as ObjectRecord,
           ],
         });
 
         updateOneRecord({
-          idToUpdate: initialRecord.id,
+          idToUpdate: recordId,
           updateOneRecordInput: {
             [selectFieldMetadataItem.name]: targetRecordGroupValue,
             position: newPosition,
@@ -161,6 +169,7 @@ export const useUpdateDroppedRecordOnBoard = () => {
       recordGroupDefinitions,
       recordIndexRecordIdsByGroupCallbackFamilyState,
       selectFieldMetadataItem,
+      store,
       upsertRecordsInStore,
       updateOneRecord,
     ],

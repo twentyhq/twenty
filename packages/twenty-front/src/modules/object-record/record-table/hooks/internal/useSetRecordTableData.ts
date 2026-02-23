@@ -82,17 +82,17 @@ export const useSetRecordTableData = ({
       }) => {
         for (const record of records) {
           // TODO: refactor with scoped state later
-          const currentRecord = snapshot
-            .getLoadable(recordStoreFamilyState(record.id))
-            .getValue();
+          const currentRecord = store.get(
+            recordStoreFamilyState.atomFamily(record.id),
+          ) as ObjectRecord | null | undefined;
 
           if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
             const newRecord = {
-              ...currentRecord,
+              ...(currentRecord ?? {}),
               ...record,
-            };
+            } as T;
 
-            set(recordStoreFamilyState(record.id), newRecord);
+            store.set(recordStoreFamilyState.atomFamily(record.id), newRecord);
             store.set(
               recordStoreFamilyStateV2.atomFamily(record.id),
               newRecord,

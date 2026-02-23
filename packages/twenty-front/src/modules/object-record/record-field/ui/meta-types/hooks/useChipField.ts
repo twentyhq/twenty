@@ -17,10 +17,7 @@ export const useChipField = () => {
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 
-  const record = useFamilyRecoilValueV2(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
 
   return {
     objectNameSingular,

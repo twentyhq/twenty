@@ -56,9 +56,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
     objectMetadataItem,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContentProps) => {
     const settingsDraftRole = useFamilyRecoilValueV2(
-    settingsDraftRoleFamilyState,
-    roleId,
-  );
+      settingsDraftRoleFamilyState,
+      roleId,
+    );
 
     const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
       objectMetadataItem.id,

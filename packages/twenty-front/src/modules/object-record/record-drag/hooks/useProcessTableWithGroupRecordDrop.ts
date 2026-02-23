@@ -1,4 +1,5 @@
 import { type DropResult } from '@hello-pangea/dnd';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,6 +20,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 export const useProcessTableWithGroupRecordDrop = () => {
+  const store = useStore();
   const { objectNameSingular, objectMetadataItem, recordTableId } =
     useRecordTableContextOrThrow();
 
@@ -100,6 +102,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
         processGroupDrop({
           groupDropResult: result,
           snapshot,
+          store,
           selectedRecordIds,
           recordIdsByGroupFamilyState: recordIdsByGroupFamilyState,
           onUpdateRecord: ({ recordId, position }) => {
@@ -115,6 +118,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
         });
       },
     [
+      store,
       objectNameSingular,
       objectMetadataItem.fields,
       originalDragSelectionCallbackState,

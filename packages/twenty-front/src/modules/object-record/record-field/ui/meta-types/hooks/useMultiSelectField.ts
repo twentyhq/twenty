@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordFieldInput } from '@/object-record/record-field/ui/hooks/useRecordFieldInput';
@@ -8,7 +7,8 @@ import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/type
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelectValue';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -23,11 +23,9 @@ export const useMultiSelectField = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const [fieldValues, setFieldValue] = useRecoilState<FieldMultiSelectValue>(
-    recordStoreFamilySelector({
-      recordId,
-      fieldName: fieldName,
-    }),
+  const [fieldValues, setFieldValue] = useFamilySelectorStateV2(
+    recordStoreFamilySelectorV2,
+    { recordId, fieldName },
   );
 
   const fieldMultiSelectValues = isFieldMultiSelectValue(fieldValues)

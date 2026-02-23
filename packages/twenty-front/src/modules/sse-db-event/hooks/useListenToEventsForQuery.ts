@@ -27,10 +27,9 @@ export const useListenToEventsForQuery = ({
         requiredQueryListenersState.atom,
       );
 
-      const listeningForThisQueryIsActive =
-        currentRequiredQueryListeners.some(
-          (listener) => listener.queryId === targetQueryId,
-        );
+      const listeningForThisQueryIsActive = currentRequiredQueryListeners.some(
+        (listener) => listener.queryId === targetQueryId,
+      );
 
       if (shouldListen === listeningForThisQueryIsActive) {
         return;

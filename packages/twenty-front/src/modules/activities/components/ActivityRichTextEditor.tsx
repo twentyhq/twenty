@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
-import { useAtom } from 'jotai';
+import { useAtom, useStore } from 'jotai';
+import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -11,7 +12,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
@@ -58,6 +58,7 @@ export const ActivityRichTextEditor = ({
   activityId,
   activityObjectNameSingular,
 }: ActivityRichTextEditorProps) => {
+  const store = useStore();
   const [activityInStore] = useAtom(
     recordStoreFamilyState.atomFamily(activityId),
   );
@@ -151,11 +152,11 @@ export const ActivityRichTextEditor = ({
 
   const handleBodyChange = useCallback(
     async (newStringifiedBody: string) => {
-      const oldActivity = jotaiStore.get(
+      const oldActivity = store.get(
         recordStoreFamilyState.atomFamily(activityId),
       );
 
-      jotaiStore.set(
+      store.set(
         recordStoreFamilyState.atomFamily(activityId),
         (prev: typeof oldActivity) => ({
           ...prev,
@@ -184,12 +185,10 @@ export const ActivityRichTextEditor = ({
 
       handlePersistBody(newStringifiedBody);
 
-      await syncAttachments(
-        newStringifiedBody,
-        oldActivity?.bodyV2.blocknote,
-      );
+      await syncAttachments(newStringifiedBody, oldActivity?.bodyV2.blocknote);
     },
     [
+      store,
       activityId,
       cache,
       objectMetadataItemActivity,
@@ -306,10 +305,6 @@ export const ActivityRichTextEditor = ({
   const handleBlockEditorFocus = useRecoilCallback(
     ({ snapshot }) =>
       () => {
-        // TODO: Here we want to detect anything that is open to avoid conflicts with the library click event
-        //   that is not prevented and propagate to other click handlers in the app.
-        //  Because that is how we do in the app, for example with stacked dropdowns, we always close what's open before
-        //  letting the click being captured by a button or input that can capture it.
         const isRecordTitleCellOpen = snapshot
           .getLoadable(
             isTitleCellInEditModeComponentState.atomFamily({

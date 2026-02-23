@@ -6,6 +6,7 @@ import { SingleRecordPickerComponentInstanceContext } from '@/object-record/reco
 import { singleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { type SearchQuery } from '~/generated/graphql';
@@ -26,6 +27,7 @@ export const useSingleRecordPickerPerformSearch = ({
   pickableMorphItems: RecordPickerPickableMorphItem[];
   loading: boolean;
 } => {
+  const store = useStore();
   const singleRecordPickerInstanceId = useAvailableComponentInstanceIdOrThrow(
     SingleRecordPickerComponentInstanceContext,
   );
@@ -38,10 +40,13 @@ export const useSingleRecordPickerPerformSearch = ({
         const searchRecords = data.search.edges.map((edge) => edge.node);
 
         searchRecords.forEach((searchRecord) => {
-          set(searchRecordStoreFamilyState(searchRecord.recordId), {
-            ...searchRecord,
-            record: undefined,
-          });
+          store.set(
+            searchRecordStoreFamilyState.atomFamily(searchRecord.recordId),
+            {
+              ...searchRecord,
+              record: undefined,
+            },
+          );
         });
 
         set(
@@ -53,7 +58,12 @@ export const useSingleRecordPickerPerformSearch = ({
           ),
         );
       },
-    [objectMetadataItems, objectNameSingulars, singleRecordPickerInstanceId],
+    [
+      store,
+      objectMetadataItems,
+      objectNameSingulars,
+      singleRecordPickerInstanceId,
+    ],
   );
 
   const selectedIdsFilter = { id: { in: selectedIds } };

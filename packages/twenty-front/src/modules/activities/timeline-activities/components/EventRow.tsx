@@ -103,7 +103,10 @@ export const EventRow = ({
 
   const { recordId } = useContext(TimelineActivityContext);
 
-  const recordFromStore = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
+  const recordFromStore = useFamilyRecoilValueV2(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
     event.createdAt,

@@ -21,9 +21,7 @@ export const useCommandMenu = () => {
     useRemoveFocusItemFromFocusStackById();
 
   const closeCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = jotaiStore.get(
-      isCommandMenuOpenedStateV2.atom,
-    );
+    const isCommandMenuOpened = jotaiStore.get(isCommandMenuOpenedStateV2.atom);
 
     if (isCommandMenuOpened) {
       jotaiStore.set(addToNavPayloadRegistryStateV2.atom, new Map());
@@ -48,9 +46,7 @@ export const useCommandMenu = () => {
   }, [closeAnyOpenDropdown, navigateCommandMenu]);
 
   const toggleCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = jotaiStore.get(
-      isCommandMenuOpenedStateV2.atom,
-    );
+    const isCommandMenuOpened = jotaiStore.get(isCommandMenuOpenedStateV2.atom);
 
     jotaiStore.set(commandMenuSearchState.atom, '');
 

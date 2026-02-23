@@ -27,7 +27,9 @@ export const useRecordShowPagePagination = (
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('viewId');
 
-  const setLastShowPageRecordId = useSetRecoilStateV2(lastShowPageRecordIdState);
+  const setLastShowPageRecordId = useSetRecoilStateV2(
+    lastShowPageRecordIdState,
+  );
 
   const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;

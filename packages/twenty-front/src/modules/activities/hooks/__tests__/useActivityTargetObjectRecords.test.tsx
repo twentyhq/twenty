@@ -3,12 +3,13 @@ import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
@@ -139,8 +140,9 @@ describe('useActivityTargetObjectRecords', () => {
 
     const { result } = renderHook(
       () => {
-        const setRecordFromStore = useSetRecoilState(
-          recordStoreFamilyState(task.id),
+        const setRecordFromStore = useSetFamilyRecoilStateV2(
+          recordStoreFamilyState,
+          task.id,
         );
 
         const { activityTargetObjectRecords } = useActivityTargetObjectRecords(

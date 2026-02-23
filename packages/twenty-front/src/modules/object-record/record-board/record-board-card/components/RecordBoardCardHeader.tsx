@@ -69,7 +69,9 @@ export const RecordBoardCardHeader = () => {
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  const recordIndexOpenRecordIn = useRecoilValueV2(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useRecoilValueV2(
+    recordIndexOpenRecordInState,
+  );
 
   const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
 

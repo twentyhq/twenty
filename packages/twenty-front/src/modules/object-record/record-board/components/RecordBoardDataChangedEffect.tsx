@@ -1,3 +1,5 @@
+import { useStore } from 'jotai';
+
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useGetShouldInitializeRecordBoardForUpdateInputs } from '@/object-record/record-board/hooks/useGetShouldInitializeRecordBoardForUpdateInputs';
 import { useRemoveRecordsFromBoard } from '@/object-record/record-board/hooks/useRemoveRecordsFromBoard';
@@ -14,6 +16,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordBoardDataChangedEffect = () => {
+  const store = useStore();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
   const { triggerRecordBoardInitialQuery } =
     useTriggerRecordBoardInitialQuery();
@@ -114,16 +117,18 @@ export const RecordBoardDataChangedEffect = () => {
               }
 
               const firstRecordIdInGroup = recordIdsWithoutCreatedRecord[0];
-              const firstExistingRecordInGroup = getSnapshotValue(
-                snapshot,
-                recordStoreFamilyState(firstRecordIdInGroup),
-              );
+              const firstExistingRecordInGroup = store.get(
+                recordStoreFamilyState.atomFamily(firstRecordIdInGroup),
+              ) as { position?: number } | null | undefined;
 
               if (!isDefined(firstExistingRecordInGroup)) {
                 return;
               }
 
-              if (createdRecordPosition < firstExistingRecordInGroup.position) {
+              if (
+                createdRecordPosition <
+                (firstExistingRecordInGroup.position ?? 0)
+              ) {
                 triggerRecordBoardInitialQuery();
               }
             }
@@ -155,6 +160,7 @@ export const RecordBoardDataChangedEffect = () => {
         }
       },
     [
+      store,
       triggerRecordBoardInitialQuery,
       getShouldInitializeRecordBoardForUpdateInputs,
       recordIndexGroupFieldMetadataItemCallbackState,

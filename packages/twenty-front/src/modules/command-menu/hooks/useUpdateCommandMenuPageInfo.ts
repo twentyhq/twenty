@@ -13,9 +13,7 @@ export const useUpdateCommandMenuPageInfo = () => {
       pageTitle?: string;
       pageIcon?: IconComponent;
     }) => {
-      const commandMenuPageInfo = jotaiStore.get(
-        commandMenuPageInfoState.atom,
-      );
+      const commandMenuPageInfo = jotaiStore.get(commandMenuPageInfoState.atom);
 
       const newCommandMenuPageInfo = {
         ...commandMenuPageInfo,

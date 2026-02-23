@@ -19,10 +19,7 @@ export const SettingsRoleEditEffect = ({
 }: SettingsRoleEditEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const role = useFamilyRecoilValueV2(
-    settingsPersistedRoleFamilyState,
-    roleId,
-  );
+  const role = useFamilyRecoilValueV2(settingsPersistedRoleFamilyState, roleId);
   const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
@@ -37,10 +34,7 @@ export const SettingsRoleEditEffect = ({
       );
 
       if (!isDeeplyEqual(newRole, currentPersistedRole)) {
-        store.set(
-          settingsDraftRoleFamilyState.atomFamily(newRole.id),
-          newRole,
-        );
+        store.set(settingsDraftRoleFamilyState.atomFamily(newRole.id), newRole);
       }
     },
     [store],

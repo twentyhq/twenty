@@ -14,7 +14,7 @@ import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-pic
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -27,7 +27,7 @@ export const useOpenJunctionRelationFieldInput = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openJunctionRelationFieldInput = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       ({
         fieldDefinition,
         recordId,
@@ -71,14 +71,12 @@ export const useOpenJunctionRelationFieldInput = () => {
           prefix,
         });
 
-        const junctionRecords = snapshot
-          .getLoadable<FieldRelationValue<FieldRelationFromManyValue>>(
-            recordStoreFamilySelector({
-              recordId,
-              fieldName: fieldDefinition.metadata.fieldName,
-            }),
-          )
-          .getValue();
+        const junctionRecords = jotaiStore.get(
+          recordStoreFamilySelectorV2.selectorFamily({
+            recordId,
+            fieldName: fieldDefinition.metadata.fieldName,
+          }),
+        ) as FieldRelationValue<FieldRelationFromManyValue>;
 
         const selectedTargetRecords = extractTargetRecordsFromJunction({
           junctionRecords,

@@ -5,7 +5,9 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 export const useOpenSpreadsheetImportDialog = () => {
-  const setSpreadSheetImport = useSetRecoilStateV2(spreadsheetImportDialogState);
+  const setSpreadSheetImport = useSetRecoilStateV2(
+    spreadsheetImportDialogState,
+  );
 
   const { openModal } = useModal();
 

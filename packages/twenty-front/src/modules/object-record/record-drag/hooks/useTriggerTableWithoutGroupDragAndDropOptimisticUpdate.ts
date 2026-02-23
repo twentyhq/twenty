@@ -1,3 +1,5 @@
+import { useStore } from 'jotai';
+
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
@@ -17,6 +19,7 @@ import { sortByProperty } from '~/utils/array/sortByProperty';
 // TODO: does not work when scrolling while dragging and does not work if not paired with a network refetch right after
 // But it's sufficient right now for the main use case
 export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
+  const store = useStore();
   const recordIdByRealIndexCallbackSelector =
     useRecoilComponentFamilyCallbackState(
       recordIdByRealIndexComponentFamilySelector,
@@ -75,10 +78,9 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
             continue;
           }
 
-          const correspondingRecordInStore = getSnapshotValue(
-            snapshot,
-            recordStoreFamilyState(recordIdAtRealIndex),
-          );
+          const correspondingRecordInStore = store.get(
+            recordStoreFamilyState.atomFamily(recordIdAtRealIndex),
+          ) as { id: string; position?: number } | null | undefined;
 
           if (
             isDefined(correspondingRecordInStore) &&
@@ -121,6 +123,7 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
       loadRecordsToVirtualRows,
       recordIdByRealIndexCallbackSelector,
       scrollWrapperHTMLElement?.clientHeight,
+      store,
       totalNumberOfRecordsToVirtualizeCallbackState,
     ],
   );

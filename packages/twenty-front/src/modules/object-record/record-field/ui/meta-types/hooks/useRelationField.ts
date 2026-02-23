@@ -1,9 +1,8 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetButtonIcon';
 import { type FieldRelationValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -11,6 +10,7 @@ import { recordFieldInputDraftValueComponentState } from '@/object-record/record
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
@@ -25,9 +25,10 @@ export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldRelationValue<T>>(
-    recordStoreFamilySelector({ recordId, fieldName }),
-  );
+  const [fieldValue, setFieldValue] = useFamilySelectorStateV2(
+    recordStoreFamilySelectorV2,
+    { recordId, fieldName },
+  ) as [FieldRelationValue<T>, (value: FieldRelationValue<T>) => void];
 
   const draftValue = useRecoilComponentValue(
     recordFieldInputDraftValueComponentState,

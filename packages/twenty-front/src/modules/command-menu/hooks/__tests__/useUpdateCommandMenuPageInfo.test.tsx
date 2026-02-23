@@ -29,10 +29,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe('useUpdateCommandMenuPageInfo', () => {
   beforeEach(() => {
-    jotaiStore.set(
-      commandMenuNavigationStackState.atom,
-      mockedNavigationStack,
-    );
+    jotaiStore.set(commandMenuNavigationStackState.atom, mockedNavigationStack);
     jotaiStore.set(commandMenuPageInfoState.atom, mockedPageInfo);
   });
 

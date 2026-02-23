@@ -36,10 +36,10 @@ export const RecordShowRightDrawerOpenRecordButton = ({
   objectNameSingular,
   recordId,
 }: RecordShowRightDrawerOpenRecordButtonProps) => {
-  const record = useFamilyRecoilValueV2(
-    recordStoreFamilyState,
-    recordId,
-  ) as ObjectRecord | null | undefined;
+  const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId) as
+    | ObjectRecord
+    | null
+    | undefined;
   const { closeCommandMenu } = useCommandMenu();
 
   const commandMenuPageComponentInstance = useComponentInstanceStateContext(

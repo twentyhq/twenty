@@ -1,5 +1,5 @@
 import { addDays } from 'date-fns';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -12,7 +12,6 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
 import { Key } from 'ts-key-enum';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';

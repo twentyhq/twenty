@@ -1,3 +1,4 @@
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
@@ -24,7 +25,7 @@ import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isF
 import { isFieldRawJsonValue } from '@/object-record/record-field/ui/types/guards/isFieldRawJsonValue';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldSelectValue';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
@@ -67,10 +68,11 @@ export const usePersistField = ({
 
   const { updateOneRecord } = useUpdateOneRecord();
 
+  const store = useStore();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const persistField = useRecoilCallback(
-    ({ set, snapshot }) =>
+    () =>
       async ({
         recordId,
         fieldDefinition,
@@ -189,9 +191,9 @@ export const usePersistField = ({
         if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;
 
-          const currentValue: any = snapshot
-            .getLoadable(recordStoreFamilySelector({ recordId, fieldName }))
-            .getValue();
+          const currentValue = store.get(
+            recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
+          ) as { id?: string } | null | undefined;
 
           if (fieldIsRelationManyToOne) {
             if (valueToPersist?.id === currentValue?.id) {
@@ -257,8 +259,8 @@ export const usePersistField = ({
             },
           });
 
-          set(
-            recordStoreFamilySelector({ recordId, fieldName }),
+          store.set(
+            recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
             valueToPersist,
           );
         } else {
@@ -271,7 +273,12 @@ export const usePersistField = ({
           );
         }
       },
-    [objectMetadataItem?.nameSingular, updateOneRecord, upsertRecordsInStore],
+    [
+      objectMetadataItem?.nameSingular,
+      store,
+      updateOneRecord,
+      upsertRecordsInStore,
+    ],
   );
 
   return persistField;

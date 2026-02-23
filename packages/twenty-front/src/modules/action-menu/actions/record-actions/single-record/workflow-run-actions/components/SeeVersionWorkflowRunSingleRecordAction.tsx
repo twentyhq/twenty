@@ -8,10 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const SeeVersionWorkflowRunSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
-  const workflowRun = useFamilyRecoilValueV2(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const workflowRun = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
 
   if (!isDefined(workflowRun) || !isDefined(workflowRun?.workflowVersion?.id)) {
     return null;

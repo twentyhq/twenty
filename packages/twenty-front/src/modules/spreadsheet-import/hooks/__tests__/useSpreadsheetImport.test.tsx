@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import React from 'react';
+import React, { act } from 'react';
 
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
@@ -10,7 +10,6 @@ import {
   type SpreadsheetImportDialogOptions,
 } from '@/spreadsheet-import/types';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { act } from 'react';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
@@ -57,9 +56,7 @@ describe('useSpreadsheetImport', () => {
         wrapper: Wrapper,
       },
     );
-    expect(
-      jotaiStore.get(spreadsheetImportDialogState.atom),
-    ).toStrictEqual({
+    expect(jotaiStore.get(spreadsheetImportDialogState.atom)).toStrictEqual({
       isOpen: false,
       isStepBarVisible: true,
       options: null,
@@ -69,9 +66,7 @@ describe('useSpreadsheetImport', () => {
         mockedSpreadsheetOptions,
       );
     });
-    expect(
-      jotaiStore.get(spreadsheetImportDialogState.atom),
-    ).toStrictEqual({
+    expect(jotaiStore.get(spreadsheetImportDialogState.atom)).toStrictEqual({
       isOpen: true,
       isStepBarVisible: true,
       options: mockedSpreadsheetOptions,

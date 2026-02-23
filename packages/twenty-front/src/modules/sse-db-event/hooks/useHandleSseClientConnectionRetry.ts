@@ -24,8 +24,7 @@ export const useHandleSseClientConnectionRetry = () => {
       }
 
       const tokenPair = jotaiStore.get(tokenPairState.atom);
-      const currentAppToken =
-        tokenPair?.accessOrWorkspaceAgnosticToken?.token;
+      const currentAppToken = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
 
       const shouldResetSseClient =
         !isDefined(currentAppToken) ||

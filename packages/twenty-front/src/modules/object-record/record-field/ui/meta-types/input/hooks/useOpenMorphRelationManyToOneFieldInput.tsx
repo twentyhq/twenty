@@ -6,19 +6,21 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export const useOpenMorphRelationManyToOneFieldInput = () => {
+  const store = useStore();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { openSingleRecordPicker } = useSingleRecordPickerOpen();
 
   const openMorphRelationManyToOneFieldInput = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       ({
         fieldDefinition,
         recordId,
@@ -43,16 +45,12 @@ export const useOpenMorphRelationManyToOneFieldInput = () => {
 
         const fieldValue = potentielFieldNames
           .map((fieldName) => {
-            const fieldValue = snapshot
-              .getLoadable<FieldRelationValue<FieldRelationToOneValue>>(
-                recordStoreFamilySelector({
-                  recordId,
-                  fieldName,
-                }),
-              )
-              .getValue();
-
-            return fieldValue;
+            return store.get(
+              recordStoreFamilySelectorV2.selectorFamily({
+                recordId,
+                fieldName,
+              }),
+            ) as FieldRelationValue<FieldRelationToOneValue>;
           })
           .find((fieldValue) => isDefined(fieldValue));
 
@@ -84,7 +82,7 @@ export const useOpenMorphRelationManyToOneFieldInput = () => {
           },
         });
       },
-    [openSingleRecordPicker, pushFocusItemToFocusStack],
+    [openSingleRecordPicker, pushFocusItemToFocusStack, store],
   );
 
   return { openMorphRelationManyToOneFieldInput };

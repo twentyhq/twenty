@@ -17,9 +17,7 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
       workflowSelectedNode: string;
       stepExecutionStatus: WorkflowRunStepStatus;
     }) => {
-      const commandMenuPageInfo = jotaiStore.get(
-        commandMenuPageInfoState.atom,
-      );
+      const commandMenuPageInfo = jotaiStore.get(commandMenuPageInfoState.atom);
 
       const activeTabIdAtom = activeTabIdComponentState.atomFamily({
         instanceId: commandMenuPageInfo.instanceId,

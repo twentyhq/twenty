@@ -1,4 +1,5 @@
 import { type DropResult } from '@hello-pangea/dnd';
+import type { Store } from 'jotai/vanilla/store';
 import { type Snapshot } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,6 +15,7 @@ import { processMultiDrag } from './processMultiDrag';
 type ProcessGroupDropParams = {
   groupDropResult: DropResult;
   snapshot: Snapshot;
+  store: Store;
   selectedRecordIds: string[];
   recordIdsByGroupFamilyState: any;
   onUpdateRecord: (
@@ -25,6 +27,7 @@ type ProcessGroupDropParams = {
 export const processGroupDrop = ({
   groupDropResult,
   snapshot,
+  store,
   selectedRecordIds,
   recordIdsByGroupFamilyState,
   onUpdateRecord,
@@ -84,7 +87,7 @@ export const processGroupDrop = ({
 
   const recordsWithPosition = extractRecordPositions(
     destinationRecordIds,
-    snapshot,
+    store,
   );
 
   const destinationIndex = groupDropResult.destination.index;

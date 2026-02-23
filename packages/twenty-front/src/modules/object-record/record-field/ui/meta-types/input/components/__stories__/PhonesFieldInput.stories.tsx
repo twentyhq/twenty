@@ -31,7 +31,7 @@ const PhoneValueSetterEffect = ({ value }: { value: FieldPhonesValue }) => {
 const PhoneFieldValueGater = () => {
   const { fieldValue } = usePhonesField();
 
-  return fieldValue && <PhonesFieldInput />;
+  return fieldValue ? <PhonesFieldInput /> : null;
 };
 
 type PhoneInputWithContextProps = {

@@ -8,22 +8,24 @@ import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-pic
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { useStore } from 'jotai';
+
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilCallback } from 'recoil';
 
 export const useOpenRelationFromManyFieldInput = () => {
+  const store = useStore();
   const { performSearch } = useMultipleRecordPickerPerformSearch();
   const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openRelationFromManyFieldInput = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       ({
         fieldName,
         objectNameSingular,
@@ -42,18 +44,11 @@ export const useOpenRelationFromManyFieldInput = () => {
         });
 
         const fieldValue =
-          snapshot
-            .getLoadable<FieldRelationValue<FieldRelationFromManyValue>>(
-              recordStoreFamilySelector({
-                recordId,
-                fieldName,
-              }),
-            )
-            .getValue() ?? [];
+          (store.get(
+            recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
+          ) as FieldRelationValue<FieldRelationFromManyValue>) ?? [];
 
-        const objectMetadataItems = jotaiStore.get(
-          objectMetadataItemsState.atom,
-        );
+        const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
         const objectMetadataItem = objectMetadataItems.find(
           (objectMetadataItem) =>
@@ -77,7 +72,7 @@ export const useOpenRelationFromManyFieldInput = () => {
           });
 
         for (const record of fieldValue) {
-          set(recordStoreFamilyState(record.id), record);
+          store.set(recordStoreFamilyState.atomFamily(record.id), record);
         }
 
         set(
@@ -112,7 +107,7 @@ export const useOpenRelationFromManyFieldInput = () => {
           },
         });
       },
-    [openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],
+    [store, openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],
   );
 
   return { openRelationFromManyFieldInput };

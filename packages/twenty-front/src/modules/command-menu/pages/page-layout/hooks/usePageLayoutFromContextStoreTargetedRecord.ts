@@ -19,10 +19,7 @@ export const usePageLayoutIdFromContextStoreTargetedRecord = () => {
 
   const recordId: string = targetedRecordsRule.selectedRecordIds[0];
 
-  const record = useFamilyRecoilValueV2(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
 
   return { pageLayoutId: record?.pageLayoutId };
 };

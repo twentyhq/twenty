@@ -96,9 +96,9 @@ describe('useCommandMenu', () => {
     expect(jotaiStore.get(commandMenuPageInfoState.atom).title).toBe(
       'First Page',
     );
-    expect(
-      jotaiStore.get(commandMenuNavigationStackState.atom),
-    ).toHaveLength(1);
+    expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toHaveLength(
+      1,
+    );
 
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
@@ -109,9 +109,9 @@ describe('useCommandMenu', () => {
       });
     });
 
-    expect(
-      jotaiStore.get(commandMenuNavigationStackState.atom),
-    ).toHaveLength(2);
+    expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toHaveLength(
+      2,
+    );
 
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
@@ -128,8 +128,8 @@ describe('useCommandMenu', () => {
     expect(jotaiStore.get(commandMenuPageInfoState.atom).title).toBe(
       'Reset Page',
     );
-    expect(
-      jotaiStore.get(commandMenuNavigationStackState.atom),
-    ).toHaveLength(1);
+    expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toHaveLength(
+      1,
+    );
   });
 });

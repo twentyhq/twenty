@@ -1,19 +1,21 @@
+import type { Store } from 'jotai/vanilla/store';
+
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
-import { type Snapshot } from 'recoil';
 
 export const extractRecordPositions = (
   recordIds: string[],
-  snapshot: Snapshot,
+  store: Store,
 ): RecordWithPosition[] => {
   return recordIds.map((recordId) => {
-    const record = snapshot
-      .getLoadable(recordStoreFamilyState(recordId))
-      .getValue();
+    const record = store.get(recordStoreFamilyState.atomFamily(recordId)) as
+      | { position?: number }
+      | null
+      | undefined;
 
     return {
       id: recordId,
-      position: record?.position,
+      position: record?.position ?? 0,
     };
   });
 };

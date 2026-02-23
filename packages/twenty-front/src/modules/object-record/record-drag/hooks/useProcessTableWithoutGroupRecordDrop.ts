@@ -10,6 +10,8 @@ import { processSingleDrag } from '@/object-record/record-drag/utils/processSing
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { allRecordIdsWithoutGroupsComponentSelector } from '@/object-record/record-index/states/selectors/allRecordIdsWithoutGroupsComponentSelector';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
+import { useStore } from 'jotai';
+
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
@@ -22,6 +24,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useProcessTableWithoutGroupRecordDrop = () => {
+  const store = useStore();
   const { objectNameSingular } = useRecordTableContextOrThrow();
 
   const { updateOneRecord } = useUpdateOneRecord();
@@ -73,12 +76,15 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
 
         const recordsWithPosition: RecordWithPosition[] = allSparseRecordIds
           .filter(isDefined)
-          .map((recordId) => ({
-            id: recordId,
-            position:
-              getSnapshotValue(snapshot, recordStoreFamilyState(recordId))
-                ?.position ?? null,
-          }));
+          .map((recordId) => {
+            const record = store.get(
+              recordStoreFamilyState.atomFamily(recordId),
+            ) as { position?: number } | null | undefined;
+            return {
+              id: recordId,
+              position: record?.position ?? 0,
+            };
+          });
 
         const contiguousRecordsWithPosition =
           recordsWithPosition.filter(isDefined);
@@ -163,6 +169,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
     [
       objectNameSingular,
       selectedRowIdsSelector,
+      store,
       updateOneRecord,
       openModal,
       currentRecordSorts,

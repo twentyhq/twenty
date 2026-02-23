@@ -71,72 +71,60 @@ export const useCommandMenuHistory = () => {
     jotaiStore.set(hasUserSelectedCommandState.atom, false);
   }, [closeCommandMenu]);
 
-  const navigateCommandMenuHistory = useCallback(
-    (pageIndex: number) => {
-      const currentNavigationStack = jotaiStore.get(
-        commandMenuNavigationStackState.atom,
+  const navigateCommandMenuHistory = useCallback((pageIndex: number) => {
+    const currentNavigationStack = jotaiStore.get(
+      commandMenuNavigationStackState.atom,
+    );
+
+    const newNavigationStack = currentNavigationStack.slice(0, pageIndex + 1);
+
+    jotaiStore.set(commandMenuNavigationStackState.atom, newNavigationStack);
+
+    const newNavigationStackItem = newNavigationStack.at(-1);
+
+    if (!isDefined(newNavigationStackItem)) {
+      throw new Error(
+        `No command menu navigation stack item found for index ${pageIndex}`,
       );
+    }
 
-      const newNavigationStack = currentNavigationStack.slice(
-        0,
-        pageIndex + 1,
-      );
+    jotaiStore.set(commandMenuPageState.atom, newNavigationStackItem.page);
+    jotaiStore.set(commandMenuPageInfoState.atom, {
+      title: newNavigationStackItem.pageTitle,
+      Icon: newNavigationStackItem.pageIcon,
+      instanceId: newNavigationStackItem.pageId,
+    });
+    const currentMorphItems = jotaiStore.get(
+      commandMenuNavigationMorphItemsByPageState.atom,
+    );
 
-      jotaiStore.set(
-        commandMenuNavigationStackState.atom,
-        newNavigationStack,
-      );
-
-      const newNavigationStackItem = newNavigationStack.at(-1);
-
-      if (!isDefined(newNavigationStackItem)) {
-        throw new Error(
-          `No command menu navigation stack item found for index ${pageIndex}`,
+    for (const [pageId, morphItems] of currentMorphItems.entries()) {
+      if (!newNavigationStack.some((item) => item.pageId === pageId)) {
+        jotaiStore.set(
+          activeTabIdComponentState.atomFamily({
+            instanceId: getShowPageTabListComponentId({
+              pageId,
+              targetObjectId: morphItems[0].recordId,
+            }),
+          }),
+          null,
         );
       }
+    }
 
-      jotaiStore.set(
-        commandMenuPageState.atom,
-        newNavigationStackItem.page,
-      );
-      jotaiStore.set(commandMenuPageInfoState.atom, {
-        title: newNavigationStackItem.pageTitle,
-        Icon: newNavigationStackItem.pageIcon,
-        instanceId: newNavigationStackItem.pageId,
-      });
-      const currentMorphItems = jotaiStore.get(
-        commandMenuNavigationMorphItemsByPageState.atom,
-      );
+    const newMorphItems = new Map(
+      Array.from(currentMorphItems.entries()).filter(([pageId]) =>
+        newNavigationStack.some((item) => item.pageId === pageId),
+      ),
+    );
 
-      for (const [pageId, morphItems] of currentMorphItems.entries()) {
-        if (!newNavigationStack.some((item) => item.pageId === pageId)) {
-          jotaiStore.set(
-            activeTabIdComponentState.atomFamily({
-              instanceId: getShowPageTabListComponentId({
-                pageId,
-                targetObjectId: morphItems[0].recordId,
-              }),
-            }),
-            null,
-          );
-        }
-      }
+    jotaiStore.set(
+      commandMenuNavigationMorphItemsByPageState.atom,
+      newMorphItems,
+    );
 
-      const newMorphItems = new Map(
-        Array.from(currentMorphItems.entries()).filter(([pageId]) =>
-          newNavigationStack.some((item) => item.pageId === pageId),
-        ),
-      );
-
-      jotaiStore.set(
-        commandMenuNavigationMorphItemsByPageState.atom,
-        newMorphItems,
-      );
-
-      jotaiStore.set(hasUserSelectedCommandState.atom, false);
-    },
-    [],
-  );
+    jotaiStore.set(hasUserSelectedCommandState.atom, false);
+  }, []);
 
   return {
     goBackFromCommandMenu,

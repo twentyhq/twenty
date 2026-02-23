@@ -61,7 +61,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     [updateCurrentView],
   );
 
-  const recordIndexOpenRecordIn = useRecoilValueV2(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useRecoilValueV2(
+    recordIndexOpenRecordInState,
+  );
   const recordIndexCalendarLayout = useRecoilValueV2(
     recordIndexCalendarLayoutState,
   );

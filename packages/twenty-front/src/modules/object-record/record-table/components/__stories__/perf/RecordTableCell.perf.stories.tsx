@@ -1,12 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
@@ -36,12 +36,14 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const RelationFieldValueSetterEffect = () => {
-  const setEntity = useSetRecoilState(
-    recordStoreFamilyState(mockPerformance.recordId),
+  const setEntity = useSetFamilyRecoilStateV2(
+    recordStoreFamilyState,
+    mockPerformance.recordId,
   );
 
-  const setRelationEntity = useSetRecoilState(
-    recordStoreFamilyState(mockPerformance.relationRecordId),
+  const setRelationEntity = useSetFamilyRecoilStateV2(
+    recordStoreFamilyState,
+    mockPerformance.relationRecordId,
   );
 
   const setCurrentRecordFields = useSetRecoilComponentState(

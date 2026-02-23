@@ -1,4 +1,5 @@
 import { type DropResult } from '@hello-pangea/dnd';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -16,6 +17,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useProcessCalendarCardDrop = () => {
+  const store = useStore();
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
   const { currentView } = useGetCurrentViewOnly();
   const { updateOneRecord } = useUpdateOneRecord();
@@ -41,9 +43,9 @@ export const useProcessCalendarCardDrop = () => {
 
         const destinationPlainDate = Temporal.PlainDate.from(destinationDate);
 
-        const record = snapshot
-          .getLoadable(recordStoreFamilyState(recordId))
-          .getValue();
+        const record = store.get(
+          recordStoreFamilyState.atomFamily(recordId),
+        ) as Record<string, unknown> | null | undefined;
 
         if (!record) return;
 
@@ -71,7 +73,7 @@ export const useProcessCalendarCardDrop = () => {
         } else {
           const recordsWithPosition = extractRecordPositions(
             destinationRecordIds,
-            snapshot,
+            store,
           );
           const droppedRecordIsFromAnotherList = !recordsWithPosition
             .map((recordWithPosition) => recordWithPosition.id)
@@ -101,7 +103,9 @@ export const useProcessCalendarCardDrop = () => {
           });
         }
 
-        const currentFieldValue = record[calendarFieldMetadata.name];
+        const currentFieldValue = record[calendarFieldMetadata.name] as
+          | string
+          | undefined;
 
         if (calendarFieldMetadata.type === FieldMetadataType.DATE) {
           await updateOneRecord({
@@ -136,6 +140,7 @@ export const useProcessCalendarCardDrop = () => {
         }
       },
     [
+      store,
       currentView,
       objectMetadataItem.nameSingular,
       objectMetadataItem.fields,

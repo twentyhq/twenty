@@ -11,7 +11,7 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useStore } from 'jotai';
@@ -73,14 +73,12 @@ export const useGetBrowsingContext = () => {
             recordId: targetedRecordsRule.selectedRecordIds[0],
           };
 
-          const pageLayoutId = snapshot
-            .getLoadable(
-              recordStoreFamilySelector<string | null | undefined>({
-                recordId: targetedRecordsRule.selectedRecordIds[0],
-                fieldName: 'pageLayoutId',
-              }),
-            )
-            .getValue();
+          const pageLayoutId = store.get(
+            recordStoreFamilySelectorV2.selectorFamily({
+              recordId: targetedRecordsRule.selectedRecordIds[0],
+              fieldName: 'pageLayoutId',
+            }),
+          ) as string | null | undefined;
 
           if (isDefined(pageLayoutId)) {
             const tabListInstanceId =

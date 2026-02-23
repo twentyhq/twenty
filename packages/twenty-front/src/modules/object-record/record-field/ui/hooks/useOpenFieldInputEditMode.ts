@@ -28,16 +28,17 @@ import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenFieldInputEditMode = () => {
+  const store = useStore();
   const { openRelationToOneFieldInput } = useOpenRelationToOneFieldInput();
   const { openRelationFromManyFieldInput } =
     useOpenRelationFromManyFieldInput();
@@ -61,7 +62,7 @@ export const useOpenFieldInputEditMode = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openFieldInput = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       ({
         fieldDefinition,
         recordId,
@@ -71,11 +72,9 @@ export const useOpenFieldInputEditMode = () => {
         recordId: string;
         prefix?: string;
       }) => {
-        const objectMetadataItems = jotaiStore.get(
-          objectMetadataItemsState.atom,
-        );
+        const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
-        const currentWorkspace = jotaiStore.get(currentWorkspaceState.atom);
+        const currentWorkspace = store.get(currentWorkspaceState.atom);
 
         const isJunctionRelationsEnabled =
           currentWorkspace?.featureFlags?.find(
@@ -140,18 +139,16 @@ export const useOpenFieldInputEditMode = () => {
             fieldDefinition.metadata.relationObjectMetadataNameSingular,
           )
         ) {
-          const fieldValue = snapshot
-            .getLoadable<FieldRelationValue<FieldRelationFromManyValue>>(
-              recordStoreFamilySelector({
-                recordId,
-                fieldName: fieldDefinition.metadata.fieldName,
-              }),
-            )
-            .getValue();
+          const fieldValue = store.get(
+            recordStoreFamilySelectorV2.selectorFamily({
+              recordId,
+              fieldName: fieldDefinition.metadata.fieldName,
+            }),
+          ) as FieldRelationValue<FieldRelationFromManyValue>;
 
-          const activity = snapshot
-            .getLoadable(recordStoreFamilyState(recordId))
-            .getValue();
+          const activity = store.get(
+            recordStoreFamilyState.atomFamily(recordId),
+          );
 
           const activityTargetObjectRecords = getActivityTargetObjectRecords({
             activityRecord: activity as Task | Note,
@@ -247,6 +244,7 @@ export const useOpenFieldInputEditMode = () => {
       openRelationFromManyFieldInput,
       openRelationToOneFieldInput,
       pushFocusItemToFocusStack,
+      store,
       updateOneRecord,
     ],
   );

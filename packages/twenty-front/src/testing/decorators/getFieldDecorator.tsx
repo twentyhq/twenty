@@ -25,10 +25,7 @@ const RecordMockSetterEffect = ({
   tasks: ObjectRecord[];
 }) => {
   const setRecordInStores = useCallback((record: ObjectRecord) => {
-    jotaiStore.set(
-      recordStoreFamilyState.atomFamily(record.id),
-      record,
-    );
+    jotaiStore.set(recordStoreFamilyState.atomFamily(record.id), record);
   }, []);
 
   useEffect(() => {

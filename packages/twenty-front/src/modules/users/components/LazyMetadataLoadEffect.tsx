@@ -68,9 +68,7 @@ export const LazyMetadataLoadEffect = () => {
 
   const setRecordPageLayouts = useCallback(
     (recordPageLayouts: PageLayout[]) => {
-      const existingRecordPageLayouts = store.get(
-        recordPageLayoutsState.atom,
-      );
+      const existingRecordPageLayouts = store.get(recordPageLayoutsState.atom);
 
       if (!isDeeplyEqual(existingRecordPageLayouts, recordPageLayouts)) {
         store.set(recordPageLayoutsState.atom, recordPageLayouts);

@@ -1,10 +1,9 @@
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { useUploadFilesFieldFile } from '@/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile';
 import { uploadMultipleFiles } from '@/object-record/record-field/ui/meta-types/utils/uploadMultipleFiles';
-import { filesFieldUploadState } from '@/object-record/record-field/ui/states/filesFieldUploadState';
 import { filesFieldUploadStateV2 } from '@/object-record/record-field/ui/states/filesFieldUploadStateV2';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
@@ -37,7 +36,7 @@ export const useOpenFilesFieldInput = () => {
   const store = useStore();
 
   const openFilesFieldInput = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set }) =>
       async ({
         fieldName,
         fieldMetadataId,
@@ -61,14 +60,12 @@ export const useOpenFilesFieldInput = () => {
           };
         };
       }) => {
-        const fieldValue = snapshot
-          .getLoadable<FieldFilesValue[]>(
-            recordStoreFamilySelector({
-              recordId,
-              fieldName,
-            }),
-          )
-          .getValue();
+        const fieldValue = store.get(
+          recordStoreFamilySelectorV2.selectorFamily({
+            recordId,
+            fieldName,
+          }),
+        ) as FieldFilesValue[];
 
         const instanceId = getRecordFieldInputInstanceId({
           recordId,
@@ -98,10 +95,6 @@ export const useOpenFilesFieldInput = () => {
 
         const currentFileCount = isDefined(fieldValue) ? fieldValue.length : 0;
 
-        set(
-          filesFieldUploadState({ recordId, fieldName }),
-          'UPLOAD_WINDOW_OPEN',
-        );
         store.set(
           filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
           'UPLOAD_WINDOW_OPEN',
@@ -115,7 +108,6 @@ export const useOpenFilesFieldInput = () => {
                 message: t`Cannot upload more than ${maxNumberOfValues} files`,
               });
 
-              set(filesFieldUploadState({ recordId, fieldName }), null);
               store.set(
                 filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
                 null,
@@ -138,10 +130,6 @@ export const useOpenFilesFieldInput = () => {
               return;
             }
 
-            set(
-              filesFieldUploadState({ recordId, fieldName }),
-              'UPLOADING_FILE',
-            );
             store.set(
               filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
               'UPLOADING_FILE',
@@ -160,7 +148,6 @@ export const useOpenFilesFieldInput = () => {
                 });
               }
             } finally {
-              set(filesFieldUploadState({ recordId, fieldName }), null);
               store.set(
                 filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
                 null,
@@ -183,7 +170,6 @@ export const useOpenFilesFieldInput = () => {
             }
           },
           onCancel: () => {
-            set(filesFieldUploadState({ recordId, fieldName }), null);
             store.set(
               filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
               null,

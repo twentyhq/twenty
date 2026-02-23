@@ -1,4 +1,5 @@
 import { isUndefined } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 
 import { FIELD_NOT_OVERWRITTEN_AT_DRAFT } from '@/object-record/constants/FieldsNotOverwrittenAtDraft';
@@ -7,11 +8,12 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { computeDraftValueFromFieldValue } from '@/object-record/record-field/ui/utils/computeDraftValueFromFieldValue';
 import { computeDraftValueFromString } from '@/object-record/record-field/ui/utils/computeDraftValueFromString';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 
 export const useInitDraftValue = <FieldValue>() => {
+  const store = useStore();
   return useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       ({
         value,
         recordId,
@@ -23,14 +25,12 @@ export const useInitDraftValue = <FieldValue>() => {
         fieldDefinition: FieldDefinition<FieldMetadata>;
         fieldComponentInstanceId: string;
       }) => {
-        const recordFieldValue = snapshot
-          .getLoadable(
-            recordStoreFamilySelector<FieldValue>({
-              recordId,
-              fieldName: fieldDefinition.metadata.fieldName,
-            }),
-          )
-          .getValue();
+        const recordFieldValue = store.get(
+          recordStoreFamilySelectorV2.selectorFamily({
+            recordId,
+            fieldName: fieldDefinition.metadata.fieldName,
+          }),
+        ) as FieldValue;
 
         if (
           isUndefined(value) ||
@@ -57,6 +57,6 @@ export const useInitDraftValue = <FieldValue>() => {
           );
         }
       },
-    [],
+    [store],
   );
 };

@@ -64,9 +64,8 @@ export const useHandleAddToNavigationDrop = () => {
       }
 
       const payload =
-        jotaiStore
-          .get(addToNavPayloadRegistryStateV2.atom)
-          .get(draggableId) ?? null;
+        jotaiStore.get(addToNavPayloadRegistryStateV2.atom).get(draggableId) ??
+        null;
       if (!payload) {
         return;
       }

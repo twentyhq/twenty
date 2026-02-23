@@ -22,7 +22,7 @@ import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/t
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -52,7 +52,7 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
   );
 
   const openFieldInput = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       ({
         fieldDefinition,
         recordId,
@@ -66,14 +66,12 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
             fieldDefinition.metadata.relationObjectMetadataNameSingular,
           )
         ) {
-          const fieldValue = snapshot
-            .getLoadable<FieldRelationValue<FieldRelationFromManyValue>>(
-              recordStoreFamilySelector({
-                recordId,
-                fieldName: fieldDefinition.metadata.fieldName,
-              }),
-            )
-            .getValue();
+          const fieldValue = jotaiStore.get(
+            recordStoreFamilySelectorV2.selectorFamily({
+              recordId,
+              fieldName: fieldDefinition.metadata.fieldName,
+            }),
+          ) as FieldRelationValue<FieldRelationFromManyValue>;
 
           const activity = jotaiStore.get(
             recordStoreFamilyState.atomFamily(recordId),

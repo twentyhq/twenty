@@ -83,10 +83,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const findManyRecordsLazy = useCallback(async () => {
     if (!hasReadPermission) {
-      jotaiStore.set(
-        hasNextPageFamilyState.atomFamily(queryIdentifier),
-        false,
-      );
+      jotaiStore.set(hasNextPageFamilyState.atomFamily(queryIdentifier), false);
       jotaiStore.set(cursorFamilyState.atomFamily(queryIdentifier), '');
 
       return {

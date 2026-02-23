@@ -4,10 +4,10 @@ import { recordFieldInputDraftValueComponentState } from '@/object-record/record
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useArrayField = () => {
@@ -17,11 +17,9 @@ export const useArrayField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldArrayValue>(
-    recordStoreFamilySelector({
-      recordId,
-      fieldName,
-    }),
+  const [fieldValue, setFieldValue] = useFamilySelectorStateV2(
+    recordStoreFamilySelectorV2,
+    { recordId, fieldName },
   );
 
   const { setDraftValue } = useRecordFieldInput<FieldArrayValue>();

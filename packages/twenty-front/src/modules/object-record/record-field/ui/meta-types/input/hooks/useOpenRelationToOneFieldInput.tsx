@@ -4,19 +4,21 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenRelationToOneFieldInput = () => {
+  const store = useStore();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { openSingleRecordPicker } = useSingleRecordPickerOpen();
 
   const openRelationToOneFieldInput = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ set }) =>
       ({
         fieldName,
         recordId,
@@ -31,14 +33,9 @@ export const useOpenRelationToOneFieldInput = () => {
           fieldName,
           prefix,
         });
-        const fieldValue = snapshot
-          .getLoadable<FieldRelationValue<FieldRelationToOneValue>>(
-            recordStoreFamilySelector({
-              recordId,
-              fieldName,
-            }),
-          )
-          .getValue();
+        const fieldValue = store.get(
+          recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
+        ) as FieldRelationValue<FieldRelationToOneValue>;
 
         if (isDefined(fieldValue)) {
           set(
@@ -62,7 +59,7 @@ export const useOpenRelationToOneFieldInput = () => {
           },
         });
       },
-    [openSingleRecordPicker, pushFocusItemToFocusStack],
+    [openSingleRecordPicker, pushFocusItemToFocusStack, store],
   );
 
   return { openRelationToOneFieldInput };

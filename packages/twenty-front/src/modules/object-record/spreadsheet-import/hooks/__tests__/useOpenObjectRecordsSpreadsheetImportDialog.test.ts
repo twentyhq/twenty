@@ -101,9 +101,7 @@ describe('useOpenObjectRecordsSpreadsheetImportDialog', () => {
       result.current.openObjectRecordsSpreadsheetImportDialog();
     });
 
-    const dialogAfterOpen = jotaiStore.get(
-      spreadsheetImportDialogState.atom,
-    );
+    const dialogAfterOpen = jotaiStore.get(spreadsheetImportDialogState.atom);
 
     expect(dialogAfterOpen.isOpen).toBe(true);
     expect(dialogAfterOpen.options).toHaveProperty('onSubmit');

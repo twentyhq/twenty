@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 import { isNonEmptyArray } from '@sniptt/guards';
 
 import { type ActivityForEditor } from '@/activities/types/ActivityForEditor';
@@ -16,7 +17,6 @@ import { createOneActivityOperationSignatureFactory } from '@/activities/graphql
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
-import { useRecoilCallback } from 'recoil';
 import { capitalize } from 'twenty-shared/utils';
 
 export const useCreateActivityInDB = ({
@@ -57,55 +57,52 @@ export const useCreateActivityInDB = ({
     });
 
   const cache = useApolloCoreClient().cache;
+  const store = useStore();
 
   const createActivityInDB = useCallback(
     async (activityToCreate: ActivityForEditor) => {
-        const createdActivity = await createOneActivity?.({
-          ...activityToCreate,
-          updatedAt: new Date().toISOString(),
+      const createdActivity = await createOneActivity?.({
+        ...activityToCreate,
+        updatedAt: new Date().toISOString(),
+      });
+
+      const activityTargetsToCreate =
+        activityToCreate.noteTargets ?? activityToCreate.taskTargets ?? [];
+
+      if (isNonEmptyArray(activityTargetsToCreate)) {
+        await createManyActivityTargets({
+          recordsToCreate: activityTargetsToCreate,
         });
+      }
 
-        const activityTargetsToCreate =
-          activityToCreate.noteTargets ?? activityToCreate.taskTargets ?? [];
+      const activityTargetsConnection = getRecordConnectionFromRecords({
+        objectMetadataItems,
+        objectMetadataItem: objectMetadataItemActivityTarget,
+        records: activityTargetsToCreate.map((activityTarget) => ({
+          ...activityTarget,
+          __typename: capitalize(objectMetadataItemActivityTarget.nameSingular),
+        })),
+        withPageInfo: false,
+        computeReferences: true,
+        isRootLevel: false,
+      });
 
-        if (isNonEmptyArray(activityTargetsToCreate)) {
-          await createManyActivityTargets({
-            recordsToCreate: activityTargetsToCreate,
-          });
-        }
+      modifyRecordFromCache({
+        recordId: createdActivity.id,
+        cache,
+        fieldModifiers: {
+          activityTargets: () => activityTargetsConnection,
+        },
+        objectMetadataItem: objectMetadataItemActivity,
+      });
 
-        const activityTargetsConnection = getRecordConnectionFromRecords({
-          objectMetadataItems,
-          objectMetadataItem: objectMetadataItemActivityTarget,
-          records: activityTargetsToCreate.map((activityTarget) => ({
-            ...activityTarget,
-            __typename: capitalize(
-              objectMetadataItemActivityTarget.nameSingular,
-            ),
-          })),
-          withPageInfo: false,
-          computeReferences: true,
-          isRootLevel: false,
-        });
-
-        modifyRecordFromCache({
-          recordId: createdActivity.id,
-          cache,
-          fieldModifiers: {
-            activityTargets: () => activityTargetsConnection,
-          },
-          objectMetadataItem: objectMetadataItemActivity,
-        });
-
-        jotaiStore.set(
-          recordStoreFamilyState.atomFamily(createdActivity.id),
-          {
-            ...createdActivity,
-            activityTargets: activityTargetsToCreate,
-          },
-        );
-      },
+      store.set(recordStoreFamilyState.atomFamily(createdActivity.id), {
+        ...createdActivity,
+        activityTargets: activityTargetsToCreate,
+      });
+    },
     [
+      store,
       cache,
       createManyActivityTargets,
       createOneActivity,

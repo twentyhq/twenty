@@ -14,6 +14,7 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { type ApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type SearchRecord, type SearchResultEdge } from '~/generated/graphql';
@@ -21,6 +22,7 @@ import { type SearchRecord, type SearchResultEdge } from '~/generated/graphql';
 const MULTIPLE_RECORD_PICKER_PAGE_SIZE = 30;
 
 export const useMultipleRecordPickerPerformSearch = () => {
+  const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
 
   const { performCombinedFindManyRecords } =
@@ -278,8 +280,8 @@ export const useMultipleRecordPickerPerformSearch = () => {
         ];
 
         searchRecords.forEach((searchRecord) => {
-          set(
-            searchRecordStoreFamilyState(searchRecord.recordId),
+          store.set(
+            searchRecordStoreFamilyState.atomFamily(searchRecord.recordId),
             searchRecord,
           );
         });
@@ -342,10 +344,13 @@ export const useMultipleRecordPickerPerformSearch = () => {
                     return;
                   }
 
-                  set(searchRecordStoreFamilyState(objectRecord.id), {
-                    ...searchRecord,
-                    record: objectRecord,
-                  });
+                  store.set(
+                    searchRecordStoreFamilyState.atomFamily(objectRecord.id),
+                    {
+                      ...searchRecord,
+                      record: objectRecord,
+                    },
+                  );
                 });
             },
           );
@@ -370,6 +375,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
         );
       },
     [
+      store,
       apolloCoreClient,
       performCombinedFindManyRecords,
       objectPermissionsByObjectMetadataId,

@@ -1,24 +1,26 @@
-import { selectorFamily } from 'recoil';
-
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
 import { type RelationType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 
-export const recordStoreMorphOneToManyValueWithObjectNameFamilySelector =
-  selectorFamily({
-    key: 'recordStoreMorphOneToManyValueWithObjectNameFamilySelector',
+type MorphOneToManyFamilyKey = {
+  recordId: string;
+  morphRelations: FieldMetadataItemRelation[];
+};
+
+type MorphValueWithObjectName = {
+  objectNameSingular: string;
+  value: ObjectRecord[] | ObjectRecord;
+};
+
+export const recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2 =
+  createFamilySelectorV2<MorphValueWithObjectName[], MorphOneToManyFamilyKey>({
+    key: 'recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2',
     get:
-      ({
-        recordId,
-        morphRelations,
-      }: {
-        recordId: string;
-        morphRelations: FieldMetadataItemRelation[];
-      }) =>
-      () => {
+      ({ recordId, morphRelations }: MorphOneToManyFamilyKey) =>
+      ({ get }) => {
         const morphValuesWithObjectName = morphRelations.map(
           (morphRelation) => {
             const fieldName = computeMorphRelationFieldName({
@@ -32,10 +34,8 @@ export const recordStoreMorphOneToManyValueWithObjectNameFamilySelector =
             return {
               objectNameSingular:
                 morphRelation.targetObjectMetadata.nameSingular,
-              value:
-                (jotaiStore.get(
-                  recordStoreFamilyState.atomFamily(recordId),
-                )?.[fieldName] || []) as ObjectRecord[] | ObjectRecord,
+              value: (get(recordStoreFamilyState, recordId)?.[fieldName] ||
+                []) as ObjectRecord[] | ObjectRecord,
             };
           },
         );

@@ -1,8 +1,8 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { multipleRecordPickerSinglePickableMorphItemComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerSinglePickableMorphItemComponentFamilySelector';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordPickerGetRecordAndObjectMetadataItemFromRecordIdProps = {
@@ -20,7 +20,10 @@ export const useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId =
       recordId,
     );
 
-    const searchRecord = useRecoilValue(searchRecordStoreFamilyState(recordId));
+    const searchRecord = useFamilyRecoilValueV2(
+      searchRecordStoreFamilyState,
+      recordId,
+    );
 
     if (!isDefined(pickableMorphItem) || !isDefined(searchRecord)) {
       return { searchRecord: null, objectMetadataItem: null };

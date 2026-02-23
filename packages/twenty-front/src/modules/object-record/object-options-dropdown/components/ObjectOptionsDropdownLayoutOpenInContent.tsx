@@ -25,7 +25,9 @@ import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   const { onContentChange } = useObjectOptionsDropdown();
-  const recordIndexOpenRecordIn = useRecoilValueV2(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useRecoilValueV2(
+    recordIndexOpenRecordInState,
+  );
   const { currentView } = useGetCurrentViewOnly();
   const { setAndPersistOpenRecordIn } = useUpdateObjectViewOptions();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();

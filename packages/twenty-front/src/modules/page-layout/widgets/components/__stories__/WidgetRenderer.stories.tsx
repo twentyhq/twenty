@@ -1069,14 +1069,17 @@ export const WithManyToOneRelationFieldWidget: Story = {
         }),
         false,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
+      jotaiStore.set(
+        recordStoreFamilyState.atomFamily(TEST_RECORD_ID),
+        mockCompanyRecord,
+      );
       // Set the related WorkspaceMember record for relation field display
       if (
         mockCompanyRecord.accountOwner !== null &&
         mockCompanyRecord.accountOwner !== undefined
       ) {
-        snapshot.set(
-          recordStoreFamilyState(
+        jotaiStore.set(
+          recordStoreFamilyState.atomFamily(
             (mockCompanyRecord.accountOwner as ObjectRecord).id,
           ),
           mockCompanyRecord.accountOwner,
@@ -1186,9 +1189,12 @@ export const WithOneToManyRelationFieldWidget: Story = {
         }),
         false,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
-      snapshot.set(
-        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
+      jotaiStore.set(
+        recordStoreFamilyState.atomFamily(TEST_RECORD_ID),
+        mockCompanyRecord,
+      );
+      jotaiStore.set(
+        recordStoreFamilyState.atomFamily(TEST_PERSON_RECORD_ID),
         mockPersonRecord,
       );
     };
@@ -1295,9 +1301,12 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
         }),
         false,
       );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
-      snapshot.set(
-        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
+      jotaiStore.set(
+        recordStoreFamilyState.atomFamily(TEST_RECORD_ID),
+        mockCompanyRecord,
+      );
+      jotaiStore.set(
+        recordStoreFamilyState.atomFamily(TEST_PERSON_RECORD_ID),
         mockPersonRecord,
       );
       // Set hover state to make the "See all" button visible

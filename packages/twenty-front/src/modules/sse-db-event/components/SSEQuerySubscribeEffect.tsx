@@ -37,82 +37,76 @@ export const SSEQuerySubscribeEffect = () => {
   const requiredQueryListeners = useRecoilValueV2(requiredQueryListenersState);
   const activeQueryListeners = useRecoilValueV2(activeQueryListenersState);
 
-  const updateQueryListeners = useCallback(
-    async () => {
-      if (!isDefined(sseEventStreamId)) {
-        return;
+  const updateQueryListeners = useCallback(async () => {
+    if (!isDefined(sseEventStreamId)) {
+      return;
+    }
+
+    const requiredQueryListeners = jotaiStore.get(
+      requiredQueryListenersState.atom,
+    );
+
+    const activeQueryListeners = jotaiStore.get(activeQueryListenersState.atom);
+
+    const queryListenersToAdd = requiredQueryListeners.filter(
+      (listener) =>
+        !activeQueryListeners.some(
+          (activeListener) => activeListener.queryId === listener.queryId,
+        ),
+    );
+
+    const queryListenersToRemove = activeQueryListeners.filter(
+      (listener) =>
+        !requiredQueryListeners.some(
+          (requiredListener) => requiredListener.queryId === listener.queryId,
+        ),
+    );
+
+    try {
+      for (const queryListenerToAdd of queryListenersToAdd) {
+        await addQueryToEventStream({
+          variables: {
+            input: {
+              eventStreamId: sseEventStreamId,
+              queryId: queryListenerToAdd.queryId,
+              operationSignature: queryListenerToAdd.operationSignature,
+            },
+          },
+        });
       }
 
-      const requiredQueryListeners = jotaiStore.get(
-        requiredQueryListenersState.atom,
-      );
+      for (const queryListenerToRemove of queryListenersToRemove) {
+        await removeQueryFromEventStream({
+          variables: {
+            input: {
+              eventStreamId: sseEventStreamId,
+              queryId: queryListenerToRemove.queryId,
+            },
+          },
+        });
+      }
+    } catch (error) {
+      if (error instanceof ApolloError) {
+        const subCode = error.graphQLErrors[0]?.extensions?.subCode;
 
-      const activeQueryListeners = jotaiStore.get(
-        activeQueryListenersState.atom,
-      );
-
-        const queryListenersToAdd = requiredQueryListeners.filter(
-          (listener) =>
-            !activeQueryListeners.some(
-              (activeListener) => activeListener.queryId === listener.queryId,
-            ),
-        );
-
-        const queryListenersToRemove = activeQueryListeners.filter(
-          (listener) =>
-            !requiredQueryListeners.some(
-              (requiredListener) =>
-                requiredListener.queryId === listener.queryId,
-            ),
-        );
-
-        try {
-          for (const queryListenerToAdd of queryListenersToAdd) {
-            await addQueryToEventStream({
-              variables: {
-                input: {
-                  eventStreamId: sseEventStreamId,
-                  queryId: queryListenerToAdd.queryId,
-                  operationSignature: queryListenerToAdd.operationSignature,
-                },
-              },
-            });
+        switch (subCode) {
+          case 'EVENT_STREAM_DOES_NOT_EXIST':
+          case 'EVENT_STREAM_ALREADY_EXISTS': {
+            jotaiStore.set(activeQueryListenersState.atom, []);
+            jotaiStore.set(shouldDestroyEventStreamState.atom, true);
+            return;
           }
-
-          for (const queryListenerToRemove of queryListenersToRemove) {
-            await removeQueryFromEventStream({
-              variables: {
-                input: {
-                  eventStreamId: sseEventStreamId,
-                  queryId: queryListenerToRemove.queryId,
-                },
-              },
-            });
-          }
-        } catch (error) {
-          if (error instanceof ApolloError) {
-            const subCode = error.graphQLErrors[0]?.extensions?.subCode;
-
-            switch (subCode) {
-              case 'EVENT_STREAM_DOES_NOT_EXIST':
-              case 'EVENT_STREAM_ALREADY_EXISTS': {
-                jotaiStore.set(activeQueryListenersState.atom, []);
-                jotaiStore.set(shouldDestroyEventStreamState.atom, true);
-                return;
-              }
-              default: {
-                throw new Error(
-                  `Unhandled error for event stream: ${error.message}`,
-                );
-              }
-            }
+          default: {
+            throw new Error(
+              `Unhandled error for event stream: ${error.message}`,
+            );
           }
         }
+      }
+    }
 
-      jotaiStore.set(activeQueryListenersState.atom, requiredQueryListeners);
-    },
-    [addQueryToEventStream, removeQueryFromEventStream, sseEventStreamId],
-  );
+    jotaiStore.set(activeQueryListenersState.atom, requiredQueryListeners);
+  }, [addQueryToEventStream, removeQueryFromEventStream, sseEventStreamId]);
 
   const debouncedUpdateQueryListeners = useDebouncedCallback(
     updateQueryListeners,

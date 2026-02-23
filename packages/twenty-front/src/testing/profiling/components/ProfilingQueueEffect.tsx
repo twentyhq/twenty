@@ -23,8 +23,9 @@ export const ProfilingQueueEffect = ({
   const [currentProfilingRunIndex, setCurrentProfilingRunIndex] =
     useRecoilStateV2(currentProfilingRunIndexState);
 
-  const [profilingSessionStatus, setProfilingSessionStatus] =
-    useRecoilStateV2(profilingSessionStatusState);
+  const [profilingSessionStatus, setProfilingSessionStatus] = useRecoilStateV2(
+    profilingSessionStatusState,
+  );
 
   const [profilingSessionRuns, setProfilingSessionRuns] = useRecoilStateV2(
     profilingSessionRunsState,

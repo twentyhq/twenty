@@ -45,13 +45,10 @@ export const ProfilerWrapper = ({
         ],
       );
 
-      jotaiStore.set(
-        profilingSessionState.atom,
-        (currentProfilingSession) => ({
-          ...currentProfilingSession,
-          [id]: [...(currentProfilingSession[id] ?? []), newDataPoint],
-        }),
-      );
+      jotaiStore.set(profilingSessionState.atom, (currentProfilingSession) => ({
+        ...currentProfilingSession,
+        [id]: [...(currentProfilingSession[id] ?? []), newDataPoint],
+      }));
 
       const queueIdentifier = dataPointId;
 
@@ -65,13 +62,10 @@ export const ProfilerWrapper = ({
 
       const newQueue = currentQueue.filter((id) => id !== queueIdentifier);
 
-      jotaiStore.set(
-        profilingQueueState.atom,
-        (currentProfilingQueue) => ({
-          ...currentProfilingQueue,
-          [runName]: newQueue,
-        }),
-      );
+      jotaiStore.set(profilingQueueState.atom, (currentProfilingQueue) => ({
+        ...currentProfilingQueue,
+        [runName]: newQueue,
+      }));
     },
     [profilingId, testIndex, componentName, runName],
   );

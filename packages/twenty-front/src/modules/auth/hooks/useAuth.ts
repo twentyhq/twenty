@@ -123,72 +123,71 @@ export const useAuth = () => {
   const navigate = useNavigate();
 
   const clearSession = useRecoilCallback(
-    () =>
-      async () => {
-        const sseClient = jotaiStore.get(sseClientState.atom);
+    () => async () => {
+      const sseClient = jotaiStore.get(sseClientState.atom);
 
-        sseClient?.dispose();
+      sseClient?.dispose();
 
-        const emptySnapshot = snapshot_UNSTABLE();
+      const emptySnapshot = snapshot_UNSTABLE();
 
-        const authProvidersValue = jotaiStore.get(
-          workspaceAuthProvidersState.atom,
-        );
-        const domainConfigurationValue = jotaiStore.get(
-          domainConfigurationState.atom,
-        );
-        const workspacePublicDataValue = jotaiStore.get(
-          workspacePublicDataState.atom,
-        );
-        const lastAuthenticatedMethod = jotaiStore.get(
-          lastAuthenticatedMethodState.atom,
-        );
-        const isCaptchaScriptLoadedValue = jotaiStore.get(
-          isCaptchaScriptLoadedState.atom,
-        );
+      const authProvidersValue = jotaiStore.get(
+        workspaceAuthProvidersState.atom,
+      );
+      const domainConfigurationValue = jotaiStore.get(
+        domainConfigurationState.atom,
+      );
+      const workspacePublicDataValue = jotaiStore.get(
+        workspacePublicDataState.atom,
+      );
+      const lastAuthenticatedMethod = jotaiStore.get(
+        lastAuthenticatedMethodState.atom,
+      );
+      const isCaptchaScriptLoadedValue = jotaiStore.get(
+        isCaptchaScriptLoadedState.atom,
+      );
 
-        const initialSnapshot = emptySnapshot.map(() => {
-          return undefined;
-        });
+      const initialSnapshot = emptySnapshot.map(() => {
+        return undefined;
+      });
 
-        sessionStorage.clear();
-        localStorage.clear();
+      sessionStorage.clear();
+      localStorage.clear();
 
-        goToRecoilSnapshot(initialSnapshot);
+      goToRecoilSnapshot(initialSnapshot);
 
-        jotaiStore.set(workspaceAuthProvidersState.atom, authProvidersValue);
-        jotaiStore.set(workspacePublicDataState.atom, workspacePublicDataValue);
-        jotaiStore.set(domainConfigurationState.atom, domainConfigurationValue);
-        jotaiStore.set(
-          isCaptchaScriptLoadedState.atom,
-          isCaptchaScriptLoadedValue,
-        );
-        jotaiStore.set(
-          lastAuthenticatedMethodState.atom,
-          lastAuthenticatedMethod,
-        );
+      jotaiStore.set(workspaceAuthProvidersState.atom, authProvidersValue);
+      jotaiStore.set(workspacePublicDataState.atom, workspacePublicDataValue);
+      jotaiStore.set(domainConfigurationState.atom, domainConfigurationValue);
+      jotaiStore.set(
+        isCaptchaScriptLoadedState.atom,
+        isCaptchaScriptLoadedValue,
+      );
+      jotaiStore.set(
+        lastAuthenticatedMethodState.atom,
+        lastAuthenticatedMethod,
+      );
 
-        // Reset user-data Jotai states that were migrated from Recoil
-        // (Recoil snapshot reset no longer handles these since they are Jotai V2)
-        jotaiStore.set(tokenPairState.atom, null);
-        jotaiStore.set(currentUserState.atom, null);
-        jotaiStore.set(currentWorkspaceState.atom, null);
-        jotaiStore.set(currentUserWorkspaceState.atom, null);
-        jotaiStore.set(currentWorkspaceMemberState.atom, null);
-        jotaiStore.set(currentWorkspaceMembersState.atom, []);
-        jotaiStore.set(availableWorkspacesState.atom, {
-          availableWorkspacesForSignIn: [],
-          availableWorkspacesForSignUp: [],
-        });
-        jotaiStore.set(loginTokenState.atom, null);
-        jotaiStore.set(signInUpStepState.atom, SignInUpStep.Init);
-        jotaiStore.set(coreViewsState.atom, []);
+      // Reset user-data Jotai states that were migrated from Recoil
+      // (Recoil snapshot reset no longer handles these since they are Jotai V2)
+      jotaiStore.set(tokenPairState.atom, null);
+      jotaiStore.set(currentUserState.atom, null);
+      jotaiStore.set(currentWorkspaceState.atom, null);
+      jotaiStore.set(currentUserWorkspaceState.atom, null);
+      jotaiStore.set(currentWorkspaceMemberState.atom, null);
+      jotaiStore.set(currentWorkspaceMembersState.atom, []);
+      jotaiStore.set(availableWorkspacesState.atom, {
+        availableWorkspacesForSignIn: [],
+        availableWorkspacesForSignUp: [],
+      });
+      jotaiStore.set(loginTokenState.atom, null);
+      jotaiStore.set(signInUpStepState.atom, SignInUpStep.Init);
+      jotaiStore.set(coreViewsState.atom, []);
 
-        await client.clearStore();
-        setLastAuthenticateWorkspaceDomain(null);
-        await resetToMockedMetadata();
-        navigate(AppPath.SignInUp);
-      },
+      await client.clearStore();
+      setLastAuthenticateWorkspaceDomain(null);
+      await resetToMockedMetadata();
+      navigate(AppPath.SignInUp);
+    },
     [
       goToRecoilSnapshot,
       client,

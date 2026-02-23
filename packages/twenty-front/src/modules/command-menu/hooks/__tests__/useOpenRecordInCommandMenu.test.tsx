@@ -6,7 +6,6 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -131,9 +130,7 @@ describe('useOpenRecordInCommandMenu', () => {
       commandMenuNavigationMorphItemsByPageState.atom,
     );
     expect(commandMenuNavigationMorphItemsByPage.size).toBe(1);
-    expect(
-      commandMenuNavigationMorphItemsByPage.get('mocked-uuid'),
-    ).toEqual([
+    expect(commandMenuNavigationMorphItemsByPage.get('mocked-uuid')).toEqual([
       {
         objectMetadataId: personMockObjectMetadataItem.id,
         recordId,

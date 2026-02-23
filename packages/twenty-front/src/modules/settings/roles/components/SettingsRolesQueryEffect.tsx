@@ -38,10 +38,7 @@ export const SettingsRolesQueryEffect = () => {
           return;
         }
 
-        store.set(
-          settingsPersistedRoleFamilyState.atomFamily(role.id),
-          role,
-        );
+        store.set(settingsPersistedRoleFamilyState.atomFamily(role.id), role);
 
         if (!isDeeplyEqual(currentDraftRole, role)) {
           store.set(settingsDraftRoleFamilyState.atomFamily(role.id), role);

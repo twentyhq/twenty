@@ -99,11 +99,10 @@ export const useLoadRecordIndexStates = () => {
           )
           .filter(filterAvailableTableColumns)
           .map((column) => {
-            const existsInFilterDefinitions =
-              filterableFieldMetadataItems.some(
-                (fieldMetadataItem) =>
-                  fieldMetadataItem.id === column.fieldMetadataId,
-              );
+            const existsInFilterDefinitions = filterableFieldMetadataItems.some(
+              (fieldMetadataItem) =>
+                fieldMetadataItem.id === column.fieldMetadataId,
+            );
 
             const existsInSortDefinitions = sortableFieldMetadataItems.some(
               (fieldMetadataItem) =>
@@ -127,10 +126,7 @@ export const useLoadRecordIndexStates = () => {
       );
 
       if (
-        !isDeeplyEqual(
-          existingRecordIndexFieldDefinitions,
-          newFieldDefinitions,
-        )
+        !isDeeplyEqual(existingRecordIndexFieldDefinitions, newFieldDefinitions)
       ) {
         jotaiStore.set(
           recordIndexFieldDefinitionsState.atom,

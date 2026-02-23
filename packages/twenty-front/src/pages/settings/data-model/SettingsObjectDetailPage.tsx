@@ -51,9 +51,8 @@ export const SettingsObjectDetailPage = () => {
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
-  const [updatedObjectNamePlural, setUpdatedObjectNamePlural] = useRecoilStateV2(
-    updatedObjectNamePluralState,
-  );
+  const [updatedObjectNamePlural, setUpdatedObjectNamePlural] =
+    useRecoilStateV2(updatedObjectNamePluralState);
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural) ??
     findObjectMetadataItemByNamePlural(updatedObjectNamePlural);

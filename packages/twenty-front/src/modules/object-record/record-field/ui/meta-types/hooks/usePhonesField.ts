@@ -1,13 +1,13 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/ui/hooks/useRecordFieldInput';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
+import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
@@ -19,11 +19,9 @@ export const usePhonesField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldPhonesValue>(
-    recordStoreFamilySelector({
-      recordId,
-      fieldName: fieldName,
-    }),
+  const [fieldValue, setFieldValue] = useFamilySelectorStateV2(
+    recordStoreFamilySelectorV2,
+    { recordId, fieldName },
   );
 
   const { setDraftValue } = useRecordFieldInput<FieldPhonesValue>();

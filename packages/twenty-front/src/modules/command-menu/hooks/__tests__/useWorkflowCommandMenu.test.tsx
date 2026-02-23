@@ -6,9 +6,6 @@ import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
 import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
-import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -68,7 +65,7 @@ const renderHooks = () => {
         openWorkflowViewStepInCommandMenu,
       } = useWorkflowCommandMenu();
 
-      const viewableRecordId = useRecoilComponentValue(
+      const _viewableRecordId = useRecoilComponentValue(
         viewableRecordIdComponentState,
         'mocked-uuid',
       );

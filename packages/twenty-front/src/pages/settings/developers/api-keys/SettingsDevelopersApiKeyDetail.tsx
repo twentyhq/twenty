@@ -62,10 +62,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   const jotaiStore = useStore();
 
-  const apiKeyToken = useFamilyRecoilValueV2(
-    apiKeyTokenFamilyState,
-    apiKeyId,
-  );
+  const apiKeyToken = useFamilyRecoilValueV2(apiKeyTokenFamilyState, apiKeyId);
 
   const setApiKeyTokenCallback = useCallback(
     (apiKeyId: string, token: string) => {

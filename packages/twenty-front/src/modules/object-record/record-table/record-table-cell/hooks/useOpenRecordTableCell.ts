@@ -4,15 +4,13 @@ import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInit
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/FocusClickOutsideListenerId';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -80,7 +78,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const openTableCell = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       ({
         initialValue,
         cellPosition,
@@ -98,9 +96,8 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
 
         const isFirstColumnCell = cellPosition.column === 0;
 
-        const fieldValue = getSnapshotValue(
-          snapshot,
-          recordStoreFamilySelector({
+        const fieldValue = store.get(
+          recordStoreFamilySelectorV2.selectorFamily({
             recordId,
             fieldName: fieldDefinition.metadata.fieldName,
           }),

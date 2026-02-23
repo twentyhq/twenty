@@ -286,7 +286,7 @@ export const WorkflowDiagramCanvasBase = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const setFlowViewport = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot: _snapshot }) =>
       ({
         workflowDiagramFlowInitialized,
         isCommandMenuOpened,
@@ -324,9 +324,7 @@ export const WorkflowDiagramCanvasBase = ({
 
         let adjustedContainerWidth = baseContainerWidth;
 
-        const commandMenuWidth = jotaiStore.get(
-          commandMenuWidthState.atom,
-        );
+        const commandMenuWidth = jotaiStore.get(commandMenuWidthState.atom);
 
         if (!isInRightDrawer && isCommandMenuOpened) {
           adjustedContainerWidth = baseContainerWidth - commandMenuWidth;

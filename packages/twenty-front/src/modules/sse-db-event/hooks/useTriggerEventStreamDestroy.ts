@@ -14,41 +14,38 @@ export const useTriggerEventStreamDestroy = () => {
     isDestroyingEventStreamState,
   );
 
-  const triggerEventStreamDestroy = useCallback(
-    () => {
-      const isDestroyingEventStream = jotaiStore.get(
-        isDestroyingEventStreamState.atom,
-      );
+  const triggerEventStreamDestroy = useCallback(() => {
+    const isDestroyingEventStream = jotaiStore.get(
+      isDestroyingEventStreamState.atom,
+    );
 
-      const isCreatingSseEventStream = jotaiStore.get(
-        isCreatingSseEventStreamState.atom,
-      );
+    const isCreatingSseEventStream = jotaiStore.get(
+      isCreatingSseEventStreamState.atom,
+    );
 
-      if (isDestroyingEventStream || isCreatingSseEventStream) {
-        return;
-      }
+    if (isDestroyingEventStream || isCreatingSseEventStream) {
+      return;
+    }
 
-      setIsDestroyingEventStream(true);
+    setIsDestroyingEventStream(true);
 
-      const eventStreamId = jotaiStore.get(sseEventStreamIdState.atom);
+    const eventStreamId = jotaiStore.get(sseEventStreamIdState.atom);
 
-      const disposeFunctionForEventStream = jotaiStore.get(
-        disposeFunctionForEventStreamState.atom,
-      );
+    const disposeFunctionForEventStream = jotaiStore.get(
+      disposeFunctionForEventStreamState.atom,
+    );
 
-      if (isNonEmptyString(eventStreamId)) {
-        disposeFunctionForEventStream?.dispose();
+    if (isNonEmptyString(eventStreamId)) {
+      disposeFunctionForEventStream?.dispose();
 
-        jotaiStore.set(sseEventStreamIdState.atom, null);
-        jotaiStore.set(sseEventStreamReadyState.atom, false);
-        jotaiStore.set(disposeFunctionForEventStreamState.atom, null);
-        jotaiStore.set(shouldDestroyEventStreamState.atom, false);
-      }
+      jotaiStore.set(sseEventStreamIdState.atom, null);
+      jotaiStore.set(sseEventStreamReadyState.atom, false);
+      jotaiStore.set(disposeFunctionForEventStreamState.atom, null);
+      jotaiStore.set(shouldDestroyEventStreamState.atom, false);
+    }
 
-      setIsDestroyingEventStream(false);
-    },
-    [setIsDestroyingEventStream],
-  );
+    setIsDestroyingEventStream(false);
+  }, [setIsDestroyingEventStream]);
 
   return {
     triggerEventStreamDestroy,

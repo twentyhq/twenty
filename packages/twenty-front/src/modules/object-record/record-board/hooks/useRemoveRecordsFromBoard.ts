@@ -1,6 +1,8 @@
 import { recordGroupFromGroupValueComponentFamilySelector } from '@/object-record/record-group/states/selectors/recordGroupFromGroupValueComponentFamilySelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { useStore } from 'jotai';
+
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -8,6 +10,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveRecordsFromBoard = () => {
+  const store = useStore();
   const recordIndexGroupFieldMetadataItemCallbackState =
     useRecoilComponentCallbackState(
       recordIndexGroupFieldMetadataItemComponentState,
@@ -29,10 +32,9 @@ export const useRemoveRecordsFromBoard = () => {
         const recordIdsToRemoveByGroup = new Map<string, string[]>();
 
         for (const recordIdToRemove of recordIdsToRemove) {
-          const recordToRemove = getSnapshotValue(
-            snapshot,
-            recordStoreFamilyState(recordIdToRemove),
-          );
+          const recordToRemove = store.get(
+            recordStoreFamilyState.atomFamily(recordIdToRemove),
+          ) as Record<string, unknown> | null | undefined;
 
           if (!isDefined(recordToRemove)) {
             continue;
@@ -47,8 +49,9 @@ export const useRemoveRecordsFromBoard = () => {
             continue;
           }
 
-          const recordGroupValue =
-            recordToRemove[recordIndexGroupFieldMetadataItem.name];
+          const recordGroupValue = recordToRemove[
+            recordIndexGroupFieldMetadataItem.name
+          ] as string | undefined;
 
           const recordGroupDefinitionFromGroupValue = getSnapshotValue(
             snapshot,
@@ -89,6 +92,7 @@ export const useRemoveRecordsFromBoard = () => {
         }
       },
     [
+      store,
       recordIndexGroupFieldMetadataItemCallbackState,
       recordGroupFromGroupValueFamilyCallbackState,
       recordIndexRecordIdsByGroupFamilyCallbackState,

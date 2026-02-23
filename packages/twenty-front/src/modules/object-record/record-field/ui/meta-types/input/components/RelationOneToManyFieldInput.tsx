@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -30,6 +31,7 @@ import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-rec
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -37,6 +39,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const RelationOneToManyFieldInput = () => {
+  const store = useStore();
   const { fieldDefinition, recordId } = useContext(FieldContext);
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -241,17 +244,23 @@ export const RelationOneToManyFieldInput = () => {
           });
 
           if (isDefined(createdJunction)) {
-            set(recordStoreFamilyState(recordId), (currentRecord) => {
-              if (!isDefined(currentRecord)) {
-                return currentRecord;
-              }
-              const currentFieldValue = currentRecord[fieldName];
-              const updatedJunctionRecords = Array.isArray(currentFieldValue)
-                ? [...currentFieldValue, createdJunction]
-                : [createdJunction];
+            store.set(
+              recordStoreFamilyState.atomFamily(recordId),
+              (currentRecord: ObjectRecord | null | undefined) => {
+                if (!isDefined(currentRecord)) {
+                  return currentRecord;
+                }
+                const currentFieldValue = currentRecord[fieldName];
+                const updatedJunctionRecords = Array.isArray(currentFieldValue)
+                  ? [...currentFieldValue, createdJunction]
+                  : [createdJunction];
 
-              return { ...currentRecord, [fieldName]: updatedJunctionRecords };
-            });
+                return {
+                  ...currentRecord,
+                  [fieldName]: updatedJunctionRecords,
+                } as ObjectRecord;
+              },
+            );
           }
 
           updatePickerState(newTargetId, junctionTargetObjectMetadata.id, [
@@ -284,6 +293,7 @@ export const RelationOneToManyFieldInput = () => {
       objectMetadataItem,
       recordId,
       relationObjectMetadataItem,
+      store,
     ],
   );
 

@@ -17,7 +17,9 @@ export const SettingsPublicDomainsListCard = () => {
 
   const { t } = useLingui();
 
-  const setSelectedPublicDomain = useSetRecoilStateV2(selectedPublicDomainState);
+  const setSelectedPublicDomain = useSetRecoilStateV2(
+    selectedPublicDomainState,
+  );
 
   const { data, loading } = useFindManyPublicDomainsQuery();
 

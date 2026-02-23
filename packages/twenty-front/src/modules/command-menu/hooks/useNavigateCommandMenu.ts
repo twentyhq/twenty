@@ -37,13 +37,9 @@ export const useNavigateCommandMenu = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = jotaiStore.get(
-      isCommandMenuOpenedStateV2.atom,
-    );
+    const isCommandMenuOpened = jotaiStore.get(isCommandMenuOpenedStateV2.atom);
 
-    const isCommandMenuClosing = jotaiStore.get(
-      isCommandMenuClosingState.atom,
-    );
+    const isCommandMenuClosing = jotaiStore.get(isCommandMenuClosingState.atom);
 
     if (isCommandMenuClosing) {
       commandMenuCloseAnimationCompleteCleanup();

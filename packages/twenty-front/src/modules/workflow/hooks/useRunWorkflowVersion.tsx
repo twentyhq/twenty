@@ -63,15 +63,12 @@ export const useRunWorkflowVersion = () => {
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const setRecordInStore = useCallback(
-    (workflowRun: WorkflowRun) => {
-      jotaiStore.set(
-        recordStoreFamilyState.atomFamily(workflowRun.id),
-        workflowRun,
-      );
-    },
-    [],
-  );
+  const setRecordInStore = useCallback((workflowRun: WorkflowRun) => {
+    jotaiStore.set(
+      recordStoreFamilyState.atomFamily(workflowRun.id),
+      workflowRun,
+    );
+  }, []);
 
   const runWorkflowVersion = async ({
     workflowId,

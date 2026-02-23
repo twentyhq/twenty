@@ -38,10 +38,7 @@ export const RecordCalendarCardHeader = ({
   recordId,
 }: RecordCalendarCardHeaderProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-  const record = useFamilyRecoilValueV2(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const { currentView } = useGetCurrentViewOnly();

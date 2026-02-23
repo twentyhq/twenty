@@ -83,47 +83,47 @@ export const WorkflowDropdownStepOutputItems = ({
         }),
       );
 
-        const { variableType, fieldMetadataId, compositeFieldSubFieldName } =
-          searchVariableThroughOutputSchemaV2({
-            stepOutputSchema: currentStepOutputSchema,
-            stepType: step.type,
-            rawVariableName,
-            isFullRecord: false,
-          });
+      const { variableType, fieldMetadataId, compositeFieldSubFieldName } =
+        searchVariableThroughOutputSchemaV2({
+          stepOutputSchema: currentStepOutputSchema,
+          stepType: step.type,
+          rawVariableName,
+          isFullRecord: false,
+        });
 
-        const { fieldMetadataItem: filterFieldMetadataItem } = isDefined(
+      const { fieldMetadataItem: filterFieldMetadataItem } = isDefined(
+        fieldMetadataId,
+      )
+        ? getFieldMetadataItemByIdOrThrow(fieldMetadataId)
+        : { fieldMetadataItem: undefined };
+
+      const filterType = isDefined(fieldMetadataId)
+        ? (filterFieldMetadataItem?.type ?? 'unknown')
+        : variableType;
+
+      const availableOperandsForFilter = getStepFilterOperands({
+        filterType,
+        subFieldName: compositeFieldSubFieldName,
+      });
+      const defaultOperand = availableOperandsForFilter[0];
+
+      const { value } = getInitialFilterValue(
+        filterType as FilterableAndTSVectorFieldType,
+        defaultOperand,
+      );
+
+      upsertStepFilterSettings({
+        stepFilterToUpsert: {
+          ...stepFilter,
+          stepOutputKey: rawVariableName,
+          isFullRecord,
+          type: filterType ?? 'unknown',
+          value: value,
           fieldMetadataId,
-        )
-          ? getFieldMetadataItemByIdOrThrow(fieldMetadataId)
-          : { fieldMetadataItem: undefined };
-
-        const filterType = isDefined(fieldMetadataId)
-          ? (filterFieldMetadataItem?.type ?? 'unknown')
-          : variableType;
-
-        const availableOperandsForFilter = getStepFilterOperands({
-          filterType,
-          subFieldName: compositeFieldSubFieldName,
-        });
-        const defaultOperand = availableOperandsForFilter[0];
-
-        const { value } = getInitialFilterValue(
-          filterType as FilterableAndTSVectorFieldType,
-          defaultOperand,
-        );
-
-        upsertStepFilterSettings({
-          stepFilterToUpsert: {
-            ...stepFilter,
-            stepOutputKey: rawVariableName,
-            isFullRecord,
-            type: filterType ?? 'unknown',
-            value: value,
-            fieldMetadataId,
-            compositeFieldSubFieldName,
-            operand: defaultOperand,
-          },
-        });
+          compositeFieldSubFieldName,
+          operand: defaultOperand,
+        },
+      });
     },
     [
       jotaiStore,
