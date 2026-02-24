@@ -174,3 +174,7 @@ redis:
   external:
     host: ""
     port: 6379
+
+# Scheduling constraints (applied to all deployments unless overridden per-component)
+nodeSelector: {}
+tolerations: []

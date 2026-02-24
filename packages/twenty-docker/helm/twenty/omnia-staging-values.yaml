@@ -92,3 +92,11 @@ redisInternal:
     limits:
       cpu: 200m
       memory: 128Mi
+
+nodeSelector:
+  environment: staging
+tolerations:
+  - key: "environment"
+    operator: "Equal"
+    value: "staging"
+    effect: "NoSchedule"

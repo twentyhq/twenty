@@ -32,6 +32,13 @@ server:
       nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
       nginx.ingress.kubernetes.io/proxy-buffering: "off"
+      nginx.ingress.kubernetes.io/server-snippet: |
+        location ~* \.(?:js|css|woff2?|svg|png|jpg|jpeg|gif|ico)$ {
+          add_header Cache-Control "public, max-age=31536000, immutable";
+        }
+        location = /index.html {
+          add_header Cache-Control "no-cache, no-store, must-revalidate";
+        }
     hosts:
       - host: crm.omniaagent.com
         paths:
@@ -86,3 +93,11 @@ redisInternal:
     limits:
       cpu: 200m
       memory: 256Mi
+
+nodeSelector:
+  environment: production
+tolerations:
+  - key: "environment"
+    operator: "Equal"
+    value: "production"
+    effect: "NoSchedule"
