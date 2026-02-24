@@ -26,9 +26,9 @@
         "isSecret": true
       }
     },
-    "yarnLockChecksum": "9b20a67fa43921ab03434ae54787c482",
-    "packageJsonChecksum": "debc8ca0bbcdc383187c93b0bb528990",
-    "apiClientChecksum": null
+    "yarnLockChecksum": "31c83d74119b810f2c956d41c2ee3576",
+    "packageJsonChecksum": "1807c41d2a51ee36385ece5d35b3ef4f",
+    "apiClientChecksum": "6893d8ff050e58aa9fff038f6e0efae7"
   },
   "objects": [],
   "fields": [],
@@ -45,6 +45,23 @@
   ],
   "skills": [],
   "logicFunctions": [
+    {
+      "universalIdentifier": "3897e059-715e-4a4b-b165-c44f17d2e30a",
+      "name": "product-data-create-users",
+      "description": "A simple logic function",
+      "timeoutSeconds": 5,
+      "cronTriggerSettings": {
+        "pattern": "*/10 * * * *"
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/create-users.ts",
+      "builtHandlerPath": "src/logic-functions/create-users.mjs",
+      "builtHandlerChecksum": "14e98fd071eac8a9ea3ea08b364f1f35"
+    },
     {
       "universalIdentifier": "ea5b3bbd-a8c3-48ed-880e-a0d062588f53",
       "name": "hello-world-logic-function",

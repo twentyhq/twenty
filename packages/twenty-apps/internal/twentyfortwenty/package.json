@@ -14,7 +14,8 @@
     "lint:fix": "eslint --fix"
   },
   "dependencies": {
-    "twenty-sdk": "latest"
+    "twenty-sdk": "latest",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
