@@ -45,11 +45,14 @@ const parseCssString = (
     const property = declaration.slice(0, colonIndex).trim();
     const value = declaration.slice(colonIndex + 1).trim();
 
-    const key = property.startsWith('--')
+    const isCssCustomProperty = property.startsWith('--');
+
+    const key = isCssCustomProperty
       ? property
       : property.replace(/-([a-z])/g, (_, letter: string) =>
           letter.toUpperCase(),
         );
+
     style[key] = value;
   }
 
