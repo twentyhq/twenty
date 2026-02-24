@@ -206,10 +206,16 @@ describe('ApplicationTokenService', () => {
       });
 
       expect(() => service.validateApplicationRefreshToken(mockToken)).toThrow(
-        expect.objectContaining({
-          code: AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
-        }),
+        AuthException,
       );
+
+      try {
+        service.validateApplicationRefreshToken(mockToken);
+      } catch (error) {
+        expect((error as AuthException).code).toBe(
+          AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
+        );
+      }
     });
 
     it('should throw dedicated code when token verification fails', () => {
@@ -223,10 +229,16 @@ describe('ApplicationTokenService', () => {
       });
 
       expect(() => service.validateApplicationRefreshToken(mockToken)).toThrow(
-        expect.objectContaining({
-          code: AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
-        }),
+        AuthException,
       );
+
+      try {
+        service.validateApplicationRefreshToken(mockToken);
+      } catch (error) {
+        expect((error as AuthException).code).toBe(
+          AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
+        );
+      }
     });
 
     it('should rethrow unexpected token verification errors', () => {
