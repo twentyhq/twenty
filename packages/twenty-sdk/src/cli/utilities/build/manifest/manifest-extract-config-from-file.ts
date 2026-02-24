@@ -6,7 +6,11 @@ import os from 'os';
 import path from 'path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-const MANIFEST_MOCK_MODULES = ['twenty-sdk/ui'];
+const MANIFEST_MOCK_MODULES = [
+  'twenty-sdk/ui',
+  'twenty-sdk/core-api',
+  'twenty-sdk/metadata-api',
+];
 
 const manifestMockPlugin: esbuild.Plugin = {
   name: 'manifest-mock',

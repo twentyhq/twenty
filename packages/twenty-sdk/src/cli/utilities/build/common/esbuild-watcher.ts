@@ -10,6 +10,7 @@ import {
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { createTypecheckPlugin } from '@/cli/utilities/build/common/typecheck-plugin';
 import * as esbuild from 'esbuild';
+import fs from 'fs';
 import path from 'path';
 import {
   GENERATED_DIR,
@@ -37,8 +38,6 @@ export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
   'tls',
   'child_process',
   'worker_threads',
-  'twenty-sdk',
-  'twenty-sdk/*',
   'twenty-shared',
   'twenty-shared/*',
 ];
@@ -193,8 +192,11 @@ export class EsbuildWatcher implements RestartableWatcher {
   }
 }
 
-// Resolves twenty-sdk/core-api and twenty-sdk/metadata-api to actual file paths
-// so esbuild bundles them instead of treating them as external (via twenty-sdk/*)
+// Resolves all twenty-sdk imports to bypass esbuild's package.json exports check.
+// - twenty-sdk/core-api → generated/core/index.ts (bundled)
+// - twenty-sdk/metadata-api → generated/metadata/index.ts (bundled)
+// - twenty-sdk → package entry point (bundled)
+// - twenty-sdk/* (anything else) → external
 const SUBPATH_TO_GENERATED_DIR: Record<string, string> = {
   'twenty-sdk/core-api': 'core',
   'twenty-sdk/metadata-api': 'metadata',
@@ -203,23 +205,35 @@ const SUBPATH_TO_GENERATED_DIR: Record<string, string> = {
 const createSdkGeneratedResolverPlugin = (appPath: string): esbuild.Plugin => ({
   name: 'sdk-generated-resolver',
   setup: (build) => {
-    build.onResolve(
-      { filter: /^twenty-sdk\/(core-api|metadata-api)$/ },
-      (args) => {
-        const subDir = SUBPATH_TO_GENERATED_DIR[args.path];
+    build.onResolve({ filter: /^twenty-sdk(\/|$)/ }, (args) => {
+      const sdkDir = path.join(appPath, 'node_modules', 'twenty-sdk');
 
-        return {
-          path: path.join(
-            appPath,
-            'node_modules',
-            'twenty-sdk',
-            GENERATED_DIR,
-            subDir,
-            'index.ts',
-          ),
-        };
-      },
-    );
+      // twenty-sdk/core-api or twenty-sdk/metadata-api → generated subdirectory
+      const generatedSubDir = SUBPATH_TO_GENERATED_DIR[args.path];
+
+      if (generatedSubDir) {
+        const resolvedPath = path.join(
+          sdkDir,
+          GENERATED_DIR,
+          generatedSubDir,
+          'index.ts',
+        );
+
+        if (!fs.existsSync(resolvedPath)) {
+          return undefined;
+        }
+
+        return { path: resolvedPath };
+      }
+
+      // twenty-sdk (main package) → resolve to dist entry point for bundling
+      if (args.path === 'twenty-sdk') {
+        return { path: path.join(sdkDir, 'dist', 'index.mjs') };
+      }
+
+      // any other twenty-sdk/* subpath → keep as external
+      return { path: args.path, external: true };
+    });
   },
 });
 
