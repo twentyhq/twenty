@@ -35,7 +35,6 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
@@ -43,10 +42,12 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { useStore } from 'jotai';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
+  const store = useStore();
   const navigate = useNavigate();
 
   const [previousLocation, setPreviousLocation] = useState('');
@@ -99,12 +100,12 @@ export const PageChangeEffect = () => {
   const { closeCommandMenu } = useCommandMenu();
 
   const closeCommandMenuUnlessOnEditPage = useCallback(() => {
-    const currentPage = jotaiStore.get(commandMenuPageState.atom);
+    const currentPage = store.get(commandMenuPageState.atom);
     if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
       return;
     }
     closeCommandMenu();
-  }, [closeCommandMenu]);
+  }, [closeCommandMenu, store]);
 
   const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
 

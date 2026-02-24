@@ -6,12 +6,13 @@ import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useSetAdvancedFilterDropdownStates = () => {
+  const store = useStore();
   const rootLevelRecordFilterGroup = useRecoilComponentSelectorValueV2(
     rootLevelRecordFilterGroupComponentSelector,
   );
@@ -38,21 +39,21 @@ export const useSetAdvancedFilterDropdownStates = () => {
           recordFilter.id,
         );
 
-      jotaiStore.set(
+      store.set(
         objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
           instanceId,
         }),
         recordFilter,
       );
 
-      jotaiStore.set(
+      store.set(
         fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
           instanceId,
         }),
         recordFilter.fieldMetadataId,
       );
 
-      jotaiStore.set(
+      store.set(
         subFieldNameUsedInDropdownComponentState.atomFamily({
           instanceId,
         }),
@@ -84,6 +85,7 @@ export const useSetAdvancedFilterDropdownStates = () => {
     currentRecordFilterGroups,
     currentRecordFilters,
     rootLevelRecordFilterGroup,
+    store,
   ]);
 
   return {

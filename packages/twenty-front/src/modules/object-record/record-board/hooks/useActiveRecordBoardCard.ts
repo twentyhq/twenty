@@ -22,10 +22,7 @@ export const useActiveRecordBoardCard = (recordBoardId?: string) => {
   const store = useStore();
 
   const deactivateBoardCard = useCallback(() => {
-    const activeBoardCardIndexes = store.get(activeBoardCardIndexesState) as
-      | BoardCardIndexes
-      | null
-      | undefined;
+    const activeBoardCardIndexes = store.get(activeBoardCardIndexesState);
 
     if (!isDefined(activeBoardCardIndexes)) {
       return;
@@ -37,10 +34,7 @@ export const useActiveRecordBoardCard = (recordBoardId?: string) => {
 
   const activateBoardCard = useCallback(
     (boardCardIndexes: BoardCardIndexes) => {
-      const activeBoardCardIndexes = store.get(activeBoardCardIndexesState) as
-        | BoardCardIndexes
-        | null
-        | undefined;
+      const activeBoardCardIndexes = store.get(activeBoardCardIndexesState);
 
       if (
         activeBoardCardIndexes?.rowIndex === boardCardIndexes.rowIndex &&

@@ -3,18 +3,19 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { computeNewPositionOfDraggedRecord } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useReorderVisibleRecordFields = (recordTableId: string) => {
-  const visibleRecordFieldsAtom = useRecoilComponentSelectorCallbackStateV2(
+  const store = useStore();
+  const visibleRecordFields = useRecoilComponentSelectorCallbackStateV2(
     visibleRecordFieldsComponentSelector,
     recordTableId,
   );
 
-  const currentRecordFieldsAtom = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFields = useRecoilComponentStateCallbackStateV2(
     currentRecordFieldsComponentState,
     recordTableId,
   );
@@ -23,18 +24,18 @@ export const useReorderVisibleRecordFields = (recordTableId: string) => {
 
   const reorderVisibleRecordFields = useCallback(
     ({ fromIndex, toIndex }: { fromIndex: number; toIndex: number }) => {
-      const visibleRecordFields = jotaiStore.get(visibleRecordFieldsAtom);
-      const currentRecordFields = jotaiStore.get(currentRecordFieldsAtom);
+      const visibleRecordFieldsValue = store.get(visibleRecordFields);
+      const currentRecordFieldsValue = store.get(currentRecordFields);
 
-      const idOfRecordToMove = visibleRecordFields[fromIndex].id;
-      const idOfTargetRecord = visibleRecordFields[toIndex].id;
+      const idOfRecordToMove = visibleRecordFieldsValue[fromIndex].id;
+      const idOfTargetRecord = visibleRecordFieldsValue[toIndex].id;
 
-      const recordToMove = visibleRecordFields[fromIndex];
+      const recordToMove = visibleRecordFieldsValue[fromIndex];
 
-      const isDroppedAfterList = toIndex >= visibleRecordFields.length;
+      const isDroppedAfterList = toIndex >= visibleRecordFieldsValue.length;
 
       const newPositionOfTargetRecord = computeNewPositionOfDraggedRecord({
-        arrayOfRecordsWithPosition: currentRecordFields,
+        arrayOfRecordsWithPosition: currentRecordFieldsValue,
         idOfItemToMove: idOfRecordToMove,
         idOfTargetItem: idOfTargetRecord,
         isDroppedAfterList,
@@ -51,7 +52,7 @@ export const useReorderVisibleRecordFields = (recordTableId: string) => {
 
       return updatedRecordField;
     },
-    [currentRecordFieldsAtom, visibleRecordFieldsAtom, updateRecordField],
+    [currentRecordFields, visibleRecordFields, updateRecordField, store],
   );
 
   return { reorderVisibleRecordFields };

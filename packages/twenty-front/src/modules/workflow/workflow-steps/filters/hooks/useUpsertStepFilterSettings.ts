@@ -8,11 +8,11 @@ import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useUpsertStepFilterSettings = () => {
-  const currentStepFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+  const currentStepFilterGroups = useRecoilComponentStateCallbackStateV2(
     currentStepFilterGroupsComponentState,
   );
 
-  const currentStepFiltersAtom = useRecoilComponentStateCallbackStateV2(
+  const currentStepFilters = useRecoilComponentStateCallbackStateV2(
     currentStepFiltersComponentState,
   );
   const { onFilterSettingsUpdate } = useContext(WorkflowStepFilterContext);
@@ -27,8 +27,8 @@ export const useUpsertStepFilterSettings = () => {
       stepFilterGroupToUpsert?: StepFilterGroup;
       stepFilterToUpsert?: StepFilter;
     }) => {
-      const stepFilterGroups = store.get(currentStepFilterGroupsAtom);
-      const stepFilters = store.get(currentStepFiltersAtom);
+      const stepFilterGroups = store.get(currentStepFilterGroups);
+      const stepFilters = store.get(currentStepFilters);
 
       const updatedStepFilterGroups = [...stepFilterGroups];
       const updatedStepFilters = [...stepFilters];
@@ -43,7 +43,7 @@ export const useUpsertStepFilterSettings = () => {
         } else {
           updatedStepFilterGroups.push(stepFilterGroupToUpsert);
         }
-        store.set(currentStepFilterGroupsAtom, updatedStepFilterGroups);
+        store.set(currentStepFilterGroups, updatedStepFilterGroups);
       }
 
       if (isDefined(stepFilterToUpsert)) {
@@ -56,7 +56,7 @@ export const useUpsertStepFilterSettings = () => {
         } else {
           updatedStepFilters.push(stepFilterToUpsert);
         }
-        store.set(currentStepFiltersAtom, updatedStepFilters);
+        store.set(currentStepFilters, updatedStepFilters);
       }
 
       onFilterSettingsUpdate({
@@ -66,8 +66,8 @@ export const useUpsertStepFilterSettings = () => {
     },
     [
       onFilterSettingsUpdate,
-      currentStepFilterGroupsAtom,
-      currentStepFiltersAtom,
+      currentStepFilterGroups,
+      currentStepFilters,
       store,
     ],
   );

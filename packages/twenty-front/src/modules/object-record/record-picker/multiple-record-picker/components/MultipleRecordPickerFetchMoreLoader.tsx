@@ -14,10 +14,10 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { useStore } from 'jotai';
 
 const StyledText = styled.div`
   align-items: center;
@@ -34,6 +34,7 @@ const StyledIntersectionObserver = styled.div`
 `;
 
 export const MultipleRecordPickerFetchMoreLoader = () => {
+  const store = useStore();
   const [
     multipleRecordPickerIsFetchingMore,
     setMultipleRecordPickerIsFetchingMore,
@@ -72,7 +73,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
   const fetchMore = useCallback(async () => {
-    const currentPaginationState = jotaiStore.get(
+    const currentPaginationState = store.get(
       multipleRecordPickerPaginationState.atomFamily({
         instanceId: componentInstanceId,
       }),
@@ -87,7 +88,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
       forceSearchFilter: searchFilter,
       loadMore: true,
     });
-  }, [componentInstanceId, performSearch, searchFilter, isLoading]);
+  }, [componentInstanceId, performSearch, searchFilter, isLoading, store]);
 
   const { ref } = useInView({
     onChange: useCallback(

@@ -13,10 +13,10 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 type UseLazyFindManyRecordsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
@@ -31,6 +31,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   recordGqlFields,
   fetchPolicy = 'cache-first',
 }: UseLazyFindManyRecordsParams<T>) => {
+  const store = useStore();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -83,8 +84,8 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const findManyRecordsLazy = useCallback(async () => {
     if (!hasReadPermission) {
-      jotaiStore.set(hasNextPageFamilyState.atomFamily(queryIdentifier), false);
-      jotaiStore.set(cursorFamilyState.atomFamily(queryIdentifier), '');
+      store.set(hasNextPageFamilyState.atomFamily(queryIdentifier), false);
+      store.set(cursorFamilyState.atomFamily(queryIdentifier), '');
 
       return {
         data: null,
@@ -107,11 +108,8 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     const lastCursor =
       result?.data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ?? '';
 
-    jotaiStore.set(
-      hasNextPageFamilyState.atomFamily(queryIdentifier),
-      hasNextPage,
-    );
-    jotaiStore.set(cursorFamilyState.atomFamily(queryIdentifier), lastCursor);
+    store.set(hasNextPageFamilyState.atomFamily(queryIdentifier), hasNextPage);
+    store.set(cursorFamilyState.atomFamily(queryIdentifier), lastCursor);
 
     const records = getRecordsFromRecordConnection({
       recordConnection: {
@@ -141,6 +139,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     objectMetadataItem.namePlural,
     queryIdentifier,
     handleFindManyRecordsError,
+    store,
   ]);
 
   return {

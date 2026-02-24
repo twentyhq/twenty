@@ -5,18 +5,19 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { useCreateRecordFilterFromObjectFilterDropdownCurrentStates } from '@/object-record/record-filter/hooks/useCreateRecordFilterFromObjectFilterDropdownCurrentStates';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useApplyObjectFilterDropdownFilterValue = () => {
-  const objectFilterDropdownCurrentRecordFilterAtom =
+  const store = useStore();
+  const objectFilterDropdownCurrentRecordFilter =
     useRecoilComponentStateCallbackStateV2(
       objectFilterDropdownCurrentRecordFilterComponentState,
     );
 
-  const fieldMetadataItemUsedInDropdownAtom =
+  const fieldMetadataItemUsedInDropdown =
     useRecoilComponentSelectorCallbackStateV2(
       fieldMetadataItemUsedInDropdownComponentSelector,
     );
@@ -29,20 +30,20 @@ export const useApplyObjectFilterDropdownFilterValue = () => {
 
   const applyObjectFilterDropdownFilterValue = useCallback(
     (newFilterValue: string, newDisplayValue?: string) => {
-      const objectFilterDropdownCurrentRecordFilter = jotaiStore.get(
-        objectFilterDropdownCurrentRecordFilterAtom,
+      const existingObjectFilterDropdownCurrentRecordFilter = store.get(
+        objectFilterDropdownCurrentRecordFilter,
       ) as RecordFilter | undefined | null;
 
-      const fieldMetadataItemUsedInDropdown = jotaiStore.get(
-        fieldMetadataItemUsedInDropdownAtom,
+      const currentFieldMetadataItemUsedInDropdown = store.get(
+        fieldMetadataItemUsedInDropdown,
       );
 
       const objectFilterDropdownFilterNotYetCreated = !isDefined(
-        objectFilterDropdownCurrentRecordFilter,
+        existingObjectFilterDropdownCurrentRecordFilter,
       );
 
       if (objectFilterDropdownFilterNotYetCreated) {
-        if (!isDefined(fieldMetadataItemUsedInDropdown)) {
+        if (!isDefined(currentFieldMetadataItemUsedInDropdown)) {
           throw new Error(
             `Field metadata item is not defined in object filter dropdown when setting a filter value to create it, this should not happen.`,
           );
@@ -60,7 +61,7 @@ export const useApplyObjectFilterDropdownFilterValue = () => {
         upsertObjectFilterDropdownCurrentFilter(newCurrentRecordFilter);
       } else {
         const newCurrentRecordFilter = {
-          ...objectFilterDropdownCurrentRecordFilter,
+          ...existingObjectFilterDropdownCurrentRecordFilter,
           value: newFilterValue,
           displayValue: newDisplayValue ?? newFilterValue,
         } satisfies RecordFilter;
@@ -69,10 +70,11 @@ export const useApplyObjectFilterDropdownFilterValue = () => {
       }
     },
     [
-      objectFilterDropdownCurrentRecordFilterAtom,
-      fieldMetadataItemUsedInDropdownAtom,
+      objectFilterDropdownCurrentRecordFilter,
+      fieldMetadataItemUsedInDropdown,
       createRecordFilterFromObjectFilterDropdownCurrentStates,
       upsertObjectFilterDropdownCurrentFilter,
+      store,
     ],
   );
 

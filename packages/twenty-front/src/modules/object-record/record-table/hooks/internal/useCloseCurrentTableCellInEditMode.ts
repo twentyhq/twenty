@@ -9,7 +9,7 @@ import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jot
 
 export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
   const store = useStore();
-  const currentTableCellInEditModePositionAtom =
+  const currentTableCellInEditModePosition =
     useRecoilComponentStateCallbackStateV2(
       recordTableCellEditModePositionComponentState,
       recordTableId,
@@ -22,7 +22,7 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
     useRemoveLastFocusItemFromFocusStackByComponentType();
 
   return useCallback(() => {
-    store.set(currentTableCellInEditModePositionAtom, null);
+    store.set(currentTableCellInEditModePosition, null);
 
     goBackToPreviousDropdownFocusId();
 
@@ -31,7 +31,7 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
     });
   }, [
     store,
-    currentTableCellInEditModePositionAtom,
+    currentTableCellInEditModePosition,
     goBackToPreviousDropdownFocusId,
     removeLastFocusItemFromFocusStackByComponentType,
   ]);

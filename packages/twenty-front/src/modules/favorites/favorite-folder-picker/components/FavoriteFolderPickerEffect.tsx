@@ -8,11 +8,11 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { usePrefetchedFavoritesFoldersData } from '@/favorites/hooks/usePrefetchedFavoritesFoldersData';
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 type FavoriteFolderPickerEffectProps = {
   record?: ObjectRecord;
@@ -21,10 +21,11 @@ type FavoriteFolderPickerEffectProps = {
 export const FavoriteFolderPickerEffect = ({
   record,
 }: FavoriteFolderPickerEffectProps) => {
+  const store = useStore();
   const [favoriteFolderIdsPicker, setFavoriteFolderIdsPicker] =
     useRecoilComponentStateV2(favoriteFolderIdsPickerComponentState);
 
-  const favoriteFolderPickerFamilyAtom =
+  const favoriteFolderPickerFamily =
     useRecoilComponentFamilyStateCallbackStateV2(
       favoriteFolderPickerComponentFamilyState,
     );
@@ -39,15 +40,15 @@ export const FavoriteFolderPickerEffect = ({
   const updateFolders = useCallback(
     (folders: FavoriteFolder[]) => {
       folders.forEach((folder) => {
-        const atom = favoriteFolderPickerFamilyAtom(folder.id);
-        const currentFolder = jotaiStore.get(atom);
+        const atom = favoriteFolderPickerFamily(folder.id);
+        const currentFolder = store.get(atom);
 
         if (!isDeeplyEqual(folder, currentFolder)) {
-          jotaiStore.set(atom, folder);
+          store.set(atom, folder);
         }
       });
     },
-    [favoriteFolderPickerFamilyAtom],
+    [favoriteFolderPickerFamily, store],
   );
 
   useEffect(() => {

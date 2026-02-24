@@ -16,7 +16,7 @@ import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValu
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
 import { useGetApprovedAccessDomainsQuery } from '~/generated-metadata/graphql';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledLink = styled(Link)`
@@ -27,7 +27,7 @@ export const SettingsApprovedAccessDomainsListCard = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigate();
   const { t } = useLingui();
-  const { localeCatalog } = useRecoilValueV2(dateLocaleStateV2);
+  const { localeCatalog } = useRecoilValueV2(dateLocaleState);
 
   const [approvedAccessDomains, setApprovedAccessDomains] = useRecoilStateV2(
     approvedAccessDomainsState,

@@ -33,7 +33,7 @@ import { getClientConfig } from '@/client-config/utils/getClientConfig';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 
 type UseClientConfigResult = {
   data: { clientConfig: ClientConfig } | undefined;
@@ -44,6 +44,7 @@ type UseClientConfigResult = {
 };
 
 export const useClientConfig = (): UseClientConfigResult => {
+  const store = useStore();
   const setIsAnalyticsEnabled = useSetRecoilStateV2(isAnalyticsEnabledState);
   const setDomainConfiguration = useSetRecoilStateV2(domainConfigurationState);
   const setAuthProviders = useSetRecoilStateV2(authProvidersState);
@@ -191,7 +192,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setGoogleMessagingEnabled(clientConfig?.isGoogleMessagingEnabled);
       setGoogleCalendarEnabled(clientConfig?.isGoogleCalendarEnabled);
       setIsAttachmentPreviewEnabled(clientConfig?.isAttachmentPreviewEnabled);
-      jotaiStore.set(
+      store.set(
         isAttachmentPreviewEnabledStateV2.atom,
         clientConfig?.isAttachmentPreviewEnabled,
       );
@@ -252,6 +253,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setSentryConfig,
     setSupportChat,
     setAllowRequestsToTwentyIcons,
+    store,
   ]);
 
   return {

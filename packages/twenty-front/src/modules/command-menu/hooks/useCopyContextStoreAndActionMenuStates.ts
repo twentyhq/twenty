@@ -7,10 +7,11 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useCopyContextStoreStates = () => {
+  const store = useStore();
   const copyContextStoreStates = useCallback(
     ({
       instanceIdToCopyFrom,
@@ -19,124 +20,124 @@ export const useCopyContextStoreStates = () => {
       instanceIdToCopyFrom: string;
       instanceIdToCopyTo: string;
     }) => {
-      const contextStoreCurrentObjectMetadataItemId = jotaiStore.get(
+      const contextStoreCurrentObjectMetadataItemId = store.get(
         contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
           instanceId: instanceIdToCopyFrom,
         }),
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
           instanceId: instanceIdToCopyTo,
         }),
         contextStoreCurrentObjectMetadataItemId,
       );
 
-      const contextStoreTargetedRecordsRule = jotaiStore.get(
+      const contextStoreTargetedRecordsRule = store.get(
         contextStoreTargetedRecordsRuleComponentState.atomFamily({
           instanceId: instanceIdToCopyFrom,
         }),
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreTargetedRecordsRuleComponentState.atomFamily({
           instanceId: instanceIdToCopyTo,
         }),
         contextStoreTargetedRecordsRule,
       );
 
-      const contextStoreNumberOfSelectedRecords = jotaiStore.get(
+      const contextStoreNumberOfSelectedRecords = store.get(
         contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
           instanceId: instanceIdToCopyFrom,
         }),
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
           instanceId: instanceIdToCopyTo,
         }),
         contextStoreNumberOfSelectedRecords,
       );
 
-      const contextStoreFilters = jotaiStore.get(
+      const contextStoreFilters = store.get(
         contextStoreFiltersComponentState.atomFamily({
           instanceId: instanceIdToCopyFrom,
         }),
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreFiltersComponentState.atomFamily({
           instanceId: instanceIdToCopyTo,
         }),
         contextStoreFilters,
       );
 
-      const contextStoreFilterGroups = jotaiStore.get(
+      const contextStoreFilterGroups = store.get(
         contextStoreFilterGroupsComponentState.atomFamily({
           instanceId: instanceIdToCopyFrom,
         }),
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreFilterGroupsComponentState.atomFamily({
           instanceId: instanceIdToCopyTo,
         }),
         contextStoreFilterGroups,
       );
 
-      const contextStoreAnyFieldFilterValue = jotaiStore.get(
+      const contextStoreAnyFieldFilterValue = store.get(
         contextStoreAnyFieldFilterValueComponentState.atomFamily({
           instanceId: instanceIdToCopyFrom,
         }),
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreAnyFieldFilterValueComponentState.atomFamily({
           instanceId: instanceIdToCopyTo,
         }),
         contextStoreAnyFieldFilterValue,
       );
 
-      const contextStoreCurrentViewId = jotaiStore.get(
+      const contextStoreCurrentViewId = store.get(
         contextStoreCurrentViewIdComponentState.atomFamily({
           instanceId: instanceIdToCopyFrom,
         }),
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreCurrentViewIdComponentState.atomFamily({
           instanceId: instanceIdToCopyTo,
         }),
         contextStoreCurrentViewId,
       );
 
-      const contextStoreCurrentViewType = jotaiStore.get(
+      const contextStoreCurrentViewType = store.get(
         contextStoreCurrentViewTypeComponentState.atomFamily({
           instanceId: instanceIdToCopyFrom,
         }),
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreCurrentViewTypeComponentState.atomFamily({
           instanceId: instanceIdToCopyTo,
         }),
         contextStoreCurrentViewType,
       );
 
-      const contextStoreIsFullTabWidgetInEditMode = jotaiStore.get(
+      const contextStoreIsFullTabWidgetInEditMode = store.get(
         contextStoreIsPageInEditModeComponentState.atomFamily({
           instanceId: instanceIdToCopyFrom,
         }),
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreIsPageInEditModeComponentState.atomFamily({
           instanceId: instanceIdToCopyTo,
         }),
         contextStoreIsFullTabWidgetInEditMode,
       );
     },
-    [],
+    [store],
   );
 
   return { copyContextStoreStates };

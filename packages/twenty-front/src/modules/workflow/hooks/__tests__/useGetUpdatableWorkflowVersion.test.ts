@@ -18,12 +18,9 @@ jest.mock('@/workflow/hooks/useCreateDraftFromWorkflowVersion', () => ({
   }),
 }));
 
-jest.mock(
-  '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
-  () => ({
-    useRecoilComponentValue: jest.fn(() => mockWorkflowId),
-  }),
-);
+jest.mock('@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2', () => ({
+  useRecoilComponentValueV2: jest.fn(() => mockWorkflowId),
+}));
 
 jest.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
   useWorkflowWithCurrentVersion: jest.fn((workflowId) =>

@@ -9,7 +9,7 @@ import { LightCopyIconButton } from '@/object-record/record-field/ui/components/
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
@@ -141,7 +141,7 @@ export const AIChatMessage = ({
   isLastMessageStreaming: boolean;
   error?: Error | null;
 }) => {
-  const { localeCatalog } = useRecoilValueV2(dateLocaleStateV2);
+  const { localeCatalog } = useRecoilValueV2(dateLocaleState);
 
   const isUser = message.role === AgentMessageRole.USER;
   const showError =

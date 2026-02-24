@@ -1,11 +1,12 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableFrontComponentIdComponentState } from '@/command-menu/pages/front-component/states/viewableFrontComponentIdComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
+import { useStore } from 'jotai';
 
 export const useOpenFrontComponentInCommandMenu = () => {
+  const store = useStore();
   const { navigateCommandMenu } = useCommandMenu();
 
   const openFrontComponentInCommandMenu = ({
@@ -21,7 +22,7 @@ export const useOpenFrontComponentInCommandMenu = () => {
   }) => {
     const pageComponentInstanceId = v4();
 
-    jotaiStore.set(
+    store.set(
       viewableFrontComponentIdComponentState.atomFamily({
         instanceId: pageComponentInstanceId,
       }),

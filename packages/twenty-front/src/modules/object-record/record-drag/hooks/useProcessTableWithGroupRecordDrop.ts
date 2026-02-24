@@ -36,22 +36,22 @@ export const useProcessTableWithGroupRecordDrop = () => {
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const currentRecordSortsAtom = useRecoilComponentStateCallbackStateV2(
+  const currentRecordSorts = useRecoilComponentStateCallbackStateV2(
     currentRecordSortsComponentState,
     recordTableId,
   );
 
-  const selectedRowIdsAtom = useRecoilComponentSelectorCallbackStateV2(
+  const selectedRowIds = useRecoilComponentSelectorCallbackStateV2(
     selectedRowIdsComponentSelector,
     recordTableId,
   );
 
-  const isDraggingRecordAtom = useRecoilComponentStateCallbackStateV2(
+  const isDraggingRecord = useRecoilComponentStateCallbackStateV2(
     isDraggingRecordComponentState,
     recordIndexId,
   );
 
-  const originalDragSelectionAtom = useRecoilComponentStateCallbackStateV2(
+  const originalDragSelection = useRecoilComponentStateCallbackStateV2(
     originalDragSelectionComponentState,
     recordIndexId,
   );
@@ -81,19 +81,17 @@ export const useProcessTableWithGroupRecordDrop = () => {
         throw new Error('Field metadata is not defined');
       }
 
-      const originalDragSelection = store.get(
-        originalDragSelectionAtom,
-      ) as string[];
+      const existingOriginalDragSelection = store.get(originalDragSelection);
 
-      const isDraggingRecord = store.get(isDraggingRecordAtom);
+      const isCurrentlyDraggingRecord = store.get(isDraggingRecord);
 
-      const selectedRecordIds = isDraggingRecord
-        ? originalDragSelection
-        : (store.get(selectedRowIdsAtom) as string[]);
+      const selectedRecordIds = isCurrentlyDraggingRecord
+        ? existingOriginalDragSelection
+        : store.get(selectedRowIds);
 
-      const currentRecordSorts = store.get(currentRecordSortsAtom);
+      const existingRecordSorts = store.get(currentRecordSorts);
 
-      if (currentRecordSorts.length > 0) {
+      if (existingRecordSorts.length > 0) {
         openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
         return;
       }
@@ -116,13 +114,13 @@ export const useProcessTableWithGroupRecordDrop = () => {
       });
     },
     [
-      currentRecordSortsAtom,
+      currentRecordSorts,
       store,
       objectNameSingular,
       objectMetadataItem.fields,
-      originalDragSelectionAtom,
-      isDraggingRecordAtom,
-      selectedRowIdsAtom,
+      originalDragSelection,
+      isDraggingRecord,
+      selectedRowIds,
       recordIdsByGroupFamilyState,
       groupFieldMetadata?.id,
       openModal,

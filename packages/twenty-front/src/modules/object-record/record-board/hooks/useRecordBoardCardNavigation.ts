@@ -17,7 +17,7 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
   const store = useStore();
   const { focusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const focusedBoardCardIndexesAtom = useRecoilComponentStateCallbackStateV2(
+  const focusedBoardCardIndexes = useRecoilComponentStateCallbackStateV2(
     focusedRecordBoardCardIndexesComponentState,
     recordBoardId,
   );
@@ -38,9 +38,7 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
 
     const firstColumnWithRecords = visibleRecordGroupIds.findIndex(
       (groupId) => {
-        const recordIdsInGroup = store.get(
-          recordIdsByGroupState(groupId),
-        ) as string[];
+        const recordIdsInGroup = store.get(recordIdsByGroupState(groupId));
         return Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0;
       },
     );
@@ -55,12 +53,9 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
 
   const moveHorizontally = useCallback(
     (direction: 'left' | 'right') => {
-      const focusedBoardCardIndexes = store.get(focusedBoardCardIndexesAtom) as
-        | { rowIndex: number; columnIndex: number }
-        | null
-        | undefined;
+      const currentFocusedBoardCardIndexes = store.get(focusedBoardCardIndexes);
 
-      if (!isDefined(focusedBoardCardIndexes)) {
+      if (!isDefined(currentFocusedBoardCardIndexes)) {
         focusFirstAvailableRecord();
         return;
       }
@@ -71,8 +66,8 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
 
       let newColumnIndex =
         direction === 'right'
-          ? focusedBoardCardIndexes.columnIndex + 1
-          : focusedBoardCardIndexes.columnIndex - 1;
+          ? currentFocusedBoardCardIndexes.columnIndex + 1
+          : currentFocusedBoardCardIndexes.columnIndex - 1;
 
       if (newColumnIndex < 0) {
         newColumnIndex = 0;
@@ -80,7 +75,7 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
         newColumnIndex = visibleRecordGroupIds.length - 1;
       }
 
-      if (newColumnIndex === focusedBoardCardIndexes.columnIndex) {
+      if (newColumnIndex === currentFocusedBoardCardIndexes.columnIndex) {
         return;
       }
 
@@ -91,7 +86,7 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
         const currentGroupId = visibleRecordGroupIds[newColumnIndex];
         const recordIdsInGroup = store.get(
           recordIdsByGroupState(currentGroupId),
-        ) as string[];
+        );
 
         if (Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0) {
           foundColumnWithRecords = true;
@@ -117,11 +112,9 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
       }
 
       const currentGroupId = visibleRecordGroupIds[newColumnIndex];
-      const recordIdsInGroup = store.get(
-        recordIdsByGroupState(currentGroupId),
-      ) as string[];
+      const recordIdsInGroup = store.get(recordIdsByGroupState(currentGroupId));
 
-      let newRowIndex = focusedBoardCardIndexes.rowIndex;
+      let newRowIndex = currentFocusedBoardCardIndexes.rowIndex;
       if (newRowIndex >= recordIdsInGroup.length) {
         newRowIndex = recordIdsInGroup.length - 1;
       }
@@ -133,7 +126,7 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
     },
     [
       store,
-      focusedBoardCardIndexesAtom,
+      focusedBoardCardIndexes,
       visibleRecordGroupIds,
       recordIdsByGroupState,
       focusBoardCard,
@@ -143,12 +136,9 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
 
   const moveVertically = useCallback(
     (direction: 'up' | 'down') => {
-      const focusedBoardCardIndexes = store.get(focusedBoardCardIndexesAtom) as
-        | { rowIndex: number; columnIndex: number }
-        | null
-        | undefined;
+      const currentFocusedBoardCardIndexes = store.get(focusedBoardCardIndexes);
 
-      if (!isDefined(focusedBoardCardIndexes)) {
+      if (!isDefined(currentFocusedBoardCardIndexes)) {
         focusFirstAvailableRecord();
         return;
       }
@@ -156,10 +146,8 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
       if (visibleRecordGroupIds.length === 0) return;
 
       const currentGroupId =
-        visibleRecordGroupIds[focusedBoardCardIndexes.columnIndex];
-      const recordIdsInGroup = store.get(
-        recordIdsByGroupState(currentGroupId),
-      ) as string[];
+        visibleRecordGroupIds[currentFocusedBoardCardIndexes.columnIndex];
+      const recordIdsInGroup = store.get(recordIdsByGroupState(currentGroupId));
 
       if (!Array.isArray(recordIdsInGroup) || recordIdsInGroup.length === 0) {
         focusFirstAvailableRecord();
@@ -168,8 +156,8 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
 
       let newRowIndex =
         direction === 'down'
-          ? focusedBoardCardIndexes.rowIndex + 1
-          : focusedBoardCardIndexes.rowIndex - 1;
+          ? currentFocusedBoardCardIndexes.rowIndex + 1
+          : currentFocusedBoardCardIndexes.rowIndex - 1;
 
       if (newRowIndex < 0) {
         newRowIndex = 0;
@@ -177,18 +165,18 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
         newRowIndex = recordIdsInGroup.length - 1;
       }
 
-      if (newRowIndex === focusedBoardCardIndexes.rowIndex) {
+      if (newRowIndex === currentFocusedBoardCardIndexes.rowIndex) {
         return;
       }
 
       focusBoardCard({
-        columnIndex: focusedBoardCardIndexes.columnIndex,
+        columnIndex: currentFocusedBoardCardIndexes.columnIndex,
         rowIndex: newRowIndex,
       });
     },
     [
       store,
-      focusedBoardCardIndexesAtom,
+      focusedBoardCardIndexes,
       visibleRecordGroupIds,
       recordIdsByGroupState,
       focusBoardCard,

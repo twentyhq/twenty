@@ -4,9 +4,9 @@ import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/t
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { type OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useHandleFindManyRecordsCompleted = <T>({
   queryIdentifier,
@@ -17,6 +17,7 @@ export const useHandleFindManyRecordsCompleted = <T>({
   objectMetadataItem: ObjectMetadataItem;
   onCompleted?: OnFindManyRecordsCompleted<T>;
 }) => {
+  const store = useStore();
   const handleFindManyRecordsCompleted = useCallback(
     (data: RecordGqlOperationFindManyResult) => {
       const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
@@ -31,17 +32,17 @@ export const useHandleFindManyRecordsCompleted = <T>({
       });
 
       if (isDefined(data?.[objectMetadataItem.namePlural])) {
-        jotaiStore.set(
+        store.set(
           cursorFamilyState.atomFamily(queryIdentifier),
           pageInfo.endCursor ?? '',
         );
-        jotaiStore.set(
+        store.set(
           hasNextPageFamilyState.atomFamily(queryIdentifier),
           pageInfo.hasNextPage ?? false,
         );
       }
     },
-    [objectMetadataItem.namePlural, onCompleted, queryIdentifier],
+    [objectMetadataItem.namePlural, onCompleted, queryIdentifier, store],
   );
 
   return {

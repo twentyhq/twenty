@@ -12,7 +12,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconMail, Status } from 'twenty-ui/display';
 import { useGetEmailingDomainsQuery } from '~/generated-metadata/graphql';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusColor';
 import { getTextByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusText';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
@@ -23,7 +23,7 @@ const StyledLink = styled(Link)`
 
 export const SettingsEmailingDomains = () => {
   const { t } = useLingui();
-  const { localeCatalog } = useRecoilValueV2(dateLocaleStateV2);
+  const { localeCatalog } = useRecoilValueV2(dateLocaleState);
   const navigate = useNavigate();
 
   const { data, loading: isLoading } = useGetEmailingDomainsQuery();

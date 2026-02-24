@@ -48,18 +48,17 @@ export const useSetRecordTableData = ({
     recordTableId,
   );
 
-  const hasUserSelectedAllRowsAtom = useRecoilComponentStateCallbackStateV2(
+  const hasUserSelectedAllRows = useRecoilComponentStateCallbackStateV2(
     hasUserSelectedAllRowsComponentState,
     recordTableId,
   );
 
-  const isRecordTableInitialLoadingAtom =
-    useRecoilComponentStateCallbackStateV2(
-      isRecordTableInitialLoadingComponentState,
-      recordTableId,
-    );
+  const isRecordTableInitialLoading = useRecoilComponentStateCallbackStateV2(
+    isRecordTableInitialLoadingComponentState,
+    recordTableId,
+  );
 
-  const recordIdByRealIndexAtom = useRecoilComponentStateCallbackStateV2(
+  const recordIdByRealIndex = useRecoilComponentStateCallbackStateV2(
     recordIdByRealIndexComponentState,
     recordTableId,
   );
@@ -84,7 +83,7 @@ export const useSetRecordTableData = ({
       for (const record of records) {
         const currentRecord = store.get(
           recordStoreFamilyState.atomFamily(record.id),
-        ) as ObjectRecord | null | undefined;
+        );
 
         if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
           const newRecord = {
@@ -98,12 +97,12 @@ export const useSetRecordTableData = ({
       }
 
       const currentRowIds = currentRecordGroupId
-        ? (store.get(
+        ? store.get(
             recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
-          ) as string[])
-        : (store.get(recordIndexAllRecordIdsSelector) as string[]);
+          )
+        : store.get(recordIndexAllRecordIdsSelector);
 
-      const hasUserSelectedAllRows = store.get(hasUserSelectedAllRowsAtom);
+      const isAllRowsSelected = store.get(hasUserSelectedAllRows);
 
       const recordIds = records.map((record) => record.id);
 
@@ -112,7 +111,7 @@ export const useSetRecordTableData = ({
         unfocusRecordTableRow();
         setRecordTableHoverPosition(null);
 
-        if (hasUserSelectedAllRows) {
+        if (isAllRowsSelected) {
           for (const rowId of recordIds) {
             store.set(isRowSelectedFamilyState(rowId), true);
           }
@@ -130,12 +129,10 @@ export const useSetRecordTableData = ({
           );
         }
 
-        const isTableInitialLoading = store.get(
-          isRecordTableInitialLoadingAtom,
-        );
+        const isTableInitialLoading = store.get(isRecordTableInitialLoading);
 
         if (isTableInitialLoading) {
-          const currentMap = store.get(recordIdByRealIndexAtom);
+          const currentMap = store.get(recordIdByRealIndex);
           const newMap = new Map(currentMap);
           let mapChanged = false;
 
@@ -147,7 +144,7 @@ export const useSetRecordTableData = ({
           }
 
           if (mapChanged) {
-            store.set(recordIdByRealIndexAtom, newMap);
+            store.set(recordIdByRealIndex, newMap);
           }
         }
       }
@@ -155,13 +152,13 @@ export const useSetRecordTableData = ({
     [
       recordIndexRecordIdsByGroupFamilyState,
       recordIndexAllRecordIdsSelector,
-      hasUserSelectedAllRowsAtom,
+      hasUserSelectedAllRows,
       unfocusRecordTableCell,
       unfocusRecordTableRow,
       setRecordTableHoverPosition,
       isRowSelectedFamilyState,
-      recordIdByRealIndexAtom,
-      isRecordTableInitialLoadingAtom,
+      recordIdByRealIndex,
+      isRecordTableInitialLoading,
       store,
     ],
   );

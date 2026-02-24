@@ -25,12 +25,12 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutDraftAtom = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraft = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutCurrentLayoutsAtom = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutCurrentLayouts = useRecoilComponentStateCallbackStateV2(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
@@ -54,11 +54,11 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
   const duplicateTab = useCallback(
     (tabId: string): string => {
-      const pageLayoutDraft = store.get(pageLayoutDraftAtom);
+      const currentPageLayoutDraft = store.get(pageLayoutDraft);
 
-      const allTabLayouts = store.get(pageLayoutCurrentLayoutsAtom);
+      const allTabLayouts = store.get(pageLayoutCurrentLayouts);
 
-      const sourceTab = pageLayoutDraft.tabs.find((t) => t.id === tabId);
+      const sourceTab = currentPageLayoutDraft.tabs.find((t) => t.id === tabId);
 
       if (!isDefined(sourceTab)) {
         throw new Error(`Tab with id ${tabId} not found`);
@@ -79,7 +79,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         };
       });
 
-      const sortedTabs = sortTabsByPosition(pageLayoutDraft.tabs);
+      const sortedTabs = sortTabsByPosition(currentPageLayoutDraft.tabs);
       const sourceIndex = sortedTabs.findIndex((t) => t.id === tabId);
 
       const newTabPosition = calculateNewPosition({
@@ -113,13 +113,13 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         })),
       };
 
-      store.set(pageLayoutCurrentLayoutsAtom, {
+      store.set(pageLayoutCurrentLayouts, {
         ...allTabLayouts,
         [newTabId]: newLayouts,
       });
 
-      const prev = store.get(pageLayoutDraftAtom);
-      store.set(pageLayoutDraftAtom, {
+      const prev = store.get(pageLayoutDraft);
+      store.set(pageLayoutDraft, {
         ...prev,
         tabs: [...prev.tabs, newTab],
       });
@@ -141,8 +141,8 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     [
       closeCommandMenu,
       navigatePageLayoutCommandMenu,
-      pageLayoutCurrentLayoutsAtom,
-      pageLayoutDraftAtom,
+      pageLayoutCurrentLayouts,
+      pageLayoutDraft,
       setActiveTabId,
       setTabSettingsOpenTabId,
       store,

@@ -1,7 +1,6 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { commandMenuWidthState } from '@/command-menu/states/commandMenuWidthState';
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
@@ -64,6 +63,7 @@ import React, {
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
+import { useStore } from 'jotai';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -165,17 +165,18 @@ export const WorkflowDiagramCanvasBase = ({
     event: MouseEvent | React.MouseEvent<Element, MouseEvent>;
   }) => void;
 }) => {
+  const store = useStore();
   const theme = useTheme();
 
   const reactflow = useReactFlow();
 
-  const workflowDiagram = useRecoilComponentValueV2(
+  const currentWorkflowDiagram = useRecoilComponentValueV2(
     workflowDiagramComponentState,
   );
   const workflowDiagramPanOnDrag = useRecoilComponentValueV2(
     workflowDiagramPanOnDragComponentState,
   );
-  const workflowDiagramAtom = useRecoilComponentStateCallbackStateV2(
+  const workflowDiagram = useRecoilComponentStateCallbackStateV2(
     workflowDiagramComponentState,
   );
   const setWorkflowDiagram = useSetRecoilComponentStateV2(
@@ -185,7 +186,7 @@ export const WorkflowDiagramCanvasBase = ({
     workflowSelectedNodeComponentState,
   );
   const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
-  const workflowDiagramWaitingNodesDimensionsAtom =
+  const workflowDiagramWaitingNodesDimensions =
     useRecoilComponentStateCallbackStateV2(
       workflowDiagramWaitingNodesDimensionsComponentState,
     );
@@ -212,12 +213,12 @@ export const WorkflowDiagramCanvasBase = ({
   } | null>(null);
 
   const { nodes, edges } = useMemo(() => {
-    if (!isDefined(workflowDiagram)) {
+    if (!isDefined(currentWorkflowDiagram)) {
       return { nodes: [], edges: [] };
     }
 
-    const nodes = [...workflowDiagram.nodes];
-    const edges = [...workflowDiagram.edges];
+    const nodes = [...currentWorkflowDiagram.nodes];
+    const edges = [...currentWorkflowDiagram.edges];
 
     if (
       isDefined(workflowInsertStepIds.position) &&
@@ -254,7 +255,7 @@ export const WorkflowDiagramCanvasBase = ({
     }
 
     return { nodes, edges };
-  }, [workflowDiagram, workflowInsertStepIds]);
+  }, [currentWorkflowDiagram, workflowInsertStepIds]);
 
   const isCommandMenuOpened = useRecoilValueV2(isCommandMenuOpenedStateV2);
   const { isInRightDrawer } = useContext(ActionMenuContext);
@@ -318,7 +319,7 @@ export const WorkflowDiagramCanvasBase = ({
 
       let adjustedContainerWidth = baseContainerWidth;
 
-      const commandMenuWidth = jotaiStore.get(commandMenuWidthState.atom);
+      const commandMenuWidth = store.get(commandMenuWidthState.atom);
 
       if (!isInRightDrawer && isCommandMenuOpened) {
         adjustedContainerWidth = baseContainerWidth - commandMenuWidth;
@@ -339,7 +340,7 @@ export const WorkflowDiagramCanvasBase = ({
         { duration: hasViewportBeenMoved ? 300 : 0 },
       );
     },
-    [reactflow, setWorkflowDiagramWaitingNodesDimensions],
+    [reactflow, setWorkflowDiagramWaitingNodesDimensions, store],
   );
 
   const handleSetFlowViewportOnChange = useCallback(
@@ -356,10 +357,10 @@ export const WorkflowDiagramCanvasBase = ({
         isInRightDrawer,
         isCommandMenuOpened,
         workflowDiagramFlowInitialized,
-        workflowDiagram: jotaiStore.get(workflowDiagramAtom),
+        workflowDiagram: store.get(workflowDiagram),
       });
     },
-    [setFlowViewport, workflowDiagramAtom],
+    [setFlowViewport, workflowDiagram, store],
   );
 
   useEffect(() => {
@@ -377,7 +378,7 @@ export const WorkflowDiagramCanvasBase = ({
 
   const handleNodesChanges = useCallback(
     (changes: NodeChange<WorkflowDiagramNode>[]) => {
-      const workflowDiagram = jotaiStore.get(workflowDiagramAtom);
+      const existingWorkflowDiagram = store.get(workflowDiagram);
 
       const filteredChanges = changes.filter(
         (change) =>
@@ -387,20 +388,23 @@ export const WorkflowDiagramCanvasBase = ({
           ),
       );
 
-      let updatedWorkflowDiagram = workflowDiagram;
-      if (isDefined(workflowDiagram) && filteredChanges.length > 0) {
+      let updatedWorkflowDiagram = existingWorkflowDiagram;
+      if (isDefined(existingWorkflowDiagram) && filteredChanges.length > 0) {
         updatedWorkflowDiagram = {
-          ...workflowDiagram,
-          nodes: applyNodeChanges(filteredChanges, workflowDiagram.nodes),
+          ...existingWorkflowDiagram,
+          nodes: applyNodeChanges(
+            filteredChanges,
+            existingWorkflowDiagram.nodes,
+          ),
         };
       }
 
-      jotaiStore.set(workflowDiagramAtom, updatedWorkflowDiagram);
+      store.set(workflowDiagram, updatedWorkflowDiagram);
 
-      const workflowDiagramWaitingNodesDimensions = jotaiStore.get(
-        workflowDiagramWaitingNodesDimensionsAtom,
+      const currentWorkflowDiagramWaitingNodesDimensions = store.get(
+        workflowDiagramWaitingNodesDimensions,
       );
-      if (!workflowDiagramWaitingNodesDimensions) {
+      if (!currentWorkflowDiagramWaitingNodesDimensions) {
         return;
       }
 
@@ -415,9 +419,10 @@ export const WorkflowDiagramCanvasBase = ({
       isCommandMenuOpened,
       setFlowViewport,
       workflowDiagramFlowInitialized,
-      workflowDiagramAtom,
-      workflowDiagramWaitingNodesDimensionsAtom,
+      workflowDiagram,
+      workflowDiagramWaitingNodesDimensions,
       isInRightDrawer,
+      store,
     ],
   );
 

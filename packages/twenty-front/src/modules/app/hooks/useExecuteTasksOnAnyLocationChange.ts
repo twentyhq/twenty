@@ -1,7 +1,6 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -12,22 +11,24 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useExecuteTasksOnAnyLocationChange = () => {
+  const store = useStore();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
   const resetPageLayoutEditMode = useCallback(() => {
-    const pageLayoutId = jotaiStore.get(currentPageLayoutIdState.atom);
+    const pageLayoutId = store.get(currentPageLayoutIdState.atom);
 
     if (isDefined(pageLayoutId)) {
-      const pageLayoutPersisted = jotaiStore.get(
+      const pageLayoutPersisted = store.get(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
         }),
       );
 
       if (isDefined(pageLayoutPersisted)) {
-        jotaiStore.set(
+        store.set(
           pageLayoutDraftComponentState.atomFamily({
             instanceId: pageLayoutId,
           }),
@@ -41,7 +42,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
         );
 
         const tabLayouts = convertPageLayoutToTabLayouts(pageLayoutPersisted);
-        jotaiStore.set(
+        store.set(
           pageLayoutCurrentLayoutsComponentState.atomFamily({
             instanceId: pageLayoutId,
           }),
@@ -49,37 +50,37 @@ export const useExecuteTasksOnAnyLocationChange = () => {
         );
       }
 
-      jotaiStore.set(
+      store.set(
         isPageLayoutInEditModeComponentState.atomFamily({
           instanceId: pageLayoutId,
         }),
         false,
       );
 
-      jotaiStore.set(
+      store.set(
         pageLayoutIsInitializedComponentState.atomFamily({
           instanceId: pageLayoutId,
         }),
         false,
       );
 
-      jotaiStore.set(
+      store.set(
         hasInitializedFieldsWidgetGroupsDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
         }),
         {},
       );
 
-      jotaiStore.set(currentPageLayoutIdState.atom, null);
+      store.set(currentPageLayoutIdState.atom, null);
     }
 
-    jotaiStore.set(
+    store.set(
       contextStoreIsPageInEditModeComponentState.atomFamily({
         instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
       }),
       false,
     );
-  }, []);
+  }, [store]);
 
   /**
    * Be careful to put idempotent tasks here.

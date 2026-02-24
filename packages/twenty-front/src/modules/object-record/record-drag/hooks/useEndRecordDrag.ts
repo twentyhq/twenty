@@ -32,7 +32,7 @@ export const useEndRecordDrag = (contextStoreInstanceId?: string) => {
       contextStoreInstanceId,
     );
 
-  const originalSelectionAtom = useRecoilComponentStateCallbackStateV2(
+  const originalSelection = useRecoilComponentStateCallbackStateV2(
     originalDragSelectionComponentState,
     contextStoreInstanceId,
   );
@@ -49,13 +49,13 @@ export const useEndRecordDrag = (contextStoreInstanceId?: string) => {
       contextStoreInstanceId,
     );
 
-  const isDraggingRecordAtom = useRecoilComponentStateCallbackStateV2(
+  const isDraggingRecord = useRecoilComponentStateCallbackStateV2(
     isDraggingRecordComponentState,
     contextStoreInstanceId,
   );
 
   const endRecordDrag = useCallback(() => {
-    store.set(isDraggingRecordAtom, false);
+    store.set(isDraggingRecord, false);
 
     const currentlyDraggedRecordIds = store.get(draggedRecordIdsCallbackState);
 
@@ -90,16 +90,16 @@ export const useEndRecordDrag = (contextStoreInstanceId?: string) => {
     store.set(isMultiDragActiveCallbackState, false);
     store.set(draggedRecordIdsCallbackState, []);
     store.set(primaryDraggedRecordIdCallbackState, null);
-    store.set(originalSelectionAtom, []);
+    store.set(originalSelection, []);
   }, [
     store,
     isMultiDragActiveCallbackState,
     draggedRecordIdsCallbackState,
     primaryDraggedRecordIdCallbackState,
-    originalSelectionAtom,
+    originalSelection,
     isRecordIdPrimaryDragMultipleCallbackState,
     isRecordIdSecondaryDragMultipleCallbackState,
-    isDraggingRecordAtom,
+    isDraggingRecord,
   ]);
 
   return { endRecordDrag };

@@ -43,10 +43,7 @@ export const useProcessCalendarCardDrop = () => {
 
       const destinationPlainDate = Temporal.PlainDate.from(destinationDate);
 
-      const record = store.get(recordStoreFamilyState.atomFamily(recordId)) as
-        | Record<string, unknown>
-        | null
-        | undefined;
+      const record = store.get(recordStoreFamilyState.atomFamily(recordId));
 
       if (!record) return;
 
@@ -61,7 +58,7 @@ export const useProcessCalendarCardDrop = () => {
           day: destinationPlainDate,
           timeZone: userTimezone,
         }),
-      ) as string[];
+      );
 
       const targetDayIsEmpty = destinationRecordIds.length === 0;
 

@@ -5,7 +5,7 @@ import { useStore } from 'jotai';
 import { useContext } from 'react';
 
 export const useRemoveRecordFilterGroup = () => {
-  const currentRecordFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilterGroups = useRecoilComponentStateCallbackStateV2(
     currentRecordFilterGroupsComponentState,
   );
 
@@ -15,17 +15,17 @@ export const useRemoveRecordFilterGroup = () => {
   const removeRecordFilterGroupCallback = (
     recordFilterGroupIdToRemove: string,
   ) => {
-    const currentRecordFilterGroups = store.get(currentRecordFilterGroupsAtom);
+    const existingRecordFilterGroups = store.get(currentRecordFilterGroups);
 
     const hasFoundRecordFilterGroupInCurrentRecordFilterGroups =
-      currentRecordFilterGroups.some(
+      existingRecordFilterGroups.some(
         (existingRecordFilterGroup) =>
           existingRecordFilterGroup.id === recordFilterGroupIdToRemove,
       );
 
     if (hasFoundRecordFilterGroupInCurrentRecordFilterGroups) {
-      store.set(currentRecordFilterGroupsAtom, (currentRecordFilterGroups) => {
-        const newCurrentRecordFilterGroups = [...currentRecordFilterGroups];
+      store.set(currentRecordFilterGroups, (previousRecordFilterGroups) => {
+        const newCurrentRecordFilterGroups = [...previousRecordFilterGroups];
 
         const indexOfRecordFilterGroupToRemove =
           newCurrentRecordFilterGroups.findIndex(

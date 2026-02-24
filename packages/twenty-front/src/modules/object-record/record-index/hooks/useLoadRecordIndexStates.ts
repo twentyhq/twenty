@@ -5,9 +5,12 @@ import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metad
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
@@ -21,69 +24,67 @@ import { viewFieldAggregateOperationState } from '@/object-record/record-table/r
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { hasInitializedCurrentRecordFieldsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFieldsComponentFamilyState';
+import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
+import { hasInitializedCurrentRecordSortsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordSortsComponentFamilyState';
 import { type View } from '@/views/types/View';
-import { type ViewField } from '@/views/types/ViewField';
+import { getFilterableFields } from '@/views/utils/getFilterableFields';
+import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
-import { useStore } from 'jotai';
+import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLoadRecordIndexStates = () => {
   const store = useStore();
 
-  const setContextStoreTargetedRecordsRuleComponentState =
-    useSetRecoilComponentStateV2(contextStoreTargetedRecordsRuleComponentState);
+  const contextStoreTargetedRecordsRuleAtom =
+    useRecoilComponentStateCallbackStateV2(
+      contextStoreTargetedRecordsRuleComponentState,
+    );
 
-  const setRecordIndexViewType = useSetRecoilStateV2(recordIndexViewTypeState);
-  const setRecordIndexOpenRecordIn = useSetRecoilStateV2(
-    recordIndexOpenRecordInState,
-  );
+  const recordIndexGroupFieldMetadataItemAtom =
+    useRecoilComponentStateCallbackStateV2(
+      recordIndexGroupFieldMetadataItemComponentState,
+    );
 
-  const setRecordIndexGroupFieldMetadataItem = useSetRecoilComponentStateV2(
-    recordIndexGroupFieldMetadataItemComponentState,
-  );
+  const recordIndexGroupAggregateOperationAtom =
+    useRecoilComponentStateCallbackStateV2(
+      recordIndexGroupAggregateOperationComponentState,
+    );
 
-  const setRecordIndexGroupAggregateOperation = useSetRecoilComponentStateV2(
-    recordIndexGroupAggregateOperationComponentState,
-  );
-
-  const setRecordIndexGroupAggregateFieldMetadataItem =
-    useSetRecoilComponentStateV2(
+  const recordIndexGroupAggregateFieldMetadataItemAtom =
+    useRecoilComponentStateCallbackStateV2(
       recordIndexGroupAggregateFieldMetadataItemComponentState,
     );
 
-  const setRecordIndexShouldHideEmptyRecordGroups =
-    useSetRecoilComponentStateV2(
+  const recordIndexShouldHideEmptyRecordGroupsAtom =
+    useRecoilComponentStateCallbackStateV2(
       recordIndexShouldHideEmptyRecordGroupsComponentState,
     );
-
-  const setRecordIndexCalendarFieldMetadataIdState = useSetRecoilStateV2(
-    recordIndexCalendarFieldMetadataIdState,
-  );
 
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
 
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
-  const onViewFieldsChange = useCallback(
-    (viewFields: ViewField[], objectMetadataItem: ObjectMetadataItem) => {
+  const loadRecordIndexStates = useCallback(
+    (view: View, objectMetadataItem: ObjectMetadataItem) => {
       const activeFieldMetadataItems = objectMetadataItem.fields.filter(
         (field) => field.isActive && !isHiddenSystemField(field),
       );
 
-      const filterableFieldMetadataItems = jotaiStore.get(
+      const filterableFieldMetadataItems = store.get(
         availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
           objectMetadataItemId: objectMetadataItem.id,
         }),
       );
 
-      const sortableFieldMetadataItems = jotaiStore.get(
+      const sortableFieldMetadataItems = store.get(
         availableFieldMetadataItemsForSortFamilySelector.selectorFamily({
           objectMetadataItemId: objectMetadataItem.id,
         }),
@@ -118,67 +119,172 @@ export const useLoadRecordIndexStates = () => {
           });
 
       const newFieldDefinitions = mapViewFieldsToColumnDefinitions({
-        viewFields,
+        viewFields: view.viewFields,
         columnDefinitions,
       });
 
-      const existingRecordIndexFieldDefinitions = jotaiStore.get(
-        recordIndexFieldDefinitionsState.atom,
+      const recordFields = view.viewFields
+        .map(mapViewFieldToRecordField)
+        .filter(isDefined);
+
+      const allFilterableFields = getFilterableFields(objectMetadataItem);
+      const recordFilters = mapViewFiltersToFilters(
+        view.viewFilters,
+        allFilterableFields,
       );
 
-      if (
-        !isDeeplyEqual(existingRecordIndexFieldDefinitions, newFieldDefinitions)
-      ) {
-        jotaiStore.set(
-          recordIndexFieldDefinitionsState.atom,
-          newFieldDefinitions,
+      const contextStoreFilters = mapViewFiltersToFilters(
+        view.viewFilters,
+        filterableFieldMetadataItems,
+      );
+
+      let recordIndexGroupFieldMetadataItemValue = undefined;
+      if (isDefined(view.mainGroupByFieldMetadataId)) {
+        const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
+          view.mainGroupByFieldMetadataId,
         );
+        recordIndexGroupFieldMetadataItemValue = fieldMetadataItem;
       }
 
-      for (const viewField of viewFields) {
-        const viewFieldMetadataType = objectMetadataItem.fields?.find(
-          (field) => field.id === viewField.fieldMetadataId,
-        )?.type;
-
-        const aggregateOperationForViewField = jotaiStore.get(
-          viewFieldAggregateOperationState.atomFamily({
-            viewFieldId: viewField.id,
-          }),
+      const recordIndexGroupAggregateFieldMetadataItemValue =
+        objectMetadataItem.fields?.find(
+          (field) => field.id === view.kanbanAggregateOperationFieldMetadataId,
         );
-        const convertedViewFieldAggregateOperation = isDefined(
-          viewField.aggregateOperation,
-        )
-          ? convertAggregateOperationToExtendedAggregateOperation(
-              viewField.aggregateOperation,
-              viewFieldMetadataType,
-            )
-          : viewField.aggregateOperation;
 
-        if (
-          aggregateOperationForViewField !==
-          convertedViewFieldAggregateOperation
-        ) {
-          jotaiStore.set(
-            viewFieldAggregateOperationState.atomFamily({
-              viewFieldId: viewField.id,
-            }),
-            convertedViewFieldAggregateOperation,
+      let convertedAggregateOperation = undefined;
+      if (isDefined(view.kanbanAggregateOperation)) {
+        convertedAggregateOperation =
+          convertAggregateOperationToExtendedAggregateOperation(
+            view.kanbanAggregateOperation,
+            recordIndexGroupAggregateFieldMetadataItemValue?.type,
           );
-        }
       }
-    },
-    [],
-  );
 
-  const loadRecordIndexStates = useCallback(
-    async (view: View, objectMetadataItem: ObjectMetadataItem) => {
-      const filterableFieldMetadataItems = jotaiStore.get(
-        availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
-          objectMetadataItemId: objectMetadataItem.id,
+      const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+        objectMetadataItem.namePlural,
+        view.id,
+      );
+
+      const currentRecordFieldsAtom =
+        currentRecordFieldsComponentState.atomFamily({
+          instanceId: recordIndexId,
+        });
+      const currentRecordFiltersAtom =
+        currentRecordFiltersComponentState.atomFamily({
+          instanceId: recordIndexId,
+        });
+      const currentRecordSortsAtom =
+        currentRecordSortsComponentState.atomFamily({
+          instanceId: recordIndexId,
+        });
+
+      const hasInitializedFieldsAtom =
+        hasInitializedCurrentRecordFieldsComponentFamilyState.atomFamily({
+          instanceId: recordIndexId,
+          familyKey: { viewId: view.id },
+        });
+      const hasInitializedFiltersAtom =
+        hasInitializedCurrentRecordFiltersComponentFamilyState.atomFamily({
+          instanceId: recordIndexId,
+          familyKey: { viewId: view.id },
+        });
+      const hasInitializedSortsAtom =
+        hasInitializedCurrentRecordSortsComponentFamilyState.atomFamily({
+          instanceId: recordIndexId,
+          familyKey: { viewId: view.id },
+        });
+
+      store.set(
+        atom(null, (get, batchSet) => {
+          const existingFieldDefs = get(recordIndexFieldDefinitionsState.atom);
+          if (!isDeeplyEqual(existingFieldDefs, newFieldDefinitions)) {
+            batchSet(
+              recordIndexFieldDefinitionsState.atom,
+              newFieldDefinitions,
+            );
+          }
+
+          for (const viewField of view.viewFields) {
+            const viewFieldMetadataType = objectMetadataItem.fields?.find(
+              (field) => field.id === viewField.fieldMetadataId,
+            )?.type;
+
+            const existingAggregateOp = get(
+              viewFieldAggregateOperationState.atomFamily({
+                viewFieldId: viewField.id,
+              }),
+            );
+
+            const convertedViewFieldAggregateOp = isDefined(
+              viewField.aggregateOperation,
+            )
+              ? convertAggregateOperationToExtendedAggregateOperation(
+                  viewField.aggregateOperation,
+                  viewFieldMetadataType,
+                )
+              : viewField.aggregateOperation;
+
+            if (existingAggregateOp !== convertedViewFieldAggregateOp) {
+              batchSet(
+                viewFieldAggregateOperationState.atomFamily({
+                  viewFieldId: viewField.id,
+                }),
+                convertedViewFieldAggregateOp,
+              );
+            }
+          }
+
+          batchSet(currentRecordFieldsAtom, recordFields);
+          batchSet(hasInitializedFieldsAtom, true);
+
+          batchSet(currentRecordFiltersAtom, recordFilters);
+          batchSet(hasInitializedFiltersAtom, true);
+
+          batchSet(currentRecordSortsAtom, view.viewSorts);
+          batchSet(hasInitializedSortsAtom, true);
+
+          const prevRule = get(contextStoreTargetedRecordsRuleAtom);
+          batchSet(contextStoreTargetedRecordsRuleAtom, {
+            ...prevRule,
+            filters: contextStoreFilters,
+          });
+
+          batchSet(recordIndexViewTypeState.atom, view.type);
+          batchSet(recordIndexOpenRecordInState.atom, view.openRecordIn);
+          batchSet(recordIndexOpenRecordInStateV2.atom, view.openRecordIn);
+
+          batchSet(
+            recordIndexCalendarFieldMetadataIdState.atom,
+            view.calendarFieldMetadataId ?? null,
+          );
+
+          batchSet(
+            recordIndexShouldHideEmptyRecordGroupsAtom,
+            view.shouldHideEmptyGroups,
+          );
+
+          if (isDefined(recordIndexGroupFieldMetadataItemValue)) {
+            batchSet(
+              recordIndexGroupFieldMetadataItemAtom,
+              recordIndexGroupFieldMetadataItemValue,
+            );
+          }
+
+          if (isDefined(convertedAggregateOperation)) {
+            batchSet(
+              recordIndexGroupAggregateOperationAtom,
+              convertedAggregateOperation,
+            );
+          }
+
+          if (isDefined(recordIndexGroupAggregateFieldMetadataItemValue)) {
+            batchSet(
+              recordIndexGroupAggregateFieldMetadataItemAtom,
+              recordIndexGroupAggregateFieldMetadataItemValue,
+            );
+          }
         }),
       );
-
-      onViewFieldsChange(view.viewFields, objectMetadataItem);
 
       setRecordGroupsFromViewGroups({
         viewId: view.id,
@@ -186,69 +292,16 @@ export const useLoadRecordIndexStates = () => {
         viewGroups: view.viewGroups,
         objectMetadataItem,
       });
-
-      setContextStoreTargetedRecordsRuleComponentState((prev) => ({
-        ...prev,
-        filters: mapViewFiltersToFilters(
-          view.viewFilters,
-          filterableFieldMetadataItems,
-        ),
-      }));
-
-      setRecordIndexViewType(view.type);
-      setRecordIndexOpenRecordIn(view.openRecordIn);
-      store.set(recordIndexOpenRecordInStateV2.atom, view.openRecordIn);
-
-      setRecordIndexCalendarFieldMetadataIdState(
-        view.calendarFieldMetadataId ?? null,
-      );
-
-      setRecordIndexShouldHideEmptyRecordGroups(view.shouldHideEmptyGroups);
-
-      if (isDefined(view.mainGroupByFieldMetadataId)) {
-        const recordIndexGroupFieldMetadataItemId =
-          view.mainGroupByFieldMetadataId;
-
-        const { fieldMetadataItem: recordIndexGroupFieldMetadataItem } =
-          getFieldMetadataItemByIdOrThrow(recordIndexGroupFieldMetadataItemId);
-
-        setRecordIndexGroupFieldMetadataItem(recordIndexGroupFieldMetadataItem);
-      }
-
-      const recordIndexGroupAggregateFieldMetadataItem =
-        objectMetadataItem.fields?.find(
-          (field) => field.id === view.kanbanAggregateOperationFieldMetadataId,
-        );
-
-      if (isDefined(view.kanbanAggregateOperation)) {
-        const convertedAggregateOperation =
-          convertAggregateOperationToExtendedAggregateOperation(
-            view.kanbanAggregateOperation,
-            recordIndexGroupAggregateFieldMetadataItem?.type,
-          );
-
-        setRecordIndexGroupAggregateOperation(convertedAggregateOperation);
-      }
-
-      if (isDefined(recordIndexGroupAggregateFieldMetadataItem)) {
-        setRecordIndexGroupAggregateFieldMetadataItem(
-          recordIndexGroupAggregateFieldMetadataItem,
-        );
-      }
     },
     [
-      onViewFieldsChange,
-      setRecordGroupsFromViewGroups,
-      setContextStoreTargetedRecordsRuleComponentState,
-      setRecordIndexViewType,
-      setRecordIndexOpenRecordIn,
-      setRecordIndexCalendarFieldMetadataIdState,
-      setRecordIndexShouldHideEmptyRecordGroups,
-      setRecordIndexGroupAggregateFieldMetadataItem,
-      setRecordIndexGroupAggregateOperation,
-      getFieldMetadataItemByIdOrThrow,
-      setRecordIndexGroupFieldMetadataItem,
       store,
+      contextStoreTargetedRecordsRuleAtom,
+      recordIndexGroupFieldMetadataItemAtom,
+      recordIndexGroupAggregateOperationAtom,
+      recordIndexGroupAggregateFieldMetadataItemAtom,
+      recordIndexShouldHideEmptyRecordGroupsAtom,
+      getFieldMetadataItemByIdOrThrow,
+      setRecordGroupsFromViewGroups,
     ],
   );
 

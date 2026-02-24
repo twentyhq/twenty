@@ -48,8 +48,12 @@ export const ViewMetadataProviderInitialEffect = () => {
   );
 
   useEffect(() => {
-    if (isInitialized) return;
-    if (!isCurrentUserLoaded) return;
+    if (isInitialized) {
+      return;
+    }
+    if (!isCurrentUserLoaded) {
+      return;
+    }
 
     if (!isLoggedIn || !isWorkspaceActiveOrSuspended(currentWorkspace)) {
       setIsInitialized(true);

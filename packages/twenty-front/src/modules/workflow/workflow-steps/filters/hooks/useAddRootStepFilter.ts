@@ -19,11 +19,11 @@ export const useAddRootStepFilter = () => {
   const { stepId, onFilterSettingsUpdate } = useContext(
     WorkflowStepFilterContext,
   );
-  const currentStepFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+  const currentStepFilterGroups = useRecoilComponentStateCallbackStateV2(
     currentStepFilterGroupsComponentState,
   );
 
-  const currentStepFiltersAtom = useRecoilComponentStateCallbackStateV2(
+  const currentStepFilters = useRecoilComponentStateCallbackStateV2(
     currentStepFiltersComponentState,
   );
 
@@ -57,8 +57,8 @@ export const useAddRootStepFilter = () => {
       positionInStepFilterGroup: 0,
     };
 
-    store.set(currentStepFilterGroupsAtom, [newStepFilterGroup]);
-    store.set(currentStepFiltersAtom, [newStepFilter]);
+    store.set(currentStepFilterGroups, [newStepFilterGroup]);
+    store.set(currentStepFilters, [newStepFilter]);
 
     setHasInitializedCurrentStepFilters(true);
     setHasInitializedCurrentStepFilterGroups(true);
@@ -69,8 +69,8 @@ export const useAddRootStepFilter = () => {
     });
   }, [
     onFilterSettingsUpdate,
-    currentStepFilterGroupsAtom,
-    currentStepFiltersAtom,
+    currentStepFilterGroups,
+    currentStepFilters,
     setHasInitializedCurrentStepFilters,
     setHasInitializedCurrentStepFilterGroups,
     store,

@@ -7,67 +7,69 @@ import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-rec
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
 
 export const useResetFilterDropdown = (componentInstanceId?: string) => {
-  const objectFilterDropdownSearchInputAtom =
+  const store = useStore();
+  const objectFilterDropdownSearchInput =
     useRecoilComponentStateCallbackStateV2(
       objectFilterDropdownSearchInputComponentState,
       componentInstanceId,
     );
 
-  const fieldMetadataItemIdUsedInDropdownAtom =
+  const fieldMetadataItemIdUsedInDropdown =
     useRecoilComponentStateCallbackStateV2(
       fieldMetadataItemIdUsedInDropdownComponentState,
       componentInstanceId,
     );
 
-  const selectedOperandInDropdownAtom = useRecoilComponentStateCallbackStateV2(
+  const selectedOperandInDropdown = useRecoilComponentStateCallbackStateV2(
     selectedOperandInDropdownComponentState,
     componentInstanceId,
   );
 
-  const objectFilterDropdownFilterIsSelectedAtom =
+  const objectFilterDropdownFilterIsSelected =
     useRecoilComponentStateCallbackStateV2(
       objectFilterDropdownFilterIsSelectedComponentState,
       componentInstanceId,
     );
 
-  const objectFilterDropdownAnyFieldSearchIsSelectedAtom =
+  const objectFilterDropdownAnyFieldSearchIsSelected =
     useRecoilComponentStateCallbackStateV2(
       objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
       componentInstanceId,
     );
 
-  const objectFilterDropdownIsSelectingCompositeFieldAtom =
+  const objectFilterDropdownIsSelectingCompositeField =
     useRecoilComponentStateCallbackStateV2(
       objectFilterDropdownIsSelectingCompositeFieldComponentState,
       componentInstanceId,
     );
 
-  const objectFilterDropdownCurrentRecordFilterAtom =
+  const objectFilterDropdownCurrentRecordFilter =
     useRecoilComponentStateCallbackStateV2(
       objectFilterDropdownCurrentRecordFilterComponentState,
       componentInstanceId,
     );
 
   const resetFilterDropdown = useCallback(() => {
-    jotaiStore.set(objectFilterDropdownSearchInputAtom, '');
-    jotaiStore.set(selectedOperandInDropdownAtom, null);
-    jotaiStore.set(objectFilterDropdownFilterIsSelectedAtom, false);
-    jotaiStore.set(objectFilterDropdownIsSelectingCompositeFieldAtom, false);
-    jotaiStore.set(fieldMetadataItemIdUsedInDropdownAtom, null);
-    jotaiStore.set(objectFilterDropdownCurrentRecordFilterAtom, null);
-    jotaiStore.set(objectFilterDropdownAnyFieldSearchIsSelectedAtom, false);
+    store.set(objectFilterDropdownSearchInput, '');
+    store.set(selectedOperandInDropdown, null);
+    store.set(objectFilterDropdownFilterIsSelected, false);
+    store.set(objectFilterDropdownIsSelectingCompositeField, false);
+    store.set(fieldMetadataItemIdUsedInDropdown, null);
+    store.set(objectFilterDropdownCurrentRecordFilter, null);
+    store.set(objectFilterDropdownAnyFieldSearchIsSelected, false);
   }, [
-    objectFilterDropdownSearchInputAtom,
-    selectedOperandInDropdownAtom,
-    objectFilterDropdownFilterIsSelectedAtom,
-    objectFilterDropdownIsSelectingCompositeFieldAtom,
-    fieldMetadataItemIdUsedInDropdownAtom,
-    objectFilterDropdownCurrentRecordFilterAtom,
-    objectFilterDropdownAnyFieldSearchIsSelectedAtom,
+    objectFilterDropdownSearchInput,
+    selectedOperandInDropdown,
+    objectFilterDropdownFilterIsSelected,
+    objectFilterDropdownIsSelectingCompositeField,
+    fieldMetadataItemIdUsedInDropdown,
+    objectFilterDropdownCurrentRecordFilter,
+    objectFilterDropdownAnyFieldSearchIsSelected,
+    store,
   ]);
 
   return {

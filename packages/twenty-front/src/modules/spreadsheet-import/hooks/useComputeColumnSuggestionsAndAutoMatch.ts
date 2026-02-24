@@ -8,9 +8,10 @@ import {
 import { suggestedFieldsByColumnHeaderState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/suggestedFieldsByColumnHeaderState';
 import { type ImportedRow } from '@/spreadsheet-import/types';
 import { getMatchedColumnsWithFuse } from '@/spreadsheet-import/utils/getMatchedColumnsWithFuse';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 
 export const useComputeColumnSuggestionsAndAutoMatch = () => {
+  const store = useStore();
   const { spreadsheetImportFields: fields, autoMapHeaders } =
     useSpreadsheetImportInternal();
 
@@ -23,21 +24,21 @@ export const useComputeColumnSuggestionsAndAutoMatch = () => {
       data: ImportedRow[];
     }) => {
       if (autoMapHeaders) {
-        const columns = jotaiStore.get(
+        const columns = store.get(
           initialComputedColumnsSelector.selectorFamily(headerValues),
         );
 
         const { matchedColumns, suggestedFieldsByColumnHeader } =
           getMatchedColumnsWithFuse({ columns, fields, data });
 
-        jotaiStore.set(matchColumnsState.atom, matchedColumns);
-        jotaiStore.set(
+        store.set(matchColumnsState.atom, matchedColumns);
+        store.set(
           suggestedFieldsByColumnHeaderState.atom,
           suggestedFieldsByColumnHeader,
         );
       }
     },
-    [autoMapHeaders, fields],
+    [autoMapHeaders, fields, store],
   );
 
   return computeColumnSuggestionsAndAutoMatch;

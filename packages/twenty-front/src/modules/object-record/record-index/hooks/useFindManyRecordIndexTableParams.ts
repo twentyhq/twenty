@@ -66,9 +66,15 @@ export const useFindManyRecordIndexTableParams = (
     objectMetadataItems,
   );
 
+  const combinedFilter = combineFilters([
+    currentFilters,
+    recordGroupFilter,
+    anyFieldFilter,
+  ]);
+
   return {
     objectNameSingular,
-    filter: combineFilters([currentFilters, recordGroupFilter, anyFieldFilter]),
+    filter: combinedFilter,
     orderBy,
     // If we have a current record group definition, we only want to fetch 8 records by page
     ...(currentRecordGroupDefinition ? { limit: 8 } : {}),

@@ -18,12 +18,12 @@ import {
   type RelativeDateFilter,
   resolveDateFilter,
 } from 'twenty-shared/utils';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
 
 export const ObjectFilterDropdownDateInput = () => {
   const { dateFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
+  const dateLocale = useRecoilValueV2(dateLocaleState);
   const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
 
   const selectedOperandInDropdown = useRecoilComponentValueV2(

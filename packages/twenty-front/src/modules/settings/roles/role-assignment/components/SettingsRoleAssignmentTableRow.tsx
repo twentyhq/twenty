@@ -14,7 +14,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
@@ -60,7 +60,7 @@ export const SettingsRoleAssignmentTableRow = ({
   );
   const { getIcon } = useIcons();
   const { dateFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
+  const dateLocale = useRecoilValueV2(dateLocaleState);
 
   const renderIcon = () => {
     switch (roleTarget.type) {

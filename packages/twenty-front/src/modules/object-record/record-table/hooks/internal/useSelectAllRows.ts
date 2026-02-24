@@ -11,12 +11,12 @@ import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/
 import { useStore } from 'jotai';
 
 export const useSelectAllRows = (recordTableId?: string) => {
-  const hasUserSelectedAllRowsAtom = useRecoilComponentStateCallbackStateV2(
+  const hasUserSelectedAllRows = useRecoilComponentStateCallbackStateV2(
     hasUserSelectedAllRowsComponentState,
     recordTableId,
   );
 
-  const allRowsSelectedStatusAtom = useRecoilComponentSelectorCallbackStateV2(
+  const allRowsSelectedStatus = useRecoilComponentSelectorCallbackStateV2(
     allRowsSelectedStatusComponentSelector,
     recordTableId,
   );
@@ -26,7 +26,7 @@ export const useSelectAllRows = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const recordIndexAllRecordIdsAtom = useRecoilComponentSelectorCallbackStateV2(
+  const recordIndexAllRecordIds = useRecoilComponentSelectorCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
@@ -36,27 +36,28 @@ export const useSelectAllRows = (recordTableId?: string) => {
   const store = useStore();
 
   const selectAllRows = useCallback(() => {
-    const allRowsSelectedStatus = store.get(allRowsSelectedStatusAtom);
-    const allRecordIds = store.get(recordIndexAllRecordIdsAtom);
+    const currentAllRowsSelectedStatus = store.get(allRowsSelectedStatus);
+    const allRecordIds = store.get(recordIndexAllRecordIds);
 
-    if (allRowsSelectedStatus === 'all') {
+    if (currentAllRowsSelectedStatus === 'all') {
       resetTableRowSelection();
     }
 
     for (const recordId of allRecordIds) {
       const isSelected =
-        allRowsSelectedStatus === 'none' || allRowsSelectedStatus === 'some';
+        currentAllRowsSelectedStatus === 'none' ||
+        currentAllRowsSelectedStatus === 'some';
 
       store.set(isRowSelectedFamilyState(recordId), isSelected);
     }
 
-    store.set(hasUserSelectedAllRowsAtom, true);
+    store.set(hasUserSelectedAllRows, true);
   }, [
-    allRowsSelectedStatusAtom,
-    recordIndexAllRecordIdsAtom,
+    allRowsSelectedStatus,
+    recordIndexAllRecordIds,
     resetTableRowSelection,
     isRowSelectedFamilyState,
-    hasUserSelectedAllRowsAtom,
+    hasUserSelectedAllRows,
     store,
   ]);
 

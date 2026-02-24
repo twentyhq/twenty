@@ -7,7 +7,6 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
@@ -20,6 +19,7 @@ import { useCallback } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { useStore } from 'jotai';
 
 export const useRunWorkflowRecordActions = ({
   objectMetadataItem,
@@ -28,6 +28,7 @@ export const useRunWorkflowRecordActions = ({
   objectMetadataItem: ObjectMetadataItem;
   skip?: boolean;
 }) => {
+  const store = useStore();
   const { getIcon } = useIcons();
   const { enqueueWarningSnackBar } = useSnackBar();
   const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
@@ -88,7 +89,7 @@ export const useRunWorkflowRecordActions = ({
         const objectNamePlural = objectMetadataItem.namePlural;
         const selectedRecords = limitedSelectedRecordIds
           .map((recordId) =>
-            jotaiStore.get(recordStoreFamilyState.atomFamily(recordId)),
+            store.get(recordStoreFamilyState.atomFamily(recordId)),
           )
           .filter(isDefined);
 
@@ -101,7 +102,7 @@ export const useRunWorkflowRecordActions = ({
         });
       } else {
         for (const selectedRecordId of limitedSelectedRecordIds) {
-          const selectedRecord = jotaiStore.get(
+          const selectedRecord = store.get(
             recordStoreFamilyState.atomFamily(selectedRecordId),
           );
 
@@ -117,7 +118,7 @@ export const useRunWorkflowRecordActions = ({
         }
       }
     },
-    [runWorkflowVersion, objectMetadataItem, enqueueWarningSnackBar],
+    [runWorkflowVersion, objectMetadataItem, enqueueWarningSnackBar, store],
   );
 
   return activeWorkflowVersions

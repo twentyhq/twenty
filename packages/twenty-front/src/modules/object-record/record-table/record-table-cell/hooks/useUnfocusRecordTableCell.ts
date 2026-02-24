@@ -17,7 +17,7 @@ export const useUnfocusRecordTableCell = (recordTableId?: string) => {
   );
 
   const store = useStore();
-  const focusPositionAtom = useRecoilComponentStateCallbackStateV2(
+  const focusPosition = useRecoilComponentStateCallbackStateV2(
     recordTableFocusPositionComponentState,
     recordTableIdFromProps,
   );
@@ -29,10 +29,7 @@ export const useUnfocusRecordTableCell = (recordTableId?: string) => {
     useRemoveFocusItemFromFocusStackById();
 
   const unfocusRecordTableCell = useCallback(() => {
-    const currentPosition = store.get(focusPositionAtom) as
-      | { row: number; column: number }
-      | null
-      | undefined;
+    const currentPosition = store.get(focusPosition);
 
     if (!isDefined(currentPosition)) {
       return;
@@ -53,7 +50,7 @@ export const useUnfocusRecordTableCell = (recordTableId?: string) => {
     });
   }, [
     store,
-    focusPositionAtom,
+    focusPosition,
     recordTableIdFromProps,
     removeFocusItemFromFocusStackById,
     setIsRecordTableCellFocusActive,

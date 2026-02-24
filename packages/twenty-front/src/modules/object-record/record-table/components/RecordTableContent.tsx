@@ -78,18 +78,18 @@ export const RecordTableContent = ({
     recordTableId,
   );
 
-  const isSomeCellInEditModeAtom = useRecoilComponentSelectorCallbackStateV2(
+  const isSomeCellInEditMode = useRecoilComponentSelectorCallbackStateV2(
     isSomeCellInEditModeComponentSelector,
     recordTableId,
   );
 
   const handleMouseLeave = useCallback(() => {
-    const isSomeCellInEditMode = store.get(isSomeCellInEditModeAtom);
+    const cellInEditMode = store.get(isSomeCellInEditMode);
 
-    if (!isSomeCellInEditMode) {
+    if (!cellInEditMode) {
       setRecordTableHoverPosition(null);
     }
-  }, [store, isSomeCellInEditModeAtom, setRecordTableHoverPosition]);
+  }, [store, isSomeCellInEditMode, setRecordTableHoverPosition]);
 
   return (
     <StyledTableContainer ref={containerRef}>

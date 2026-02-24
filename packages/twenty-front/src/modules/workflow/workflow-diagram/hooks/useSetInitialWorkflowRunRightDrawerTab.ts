@@ -2,13 +2,14 @@ import { getIsInputTabDisabled } from '@/command-menu/pages/workflow/step/view-r
 import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
+import { useStore } from 'jotai';
 
 export const useSetInitialWorkflowRunRightDrawerTab = () => {
+  const store = useStore();
   const setInitialWorkflowRunRightDrawerTab = useCallback(
     ({
       workflowSelectedNode,
@@ -17,14 +18,14 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
       workflowSelectedNode: string;
       stepExecutionStatus: WorkflowRunStepStatus;
     }) => {
-      const commandMenuPageInfo = jotaiStore.get(commandMenuPageInfoState.atom);
+      const commandMenuPageInfo = store.get(commandMenuPageInfoState.atom);
 
-      const activeTabIdAtom = activeTabIdComponentState.atomFamily({
+      const activeTabId = activeTabIdComponentState.atomFamily({
         instanceId: commandMenuPageInfo.instanceId,
       });
 
-      const activeWorkflowRunRightDrawerTab = jotaiStore.get(
-        activeTabIdAtom,
+      const activeWorkflowRunRightDrawerTab = store.get(
+        activeTabId,
       ) as WorkflowRunTabId | null;
 
       const isInputTabDisabled = getIsInputTabDisabled({
@@ -40,7 +41,7 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
           ? WorkflowRunTabId.NODE
           : WorkflowRunTabId.OUTPUT;
 
-        jotaiStore.set(activeTabIdAtom, defaultTabId);
+        store.set(activeTabId, defaultTabId);
 
         return;
       }
@@ -51,10 +52,10 @@ export const useSetInitialWorkflowRunRightDrawerTab = () => {
         (isOutputTabDisabled &&
           activeWorkflowRunRightDrawerTab === WorkflowRunTabId.OUTPUT)
       ) {
-        jotaiStore.set(activeTabIdAtom, WorkflowRunTabId.NODE);
+        store.set(activeTabId, WorkflowRunTabId.NODE);
       }
     },
-    [],
+    [store],
   );
 
   return {

@@ -1,6 +1,5 @@
 import { type ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
@@ -10,6 +9,7 @@ import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 type OpenActivityTargetCellEditModeProps = {
   recordPickerInstanceId: string;
@@ -18,6 +18,7 @@ type OpenActivityTargetCellEditModeProps = {
 
 // TODO: deprecate this once we are supporting one to many through relations
 export const useOpenActivityTargetCellEditMode = () => {
+  const store = useStore();
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
   const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
@@ -29,7 +30,7 @@ export const useOpenActivityTargetCellEditMode = () => {
       recordPickerInstanceId,
       activityTargetObjectRecords,
     }: OpenActivityTargetCellEditModeProps) => {
-      const objectMetadataItems = jotaiStore
+      const objectMetadataItems = store
         .get(objectMetadataItemsState.atom)
         .filter(
           (objectMetadataItem) =>
@@ -41,7 +42,7 @@ export const useOpenActivityTargetCellEditMode = () => {
               CoreObjectNameSingular.WorkspaceMember,
         );
 
-      jotaiStore.set(
+      store.set(
         multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
           instanceId: recordPickerInstanceId,
         }),
@@ -54,7 +55,7 @@ export const useOpenActivityTargetCellEditMode = () => {
         })),
       );
 
-      jotaiStore.set(
+      store.set(
         multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
           {
             instanceId: recordPickerInstanceId,
@@ -63,7 +64,7 @@ export const useOpenActivityTargetCellEditMode = () => {
         objectMetadataItems,
       );
 
-      jotaiStore.set(
+      store.set(
         multipleRecordPickerSearchFilterComponentState.atomFamily({
           instanceId: recordPickerInstanceId,
         }),
@@ -102,6 +103,7 @@ export const useOpenActivityTargetCellEditMode = () => {
       multipleRecordPickerPerformSearch,
       openMultipleRecordPicker,
       pushFocusItemToFocusStack,
+      store,
     ],
   );
 

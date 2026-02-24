@@ -21,7 +21,6 @@ import {
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
@@ -63,8 +62,10 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { useStore } from 'jotai';
 
 export const useAuth = () => {
+  const store = useStore();
   const setTokenPair = useSetRecoilStateV2(tokenPairState);
   const setLoginToken = useSetRecoilStateV2(loginTokenState);
   const setIsAppEffectRedirectEnabled = useSetRecoilStateV2(
@@ -119,23 +120,19 @@ export const useAuth = () => {
   const navigate = useNavigate();
 
   const clearSession = useCallback(async () => {
-    const sseClient = jotaiStore.get(sseClientState.atom);
+    const sseClient = store.get(sseClientState.atom);
 
     sseClient?.dispose();
 
     const emptySnapshot = snapshot_UNSTABLE();
 
-    const authProvidersValue = jotaiStore.get(workspaceAuthProvidersState.atom);
-    const domainConfigurationValue = jotaiStore.get(
-      domainConfigurationState.atom,
-    );
-    const workspacePublicDataValue = jotaiStore.get(
-      workspacePublicDataState.atom,
-    );
-    const lastAuthenticatedMethod = jotaiStore.get(
+    const authProvidersValue = store.get(workspaceAuthProvidersState.atom);
+    const domainConfigurationValue = store.get(domainConfigurationState.atom);
+    const workspacePublicDataValue = store.get(workspacePublicDataState.atom);
+    const lastAuthenticatedMethod = store.get(
       lastAuthenticatedMethodState.atom,
     );
-    const isCaptchaScriptLoadedValue = jotaiStore.get(
+    const isCaptchaScriptLoadedValue = store.get(
       isCaptchaScriptLoadedState.atom,
     );
 
@@ -148,27 +145,27 @@ export const useAuth = () => {
 
     goToRecoilSnapshot(initialSnapshot);
 
-    jotaiStore.set(workspaceAuthProvidersState.atom, authProvidersValue);
-    jotaiStore.set(workspacePublicDataState.atom, workspacePublicDataValue);
-    jotaiStore.set(domainConfigurationState.atom, domainConfigurationValue);
-    jotaiStore.set(isCaptchaScriptLoadedState.atom, isCaptchaScriptLoadedValue);
-    jotaiStore.set(lastAuthenticatedMethodState.atom, lastAuthenticatedMethod);
+    store.set(workspaceAuthProvidersState.atom, authProvidersValue);
+    store.set(workspacePublicDataState.atom, workspacePublicDataValue);
+    store.set(domainConfigurationState.atom, domainConfigurationValue);
+    store.set(isCaptchaScriptLoadedState.atom, isCaptchaScriptLoadedValue);
+    store.set(lastAuthenticatedMethodState.atom, lastAuthenticatedMethod);
 
     // Reset user-data Jotai states that were migrated from Recoil
     // (Recoil snapshot reset no longer handles these since they are Jotai V2)
-    jotaiStore.set(tokenPairState.atom, null);
-    jotaiStore.set(currentUserState.atom, null);
-    jotaiStore.set(currentWorkspaceState.atom, null);
-    jotaiStore.set(currentUserWorkspaceState.atom, null);
-    jotaiStore.set(currentWorkspaceMemberState.atom, null);
-    jotaiStore.set(currentWorkspaceMembersState.atom, []);
-    jotaiStore.set(availableWorkspacesState.atom, {
+    store.set(tokenPairState.atom, null);
+    store.set(currentUserState.atom, null);
+    store.set(currentWorkspaceState.atom, null);
+    store.set(currentUserWorkspaceState.atom, null);
+    store.set(currentWorkspaceMemberState.atom, null);
+    store.set(currentWorkspaceMembersState.atom, []);
+    store.set(availableWorkspacesState.atom, {
       availableWorkspacesForSignIn: [],
       availableWorkspacesForSignUp: [],
     });
-    jotaiStore.set(loginTokenState.atom, null);
-    jotaiStore.set(signInUpStepState.atom, SignInUpStep.Init);
-    jotaiStore.set(coreViewsState.atom, []);
+    store.set(loginTokenState.atom, null);
+    store.set(signInUpStepState.atom, SignInUpStep.Init);
+    store.set(coreViewsState.atom, []);
 
     await client.clearStore();
     setLastAuthenticateWorkspaceDomain(null);
@@ -180,6 +177,7 @@ export const useAuth = () => {
     setLastAuthenticateWorkspaceDomain,
     resetToMockedMetadata,
     navigate,
+    store,
   ]);
 
   const handleSetAuthTokens = useCallback(

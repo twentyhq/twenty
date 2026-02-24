@@ -2,6 +2,7 @@ import { useCommandMenuUpdateNavigationMorphItemsByPage } from '@/command-menu/h
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { RecoilRoot } from 'recoil';
 
@@ -9,7 +10,9 @@ const pageId = 'merge-page-id';
 const objectMetadataId = 'company-metadata-id';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
+  <JotaiProvider store={jotaiStore}>
+    <RecoilRoot>{children}</RecoilRoot>
+  </JotaiProvider>
 );
 
 const renderHooks = (initialRecordIds: string[]) => {

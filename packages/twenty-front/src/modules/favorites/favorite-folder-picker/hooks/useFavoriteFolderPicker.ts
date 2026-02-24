@@ -26,7 +26,7 @@ export const useFavoriteFolderPicker = ({
   record,
   objectNameSingular,
 }: useFavoriteFolderPickerProps): useFavoriteFolderPickerReturnType => {
-  const favoriteFoldersMultiSelectCheckedAtom =
+  const favoriteFoldersMultiSelectChecked =
     useRecoilComponentStateCallbackStateV2(
       favoriteFolderPickerCheckedComponentState,
     );
@@ -70,7 +70,7 @@ export const useFavoriteFolderPicker = ({
         await deleteFavorite(favoriteToDelete.id);
       };
 
-      const checkedIds = store.get(favoriteFoldersMultiSelectCheckedAtom);
+      const checkedIds = store.get(favoriteFoldersMultiSelectChecked);
 
       const isAlreadyChecked = checkedIds.includes(folderId);
 
@@ -78,7 +78,7 @@ export const useFavoriteFolderPicker = ({
         await deleteFavoriteForRecord(folderId === 'no-folder');
 
         const newCheckedIds = checkedIds.filter((id) => id !== folderId);
-        store.set(favoriteFoldersMultiSelectCheckedAtom, newCheckedIds);
+        store.set(favoriteFoldersMultiSelectChecked, newCheckedIds);
         return;
       }
 
@@ -89,10 +89,10 @@ export const useFavoriteFolderPicker = ({
       }
 
       const newCheckedIds = [...checkedIds, folderId];
-      store.set(favoriteFoldersMultiSelectCheckedAtom, newCheckedIds);
+      store.set(favoriteFoldersMultiSelectChecked, newCheckedIds);
     },
     [
-      favoriteFoldersMultiSelectCheckedAtom,
+      favoriteFoldersMultiSelectChecked,
       createFavorite,
       deleteFavorite,
       favorites,

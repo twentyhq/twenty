@@ -3,7 +3,6 @@ import { useStore } from 'jotai';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -21,7 +20,7 @@ export const useClearField = () => {
   const [updateRecord] = useUpdateRecord();
 
   const clearField = useCallback(() => {
-    const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+    const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
     const foundObjectMetadataItem = objectMetadataItems.find(
       (item) =>

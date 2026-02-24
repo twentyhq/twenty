@@ -1,19 +1,20 @@
 import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useSetLastVisitedObjectMetadataId = () => {
+  const store = useStore();
   const setLastVisitedObjectMetadataId = useCallback(
     ({ objectMetadataItemId }: { objectMetadataItemId: string }) => {
-      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.id === objectMetadataItemId,
       );
 
-      const lastVisitedObjectMetadataItemId = jotaiStore.get(
+      const lastVisitedObjectMetadataItemId = store.get(
         lastVisitedObjectMetadataItemIdState.atom,
       );
 
@@ -21,13 +22,13 @@ export const useSetLastVisitedObjectMetadataId = () => {
         isDefined(objectMetadataItem) &&
         lastVisitedObjectMetadataItemId !== objectMetadataItemId
       ) {
-        jotaiStore.set(
+        store.set(
           lastVisitedObjectMetadataItemIdState.atom,
           objectMetadataItemId,
         );
       }
     },
-    [],
+    [store],
   );
 
   return {

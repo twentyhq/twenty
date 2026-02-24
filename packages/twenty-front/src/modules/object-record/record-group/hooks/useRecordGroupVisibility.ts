@@ -12,7 +12,7 @@ import { useCallback } from 'react';
 export const useRecordGroupVisibility = () => {
   const store = useStore();
 
-  const recordIndexShouldHideEmptyRecordGroupsAtom =
+  const recordIndexShouldHideEmptyRecordGroups =
     useRecoilComponentStateCallbackStateV2(
       recordIndexShouldHideEmptyRecordGroupsComponentState,
     );
@@ -33,18 +33,16 @@ export const useRecordGroupVisibility = () => {
   );
 
   const handleHideEmptyRecordGroupChange = useCallback(async () => {
-    const currentHideState = store.get(
-      recordIndexShouldHideEmptyRecordGroupsAtom,
-    );
+    const currentHideState = store.get(recordIndexShouldHideEmptyRecordGroups);
 
     const newHideState = !currentHideState;
 
-    store.set(recordIndexShouldHideEmptyRecordGroupsAtom, newHideState);
+    store.set(recordIndexShouldHideEmptyRecordGroups, newHideState);
 
     await updateCurrentView({
       shouldHideEmptyGroups: newHideState,
     });
-  }, [store, recordIndexShouldHideEmptyRecordGroupsAtom, updateCurrentView]);
+  }, [store, recordIndexShouldHideEmptyRecordGroups, updateCurrentView]);
 
   return {
     handleVisibilityChange,

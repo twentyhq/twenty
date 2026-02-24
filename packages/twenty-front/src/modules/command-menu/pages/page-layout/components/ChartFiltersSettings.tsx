@@ -49,12 +49,12 @@ export const ChartFiltersSettings = ({
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  const currentRecordFiltersAtom = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilters = useRecoilComponentStateCallbackStateV2(
     currentRecordFiltersComponentState,
     instanceId,
   );
 
-  const currentRecordFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilterGroups = useRecoilComponentStateCallbackStateV2(
     currentRecordFilterGroupsComponentState,
     instanceId,
   );
@@ -63,15 +63,15 @@ export const ChartFiltersSettings = ({
   const chartWidgetConfiguration = widget.configuration;
 
   const handleFiltersUpdate = () => {
-    const currentRecordFilters = store.get(currentRecordFiltersAtom);
-    const currentRecordFilterGroups = store.get(currentRecordFilterGroupsAtom);
+    const existingRecordFilters = store.get(currentRecordFilters);
+    const existingRecordFilterGroups = store.get(currentRecordFilterGroups);
 
     updateCurrentWidgetConfig({
       objectMetadataId: objectMetadataItem.id,
       configToUpdate: {
         filter: {
-          recordFilters: currentRecordFilters,
-          recordFilterGroups: currentRecordFilterGroups,
+          recordFilters: existingRecordFilters,
+          recordFilterGroups: existingRecordFilterGroups,
         },
       } satisfies Partial<ChartWidgetConfiguration>,
     });

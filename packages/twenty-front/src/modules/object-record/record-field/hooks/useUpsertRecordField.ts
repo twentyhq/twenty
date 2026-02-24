@@ -1,32 +1,33 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useUpsertRecordField = (recordTableId?: string) => {
-  const currentRecordFieldsAtom = useRecoilComponentStateCallbackStateV2(
+  const store = useStore();
+  const currentRecordFields = useRecoilComponentStateCallbackStateV2(
     currentRecordFieldsComponentState,
     recordTableId,
   );
 
   const upsertRecordField = useCallback(
     (recordFieldToUpsert: RecordField) => {
-      const currentRecordFields = jotaiStore.get(currentRecordFieldsAtom);
+      const existingRecordFields = store.get(currentRecordFields);
 
-      const foundRecordFieldInCurrentRecordFields = currentRecordFields.some(
+      const foundRecordFieldInCurrentRecordFields = existingRecordFields.some(
         (existingRecordField) =>
           existingRecordField.id === recordFieldToUpsert.id,
       );
 
       if (!foundRecordFieldInCurrentRecordFields) {
-        jotaiStore.set(currentRecordFieldsAtom, [
-          ...currentRecordFields,
+        store.set(currentRecordFields, [
+          ...existingRecordFields,
           recordFieldToUpsert,
         ]);
       } else {
-        jotaiStore.set(currentRecordFieldsAtom, (currentRecordFields) => {
-          const newCurrentRecordFields = [...currentRecordFields];
+        store.set(currentRecordFields, (previousRecordFields) => {
+          const newCurrentRecordFields = [...previousRecordFields];
 
           const indexOfRecordFieldToUpdate = newCurrentRecordFields.findIndex(
             (existingRecordField) =>
@@ -41,7 +42,7 @@ export const useUpsertRecordField = (recordTableId?: string) => {
         });
       }
     },
-    [currentRecordFieldsAtom],
+    [currentRecordFields, store],
   );
 
   return {

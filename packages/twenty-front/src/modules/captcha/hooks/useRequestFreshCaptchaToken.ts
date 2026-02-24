@@ -3,12 +3,13 @@ import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCapt
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { captchaState } from '@/client-config/states/captchaState';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
+import { useStore } from 'jotai';
 
 export const useRequestFreshCaptchaToken = () => {
+  const store = useStore();
   const setCaptchaToken = useSetRecoilStateV2(captchaTokenState);
   const setIsRequestingCaptchaToken = useSetRecoilStateV2(
     isRequestingCaptchaTokenState,
@@ -19,7 +20,7 @@ export const useRequestFreshCaptchaToken = () => {
       return;
     }
 
-    const captcha = jotaiStore.get(captchaState.atom);
+    const captcha = store.get(captchaState.atom);
 
     if (!isDefined(captcha)) {
       return;
@@ -52,7 +53,7 @@ export const useRequestFreshCaptchaToken = () => {
           },
         });
     }
-  }, [setCaptchaToken, setIsRequestingCaptchaToken]);
+  }, [setCaptchaToken, setIsRequestingCaptchaToken, store]);
 
   return { requestFreshCaptchaToken };
 };

@@ -1,10 +1,11 @@
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
 import { type IconComponent, IconDotsVertical } from 'twenty-ui/display';
+import { useStore } from 'jotai';
 
 export const useUpdateCommandMenuPageInfo = () => {
+  const store = useStore();
   const updateCommandMenuPageInfo = useCallback(
     ({
       pageTitle,
@@ -13,7 +14,7 @@ export const useUpdateCommandMenuPageInfo = () => {
       pageTitle?: string;
       pageIcon?: IconComponent;
     }) => {
-      const commandMenuPageInfo = jotaiStore.get(commandMenuPageInfoState.atom);
+      const commandMenuPageInfo = store.get(commandMenuPageInfoState.atom);
 
       const newCommandMenuPageInfo = {
         ...commandMenuPageInfo,
@@ -21,9 +22,9 @@ export const useUpdateCommandMenuPageInfo = () => {
         Icon: pageIcon ?? commandMenuPageInfo.Icon ?? IconDotsVertical,
       };
 
-      jotaiStore.set(commandMenuPageInfoState.atom, newCommandMenuPageInfo);
+      store.set(commandMenuPageInfoState.atom, newCommandMenuPageInfo);
 
-      const commandMenuNavigationStack = jotaiStore.get(
+      const commandMenuNavigationStack = store.get(
         commandMenuNavigationStackState.atom,
       );
 
@@ -44,12 +45,12 @@ export const useUpdateCommandMenuPageInfo = () => {
         },
       ];
 
-      jotaiStore.set(
+      store.set(
         commandMenuNavigationStackState.atom,
         newCommandMenuNavigationStack,
       );
     },
-    [],
+    [store],
   );
 
   return {

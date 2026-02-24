@@ -26,7 +26,7 @@ import {
   Section,
 } from 'twenty-ui/layout';
 import { type TimelineCalendarEventsWithTotal } from '~/generated/graphql';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -49,7 +49,7 @@ const StyledTitleContainer = styled.div`
 export const CalendarEventsCard = () => {
   const { t } = useLingui();
   const targetRecord = useTargetRecord();
-  const { localeCatalog } = useRecoilValueV2(dateLocaleStateV2);
+  const { localeCatalog } = useRecoilValueV2(dateLocaleState);
 
   const [query, queryName] =
     targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Person

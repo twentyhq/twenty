@@ -9,7 +9,6 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -48,7 +47,7 @@ export const useOpenRecordFromIndexView = () => {
 
   const openRecordFromIndexView = useCallback(
     ({ recordId }: { recordId: string }) => {
-      const recordIndexOpenRecordIn = jotaiStore.get(
+      const recordIndexOpenRecordIn = store.get(
         recordIndexOpenRecordInState.atom,
       );
 

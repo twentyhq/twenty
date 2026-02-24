@@ -21,17 +21,18 @@ import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/ho
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useStore } from 'jotai';
 
 export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
 }: {
   objectMetadataItem?: ObjectMetadataItem;
 }): ShouldBeRegisteredFunctionParams => {
+  const store = useStore();
   const { sortedFavorites: favorites } = useFavorites();
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
@@ -119,24 +120,24 @@ export const useShouldActionBeRegisteredParams = ({
 
   const getObjectReadPermission = useCallback(
     (objectMetadataNameSingular: string) => {
-      return jotaiStore.get(
+      return store.get(
         objectPermissionsFamilySelector.selectorFamily({
           objectNameSingular: objectMetadataNameSingular,
         }),
       ).canRead;
     },
-    [],
+    [store],
   );
 
   const getObjectWritePermission = useCallback(
     (objectMetadataNameSingular: string) => {
-      return jotaiStore.get(
+      return store.get(
         objectPermissionsFamilySelector.selectorFamily({
           objectNameSingular: objectMetadataNameSingular,
         }),
       ).canUpdate;
     },
-    [],
+    [store],
   );
 
   const forceRegisteredActionsByKey = useRecoilValueV2(

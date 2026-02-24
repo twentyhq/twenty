@@ -14,7 +14,7 @@ export const useMoveHoverToCurrentCell = (recordTableId: string) => {
     recordTableId,
   );
 
-  const isSomeCellInEditModeAtom = useRecoilComponentSelectorCallbackStateV2(
+  const isSomeCellInEditMode = useRecoilComponentSelectorCallbackStateV2(
     isSomeCellInEditModeComponentSelector,
     recordTableId,
   );
@@ -23,13 +23,13 @@ export const useMoveHoverToCurrentCell = (recordTableId: string) => {
 
   const moveHoverToCurrentCell = useCallback(
     (cellPosition: TableCellPosition) => {
-      const isSomeCellInEditMode = store.get(isSomeCellInEditModeAtom);
+      const cellInEditMode = store.get(isSomeCellInEditMode);
 
-      if (!isSomeCellInEditMode) {
+      if (!cellInEditMode) {
         setHoverPosition(cellPosition);
       }
     },
-    [store, isSomeCellInEditModeAtom, setHoverPosition],
+    [store, isSomeCellInEditMode, setHoverPosition],
   );
 
   return { moveHoverToCurrentCell };

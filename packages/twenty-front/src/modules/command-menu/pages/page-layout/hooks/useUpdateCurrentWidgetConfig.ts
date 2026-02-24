@@ -7,7 +7,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
-  const pageLayoutDraftAtom = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraft = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraftComponentState,
     pageLayoutIdFromProps,
   );
@@ -27,8 +27,8 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
       objectMetadataId?: string | null;
       configToUpdate?: Partial<PageLayoutWidget['configuration']>;
     }) => {
-      const prev = store.get(pageLayoutDraftAtom);
-      store.set(pageLayoutDraftAtom, {
+      const prev = store.get(pageLayoutDraft);
+      store.set(pageLayoutDraft, {
         ...prev,
         tabs: prev.tabs.map((tab) => ({
           ...tab,
@@ -47,7 +47,7 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
         })),
       });
     },
-    [pageLayoutDraftAtom, currentlyEditingWidgetId, store],
+    [pageLayoutDraft, currentlyEditingWidgetId, store],
   );
 
   return { updateCurrentWidgetConfig };

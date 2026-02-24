@@ -50,15 +50,15 @@ export const useSetRecordGroups = () => {
             (field) => field.id === fieldMetadataId,
           )
         : undefined;
-      const recordIndexGroupFieldMetadataAtom =
+      const recordIndexGroupFieldMetadata =
         recordIndexGroupFieldMetadataItemComponentState.atomFamily({
           instanceId: recordIndexId,
         });
-      const currentFieldMetadata = store.get(recordIndexGroupFieldMetadataAtom);
+      const currentFieldMetadata = store.get(recordIndexGroupFieldMetadata);
 
       // Set the field metadata linked to the record groups
       if (!isDeeplyEqual(fieldMetadata, currentFieldMetadata)) {
-        store.set(recordIndexGroupFieldMetadataAtom, fieldMetadata);
+        store.set(recordIndexGroupFieldMetadata, fieldMetadata);
       }
 
       // Set the record groups by id

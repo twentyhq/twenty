@@ -3,11 +3,12 @@ import { useCallback } from 'react';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
 
 export const useUpsertObjectFilterDropdownCurrentFilter = () => {
-  const objectFilterDropdownCurrentRecordFilterAtom =
+  const store = useStore();
+  const objectFilterDropdownCurrentRecordFilter =
     useRecoilComponentStateCallbackStateV2(
       objectFilterDropdownCurrentRecordFilterComponentState,
     );
@@ -18,12 +19,9 @@ export const useUpsertObjectFilterDropdownCurrentFilter = () => {
     (recordFilterToUpsert: RecordFilter) => {
       upsertRecordFilter(recordFilterToUpsert);
 
-      jotaiStore.set(
-        objectFilterDropdownCurrentRecordFilterAtom,
-        recordFilterToUpsert,
-      );
+      store.set(objectFilterDropdownCurrentRecordFilter, recordFilterToUpsert);
     },
-    [objectFilterDropdownCurrentRecordFilterAtom, upsertRecordFilter],
+    [objectFilterDropdownCurrentRecordFilter, upsertRecordFilter, store],
   );
 
   return {

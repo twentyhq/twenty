@@ -4,7 +4,6 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { getFilterableFields } from '@/views/utils/getFilterableFields';
@@ -15,8 +14,10 @@ import { useCallback } from 'react';
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 import { useFindManyCoreViewsLazyQuery } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useStore } from 'jotai';
 
 export const useRefreshCoreViewsByObjectMetadataId = () => {
+  const store = useStore();
   const [findManyCoreViewsLazy] = useFindManyCoreViewsLazyQuery();
 
   const refreshCoreViewsByObjectMetadataId = useCallback(
@@ -32,7 +33,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
         return;
       }
 
-      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
       const objectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) => objectMetadataItem.id === objectMetadataId,
@@ -42,7 +43,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
         return;
       }
 
-      const coreViewsForObjectMetadataId = jotaiStore.get(
+      const coreViewsForObjectMetadataId = store.get(
         coreViewsByObjectMetadataIdFamilySelector.selectorFamily(
           objectMetadataId,
         ),
@@ -54,7 +55,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
         return;
       }
 
-      jotaiStore.set(
+      store.set(
         coreViewsByObjectMetadataIdFamilySelector.selectorFamily(
           objectMetadataId,
         ),
@@ -80,7 +81,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           )
         ) {
           const view = convertCoreViewToView(coreView);
-          jotaiStore.set(
+          store.set(
             currentRecordFieldsComponentState.atomFamily({
               instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
                 objectMetadataItem.namePlural,
@@ -105,7 +106,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           )
         ) {
           const view = convertCoreViewToView(coreView);
-          jotaiStore.set(
+          store.set(
             currentRecordFiltersComponentState.atomFamily({
               instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
                 objectMetadataItem.namePlural,
@@ -121,7 +122,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
 
         if (!isDeeplyEqual(coreView.viewSorts, existingView.viewSorts)) {
           const view = convertCoreViewToView(coreView);
-          jotaiStore.set(
+          store.set(
             currentRecordSortsComponentState.atomFamily({
               instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
                 objectMetadataItem.namePlural,
@@ -136,7 +137,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           coreView.shouldHideEmptyGroups !== existingView.shouldHideEmptyGroups
         ) {
           const view = convertCoreViewToView(coreView);
-          jotaiStore.set(
+          store.set(
             recordIndexShouldHideEmptyRecordGroupsComponentState.atomFamily({
               instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
                 objectMetadataItem.namePlural,
@@ -148,7 +149,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
         }
       }
     },
-    [findManyCoreViewsLazy],
+    [findManyCoreViewsLazy, store],
   );
 
   return {

@@ -7,7 +7,7 @@ import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveRecordFilter = () => {
-  const currentRecordFiltersAtom = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilters = useRecoilComponentStateCallbackStateV2(
     currentRecordFiltersComponentState,
   );
 
@@ -16,11 +16,11 @@ export const useRemoveRecordFilter = () => {
 
   const removeRecordFilterCallback = useCallback(
     ({ recordFilterId }: { recordFilterId: string }) => {
-      const currentRecordFilters = store.get(
-        currentRecordFiltersAtom,
+      const existingRecordFilters = store.get(
+        currentRecordFilters,
       ) as RecordFilter[];
 
-      const filterToRemove = currentRecordFilters.find(
+      const filterToRemove = existingRecordFilters.find(
         (existingFilter) => existingFilter.id === recordFilterId,
       );
 
@@ -29,9 +29,9 @@ export const useRemoveRecordFilter = () => {
       }
 
       store.set(
-        currentRecordFiltersAtom,
-        (currentRecordFilters: RecordFilter[]) => {
-          const newCurrentRecordFilters = [...currentRecordFilters];
+        currentRecordFilters,
+        (previousRecordFilters: RecordFilter[]) => {
+          const newCurrentRecordFilters = [...previousRecordFilters];
 
           const indexOfFilterToRemove = newCurrentRecordFilters.findIndex(
             (existingFilter) => existingFilter.id === recordFilterId,
@@ -43,7 +43,7 @@ export const useRemoveRecordFilter = () => {
         },
       );
     },
-    [currentRecordFiltersAtom, store],
+    [currentRecordFilters, store],
   );
 
   const removeRecordFilter = ({

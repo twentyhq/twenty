@@ -40,19 +40,18 @@ export const WorkflowRunVisualizerEffect = ({
     workflowVisualizerWorkflowVersionIdComponentState,
   );
 
-  const workflowVisualizerWorkflowIdAtom =
-    useRecoilComponentStateCallbackStateV2(
-      workflowVisualizerWorkflowIdComponentState,
-    );
+  const workflowVisualizerWorkflowId = useRecoilComponentStateCallbackStateV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
   const setWorkflowVisualizerWorkflowId = useSetRecoilComponentStateV2(
     workflowVisualizerWorkflowIdComponentState,
   );
 
-  const flowAtom = useRecoilComponentStateCallbackStateV2(flowComponentState);
-  const workflowDiagramAtom = useRecoilComponentStateCallbackStateV2(
+  const flow = useRecoilComponentStateCallbackStateV2(flowComponentState);
+  const workflowDiagram = useRecoilComponentStateCallbackStateV2(
     workflowDiagramComponentState,
   );
-  const workflowSelectedNodeAtom = useRecoilComponentStateCallbackStateV2(
+  const workflowSelectedNode = useRecoilComponentStateCallbackStateV2(
     workflowSelectedNodeComponentState,
   );
 
@@ -103,8 +102,8 @@ export const WorkflowRunVisualizerEffect = ({
       isInRightDrawer: boolean;
     }) => {
       if (!(isDefined(workflowRunState) && isDefined(versionId))) {
-        store.set(flowAtom, undefined);
-        store.set(workflowDiagramAtom, undefined);
+        store.set(flow, undefined);
+        store.set(workflowDiagram, undefined);
 
         return;
       }
@@ -115,7 +114,7 @@ export const WorkflowRunVisualizerEffect = ({
         store.set(workflowDiagramStatusState, 'computing-diagram');
       }
 
-      store.set(flowAtom, {
+      store.set(flow, {
         workflowVersionId: versionId,
         trigger: workflowRunState.flow.trigger,
         steps: workflowRunState.flow.steps,
@@ -133,7 +132,7 @@ export const WorkflowRunVisualizerEffect = ({
       }
 
       if (!isDefined(stepToOpenByDefault)) {
-        store.set(workflowDiagramAtom, baseWorkflowRunDiagram);
+        store.set(workflowDiagram, baseWorkflowRunDiagram);
 
         return;
       }
@@ -148,31 +147,31 @@ export const WorkflowRunVisualizerEffect = ({
             step.isInRightDrawer === inRightDrawer,
         );
 
-      const workflowVisualizerWorkflowId = store.get(
-        workflowVisualizerWorkflowIdAtom,
+      const currentWorkflowVisualizerWorkflowId = store.get(
+        workflowVisualizerWorkflowId,
       );
-      if (!isDefined(workflowVisualizerWorkflowId)) {
+      if (!isDefined(currentWorkflowVisualizerWorkflowId)) {
         throw new Error(
           'The workflow id must be set; ensure the workflow id is always set before rendering the workflow diagram.',
         );
       }
 
       if (inRightDrawer) {
-        store.set(workflowDiagramAtom, baseWorkflowRunDiagram);
+        store.set(workflowDiagram, baseWorkflowRunDiagram);
       } else {
         const workflowRunDiagram = selectWorkflowDiagramNode({
           diagram: baseWorkflowRunDiagram,
           nodeIdToSelect: stepToOpenByDefault.id,
         });
 
-        store.set(workflowDiagramAtom, workflowRunDiagram);
+        store.set(workflowDiagram, workflowRunDiagram);
       }
 
       if (hasStepAlreadyBeenOpenedAutomatically) {
         return;
       }
 
-      store.set(workflowSelectedNodeAtom, stepToOpenByDefault.id);
+      store.set(workflowSelectedNode, stepToOpenByDefault.id);
 
       store.set(workflowRunDiagramAutomaticallyOpenedStepsState, [
         ...workflowRunDiagramAutomaticallyOpenedSteps,
@@ -183,7 +182,7 @@ export const WorkflowRunVisualizerEffect = ({
       ]);
 
       openWorkflowRunViewStepInCommandMenu({
-        workflowId: workflowVisualizerWorkflowId,
+        workflowId: currentWorkflowVisualizerWorkflowId,
         workflowRunId,
         title: stepToOpenByDefault.data.name,
         icon: getIcon(getWorkflowNodeIconKey(stepToOpenByDefault.data)),
@@ -192,15 +191,15 @@ export const WorkflowRunVisualizerEffect = ({
       });
     },
     [
-      flowAtom,
+      flow,
       getIcon,
       openWorkflowRunViewStepInCommandMenu,
-      workflowDiagramAtom,
+      workflowDiagram,
       workflowDiagramStatusState,
       workflowRunDiagramAutomaticallyOpenedStepsState,
       workflowRunId,
-      workflowSelectedNodeAtom,
-      workflowVisualizerWorkflowIdAtom,
+      workflowSelectedNode,
+      workflowVisualizerWorkflowId,
       store,
     ],
   );

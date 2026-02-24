@@ -16,8 +16,8 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
@@ -28,6 +28,7 @@ export const MultipleRecordPickerMenuItems = ({
   onChange,
   focusId,
 }: MultipleRecordPickerMenuItemsProps) => {
+  const store = useStore();
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
@@ -40,7 +41,7 @@ export const MultipleRecordPickerMenuItems = ({
     componentInstanceId,
   );
 
-  const multipleRecordPickerPickableMorphItemsAtom =
+  const multipleRecordPickerPickableMorphItems =
     useRecoilComponentStateCallbackStateV2(
       multipleRecordPickerPickableMorphItemsComponentState,
       componentInstanceId,
@@ -48,8 +49,8 @@ export const MultipleRecordPickerMenuItems = ({
 
   const handleChange = useCallback(
     (morphItem: RecordPickerPickableMorphItem) => {
-      const previousMorphItems = jotaiStore.get(
-        multipleRecordPickerPickableMorphItemsAtom,
+      const previousMorphItems = store.get(
+        multipleRecordPickerPickableMorphItems,
       );
 
       const existingMorphItemIndex = previousMorphItems.findIndex(
@@ -64,9 +65,9 @@ export const MultipleRecordPickerMenuItems = ({
         newMorphItems[existingMorphItemIndex] = morphItem;
       }
 
-      jotaiStore.set(multipleRecordPickerPickableMorphItemsAtom, newMorphItems);
+      store.set(multipleRecordPickerPickableMorphItems, newMorphItems);
     },
-    [multipleRecordPickerPickableMorphItemsAtom],
+    [multipleRecordPickerPickableMorphItems, store],
   );
 
   const multipleRecordPickerShouldShowInitialLoading =

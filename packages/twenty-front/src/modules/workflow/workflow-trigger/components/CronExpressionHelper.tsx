@@ -9,7 +9,7 @@ import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValu
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { CronExpressionParser } from 'cron-parser';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
 const getNextExecutions = (
@@ -93,7 +93,7 @@ export const CronExpressionHelper = ({
   isUpcomingExecutionVisible = true,
 }: CronExpressionHelperProps) => {
   const { timeZone, dateFormat, timeFormat } = useDateTimeFormat();
-  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
+  const dateLocale = useRecoilValueV2(dateLocaleState);
 
   if (!isVisible) {
     return null;

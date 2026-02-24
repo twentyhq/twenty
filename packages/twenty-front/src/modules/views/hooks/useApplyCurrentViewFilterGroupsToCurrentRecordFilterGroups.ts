@@ -20,10 +20,9 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
       currentRecordFilterGroupsComponentState,
     );
 
-    const currentRecordFilterGroupsAtom =
-      useRecoilComponentStateCallbackStateV2(
-        currentRecordFilterGroupsComponentState,
-      );
+    const currentRecordFilterGroups = useRecoilComponentStateCallbackStateV2(
+      currentRecordFilterGroupsComponentState,
+    );
 
     const store = useStore();
 
@@ -36,8 +35,8 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
         );
 
         if (isDefined(currentView)) {
-          const currentRecordFilterGroups = store.get(
-            currentRecordFilterGroupsAtom,
+          const existingRecordFilterGroups = store.get(
+            currentRecordFilterGroups,
           );
 
           const newRecordFilterGroups = mapViewFilterGroupsToRecordFilterGroups(
@@ -45,7 +44,7 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
           );
 
           if (
-            !isDeeplyEqual(currentRecordFilterGroups, newRecordFilterGroups)
+            !isDeeplyEqual(existingRecordFilterGroups, newRecordFilterGroups)
           ) {
             setCurrentRecordFilterGroups(newRecordFilterGroups);
           }
@@ -53,7 +52,7 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
       }, [
         currentViewId,
         setCurrentRecordFilterGroups,
-        currentRecordFilterGroupsAtom,
+        currentRecordFilterGroups,
         store,
       ]);
 

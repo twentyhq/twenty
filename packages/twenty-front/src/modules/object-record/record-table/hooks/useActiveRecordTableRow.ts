@@ -21,10 +21,7 @@ export const useActiveRecordTableRow = (recordTableId?: string) => {
   const store = useStore();
 
   const deactivateRecordTableRow = useCallback(() => {
-    const activeRowIndex = store.get(activeRowIndexState) as
-      | number
-      | null
-      | undefined;
+    const activeRowIndex = store.get(activeRowIndexState);
 
     if (!isDefined(activeRowIndex)) {
       return;
@@ -37,10 +34,7 @@ export const useActiveRecordTableRow = (recordTableId?: string) => {
 
   const activateRecordTableRow = useCallback(
     (rowIndex: number) => {
-      const activeRowIndex = store.get(activeRowIndexState) as
-        | number
-        | null
-        | undefined;
+      const activeRowIndex = store.get(activeRowIndexState);
 
       if (activeRowIndex === rowIndex) {
         return;

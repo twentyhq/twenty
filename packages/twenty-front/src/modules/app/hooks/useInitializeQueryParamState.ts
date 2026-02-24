@@ -3,16 +3,17 @@ import { useCallback } from 'react';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import deepEqual from 'deep-equal';
+import { useStore } from 'jotai';
 
 // Initialize state that are hydrated from query parameters
 // We used to use recoil-sync to do this, but it was causing issues with Firefox
 export const useInitializeQueryParamState = () => {
+  const store = useStore();
   const initializeQueryParamState = useCallback(() => {
     const handlers = {
       billingCheckoutSession: (value: string) => {
-        const billingCheckoutSession = jotaiStore.get(
+        const billingCheckoutSession = store.get(
           billingCheckoutSessionState.atom,
         );
 
@@ -27,7 +28,7 @@ export const useInitializeQueryParamState = () => {
             'requirePaymentMethod' in parsedValue &&
             !deepEqual(billingCheckoutSession, parsedValue)
           ) {
-            jotaiStore.set(
+            store.set(
               billingCheckoutSessionState.atom,
               parsedValue as BillingCheckoutSession,
             );
@@ -38,7 +39,7 @@ export const useInitializeQueryParamState = () => {
             'Failed to parse billingCheckoutSession from URL',
             error,
           );
-          jotaiStore.set(
+          store.set(
             billingCheckoutSessionState.atom,
             BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
           );
@@ -54,7 +55,7 @@ export const useInitializeQueryParamState = () => {
         handler(value);
       }
     }
-  }, []);
+  }, [store]);
 
   return { initializeQueryParamState };
 };

@@ -23,15 +23,16 @@ import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useOpenFieldWidgetFieldInputEditMode = () => {
+  const store = useStore();
   const { openRelationToOneFieldInput } = useOpenRelationToOneFieldInput();
   const { openRelationFromManyFieldInput } =
     useOpenRelationFromManyFieldInput();
@@ -65,20 +66,16 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
           fieldDefinition.metadata.relationObjectMetadataNameSingular,
         )
       ) {
-        const fieldValue = jotaiStore.get(
+        const fieldValue = store.get(
           recordStoreFamilySelectorV2.selectorFamily({
             recordId,
             fieldName: fieldDefinition.metadata.fieldName,
           }),
         ) as FieldRelationValue<FieldRelationFromManyValue>;
 
-        const activity = jotaiStore.get(
-          recordStoreFamilyState.atomFamily(recordId),
-        );
+        const activity = store.get(recordStoreFamilyState.atomFamily(recordId));
 
-        const objectMetadataItems = jotaiStore.get(
-          objectMetadataItemsState.atom,
-        );
+        const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
         const activityTargetObjectRecords = getActivityTargetObjectRecords({
           activityRecord: activity as Task | Note,
@@ -159,6 +156,7 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
       openRelationFromManyFieldInput,
       openRelationToOneFieldInput,
       pushFocusItemToFocusStack,
+      store,
     ],
   );
 

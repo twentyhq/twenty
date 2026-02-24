@@ -50,13 +50,12 @@ export const useTriggerInitialRecordTableDataLoad = () => {
     dataPagesLoadedComponentState,
   );
 
-  const isRecordTableInitialLoadingAtom =
-    useRecoilComponentStateCallbackStateV2(
-      isRecordTableInitialLoadingComponentState,
-      recordTableId,
-    );
+  const isRecordTableInitialLoading = useRecoilComponentStateCallbackStateV2(
+    isRecordTableInitialLoadingComponentState,
+    recordTableId,
+  );
 
-  const recordIndexAllRecordIdsAtom = useRecoilComponentSelectorCallbackStateV2(
+  const recordIndexAllRecordIds = useRecoilComponentSelectorCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
@@ -134,7 +133,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         'hidden',
       );
 
-      const currentRecordIds = store.get(recordIndexAllRecordIdsAtom);
+      const currentRecordIds = store.get(recordIndexAllRecordIds);
 
       let records: ObjectRecord[] | null = null;
       let totalCount = 0;
@@ -184,7 +183,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       store.set(dataPagesLoadedCallbackState, []);
 
       store.set(isInitializingVirtualTableDataLoadingCallbackState, false);
-      store.set(isRecordTableInitialLoadingAtom, false);
+      store.set(isRecordTableInitialLoading, false);
 
       store.set(lastScrollPositionCallbackState, 0);
       store.set(lastRealIndexSetCallbackState, null);
@@ -205,11 +204,11 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       isInitializingVirtualTableDataLoadingCallbackState,
       resetTableFocuses,
       resetVirtualizedRowTreadmill,
-      recordIndexAllRecordIdsAtom,
+      recordIndexAllRecordIds,
       store,
       showAuthModal,
       dataPagesLoadedCallbackState,
-      isRecordTableInitialLoadingAtom,
+      isRecordTableInitialLoading,
       lastScrollPositionCallbackState,
       lastRealIndexSetCallbackState,
       scrollAtRealIndexCallbackState,

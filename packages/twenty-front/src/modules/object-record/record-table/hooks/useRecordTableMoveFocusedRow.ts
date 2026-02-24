@@ -11,12 +11,12 @@ import { isDefined } from 'twenty-shared/utils';
 export const useRecordTableMoveFocusedRow = (recordTableId?: string) => {
   const { focusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
-  const focusedRowIndexAtom = useRecoilComponentStateCallbackStateV2(
+  const focusedRowIndex = useRecoilComponentStateCallbackStateV2(
     focusedRecordTableRowIndexComponentState,
     recordTableId,
   );
 
-  const recordIndexAllRecordIdsAtom = useRecoilComponentSelectorCallbackStateV2(
+  const recordIndexAllRecordIds = useRecoilComponentSelectorCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
@@ -24,50 +24,39 @@ export const useRecordTableMoveFocusedRow = (recordTableId?: string) => {
   const store = useStore();
 
   const moveFocusedRowUp = useCallback(() => {
-    const focusedRowIndex = store.get(focusedRowIndexAtom) as
-      | number
-      | null
-      | undefined;
+    const currentFocusedRowIndex = store.get(focusedRowIndex);
 
-    if (!isDefined(focusedRowIndex)) {
+    if (!isDefined(currentFocusedRowIndex)) {
       focusRecordTableRow(0);
       return;
     }
 
-    let newRowIndex = focusedRowIndex - 1;
+    let newRowIndex = currentFocusedRowIndex - 1;
 
     if (newRowIndex < 0) {
       newRowIndex = 0;
     }
 
     focusRecordTableRow(newRowIndex);
-  }, [store, focusedRowIndexAtom, focusRecordTableRow]);
+  }, [store, focusedRowIndex, focusRecordTableRow]);
 
   const moveFocusedRowDown = useCallback(() => {
-    const allRecordIds = store.get(recordIndexAllRecordIdsAtom);
-    const focusedRowIndex = store.get(focusedRowIndexAtom) as
-      | number
-      | null
-      | undefined;
+    const allRecordIds = store.get(recordIndexAllRecordIds);
+    const currentFocusedRowIndex = store.get(focusedRowIndex);
 
-    if (!isDefined(focusedRowIndex)) {
+    if (!isDefined(currentFocusedRowIndex)) {
       focusRecordTableRow(0);
       return;
     }
 
-    let newRowIndex = focusedRowIndex + 1;
+    let newRowIndex = currentFocusedRowIndex + 1;
 
     if (newRowIndex >= allRecordIds.length) {
       newRowIndex = allRecordIds.length - 1;
     }
 
     focusRecordTableRow(newRowIndex);
-  }, [
-    recordIndexAllRecordIdsAtom,
-    focusedRowIndexAtom,
-    focusRecordTableRow,
-    store,
-  ]);
+  }, [recordIndexAllRecordIds, focusedRowIndex, focusRecordTableRow, store]);
 
   const moveFocusedRow = (direction: MoveFocusDirection) => {
     if (direction === 'up') {

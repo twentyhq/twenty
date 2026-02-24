@@ -1,5 +1,4 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldRelationFromManyValue,
@@ -38,7 +37,7 @@ export const useOpenJunctionRelationFieldInput = () => {
       recordId: string;
       prefix?: string;
     }) => {
-      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
       const sourceObjectMetadataId = objectMetadataItems.find(
         (item) =>
@@ -70,7 +69,7 @@ export const useOpenJunctionRelationFieldInput = () => {
         prefix,
       });
 
-      const junctionRecords = jotaiStore.get(
+      const junctionRecords = store.get(
         recordStoreFamilySelectorV2.selectorFamily({
           recordId,
           fieldName: fieldDefinition.metadata.fieldName,

@@ -20,7 +20,7 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const recordIndexAllRecordIdsAtom = useRecoilComponentSelectorCallbackStateV2(
+  const recordIndexAllRecordIds = useRecoilComponentSelectorCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
     recordTableIdFromContext,
   );
@@ -30,7 +30,7 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
     recordTableIdFromContext,
   );
 
-  const hasUserSelectedAllRowsAtom = useRecoilComponentStateCallbackStateV2(
+  const hasUserSelectedAllRows = useRecoilComponentStateCallbackStateV2(
     hasUserSelectedAllRowsComponentState,
     recordTableIdFromContext,
   );
@@ -45,13 +45,13 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
   const store = useStore();
 
   const resetTableRowSelection = useCallback(() => {
-    const allRecordIds = store.get(recordIndexAllRecordIdsAtom);
+    const allRecordIds = store.get(recordIndexAllRecordIds);
 
     for (const recordId of allRecordIds) {
       store.set(isRowSelectedFamilyState(recordId), false);
     }
 
-    store.set(hasUserSelectedAllRowsAtom, false);
+    store.set(hasUserSelectedAllRows, false);
     store.set(lastSelectedRowIndexComponentCallbackState, null);
 
     closeDropdown(
@@ -60,8 +60,8 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
       ),
     );
   }, [
-    recordIndexAllRecordIdsAtom,
-    hasUserSelectedAllRowsAtom,
+    recordIndexAllRecordIds,
+    hasUserSelectedAllRows,
     lastSelectedRowIndexComponentCallbackState,
     isRowSelectedFamilyState,
     closeDropdown,

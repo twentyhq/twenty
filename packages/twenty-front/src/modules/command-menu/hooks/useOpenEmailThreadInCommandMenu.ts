@@ -1,20 +1,21 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconMail } from 'twenty-ui/display';
 import { v4 } from 'uuid';
+import { useStore } from 'jotai';
 
 export const useOpenEmailThreadInCommandMenu = () => {
+  const store = useStore();
   const { navigateCommandMenu } = useNavigateCommandMenu();
 
   const openEmailThreadInCommandMenu = useCallback(
     (emailThreadId: string) => {
       const pageComponentInstanceId = v4();
 
-      jotaiStore.set(
+      store.set(
         viewableRecordIdComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
@@ -53,7 +54,7 @@ export const useOpenEmailThreadInCommandMenu = () => {
         pageId: pageComponentInstanceId,
       });
     },
-    [navigateCommandMenu],
+    [navigateCommandMenu, store],
   );
 
   return {

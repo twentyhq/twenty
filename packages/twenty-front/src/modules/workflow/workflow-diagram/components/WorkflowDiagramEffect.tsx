@@ -24,13 +24,13 @@ export const WorkflowDiagramEffect = () => {
     workflowVisualizerWorkflowId,
   );
 
-  const workflowDiagramAtom = useRecoilComponentStateCallbackStateV2(
+  const workflowDiagram = useRecoilComponentStateCallbackStateV2(
     workflowDiagramComponentState,
   );
   const setFlow = useSetRecoilComponentStateV2(flowComponentState);
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
-  const workflowLastCreatedStepIdAtom = useRecoilComponentStateCallbackStateV2(
+  const workflowLastCreatedStepId = useRecoilComponentStateCallbackStateV2(
     workflowLastCreatedStepIdComponentState,
   );
 
@@ -39,7 +39,7 @@ export const WorkflowDiagramEffect = () => {
 
   const computeAndMergeNewWorkflowDiagram = useCallback(
     (version: WorkflowVersion) => {
-      const previousWorkflowDiagram = store.get(workflowDiagramAtom);
+      const previousWorkflowDiagram = store.get(workflowDiagram);
 
       const nextWorkflowDiagram = getWorkflowVersionDiagram({
         workflowVersion: version,
@@ -55,7 +55,7 @@ export const WorkflowDiagramEffect = () => {
         );
       }
 
-      const lastCreatedStepId = store.get(workflowLastCreatedStepIdAtom);
+      const lastCreatedStepId = store.get(workflowLastCreatedStepId);
 
       if (isDefined(lastCreatedStepId)) {
         mergedWorkflowDiagram.nodes = mergedWorkflowDiagram.nodes.map(
@@ -67,12 +67,12 @@ export const WorkflowDiagramEffect = () => {
           },
         );
 
-        store.set(workflowLastCreatedStepIdAtom, undefined);
+        store.set(workflowLastCreatedStepId, undefined);
       }
 
-      store.set(workflowDiagramAtom, mergedWorkflowDiagram);
+      store.set(workflowDiagram, mergedWorkflowDiagram);
     },
-    [workflowDiagramAtom, workflowLastCreatedStepIdAtom, store],
+    [workflowDiagram, workflowLastCreatedStepId, store],
   );
 
   useEffect(() => {

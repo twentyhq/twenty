@@ -1,17 +1,17 @@
 import { useCallback } from 'react';
 
 import { mountedHeadlessFrontComponentIdsState } from '@/front-components/states/mountedHeadlessFrontComponentIdsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useStore } from 'jotai';
 
 export const useMountHeadlessFrontComponent = () => {
+  const store = useStore();
   const mountHeadlessFrontComponent = useCallback(
     (frontComponentId: string) => {
-      jotaiStore.set(
-        mountedHeadlessFrontComponentIdsState.atom,
-        (previousIds) => new Set(previousIds).add(frontComponentId),
+      store.set(mountedHeadlessFrontComponentIdsState.atom, (previousIds) =>
+        new Set(previousIds).add(frontComponentId),
       );
     },
-    [],
+    [store],
   );
 
   return mountHeadlessFrontComponent;

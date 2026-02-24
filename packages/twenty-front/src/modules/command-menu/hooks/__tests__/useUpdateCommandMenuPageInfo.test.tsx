@@ -3,6 +3,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { RecoilRoot } from 'recoil';
 import { CommandMenuPages } from 'twenty-shared/types';
@@ -24,7 +25,9 @@ const mockedNavigationStack = [
 ];
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
+  <JotaiProvider store={jotaiStore}>
+    <RecoilRoot>{children}</RecoilRoot>
+  </JotaiProvider>
 );
 
 describe('useUpdateCommandMenuPageInfo', () => {

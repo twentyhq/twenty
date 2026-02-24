@@ -12,21 +12,20 @@ import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/sta
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 
 export const useLoadRecordsToVirtualRows = () => {
-  const recordIdByRealIndexAtom = useRecoilComponentStateCallbackStateV2(
+  const recordIdByRealIndex = useRecoilComponentStateCallbackStateV2(
     recordIdByRealIndexComponentState,
   );
 
-  const dataLoadingStatusByRealIndexAtom =
-    useRecoilComponentStateCallbackStateV2(
-      dataLoadingStatusByRealIndexComponentState,
-    );
+  const dataLoadingStatusByRealIndex = useRecoilComponentStateCallbackStateV2(
+    dataLoadingStatusByRealIndexComponentState,
+  );
 
   const recordIndexRecordIdsByGroupFamilyState =
     useRecoilComponentFamilyStateCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const hasUserSelectedAllRowsAtom = useRecoilComponentStateCallbackStateV2(
+  const hasUserSelectedAllRows = useRecoilComponentStateCallbackStateV2(
     hasUserSelectedAllRowsComponentState,
   );
 
@@ -44,11 +43,11 @@ export const useLoadRecordsToVirtualRows = () => {
       records: ObjectRecord[];
       startingRealIndex: number;
     }) => {
-      const hasUserSelectedAllRows = store.get(hasUserSelectedAllRowsAtom);
+      const isAllRowsSelected = store.get(hasUserSelectedAllRows);
 
-      const currentRecordIdMap = store.get(recordIdByRealIndexAtom);
+      const currentRecordIdMap = store.get(recordIdByRealIndex);
       const newRecordIdMap = new Map(currentRecordIdMap);
-      const currentStatusMap = store.get(dataLoadingStatusByRealIndexAtom);
+      const currentStatusMap = store.get(dataLoadingStatusByRealIndex);
       const newStatusMap = new Map(currentStatusMap);
 
       for (const [recordIndex, record] of records.entries()) {
@@ -61,8 +60,8 @@ export const useLoadRecordsToVirtualRows = () => {
         newStatusMap.set(realIndex, 'loaded');
       }
 
-      store.set(recordIdByRealIndexAtom, newRecordIdMap);
-      store.set(dataLoadingStatusByRealIndexAtom, newStatusMap);
+      store.set(recordIdByRealIndex, newRecordIdMap);
+      store.set(dataLoadingStatusByRealIndex, newStatusMap);
 
       const currentAllRecordIds = store.get(
         recordIndexRecordIdsByGroupFamilyState(NO_RECORD_GROUP_FAMILY_KEY),
@@ -75,7 +74,7 @@ export const useLoadRecordsToVirtualRows = () => {
       for (let i = 0; i < records.length; i++) {
         newAllRecordIds[i + startingRealIndex] = recordIds[i];
 
-        if (hasUserSelectedAllRows) {
+        if (isAllRowsSelected) {
           store.set(isRowSelectedFamilyState(recordIds[i]), true);
         }
       }
@@ -86,11 +85,11 @@ export const useLoadRecordsToVirtualRows = () => {
       );
     },
     [
-      recordIdByRealIndexAtom,
-      dataLoadingStatusByRealIndexAtom,
+      recordIdByRealIndex,
+      dataLoadingStatusByRealIndex,
       recordIndexRecordIdsByGroupFamilyState,
       isRowSelectedFamilyState,
-      hasUserSelectedAllRowsAtom,
+      hasUserSelectedAllRows,
       store,
     ],
   );
