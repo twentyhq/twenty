@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 type FieldsWidgetTestSetup = {
   widgetId: string;
   viewId: string;
+  labelIdentifierFieldMetadataId: string | null;
   viewFields: Array<{
     id: string;
     fieldMetadataId: string;
@@ -31,6 +32,7 @@ const VIEW_WITH_FIELDS_AND_GROUPS_GQL_FIELDS = `
 `;
 
 const fetchFieldsWidgetTestSetup = async (): Promise<FieldsWidgetTestSetup> => {
+  // TODO refactor should not use global source for that
   const widgets = await global.testDataSource.query(
     `SELECT id, configuration->>'viewId' AS "viewId"
      FROM core."pageLayoutWidget"
@@ -46,6 +48,18 @@ const fetchFieldsWidgetTestSetup = async (): Promise<FieldsWidgetTestSetup> => {
   expect(widgetId).toBeDefined();
   expect(viewId).toBeDefined();
 
+  // TODO refactor should not use global source for that
+  const views = await global.testDataSource.query(
+    `SELECT v."objectMetadataId", om."labelIdentifierFieldMetadataId"
+     FROM core."view" v
+     JOIN core."objectMetadata" om ON om.id = v."objectMetadataId"
+     WHERE v.id = $1`,
+    [viewId],
+  );
+
+  const labelIdentifierFieldMetadataId =
+    views[0]?.labelIdentifierFieldMetadataId ?? null;
+
   const { data } = await findCoreViewFields({
     viewId,
     gqlFields: 'id fieldMetadataId position isVisible viewFieldGroupId',
@@ -54,7 +68,7 @@ const fetchFieldsWidgetTestSetup = async (): Promise<FieldsWidgetTestSetup> => {
 
   const viewFields = data.getCoreViewFields;
 
-  return { widgetId, viewId, viewFields };
+  return { widgetId, viewId, labelIdentifierFieldMetadataId, viewFields };
 };
 
 describe('upsertFieldsWidget', () => {
@@ -199,7 +213,12 @@ describe('upsertFieldsWidget', () => {
 
     it('should update view field positions and visibility within groups', async () => {
       const groupId = uuidv4();
-      const targetField = testSetup.viewFields[0];
+      const targetField = testSetup.viewFields.find(
+        (field) =>
+          field.fieldMetadataId !== testSetup.labelIdentifierFieldMetadataId,
+      )!;
+
+      expect(targetField).toBeDefined();
 
       await upsertFieldsWidget({
         expectToFail: false,
@@ -343,7 +362,13 @@ describe('upsertFieldsWidget', () => {
     });
 
     it('should update field positions and visibility without groups', async () => {
-      const targetField = testSetup.viewFields[0];
+      const targetField = testSetup.viewFields.find(
+        (field) =>
+          field.fieldMetadataId !== testSetup.labelIdentifierFieldMetadataId,
+      )!;
+
+      expect(targetField).toBeDefined();
+
       const groupId = uuidv4();
 
       // First assign the field to a group so it has a non-null viewFieldGroupId
