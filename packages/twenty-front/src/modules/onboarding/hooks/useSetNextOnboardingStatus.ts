@@ -11,13 +11,13 @@ import {
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import { useCallback } from 'react';
 import {
   OnboardingStatus,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { useStore } from 'jotai';
 
 type GetNextOnboardingStatusArgs = {
   currentUser: CurrentUser | null;
@@ -63,6 +63,7 @@ const getNextOnboardingStatus = ({
 };
 
 export const useSetNextOnboardingStatus = () => {
+  const store = useStore();
   const currentUser = useRecoilValueV2(currentUserState);
   const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
   const calendarBookingPageId = useRecoilValueV2(calendarBookingPageIdState);
@@ -77,7 +78,7 @@ export const useSetNextOnboardingStatus = () => {
       calendarBookingPageId,
       isAccountSyncEnabled,
     });
-    jotaiStore.set(currentUserState.atom, (current) => {
+    store.set(currentUserState.atom, (current) => {
       if (isDefined(current)) {
         return {
           ...current,
@@ -91,5 +92,6 @@ export const useSetNextOnboardingStatus = () => {
     currentWorkspace,
     calendarBookingPageId,
     isAccountSyncEnabled,
+    store,
   ]);
 };

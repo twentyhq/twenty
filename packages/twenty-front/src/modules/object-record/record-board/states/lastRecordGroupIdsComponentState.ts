@@ -1,7 +1,9 @@
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
-export const lastRecordGroupIdsComponentState = createComponentState<string[]>({
+export const lastRecordGroupIdsComponentState = createComponentStateV2<
+  string[]
+>({
   key: 'lastRecordGroupIdsComponentState',
   componentInstanceContext: RecordBoardComponentInstanceContext,
   defaultValue: [],

@@ -2,8 +2,8 @@ import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useRecoilValue } from 'recoil';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -40,7 +40,10 @@ const SeeRunsWorkflowVersionSingleRecordActionContent = ({
 
 export const SeeRunsWorkflowVersionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
-  const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
+  const workflowVersion = useFamilyRecoilValueV2(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   const workflowId = workflowVersion?.workflow?.id;
 

@@ -1,12 +1,12 @@
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { isNonEmptyString } from '@sniptt/guards';
 import { compareNonEmptyStrings } from '~/utils/compareNonEmptyStrings';
 
 export const useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter = () => {
   const { currentView } = useGetCurrentViewOnly();
-  const anyFieldFilterValue = useRecoilComponentValue(
+  const anyFieldFilterValue = useRecoilComponentValueV2(
     anyFieldFilterValueComponentState,
   );
 

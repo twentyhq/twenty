@@ -1,24 +1,36 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
+import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const BaseWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
+
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <BaseWrapper>
+    <RecordFiltersComponentInstanceContext.Provider
+      value={{ instanceId: 'test' }}
+    >
+      {children}
+    </RecordFiltersComponentInstanceContext.Provider>
+  </BaseWrapper>
+);
 
 describe('useUpsertRecordFilter', () => {
   it('should add a new filter when record filter id does not exist', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilters = useRecoilComponentValue(
+        const currentRecordFilters = useRecoilComponentValueV2(
           currentRecordFiltersComponentState,
+          'test',
         );
 
         const { upsertRecordFilter } = useUpsertRecordFilter();
@@ -51,8 +63,9 @@ describe('useUpsertRecordFilter', () => {
   it('should update an existing filter when record filter id exists', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilters = useRecoilComponentValue(
+        const currentRecordFilters = useRecoilComponentValueV2(
           currentRecordFiltersComponentState,
+          'test',
         );
 
         const { upsertRecordFilter } = useUpsertRecordFilter();

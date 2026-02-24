@@ -1,5 +1,5 @@
 import { singleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShouldShowSkeletonComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -10,7 +10,7 @@ export const SingleRecordPickerLoadingEffect = ({
 }) => {
   const [previousLoading, setPreviousLoading] = useState(false);
 
-  const setSingleRecordPickerShouldShowSkeleton = useSetRecoilComponentState(
+  const setSingleRecordPickerShouldShowSkeleton = useSetRecoilComponentStateV2(
     singleRecordPickerShouldShowSkeletonComponentState,
   );
 

@@ -1,21 +1,18 @@
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
+import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { type SparseArray } from '~/types/SparseArray';
 
 export const allRecordIdsWithoutGroupsComponentSelector =
-  createComponentSelector<SparseArray<string>>({
+  createComponentSelectorV2<string[]>({
     key: 'allRecordIdsWithoutGroupsComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
       ({ instanceId }) =>
       ({ get }) => {
-        return get(
-          recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
-            instanceId,
-            familyKey: NO_RECORD_GROUP_FAMILY_KEY,
-          }),
-        );
+        return get(recordIndexRecordIdsByGroupComponentFamilyState, {
+          instanceId,
+          familyKey: NO_RECORD_GROUP_FAMILY_KEY,
+        });
       },
   });

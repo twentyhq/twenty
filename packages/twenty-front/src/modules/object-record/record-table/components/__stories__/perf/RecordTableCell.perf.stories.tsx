@@ -1,12 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
@@ -29,22 +29,25 @@ import { RecordTableContextProvider } from '@/object-record/record-table/context
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const RelationFieldValueSetterEffect = () => {
-  const setEntity = useSetRecoilState(
-    recordStoreFamilyState(mockPerformance.recordId),
+  const setEntity = useSetFamilyRecoilStateV2(
+    recordStoreFamilyState,
+    mockPerformance.recordId,
   );
 
-  const setRelationEntity = useSetRecoilState(
-    recordStoreFamilyState(mockPerformance.relationRecordId),
+  const setRelationEntity = useSetFamilyRecoilStateV2(
+    recordStoreFamilyState,
+    mockPerformance.relationRecordId,
   );
 
-  const setCurrentRecordFields = useSetRecoilComponentState(
+  const setCurrentRecordFields = useSetRecoilComponentStateV2(
     currentRecordFieldsComponentState,
     'recordTableId',
   );
@@ -84,12 +87,12 @@ const meta: Meta = {
     MemoryRouterDecorator,
     ChipGeneratorsDecorator,
     (Story) => {
-      const currentRecordFields = useRecoilComponentValue(
+      const currentRecordFields = useRecoilComponentValueV2(
         currentRecordFieldsComponentState,
         'recordTableId',
       );
 
-      const visibleRecordFields = useRecoilComponentValue(
+      const visibleRecordFields = useRecoilComponentSelectorValueV2(
         visibleRecordFieldsComponentSelector,
         'recordTableId',
       );

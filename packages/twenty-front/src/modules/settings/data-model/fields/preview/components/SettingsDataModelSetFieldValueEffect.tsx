@@ -1,6 +1,6 @@
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 
 type SettingsDataModelSetFieldValueEffectProps = {
   recordId: string;
@@ -13,8 +13,8 @@ export const SettingsDataModelSetFieldValueEffect = ({
   gqlFieldName,
   value,
 }: SettingsDataModelSetFieldValueEffectProps) => {
-  const setFieldValue = useSetRecoilState(
-    recordStoreFamilySelector({
+  const setFieldValue = useSetAtom(
+    recordStoreFamilySelectorV2.selectorFamily({
       recordId,
       fieldName: gqlFieldName,
     }),

@@ -6,7 +6,7 @@ import { draggedRecordIdsComponentState } from '@/object-record/record-drag/stat
 import { isMultiDragActiveComponentState } from '@/object-record/record-drag/states/isMultiDragActiveComponentState';
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 describe('useEndRecordDrag', () => {
@@ -16,17 +16,16 @@ describe('useEndRecordDrag', () => {
     const { result } = renderHook(
       () => {
         const [isMultiDragActive, setIsMultiDragActive] =
-          useRecoilComponentState(isMultiDragActiveComponentState);
+          useRecoilComponentStateV2(isMultiDragActiveComponentState);
 
-        const [draggedRecordIds, setDraggedRecordIds] = useRecoilComponentState(
-          draggedRecordIdsComponentState,
-        );
+        const [draggedRecordIds, setDraggedRecordIds] =
+          useRecoilComponentStateV2(draggedRecordIdsComponentState);
 
         const [primaryDraggedRecordId, setPrimaryDraggedRecordId] =
-          useRecoilComponentState(primaryDraggedRecordIdComponentState);
+          useRecoilComponentStateV2(primaryDraggedRecordIdComponentState);
 
         const [originalSelection, setOriginalSelection] =
-          useRecoilComponentState(originalDragSelectionComponentState);
+          useRecoilComponentStateV2(originalDragSelectionComponentState);
 
         const { endRecordDrag } = useEndRecordDrag();
 

@@ -13,13 +13,13 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 // to improve - https://github.com/twentyhq/twenty/issues/12190
 export const useEmailThreadInCommandMenu = () => {
-  const viewableRecordId = useRecoilComponentValue(
+  const viewableRecordId = useRecoilComponentValueV2(
     viewableRecordIdComponentState,
   );
   const { upsertRecordsInStore } = useUpsertRecordsInStore();

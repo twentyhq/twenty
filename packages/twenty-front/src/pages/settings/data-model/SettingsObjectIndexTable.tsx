@@ -12,8 +12,9 @@ import styled from '@emotion/styled';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { useEffect, useMemo, useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { IconSearch, IconSquareKey } from 'twenty-ui/display';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -66,10 +67,13 @@ export const SettingsObjectIndexTable = ({
     },
   };
 
-  const [settingsObjectIndexes, setSettingsObjectIndexes] = useRecoilState(
-    settingsObjectIndexesFamilyState({
-      objectMetadataItemId: objectMetadataItem.id,
-    }),
+  const settingsObjectIndexes = useFamilyRecoilValueV2(
+    settingsObjectIndexesFamilyState,
+    { objectMetadataItemId: objectMetadataItem.id },
+  );
+  const setSettingsObjectIndexes = useSetFamilyRecoilStateV2(
+    settingsObjectIndexesFamilyState,
+    { objectMetadataItemId: objectMetadataItem.id },
   );
 
   useEffect(() => {

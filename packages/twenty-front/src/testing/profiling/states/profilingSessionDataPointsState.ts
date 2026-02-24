@@ -1,8 +1,10 @@
-import { atom } from 'recoil';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
 import { type ProfilingDataPoint } from '~/testing/profiling/types/ProfilingDataPoint';
 
-export const profilingSessionDataPointsState = atom<ProfilingDataPoint[]>({
+export const profilingSessionDataPointsState = createStateV2<
+  ProfilingDataPoint[]
+>({
   key: 'profilingSessionDataPointsState',
-  default: [],
+  defaultValue: [],
 });

@@ -18,6 +18,7 @@ export const getJestMetadataAndApolloMocksWrapper = ({
   apolloMocks,
   cache,
   onInitializeRecoilSnapshot,
+  onInitializeJotaiStore,
   objectMetadataItems,
 }: {
   cache?: InMemoryCache;
@@ -25,8 +26,11 @@ export const getJestMetadataAndApolloMocksWrapper = ({
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
   onInitializeRecoilSnapshot?: (snapshot: MutableSnapshot) => void;
+  onInitializeJotaiStore?: (store: typeof jotaiStore) => void;
   objectMetadataItems?: ObjectMetadataItem[];
 }) => {
+  onInitializeJotaiStore?.(jotaiStore);
+
   return ({ children }: { children: ReactNode }) => (
     <JotaiProvider store={jotaiStore}>
       <RecoilRoot initializeState={onInitializeRecoilSnapshot}>

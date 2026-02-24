@@ -1,8 +1,9 @@
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
@@ -21,82 +22,32 @@ export type MorphPersistManyToOneProps = {
 export const useMorphPersistManyToOne = ({
   objectMetadataNameSingular,
 }: MorphPersistManyToOneProps) => {
+  const store = useStore();
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const persistMorphManyToOne = useRecoilCallback(
-    ({ snapshot }) =>
-      async ({
-        recordId,
+  const persistMorphManyToOne = useCallback(
+    async ({
+      recordId,
+      fieldDefinition,
+      valueToPersist,
+      targetObjectMetadataNameSingular,
+    }: {
+      recordId: string;
+      fieldDefinition: FieldDefinition<FieldMetadata>;
+      valueToPersist: string | null | undefined;
+      targetObjectMetadataNameSingular?: string;
+    }) => {
+      assertFieldMetadata(
+        FieldMetadataType.MORPH_RELATION,
+        isFieldMorphRelation,
         fieldDefinition,
-        valueToPersist,
-        targetObjectMetadataNameSingular,
-      }: {
-        recordId: string;
-        fieldDefinition: FieldDefinition<FieldMetadata>;
-        valueToPersist: string | null | undefined;
-        targetObjectMetadataNameSingular?: string;
-      }) => {
-        assertFieldMetadata(
-          FieldMetadataType.MORPH_RELATION,
-          isFieldMorphRelation,
-          fieldDefinition,
-        );
+      );
 
-        const fieldName = fieldDefinition.metadata.fieldName;
+      const fieldName = fieldDefinition.metadata.fieldName;
 
-        if (!isDefined(valueToPersist)) {
-          const recordWithAllMorphObjectIdsToNull =
-            buildRecordWithAllMorphObjectIdsToNull({
-              morphRelations: fieldDefinition.metadata.morphRelations,
-              fieldName,
-              relationType: fieldDefinition.metadata.relationType,
-            });
-
-          updateOneRecord?.({
-            objectNameSingular: objectMetadataNameSingular,
-            idToUpdate: recordId,
-            updateOneRecordInput: recordWithAllMorphObjectIdsToNull,
-          });
-
-          return;
-        }
-
-        const targetObjectMetadataItem = objectMetadataItems.find(
-          (objectMetadataItem) =>
-            objectMetadataItem.nameSingular ===
-            targetObjectMetadataNameSingular,
-        );
-
-        if (!isDefined(targetObjectMetadataItem)) {
-          throw new Error('Object metadata item not found');
-        }
-
-        const computedFieldName = computeMorphRelationFieldName({
-          fieldName,
-          relationType: fieldDefinition.metadata.relationType,
-          targetObjectMetadataNameSingular:
-            targetObjectMetadataItem.nameSingular,
-          targetObjectMetadataNamePlural: targetObjectMetadataItem.namePlural,
-        });
-
-        const currentValue: unknown = snapshot
-          .getLoadable(
-            recordStoreFamilySelector({
-              recordId,
-              fieldName: computedFieldName,
-            }),
-          )
-          .getValue();
-
-        if (
-          isDefined(currentValue) &&
-          (currentValue as ObjectRecord).id === valueToPersist
-        ) {
-          return;
-        }
-
+      if (!isDefined(valueToPersist)) {
         const recordWithAllMorphObjectIdsToNull =
           buildRecordWithAllMorphObjectIdsToNull({
             morphRelations: fieldDefinition.metadata.morphRelations,
@@ -104,18 +55,64 @@ export const useMorphPersistManyToOne = ({
             relationType: fieldDefinition.metadata.relationType,
           });
 
-        updateOneRecord({
+        updateOneRecord?.({
           objectNameSingular: objectMetadataNameSingular,
           idToUpdate: recordId,
-          updateOneRecordInput: {
-            ...recordWithAllMorphObjectIdsToNull,
-            [`${computedFieldName}Id`]: valueToPersist,
-          },
+          updateOneRecordInput: recordWithAllMorphObjectIdsToNull,
         });
 
         return;
-      },
-    [objectMetadataItems, updateOneRecord, objectMetadataNameSingular],
+      }
+
+      const targetObjectMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.nameSingular === targetObjectMetadataNameSingular,
+      );
+
+      if (!isDefined(targetObjectMetadataItem)) {
+        throw new Error('Object metadata item not found');
+      }
+
+      const computedFieldName = computeMorphRelationFieldName({
+        fieldName,
+        relationType: fieldDefinition.metadata.relationType,
+        targetObjectMetadataNameSingular: targetObjectMetadataItem.nameSingular,
+        targetObjectMetadataNamePlural: targetObjectMetadataItem.namePlural,
+      });
+
+      const currentValue: unknown = store.get(
+        recordStoreFamilySelectorV2.selectorFamily({
+          recordId,
+          fieldName: computedFieldName,
+        }),
+      );
+
+      if (
+        isDefined(currentValue) &&
+        (currentValue as ObjectRecord).id === valueToPersist
+      ) {
+        return;
+      }
+
+      const recordWithAllMorphObjectIdsToNull =
+        buildRecordWithAllMorphObjectIdsToNull({
+          morphRelations: fieldDefinition.metadata.morphRelations,
+          fieldName,
+          relationType: fieldDefinition.metadata.relationType,
+        });
+
+      updateOneRecord({
+        objectNameSingular: objectMetadataNameSingular,
+        idToUpdate: recordId,
+        updateOneRecordInput: {
+          ...recordWithAllMorphObjectIdsToNull,
+          [`${computedFieldName}Id`]: valueToPersist,
+        },
+      });
+
+      return;
+    },
+    [objectMetadataItems, objectMetadataNameSingular, store, updateOneRecord],
   );
 
   return { persistMorphManyToOne };

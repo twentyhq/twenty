@@ -22,7 +22,9 @@ export const VerifyLoginTokenEffect = () => {
   );
 
   useEffect(() => {
-    if (!clientConfigLoaded) return;
+    if (!clientConfigLoaded) {
+      return;
+    }
 
     if (isDefined(loginToken)) {
       verifyLoginToken(loginToken);

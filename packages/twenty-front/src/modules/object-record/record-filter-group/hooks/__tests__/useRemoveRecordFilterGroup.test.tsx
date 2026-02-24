@@ -1,24 +1,36 @@
 import { renderHook } from '@testing-library/react';
-
-import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { act } from 'react';
-import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
+import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const BaseWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
+
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <BaseWrapper>
+    <RecordFilterGroupsComponentInstanceContext.Provider
+      value={{ instanceId: 'test' }}
+    >
+      {children}
+    </RecordFilterGroupsComponentInstanceContext.Provider>
+  </BaseWrapper>
+);
 
 describe('useRemoveRecordFilterGroup', () => {
   it('should remove an existing record filter group', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilterGroups = useRecoilComponentValue(
+        const currentRecordFilterGroups = useRecoilComponentValueV2(
           currentRecordFilterGroupsComponentState,
+          'test',
         );
 
         const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
@@ -60,8 +72,9 @@ describe('useRemoveRecordFilterGroup', () => {
   it('should not modify record filter groups when trying to remove a non-existent record filter group', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilterGroups = useRecoilComponentValue(
+        const currentRecordFilterGroups = useRecoilComponentValueV2(
           currentRecordFilterGroupsComponentState,
+          'test',
         );
 
         const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();

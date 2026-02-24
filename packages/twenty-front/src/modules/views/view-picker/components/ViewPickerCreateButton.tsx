@@ -1,4 +1,4 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
@@ -20,14 +20,16 @@ export const ViewPickerCreateButton = () => {
     useGetAvailableFieldsForCalendar();
 
   const { viewPickerMode } = useViewPickerMode();
-  const viewPickerType = useRecoilComponentValue(viewPickerTypeComponentState);
-  const viewPickerIsPersisting = useRecoilComponentValue(
+  const viewPickerType = useRecoilComponentValueV2(
+    viewPickerTypeComponentState,
+  );
+  const viewPickerIsPersisting = useRecoilComponentValueV2(
     viewPickerIsPersistingComponentState,
   );
-  const viewPickerMainGroupByFieldMetadataId = useRecoilComponentValue(
+  const viewPickerMainGroupByFieldMetadataId = useRecoilComponentValueV2(
     viewPickerMainGroupByFieldMetadataIdComponentState,
   );
-  const viewPickerCalendarFieldMetadataId = useRecoilComponentValue(
+  const viewPickerCalendarFieldMetadataId = useRecoilComponentValueV2(
     viewPickerCalendarFieldMetadataIdComponentState,
   );
 

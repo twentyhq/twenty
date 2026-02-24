@@ -2,13 +2,13 @@ import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-ind
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 
 export const RecordIndexRemoveSortingModal = () => {
   const { t } = useLingui();
 
-  const currentRecordSorts = useRecoilComponentValue(
+  const currentRecordSorts = useRecoilComponentValueV2(
     currentRecordSortsComponentState,
   );
 

@@ -1,4 +1,5 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
@@ -7,7 +8,6 @@ import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
 import { createVirtualElementFromContainerOffset } from '@/page-layout/widgets/graph/utils/createVirtualElementFromContainerOffset';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -30,7 +30,7 @@ export const BarChartTooltip = ({
   onMouseEnter,
   onMouseLeave,
 }: BarChartTooltipProps) => {
-  const tooltipState = useRecoilComponentValue(
+  const tooltipState = useRecoilComponentValueV2(
     graphWidgetBarTooltipComponentState,
   );
 

@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { AppTooltip, TooltipPosition } from 'twenty-ui/display';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
@@ -31,7 +31,7 @@ export const EmailThreadMessageSender = ({
   sender,
   sentAt,
 }: EmailThreadMessageSenderProps) => {
-  const { localeCatalog } = useRecoilValue(dateLocaleState);
+  const { localeCatalog } = useRecoilValueV2(dateLocaleState);
   const tooltipId = `date-tooltip-${sentAt.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
   return (

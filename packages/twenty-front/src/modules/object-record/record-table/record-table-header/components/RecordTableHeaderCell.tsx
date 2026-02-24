@@ -11,8 +11,9 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { cx } from '@linaria/core';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -27,32 +28,32 @@ export const RecordTableHeaderCell = ({
 }: RecordTableHeaderCellProps) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const isFirstRowActive = useRecoilComponentFamilyValue(
+  const isFirstRowActive = useRecoilComponentFamilyValueV2(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useRecoilComponentFamilyValue(
+  const isFirstRowFocused = useRecoilComponentFamilyValueV2(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );
 
-  const isScrolledVertically = useRecoilComponentValue(
+  const isScrolledVertically = useRecoilComponentValueV2(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRowFocusActive = useRecoilComponentValueV2(
     isRecordTableRowFocusActiveComponentState,
   );
 
   const isFirstRowActiveOrFocused =
     isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
 
-  const hasRecordGroups = useRecoilComponentValue(
+  const hasRecordGroups = useRecoilComponentSelectorValueV2(
     hasRecordGroupsComponentSelector,
   );
 
-  const resizedFieldMetadataItemId = useRecoilComponentValue(
+  const resizedFieldMetadataItemId = useRecoilComponentValueV2(
     resizedFieldMetadataIdComponentState,
   );
 

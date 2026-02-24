@@ -1,8 +1,8 @@
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const recordCalendarCardEditModePositionComponentState =
-  createComponentState<number | null>({
+  createComponentStateV2<number | null>({
     key: 'recordCalendarCardEditModePositionComponentState',
     defaultValue: null,
     componentInstanceContext: RecordCalendarCardComponentInstanceContext,

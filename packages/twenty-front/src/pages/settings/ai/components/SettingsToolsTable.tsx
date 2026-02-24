@@ -2,11 +2,11 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { useRecoilValue } from 'recoil';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -55,7 +55,7 @@ const StyledFooterContainer = styled.div`
 `;
 
 export const SettingsToolsTable = () => {
-  const logicFunctions = useRecoilValue(logicFunctionsState);
+  const logicFunctions = useRecoilValueV2(logicFunctionsState);
   const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();
   const { createLogicFunction } = usePersistLogicFunction();
 

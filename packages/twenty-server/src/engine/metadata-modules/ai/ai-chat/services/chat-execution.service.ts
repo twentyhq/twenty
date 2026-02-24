@@ -126,10 +126,13 @@ export class ChatExecutionService {
 
     const preloadedToolNames = Object.keys(preloadedTools);
 
-    // Respect the workspace's model preference (Settings > AI > Model Router)
+    const modelId = workspace.smartModel;
+
+    this.aiModelRegistryService.validateModelAvailability(modelId, workspace);
+
     const registeredModel =
       await this.aiModelRegistryService.resolveModelForAgent({
-        modelId: workspace.smartModel,
+        modelId,
       });
 
     const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(

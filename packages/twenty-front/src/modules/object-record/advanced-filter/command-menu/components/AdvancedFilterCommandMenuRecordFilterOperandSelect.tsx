@@ -4,7 +4,7 @@ import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/ge
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,7 +17,7 @@ export const AdvancedFilterCommandMenuRecordFilterOperandSelect = ({
   recordFilterId,
 }: AdvancedFilterCommandMenuRecordFilterOperandSelectProps) => {
   const { readonly, isWorkflowFindRecords } = useContext(AdvancedFilterContext);
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 

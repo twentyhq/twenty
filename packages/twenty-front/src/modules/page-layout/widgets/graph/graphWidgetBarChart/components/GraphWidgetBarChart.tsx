@@ -19,9 +19,9 @@ import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/co
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useRef, useState } from 'react';
@@ -91,23 +91,23 @@ export const GraphWidgetBarChart = ({
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const setActiveBarTooltip = useSetRecoilComponentState(
+  const setActiveBarTooltip = useSetRecoilComponentStateV2(
     graphWidgetBarTooltipComponentState,
   );
 
-  const setHoveredSliceIndex = useSetRecoilComponentState(
+  const setHoveredSliceIndex = useSetRecoilComponentStateV2(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const hoveredSliceIndexValue = useRecoilComponentValue(
+  const hoveredSliceIndexValue = useRecoilComponentValueV2(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const draggingWidgetId = useRecoilComponentValue(
+  const draggingWidgetId = useRecoilComponentValueV2(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const resizingWidgetId = useRecoilComponentValue(
+  const resizingWidgetId = useRecoilComponentValueV2(
     pageLayoutResizingWidgetIdComponentState,
   );
 

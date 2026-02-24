@@ -1,6 +1,6 @@
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useAnimatedPath } from '@nivo/core';
 import { animated } from '@react-spring/web';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,7 +18,7 @@ export const LineAnimatedAreaPath = ({
 }: LineAnimatedAreaPathProps) => {
   const animatedPath = useAnimatedPath(path);
 
-  const highlightedLegendId = useRecoilComponentValue(
+  const highlightedLegendId = useRecoilComponentValueV2(
     graphWidgetHighlightedLegendIdComponentState,
   );
 

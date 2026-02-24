@@ -12,34 +12,38 @@ import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-re
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
   () => {
     const selectedOperandInDropdownCallbackState =
-      useRecoilComponentCallbackState(selectedOperandInDropdownComponentState);
+      useRecoilComponentStateCallbackStateV2(
+        selectedOperandInDropdownComponentState,
+      );
 
-    const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
-      currentRecordFiltersComponentState,
-    );
+    const currentRecordFiltersCallbackState =
+      useRecoilComponentStateCallbackStateV2(
+        currentRecordFiltersComponentState,
+      );
 
     const objectFilterDropdownCurrentRecordFilterCallbackState =
-      useRecoilComponentCallbackState(
+      useRecoilComponentStateCallbackStateV2(
         objectFilterDropdownCurrentRecordFilterComponentState,
       );
 
     const fieldMetadataItemUsedInDropdownCallbackState =
-      useRecoilComponentCallbackState(
+      useRecoilComponentStateCallbackStateV2(
         fieldMetadataItemIdUsedInDropdownComponentState,
       );
 
     const objectFilterDropdownFilterIsSelectedCallbackState =
-      useRecoilComponentCallbackState(
+      useRecoilComponentStateCallbackStateV2(
         objectFilterDropdownFilterIsSelectedComponentState,
       );
 
@@ -49,93 +53,91 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
     const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
     const { getInitialFilterValue } = useGetInitialFilterValue();
 
+    const store = useStore();
+
     const initializeFilterOnFieldMetataItemFromViewBarFilterDropdown =
-      useRecoilCallback(
-        ({ set, snapshot }) =>
-          (fieldMetadataItem: FieldMetadataItem) => {
-            set(
-              fieldMetadataItemUsedInDropdownCallbackState,
-              fieldMetadataItem.id,
-            );
+      useCallback(
+        (fieldMetadataItem: FieldMetadataItem) => {
+          store.set(
+            fieldMetadataItemUsedInDropdownCallbackState,
+            fieldMetadataItem.id,
+          );
 
-            const currentRecordFilters = snapshot
-              .getLoadable(currentRecordFiltersCallbackState)
-              .getValue();
+          const currentRecordFilters = store.get(
+            currentRecordFiltersCallbackState,
+          );
 
-            const filterType = getFilterTypeFromFieldType(
-              fieldMetadataItem.type,
-            );
+          const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
 
-            if (filterType === 'RELATION' || filterType === 'SELECT') {
-              pushFocusItemToFocusStack({
-                focusId: ViewBarFilterDropdownIds.MAIN,
-                component: {
-                  type: FocusComponentType.DROPDOWN,
-                  instanceId: fieldMetadataItem.id,
-                },
-                globalHotkeysConfig: {
-                  enableGlobalHotkeysConflictingWithKeyboard: false,
-                },
-              });
-            }
+          if (filterType === 'RELATION' || filterType === 'SELECT') {
+            pushFocusItemToFocusStack({
+              focusId: ViewBarFilterDropdownIds.MAIN,
+              component: {
+                type: FocusComponentType.DROPDOWN,
+                instanceId: fieldMetadataItem.id,
+              },
+              globalHotkeysConfig: {
+                enableGlobalHotkeysConflictingWithKeyboard: false,
+              },
+            });
+          }
 
-            set(objectFilterDropdownFilterIsSelectedCallbackState, true);
+          store.set(objectFilterDropdownFilterIsSelectedCallbackState, true);
 
-            const defaultOperand = getRecordFilterOperands({
-              filterType,
-            })[0];
+          const defaultOperand = getRecordFilterOperands({
+            filterType,
+          })[0];
 
-            const duplicateFilterInCurrentRecordFilters =
-              findDuplicateRecordFilterInNonAdvancedRecordFilters({
-                recordFilters: currentRecordFilters,
-                fieldMetadataItemId: fieldMetadataItem.id,
-              });
+          const duplicateFilterInCurrentRecordFilters =
+            findDuplicateRecordFilterInNonAdvancedRecordFilters({
+              recordFilters: currentRecordFilters,
+              fieldMetadataItemId: fieldMetadataItem.id,
+            });
 
-            const filterIsAlreadyInCurrentRecordFilters = isDefined(
+          const filterIsAlreadyInCurrentRecordFilters = isDefined(
+            duplicateFilterInCurrentRecordFilters,
+          );
+
+          if (filterIsAlreadyInCurrentRecordFilters) {
+            store.set(
+              objectFilterDropdownCurrentRecordFilterCallbackState,
               duplicateFilterInCurrentRecordFilters,
             );
 
-            if (filterIsAlreadyInCurrentRecordFilters) {
-              set(
+            store.set(
+              selectedOperandInDropdownCallbackState,
+              duplicateFilterInCurrentRecordFilters.operand,
+            );
+          } else {
+            store.set(selectedOperandInDropdownCallbackState, defaultOperand);
+
+            if (filterType === 'DATE' || filterType === 'DATE_TIME') {
+              const { displayValue, value } = getInitialFilterValue(
+                filterType,
+                defaultOperand,
+              );
+
+              const initialDateRecordFilter: RecordFilter = {
+                id: v4(),
+                fieldMetadataId: fieldMetadataItem.id,
+                operand: defaultOperand,
+                displayValue,
+                label: fieldMetadataItem.label,
+                type: filterType,
+                value,
+              };
+
+              upsertObjectFilterDropdownCurrentFilter(initialDateRecordFilter);
+
+              store.set(
                 objectFilterDropdownCurrentRecordFilterCallbackState,
-                duplicateFilterInCurrentRecordFilters,
+                initialDateRecordFilter,
               );
-
-              set(
-                selectedOperandInDropdownCallbackState,
-                duplicateFilterInCurrentRecordFilters.operand,
-              );
-            } else {
-              set(selectedOperandInDropdownCallbackState, defaultOperand);
-
-              if (filterType === 'DATE' || filterType === 'DATE_TIME') {
-                const { displayValue, value } = getInitialFilterValue(
-                  filterType,
-                  defaultOperand,
-                );
-
-                const initialDateRecordFilter: RecordFilter = {
-                  id: v4(),
-                  fieldMetadataId: fieldMetadataItem.id,
-                  operand: defaultOperand,
-                  displayValue,
-                  label: fieldMetadataItem.label,
-                  type: filterType,
-                  value,
-                };
-
-                upsertObjectFilterDropdownCurrentFilter(
-                  initialDateRecordFilter,
-                );
-
-                set(
-                  objectFilterDropdownCurrentRecordFilterCallbackState,
-                  initialDateRecordFilter,
-                );
-              }
             }
-          },
+          }
+        },
         [
+          store,
           fieldMetadataItemUsedInDropdownCallbackState,
           currentRecordFiltersCallbackState,
           objectFilterDropdownFilterIsSelectedCallbackState,

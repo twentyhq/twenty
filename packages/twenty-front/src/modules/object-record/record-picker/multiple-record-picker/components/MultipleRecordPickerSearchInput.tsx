@@ -1,10 +1,12 @@
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
+
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const MultipleRecordPickerSearchInput = () => {
@@ -13,27 +15,28 @@ export const MultipleRecordPickerSearchInput = () => {
   );
 
   const [recordPickerSearchFilter, setRecordPickerSearchFilter] =
-    useRecoilComponentState(multipleRecordPickerSearchFilterComponentState);
+    useRecoilComponentStateV2(multipleRecordPickerSearchFilterComponentState);
 
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
-  const debouncedSearch = useDebouncedCallback(
-    useRecoilCallback(
-      ({ set }) =>
-        (searchFilter: string) => {
-          set(
-            multipleRecordPickerSearchFilterComponentState.atomFamily({
-              instanceId: componentInstanceId,
-            }),
-            searchFilter,
-          );
+  const store = useStore();
 
-          performSearch({
-            multipleRecordPickerInstanceId: componentInstanceId,
-            forceSearchFilter: searchFilter,
-          });
-        },
-      [componentInstanceId, performSearch],
+  const debouncedSearch = useDebouncedCallback(
+    useCallback(
+      (searchFilter: string) => {
+        store.set(
+          multipleRecordPickerSearchFilterComponentState.atomFamily({
+            instanceId: componentInstanceId,
+          }),
+          searchFilter,
+        );
+
+        performSearch({
+          multipleRecordPickerInstanceId: componentInstanceId,
+          forceSearchFilter: searchFilter,
+        });
+      },
+      [componentInstanceId, performSearch, store],
     ),
     500,
   );

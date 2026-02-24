@@ -1,19 +1,18 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
-import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
@@ -53,32 +52,27 @@ const renderHooks = () => {
     () => {
       const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-      const commandMenuPage = useRecoilValue(commandMenuPageState);
-      const commandMenuNavigationMorphItemsByPage = useRecoilValue(
-        commandMenuNavigationMorphItemsByPageState,
-      );
-
-      const viewableRecordId = useRecoilComponentValue(
+      const viewableRecordId = useRecoilComponentValueV2(
         viewableRecordIdComponentState,
         'mocked-uuid',
       );
-      const viewableRecordNameSingular = useRecoilComponentValue(
+      const viewableRecordNameSingular = useRecoilComponentValueV2(
         viewableRecordNameSingularComponentState,
         'mocked-uuid',
       );
-      const currentObjectMetadataItemId = useRecoilComponentValue(
+      const currentObjectMetadataItemId = useRecoilComponentValueV2(
         contextStoreCurrentObjectMetadataItemIdComponentState,
         'mocked-uuid',
       );
-      const targetedRecordsRule = useRecoilComponentValue(
+      const targetedRecordsRule = useRecoilComponentValueV2(
         contextStoreTargetedRecordsRuleComponentState,
         'mocked-uuid',
       );
-      const numberOfSelectedRecords = useRecoilComponentValue(
+      const numberOfSelectedRecords = useRecoilComponentValueV2(
         contextStoreNumberOfSelectedRecordsComponentState,
         'mocked-uuid',
       );
-      const currentViewType = useRecoilComponentValue(
+      const currentViewType = useRecoilComponentValueV2(
         contextStoreCurrentViewTypeComponentState,
         'mocked-uuid',
       );
@@ -87,8 +81,6 @@ const renderHooks = () => {
       return {
         openRecordInCommandMenu,
         viewableRecordId,
-        commandMenuPage,
-        commandMenuNavigationMorphItemsByPage,
         viewableRecordNameSingular,
         currentObjectMetadataItemId,
         targetedRecordsRule,
@@ -134,10 +126,11 @@ describe('useOpenRecordInCommandMenu', () => {
     expect(result.current.numberOfSelectedRecords).toBe(1);
     expect(result.current.currentViewType).toBe(ContextStoreViewType.ShowPage);
 
-    expect(result.current.commandMenuNavigationMorphItemsByPage.size).toBe(1);
-    expect(
-      result.current.commandMenuNavigationMorphItemsByPage.get('mocked-uuid'),
-    ).toEqual([
+    const commandMenuNavigationMorphItemsByPage = jotaiStore.get(
+      commandMenuNavigationMorphItemsByPageState.atom,
+    );
+    expect(commandMenuNavigationMorphItemsByPage.size).toBe(1);
+    expect(commandMenuNavigationMorphItemsByPage.get('mocked-uuid')).toEqual([
       {
         objectMetadataId: personMockObjectMetadataItem.id,
         recordId,

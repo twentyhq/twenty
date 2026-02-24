@@ -2,7 +2,7 @@ import { SingleRecordPickerComponentInstanceContext } from '@/object-record/reco
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const useSingleRecordPickerSearch = (
@@ -14,12 +14,12 @@ export const useSingleRecordPickerSearch = (
       recordPickerComponentInstanceIdFromProps,
     );
 
-  const setRecordPickerSearchFilter = useSetRecoilComponentState(
+  const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
     singleRecordPickerSearchFilterComponentState,
     recordPickerComponentInstanceId,
   );
 
-  const setRecordPickerSelectedId = useSetRecoilComponentState(
+  const setRecordPickerSelectedId = useSetRecoilComponentStateV2(
     singleRecordPickerSelectedIdComponentState,
     recordPickerComponentInstanceId,
   );

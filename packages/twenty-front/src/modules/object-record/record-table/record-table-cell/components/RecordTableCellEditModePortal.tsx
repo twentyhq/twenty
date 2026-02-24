@@ -1,5 +1,6 @@
 import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
@@ -13,15 +14,15 @@ import { recordTableFocusPositionComponentState } from '@/object-record/record-t
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellEditModePortal = () => {
-  const focusedCellPosition = useRecoilComponentValue(
+  const focusedCellPosition = useRecoilComponentValueV2(
     recordTableFocusPositionComponentState,
   );
 
-  const currentTableCellInEditModePosition = useRecoilComponentValue(
+  const currentTableCellInEditModePosition = useRecoilComponentValueV2(
     recordTableCellEditModePositionComponentState,
   );
 
-  const hasRecordGroups = useRecoilComponentValue(
+  const hasRecordGroups = useRecoilComponentSelectorValueV2(
     hasRecordGroupsComponentSelector,
   );
 

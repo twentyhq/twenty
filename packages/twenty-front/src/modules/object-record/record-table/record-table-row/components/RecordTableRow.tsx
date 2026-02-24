@@ -8,10 +8,11 @@ import { RecordTableDraggableTrFirstRowOfGroup } from '@/object-record/record-ta
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
 import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
 import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 type RecordTableRowProps = {
   recordId: string;
@@ -26,12 +27,15 @@ export const RecordTableRow = ({
   rowIndexForDrag,
   isFirstRowOfGroup,
 }: RecordTableRowProps) => {
-  const isFocused = useRecoilComponentFamilyValue(
+  const { recordTableId } = useRecordTableContextOrThrow();
+
+  const isFocused = useRecoilComponentFamilyValueV2(
     isRecordTableRowFocusedComponentFamilyState,
     rowIndexForFocus,
   );
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRowFocusActive = useRecoilComponentValueV2(
     isRecordTableRowFocusActiveComponentState,
+    recordTableId,
   );
 
   return isFirstRowOfGroup ? (

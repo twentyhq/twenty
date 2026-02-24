@@ -8,8 +8,8 @@ import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/obje
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
@@ -27,18 +27,21 @@ export const useDeleteOneFieldMetadataItem = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const setRecordIndexGroupAggregateOperation = useSetRecoilComponentState(
+  const setRecordIndexGroupAggregateOperation = useSetRecoilComponentStateV2(
     recordIndexGroupAggregateOperationComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const [
-    recordIndexGroupAggregateFieldMetadataItem,
-    setRecordIndexGroupAggregateFieldMetadataItem,
-  ] = useRecoilComponentState(
+  const recordIndexGroupAggregateFieldMetadataItem = useRecoilComponentValueV2(
     recordIndexGroupAggregateFieldMetadataItemComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
+
+  const setRecordIndexGroupAggregateFieldMetadataItem =
+    useSetRecoilComponentStateV2(
+      recordIndexGroupAggregateFieldMetadataItemComponentState,
+      MAIN_CONTEXT_STORE_INSTANCE_ID,
+    );
 
   const resetRecordIndexKanbanAggregateOperation = async (
     idToDelete: string,

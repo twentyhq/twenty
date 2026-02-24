@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { isUndefined } from '@sniptt/guards';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 
@@ -17,7 +17,7 @@ export const ContextStoreDecorator: Decorator = (Story, context) => {
     componentInstanceId = MAIN_CONTEXT_STORE_INSTANCE_ID;
   }
 
-  const setCurrentObjectMetadataItemId = useSetRecoilComponentState(
+  const setCurrentObjectMetadataItemId = useSetRecoilComponentStateV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     componentInstanceId,
   );

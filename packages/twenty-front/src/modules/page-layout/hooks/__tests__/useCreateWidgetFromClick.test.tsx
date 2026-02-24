@@ -2,7 +2,7 @@ import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layo
 import { useCreateWidgetFromClick } from '@/page-layout/hooks/useCreateWidgetFromClick';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
@@ -29,11 +29,11 @@ describe('useCreateWidgetFromClick', () => {
     const { result } = renderHook(
       () => ({
         createWidget: useCreateWidgetFromClick(),
-        draggedArea: useRecoilComponentValue(
+        draggedArea: useRecoilComponentValueV2(
           pageLayoutDraggedAreaComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        editingWidgetId: useRecoilComponentValue(
+        editingWidgetId: useRecoilComponentValueV2(
           pageLayoutEditingWidgetIdComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),

@@ -1,5 +1,5 @@
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { NotificationCounter } from 'twenty-ui/navigation';
 
@@ -11,7 +11,7 @@ const StyledNotificationCounter = styled(NotificationCounter)`
 `;
 
 export const RecordTableRowMultiDragCounterChip = () => {
-  const originalDragSelection = useRecoilComponentValue(
+  const originalDragSelection = useRecoilComponentValueV2(
     originalDragSelectionComponentState,
   );
 

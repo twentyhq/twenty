@@ -1,8 +1,9 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useUpdateWorkspaceMemberRoleMutation } from '~/generated-metadata/graphql';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useUpdateWorkspaceMemberRoleMutation } from '~/generated-metadata/graphql';
 
 type AddWorkspaceMemberToRoleAndUpdateStateParams = {
   workspaceMemberId: string;
@@ -18,11 +19,17 @@ type AddWorkspaceMembersToRoleParams = {
 };
 
 export const useUpdateWorkspaceMemberRole = (roleId: string) => {
-  const setSettingsPersistedRole = useSetRecoilState(
-    settingsPersistedRoleFamilyState(roleId),
+  const setSettingsPersistedRole = useSetFamilyRecoilStateV2(
+    settingsPersistedRoleFamilyState,
+    roleId,
   );
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useFamilyRecoilValueV2(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+  const setSettingsDraftRole = useSetFamilyRecoilStateV2(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const [updateWorkspaceMemberRoleMutation] =

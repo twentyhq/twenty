@@ -11,7 +11,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
 import { useGetApprovedAccessDomainsQuery } from '~/generated-metadata/graphql';
@@ -26,9 +27,9 @@ export const SettingsApprovedAccessDomainsListCard = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigate();
   const { t } = useLingui();
-  const { localeCatalog } = useRecoilValue(dateLocaleState);
+  const { localeCatalog } = useRecoilValueV2(dateLocaleState);
 
-  const [approvedAccessDomains, setApprovedAccessDomains] = useRecoilState(
+  const [approvedAccessDomains, setApprovedAccessDomains] = useRecoilStateV2(
     approvedAccessDomainsState,
   );
 

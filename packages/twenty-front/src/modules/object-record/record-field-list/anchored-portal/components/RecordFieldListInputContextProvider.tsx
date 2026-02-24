@@ -13,7 +13,7 @@ import {
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -39,7 +39,7 @@ export const RecordFieldListInputContextProvider = ({
 
   const { closeFieldInput } = useOpenFieldInputEditMode();
 
-  const setRecordFieldListCellEditModePosition = useSetRecoilComponentState(
+  const setRecordFieldListCellEditModePosition = useSetRecoilComponentStateV2(
     recordFieldListCellEditModePositionComponentState,
   );
 

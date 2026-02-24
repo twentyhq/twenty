@@ -8,9 +8,9 @@ import { useLegendItemToggle } from '@/page-layout/widgets/graph/hooks/useLegend
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -146,17 +146,17 @@ export const GraphWidgetLegend = ({
 
   const theme = useTheme();
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useRecoilComponentValueV2(
     isPageLayoutInEditModeComponentState,
   );
 
   const isInteractive = !isPageLayoutInEditMode;
 
-  const setHighlightedLegendId = useSetRecoilComponentState(
+  const setHighlightedLegendId = useSetRecoilComponentStateV2(
     graphWidgetHighlightedLegendIdComponentState,
   );
 
-  const [hiddenLegendIds, setHiddenLegendIds] = useRecoilComponentState(
+  const [hiddenLegendIds, setHiddenLegendIds] = useRecoilComponentStateV2(
     graphWidgetHiddenLegendIdsComponentState,
   );
 

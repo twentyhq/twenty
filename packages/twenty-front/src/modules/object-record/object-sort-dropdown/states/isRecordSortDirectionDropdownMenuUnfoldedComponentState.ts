@@ -1,8 +1,8 @@
 import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const isRecordSortDirectionDropdownMenuUnfoldedComponentState =
-  createComponentState<boolean>({
+  createComponentStateV2<boolean>({
     key: 'isRecordSortDirectionDropdownMenuUnfoldedComponentState',
     defaultValue: false,
     componentInstanceContext: ObjectSortDropdownComponentInstanceContext,

@@ -1,3 +1,6 @@
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
+
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
@@ -6,7 +9,6 @@ import { SingleRecordPickerComponentInstanceContext } from '@/object-record/reco
 import { singleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilCallback } from 'recoil';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { type SearchQuery } from '~/generated/graphql';
 
@@ -26,34 +28,42 @@ export const useSingleRecordPickerPerformSearch = ({
   pickableMorphItems: RecordPickerPickableMorphItem[];
   loading: boolean;
 } => {
+  const store = useStore();
   const singleRecordPickerInstanceId = useAvailableComponentInstanceIdOrThrow(
     SingleRecordPickerComponentInstanceContext,
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const onSearchRecordsCompleted = useRecoilCallback(
-    ({ set }) =>
-      (data: SearchQuery) => {
-        const searchRecords = data.search.edges.map((edge) => edge.node);
+  const onSearchRecordsCompleted = useCallback(
+    (data: SearchQuery) => {
+      const searchRecords = data.search.edges.map((edge) => edge.node);
 
-        searchRecords.forEach((searchRecord) => {
-          set(searchRecordStoreFamilyState(searchRecord.recordId), {
+      searchRecords.forEach((searchRecord) => {
+        store.set(
+          searchRecordStoreFamilyState.atomFamily(searchRecord.recordId),
+          {
             ...searchRecord,
             record: undefined,
-          });
-        });
-
-        set(
-          singleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
-            { instanceId: singleRecordPickerInstanceId },
-          ),
-          objectMetadataItems.filter((objectMetadataItem) =>
-            objectNameSingulars.includes(objectMetadataItem.nameSingular),
-          ),
+          },
         );
-      },
-    [objectMetadataItems, objectNameSingulars, singleRecordPickerInstanceId],
+      });
+
+      store.set(
+        singleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
+          { instanceId: singleRecordPickerInstanceId },
+        ),
+        objectMetadataItems.filter((objectMetadataItem) =>
+          objectNameSingulars.includes(objectMetadataItem.nameSingular),
+        ),
+      );
+    },
+    [
+      store,
+      objectMetadataItems,
+      objectNameSingulars,
+      singleRecordPickerInstanceId,
+    ],
   );
 
   const selectedIdsFilter = { id: { in: selectedIds } };

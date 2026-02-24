@@ -9,7 +9,7 @@ import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/o
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 
 const StyledContainer = styled.div`
   flex: 2;
@@ -28,7 +28,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect 
       useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
     const [objectFilterDropdownIsSelectingCompositeField] =
-      useRecoilComponentState(
+      useRecoilComponentStateV2(
         objectFilterDropdownIsSelectingCompositeFieldComponentState,
       );
 

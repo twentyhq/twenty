@@ -1,6 +1,8 @@
-import { atom } from 'recoil';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-export const mountedHeadlessFrontComponentIdsState = atom<Set<string>>({
-  key: 'mountedHeadlessFrontComponentIdsState',
-  default: new Set(),
-});
+export const mountedHeadlessFrontComponentIdsState = createStateV2<Set<string>>(
+  {
+    key: 'mountedHeadlessFrontComponentIdsState',
+    defaultValue: new Set(),
+  },
+);

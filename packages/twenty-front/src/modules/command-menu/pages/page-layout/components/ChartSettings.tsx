@@ -14,7 +14,7 @@ import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layou
 import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
@@ -58,7 +58,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     CHART_CONFIGURATION_SETTING_IDS.GROUP_BY,
   );
   const [hasWidgetTooManyGroups, setHasWidgetTooManyGroups] =
-    useRecoilComponentState(hasWidgetTooManyGroupsComponentState);
+    useRecoilComponentStateV2(hasWidgetTooManyGroupsComponentState);
 
   const handleGraphTypeChange = (graphType: GraphType) => {
     const configToUpdate = getConfigToUpdateAfterGraphTypeChange(graphType);

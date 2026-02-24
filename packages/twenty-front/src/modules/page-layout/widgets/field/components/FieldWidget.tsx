@@ -5,7 +5,7 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidgetDisplay } from '@/page-layout/widgets/field/components/FieldWidgetDisplay';
@@ -19,7 +19,7 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AnimatedPlaceholder,
@@ -62,12 +62,10 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     resolvedFieldMetadataId ?? '',
   );
 
-  const record = useRecoilValue(
-    recordStoreFamilySelector({
-      recordId: targetRecord.id,
-      fieldName: fieldMetadataItem?.name ?? '',
-    }),
-  );
+  const record = useFamilySelectorValueV2(recordStoreFamilySelectorV2, {
+    recordId: targetRecord.id,
+    fieldName: fieldMetadataItem?.name ?? '',
+  });
 
   if (isPrefetchLoading) {
     return (

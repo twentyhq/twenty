@@ -18,8 +18,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import { type IconComponent } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
@@ -72,15 +72,15 @@ export const SingleRecordPickerMenuItems = ({
   const selectableItemIds = pickableMorphItems.map(
     (morphItem) => morphItem.recordId,
   );
-  const [selectedRecordId, setSelectedRecordId] = useRecoilComponentState(
+  const [selectedRecordId, setSelectedRecordId] = useRecoilComponentStateV2(
     singleRecordPickerSelectedIdComponentState,
   );
 
-  const singleRecordPickerShouldShowSkeleton = useRecoilComponentValue(
+  const singleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
     singleRecordPickerShouldShowSkeletonComponentState,
   );
 
-  const singleRecordPickerShouldShowInitialLoading = useRecoilComponentValue(
+  const singleRecordPickerShouldShowInitialLoading = useRecoilComponentValueV2(
     singleRecordPickerShouldShowInitialLoadingComponentState,
   );
 

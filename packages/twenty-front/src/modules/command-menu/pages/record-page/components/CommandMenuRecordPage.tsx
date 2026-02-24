@@ -8,11 +8,11 @@ import { INFORMATION_BANNER_HEIGHT } from '@/information-banner/constants/Inform
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 
 const StyledRightDrawerRecord = styled.div<{
   hasDeletedRecordBanner: boolean;
@@ -26,11 +26,11 @@ const StyledRightDrawerRecord = styled.div<{
 `;
 
 export const CommandMenuRecordPage = () => {
-  const viewableRecordNameSingular = useRecoilComponentValue(
+  const viewableRecordNameSingular = useRecoilComponentValueV2(
     viewableRecordNameSingularComponentState,
   );
 
-  const viewableRecordId = useRecoilComponentValue(
+  const viewableRecordId = useRecoilComponentValueV2(
     viewableRecordIdComponentState,
   );
 
@@ -47,11 +47,9 @@ export const CommandMenuRecordPage = () => {
     viewableRecordId,
   );
 
-  const recordDeletedAt = useRecoilValue(
-    recordStoreFamilySelector({
-      recordId: objectRecordId,
-      fieldName: 'deletedAt',
-    }),
+  const recordDeletedAt = useFamilySelectorValueV2(
+    recordStoreFamilySelectorV2,
+    { recordId: objectRecordId, fieldName: 'deletedAt' },
   );
 
   const commandMenuPageInstanceId = useComponentInstanceStateContext(

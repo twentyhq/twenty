@@ -3,8 +3,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -15,10 +14,12 @@ import {
   upsertIntoArrayOfObjectsComparingId,
 } from 'twenty-shared/utils';
 import { type CoreView } from '~/generated-metadata/graphql';
+import { useStore } from 'jotai';
 
 export const useUpdateViewAggregate = () => {
+  const store = useStore();
   const { canPersistChanges } = useCanPersistViewChanges();
-  const currentViewId = useRecoilComponentValue(
+  const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();
@@ -66,7 +67,7 @@ export const useUpdateViewAggregate = () => {
           return;
         }
 
-        jotaiStore.set(coreViewsState.atom, (currentCoreViews) =>
+        store.set(coreViewsState.atom, (currentCoreViews) =>
           upsertIntoArrayOfObjectsComparingId(
             currentCoreViews,
             updatedCoreView,
@@ -83,6 +84,7 @@ export const useUpdateViewAggregate = () => {
       currentViewId,
       performViewAPIUpdate,
       loadRecordIndexStates,
+      store,
     ],
   );
 

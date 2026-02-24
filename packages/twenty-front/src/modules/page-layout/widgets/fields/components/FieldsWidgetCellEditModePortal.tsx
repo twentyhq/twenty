@@ -7,7 +7,7 @@ import { FieldInput } from '@/object-record/record-field/ui/components/FieldInpu
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 type FieldsWidgetCellEditModePortalProps = {
@@ -25,7 +25,7 @@ export const FieldsWidgetCellEditModePortal = ({
     RecordFieldListComponentInstanceContext,
   );
 
-  const editModePosition = useRecoilComponentValue(
+  const editModePosition = useRecoilComponentValueV2(
     recordFieldListCellEditModePositionComponentState,
   );
 

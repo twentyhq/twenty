@@ -11,8 +11,8 @@ import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/const
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { IconFunction } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -35,7 +35,7 @@ export const CommandMenuWorkflowSelectAction = ({
 
   const { t } = useLingui();
 
-  const logicFunctions = useRecoilValue(logicFunctionsState);
+  const logicFunctions = useRecoilValueV2(logicFunctionsState);
 
   const toolFunctions = logicFunctions.filter((fn) => fn.isTool === true);
 

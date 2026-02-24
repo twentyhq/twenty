@@ -13,7 +13,7 @@ import { type ApolloError } from '@apollo/client';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconKey } from 'twenty-ui/display';
@@ -33,7 +33,7 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
 
   const { t } = useLingui();
 
-  const [SSOIdentitiesProviders, setSSOIdentitiesProviders] = useRecoilState(
+  const [SSOIdentitiesProviders, setSSOIdentitiesProviders] = useRecoilStateV2(
     SSOIdentitiesProvidersState,
   );
 

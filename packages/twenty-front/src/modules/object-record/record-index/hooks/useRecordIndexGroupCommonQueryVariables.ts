@@ -10,7 +10,8 @@ import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/ut
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
@@ -21,15 +22,15 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const currentRecordFilterGroups = useRecoilComponentValue(
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 
-  const currentRecordSorts = useRecoilComponentValue(
+  const currentRecordSorts = useRecoilComponentValueV2(
     currentRecordSortsComponentState,
   );
 
@@ -42,7 +43,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     fields: objectMetadataItem.fields,
   });
 
-  const anyFieldFilterValue = useRecoilComponentValue(
+  const anyFieldFilterValue = useRecoilComponentValueV2(
     anyFieldFilterValueComponentState,
   );
 
@@ -58,7 +59,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     objectMetadataItems,
   );
 
-  const recordGroupFieldMetadata = useRecoilComponentValue(
+  const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -67,7 +68,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     additionalFieldMetadataId: recordGroupFieldMetadata?.id,
   });
 
-  const recordGroupDefinitions = useRecoilComponentValue(
+  const recordGroupDefinitions = useRecoilComponentSelectorValueV2(
     recordGroupDefinitionsComponentSelector,
   );
 

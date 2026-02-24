@@ -14,24 +14,24 @@ import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-t
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
 import { RECORD_TABLE_VIRTUALIZATION_BODY_PLACEHOLDER_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedBodyPlaceholder';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableColumnWidthEffect = () => {
-  const [resizedFieldMetadataItemId] = useRecoilComponentState(
+  const [resizedFieldMetadataItemId] = useRecoilComponentStateV2(
     resizedFieldMetadataIdComponentState,
   );
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const shouldCompactRecordTableFirstColumn = useRecoilComponentValue(
+  const shouldCompactRecordTableFirstColumn = useRecoilComponentValueV2(
     shouldCompactRecordTableFirstColumnComponentState,
   );
 
-  const recordTableWidth = useRecoilComponentValue(
+  const recordTableWidth = useRecoilComponentValueV2(
     recordTableWidthComponentState,
   );
 
