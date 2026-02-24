@@ -1,6 +1,7 @@
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
+import { type FieldsWidgetDisplayMode } from '@/page-layout/widgets/fields/types/FieldsWidgetDisplayMode';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { filterDraftGroupsForDisplay } from '@/page-layout/widgets/fields/utils/filterDraftGroupsForDisplay';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -48,5 +49,10 @@ export const useFieldsWidgetGroupsForDisplay = ({
     viewGroups.groups,
   ]);
 
-  return { groups };
+  const displayMode: FieldsWidgetDisplayMode =
+    isPageLayoutInEditMode && hasDraftGroups
+      ? 'grouped'
+      : viewGroups.displayMode;
+
+  return { groups, displayMode };
 };
