@@ -5,7 +5,7 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
@@ -39,7 +39,7 @@ export const CommandMenuWorkflowStepInfo = ({
 
   const workflowId = useCommandMenuWorkflowIdOrThrow();
 
-  const workflowStepId = useRecoilComponentValue(
+  const workflowStepId = useRecoilComponentValueV2(
     commandMenuWorkflowStepIdComponentState,
     commandMenuPageInstanceId,
   );

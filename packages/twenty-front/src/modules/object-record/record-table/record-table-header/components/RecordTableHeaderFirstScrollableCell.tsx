@@ -17,7 +17,7 @@ import { resizedFieldMetadataIdComponentState } from '@/object-record/record-tab
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { cx } from '@linaria/core';
 import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
 
@@ -44,18 +44,18 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     ),
   )[0] as RecordField | undefined;
 
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRowFocusActive = useRecoilComponentValueV2(
     isRecordTableRowFocusActiveComponentState,
   );
 
   const isFirstRowActiveOrFocused =
     isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
 
-  const isRecordTableScrolledVertically = useRecoilComponentValue(
+  const isRecordTableScrolledVertically = useRecoilComponentValueV2(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const isRecordTableScrolledHorizontally = useRecoilComponentValue(
+  const isRecordTableScrolledHorizontally = useRecoilComponentValueV2(
     isRecordTableScrolledHorizontallyComponentState,
   );
 
@@ -89,14 +89,14 @@ export const RecordTableHeaderFirstScrollableCell = () => {
 
   const zIndex = hasRecordGroups ? zIndexWithGroups : zIndexWithoutGroups;
 
-  const isScrolledVertically = useRecoilComponentValue(
+  const isScrolledVertically = useRecoilComponentValueV2(
     isRecordTableScrolledVerticallyComponentState,
   );
 
   const shouldDisplayBorderBottom =
     hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
 
-  const resizedFieldMetadataItemId = useRecoilComponentValue(
+  const resizedFieldMetadataItemId = useRecoilComponentValueV2(
     resizedFieldMetadataIdComponentState,
   );
 

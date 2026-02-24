@@ -9,6 +9,7 @@ import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-ind
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useStore } from 'jotai';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -25,8 +26,9 @@ export const RecordBoardDragDropContext = ({
 }: React.PropsWithChildren) => {
   const { recordBoardId } = useContext(RecordBoardContext);
 
-  const currentRecordSortCallbackState = useRecoilComponentCallbackState(
+  const currentRecordSortsAtom = useRecoilComponentStateCallbackStateV2(
     currentRecordSortsComponentState,
+    recordBoardId,
   );
 
   const recordBoardSelectedRecordIdsAtom =
@@ -66,10 +68,7 @@ export const RecordBoardDragDropContext = ({
 
         if (!result.destination) return;
 
-        const currentRecordSorts = getSnapshotValue(
-          snapshot,
-          currentRecordSortCallbackState,
-        );
+        const currentRecordSorts = store.get(currentRecordSortsAtom);
 
         if (currentRecordSorts.length > 0) {
           openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
@@ -87,8 +86,9 @@ export const RecordBoardDragDropContext = ({
       processBoardCardDrop,
       originalDragSelectionCallbackState,
       endRecordDrag,
-      currentRecordSortCallbackState,
+      currentRecordSortsAtom,
       openModal,
+      store,
     ],
   );
 

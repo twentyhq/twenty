@@ -8,7 +8,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
 import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 
@@ -26,7 +26,7 @@ export const usePhonesField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldPhonesValue>();
 
-  const draftValue = useRecoilComponentValue(
+  const draftValue = useRecoilComponentValueV2(
     recordFieldInputDraftValueComponentState,
   );
 

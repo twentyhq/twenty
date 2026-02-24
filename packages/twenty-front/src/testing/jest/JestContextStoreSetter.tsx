@@ -6,6 +6,7 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import {
   type ContextStoreTargetedRecordsRule,
   contextStoreTargetedRecordsRuleComponentState,
@@ -14,7 +15,7 @@ import { type ContextStoreViewType } from '@/context-store/types/ContextStoreVie
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 
 export type JestContextStoreSetterMocks = {
   contextStoreTargetedRecordsRule?: ContextStoreTargetedRecordsRule;
@@ -41,32 +42,39 @@ export const JestContextStoreSetter = ({
   contextStoreCurrentViewType,
   children,
 }: JestContextStoreSetterProps) => {
-  const setContextStoreTargetedRecordsRule = useSetRecoilComponentState(
+  const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
     contextStoreTargetedRecordsRuleComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const setContextStoreCurrentObjectMetadataItemId = useSetRecoilComponentState(
+  const setContextStoreCurrentObjectMetadataItemId = useSetRecoilComponentStateV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentState(
+  const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
     contextStoreNumberOfSelectedRecordsComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const setcontextStoreFiltersComponentState = useSetRecoilComponentState(
+  const setContextStoreFiltersComponentState = useSetRecoilComponentStateV2(
     contextStoreFiltersComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const setContextStoreFilterGroupsComponentState = useSetRecoilComponentState(
+  const setContextStoreFilterGroupsComponentState = useSetRecoilComponentStateV2(
     contextStoreFilterGroupsComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const setContextStoreCurrentViewId = useSetRecoilComponentState(
+  const setContextStoreCurrentViewId = useSetRecoilComponentStateV2(
     contextStoreCurrentViewIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const setContextStoreCurrentViewType = useSetRecoilComponentState(
+  const setContextStoreCurrentViewType = useSetRecoilComponentStateV2(
     contextStoreCurrentViewTypeComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -81,7 +89,7 @@ export const JestContextStoreSetter = ({
     setContextStoreTargetedRecordsRule(contextStoreTargetedRecordsRule);
     setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     setContextStoreNumberOfSelectedRecords(contextStoreNumberOfSelectedRecords);
-    setcontextStoreFiltersComponentState(contextStoreFilters);
+    setContextStoreFiltersComponentState(contextStoreFilters);
     setContextStoreFilterGroupsComponentState(contextStoreFilterGroups);
     setContextStoreCurrentViewType(contextStoreCurrentViewType ?? null);
     setIsLoaded(true);
@@ -92,7 +100,7 @@ export const JestContextStoreSetter = ({
     contextStoreCurrentObjectMetadataId,
     setContextStoreNumberOfSelectedRecords,
     contextStoreNumberOfSelectedRecords,
-    setcontextStoreFiltersComponentState,
+    setContextStoreFiltersComponentState,
     contextStoreFilters,
     objectMetadataItem,
     setContextStoreCurrentViewId,

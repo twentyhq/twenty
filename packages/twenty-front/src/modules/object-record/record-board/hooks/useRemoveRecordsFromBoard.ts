@@ -1,20 +1,20 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { recordGroupFromGroupValueComponentFamilySelector } from '@/object-record/record-group/states/selectors/recordGroupFromGroupValueComponentFamilySelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useStore } from 'jotai';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorCallbackStateV2';
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveRecordsFromBoard = () => {
   const store = useStore();
-  const recordIndexGroupFieldMetadataItemCallbackState =
-    useRecoilComponentCallbackState(
+  const recordIndexGroupFieldMetadataItemAtom =
+    useRecoilComponentStateCallbackStateV2(
       recordIndexGroupFieldMetadataItemComponentState,
     );
 
@@ -29,7 +29,7 @@ export const useRemoveRecordsFromBoard = () => {
     );
 
   const removeRecordsFromBoard = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       ({ recordIdsToRemove }: { recordIdsToRemove: string[] }) => {
         const recordIdsToRemoveByGroup = new Map<string, string[]>();
 
@@ -42,10 +42,9 @@ export const useRemoveRecordsFromBoard = () => {
             continue;
           }
 
-          const recordIndexGroupFieldMetadataItem = getSnapshotValue(
-            snapshot,
-            recordIndexGroupFieldMetadataItemCallbackState,
-          );
+          const recordIndexGroupFieldMetadataItem = store.get(
+            recordIndexGroupFieldMetadataItemAtom,
+          ) as FieldMetadataItem | undefined;
 
           if (!isDefined(recordIndexGroupFieldMetadataItem)) {
             continue;
@@ -93,7 +92,7 @@ export const useRemoveRecordsFromBoard = () => {
       },
     [
       store,
-      recordIndexGroupFieldMetadataItemCallbackState,
+      recordIndexGroupFieldMetadataItemAtom,
       recordGroupFromGroupValueFamilyCallbackState,
       recordIndexRecordIdsByGroupFamilyCallbackState,
     ],

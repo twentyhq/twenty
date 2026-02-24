@@ -5,7 +5,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
@@ -32,13 +32,16 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { performViewAPICreate } = usePerformViewAPIPersist();
 
+  const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
+
   const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,
     viewBarComponentId,
   );
 
-  const anyFieldFilterValue = useRecoilComponentValue(
+  const anyFieldFilterValue = useRecoilComponentValueV2(
     anyFieldFilterValueComponentState,
+    recordIndexId,
   );
 
   const { performViewFieldAPICreate } = usePerformViewFieldAPIPersist();
@@ -50,23 +53,24 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { performViewFilterGroupAPICreate } =
     usePerformViewFilterGroupAPIPersist();
 
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
-
   const store = useStore();
 
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
 
-  const currentRecordFilterGroups = useRecoilComponentValue(
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
     currentRecordFilterGroupsComponentState,
+    recordIndexId,
   );
 
-  const currentRecordSorts = useRecoilComponentValue(
+  const currentRecordSorts = useRecoilComponentValueV2(
     currentRecordSortsComponentState,
+    recordIndexId,
   );
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
+    recordIndexId,
   );
 
   const createViewFromCurrentView = useRecoilCallback(

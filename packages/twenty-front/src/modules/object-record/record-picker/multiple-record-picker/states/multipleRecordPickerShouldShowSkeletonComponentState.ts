@@ -1,8 +1,8 @@
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const multipleRecordPickerShouldShowSkeletonComponentState =
-  createComponentState<boolean>({
+  createComponentStateV2<boolean>({
     key: 'multipleRecordPickerShouldShowSkeletonComponentState',
     defaultValue: false,
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,

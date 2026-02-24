@@ -8,6 +8,7 @@ import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-rec
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 export const MorphRelationOneToManyFieldInput = () => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
@@ -23,7 +24,7 @@ export const MorphRelationOneToManyFieldInput = () => {
     onSubmit?.({ skipPersist: true });
   };
 
-  const layoutDirection = useRecoilComponentValue(
+  const layoutDirection = useRecoilComponentValueV2(
     recordFieldInputLayoutDirectionComponentState,
   );
 

@@ -8,7 +8,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
 import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 
@@ -30,7 +30,7 @@ export const useCurrencyField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldCurrencyValue>();
 
-  const draftValue = useRecoilComponentValue(
+  const draftValue = useRecoilComponentValueV2(
     recordFieldInputDraftValueComponentState,
   );
 

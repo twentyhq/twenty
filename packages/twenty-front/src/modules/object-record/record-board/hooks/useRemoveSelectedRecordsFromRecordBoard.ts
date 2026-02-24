@@ -6,7 +6,7 @@ import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilCallback } from 'recoil';
@@ -21,7 +21,7 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
     recordBoardIndexId,
   );
 
-  const groupByFieldMetadataItem = useRecoilComponentValue(
+  const groupByFieldMetadataItem = useRecoilComponentValueV2(
     recordIndexGroupFieldMetadataItemComponentState,
     recordBoardIndexId,
   );

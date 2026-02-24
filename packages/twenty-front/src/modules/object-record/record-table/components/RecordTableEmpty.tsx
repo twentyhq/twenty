@@ -16,7 +16,7 @@ import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-reco
 import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-table/utils/computeVisibleRecordFieldsWidthOnTable';
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -33,21 +33,21 @@ export interface RecordTableEmptyProps {
 export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const recordTableWidth = useRecoilComponentValue(
+  const recordTableWidth = useRecoilComponentValueV2(
     recordTableWidthComponentState,
   );
 
-  const resizedFieldMetadataId = useRecoilComponentValue(
+  const resizedFieldMetadataId = useRecoilComponentValueV2(
     resizedFieldMetadataIdComponentState,
   );
 
-  const resizeFieldOffset = useRecoilComponentValue(
+  const resizeFieldOffset = useRecoilComponentValueV2(
     resizeFieldOffsetComponentState,
   );
 
   const isResizing = isDefined(resizedFieldMetadataId);
 
-  const shouldCompactRecordTableFirstColumn = useRecoilComponentValue(
+  const shouldCompactRecordTableFirstColumn = useRecoilComponentValueV2(
     shouldCompactRecordTableFirstColumnComponentState,
   );
 

@@ -6,7 +6,7 @@ import { isDraggingRecordComponentState } from '@/object-record/record-drag/stat
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
@@ -45,7 +45,7 @@ export const RecordCalendarCardHeader = ({
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const isDraggingRecord = useRecoilComponentValue(
+  const isDraggingRecord = useRecoilComponentValueV2(
     isDraggingRecordComponentState,
   );
 

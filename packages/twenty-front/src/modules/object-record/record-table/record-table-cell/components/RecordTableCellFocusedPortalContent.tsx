@@ -8,7 +8,7 @@ import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/reco
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { BORDER_COMMON } from 'twenty-ui/theme';
@@ -35,7 +35,7 @@ export const RecordTableCellFocusedPortalContent = () => {
   const { rowIndex } = useRecordTableRowContextOrThrow();
   const { onMoveHoverToCurrentCell } = useRecordTableBodyContextOrThrow();
 
-  const focusPosition = useRecoilComponentValue(
+  const focusPosition = useRecoilComponentValueV2(
     recordTableFocusPositionComponentState,
   );
 
@@ -44,7 +44,7 @@ export const RecordTableCellFocusedPortalContent = () => {
     rowIndex,
   );
 
-  const hoverPosition = useRecoilComponentValue(
+  const hoverPosition = useRecoilComponentValueV2(
     recordTableHoverPositionComponentState,
   );
 

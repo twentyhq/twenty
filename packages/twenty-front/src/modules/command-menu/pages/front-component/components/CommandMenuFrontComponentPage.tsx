@@ -11,7 +11,7 @@ const FrontComponentRenderer = lazy(() =>
 );
 
 export const CommandMenuFrontComponentPage = () => {
-  const viewableFrontComponentId = useRecoilComponentValue(
+  const viewableFrontComponentId = useRecoilComponentValueV2(
     viewableFrontComponentIdComponentState,
   );
 

@@ -11,7 +11,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
@@ -30,7 +30,7 @@ export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
     { recordId, fieldName },
   ) as [FieldRelationValue<T>, (value: FieldRelationValue<T>) => void];
 
-  const draftValue = useRecoilComponentValue(
+  const draftValue = useRecoilComponentValueV2(
     recordFieldInputDraftValueComponentState,
   );
 

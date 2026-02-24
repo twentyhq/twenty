@@ -1,4 +1,4 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,7 +29,7 @@ describe('useStartPageLayoutDragSelection', () => {
         startDragSelection: useStartPageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValue(
+        selectedCells: useRecoilComponentValueV2(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -77,7 +77,7 @@ describe('useStartPageLayoutDragSelection', () => {
         startDragSelection: useStartPageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValue(
+        selectedCells: useRecoilComponentValueV2(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),

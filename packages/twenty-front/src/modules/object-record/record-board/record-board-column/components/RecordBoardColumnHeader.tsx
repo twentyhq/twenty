@@ -16,7 +16,8 @@ import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useC
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { Tag } from 'twenty-ui/components';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -91,7 +92,7 @@ export const RecordBoardColumnHeader = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+  const hasAnySoftDeleteFilterOnView = useRecoilComponentSelectorValueV2(
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
@@ -105,7 +106,7 @@ export const RecordBoardColumnHeader = () => {
       { groupValue: columnDefinition?.value ?? '' },
     );
 
-  const recordIndexAggregateDisplayLabel = useRecoilComponentValue(
+  const recordIndexAggregateDisplayLabel = useRecoilComponentValueV2(
     recordIndexAggregateDisplayLabelComponentState,
   );
 

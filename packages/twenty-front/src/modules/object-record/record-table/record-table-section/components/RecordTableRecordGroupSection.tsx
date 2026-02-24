@@ -25,7 +25,8 @@ import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } fro
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import {
   filterOutByProperty,
@@ -133,13 +134,13 @@ export const RecordTableRecordGroupSection = () => {
       { groupValue: recordGroup?.value ?? '' },
     );
 
-  const recordIndexAggregateDisplayLabel = useRecoilComponentValue(
+  const recordIndexAggregateDisplayLabel = useRecoilComponentValueV2(
     recordIndexAggregateDisplayLabelComponentState,
   );
 
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useRecoilComponentSelectorValueV2(
     visibleRecordFieldsComponentSelector,
   );
 

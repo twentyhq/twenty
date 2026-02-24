@@ -26,8 +26,9 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useStore } from 'jotai';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -51,8 +52,11 @@ export const useTriggerInitialRecordTableDataLoad = () => {
     dataPagesLoadedComponentState,
   );
 
-  const isRecordTableInitialLoadingCallbackState =
-    useRecoilComponentCallbackState(isRecordTableInitialLoadingComponentState);
+  const isRecordTableInitialLoadingAtom =
+    useRecoilComponentStateCallbackStateV2(
+      isRecordTableInitialLoadingComponentState,
+      recordTableId,
+    );
 
   const recordIndexAllRecordIdsAtom = useRecoilComponentSelectorCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
@@ -71,11 +75,11 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       dataLoadingStatusByRealIndexComponentFamilySelector,
     );
 
-  const setIsRecordTableScrolledHorizontally = useSetRecoilComponentState(
+  const setIsRecordTableScrolledHorizontally = useSetRecoilComponentStateV2(
     isRecordTableScrolledHorizontallyComponentState,
   );
 
-  const setIsRecordTableScrolledVertically = useSetRecoilComponentState(
+  const setIsRecordTableScrolledVertically = useSetRecoilComponentStateV2(
     isRecordTableScrolledVerticallyComponentState,
   );
 
@@ -177,7 +181,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         set(dataPagesLoadedCallbackState, []);
 
         set(isInitializingVirtualTableDataLoadingCallbackState, false);
-        set(isRecordTableInitialLoadingCallbackState, false);
+        store.set(isRecordTableInitialLoadingAtom, false);
 
         set(lastScrollPositionCallbackState, 0);
         set(lastRealIndexSetCallbackState, null);
@@ -202,7 +206,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       store,
       showAuthModal,
       dataPagesLoadedCallbackState,
-      isRecordTableInitialLoadingCallbackState,
+      isRecordTableInitialLoadingAtom,
       lastScrollPositionCallbackState,
       lastRealIndexSetCallbackState,
       scrollAtRealIndexCallbackState,

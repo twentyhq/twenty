@@ -1,7 +1,7 @@
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,7 +18,7 @@ const StyledVirtualizationContainer = styled.div<{
 `;
 
 export const RecordTableVirtualizedBodyPlaceholder = () => {
-  const totalNumberOfRecordsToVirtualize = useRecoilComponentValue(
+  const totalNumberOfRecordsToVirtualize = useRecoilComponentValueV2(
     totalNumberOfRecordsToVirtualizeComponentState,
   );
 

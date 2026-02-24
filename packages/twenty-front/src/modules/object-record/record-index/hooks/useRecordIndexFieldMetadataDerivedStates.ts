@@ -2,7 +2,7 @@ import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/stat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,7 +19,7 @@ export const useRecordIndexFieldMetadataDerivedStates = (
     ]),
   );
 
-  const currentRecordFields = useRecoilComponentValue(
+  const currentRecordFields = useRecoilComponentValueV2(
     currentRecordFieldsComponentState,
     recordIndexId,
   );

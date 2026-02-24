@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { CommandMenuPages } from 'twenty-shared/types';
 
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
@@ -19,7 +19,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const setPageLayoutEditingWidgetId = useSetRecoilComponentState(
+  const setPageLayoutEditingWidgetId = useSetRecoilComponentStateV2(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );

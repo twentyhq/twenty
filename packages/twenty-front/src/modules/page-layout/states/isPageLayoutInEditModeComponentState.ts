@@ -1,9 +1,9 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
 export const isPageLayoutInEditModeComponentState =
-  createComponentState<boolean>({
+  createComponentStateV2<boolean>({
     key: 'isPageLayoutInEditModeComponentState',
     defaultValue: false,
     componentInstanceContext: PageLayoutComponentInstanceContext,

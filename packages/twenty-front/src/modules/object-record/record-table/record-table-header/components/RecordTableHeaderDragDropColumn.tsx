@@ -8,7 +8,7 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { cx } from '@linaria/core';
 import { useContext } from 'react';
@@ -36,11 +36,11 @@ const StyledDragDropHeaderCell = styled.div<{
 export const RecordTableHeaderDragDropColumn = () => {
   const { theme } = useContext(ThemeContext);
 
-  const isScrolledVertically = useRecoilComponentValue(
+  const isScrolledVertically = useRecoilComponentValueV2(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRowFocusActive = useRecoilComponentValueV2(
     isRecordTableRowFocusActiveComponentState,
   );
 

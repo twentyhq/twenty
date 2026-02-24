@@ -22,7 +22,7 @@ import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -50,19 +50,19 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useRecoilComponentValueV2(
     isPageLayoutInEditModeComponentState,
   );
 
-  const draggingWidgetId = useRecoilComponentValue(
+  const draggingWidgetId = useRecoilComponentValueV2(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const resizingWidgetId = useRecoilComponentValue(
+  const resizingWidgetId = useRecoilComponentValueV2(
     pageLayoutResizingWidgetIdComponentState,
   );
 
-  const currentlyEditingWidgetId = useRecoilComponentValue(
+  const currentlyEditingWidgetId = useRecoilComponentValueV2(
     pageLayoutEditingWidgetIdComponentState,
   );
 

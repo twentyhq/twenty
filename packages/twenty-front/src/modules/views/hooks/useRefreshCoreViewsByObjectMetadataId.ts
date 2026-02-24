@@ -20,7 +20,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
   const [findManyCoreViewsLazy] = useFindManyCoreViewsLazyQuery();
 
   const refreshCoreViewsByObjectMetadataId = useRecoilCallback(
-    ({ set }) =>
+    () =>
       async (objectMetadataId: string) => {
         const result = await findManyCoreViewsLazy({
           variables: {
@@ -86,7 +86,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
             )
           ) {
             const view = convertCoreViewToView(coreView);
-            set(
+            jotaiStore.set(
               currentRecordFieldsComponentState.atomFamily({
                 instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
                   objectMetadataItem.namePlural,
@@ -111,7 +111,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
             )
           ) {
             const view = convertCoreViewToView(coreView);
-            set(
+            jotaiStore.set(
               currentRecordFiltersComponentState.atomFamily({
                 instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
                   objectMetadataItem.namePlural,
@@ -127,7 +127,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
 
           if (!isDeeplyEqual(coreView.viewSorts, existingView.viewSorts)) {
             const view = convertCoreViewToView(coreView);
-            set(
+            jotaiStore.set(
               currentRecordSortsComponentState.atomFamily({
                 instanceId: getRecordIndexIdFromObjectNamePluralAndViewId(
                   objectMetadataItem.namePlural,

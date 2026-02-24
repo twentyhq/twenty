@@ -6,7 +6,7 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorCallbackStateV2';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { type ViewType } from '@/views/types/ViewType';
@@ -42,7 +42,7 @@ export const useReorderRecordGroups = ({
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
 
-  const groupFieldMetadata = useRecoilComponentValue(
+  const groupFieldMetadata = useRecoilComponentValueV2(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 

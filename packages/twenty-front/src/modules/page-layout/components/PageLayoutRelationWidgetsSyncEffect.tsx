@@ -9,7 +9,7 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { injectRelationWidgetsIntoLayout } from '@/page-layout/utils/injectRelationWidgetsIntoLayout';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
@@ -26,7 +26,7 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
 }: PageLayoutRelationWidgetsSyncEffectProps) => {
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
-  const isInitialized = useRecoilComponentValue(
+  const isInitialized = useRecoilComponentValueV2(
     pageLayoutIsInitializedComponentState,
   );
 

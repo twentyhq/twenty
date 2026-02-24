@@ -5,13 +5,13 @@ import { useResetTableRowSelection } from '@/object-record/record-table/hooks/in
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useStore } from 'jotai';
 
 export const useSelectAllRows = (recordTableId?: string) => {
-  const hasUserSelectedAllRowsCallbackState = useRecoilComponentCallbackState(
+  const hasUserSelectedAllRowsAtom = useRecoilComponentStateCallbackStateV2(
     hasUserSelectedAllRowsComponentState,
     recordTableId,
   );
@@ -53,14 +53,14 @@ export const useSelectAllRows = (recordTableId?: string) => {
           store.set(isRowSelectedFamilyState(recordId), isSelected);
         }
 
-        set(hasUserSelectedAllRowsCallbackState, true);
+        store.set(hasUserSelectedAllRowsAtom, true);
       },
     [
       allRowsSelectedStatusAtom,
       recordIndexAllRecordIdsAtom,
       resetTableRowSelection,
       isRowSelectedFamilyState,
-      hasUserSelectedAllRowsCallbackState,
+      hasUserSelectedAllRowsAtom,
       store,
     ],
   );

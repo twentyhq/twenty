@@ -5,6 +5,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -43,8 +44,11 @@ export const useResetChartDraftFiltersSettings = () => {
           false,
         );
 
-        set(currentRecordFiltersComponentState.atomFamily({ instanceId }), []);
-        set(
+        jotaiStore.set(
+          currentRecordFiltersComponentState.atomFamily({ instanceId }),
+          [],
+        );
+        jotaiStore.set(
           currentRecordFilterGroupsComponentState.atomFamily({ instanceId }),
           [],
         );

@@ -8,7 +8,8 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 
@@ -29,12 +30,16 @@ export const useRunWorkflowRecordActions = ({
 }) => {
   const { getIcon } = useIcons();
   const { enqueueWarningSnackBar } = useSnackBar();
-  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
+
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
+    recordIndexId,
   );
 
-  const isPageInEditMode = useRecoilComponentValue(
+  const isPageInEditMode = useRecoilComponentValueV2(
     contextStoreIsPageInEditModeComponentState,
+    recordIndexId,
   );
 
   const selectedRecordIds =

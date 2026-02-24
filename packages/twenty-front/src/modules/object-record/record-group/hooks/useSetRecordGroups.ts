@@ -7,7 +7,6 @@ import { recordGroupIdsComponentState } from '@/object-record/record-group/state
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
 import { useCallback } from 'react';
@@ -19,7 +18,7 @@ export const useSetRecordGroups = () => {
   const store = useStore();
 
   const setRecordGroups = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set }) =>
       ({
         mainGroupByFieldMetadataId,
         recordGroups,
@@ -54,21 +53,17 @@ export const useSetRecordGroups = () => {
               (field) => field.id === fieldMetadataId,
             )
           : undefined;
-        const currentFieldMetadata = getSnapshotValue(
-          snapshot,
+        const recordIndexGroupFieldMetadataAtom =
           recordIndexGroupFieldMetadataItemComponentState.atomFamily({
             instanceId: recordIndexId,
-          }),
+          });
+        const currentFieldMetadata = store.get(
+          recordIndexGroupFieldMetadataAtom,
         );
 
         // Set the field metadata linked to the record groups
         if (!isDeeplyEqual(fieldMetadata, currentFieldMetadata)) {
-          set(
-            recordIndexGroupFieldMetadataItemComponentState.atomFamily({
-              instanceId: recordIndexId,
-            }),
-            fieldMetadata,
-          );
+          store.set(recordIndexGroupFieldMetadataAtom, fieldMetadata);
         }
 
         // Set the record groups by id

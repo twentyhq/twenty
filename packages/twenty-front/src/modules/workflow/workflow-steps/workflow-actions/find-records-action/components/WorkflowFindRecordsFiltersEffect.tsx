@@ -2,7 +2,7 @@ import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-fil
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
@@ -30,11 +30,11 @@ export const WorkflowFindRecordsFiltersEffect = ({
     {},
   );
 
-  const setCurrentRecordFilters = useSetRecoilComponentState(
+  const setCurrentRecordFilters = useSetRecoilComponentStateV2(
     currentRecordFiltersComponentState,
   );
 
-  const setCurrentRecordFilterGroups = useSetRecoilComponentState(
+  const setCurrentRecordFilterGroups = useSetRecoilComponentStateV2(
     currentRecordFilterGroupsComponentState,
   );
 

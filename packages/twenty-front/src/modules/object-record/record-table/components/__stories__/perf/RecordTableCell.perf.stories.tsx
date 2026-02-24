@@ -29,8 +29,9 @@ import { RecordTableContextProvider } from '@/object-record/record-table/context
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -46,7 +47,7 @@ const RelationFieldValueSetterEffect = () => {
     mockPerformance.relationRecordId,
   );
 
-  const setCurrentRecordFields = useSetRecoilComponentState(
+  const setCurrentRecordFields = useSetRecoilComponentStateV2(
     currentRecordFieldsComponentState,
     'recordTableId',
   );
@@ -86,12 +87,12 @@ const meta: Meta = {
     MemoryRouterDecorator,
     ChipGeneratorsDecorator,
     (Story) => {
-      const currentRecordFields = useRecoilComponentValue(
+      const currentRecordFields = useRecoilComponentValueV2(
         currentRecordFieldsComponentState,
         'recordTableId',
       );
 
-      const visibleRecordFields = useRecoilComponentValue(
+      const visibleRecordFields = useRecoilComponentSelectorValueV2(
         visibleRecordFieldsComponentSelector,
         'recordTableId',
       );

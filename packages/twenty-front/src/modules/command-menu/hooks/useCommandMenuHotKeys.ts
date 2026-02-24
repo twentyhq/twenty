@@ -11,7 +11,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
@@ -38,7 +38,7 @@ export const useCommandMenuHotKeys = () => {
 
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  const contextStoreTargetedRecordsRuleComponent = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRuleComponent = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );

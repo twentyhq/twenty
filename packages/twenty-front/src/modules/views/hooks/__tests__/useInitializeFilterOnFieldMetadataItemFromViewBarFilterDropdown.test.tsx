@@ -17,8 +17,9 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
@@ -75,13 +76,13 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
         const { initializeFilterOnFieldMetataItemFromViewBarFilterDropdown } =
           useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown();
 
-        const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
+        const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
           fieldMetadataItemUsedInDropdownComponentSelector,
         );
-        const objectFilterDropdownFilterIsSelected = useRecoilComponentValue(
+        const objectFilterDropdownFilterIsSelected = useRecoilComponentValueV2(
           objectFilterDropdownFilterIsSelectedComponentState,
         );
-        const selectedOperandInDropdown = useRecoilComponentValue(
+        const selectedOperandInDropdown = useRecoilComponentValueV2(
           selectedOperandInDropdownComponentState,
         );
 
@@ -127,13 +128,13 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
         const { initializeFilterOnFieldMetataItemFromViewBarFilterDropdown } =
           useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown();
 
-        const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
+        const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
           fieldMetadataItemUsedInDropdownComponentSelector,
         );
-        const objectFilterDropdownFilterIsSelected = useRecoilComponentValue(
+        const objectFilterDropdownFilterIsSelected = useRecoilComponentValueV2(
           objectFilterDropdownFilterIsSelectedComponentState,
         );
-        const selectedOperandInDropdown = useRecoilComponentValue(
+        const selectedOperandInDropdown = useRecoilComponentValueV2(
           selectedOperandInDropdownComponentState,
         );
 
@@ -188,26 +189,28 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
         const { initializeFilterOnFieldMetataItemFromViewBarFilterDropdown } =
           useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown();
 
-        const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
+        const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
           fieldMetadataItemUsedInDropdownComponentSelector,
         );
-        const objectFilterDropdownFilterIsSelected = useRecoilComponentValue(
+        const objectFilterDropdownFilterIsSelected = useRecoilComponentValueV2(
           objectFilterDropdownFilterIsSelectedComponentState,
         );
-        const selectedOperandInDropdown = useRecoilComponentValue(
+        const selectedOperandInDropdown = useRecoilComponentValueV2(
           selectedOperandInDropdownComponentState,
         );
 
-        const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
+        const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
           objectFilterDropdownCurrentRecordFilterComponentState,
         );
 
-        const setCurrentRecordFilters = useSetRecoilComponentState(
+        const setCurrentRecordFilters = useSetRecoilComponentStateV2(
           currentRecordFiltersComponentState,
+          'test',
         );
 
-        const currentRecordFilters = useRecoilComponentValue(
+        const currentRecordFilters = useRecoilComponentValueV2(
           currentRecordFiltersComponentState,
+          'test',
         );
 
         return {
@@ -268,26 +271,28 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
         const { initializeFilterOnFieldMetataItemFromViewBarFilterDropdown } =
           useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown();
 
-        const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
+        const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
           fieldMetadataItemUsedInDropdownComponentSelector,
         );
-        const objectFilterDropdownFilterIsSelected = useRecoilComponentValue(
+        const objectFilterDropdownFilterIsSelected = useRecoilComponentValueV2(
           objectFilterDropdownFilterIsSelectedComponentState,
         );
-        const selectedOperandInDropdown = useRecoilComponentValue(
+        const selectedOperandInDropdown = useRecoilComponentValueV2(
           selectedOperandInDropdownComponentState,
         );
 
-        const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
+        const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
           objectFilterDropdownCurrentRecordFilterComponentState,
         );
 
-        const setCurrentRecordFilters = useSetRecoilComponentState(
+        const setCurrentRecordFilters = useSetRecoilComponentStateV2(
           currentRecordFiltersComponentState,
+          'test',
         );
 
-        const currentRecordFilters = useRecoilComponentValue(
+        const currentRecordFilters = useRecoilComponentValueV2(
           currentRecordFiltersComponentState,
+          'test',
         );
 
         return {

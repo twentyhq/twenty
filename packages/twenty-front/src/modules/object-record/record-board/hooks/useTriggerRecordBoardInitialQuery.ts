@@ -15,11 +15,13 @@ import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useTriggerRecordBoardInitialQuery = () => {
@@ -29,11 +31,11 @@ export const useTriggerRecordBoardInitialQuery = () => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const recordIndexGroupFieldMetadataItem = useRecoilComponentValue(
+  const recordIndexGroupFieldMetadataItem = useRecoilComponentValueV2(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const setLastRecordBoardQueryIdentifier = useSetRecoilComponentState(
+  const setLastRecordBoardQueryIdentifier = useSetRecoilComponentStateV2(
     lastRecordBoardQueryIdentifierComponentState,
   );
 
@@ -42,12 +44,14 @@ export const useTriggerRecordBoardInitialQuery = () => {
       recordBoardShouldFetchMoreInColumnComponentFamilyState,
     );
 
-  const recordIndexRecordGroupsAreInInitialLoadingCallbackState =
-    useRecoilComponentCallbackState(
+  const recordIndexRecordGroupsAreInInitialLoadingAtom =
+    useRecoilComponentStateCallbackStateV2(
       recordIndexRecordGroupsAreInInitialLoadingComponentState,
     );
 
-  const setRecordBoardCurrentGroupByQueryOffset = useSetRecoilComponentState(
+  const store = useStore();
+
+  const setRecordBoardCurrentGroupByQueryOffset = useSetRecoilComponentStateV2(
     recordBoardCurrentGroupByQueryOffsetComponentState,
   );
 
@@ -74,10 +78,10 @@ export const useTriggerRecordBoardInitialQuery = () => {
   const triggerRecordBoardInitialQuery = useRecoilCallback(
     ({ set }) =>
       async () => {
-        set(recordIndexRecordGroupsAreInInitialLoadingCallbackState, true);
+        store.set(recordIndexRecordGroupsAreInInitialLoadingAtom, true);
 
         const cleanStateBeforeExit = () => {
-          set(recordIndexRecordGroupsAreInInitialLoadingCallbackState, false);
+          store.set(recordIndexRecordGroupsAreInInitialLoadingAtom, false);
 
           setLastRecordBoardQueryIdentifier(queryIdentifier);
 
@@ -164,7 +168,8 @@ export const useTriggerRecordBoardInitialQuery = () => {
         cleanStateBeforeExit();
       },
     [
-      recordIndexRecordGroupsAreInInitialLoadingCallbackState,
+      recordIndexRecordGroupsAreInInitialLoadingAtom,
+      store,
       executeRecordIndexGroupsRecordsLazyGroupBy,
       objectMetadataItem,
       setLastRecordBoardQueryIdentifier,

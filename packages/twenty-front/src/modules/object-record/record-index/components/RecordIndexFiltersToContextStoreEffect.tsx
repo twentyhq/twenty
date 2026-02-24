@@ -12,27 +12,28 @@ import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-tab
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 
 export const RecordIndexFiltersToContextStoreEffect = () => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const recordIndexFilters = useRecoilComponentValue(
+  const recordIndexFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
     recordIndexId,
   );
 
-  const recordIndexFilterGroups = useRecoilComponentValue(
+  const recordIndexFilterGroups = useRecoilComponentValueV2(
     currentRecordFilterGroupsComponentState,
     recordIndexId,
   );
 
-  const setContextStoreTargetedRecords = useSetRecoilComponentState(
+  const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
     contextStoreTargetedRecordsRuleComponentState,
+    recordIndexId,
   );
 
-  const hasUserSelectedAllRows = useRecoilComponentValue(
+  const hasUserSelectedAllRows = useRecoilComponentValueV2(
     hasUserSelectedAllRowsComponentState,
     recordIndexId,
   );
@@ -72,12 +73,14 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     unselectedRowIds,
   ]);
 
-  const setContextStoreFilters = useSetRecoilComponentState(
+  const setContextStoreFilters = useSetRecoilComponentStateV2(
     contextStoreFiltersComponentState,
+    recordIndexId,
   );
 
-  const setContextStoreFilterGroups = useSetRecoilComponentState(
+  const setContextStoreFilterGroups = useSetRecoilComponentStateV2(
     contextStoreFilterGroupsComponentState,
+    recordIndexId,
   );
 
   useEffect(() => {
@@ -94,11 +97,12 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     setContextStoreFilters,
   ]);
 
-  const setContextStoreAnyFieldFilterValue = useSetRecoilComponentState(
+  const setContextStoreAnyFieldFilterValue = useSetRecoilComponentStateV2(
     contextStoreAnyFieldFilterValueComponentState,
+    recordIndexId,
   );
 
-  const anyFieldFilterValue = useRecoilComponentValue(
+  const anyFieldFilterValue = useRecoilComponentValueV2(
     anyFieldFilterValueComponentState,
     recordIndexId,
   );

@@ -10,7 +10,7 @@ import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/compon
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 
@@ -26,11 +26,11 @@ const StyledRightDrawerRecord = styled.div<{
 `;
 
 export const CommandMenuRecordPage = () => {
-  const viewableRecordNameSingular = useRecoilComponentValue(
+  const viewableRecordNameSingular = useRecoilComponentValueV2(
     viewableRecordNameSingularComponentState,
   );
 
-  const viewableRecordId = useRecoilComponentValue(
+  const viewableRecordId = useRecoilComponentValueV2(
     viewableRecordIdComponentState,
   );
 

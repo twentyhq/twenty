@@ -27,7 +27,7 @@ import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/use
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useStore } from 'jotai';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 
@@ -44,7 +44,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const store = useStore();
 
-  const setCurrentTableCellInEditModePosition = useSetRecoilComponentState(
+  const setCurrentTableCellInEditModePosition = useSetRecoilComponentStateV2(
     recordTableCellEditModePositionComponentState,
     recordTableId,
   );
@@ -68,7 +68,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
 
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
-  const setIsRowFocusActive = useSetRecoilComponentState(
+  const setIsRowFocusActive = useSetRecoilComponentStateV2(
     isRecordTableRowFocusActiveComponentState,
     recordTableId,
   );

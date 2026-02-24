@@ -16,7 +16,8 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -34,7 +35,7 @@ export const useTriggerRecordBoardFetchMore = () => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const recordIndexGroupFieldMetadataItem = useRecoilComponentValue(
+  const recordIndexGroupFieldMetadataItem = useRecoilComponentValueV2(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -63,26 +64,24 @@ export const useTriggerRecordBoardFetchMore = () => {
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const recordBoardIsFetchingMoreCallbackState =
-    useRecoilComponentCallbackState(recordBoardIsFetchingMoreComponentState);
+  const recordBoardIsFetchingMoreAtom = useRecoilComponentStateCallbackStateV2(
+    recordBoardIsFetchingMoreComponentState,
+  );
 
   const triggerRecordBoardFetchMore = useRecoilCallback(
     ({ set, snapshot }) =>
       async () => {
-        const isAlreadyFetchingMore = getSnapshotValue(
-          snapshot,
-          recordBoardIsFetchingMoreCallbackState,
-        );
+        const isAlreadyFetchingMore = store.get(recordBoardIsFetchingMoreAtom);
 
         const cleanStateBeforeExit = () => {
-          set(recordBoardIsFetchingMoreCallbackState, false);
+          store.set(recordBoardIsFetchingMoreAtom, false);
         };
 
         if (isAlreadyFetchingMore) {
           return;
         }
 
-        set(recordBoardIsFetchingMoreCallbackState, true);
+        store.set(recordBoardIsFetchingMoreAtom, true);
 
         const currentOffset = getSnapshotValue(
           snapshot,
@@ -222,7 +221,7 @@ export const useTriggerRecordBoardFetchMore = () => {
       upsertRecordsInStore,
       executeRecordIndexGroupsRecordsLazyGroupBy,
       recordIndexRecordIdsByGroupCallbackState,
-      recordBoardIsFetchingMoreCallbackState,
+      recordBoardIsFetchingMoreAtom,
       recordBoardCurrentGroupByQueryOffsetCallbackState,
       recordBoardShouldFetchMoreInColumnFamilyCallbackState,
       combinedFilters,

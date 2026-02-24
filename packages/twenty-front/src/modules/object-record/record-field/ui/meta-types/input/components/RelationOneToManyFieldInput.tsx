@@ -36,6 +36,7 @@ import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelP
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const RelationOneToManyFieldInput = () => {
@@ -159,7 +160,7 @@ export const RelationOneToManyFieldInput = () => {
       relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
-  const layoutDirection = useRecoilComponentValue(
+  const layoutDirection = useRecoilComponentValueV2(
     recordFieldInputLayoutDirectionComponentState,
   );
 

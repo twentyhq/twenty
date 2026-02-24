@@ -4,7 +4,7 @@ import {
   type WorkflowActionSelection,
 } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
@@ -21,10 +21,10 @@ import { useIcons } from 'twenty-ui/display';
 
 export const CommandMenuWorkflowEditStepTypeContent = () => {
   const { getIcon } = useIcons();
-  const workflowSelectedNode = useRecoilComponentValue(
+  const workflowSelectedNode = useRecoilComponentValueV2(
     workflowSelectedNodeComponentState,
   );
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
     workflowVisualizerWorkflowIdComponentState,
   );
   const flow = useFlowOrThrow();

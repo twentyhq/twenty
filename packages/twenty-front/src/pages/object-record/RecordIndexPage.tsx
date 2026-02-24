@@ -8,7 +8,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { isUndefined } from '@sniptt/guards';
 
 export const RecordIndexPage = () => {
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

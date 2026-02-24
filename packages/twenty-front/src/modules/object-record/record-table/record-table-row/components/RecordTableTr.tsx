@@ -14,7 +14,7 @@ import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/reco
 import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { forwardRef, type ReactNode } from 'react';
 
 type RecordTableTrProps = {
@@ -72,7 +72,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
       focusIndex,
     );
 
-    const isRowFocusActive = useRecoilComponentValue(
+    const isRowFocusActive = useRecoilComponentValueV2(
       isRecordTableRowFocusActiveComponentState,
     );
 

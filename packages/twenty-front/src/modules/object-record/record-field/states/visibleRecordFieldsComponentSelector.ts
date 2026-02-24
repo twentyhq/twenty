@@ -1,75 +1,86 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
 import { RecordFieldsComponentInstanceContext } from '@/object-record/record-field/states/context/RecordFieldsComponentInstanceContext';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
-import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
 import { findById } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
-export const visibleRecordFieldsComponentSelector = createComponentSelector({
-  key: 'visibleRecordFieldsComponentSelector',
-  componentInstanceContext: RecordFieldsComponentInstanceContext,
-  get:
-    ({ instanceId }) =>
-    ({ get }) => {
-      const currentRecordFields = get(
-        currentRecordFieldsComponentState.atomFamily({
-          instanceId,
-        }),
-      );
+export const visibleRecordFieldsComponentSelector =
+  createComponentSelectorV2<RecordField[]>({
+    key: 'visibleRecordFieldsComponentSelector',
+    componentInstanceContext: RecordFieldsComponentInstanceContext,
+    get:
+      (componentStateKey) =>
+      ({ get }) => {
+        const currentRecordFields = get(
+          currentRecordFieldsComponentState,
+          componentStateKey,
+        );
 
-      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+        const objectMetadataItems = get(objectMetadataItemsState);
 
-      const filteredVisibleAndReadableRecordFields = currentRecordFields.filter(
-        (recordFieldToFilter) => {
-          if (!recordFieldToFilter.isVisible) {
-            return false;
-          }
+        return filterVisibleAndReadableRecordFields(
+          currentRecordFields,
+          objectMetadataItems,
+        );
+      },
+  });
 
-          const objectMetadataItem = objectMetadataItems.find(
-            (objectMetadataItem) =>
-              objectMetadataItem.fields.some(
-                (fieldMetadataItem) =>
-                  fieldMetadataItem.id ===
-                  recordFieldToFilter.fieldMetadataItemId,
-              ),
-          );
+function filterVisibleAndReadableRecordFields(
+  currentRecordFields: RecordField[],
+  objectMetadataItems: ObjectMetadataItem[],
+): RecordField[] {
+  const filteredVisibleAndReadableRecordFields = currentRecordFields.filter(
+    (recordFieldToFilter) => {
+      if (!recordFieldToFilter.isVisible) {
+        return false;
+      }
 
-          if (!objectMetadataItem) {
-            return false;
-          }
-
-          const fieldMetadataItem = objectMetadataItem.fields.find(
+      const objectMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.fields.some(
             (fieldMetadataItem) =>
-              fieldMetadataItem.id === recordFieldToFilter.fieldMetadataItemId,
-          );
-
-          if (!fieldMetadataItem) {
-            return false;
-          }
-
-          const isLabelIdentifier =
-            fieldMetadataItem.id ===
-            objectMetadataItem.labelIdentifierFieldMetadataId;
-
-          const isActive =
-            isLabelIdentifier ||
-            isActiveFieldMetadataItem({
-              objectNameSingular: objectMetadataItem.nameSingular,
-              fieldMetadata: fieldMetadataItem,
-            });
-
-          const isReadable = objectMetadataItem.readableFields.some(
-            findById(fieldMetadataItem.id),
-          );
-
-          return isReadable && isActive;
-        },
+              fieldMetadataItem.id ===
+              recordFieldToFilter.fieldMetadataItemId,
+          ),
       );
 
-      return [...filteredVisibleAndReadableRecordFields].sort(
-        sortByProperty('position'),
+      if (!objectMetadataItem) {
+        return false;
+      }
+
+      const fieldMetadataItem = objectMetadataItem.fields.find(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.id === recordFieldToFilter.fieldMetadataItemId,
       );
+
+      if (!fieldMetadataItem) {
+        return false;
+      }
+
+      const isLabelIdentifier =
+        fieldMetadataItem.id ===
+        objectMetadataItem.labelIdentifierFieldMetadataId;
+
+      const isActive =
+        isLabelIdentifier ||
+        isActiveFieldMetadataItem({
+          objectNameSingular: objectMetadataItem.nameSingular,
+          fieldMetadata: fieldMetadataItem,
+        });
+
+      const isReadable = objectMetadataItem.readableFields.some(
+        findById(fieldMetadataItem.id),
+      );
+
+      return isReadable && isActive;
     },
-});
+  );
+
+  return [...filteredVisibleAndReadableRecordFields].sort(
+    sortByProperty('position'),
+  );
+}

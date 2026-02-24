@@ -10,7 +10,7 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
@@ -40,12 +40,12 @@ export const CommandMenuPageLayoutInfoContent = ({
     setShouldFocusTitleInput(false);
   };
 
-  const draftPageLayout = useRecoilComponentValue(
+  const draftPageLayout = useRecoilComponentValueV2(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutEditingWidgetId = useRecoilComponentValue(
+  const pageLayoutEditingWidgetId = useRecoilComponentValueV2(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );

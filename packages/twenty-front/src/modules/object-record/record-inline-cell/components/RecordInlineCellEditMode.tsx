@@ -6,7 +6,8 @@ import { RecordInlineCellContext } from '@/object-record/record-inline-cell/comp
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import {
   autoUpdate,
@@ -42,12 +43,12 @@ export const RecordInlineCellEditMode = ({
     RecordFieldComponentInstanceContext,
   );
 
-  const setFieldInputLayoutDirection = useSetRecoilComponentState(
+  const setFieldInputLayoutDirection = useSetRecoilComponentStateV2(
     recordFieldInputLayoutDirectionComponentState,
     recordFieldComponentInstanceId,
   );
 
-  const setFieldInputLayoutDirectionLoading = useSetRecoilComponentState(
+  const setFieldInputLayoutDirectionLoading = useSetRecoilComponentStateV2(
     recordFieldInputLayoutDirectionLoadingComponentState,
     recordFieldComponentInstanceId,
   );
@@ -63,7 +64,7 @@ export const RecordInlineCellEditMode = ({
     },
   };
 
-  const isFieldInError = useRecoilComponentValue(
+  const isFieldInError = useRecoilComponentValueV2(
     recordFieldInputIsFieldInErrorComponentState,
   );
 

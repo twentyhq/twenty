@@ -18,12 +18,12 @@ const StyledContainer = styled.div`
 export const CommandMenuPageLayoutChartSettings = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
-  const draftPageLayout = useRecoilComponentValue(
+  const draftPageLayout = useRecoilComponentValueV2(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutEditingWidgetId = useRecoilComponentValue(
+  const pageLayoutEditingWidgetId = useRecoilComponentValueV2(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );

@@ -15,7 +15,7 @@ import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/r
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
 import { cx } from '@linaria/core';
 import { IconPlus } from 'twenty-ui/display';
@@ -72,14 +72,14 @@ export const RecordTableHeaderAddColumnButton = () => {
     0,
   );
 
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRowFocusActive = useRecoilComponentValueV2(
     isRecordTableRowFocusActiveComponentState,
   );
 
   const isFirstRowActiveOrFocused =
     isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
 
-  const isScrolledVertically = useRecoilComponentValue(
+  const isScrolledVertically = useRecoilComponentValueV2(
     isRecordTableScrolledVerticallyComponentState,
   );
 

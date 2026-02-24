@@ -11,7 +11,7 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
@@ -130,7 +130,7 @@ export const useObjectOptionsForBoard = ({
     ],
   );
 
-  const currentRecordFields = useRecoilComponentValue(
+  const currentRecordFields = useRecoilComponentValueV2(
     currentRecordFieldsComponentState,
     recordBoardId,
   );

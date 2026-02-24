@@ -7,8 +7,8 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValueV2V2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2V2';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
@@ -44,7 +44,7 @@ type TabId = WorkflowRunTabIdType;
 
 export const CommandMenuWorkflowRunViewStepContent = () => {
   const flow = useFlowOrThrow();
-  const workflowSelectedNode = useRecoilComponentValue(
+  const workflowSelectedNode = useRecoilComponentValueV2(
     workflowSelectedNodeComponentState,
   );
   const workflowRunId = useWorkflowRunIdOrThrow();
@@ -60,7 +60,7 @@ export const CommandMenuWorkflowRunViewStepContent = () => {
     );
   }
 
-  const activeTabId = useRecoilComponentValueV2(
+  const activeTabId = useRecoilComponentValueV2V2(
     activeTabIdComponentState,
     commandMenuPageComponentInstance.instanceId,
   );

@@ -9,7 +9,7 @@ import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards
 import { isFieldMultiSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelectValue';
 import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useMultiSelectField = () => {
@@ -34,7 +34,7 @@ export const useMultiSelectField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldMultiSelectValue>();
 
-  const draftValue = useRecoilComponentValue(
+  const draftValue = useRecoilComponentValueV2(
     recordFieldInputDraftValueComponentState,
   );
 

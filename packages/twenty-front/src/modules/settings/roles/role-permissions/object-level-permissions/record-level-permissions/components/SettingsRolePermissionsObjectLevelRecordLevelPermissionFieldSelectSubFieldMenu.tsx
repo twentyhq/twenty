@@ -28,8 +28,8 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentSelectorValueV2V2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2V2';
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenuProps =
   {
@@ -42,7 +42,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenuProps) => {
     const { getIcon } = useIcons();
 
-    const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
+    const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
       fieldMetadataItemUsedInDropdownComponentSelector,
     );
 
@@ -89,7 +89,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
     const { advancedFilterFieldSelectDropdownId } =
       useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-    const selectedItemId = useRecoilComponentValueV2(
+    const selectedItemId = useRecoilComponentSelectorValueV2V2(
       selectedItemIdComponentState,
       advancedFilterFieldSelectDropdownId,
     );

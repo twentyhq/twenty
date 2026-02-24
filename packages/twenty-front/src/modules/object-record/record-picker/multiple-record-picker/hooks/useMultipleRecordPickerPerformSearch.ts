@@ -15,7 +15,8 @@ import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/
 import { type ApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useCallback } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type SearchRecord, type SearchResultEdge } from '~/generated/graphql';
 
@@ -30,71 +31,64 @@ export const useMultipleRecordPickerPerformSearch = () => {
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const performSearch = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async ({
-        multipleRecordPickerInstanceId,
-        forceSearchFilter = '',
-        forceSearchableObjectMetadataItems = [],
-        forcePickableMorphItems = [],
-        loadMore = false,
-      }: {
-        multipleRecordPickerInstanceId: string;
-        forceSearchFilter?: string;
-        forceSearchableObjectMetadataItems?: ObjectMetadataItem[];
-        forcePickableMorphItems?: RecordPickerPickableMorphItem[];
-        loadMore?: boolean;
-      }) => {
-        const { getLoadable } = snapshot;
+  const performSearch = useCallback(
+    async ({
+      multipleRecordPickerInstanceId,
+      forceSearchFilter = '',
+      forceSearchableObjectMetadataItems = [],
+      forcePickableMorphItems = [],
+      loadMore = false,
+    }: {
+      multipleRecordPickerInstanceId: string;
+      forceSearchFilter?: string;
+      forceSearchableObjectMetadataItems?: ObjectMetadataItem[];
+      forcePickableMorphItems?: RecordPickerPickableMorphItem[];
+      loadMore?: boolean;
+    }) => {
+      const atomFamilyKey = { instanceId: multipleRecordPickerInstanceId };
 
-        const paginationState = getLoadable(
-          multipleRecordPickerPaginationState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-        ).getValue();
+      const paginationState = jotaiStore.get(
+        multipleRecordPickerPaginationState.atomFamily(atomFamilyKey),
+      );
 
-        set(
-          multipleRecordPickerIsLoadingComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-          true,
-        );
+      jotaiStore.set(
+        multipleRecordPickerIsLoadingComponentState.atomFamily(atomFamilyKey),
+        true,
+      );
 
-        set(
-          multipleRecordPickerPaginationState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-          {
-            ...paginationState,
-            endCursor: loadMore ? paginationState.endCursor : null,
-            hasNextPage: loadMore ? paginationState.hasNextPage : true,
-          },
-        );
+      jotaiStore.set(
+        multipleRecordPickerPaginationState.atomFamily(atomFamilyKey),
+        {
+          ...paginationState,
+          endCursor: loadMore ? paginationState.endCursor : null,
+          hasNextPage: loadMore ? paginationState.hasNextPage : true,
+        },
+      );
 
-        const recordPickerSearchFilter = getLoadable(
-          multipleRecordPickerSearchFilterComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-        ).getValue();
+      const recordPickerSearchFilter = jotaiStore.get(
+        multipleRecordPickerSearchFilterComponentState.atomFamily(
+          atomFamilyKey,
+        ),
+      );
 
-        const searchFilter = forceSearchFilter ?? recordPickerSearchFilter;
+      const searchFilter = forceSearchFilter ?? recordPickerSearchFilter;
 
-        const recordPickerSearchableObjectMetadataItems = getLoadable(
-          multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
-            { instanceId: multipleRecordPickerInstanceId },
-          ),
-        ).getValue();
+      const recordPickerSearchableObjectMetadataItems = jotaiStore.get(
+        multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
+          atomFamilyKey,
+        ),
+      );
 
-        const searchableObjectMetadataItems =
-          forceSearchableObjectMetadataItems.length > 0
-            ? forceSearchableObjectMetadataItems
-            : recordPickerSearchableObjectMetadataItems;
+      const searchableObjectMetadataItems =
+        forceSearchableObjectMetadataItems.length > 0
+          ? forceSearchableObjectMetadataItems
+          : recordPickerSearchableObjectMetadataItems;
 
-        const recordPickerPickableMorphItems = getLoadable(
-          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-        ).getValue();
+      const recordPickerPickableMorphItems = jotaiStore.get(
+        multipleRecordPickerPickableMorphItemsComponentState.atomFamily(
+          atomFamilyKey,
+        ),
+      );
 
         const pickableMorphItems =
           forcePickableMorphItems.length > 0
@@ -127,11 +121,11 @@ export const useMultipleRecordPickerPerformSearch = () => {
           after: loadMore ? paginationState.endCursor : null,
         });
 
-        const existingMorphItems = getLoadable(
-          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-        ).getValue();
+        const existingMorphItems = jotaiStore.get(
+          multipleRecordPickerPickableMorphItemsComponentState.atomFamily(
+            atomFamilyKey,
+          ),
+        );
 
         const allPickedItems = [
           ...existingMorphItems.filter(({ isSelected }) => isSelected),
@@ -267,10 +261,10 @@ export const useMultipleRecordPickerPerformSearch = () => {
           ...searchRecordsExcludingPickedRecords,
         ]);
 
-        set(
-          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
+        jotaiStore.set(
+          multipleRecordPickerPickableMorphItemsComponentState.atomFamily(
+            atomFamilyKey,
+          ),
           sortedMorphItems,
         );
 
@@ -356,10 +350,8 @@ export const useMultipleRecordPickerPerformSearch = () => {
           );
         }
 
-        set(
-          multipleRecordPickerPaginationState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
+        jotaiStore.set(
+          multipleRecordPickerPaginationState.atomFamily(atomFamilyKey),
           {
             ...paginationState,
             endCursor: pageInfo.endCursor,
@@ -367,15 +359,12 @@ export const useMultipleRecordPickerPerformSearch = () => {
           },
         );
 
-        set(
-          multipleRecordPickerIsLoadingComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
+        jotaiStore.set(
+          multipleRecordPickerIsLoadingComponentState.atomFamily(atomFamilyKey),
           false,
         );
       },
     [
-      store,
       apolloCoreClient,
       performCombinedFindManyRecords,
       objectPermissionsByObjectMetadataId,

@@ -2,9 +2,10 @@ import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutT
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentValueV2V2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2V2';
+import { useRecoilComponentValueV2V2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2V2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { act, renderHook } from '@testing-library/react';
 import { useSetAtom } from 'jotai';
 import { PageLayoutType } from '~/generated-metadata/graphql';
@@ -29,11 +30,11 @@ describe('useCreatePageLayoutTab', () => {
     const { result } = renderHook(
       () => ({
         createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
-        pageLayoutDraft: useRecoilComponentValue(
+        pageLayoutDraft: useRecoilComponentValueV2(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        pageLayoutCurrentLayouts: useRecoilComponentValue(
+        pageLayoutCurrentLayouts: useRecoilComponentValueV2(
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -71,7 +72,7 @@ describe('useCreatePageLayoutTab', () => {
     const { result } = renderHook(
       () => ({
         createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
-        pageLayoutDraft: useRecoilComponentValue(
+        pageLayoutDraft: useRecoilComponentValueV2(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -99,7 +100,7 @@ describe('useCreatePageLayoutTab', () => {
     const { result } = renderHook(
       () => ({
         createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
-        pageLayoutDraft: useRecoilComponentValue(
+        pageLayoutDraft: useRecoilComponentValueV2(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -135,7 +136,7 @@ describe('useCreatePageLayoutTab', () => {
     const { result } = renderHook(
       () => ({
         createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
-        pageLayoutCurrentLayouts: useRecoilComponentValue(
+        pageLayoutCurrentLayouts: useRecoilComponentValueV2(
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -175,7 +176,7 @@ describe('useCreatePageLayoutTab', () => {
 
     const { result } = renderHook(
       () => {
-        const getActiveTabId = useRecoilComponentValueV2(
+        const getActiveTabId = useRecoilComponentValueV2V2(
           activeTabIdComponentState,
           `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
         );
@@ -204,11 +205,11 @@ describe('useCreatePageLayoutTab', () => {
 
     const { result } = renderHook(
       () => {
-        const setPageLayoutDraft = useSetRecoilComponentState(
+        const setPageLayoutDraft = useSetRecoilComponentStateV2(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const pageLayoutDraft = useRecoilComponentValue(
+        const pageLayoutDraft = useRecoilComponentValueV2V2(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );

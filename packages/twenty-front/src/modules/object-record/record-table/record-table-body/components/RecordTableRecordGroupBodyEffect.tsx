@@ -12,7 +12,7 @@ import { useSetRecordTableData } from '@/object-record/record-table/hooks/intern
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const RecordTableRecordGroupBodyEffect = () => {
@@ -23,7 +23,7 @@ export const RecordTableRecordGroupBodyEffect = () => {
     recordTableId,
   });
 
-  const setIsRecordTableInitialLoading = useSetRecoilComponentState(
+  const setIsRecordTableInitialLoading = useSetRecoilComponentStateV2(
     isRecordTableInitialLoadingComponentState,
   );
 

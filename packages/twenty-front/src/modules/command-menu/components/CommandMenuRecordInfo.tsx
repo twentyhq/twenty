@@ -11,7 +11,7 @@ import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states
 import { recordStoreIdentifierFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelectorV2';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -31,7 +31,7 @@ export const CommandMenuRecordInfo = ({
 }: {
   commandMenuPageInstanceId: string;
 }) => {
-  const viewableRecordNameSingular = useRecoilComponentValue(
+  const viewableRecordNameSingular = useRecoilComponentValueV2(
     viewableRecordNameSingularComponentState,
     commandMenuPageInstanceId,
   );
@@ -39,7 +39,7 @@ export const CommandMenuRecordInfo = ({
     allowRequestsToTwentyIconsState,
   );
 
-  const viewableRecordId = useRecoilComponentValue(
+  const viewableRecordId = useRecoilComponentValueV2(
     viewableRecordIdComponentState,
     commandMenuPageInstanceId,
   );

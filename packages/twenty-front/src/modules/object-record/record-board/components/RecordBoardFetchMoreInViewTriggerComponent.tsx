@@ -12,7 +12,7 @@ import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/obje
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 
 const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
@@ -25,11 +25,11 @@ export const RecordBoardFetchMoreInViewTriggerComponent = () => {
     recordBoardShouldFetchMoreComponentState,
   );
 
-  const isInitialLoading = useRecoilComponentValue(
+  const isInitialLoading = useRecoilComponentValueV2(
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
   );
 
-  const isFetchingMore = useRecoilComponentValue(
+  const isFetchingMore = useRecoilComponentValueV2(
     recordBoardIsFetchingMoreComponentState,
   );
 

@@ -13,9 +13,8 @@ import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/obje
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 
 import { useEffect } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -30,11 +29,11 @@ export const RecordBoardQueryEffect = () => {
     lastRecordGroupIdsComponentState,
   );
 
-  const [recordIndexRecordGroupsAreInInitialLoading] = useRecoilComponentState(
+  const recordIndexRecordGroupsAreInInitialLoading = useRecoilComponentValueV2(
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
   );
 
-  const setRecordBoardCurrentGroupByQueryOffset = useSetRecoilComponentState(
+  const setRecordBoardCurrentGroupByQueryOffset = useSetRecoilComponentStateV2(
     recordBoardCurrentGroupByQueryOffsetComponentState,
   );
 
@@ -56,7 +55,7 @@ export const RecordBoardQueryEffect = () => {
     recordBoardShouldFetchMoreComponentState,
   );
 
-  const recordBoardIsFetchingMore = useRecoilComponentValue(
+  const recordBoardIsFetchingMore = useRecoilComponentValueV2(
     recordBoardIsFetchingMoreComponentState,
   );
 

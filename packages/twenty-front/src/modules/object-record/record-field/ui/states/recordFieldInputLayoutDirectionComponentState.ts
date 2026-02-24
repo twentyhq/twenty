@@ -1,9 +1,9 @@
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldInputLayoutDirection } from '@/object-record/record-field/ui/types/FieldInputLayoutDirection';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const recordFieldInputLayoutDirectionComponentState =
-  createComponentState<FieldInputLayoutDirection>({
+  createComponentStateV2<FieldInputLayoutDirection>({
     key: 'recordFieldInputLayoutDirectionComponentState',
     defaultValue: 'upward',
     componentInstanceContext: RecordFieldComponentInstanceContext,

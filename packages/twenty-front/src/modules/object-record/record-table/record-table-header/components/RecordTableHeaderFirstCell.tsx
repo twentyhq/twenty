@@ -18,7 +18,7 @@ import { resizedFieldMetadataIdComponentState } from '@/object-record/record-tab
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { cx } from '@linaria/core';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -48,11 +48,11 @@ export const RecordTableHeaderFirstCell = () => {
 
   const recordField = getVisibleFieldWithLowestPosition(visibleRecordFields);
 
-  const isScrolledVertically = useRecoilComponentValue(
+  const isScrolledVertically = useRecoilComponentValueV2(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRowFocusActive = useRecoilComponentValueV2(
     isRecordTableRowFocusActiveComponentState,
   );
 
@@ -63,7 +63,7 @@ export const RecordTableHeaderFirstCell = () => {
     hasRecordGroupsComponentSelector,
   );
 
-  const resizedFieldMetadataItemId = useRecoilComponentValue(
+  const resizedFieldMetadataItemId = useRecoilComponentValueV2(
     resizedFieldMetadataIdComponentState,
   );
 

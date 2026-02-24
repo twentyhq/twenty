@@ -2,7 +2,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import type { PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilCallback } from 'recoil';
 
 export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
@@ -11,7 +11,7 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
     pageLayoutIdFromProps,
   );
 
-  const currentlyEditingWidgetId = useRecoilComponentValue(
+  const currentlyEditingWidgetId = useRecoilComponentValueV2(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutIdFromProps,
   );

@@ -26,9 +26,9 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -42,7 +42,7 @@ export const ObjectSortDropdownButton = () => {
   const { resetRecordSortDropdownSearchInput } =
     useResetRecordSortDropdownSearchInput();
 
-  const setObjectSortDropdownSearchInput = useSetRecoilComponentState(
+  const setObjectSortDropdownSearchInput = useSetRecoilComponentStateV2(
     objectSortDropdownSearchInputComponentState,
   );
 
@@ -50,7 +50,7 @@ export const ObjectSortDropdownButton = () => {
 
   const { recordIndexId, objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const objectSortDropdownSearchInput = useRecoilComponentValue(
+  const objectSortDropdownSearchInput = useRecoilComponentValueV2(
     objectSortDropdownSearchInputComponentState,
   );
 
@@ -63,7 +63,7 @@ export const ObjectSortDropdownButton = () => {
 
   const { getIcon } = useIcons();
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useRecoilComponentSelectorValueV2(
     visibleRecordFieldsComponentSelector,
     recordIndexId,
   );
@@ -130,9 +130,9 @@ export const ObjectSortDropdownButton = () => {
   };
 
   const [selectedRecordSortDirection, setSelectedRecordSortDirection] =
-    useRecoilComponentState(selectedRecordSortDirectionComponentState);
+    useRecoilComponentStateV2(selectedRecordSortDirectionComponentState);
 
-  const setIsRecordSortDirectionMenuUnfolded = useSetRecoilComponentState(
+  const setIsRecordSortDirectionMenuUnfolded = useSetRecoilComponentStateV2(
     isRecordSortDirectionDropdownMenuUnfoldedComponentState,
   );
 

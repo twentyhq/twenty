@@ -19,7 +19,7 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import { type IconComponent } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
@@ -76,13 +76,14 @@ export const SingleRecordPickerMenuItems = ({
     singleRecordPickerSelectedIdComponentState,
   );
 
-  const singleRecordPickerShouldShowSkeleton = useRecoilComponentValue(
+  const singleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
     singleRecordPickerShouldShowSkeletonComponentState,
   );
 
-  const singleRecordPickerShouldShowInitialLoading = useRecoilComponentValue(
-    singleRecordPickerShouldShowInitialLoadingComponentState,
-  );
+  const singleRecordPickerShouldShowInitialLoading =
+    useRecoilComponentValueV2(
+      singleRecordPickerShouldShowInitialLoadingComponentState,
+    );
 
   const itemsMatchingSearchFilter = pickableMorphItems.filter(
     (morphItem) => morphItem.isMatchingSearchFilter,

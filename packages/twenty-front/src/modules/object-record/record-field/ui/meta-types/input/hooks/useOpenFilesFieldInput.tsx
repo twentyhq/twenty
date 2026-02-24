@@ -36,7 +36,7 @@ export const useOpenFilesFieldInput = () => {
   const store = useStore();
 
   const openFilesFieldInput = useRecoilCallback(
-    ({ set }) =>
+    () =>
       async ({
         fieldName,
         fieldMetadataId,
@@ -114,7 +114,7 @@ export const useOpenFilesFieldInput = () => {
               );
 
               if (isTableContext && isDefined(recordTableId)) {
-                set(
+                store.set(
                   recordTableCellEditModePositionComponentState.atomFamily({
                     instanceId: recordTableId,
                   }),
@@ -154,7 +154,7 @@ export const useOpenFilesFieldInput = () => {
               );
 
               if (isTableContext && isDefined(recordTableId)) {
-                set(
+                store.set(
                   recordTableCellEditModePositionComponentState.atomFamily({
                     instanceId: recordTableId,
                   }),
@@ -176,7 +176,7 @@ export const useOpenFilesFieldInput = () => {
             );
 
             if (isTableContext && isDefined(recordTableId)) {
-              set(
+              store.set(
                 recordTableCellEditModePositionComponentState.atomFamily({
                   instanceId: recordTableId,
                 }),

@@ -2,31 +2,28 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { getRecordAggregateDisplayLabel } from '@/object-record/record-index/utils/getRecordndexAggregateDisplayLabel';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
 
 export const useSetRecordIndexAggregateDisplayLabel = () => {
-  const recordIndexAggregateDisplayLabelCallbackState =
-    useRecoilComponentCallbackState(
+  const recordIndexAggregateDisplayLabelAtom =
+    useRecoilComponentStateCallbackStateV2(
       recordIndexAggregateDisplayLabelComponentState,
     );
 
-  const setRecordIndexAggregateDisplayLabel = useRecoilCallback(
-    ({ set }) =>
-      (
-        recordIndexGroupAggregateOperation: ExtendedAggregateOperations,
-        recordIndexGroupAggregateFieldMetadataItem: FieldMetadataItem,
-      ) => {
-        const { aggregateLabel } = getRecordAggregateDisplayLabel({
-          aggregateOperation: recordIndexGroupAggregateOperation,
-          aggregateFieldMetadataItem:
-            recordIndexGroupAggregateFieldMetadataItem,
-        });
+  const store = useStore();
 
-        set(recordIndexAggregateDisplayLabelCallbackState, aggregateLabel);
-      },
-    [recordIndexAggregateDisplayLabelCallbackState],
-  );
+  const setRecordIndexAggregateDisplayLabel = (
+    recordIndexGroupAggregateOperation: ExtendedAggregateOperations,
+    recordIndexGroupAggregateFieldMetadataItem: FieldMetadataItem,
+  ) => {
+    const { aggregateLabel } = getRecordAggregateDisplayLabel({
+      aggregateOperation: recordIndexGroupAggregateOperation,
+      aggregateFieldMetadataItem: recordIndexGroupAggregateFieldMetadataItem,
+    });
+
+    store.set(recordIndexAggregateDisplayLabelAtom, aggregateLabel);
+  };
 
   return {
     setRecordIndexAggregateDisplayLabel,

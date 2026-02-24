@@ -18,10 +18,11 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useStore } from 'jotai';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -50,13 +51,13 @@ export const useSetRecordTableData = ({
     recordTableId,
   );
 
-  const hasUserSelectedAllRowsState = useRecoilComponentCallbackState(
+  const hasUserSelectedAllRowsAtom = useRecoilComponentStateCallbackStateV2(
     hasUserSelectedAllRowsComponentState,
     recordTableId,
   );
 
-  const isRecordTableInitialLoadingCallbackState =
-    useRecoilComponentCallbackState(
+  const isRecordTableInitialLoadingAtom =
+    useRecoilComponentStateCallbackStateV2(
       isRecordTableInitialLoadingComponentState,
       recordTableId,
     );
@@ -67,7 +68,7 @@ export const useSetRecordTableData = ({
       recordTableId,
     );
 
-  const setRecordTableHoverPosition = useSetRecoilComponentState(
+  const setRecordTableHoverPosition = useSetRecoilComponentStateV2(
     recordTableHoverPositionComponentState,
     recordTableId,
   );
@@ -111,10 +112,7 @@ export const useSetRecordTableData = ({
             ) as string[])
           : (store.get(recordIndexAllRecordIdsSelector) as string[]);
 
-        const hasUserSelectedAllRows = getSnapshotValue(
-          snapshot,
-          hasUserSelectedAllRowsState,
-        );
+        const hasUserSelectedAllRows = store.get(hasUserSelectedAllRowsAtom);
 
         const recordIds = records.map((record) => record.id);
 
@@ -143,9 +141,8 @@ export const useSetRecordTableData = ({
             );
           }
 
-          const isTableInitialLoading = getSnapshotValue(
-            snapshot,
-            isRecordTableInitialLoadingCallbackState,
+          const isTableInitialLoading = store.get(
+            isRecordTableInitialLoadingAtom,
           );
 
           if (isTableInitialLoading) {
@@ -165,13 +162,13 @@ export const useSetRecordTableData = ({
     [
       recordIndexRecordIdsByGroupFamilyState,
       recordIndexAllRecordIdsSelector,
-      hasUserSelectedAllRowsState,
+      hasUserSelectedAllRowsAtom,
       unfocusRecordTableCell,
       unfocusRecordTableRow,
       setRecordTableHoverPosition,
       isRowSelectedFamilyState,
       recordIdByRealIndexCallbackSelector,
-      isRecordTableInitialLoadingCallbackState,
+      isRecordTableInitialLoadingAtom,
       store,
     ],
   );

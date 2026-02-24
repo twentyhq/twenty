@@ -17,7 +17,7 @@ import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInS
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useStore } from 'jotai';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -44,7 +44,7 @@ export const useCreateNewIndexRecord = ({
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const recordIndexGroupFieldMetadataItem = useRecoilComponentValue(
+  const recordIndexGroupFieldMetadataItem = useRecoilComponentValueV2(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 

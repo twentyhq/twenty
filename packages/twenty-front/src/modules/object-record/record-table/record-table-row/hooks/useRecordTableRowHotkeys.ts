@@ -14,7 +14,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { Key } from 'ts-key-enum';
 
 export const useRecordTableRowHotkeys = (focusId: string) => {
@@ -27,7 +27,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
 
   const { activateRecordTableRow } = useActiveRecordTableRow();
 
-  const setIsRowFocusActive = useSetRecoilComponentState(
+  const setIsRowFocusActive = useSetRecoilComponentStateV2(
     isRecordTableRowFocusActiveComponentState,
   );
 

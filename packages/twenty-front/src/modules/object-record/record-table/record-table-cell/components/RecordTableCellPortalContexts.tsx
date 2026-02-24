@@ -8,7 +8,6 @@ import { RecordTableRowContextProvider } from '@/object-record/record-table/cont
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellPortalContexts = ({
@@ -24,7 +23,7 @@ export const RecordTableCellPortalContexts = ({
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useRecoilComponentSelectorValueV2(
     visibleRecordFieldsComponentSelector,
   );
 

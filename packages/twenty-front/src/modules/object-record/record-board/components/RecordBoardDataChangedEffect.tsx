@@ -10,10 +10,9 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorCallbackStateV2';
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -29,8 +28,8 @@ export const RecordBoardDataChangedEffect = () => {
     useRecoilComponentFamilySelectorCallbackStateV2(
       recordGroupFromGroupValueComponentFamilySelector,
     );
-  const recordIndexGroupFieldMetadataItemCallbackState =
-    useRecoilComponentCallbackState(
+  const recordIndexGroupFieldMetadataItemAtom =
+    useRecoilComponentStateCallbackStateV2(
       recordIndexGroupFieldMetadataItemComponentState,
     );
   const recordIndexRecordIdsByGroupCallbackState =
@@ -41,7 +40,7 @@ export const RecordBoardDataChangedEffect = () => {
   const { removeRecordsFromBoard } = useRemoveRecordsFromBoard();
 
   const handleObjectRecordOperation = useRecoilCallback(
-    ({ snapshot }) =>
+    () =>
       (
         objectRecordOperationEventDetail: ObjectRecordOperationBrowserEventDetail,
       ) => {
@@ -76,9 +75,8 @@ export const RecordBoardDataChangedEffect = () => {
                 return;
               }
 
-              const recordIndexGroupFieldMetadataItem = getSnapshotValue(
-                snapshot,
-                recordIndexGroupFieldMetadataItemCallbackState,
+              const recordIndexGroupFieldMetadataItem = store.get(
+                recordIndexGroupFieldMetadataItemAtom,
               );
 
               if (!isDefined(recordIndexGroupFieldMetadataItem)) {
@@ -163,7 +161,7 @@ export const RecordBoardDataChangedEffect = () => {
       store,
       triggerRecordBoardInitialQuery,
       getShouldInitializeRecordBoardForUpdateInputs,
-      recordIndexGroupFieldMetadataItemCallbackState,
+      recordIndexGroupFieldMetadataItemAtom,
       recordGroupFromGroupValueCallbackState,
       recordIndexRecordIdsByGroupCallbackState,
       removeRecordsFromBoard,

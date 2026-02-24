@@ -30,7 +30,7 @@ export const BarChartTooltip = ({
   onMouseEnter,
   onMouseLeave,
 }: BarChartTooltipProps) => {
-  const tooltipState = useRecoilComponentValue(
+  const tooltipState = useRecoilComponentValueV2(
     graphWidgetBarTooltipComponentState,
   );
 

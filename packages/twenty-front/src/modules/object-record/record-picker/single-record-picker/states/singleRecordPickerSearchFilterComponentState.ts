@@ -1,8 +1,8 @@
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const singleRecordPickerSearchFilterComponentState =
-  createComponentState<string>({
+  createComponentStateV2<string>({
     key: 'singleRecordPickerSearchFilterComponentState',
     defaultValue: '',
     componentInstanceContext: SingleRecordPickerComponentInstanceContext,

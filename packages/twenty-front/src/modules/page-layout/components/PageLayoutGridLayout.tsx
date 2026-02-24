@@ -24,7 +24,7 @@ import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterP
 import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -126,18 +126,18 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useRecoilComponentValueV2(
     isPageLayoutInEditModeComponentState,
   );
 
-  const pageLayoutCurrentLayouts = useRecoilComponentValue(
+  const pageLayoutCurrentLayouts = useRecoilComponentValueV2(
     pageLayoutCurrentLayoutsComponentState,
   );
 
-  const pageLayoutDraggedArea = useRecoilComponentValue(
+  const pageLayoutDraggedArea = useRecoilComponentValueV2(
     pageLayoutDraggedAreaComponentState,
   );
-  const draggingWidgetId = useRecoilComponentValue(
+  const draggingWidgetId = useRecoilComponentValueV2(
     pageLayoutDraggingWidgetIdComponentState,
   );
 

@@ -7,9 +7,9 @@ import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/
 import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useStore } from 'jotai';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
@@ -29,7 +29,7 @@ export const useLoadRecordsToVirtualRows = () => {
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const hasUserSelectedAllRowsCallbackState = useRecoilComponentCallbackState(
+  const hasUserSelectedAllRowsAtom = useRecoilComponentStateCallbackStateV2(
     hasUserSelectedAllRowsComponentState,
   );
 
@@ -48,10 +48,7 @@ export const useLoadRecordsToVirtualRows = () => {
         records: ObjectRecord[];
         startingRealIndex: number;
       }) => {
-        const hasUserSelectedAllRows = getSnapshotValue(
-          snapshot,
-          hasUserSelectedAllRowsCallbackState,
-        );
+        const hasUserSelectedAllRows = store.get(hasUserSelectedAllRowsAtom);
 
         for (const [recordIndex, record] of records.entries()) {
           const realIndex = startingRealIndex + recordIndex;
@@ -97,7 +94,7 @@ export const useLoadRecordsToVirtualRows = () => {
       dataLoadingStatusByRealIndexCallbackSelector,
       recordIndexRecordIdsByGroupFamilyState,
       isRowSelectedFamilyState,
-      hasUserSelectedAllRowsCallbackState,
+      hasUserSelectedAllRowsAtom,
       store,
     ],
   );

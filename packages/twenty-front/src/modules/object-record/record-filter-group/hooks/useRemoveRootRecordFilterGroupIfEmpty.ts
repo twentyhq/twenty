@@ -1,33 +1,29 @@
 import { useRemoveRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useRemoveRecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveRootRecordFilterGroupIfEmpty = () => {
-  const currentRecordFilterGroupsCallbackState =
-    useRecoilComponentCallbackState(currentRecordFilterGroupsComponentState);
+  const currentRecordFilterGroupsAtom =
+    useRecoilComponentStateCallbackStateV2(
+      currentRecordFilterGroupsComponentState,
+    );
 
-  const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
+  const currentRecordFiltersAtom = useRecoilComponentStateCallbackStateV2(
     currentRecordFiltersComponentState,
   );
 
+  const store = useStore();
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
 
-  const removeRootRecordFilterGroupIfEmpty = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const currentRecordFilterGroups = getSnapshotValue(
-          snapshot,
-          currentRecordFilterGroupsCallbackState,
-        );
+  const removeRootRecordFilterGroupIfEmpty = () => {
+    const currentRecordFilterGroups = store.get(
+      currentRecordFilterGroupsAtom,
+    );
 
-        const currentRecordFilters = getSnapshotValue(
-          snapshot,
-          currentRecordFiltersCallbackState,
-        );
+    const currentRecordFilters = store.get(currentRecordFiltersAtom);
 
         const rootRecordFilterGroup = currentRecordFilterGroups.find(
           (existingRecordFilterGroup) =>
@@ -57,13 +53,7 @@ export const useRemoveRootRecordFilterGroupIfEmpty = () => {
             removeRecordFilterGroup(rootRecordFilterGroup.id);
           }
         }
-      },
-    [
-      removeRecordFilterGroup,
-      currentRecordFilterGroupsCallbackState,
-      currentRecordFiltersCallbackState,
-    ],
-  );
+  };
 
   return {
     removeRootRecordFilterGroupIfEmpty,

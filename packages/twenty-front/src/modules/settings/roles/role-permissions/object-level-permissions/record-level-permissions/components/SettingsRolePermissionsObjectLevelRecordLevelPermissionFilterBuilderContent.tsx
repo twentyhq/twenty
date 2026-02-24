@@ -22,9 +22,10 @@ import { useRecordLevelPermissionFilterActions } from '@/settings/roles/role-per
 import { useRecordLevelPermissionFilterInitialization } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionFilterInitialization';
 import { useRecordLevelPermissionSyncToDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionSyncToDraftRole';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 
 const StyledContainer = styled.div`
   align-items: start;
@@ -64,26 +65,26 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
       objectMetadataItem.id,
     );
 
-    const setCurrentRecordFilters = useSetRecoilComponentState(
+    const setCurrentRecordFilters = useSetRecoilComponentStateV2(
       currentRecordFiltersComponentState,
     );
 
-    const setCurrentRecordFilterGroups = useSetRecoilComponentState(
+    const setCurrentRecordFilterGroups = useSetRecoilComponentStateV2(
       currentRecordFilterGroupsComponentState,
     );
 
-    const currentRecordFilters = useRecoilComponentValue(
+    const currentRecordFilters = useRecoilComponentValueV2(
       currentRecordFiltersComponentState,
     );
 
-    const currentRecordFilterGroups = useRecoilComponentValue(
+    const currentRecordFilterGroups = useRecoilComponentValueV2(
       currentRecordFilterGroupsComponentState,
     );
 
     const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
       useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
-    const rootRecordFilterGroup = useRecoilComponentValue(
+    const rootRecordFilterGroup = useRecoilComponentSelectorValueV2(
       rootLevelRecordFilterGroupComponentSelector,
     );
 

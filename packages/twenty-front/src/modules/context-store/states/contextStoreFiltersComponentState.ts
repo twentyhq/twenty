@@ -1,8 +1,8 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
-export const contextStoreFiltersComponentState = createComponentState<
+export const contextStoreFiltersComponentState = createComponentStateV2<
   RecordFilter[]
 >({
   key: 'contextStoreFiltersComponentState',

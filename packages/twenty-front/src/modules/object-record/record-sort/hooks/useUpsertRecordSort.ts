@@ -1,34 +1,34 @@
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const useUpsertRecordSort = () => {
-  const currentRecordSortsCallbackState = useRecoilComponentCallbackState(
+  const currentRecordSortsAtom = useRecoilComponentStateCallbackStateV2(
     currentRecordSortsComponentState,
   );
 
-  const upsertRecordSort = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (recordSortToSet: RecordSort) => {
-        const currentRecordSorts = getSnapshotValue(
-          snapshot,
-          currentRecordSortsCallbackState,
-        );
+  const store = useStore();
 
-        const hasFoundRecordSortInCurrentRecordSorts = currentRecordSorts.some(
-          (existingSort) =>
-            existingSort.fieldMetadataId === recordSortToSet.fieldMetadataId,
-        );
+  const upsertRecordSort = useCallback(
+    (recordSortToSet: RecordSort) => {
+      const currentRecordSorts = store.get(
+        currentRecordSortsAtom,
+      ) as RecordSort[];
 
-        if (!hasFoundRecordSortInCurrentRecordSorts) {
-          set(currentRecordSortsCallbackState, [
-            ...currentRecordSorts,
-            recordSortToSet,
-          ]);
-        } else {
-          set(currentRecordSortsCallbackState, (currentRecordSorts) => {
+      const hasFoundRecordSortInCurrentRecordSorts = currentRecordSorts.some(
+        (existingSort) =>
+          existingSort.fieldMetadataId === recordSortToSet.fieldMetadataId,
+      );
+
+      if (!hasFoundRecordSortInCurrentRecordSorts) {
+        store.set(currentRecordSortsAtom, [
+          ...currentRecordSorts,
+          recordSortToSet,
+        ]);
+      } else {
+        store.set(currentRecordSortsAtom, (currentRecordSorts: RecordSort[]) => {
             const newCurrentRecordSorts = [...currentRecordSorts];
 
             const indexOfSortToUpdate = newCurrentRecordSorts.findIndex(
@@ -45,11 +45,11 @@ export const useUpsertRecordSort = () => {
               ...recordSortToSet,
             };
 
-            return newCurrentRecordSorts;
-          });
-        }
-      },
-    [currentRecordSortsCallbackState],
+          return newCurrentRecordSorts;
+        });
+      }
+    },
+    [currentRecordSortsAtom, store],
   );
 
   return {

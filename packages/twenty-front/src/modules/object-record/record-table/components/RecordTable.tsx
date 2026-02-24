@@ -15,7 +15,7 @@ import { useResetTableRowSelection } from '@/object-record/record-table/hooks/in
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 export const RecordTable = () => {
   const { recordTableId, objectNameSingular, objectMetadataItem } =
@@ -31,7 +31,7 @@ export const RecordTable = () => {
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
   );
 
-  const isRecordTableInitialLoading = useRecoilComponentValue(
+  const isRecordTableInitialLoading = useRecoilComponentValueV2(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );

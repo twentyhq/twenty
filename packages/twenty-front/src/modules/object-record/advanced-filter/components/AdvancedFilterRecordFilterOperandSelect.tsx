@@ -5,7 +5,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,7 +21,7 @@ type AdvancedFilterRecordFilterOperandSelectProps = {
 export const AdvancedFilterRecordFilterOperandSelect = ({
   recordFilterId,
 }: AdvancedFilterRecordFilterOperandSelectProps) => {
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 

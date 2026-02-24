@@ -7,7 +7,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -38,7 +38,7 @@ const meta: Meta<typeof RecordCalendarMonth> = {
       )!;
       const instanceId = companyObjectMetadataItem.id;
 
-      const setCurrentRecordFields = useSetRecoilComponentState(
+      const setCurrentRecordFields = useSetRecoilComponentStateV2(
         currentRecordFieldsComponentState,
         instanceId,
       );
@@ -49,7 +49,7 @@ const meta: Meta<typeof RecordCalendarMonth> = {
 
       setCoreViews([mockCoreView]);
 
-      const setCurrentViewId = useSetRecoilComponentState(
+      const setCurrentViewId = useSetRecoilComponentStateV2(
         contextStoreCurrentViewIdComponentState,
         MAIN_CONTEXT_STORE_INSTANCE_ID,
       );

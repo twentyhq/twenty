@@ -15,7 +15,7 @@ import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-l
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
@@ -51,7 +51,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
   const actionMenuDropdownId =
     getActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
-  const setActionMenuDropdownPosition = useSetRecoilComponentState(
+  const setActionMenuDropdownPosition = useSetRecoilComponentStateV2(
     recordIndexActionMenuDropdownPositionComponentState,
     actionMenuDropdownId,
   );

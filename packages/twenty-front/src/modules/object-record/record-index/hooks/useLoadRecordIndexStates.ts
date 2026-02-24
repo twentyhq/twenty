@@ -22,7 +22,6 @@ import { type ColumnDefinition } from '@/object-record/record-table/types/Column
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { type View } from '@/views/types/View';
 import { type ViewField } from '@/views/types/ViewField';
@@ -38,23 +37,23 @@ export const useLoadRecordIndexStates = () => {
   const store = useStore();
 
   const setContextStoreTargetedRecordsRuleComponentState =
-    useSetRecoilComponentState(contextStoreTargetedRecordsRuleComponentState);
+    useSetRecoilComponentStateV2(contextStoreTargetedRecordsRuleComponentState);
 
   const setRecordIndexViewType = useSetRecoilStateV2(recordIndexViewTypeState);
   const setRecordIndexOpenRecordIn = useSetRecoilStateV2(
     recordIndexOpenRecordInState,
   );
 
-  const setRecordIndexGroupFieldMetadataItem = useSetRecoilComponentState(
+  const setRecordIndexGroupFieldMetadataItem = useSetRecoilComponentStateV2(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const setRecordIndexGroupAggregateOperation = useSetRecoilComponentState(
+  const setRecordIndexGroupAggregateOperation = useSetRecoilComponentStateV2(
     recordIndexGroupAggregateOperationComponentState,
   );
 
   const setRecordIndexGroupAggregateFieldMetadataItem =
-    useSetRecoilComponentState(
+    useSetRecoilComponentStateV2(
       recordIndexGroupAggregateFieldMetadataItemComponentState,
     );
 

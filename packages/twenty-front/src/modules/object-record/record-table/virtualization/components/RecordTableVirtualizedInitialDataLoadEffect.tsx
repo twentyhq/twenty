@@ -9,7 +9,7 @@ import { lastContextStoreVirtualizedVisibleRecordFieldsComponentState } from '@/
 import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import isEmpty from 'lodash.isempty';
@@ -24,7 +24,7 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   const [lastRecordTableQueryIdentifier, setLastRecordTableQueryIdentifier] =
     useRecoilComponentState(lastRecordTableQueryIdentifierComponentState);
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useRecoilComponentSelectorValueV2(
     visibleRecordFieldsComponentSelector,
   );
   const [isInitializingVirtualTableDataLoading] = useRecoilComponentState(
