@@ -1,6 +1,6 @@
 import { SuggestionMenu } from '@blocknote/core/extensions';
 import { useExtensionState } from '@blocknote/react';
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { isSlashMenuOpenComponentState } from '@/blocknote-editor/states/isSlashMenuOpenComponentState';
@@ -46,9 +46,12 @@ export const BlockEditorDropdownFocusEffect = () => {
     ],
   );
 
-  useEffect(() => {
-    syncSlashMenuState(isSlashMenuShowing);
-  }, [isSlashMenuShowing, syncSlashMenuState]);
+  const [prevShowing, setPrevShowing] = useState<boolean | null>(null);
 
-  return null;
+  if (prevShowing !== isSlashMenuShowing) {
+    setPrevShowing(isSlashMenuShowing);
+    syncSlashMenuState(isSlashMenuShowing);
+  }
+
+  return <></>;
 };
