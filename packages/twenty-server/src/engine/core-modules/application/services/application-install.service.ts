@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import * as fs from 'fs/promises';
-import { join } from 'path';
 import { tmpdir } from 'os';
+import { basename, join } from 'path';
 
-import { v4 } from 'uuid';
 import { extract, type ReadEntry } from 'tar';
 import { type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import {
   ApplicationException,
@@ -15,6 +15,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -315,15 +316,22 @@ export class ApplicationInstallService {
       const absolutePath = join(extractedDir, relativePath);
       const fileContent = await fs.readFile(absolutePath);
 
-      await this.fileStorageService.writeFileLegacy({
+      const { mimeType } = await extractFileInfo({
         file: fileContent,
-        name: mapping.resourcePath,
-        folder: join(
-          workspaceId,
-          applicationUniversalIdentifier,
-          mapping.fileFolder,
-        ),
-        mimeType: undefined,
+        filename: basename(relativePath),
+      });
+
+      await this.fileStorageService.writeFile({
+        sourceFile: fileContent,
+        mimeType,
+        fileFolder: mapping.fileFolder,
+        applicationUniversalIdentifier,
+        workspaceId,
+        resourcePath: mapping.resourcePath,
+        settings: {
+          isTemporaryFile: false,
+          toDelete: false,
+        },
       });
     }
   }
