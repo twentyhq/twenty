@@ -51,9 +51,7 @@ export const MobileNavigationBar = () => {
     ? currentMobileNavigationDrawer
     : isCommandMenuOpened
       ? 'search'
-      : isSettingsPage
-        ? 'main'
-        : 'main';
+      : 'main';
 
   const items: {
     name: NavigationBarItemName;
