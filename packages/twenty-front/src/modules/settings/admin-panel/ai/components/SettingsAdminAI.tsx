@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
@@ -56,77 +56,67 @@ export const SettingsAdminAI = () => {
   const autoEnableNewModels =
     data?.getAdminAiModels?.autoEnableNewModels ?? true;
 
-  const models = useMemo(
-    () => data?.getAdminAiModels?.models ?? [],
-    [data?.getAdminAiModels?.models],
-  );
+  const models = data?.getAdminAiModels?.models ?? [];
 
-  const handleAutoEnableToggle = useCallback(
-    async (checked: boolean) => {
-      try {
-        await createConfigVariable({
-          variables: {
-            key: 'AI_AUTO_ENABLE_NEW_MODELS',
-            value: checked,
-          },
-          refetchQueries: [{ query: GET_ADMIN_AI_MODELS }],
-        });
+  const handleAutoEnableToggle = async (checked: boolean) => {
+    try {
+      await createConfigVariable({
+        variables: {
+          key: 'AI_AUTO_ENABLE_NEW_MODELS',
+          value: checked,
+        },
+        refetchQueries: [{ query: GET_ADMIN_AI_MODELS }],
+      });
 
-        await refetchClientConfig();
-      } catch {
-        enqueueErrorSnackBar({
-          message: t`Failed to update auto-enable setting`,
-        });
-      }
-    },
-    [createConfigVariable, refetchClientConfig, enqueueErrorSnackBar],
-  );
-
-  const handleModelToggle = useCallback(
-    async (modelId: string, isCurrentlyEnabled: boolean) => {
-      try {
-        await setModelEnabled({
-          variables: {
-            modelId,
-            enabled: !isCurrentlyEnabled,
-          },
-          refetchQueries: [{ query: GET_ADMIN_AI_MODELS }],
-        });
-
-        await refetchClientConfig();
-      } catch {
-        enqueueErrorSnackBar({
-          message: t`Failed to update model availability`,
-        });
-      }
-    },
-    [setModelEnabled, refetchClientConfig, enqueueErrorSnackBar],
-  );
-
-  const filteredModels = useMemo(() => {
-    let result = models;
-
-    if (!showUnconfigured) {
-      result = result.filter((model) => model.isAvailable);
+      await refetchClientConfig();
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Failed to update auto-enable setting`,
+      });
     }
+  };
 
-    if (!showDeprecated) {
-      result = result.filter((model) => !model.deprecated);
+  const handleModelToggle = async (
+    modelId: string,
+    isCurrentlyEnabled: boolean,
+  ) => {
+    try {
+      await setModelEnabled({
+        variables: {
+          modelId,
+          enabled: !isCurrentlyEnabled,
+        },
+        refetchQueries: [{ query: GET_ADMIN_AI_MODELS }],
+      });
+
+      await refetchClientConfig();
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Failed to update model availability`,
+      });
     }
+  };
 
-    if (searchQuery.trim().length > 0) {
-      const query = searchQuery.toLowerCase();
+  let filteredModels = models;
 
-      result = result.filter(
-        (model) =>
-          model.label.toLowerCase().includes(query) ||
-          (model.modelFamily?.toLowerCase().includes(query) ?? false) ||
-          model.inferenceProvider.toLowerCase().includes(query),
-      );
-    }
+  if (!showUnconfigured) {
+    filteredModels = filteredModels.filter((model) => model.isAvailable);
+  }
 
-    return result;
-  }, [models, showUnconfigured, showDeprecated, searchQuery]);
+  if (!showDeprecated) {
+    filteredModels = filteredModels.filter((model) => !model.deprecated);
+  }
+
+  if (searchQuery.trim().length > 0) {
+    const query = searchQuery.toLowerCase();
+
+    filteredModels = filteredModels.filter(
+      (model) =>
+        model.label.toLowerCase().includes(query) ||
+        (model.modelFamily?.toLowerCase().includes(query) ?? false) ||
+        model.inferenceProvider.toLowerCase().includes(query),
+    );
+  }
 
   const getModelDescription = (
     modelFamily: string | null | undefined,

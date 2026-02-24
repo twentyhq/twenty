@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
@@ -57,60 +57,40 @@ export const SettingsAIModelsTab = () => {
   const currentSmartModel = currentWorkspace?.smartModel;
   const currentFastModel = currentWorkspace?.fastModel;
 
-  const buildVirtualModelOption = useCallback(
-    (virtualModelId: string) => {
-      const virtualModel = aiModels.find(
-        (model) => model.modelId === virtualModelId,
-      );
+  const buildVirtualModelOption = (virtualModelId: string) => {
+    const virtualModel = aiModels.find(
+      (model) => model.modelId === virtualModelId,
+    );
 
-      return virtualModel
-        ? {
-            value: virtualModelId,
-            label: virtualModel.label,
-            Icon: IconTwentyStar,
-          }
-        : null;
-    },
-    [aiModels],
-  );
+    return virtualModel
+      ? {
+          value: virtualModelId,
+          label: virtualModel.label,
+          Icon: IconTwentyStar,
+        }
+      : null;
+  };
 
-  const smartAutoOption = useMemo(
-    () => buildVirtualModelOption(DEFAULT_SMART_MODEL),
-    [buildVirtualModelOption],
-  );
+  const smartAutoOption = buildVirtualModelOption(DEFAULT_SMART_MODEL);
+  const fastAutoOption = buildVirtualModelOption(DEFAULT_FAST_MODEL);
 
-  const fastAutoOption = useMemo(
-    () => buildVirtualModelOption(DEFAULT_FAST_MODEL),
-    [buildVirtualModelOption],
-  );
+  const modelOptions = enabledModels.map((model) => ({
+    value: model.modelId,
+    label: model.label,
+    Icon: getModelIcon(model.modelFamily),
+  }));
 
-  const modelOptions = useMemo(() => {
-    return enabledModels.map((model) => ({
-      value: model.modelId,
-      label: model.label,
-      Icon: getModelIcon(model.modelFamily),
-    }));
-  }, [enabledModels]);
+  const smartModelOptions = [...modelOptions];
 
-  const smartModelOptions = useMemo(() => {
-    const options = [...modelOptions];
+  if (smartAutoOption !== null) {
+    smartModelOptions.unshift(smartAutoOption);
+  }
 
-    if (smartAutoOption !== null) {
-      options.unshift(smartAutoOption);
-    }
+  const fastModelOptions = [...modelOptions];
 
-    return options;
-  }, [modelOptions, smartAutoOption]);
-
-  const fastModelOptions = useMemo(() => {
-    const options = [...modelOptions];
-
-    if (fastAutoOption !== null) {
-      options.unshift(fastAutoOption);
-    }
-
-    return options;
-  }, [modelOptions, fastAutoOption]);
+  if (fastAutoOption !== null) {
+    fastModelOptions.unshift(fastAutoOption);
+  }
 
   const handleSmartModelChange = async (value: string) => {
     if (!currentWorkspace?.id) {
@@ -176,199 +156,172 @@ export const SettingsAIModelsTab = () => {
     }
   };
 
-  const handleUseRecommendedToggle = useCallback(
-    async (checked: boolean) => {
-      if (!currentWorkspace?.id) {
-        return;
-      }
-
-      const previousValue = currentWorkspace.useRecommendedModels;
-
-      let newEnabledIds = currentWorkspace.enabledAiModelIds ?? [];
-
-      if (!checked && previousValue) {
-        const recommendedModelIds = realModels
-          .filter((model) => model.isRecommended)
-          .map((model) => model.modelId);
-
-        newEnabledIds = recommendedModelIds;
-      }
-
-      try {
-        setCurrentWorkspace({
-          ...currentWorkspace,
-          useRecommendedModels: checked,
-          enabledAiModelIds: newEnabledIds,
-        });
-
-        await updateWorkspace({
-          variables: {
-            input: {
-              useRecommendedModels: checked,
-              enabledAiModelIds: newEnabledIds,
-            },
-          },
-        });
-      } catch {
-        setCurrentWorkspace({
-          ...currentWorkspace,
-          useRecommendedModels: previousValue,
-        });
-
-        enqueueErrorSnackBar({
-          message: t`Failed to update model selection mode`,
-        });
-      }
-    },
-    [
-      currentWorkspace,
-      setCurrentWorkspace,
-      updateWorkspace,
-      realModels,
-      enqueueErrorSnackBar,
-    ],
-  );
-
-  const handleAutoEnableToggle = useCallback(
-    async (checked: boolean) => {
-      if (!currentWorkspace?.id) {
-        return;
-      }
-
-      const previousAutoEnable = currentWorkspace.autoEnableNewAiModels;
-      const previousDisabled = currentWorkspace.disabledAiModelIds ?? [];
-      const previousEnabled = currentWorkspace.enabledAiModelIds ?? [];
-
-      let newDisabledIds: string[] = [];
-      let newEnabledIds: string[] = [];
-
-      if (checked) {
-        newDisabledIds = realModels
-          .filter((model) => !previousEnabled.includes(model.modelId))
-          .map((model) => model.modelId);
-        newEnabledIds = [];
-      } else {
-        newEnabledIds = realModels
-          .filter((model) => !previousDisabled.includes(model.modelId))
-          .map((model) => model.modelId);
-        newDisabledIds = [];
-      }
-
-      try {
-        setCurrentWorkspace({
-          ...currentWorkspace,
-          autoEnableNewAiModels: checked,
-          disabledAiModelIds: newDisabledIds,
-          enabledAiModelIds: newEnabledIds,
-        });
-
-        await updateWorkspace({
-          variables: {
-            input: {
-              autoEnableNewAiModels: checked,
-              disabledAiModelIds: newDisabledIds,
-              enabledAiModelIds: newEnabledIds,
-            },
-          },
-        });
-      } catch {
-        setCurrentWorkspace({
-          ...currentWorkspace,
-          autoEnableNewAiModels: previousAutoEnable,
-          disabledAiModelIds: previousDisabled,
-          enabledAiModelIds: previousEnabled,
-        });
-
-        enqueueErrorSnackBar({
-          message: t`Failed to update model availability settings`,
-        });
-      }
-    },
-    [
-      currentWorkspace,
-      setCurrentWorkspace,
-      updateWorkspace,
-      realModels,
-      enqueueErrorSnackBar,
-    ],
-  );
-
-  const handleModelToggle = useCallback(
-    async (modelId: string, isCurrentlyEnabled: boolean) => {
-      if (!currentWorkspace?.id) {
-        return;
-      }
-
-      const previousDisabled = currentWorkspace.disabledAiModelIds ?? [];
-      const previousEnabled = currentWorkspace.enabledAiModelIds ?? [];
-
-      let newDisabledIds = [...previousDisabled];
-      let newEnabledIds = [...previousEnabled];
-
-      if (autoEnableNewAiModels) {
-        if (isCurrentlyEnabled) {
-          newDisabledIds = [...previousDisabled, modelId];
-        } else {
-          newDisabledIds = previousDisabled.filter((id) => id !== modelId);
-        }
-      } else {
-        if (isCurrentlyEnabled) {
-          newEnabledIds = previousEnabled.filter((id) => id !== modelId);
-        } else {
-          newEnabledIds = [...previousEnabled, modelId];
-        }
-      }
-
-      try {
-        setCurrentWorkspace({
-          ...currentWorkspace,
-          disabledAiModelIds: newDisabledIds,
-          enabledAiModelIds: newEnabledIds,
-        });
-
-        await updateWorkspace({
-          variables: {
-            input: {
-              disabledAiModelIds: newDisabledIds,
-              enabledAiModelIds: newEnabledIds,
-            },
-          },
-        });
-      } catch {
-        setCurrentWorkspace({
-          ...currentWorkspace,
-          disabledAiModelIds: previousDisabled,
-          enabledAiModelIds: previousEnabled,
-        });
-
-        enqueueErrorSnackBar({
-          message: t`Failed to update model availability`,
-        });
-      }
-    },
-    [
-      currentWorkspace,
-      setCurrentWorkspace,
-      updateWorkspace,
-      autoEnableNewAiModels,
-      enqueueErrorSnackBar,
-    ],
-  );
-
-  const filteredModels = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return allModelsWithAvailability;
+  const handleUseRecommendedToggle = async (checked: boolean) => {
+    if (!currentWorkspace?.id) {
+      return;
     }
 
-    const query = searchQuery.toLowerCase();
+    const previousValue = currentWorkspace.useRecommendedModels;
 
-    return allModelsWithAvailability.filter(
-      (model) =>
-        model.label.toLowerCase().includes(query) ||
-        (model.modelFamily?.toLowerCase().includes(query) ?? false) ||
-        model.inferenceProvider.toLowerCase().includes(query),
-    );
-  }, [allModelsWithAvailability, searchQuery]);
+    let newEnabledIds = currentWorkspace.enabledAiModelIds ?? [];
+
+    if (!checked && previousValue) {
+      const recommendedModelIds = realModels
+        .filter((model) => model.isRecommended)
+        .map((model) => model.modelId);
+
+      newEnabledIds = recommendedModelIds;
+    }
+
+    try {
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        useRecommendedModels: checked,
+        enabledAiModelIds: newEnabledIds,
+      });
+
+      await updateWorkspace({
+        variables: {
+          input: {
+            useRecommendedModels: checked,
+            enabledAiModelIds: newEnabledIds,
+          },
+        },
+      });
+    } catch {
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        useRecommendedModels: previousValue,
+      });
+
+      enqueueErrorSnackBar({
+        message: t`Failed to update model selection mode`,
+      });
+    }
+  };
+
+  const handleAutoEnableToggle = async (checked: boolean) => {
+    if (!currentWorkspace?.id) {
+      return;
+    }
+
+    const previousAutoEnable = currentWorkspace.autoEnableNewAiModels;
+    const previousDisabled = currentWorkspace.disabledAiModelIds ?? [];
+    const previousEnabled = currentWorkspace.enabledAiModelIds ?? [];
+
+    let newDisabledIds: string[] = [];
+    let newEnabledIds: string[] = [];
+
+    if (checked) {
+      newDisabledIds = realModels
+        .filter((model) => !previousEnabled.includes(model.modelId))
+        .map((model) => model.modelId);
+      newEnabledIds = [];
+    } else {
+      newEnabledIds = realModels
+        .filter((model) => !previousDisabled.includes(model.modelId))
+        .map((model) => model.modelId);
+      newDisabledIds = [];
+    }
+
+    try {
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        autoEnableNewAiModels: checked,
+        disabledAiModelIds: newDisabledIds,
+        enabledAiModelIds: newEnabledIds,
+      });
+
+      await updateWorkspace({
+        variables: {
+          input: {
+            autoEnableNewAiModels: checked,
+            disabledAiModelIds: newDisabledIds,
+            enabledAiModelIds: newEnabledIds,
+          },
+        },
+      });
+    } catch {
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        autoEnableNewAiModels: previousAutoEnable,
+        disabledAiModelIds: previousDisabled,
+        enabledAiModelIds: previousEnabled,
+      });
+
+      enqueueErrorSnackBar({
+        message: t`Failed to update model availability settings`,
+      });
+    }
+  };
+
+  const handleModelToggle = async (
+    modelId: string,
+    isCurrentlyEnabled: boolean,
+  ) => {
+    if (!currentWorkspace?.id) {
+      return;
+    }
+
+    const previousDisabled = currentWorkspace.disabledAiModelIds ?? [];
+    const previousEnabled = currentWorkspace.enabledAiModelIds ?? [];
+
+    let newDisabledIds = [...previousDisabled];
+    let newEnabledIds = [...previousEnabled];
+
+    if (autoEnableNewAiModels) {
+      if (isCurrentlyEnabled) {
+        newDisabledIds = [...previousDisabled, modelId];
+      } else {
+        newDisabledIds = previousDisabled.filter((id) => id !== modelId);
+      }
+    } else {
+      if (isCurrentlyEnabled) {
+        newEnabledIds = previousEnabled.filter((id) => id !== modelId);
+      } else {
+        newEnabledIds = [...previousEnabled, modelId];
+      }
+    }
+
+    try {
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        disabledAiModelIds: newDisabledIds,
+        enabledAiModelIds: newEnabledIds,
+      });
+
+      await updateWorkspace({
+        variables: {
+          input: {
+            disabledAiModelIds: newDisabledIds,
+            enabledAiModelIds: newEnabledIds,
+          },
+        },
+      });
+    } catch {
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        disabledAiModelIds: previousDisabled,
+        enabledAiModelIds: previousEnabled,
+      });
+
+      enqueueErrorSnackBar({
+        message: t`Failed to update model availability`,
+      });
+    }
+  };
+
+  const filteredModels = searchQuery.trim()
+    ? allModelsWithAvailability.filter((model) => {
+        const query = searchQuery.toLowerCase();
+
+        return (
+          model.label.toLowerCase().includes(query) ||
+          (model.modelFamily?.toLowerCase().includes(query) ?? false) ||
+          model.inferenceProvider.toLowerCase().includes(query)
+        );
+      })
+    : allModelsWithAvailability;
 
   return (
     <>

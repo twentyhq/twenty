@@ -1,5 +1,3 @@
-import { useCallback, useMemo } from 'react';
-
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -24,49 +22,35 @@ export const useWorkspaceAiModelAvailability = () => {
   const disabledAiModelIds = currentWorkspace?.disabledAiModelIds ?? [];
   const enabledAiModelIds = currentWorkspace?.enabledAiModelIds ?? [];
 
-  const isModelEnabled = useCallback(
-    (modelId: string, model?: ClientAiModelConfig): boolean => {
-      if (isVirtualModel(modelId)) {
-        return true;
-      }
+  const isModelEnabled = (
+    modelId: string,
+    model?: ClientAiModelConfig,
+  ): boolean => {
+    if (isVirtualModel(modelId)) {
+      return true;
+    }
 
-      if (useRecommendedModels) {
-        return model?.isRecommended === true;
-      }
+    if (useRecommendedModels) {
+      return model?.isRecommended === true;
+    }
 
-      return autoEnableNewAiModels
-        ? !disabledAiModelIds.includes(modelId)
-        : enabledAiModelIds.includes(modelId);
-    },
-    [
-      useRecommendedModels,
-      autoEnableNewAiModels,
-      disabledAiModelIds,
-      enabledAiModelIds,
-    ],
+    return autoEnableNewAiModels
+      ? !disabledAiModelIds.includes(modelId)
+      : enabledAiModelIds.includes(modelId);
+  };
+
+  const realModels = aiModels.filter(
+    (model) => !isVirtualModel(model.modelId) && !model.deprecated,
   );
 
-  const realModels = useMemo(
-    () =>
-      aiModels.filter(
-        (model) => !isVirtualModel(model.modelId) && !model.deprecated,
-      ),
-    [aiModels],
+  const enabledModels = realModels.filter((model) =>
+    isModelEnabled(model.modelId, model),
   );
 
-  const enabledModels = useMemo(
-    () => realModels.filter((model) => isModelEnabled(model.modelId, model)),
-    [realModels, isModelEnabled],
-  );
-
-  const allModelsWithAvailability = useMemo(
-    () =>
-      realModels.map((model) => ({
-        ...model,
-        isEnabled: isModelEnabled(model.modelId, model),
-      })),
-    [realModels, isModelEnabled],
-  );
+  const allModelsWithAvailability = realModels.map((model) => ({
+    ...model,
+    isEnabled: isModelEnabled(model.modelId, model),
+  }));
 
   return {
     isModelEnabled,
