@@ -12,6 +12,8 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 const deleteMock = test.fn();
 const addToFavoritesMock = test.fn();
@@ -57,6 +59,8 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
     ),
     ComponentDecorator,
     ContextStoreDecorator,
+    ObjectMetadataItemsDecorator,
+    SnackBarDecorator,
     RouterDecorator,
   ],
   args: {

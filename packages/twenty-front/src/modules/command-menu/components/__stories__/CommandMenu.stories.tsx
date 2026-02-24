@@ -3,6 +3,7 @@ import {
   type Meta,
   type StoryObj,
 } from '@storybook/react-vite';
+import { useEffect, useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -84,19 +85,33 @@ const meta: Meta<typeof CommandMenu> = {
         commandMenuNavigationStackState,
       );
 
-      setCurrentWorkspace(mockCurrentWorkspace);
-      setCurrentWorkspaceMember(mockedWorkspaceMemberData);
-      setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
+      const [isLoaded, setIsLoaded] = useState(false);
 
-      jotaiStore.set(isCommandMenuOpenedStateV2.atom, true);
-      setCommandMenuNavigationStack([
-        {
-          page: CommandMenuPages.Root,
-          pageTitle: 'Command Menu',
-          pageIcon: IconDotsVertical,
-          pageId: '1',
-        },
+      useEffect(() => {
+        setCurrentWorkspace(mockCurrentWorkspace);
+        setCurrentWorkspaceMember(mockedWorkspaceMemberData);
+        setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
+
+        jotaiStore.set(isCommandMenuOpenedStateV2.atom, true);
+        setCommandMenuNavigationStack([
+          {
+            page: CommandMenuPages.Root,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
+            pageId: '1',
+          },
+        ]);
+        setIsLoaded(true);
+      }, [
+        setCurrentWorkspace,
+        setCurrentWorkspaceMember,
+        setCurrentUserWorkspace,
+        setCommandMenuNavigationStack,
       ]);
+
+      if (!isLoaded) {
+        return <></>;
+      }
 
       return <Story />;
     },
@@ -139,9 +154,19 @@ export const LimitedPermissions: Story = {
       const setCurrentUserWorkspace = useSetRecoilStateV2(
         currentUserWorkspaceState,
       );
-      setCurrentUserWorkspace(
-        mockedLimitedPermissionsUserData.currentUserWorkspace,
-      );
+
+      const [isLoaded, setIsLoaded] = useState(false);
+
+      useEffect(() => {
+        setCurrentUserWorkspace(
+          mockedLimitedPermissionsUserData.currentUserWorkspace,
+        );
+        setIsLoaded(true);
+      }, [setCurrentUserWorkspace]);
+
+      if (!isLoaded) {
+        return <></>;
+      }
 
       return <Story />;
     },

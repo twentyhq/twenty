@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useEffect, useMemo, useState } from 'react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
@@ -46,27 +47,40 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
 
       const mockCoreView = mockedCoreViewsData[0];
 
-      setCoreViews([mockCoreView]);
-
       const setCurrentViewId = useSetRecoilComponentStateV2(
         contextStoreCurrentViewIdComponentState,
         MAIN_CONTEXT_STORE_INSTANCE_ID,
       );
 
-      setCurrentViewId(mockCoreView.id);
-
-      const columns = companyObjectMetadataItem.fields.map(
-        (fieldMetadataItem, index) =>
-          ({
-            id: fieldMetadataItem.id,
-            fieldMetadataItemId: fieldMetadataItem.id,
-            isVisible: true,
-            position: index,
-            size: 100,
-          }) satisfies RecordField,
+      const columns = useMemo(
+        () =>
+          companyObjectMetadataItem.fields.map(
+            (fieldMetadataItem, index) =>
+              ({
+                id: fieldMetadataItem.id,
+                fieldMetadataItemId: fieldMetadataItem.id,
+                isVisible: true,
+                position: index,
+                size: 100,
+              }) satisfies RecordField,
+          ),
+        [companyObjectMetadataItem.fields],
       );
 
-      setCurrentRecordFields(columns);
+      const [isLoaded, setIsLoaded] = useState(false);
+
+      useEffect(() => {
+        setCoreViews([mockCoreView]);
+        setCurrentViewId(mockCoreView.id);
+        setCurrentRecordFields(columns);
+        setIsLoaded(true);
+      }, [
+        setCoreViews,
+        setCurrentViewId,
+        setCurrentRecordFields,
+        mockCoreView,
+        columns,
+      ]);
 
       const {
         fieldDefinitionByFieldMetadataItemId,
@@ -77,6 +91,10 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
         companyObjectMetadataItem,
         instanceId,
       );
+
+      if (!isLoaded) {
+        return <></>;
+      }
 
       return (
         <RecordIndexContextProvider
