@@ -703,7 +703,7 @@ Key points:
 Front components let you build custom React components that render within Twenty's UI. Use `defineFrontComponent()` to define components with built-in validation:
 
 ```typescript
-// src/my-widget.front-component.tsx
+// src/front-components/my-widget.tsx
 import { defineFrontComponent } from 'twenty-sdk';
 
 const MyWidget = () => {
@@ -725,14 +725,13 @@ export default defineFrontComponent({
 
 Key points:
 - Front components are React components that render in isolated contexts within Twenty.
-- Use the `*.front-component.tsx` file suffix for automatic detection.
 - The `component` field references your React component.
 - Components are built and synced automatically during `yarn twenty app:dev`.
 
 You can create new front components in two ways:
 
 - **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new front component.
-- **Manual**: Create a new `*.front-component.tsx` file and use `defineFrontComponent()`.
+- **Manual**: Create a new `.tsx` file and use `defineFrontComponent()`, following the same pattern.
 
 ### Skills
 
