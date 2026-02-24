@@ -59,22 +59,15 @@ worker:
       memory: 1024Mi
 
 db:
-  internal:
-    image:
-      repository: twentycrm/twenty-postgres-spilo
-      tag: latest
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
-    persistence:
-      enabled: true
-      size: 10Gi
-      accessModes:
-        - ReadWriteOnce
+  enabled: false
+  external:
+    host: twenty-crm-db.cluster-cgx4wwy00vhj.us-east-1.rds.amazonaws.com
+    port: 5432
+    user: twenty_app_user
+    database: twenty
+    ssl: false
+    secretName: twenty-rds-credentials
+    passwordKey: password
 
 storage:
   type: s3

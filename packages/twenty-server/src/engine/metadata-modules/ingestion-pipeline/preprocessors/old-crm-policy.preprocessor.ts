@@ -61,10 +61,16 @@ export class OldCrmPolicyPreprocessor {
       `Preprocessing old CRM policy ${payload.policy_id}`,
     );
 
+    // Resolve lead source from vendor_name (needed before person creation)
+    const leadSourceId = payload.vendor_name
+      ? await this.findOrCreateLeadSource(payload.vendor_name, workspaceId)
+      : null;
+
     // Find person by phone
     const normalizedPhone = this.normalizePhone(payload.phone);
     const personId = await this.findOrCreatePersonByPhone(
       normalizedPhone,
+      leadSourceId,
       workspaceId,
     );
 
@@ -89,11 +95,6 @@ export class OldCrmPolicyPreprocessor {
     // Resolve agent by name (fuzzy)
     const agentId = payload.member_name
       ? await this.findAgentByName(payload.member_name, workspaceId)
-      : null;
-
-    // Resolve lead source from vendor_name
-    const leadSourceId = payload.vendor_name
-      ? await this.findOrCreateLeadSource(payload.vendor_name, workspaceId)
       : null;
 
     // Map status
@@ -132,6 +133,7 @@ export class OldCrmPolicyPreprocessor {
     const expirationDate = this.parseDate(payload.expires_date);
     const submittedDate = this.parseDate(payload.reg_date);
 
+    // leadSource is set directly on the person/lead, not on the policy
     return {
       ...payload,
       _personId: personId,
@@ -145,7 +147,6 @@ export class OldCrmPolicyPreprocessor {
       _carrierId: carrierId,
       _productId: productId,
       _submittedDate: submittedDate,
-      _leadSourceId: leadSourceId,
     };
   }
 
@@ -193,6 +194,7 @@ export class OldCrmPolicyPreprocessor {
 
   private async findOrCreatePersonByPhone(
     normalizedPhone: string | null,
+    leadSourceId: string | null,
     workspaceId: string,
   ): Promise<string | null> {
     if (!normalizedPhone) {
@@ -214,12 +216,31 @@ export class OldCrmPolicyPreprocessor {
     });
 
     if (existing) {
-      return (existing as Record<string, unknown>).id as string;
+      const existingRecord = existing as Record<string, unknown>;
+      const existingId = existingRecord.id as string;
+
+      // Set leadSource on existing person if not already set
+      if (leadSourceId && !existingRecord.leadSourceId) {
+        try {
+          await personRepo.update(existingId, {
+            leadSourceId,
+          });
+          this.logger.log(
+            `Updated Person ${existingId} with leadSourceId ${leadSourceId}`,
+          );
+        } catch (error) {
+          this.logger.warn(
+            `Failed to update leadSourceId on Person ${existingId}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          );
+        }
+      }
+
+      return existingId;
     }
 
-    // Create minimal person from phone
+    // Create minimal person from phone, with leadSource if available
     try {
-      const created = await personRepo.save({
+      const personData: Record<string, unknown> = {
         phones: {
           primaryPhoneNumber: normalizedPhone,
           primaryPhoneCallingCode: '+1',
@@ -229,8 +250,13 @@ export class OldCrmPolicyPreprocessor {
           firstName: '',
           lastName: '',
         },
-      });
+      };
 
+      if (leadSourceId) {
+        personData.leadSourceId = leadSourceId;
+      }
+
+      const created = await personRepo.save(personData);
       const createdId = (created as Record<string, unknown>).id as string;
 
       this.logger.log(

@@ -84,7 +84,7 @@ password
 {{- $port := .Values.db.external.port | default 5432 -}}
 {{- $user := .Values.db.external.user | default "postgres" -}}
 {{- $db := .Values.db.external.database | default "twenty" -}}
-{{- $qs := ternary "?sslmode=require" "" (eq .Values.db.external.ssl true) -}}
+{{- $qs := ternary "?sslmode=no-verify" "" (eq .Values.db.external.ssl true) -}}
 {{- printf "%s://%s:$(DB_PASSWORD)@%s:%v/%s%s" $scheme $user $host $port $db $qs -}}
 {{- end -}}
 {{- end -}}
