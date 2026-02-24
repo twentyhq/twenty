@@ -173,6 +173,20 @@ spec:
             {{- if $storageEnv }}
             {{ $storageEnv | nindent 12 }}
             {{- end }}
+            {{- $reserved := dict "SERVER_URL" true "REDIS_URL" true "SIGN_IN_PREFILLED" true "STORAGE_TYPE" true "ACCESS_TOKEN_EXPIRES_IN" true "LOGIN_TOKEN_EXPIRES_IN" true "APP_SECRET" true "DB_PASSWORD" true "PG_DATABASE_URL" true "STORAGE_S3_NAME" true "STORAGE_S3_REGION" true "STORAGE_S3_ENDPOINT" true "STORAGE_S3_ACCESS_KEY_ID" true "STORAGE_S3_SECRET_ACCESS_KEY" true }}
+            {{- range $k, $v := .Values.server.env }}
+            {{- if not (hasKey $reserved $k) }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+            {{- end }}
+            {{- end }}
+            {{- with .Values.server.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- with .Values.server.extraEnvFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: http-tcp
               containerPort: {{ include "twenty.server.containerPort" . }}

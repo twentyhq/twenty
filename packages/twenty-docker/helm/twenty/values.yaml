@@ -52,6 +52,13 @@ server:
     SIGN_IN_PREFILLED: "false"
     ACCESS_TOKEN_EXPIRES_IN: "7d"
     LOGIN_TOKEN_EXPIRES_IN: "1h"
+    # Add any additional server env vars here (e.g., IS_MULTIWORKSPACE_ENABLED: "true")
+
+  # Additional environment entries (list of EnvVar objects)
+  extraEnv: []
+
+  # Additional envFrom entries (list of EnvFromSource objects)
+  extraEnvFrom: []
 
   service:
     type: ClusterIP
@@ -96,6 +103,15 @@ worker:
   replicaCount: 1
   image: {}
   command: ["yarn", "worker:prod"]
+
+  env:
+    # Add any additional worker env vars here (e.g., WORKER_CONCURRENCY: "10")
+
+  # Additional environment entries (list of EnvVar objects)
+  extraEnv: []
+
+  # Additional envFrom entries (list of EnvFromSource objects)
+  extraEnvFrom: []
 
   resources:
     requests:
