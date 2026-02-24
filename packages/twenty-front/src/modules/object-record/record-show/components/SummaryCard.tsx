@@ -7,15 +7,15 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { usePersonAvatarUpload } from '@/object-record/record-show/hooks/usePersonAvatarUpload';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreIdentifierFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelectorV2';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
@@ -38,12 +38,10 @@ export const SummaryCard = ({
     objectRecordId,
   });
 
-  const recordCreatedAt = useRecoilValue<string | null>(
-    recordStoreFamilySelector({
-      recordId: objectRecordId,
-      fieldName: 'createdAt',
-    }),
-  );
+  const recordCreatedAt = useFamilySelectorValueV2(
+    recordStoreFamilySelectorV2,
+    { recordId: objectRecordId, fieldName: 'createdAt' },
+  ) as string | null;
   const allowRequestsToTwentyIcons = useRecoilValueV2(
     allowRequestsToTwentyIconsState,
   );
@@ -59,12 +57,13 @@ export const SummaryCard = ({
 
   const isMobile = useIsMobile() || isInRightDrawer;
 
-  const recordIdentifier = useRecoilValue(
-    recordStoreIdentifierFamilySelector({
+  const recordIdentifier = useFamilySelectorValueV2(
+    recordStoreIdentifierFamilySelectorV2,
+    {
       recordId: objectRecordId,
       allowRequestsToTwentyIcons,
       isFilesFieldMigrated,
-    }),
+    },
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({

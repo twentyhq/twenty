@@ -8,7 +8,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -94,17 +94,17 @@ export const useCommandMenuItemFrontComponentActions = () => {
     useOpenFrontComponentInCommandMenu();
   const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
 
-  const isPageInEditMode = useRecoilComponentValue(
+  const isPageInEditMode = useRecoilComponentValueV2(
     contextStoreIsPageInEditModeComponentState,
   );
 
   const { actionMenuType } = useContext(ActionMenuContext);
 
-  const currentObjectMetadataItemId = useRecoilComponentValue(
+  const currentObjectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const targetedRecordsRule = useRecoilComponentValue(
+  const targetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
   );
 

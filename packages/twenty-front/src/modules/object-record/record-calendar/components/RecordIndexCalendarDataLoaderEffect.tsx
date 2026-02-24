@@ -7,8 +7,9 @@ import { recordCalendarSelectedDateComponentState } from '@/object-record/record
 import { recordCalendarSelectedRecordIdsComponentSelector } from '@/object-record/record-calendar/states/selectors/recordCalendarSelectedRecordIdsComponentSelector';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useEffect } from 'react';
 
 export const RecordIndexCalendarDataLoaderEffect = () => {
@@ -16,31 +17,35 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
     RecordCalendarComponentInstanceContext,
   );
 
-  const selectedRecordIds = useRecoilComponentValue(
+  const selectedRecordIds = useRecoilComponentSelectorValueV2(
     recordCalendarSelectedRecordIdsComponentSelector,
     recordCalendarId,
   );
 
-  const recordCalendarSelectedDate = useRecoilComponentValue(
+  const recordCalendarSelectedDate = useRecoilComponentValueV2(
     recordCalendarSelectedDateComponentState,
+    recordCalendarId,
   );
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const setContextStoreTargetedRecords = useSetRecoilComponentState(
+  const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
     contextStoreTargetedRecordsRuleComponentState,
+    recordCalendarId,
   );
 
-  const setRecordCalendarRecordIds = useSetRecoilComponentState(
+  const setRecordCalendarRecordIds = useSetRecoilComponentStateV2(
     recordCalendarRecordIdsComponentState,
+    recordCalendarId,
   );
 
   const { records } = useRecordCalendarGroupByRecords(
     recordCalendarSelectedDate,
   );
 
-  const hasInitializedRecordCalendarSelectedDate = useRecoilComponentValue(
+  const hasInitializedRecordCalendarSelectedDate = useRecoilComponentValueV2(
     hasInitializedRecordCalendarSelectedDateComponentState,
+    recordCalendarId,
   );
 
   useEffect(() => {

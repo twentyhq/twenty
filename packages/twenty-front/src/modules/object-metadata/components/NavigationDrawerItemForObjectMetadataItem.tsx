@@ -11,7 +11,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { ViewKey } from '@/views/types/ViewKey';
@@ -59,7 +59,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     { objectMetadataItemId: objectMetadataItem.id },
   );
 
-  const contextStoreCurrentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

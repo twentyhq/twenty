@@ -5,7 +5,7 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useGetViewGroupsFilters } from '@/views/hooks/useGetViewGroupsFilters';
 import {
   computeRecordGqlOperationFilter,
@@ -15,11 +15,11 @@ import {
 export const useGetRecordIndexTotalCount = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const currentRecordFilterGroups = useRecoilComponentValue(
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 
@@ -34,7 +34,7 @@ export const useGetRecordIndexTotalCount = () => {
     fields: objectMetadataItem.fields,
   });
 
-  const anyFieldFilterValue = useRecoilComponentValue(
+  const anyFieldFilterValue = useRecoilComponentValueV2(
     anyFieldFilterValueComponentState,
   );
 

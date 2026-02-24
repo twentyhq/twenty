@@ -1,15 +1,16 @@
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledDebugRow = styled.div`
@@ -45,17 +46,17 @@ type RecordTableRowVirtualizedDebugRowHelperProps = {
 export const RecordTableRowVirtualizedDebugRowHelper = ({
   virtualIndex,
 }: RecordTableRowVirtualizedDebugRowHelperProps) => {
-  const realIndex = useRecoilComponentFamilyValue(
+  const realIndex = useRecoilComponentFamilyValueV2(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
   );
 
-  const recordId = useRecoilComponentFamilyValue(
+  const recordId = useRecoilComponentFamilySelectorValueV2(
     recordIdByRealIndexComponentFamilySelector,
     realIndex,
   );
 
-  const dataLoadingStatus = useRecoilComponentFamilyValue(
+  const dataLoadingStatus = useRecoilComponentFamilySelectorValueV2(
     dataLoadingStatusByRealIndexComponentFamilySelector,
     realIndex,
   );
@@ -64,7 +65,7 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
     (realIndex ?? 0) * (RECORD_TABLE_ROW_HEIGHT + 1) +
     (RECORD_TABLE_ROW_HEIGHT + 1);
 
-  const record = useRecoilValue(recordStoreFamilyState(recordId ?? ''));
+  const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId ?? '');
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);

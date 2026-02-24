@@ -12,13 +12,12 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
-import { useRef, useState } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useCallback, useRef, useState } from 'react';
+import { useStore } from 'jotai';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -56,43 +55,41 @@ export const RecordTableContent = ({
     handleDragSelectionEnd();
   };
 
-  const isRowSelectedCallbackFamilyState =
-    useRecoilComponentFamilyCallbackState(isRowSelectedComponentFamilyState);
+  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
+    isRowSelectedComponentFamilyState,
+    recordTableId,
+  );
 
-  const handleDragSelectionChange = useRecoilCallback(
-    ({ set }) =>
-      (rowId: string, selected: boolean) => {
-        set(isRowSelectedCallbackFamilyState(rowId), selected);
-      },
-    [isRowSelectedCallbackFamilyState],
+  const store = useStore();
+
+  const handleDragSelectionChange = useCallback(
+    (rowId: string, selected: boolean) => {
+      store.set(isRowSelectedFamilyState(rowId), selected);
+    },
+    [isRowSelectedFamilyState, store],
   );
 
   const recordTableScrollWrapperId = `record-table-scroll-${recordTableId}`;
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const setRecordTableHoverPosition = useSetRecoilComponentState(
+  const setRecordTableHoverPosition = useSetRecoilComponentStateV2(
     recordTableHoverPositionComponentState,
+    recordTableId,
   );
 
-  const isSomeCellInEditModeCallbackState = useRecoilComponentCallbackState(
+  const isSomeCellInEditModeAtom = useRecoilComponentSelectorCallbackStateV2(
     isSomeCellInEditModeComponentSelector,
+    recordTableId,
   );
 
-  const handleMouseLeave = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const isSomeCellInEditMode = getSnapshotValue(
-          snapshot,
-          isSomeCellInEditModeCallbackState,
-        );
+  const handleMouseLeave = useCallback(() => {
+    const isSomeCellInEditMode = store.get(isSomeCellInEditModeAtom);
 
-        if (!isSomeCellInEditMode) {
-          setRecordTableHoverPosition(null);
-        }
-      },
-    [isSomeCellInEditModeCallbackState, setRecordTableHoverPosition],
-  );
+    if (!isSomeCellInEditMode) {
+      setRecordTableHoverPosition(null);
+    }
+  }, [store, isSomeCellInEditModeAtom, setRecordTableHoverPosition]);
 
   return (
     <StyledTableContainer ref={containerRef}>

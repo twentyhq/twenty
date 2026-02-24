@@ -3,13 +3,13 @@ import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdow
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 export const useRecordFilterField = (recordFilterId: string) => {
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 

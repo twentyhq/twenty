@@ -21,7 +21,6 @@ import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImperso
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { ApolloError } from '@apollo/client';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
@@ -69,7 +68,7 @@ export const SettingsSecurity = () => {
   );
   const isClickHouseConfigured = useRecoilValueV2(isClickHouseConfiguredState);
   const authProviders = useRecoilValueV2(authProvidersState);
-  const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
+  const SSOIdentitiesProviders = useRecoilValueV2(SSOIdentitiesProvidersState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
     currentWorkspaceState,
   );

@@ -3,7 +3,7 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -35,7 +35,7 @@ export const RecordBoardColumnNewRecordButton = () => {
 
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+  const hasAnySoftDeleteFilterOnView = useRecoilComponentSelectorValueV2(
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 

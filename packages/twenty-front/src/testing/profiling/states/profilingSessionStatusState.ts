@@ -1,8 +1,9 @@
-import { atom } from 'recoil';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
 export type ProfilingSessionStatus = 'running' | 'finished' | 'not_started';
 
-export const profilingSessionStatusState = atom<ProfilingSessionStatus>({
-  key: 'profilingSessionStatusState',
-  default: 'not_started',
-});
+export const profilingSessionStatusState =
+  createStateV2<ProfilingSessionStatus>({
+    key: 'profilingSessionStatusState',
+    defaultValue: 'not_started',
+  });

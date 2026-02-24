@@ -5,10 +5,10 @@ import { COMMAND_MENU_PAGES_CONFIG } from '@/command-menu/constants/CommandMenuP
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledCommandMenuContent = styled.div`
@@ -17,8 +17,8 @@ const StyledCommandMenuContent = styled.div`
 `;
 
 export const CommandMenuRouter = () => {
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
-  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuPage = useRecoilValueV2(commandMenuPageState);
+  const commandMenuPageInfo = useRecoilValueV2(commandMenuPageInfoState);
 
   const commandMenuPageComponent = isDefined(commandMenuPage) ? (
     COMMAND_MENU_PAGES_CONFIG.get(commandMenuPage)

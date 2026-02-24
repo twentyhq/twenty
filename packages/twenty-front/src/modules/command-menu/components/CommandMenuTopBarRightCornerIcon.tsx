@@ -1,9 +1,9 @@
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconEdit, IconSparkles } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -19,7 +19,7 @@ const StyledIconButton = styled(IconButton)`
 export const CommandMenuTopBarRightCornerIcon = () => {
   const isMobile = useIsMobile();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
+  const commandMenuPage = useRecoilValueV2(commandMenuPageState);
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
   const { createChatThread } = useCreateNewAIChatThread();
 

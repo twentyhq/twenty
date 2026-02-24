@@ -9,7 +9,7 @@ import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 type OpenActivityTargetCellEditModeProps = {
   recordPickerInstanceId: string;
@@ -24,81 +24,80 @@ export const useOpenActivityTargetCellEditMode = () => {
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const openActivityTargetCellEditMode = useRecoilCallback(
-    ({ set }) =>
-      ({
-        recordPickerInstanceId,
-        activityTargetObjectRecords,
-      }: OpenActivityTargetCellEditModeProps) => {
-        const objectMetadataItems = jotaiStore
-          .get(objectMetadataItemsState.atom)
-          .filter(
-            (objectMetadataItem) =>
-              objectMetadataItem.isSearchable &&
-              objectMetadataItem.isActive &&
-              objectMetadataItem.nameSingular !== CoreObjectNameSingular.Task &&
-              objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note &&
-              objectMetadataItem.nameSingular !==
-                CoreObjectNameSingular.WorkspaceMember,
-          );
+  const openActivityTargetCellEditMode = useCallback(
+    ({
+      recordPickerInstanceId,
+      activityTargetObjectRecords,
+    }: OpenActivityTargetCellEditModeProps) => {
+      const objectMetadataItems = jotaiStore
+        .get(objectMetadataItemsState.atom)
+        .filter(
+          (objectMetadataItem) =>
+            objectMetadataItem.isSearchable &&
+            objectMetadataItem.isActive &&
+            objectMetadataItem.nameSingular !== CoreObjectNameSingular.Task &&
+            objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note &&
+            objectMetadataItem.nameSingular !==
+              CoreObjectNameSingular.WorkspaceMember,
+        );
 
-        set(
-          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
+      jotaiStore.set(
+        multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
+          instanceId: recordPickerInstanceId,
+        }),
+        activityTargetObjectRecords.map((activityTargetObjectRecord) => ({
+          recordId: activityTargetObjectRecord.targetObject.id,
+          objectMetadataId:
+            activityTargetObjectRecord.targetObjectMetadataItem.id,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        })),
+      );
+
+      jotaiStore.set(
+        multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
+          {
             instanceId: recordPickerInstanceId,
-          }),
-          activityTargetObjectRecords.map((activityTargetObjectRecord) => ({
+          },
+        ),
+        objectMetadataItems,
+      );
+
+      jotaiStore.set(
+        multipleRecordPickerSearchFilterComponentState.atomFamily({
+          instanceId: recordPickerInstanceId,
+        }),
+        '',
+      );
+
+      openMultipleRecordPicker(recordPickerInstanceId);
+
+      multipleRecordPickerPerformSearch({
+        multipleRecordPickerInstanceId: recordPickerInstanceId,
+        forceSearchFilter: '',
+        forceSearchableObjectMetadataItems: objectMetadataItems,
+        forcePickableMorphItems: activityTargetObjectRecords.map(
+          (activityTargetObjectRecord) => ({
             recordId: activityTargetObjectRecord.targetObject.id,
             objectMetadataId:
               activityTargetObjectRecord.targetObjectMetadataItem.id,
             isSelected: true,
             isMatchingSearchFilter: true,
-          })),
-        );
-
-        set(
-          multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
-            {
-              instanceId: recordPickerInstanceId,
-            },
-          ),
-          objectMetadataItems,
-        );
-
-        set(
-          multipleRecordPickerSearchFilterComponentState.atomFamily({
-            instanceId: recordPickerInstanceId,
           }),
-          '',
-        );
+        ),
+      });
 
-        openMultipleRecordPicker(recordPickerInstanceId);
-
-        multipleRecordPickerPerformSearch({
-          multipleRecordPickerInstanceId: recordPickerInstanceId,
-          forceSearchFilter: '',
-          forceSearchableObjectMetadataItems: objectMetadataItems,
-          forcePickableMorphItems: activityTargetObjectRecords.map(
-            (activityTargetObjectRecord) => ({
-              recordId: activityTargetObjectRecord.targetObject.id,
-              objectMetadataId:
-                activityTargetObjectRecord.targetObjectMetadataItem.id,
-              isSelected: true,
-              isMatchingSearchFilter: true,
-            }),
-          ),
-        });
-
-        pushFocusItemToFocusStack({
-          focusId: recordPickerInstanceId,
-          component: {
-            type: FocusComponentType.DROPDOWN,
-            instanceId: recordPickerInstanceId,
-          },
-          globalHotkeysConfig: {
-            enableGlobalHotkeysConflictingWithKeyboard: false,
-          },
-        });
-      },
+      pushFocusItemToFocusStack({
+        focusId: recordPickerInstanceId,
+        component: {
+          type: FocusComponentType.DROPDOWN,
+          instanceId: recordPickerInstanceId,
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysConflictingWithKeyboard: false,
+        },
+      });
+    },
     [
       multipleRecordPickerPerformSearch,
       openMultipleRecordPicker,

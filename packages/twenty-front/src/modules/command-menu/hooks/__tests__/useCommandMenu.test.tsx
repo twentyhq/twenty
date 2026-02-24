@@ -1,13 +1,14 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/display';
 
@@ -26,19 +27,9 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const commandMenu = useCommandMenu();
-      const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
-      const commandMenuNavigationStack = useRecoilValue(
-        commandMenuNavigationStackState,
-      );
-      const commandMenuPage = useRecoilValue(commandMenuPageState);
-      const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
 
       return {
         commandMenu,
-        isCommandMenuOpened,
-        commandMenuNavigationStack,
-        commandMenuPage,
-        commandMenuPageInfo,
       };
     },
     {
@@ -60,31 +51,31 @@ describe('useCommandMenu', () => {
       result.current.commandMenu.openCommandMenu();
     });
 
-    expect(result.current.isCommandMenuOpened).toBe(true);
+    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(true);
 
     act(() => {
       result.current.commandMenu.closeCommandMenu();
     });
 
-    expect(result.current.isCommandMenuOpened).toBe(false);
+    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(false);
   });
 
   it('should toggle the command menu', () => {
     const { result } = renderHooks();
 
-    expect(result.current.isCommandMenuOpened).toBe(false);
+    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(false);
 
     act(() => {
       result.current.commandMenu.toggleCommandMenu();
     });
 
-    expect(result.current.isCommandMenuOpened).toBe(true);
+    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(true);
 
     act(() => {
       result.current.commandMenu.toggleCommandMenu();
     });
 
-    expect(result.current.isCommandMenuOpened).toBe(false);
+    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(false);
   });
 
   it('should navigate command menu and reset navigation stack when resetNavigationStack is true', () => {
@@ -99,9 +90,15 @@ describe('useCommandMenu', () => {
       });
     });
 
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
-    expect(result.current.commandMenuPageInfo.title).toBe('First Page');
-    expect(result.current.commandMenuNavigationStack).toHaveLength(1);
+    expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
+      CommandMenuPages.Root,
+    );
+    expect(jotaiStore.get(commandMenuPageInfoState.atom).title).toBe(
+      'First Page',
+    );
+    expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toHaveLength(
+      1,
+    );
 
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
@@ -112,7 +109,9 @@ describe('useCommandMenu', () => {
       });
     });
 
-    expect(result.current.commandMenuNavigationStack).toHaveLength(2);
+    expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toHaveLength(
+      2,
+    );
 
     act(() => {
       result.current.commandMenu.navigateCommandMenu({
@@ -123,8 +122,14 @@ describe('useCommandMenu', () => {
       });
     });
 
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
-    expect(result.current.commandMenuPageInfo.title).toBe('Reset Page');
-    expect(result.current.commandMenuNavigationStack).toHaveLength(1);
+    expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
+      CommandMenuPages.Root,
+    );
+    expect(jotaiStore.get(commandMenuPageInfoState.atom).title).toBe(
+      'Reset Page',
+    );
+    expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toHaveLength(
+      1,
+    );
   });
 });

@@ -1,34 +1,34 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type StartNodeCreationParams } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useCallback, useContext } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useStartNodeCreation = () => {
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
-    useRecoilComponentState(workflowInsertStepIdsComponentState);
+    useRecoilComponentStateV2(workflowInsertStepIdsComponentState);
 
-  const setWorkflowSelectedNode = useSetRecoilComponentState(
+  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
     workflowSelectedNodeComponentState,
   );
 
   const { openWorkflowCreateStepInCommandMenu } = useWorkflowCommandMenu();
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
     workflowVisualizerWorkflowIdComponentState,
   );
 
-  const setCommandMenuNavigationStack = useSetRecoilState(
+  const setCommandMenuNavigationStack = useSetRecoilStateV2(
     commandMenuNavigationStackState,
   );
 

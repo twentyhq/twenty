@@ -1,14 +1,16 @@
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useRemoveLastFocusItemFromFocusStackByComponentType } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackByComponentType';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 
 export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
-  const currentTableCellInEditModePositionState =
-    useRecoilComponentCallbackState(
+  const store = useStore();
+  const currentTableCellInEditModePositionAtom =
+    useRecoilComponentStateCallbackStateV2(
       recordTableCellEditModePositionComponentState,
       recordTableId,
     );
@@ -19,22 +21,18 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
   const { removeLastFocusItemFromFocusStackByComponentType } =
     useRemoveLastFocusItemFromFocusStackByComponentType();
 
-  return useRecoilCallback(
-    ({ set }) => {
-      return () => {
-        set(currentTableCellInEditModePositionState, null);
+  return useCallback(() => {
+    store.set(currentTableCellInEditModePositionAtom, null);
 
-        goBackToPreviousDropdownFocusId();
+    goBackToPreviousDropdownFocusId();
 
-        removeLastFocusItemFromFocusStackByComponentType({
-          componentType: FocusComponentType.OPENED_FIELD_INPUT,
-        });
-      };
-    },
-    [
-      currentTableCellInEditModePositionState,
-      goBackToPreviousDropdownFocusId,
-      removeLastFocusItemFromFocusStackByComponentType,
-    ],
-  );
+    removeLastFocusItemFromFocusStackByComponentType({
+      componentType: FocusComponentType.OPENED_FIELD_INPUT,
+    });
+  }, [
+    store,
+    currentTableCellInEditModePositionAtom,
+    goBackToPreviousDropdownFocusId,
+    removeLastFocusItemFromFocusStackByComponentType,
+  ]);
 };

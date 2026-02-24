@@ -2,9 +2,9 @@ import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fiel
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
 import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useEffect } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
+import { useCallback, useEffect } from 'react';
 
 type UseInitializeFieldsWidgetGroupsDraftParams = {
   pageLayoutId: string;
@@ -17,64 +17,62 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
   widgetId,
   serverGroups,
 }: UseInitializeFieldsWidgetGroupsDraftParams) => {
-  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetGroupsDraftState = useRecoilComponentStateCallbackStateV2(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetGroupsPersistedState = useRecoilComponentCallbackState(
-    fieldsWidgetGroupsPersistedComponentState,
-    pageLayoutId,
-  );
+  const fieldsWidgetGroupsPersistedState =
+    useRecoilComponentStateCallbackStateV2(
+      fieldsWidgetGroupsPersistedComponentState,
+      pageLayoutId,
+    );
 
   const hasInitializedFieldsWidgetGroupsDraftState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentStateCallbackStateV2(
       hasInitializedFieldsWidgetGroupsDraftComponentState,
       pageLayoutId,
     );
 
-  const initializeDraft = useRecoilCallback(
-    ({ set, snapshot }) =>
-      () => {
-        const hasInitialized = snapshot
-          .getLoadable(hasInitializedFieldsWidgetGroupsDraftState)
-          .getValue();
+  const store = useStore();
 
-        if (hasInitialized[widgetId]) {
-          return;
-        }
-
-        const currentDraft = snapshot
-          .getLoadable(fieldsWidgetGroupsDraftState)
-          .getValue();
-
-        const hasDraftForWidget = widgetId in currentDraft;
-
-        if (!hasDraftForWidget) {
-          set(fieldsWidgetGroupsDraftState, (prev) => ({
-            ...prev,
-            [widgetId]: serverGroups,
-          }));
-
-          set(fieldsWidgetGroupsPersistedState, (prev) => ({
-            ...prev,
-            [widgetId]: serverGroups,
-          }));
-        }
-
-        set(hasInitializedFieldsWidgetGroupsDraftState, (prev) => ({
-          ...prev,
-          [widgetId]: true,
-        }));
-      },
-    [
+  const initializeDraft = useCallback(() => {
+    const hasInitialized = store.get(
       hasInitializedFieldsWidgetGroupsDraftState,
-      fieldsWidgetGroupsDraftState,
-      fieldsWidgetGroupsPersistedState,
-      widgetId,
-      serverGroups,
-    ],
-  );
+    );
+
+    if (hasInitialized[widgetId]) {
+      return;
+    }
+
+    const currentDraft = store.get(fieldsWidgetGroupsDraftState);
+
+    const hasDraftForWidget = widgetId in currentDraft;
+
+    if (!hasDraftForWidget) {
+      store.set(fieldsWidgetGroupsDraftState, (prev) => ({
+        ...prev,
+        [widgetId]: serverGroups,
+      }));
+
+      store.set(fieldsWidgetGroupsPersistedState, (prev) => ({
+        ...prev,
+        [widgetId]: serverGroups,
+      }));
+    }
+
+    store.set(hasInitializedFieldsWidgetGroupsDraftState, (prev) => ({
+      ...prev,
+      [widgetId]: true,
+    }));
+  }, [
+    hasInitializedFieldsWidgetGroupsDraftState,
+    fieldsWidgetGroupsDraftState,
+    fieldsWidgetGroupsPersistedState,
+    widgetId,
+    serverGroups,
+    store,
+  ]);
 
   useEffect(() => {
     if (serverGroups.length > 0) {

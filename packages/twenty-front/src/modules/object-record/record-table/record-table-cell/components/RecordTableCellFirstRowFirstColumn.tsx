@@ -4,8 +4,8 @@ import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/r
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
@@ -33,11 +33,11 @@ export const RecordTableCellFirstRowFirstColumn = ({
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
-  const hoverPosition = useRecoilComponentValue(
+  const hoverPosition = useRecoilComponentValueV2(
     recordTableHoverPositionComponentState,
   );
 
-  const focusPosition = useRecoilComponentValue(
+  const focusPosition = useRecoilComponentValueV2(
     recordTableFocusPositionComponentState,
   );
 
@@ -47,7 +47,7 @@ export const RecordTableCellFirstRowFirstColumn = ({
   const isHoveredPortalOnThisCell =
     hoverPosition?.column === 0 && hoverPosition.row === 0;
 
-  const [isRecordTableScrolledVertically] = useRecoilComponentState(
+  const [isRecordTableScrolledVertically] = useRecoilComponentStateV2(
     isRecordTableScrolledVerticallyComponentState,
   );
 

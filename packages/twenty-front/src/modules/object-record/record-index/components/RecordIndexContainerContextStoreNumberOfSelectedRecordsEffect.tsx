@@ -10,17 +10,17 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useEffect } from 'react';
 
 export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
   () => {
-    const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentState(
+    const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
       contextStoreNumberOfSelectedRecordsComponentState,
     );
 
-    const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+    const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
       contextStoreTargetedRecordsRuleComponentState,
     );
 
@@ -38,15 +38,15 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       objectMetadataItem?.nameSingular ?? '',
     );
 
-    const contextStoreFilters = useRecoilComponentValue(
+    const contextStoreFilters = useRecoilComponentValueV2(
       contextStoreFiltersComponentState,
     );
 
-    const contextStoreFilterGroups = useRecoilComponentValue(
+    const contextStoreFilterGroups = useRecoilComponentValueV2(
       contextStoreFilterGroupsComponentState,
     );
 
-    const contextStoreAnyFieldFilterValue = useRecoilComponentValue(
+    const contextStoreAnyFieldFilterValue = useRecoilComponentValueV2(
       contextStoreAnyFieldFilterValueComponentState,
     );
 

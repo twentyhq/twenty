@@ -4,7 +4,7 @@ import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUp
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isDefined } from 'twenty-shared/utils';
 
 export const TidyUpWorkflowSingleRecordAction = () => {
@@ -16,26 +16,20 @@ export const TidyUpWorkflowSingleRecordAction = () => {
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
 
-  const onClick = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
-        const workflowDiagramState = workflowDiagramComponentState.atomFamily({
-          instanceId,
-        });
-        const workflowDiagram = snapshot
-          .getLoadable(workflowDiagramState)
-          .getValue();
+  const onClick = async () => {
+    const workflowDiagramAtom = workflowDiagramComponentState.atomFamily({
+      instanceId,
+    });
+    const workflowDiagram = jotaiStore.get(workflowDiagramAtom);
 
-        if (!isDefined(workflowDiagram)) {
-          return;
-        }
+    if (!isDefined(workflowDiagram)) {
+      return;
+    }
 
-        const workflowVersionId = await getUpdatableWorkflowVersion();
+    const workflowVersionId = await getUpdatableWorkflowVersion();
 
-        await tidyUpWorkflowVersion(workflowVersionId, workflowDiagram);
-      },
-    [getUpdatableWorkflowVersion, tidyUpWorkflowVersion, instanceId],
-  );
+    await tidyUpWorkflowVersion(workflowVersionId, workflowDiagram);
+  };
 
   return <Action onClick={onClick} />;
 };

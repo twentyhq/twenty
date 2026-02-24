@@ -1,8 +1,8 @@
 import { CommandMenuWorkflowRunStepContentComponentInstanceContext } from '@/command-menu/pages/workflow/step/view-run/states/contexts/CommandMenuWorkflowRunStepContentComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const workflowRunIteratorSubStepIterationIndexComponentState =
-  createComponentState<number>({
+  createComponentStateV2<number>({
     key: 'workflowRunIteratorSubStepIterationIndexComponentState',
     defaultValue: 0,
     componentInstanceContext:

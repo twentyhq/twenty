@@ -1,10 +1,10 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 import { type FindManyLogicFunctionsQuery } from '~/generated-metadata/graphql';
 
 export type LogicFunction =
   FindManyLogicFunctionsQuery['findManyLogicFunctions'][number];
 
-export const logicFunctionsState = createState<LogicFunction[]>({
+export const logicFunctionsState = createStateV2<LogicFunction[]>({
   key: 'logicFunctionsState',
   defaultValue: [],
 });

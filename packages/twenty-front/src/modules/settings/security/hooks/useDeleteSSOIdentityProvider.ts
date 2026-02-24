@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import {
   type DeleteSsoIdentityProviderMutationVariables,
   useDeleteSsoIdentityProviderMutation,
@@ -11,7 +11,7 @@ export const useDeleteSSOIdentityProvider = () => {
   const [deleteSsoIdentityProviderMutation] =
     useDeleteSsoIdentityProviderMutation();
 
-  const setSSOIdentitiesProviders = useSetRecoilState(
+  const setSSOIdentitiesProviders = useSetRecoilStateV2(
     SSOIdentitiesProvidersState,
   );
 

@@ -9,26 +9,31 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useStopWorkflowRun } from '@/workflow/hooks/useStopWorkflowRun';
 
 export const StopWorkflowRunSingleRecordAction = () => {
-  const { objectMetadataItem } = useRecordIndexIdFromCurrentContextStore();
+  const { objectMetadataItem, recordIndexId } =
+    useRecordIndexIdFromCurrentContextStore();
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
+    recordIndexId,
   );
 
-  const contextStoreFilters = useRecoilComponentValue(
+  const contextStoreFilters = useRecoilComponentValueV2(
     contextStoreFiltersComponentState,
+    recordIndexId,
   );
 
-  const contextStoreFilterGroups = useRecoilComponentValue(
+  const contextStoreFilterGroups = useRecoilComponentValueV2(
     contextStoreFilterGroupsComponentState,
+    recordIndexId,
   );
 
-  const contextStoreAnyFieldFilterValue = useRecoilComponentValue(
+  const contextStoreAnyFieldFilterValue = useRecoilComponentValueV2(
     contextStoreAnyFieldFilterValueComponentState,
+    recordIndexId,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();

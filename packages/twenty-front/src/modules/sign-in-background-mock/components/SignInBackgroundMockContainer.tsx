@@ -10,7 +10,7 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/components/SignInBackgroundMockContainerEffect';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
@@ -31,7 +31,7 @@ export const SignInBackgroundMockContainer = () => {
 
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
-  const objectMetadataItemId = useRecoilComponentValue(
+  const objectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

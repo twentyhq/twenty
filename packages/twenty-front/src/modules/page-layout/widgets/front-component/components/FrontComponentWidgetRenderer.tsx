@@ -4,10 +4,10 @@ import { Suspense, lazy } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const StyledContainer = styled.div<{ isInEditMode: boolean }>`
   height: 100%;
@@ -29,7 +29,7 @@ type FrontComponentWidgetRendererProps = {
 export const FrontComponentWidgetRenderer = ({
   widget,
 }: FrontComponentWidgetRendererProps) => {
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useRecoilComponentValueV2(
     isPageLayoutInEditModeComponentState,
   );
 

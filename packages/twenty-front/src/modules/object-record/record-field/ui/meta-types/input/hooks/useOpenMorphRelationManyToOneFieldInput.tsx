@@ -6,85 +6,82 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export const useOpenMorphRelationManyToOneFieldInput = () => {
+  const store = useStore();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { openSingleRecordPicker } = useSingleRecordPickerOpen();
 
-  const openMorphRelationManyToOneFieldInput = useRecoilCallback(
-    ({ set, snapshot }) =>
-      ({
-        fieldDefinition,
-        recordId,
-        prefix,
-      }: {
-        fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
-        recordId: string;
-        prefix?: string;
-      }) => {
-        const potentielFieldNames = fieldDefinition.metadata.morphRelations.map(
-          (morphRelation) => {
-            return computeMorphRelationFieldName({
-              fieldName: fieldDefinition.metadata.fieldName,
-              relationType: fieldDefinition.metadata.relationType,
-              targetObjectMetadataNameSingular:
-                morphRelation.targetObjectMetadata.nameSingular,
-              targetObjectMetadataNamePlural:
-                morphRelation.targetObjectMetadata.namePlural,
-            });
-          },
-        );
+  const openMorphRelationManyToOneFieldInput = useCallback(
+    ({
+      fieldDefinition,
+      recordId,
+      prefix,
+    }: {
+      fieldDefinition: FieldDefinition<FieldMorphRelationMetadata>;
+      recordId: string;
+      prefix?: string;
+    }) => {
+      const potentielFieldNames = fieldDefinition.metadata.morphRelations.map(
+        (morphRelation) => {
+          return computeMorphRelationFieldName({
+            fieldName: fieldDefinition.metadata.fieldName,
+            relationType: fieldDefinition.metadata.relationType,
+            targetObjectMetadataNameSingular:
+              morphRelation.targetObjectMetadata.nameSingular,
+            targetObjectMetadataNamePlural:
+              morphRelation.targetObjectMetadata.namePlural,
+          });
+        },
+      );
 
-        const fieldValue = potentielFieldNames
-          .map((fieldName) => {
-            const fieldValue = snapshot
-              .getLoadable<FieldRelationValue<FieldRelationToOneValue>>(
-                recordStoreFamilySelector({
-                  recordId,
-                  fieldName,
-                }),
-              )
-              .getValue();
-
-            return fieldValue;
-          })
-          .find((fieldValue) => isDefined(fieldValue));
-
-        const recordPickerInstanceId = getRecordFieldInputInstanceId({
-          recordId,
-          fieldName: fieldDefinition.metadata.fieldName,
-          prefix,
-        });
-
-        if (isDefined(fieldValue)) {
-          set(
-            singleRecordPickerSelectedIdComponentState.atomFamily({
-              instanceId: recordPickerInstanceId,
+      const fieldValue = potentielFieldNames
+        .map((fieldName) => {
+          return store.get(
+            recordStoreFamilySelectorV2.selectorFamily({
+              recordId,
+              fieldName,
             }),
-            fieldValue.id,
-          );
-        }
+          ) as FieldRelationValue<FieldRelationToOneValue>;
+        })
+        .find((fieldValue) => isDefined(fieldValue));
 
-        openSingleRecordPicker(recordPickerInstanceId);
+      const recordPickerInstanceId = getRecordFieldInputInstanceId({
+        recordId,
+        fieldName: fieldDefinition.metadata.fieldName,
+        prefix,
+      });
 
-        pushFocusItemToFocusStack({
-          focusId: recordPickerInstanceId,
-          component: {
-            type: FocusComponentType.OPENED_FIELD_INPUT,
+      if (isDefined(fieldValue)) {
+        store.set(
+          singleRecordPickerSelectedIdComponentState.atomFamily({
             instanceId: recordPickerInstanceId,
-          },
-          globalHotkeysConfig: {
-            enableGlobalHotkeysConflictingWithKeyboard: false,
-          },
-        });
-      },
-    [openSingleRecordPicker, pushFocusItemToFocusStack],
+          }),
+          fieldValue.id,
+        );
+      }
+
+      openSingleRecordPicker(recordPickerInstanceId);
+
+      pushFocusItemToFocusStack({
+        focusId: recordPickerInstanceId,
+        component: {
+          type: FocusComponentType.OPENED_FIELD_INPUT,
+          instanceId: recordPickerInstanceId,
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysConflictingWithKeyboard: false,
+        },
+      });
+    },
+    [openSingleRecordPicker, pushFocusItemToFocusStack, store],
   );
 
   return { openMorphRelationManyToOneFieldInput };

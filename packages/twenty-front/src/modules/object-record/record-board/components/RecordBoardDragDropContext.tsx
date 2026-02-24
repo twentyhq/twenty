@@ -8,84 +8,83 @@ import { originalDragSelectionComponentState } from '@/object-record/record-drag
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useStore } from 'jotai';
 import {
   DragDropContext,
   type DragStart,
   type OnDragEndResponder,
 } from '@hello-pangea/dnd';
-import { useContext } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useCallback, useContext } from 'react';
 
 export const RecordBoardDragDropContext = ({
   children,
 }: React.PropsWithChildren) => {
   const { recordBoardId } = useContext(RecordBoardContext);
 
-  const currentRecordSortCallbackState = useRecoilComponentCallbackState(
+  const currentRecordSortsAtom = useRecoilComponentStateCallbackStateV2(
     currentRecordSortsComponentState,
-  );
-
-  const recordBoardSelectedRecordIdsSelector = useRecoilComponentCallbackState(
-    recordBoardSelectedRecordIdsComponentSelector,
     recordBoardId,
   );
 
-  const originalDragSelectionCallbackState = useRecoilComponentCallbackState(
+  const recordBoardSelectedRecordIdsAtom =
+    useRecoilComponentSelectorCallbackStateV2(
+      recordBoardSelectedRecordIdsComponentSelector,
+      recordBoardId,
+    );
+
+  const store = useStore();
+
+  const originalDragSelectionAtom = useRecoilComponentStateCallbackStateV2(
     originalDragSelectionComponentState,
+    recordBoardId,
   );
 
-  const { startRecordDrag } = useStartRecordDrag();
-  const { endRecordDrag } = useEndRecordDrag();
+  const { startRecordDrag } = useStartRecordDrag(recordBoardId);
+  const { endRecordDrag } = useEndRecordDrag(recordBoardId);
 
   const { processBoardCardDrop } = useProcessBoardCardDrop();
 
   const { openModal } = useModal();
 
-  const handleDragStart = useRecoilCallback(
-    ({ snapshot }) =>
-      (start: DragStart) => {
-        const currentSelectedRecordIds = getSnapshotValue(
-          snapshot,
-          recordBoardSelectedRecordIdsSelector,
-        );
+  const handleDragStart = useCallback(
+    (start: DragStart) => {
+      const currentSelectedRecordIds = store.get(
+        recordBoardSelectedRecordIdsAtom,
+      );
 
-        startRecordDrag(start, currentSelectedRecordIds);
-      },
-    [recordBoardSelectedRecordIdsSelector, startRecordDrag],
+      startRecordDrag(start, currentSelectedRecordIds);
+    },
+    [recordBoardSelectedRecordIdsAtom, startRecordDrag, store],
   );
 
-  const handleDragEnd: OnDragEndResponder = useRecoilCallback(
-    ({ snapshot }) =>
-      (result) => {
-        endRecordDrag();
+  const handleDragEnd: OnDragEndResponder = useCallback(
+    (result) => {
+      endRecordDrag();
 
-        if (!result.destination) return;
+      if (!result.destination) return;
 
-        const currentRecordSorts = getSnapshotValue(
-          snapshot,
-          currentRecordSortCallbackState,
-        );
+      const currentRecordSorts = store.get(currentRecordSortsAtom);
 
-        if (currentRecordSorts.length > 0) {
-          openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
-          return;
-        }
+      if (currentRecordSorts.length > 0) {
+        openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+        return;
+      }
 
-        const originalSelection = getSnapshotValue(
-          snapshot,
-          originalDragSelectionCallbackState,
-        );
+      const originalSelection = store.get(
+        originalDragSelectionAtom,
+      ) as string[];
 
-        processBoardCardDrop(result, originalSelection);
-      },
+      processBoardCardDrop(result, originalSelection);
+    },
     [
       processBoardCardDrop,
-      originalDragSelectionCallbackState,
+      originalDragSelectionAtom,
       endRecordDrag,
-      currentRecordSortCallbackState,
+      currentRecordSortsAtom,
       openModal,
+      store,
     ],
   );
 

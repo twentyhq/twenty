@@ -8,7 +8,7 @@ import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/co
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -41,7 +41,7 @@ export const AdvancedFilterCommandMenuContainer = ({
   VariablePicker,
   isWorkflowFindRecords,
 }: AdvancedFilterCommandMenuContainerProps) => {
-  const rootRecordFilterGroup = useRecoilComponentValue(
+  const rootRecordFilterGroup = useRecoilComponentSelectorValueV2(
     rootLevelRecordFilterGroupComponentSelector,
   );
 

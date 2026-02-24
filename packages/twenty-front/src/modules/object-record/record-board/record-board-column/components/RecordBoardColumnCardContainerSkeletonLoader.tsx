@@ -6,7 +6,7 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
 import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 
 const StyledSkeletonIconAndText = styled.div`
@@ -41,7 +41,7 @@ export const RecordBoardColumnCardContainerSkeletonLoader = () => {
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useRecoilComponentSelectorValueV2(
     visibleRecordFieldsComponentSelector,
   );
 

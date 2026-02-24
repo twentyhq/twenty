@@ -1,9 +1,13 @@
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 export const useSelectedRecordIds = () => {
-  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
+
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
+    recordIndexId,
   );
 
   if (

@@ -9,12 +9,12 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -27,11 +27,11 @@ export const CommandMenuPageLayoutInfoContent = ({
 }) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
-  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuPage = useRecoilValueV2(commandMenuPageState);
+  const commandMenuPageInfo = useRecoilValueV2(commandMenuPageInfoState);
 
   const [shouldFocusTitleInput, setShouldFocusTitleInput] =
-    useRecoilComponentState(
+    useRecoilComponentStateV2(
       commandMenuShouldFocusTitleInputComponentState,
       commandMenuPageInfo.instanceId,
     );
@@ -40,17 +40,17 @@ export const CommandMenuPageLayoutInfoContent = ({
     setShouldFocusTitleInput(false);
   };
 
-  const draftPageLayout = useRecoilComponentValue(
+  const draftPageLayout = useRecoilComponentValueV2(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutEditingWidgetId = useRecoilComponentValue(
+  const pageLayoutEditingWidgetId = useRecoilComponentValueV2(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );
 
-  const [openTabId] = useRecoilComponentState(
+  const [openTabId] = useRecoilComponentStateV2(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );

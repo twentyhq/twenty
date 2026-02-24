@@ -1,11 +1,13 @@
 import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandMenuActionMenuDropdown';
 import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 export const RecordShowRightDrawerActionMenu = () => {
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   return (

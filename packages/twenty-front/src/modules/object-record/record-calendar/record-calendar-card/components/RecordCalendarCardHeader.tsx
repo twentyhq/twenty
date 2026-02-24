@@ -5,11 +5,11 @@ import { RecordCardHeaderContainer } from '@/object-record/record-card/component
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/components';
 import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
@@ -38,19 +38,19 @@ export const RecordCalendarCardHeader = ({
   recordId,
 }: RecordCalendarCardHeaderProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-  const record = useRecoilValue(recordStoreFamilyState(recordId));
+  const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const { currentView } = useGetCurrentViewOnly();
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const isDraggingRecord = useRecoilComponentValue(
+  const isDraggingRecord = useRecoilComponentValueV2(
     isDraggingRecordComponentState,
   );
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] =
-    useRecoilComponentFamilyState(
+    useRecoilComponentFamilyStateV2(
       isRecordCalendarCardSelectedComponentFamilyState,
       recordId,
     );

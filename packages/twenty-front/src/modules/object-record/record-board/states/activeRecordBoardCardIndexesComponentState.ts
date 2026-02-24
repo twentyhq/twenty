@@ -1,9 +1,9 @@
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { type BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const activeRecordBoardCardIndexesComponentState =
-  createComponentState<BoardCardIndexes | null>({
+  createComponentStateV2<BoardCardIndexes | null>({
     key: 'activeRecordBoardCardIndexesComponentState',
     defaultValue: null,
     componentInstanceContext: RecordBoardComponentInstanceContext,

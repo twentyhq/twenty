@@ -1,7 +1,7 @@
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { format, getYear } from 'date-fns';
-import { useRecoilValue } from 'recoil';
 
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calendar/constants/Calendar';
@@ -26,7 +26,7 @@ import {
   Section,
 } from 'twenty-ui/layout';
 import { type TimelineCalendarEventsWithTotal } from '~/generated/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -49,7 +49,7 @@ const StyledTitleContainer = styled.div`
 export const CalendarEventsCard = () => {
   const { t } = useLingui();
   const targetRecord = useTargetRecord();
-  const { localeCatalog } = useRecoilValue(dateLocaleState);
+  const { localeCatalog } = useRecoilValueV2(dateLocaleStateV2);
 
   const [query, queryName] =
     targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Person

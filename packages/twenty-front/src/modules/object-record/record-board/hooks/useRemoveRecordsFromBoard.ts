@@ -1,95 +1,96 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { recordGroupFromGroupValueComponentFamilySelector } from '@/object-record/record-group/states/selectors/recordGroupFromGroupValueComponentFamilySelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { useStore } from 'jotai';
+
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorCallbackStateV2';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveRecordsFromBoard = () => {
-  const recordIndexGroupFieldMetadataItemCallbackState =
-    useRecoilComponentCallbackState(
+  const store = useStore();
+  const recordIndexGroupFieldMetadataItemAtom =
+    useRecoilComponentStateCallbackStateV2(
       recordIndexGroupFieldMetadataItemComponentState,
     );
 
   const recordGroupFromGroupValueFamilyCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentFamilySelectorCallbackStateV2(
       recordGroupFromGroupValueComponentFamilySelector,
     );
 
   const recordIndexRecordIdsByGroupFamilyCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentFamilyStateCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const removeRecordsFromBoard = useRecoilCallback(
-    ({ snapshot, set }) =>
-      ({ recordIdsToRemove }: { recordIdsToRemove: string[] }) => {
-        const recordIdsToRemoveByGroup = new Map<string, string[]>();
+  const removeRecordsFromBoard = useCallback(
+    ({ recordIdsToRemove }: { recordIdsToRemove: string[] }) => {
+      const recordIdsToRemoveByGroup = new Map<string, string[]>();
 
-        for (const recordIdToRemove of recordIdsToRemove) {
-          const recordToRemove = getSnapshotValue(
-            snapshot,
-            recordStoreFamilyState(recordIdToRemove),
-          );
+      for (const recordIdToRemove of recordIdsToRemove) {
+        const recordToRemove = store.get(
+          recordStoreFamilyState.atomFamily(recordIdToRemove),
+        ) as Record<string, unknown> | null | undefined;
 
-          if (!isDefined(recordToRemove)) {
-            continue;
-          }
-
-          const recordIndexGroupFieldMetadataItem = getSnapshotValue(
-            snapshot,
-            recordIndexGroupFieldMetadataItemCallbackState,
-          );
-
-          if (!isDefined(recordIndexGroupFieldMetadataItem)) {
-            continue;
-          }
-
-          const recordGroupValue =
-            recordToRemove[recordIndexGroupFieldMetadataItem.name];
-
-          const recordGroupDefinitionFromGroupValue = getSnapshotValue(
-            snapshot,
-            recordGroupFromGroupValueFamilyCallbackState({ recordGroupValue }),
-          );
-
-          if (!isDefined(recordGroupDefinitionFromGroupValue)) {
-            continue;
-          }
-
-          const groupId = recordGroupDefinitionFromGroupValue.id;
-
-          if (!recordIdsToRemoveByGroup.has(groupId)) {
-            recordIdsToRemoveByGroup.set(groupId, []);
-          }
-
-          recordIdsToRemoveByGroup.get(groupId)?.push(recordIdToRemove);
+        if (!isDefined(recordToRemove)) {
+          continue;
         }
 
-        for (const [
-          groupId,
-          recordIdsToRemoveInGroup,
-        ] of recordIdsToRemoveByGroup) {
-          const currentRecordIdsForGroup = getSnapshotValue(
-            snapshot,
-            recordIndexRecordIdsByGroupFamilyCallbackState(groupId),
-          );
+        const recordIndexGroupFieldMetadataItem = store.get(
+          recordIndexGroupFieldMetadataItemAtom,
+        ) as FieldMetadataItem | undefined;
 
-          const recordIdsWithoutRemovedRecords =
-            currentRecordIdsForGroup.filter(
-              (recordId) => !recordIdsToRemoveInGroup.includes(recordId),
-            );
-
-          set(
-            recordIndexRecordIdsByGroupFamilyCallbackState(groupId),
-            recordIdsWithoutRemovedRecords,
-          );
+        if (!isDefined(recordIndexGroupFieldMetadataItem)) {
+          continue;
         }
-      },
+
+        const recordGroupValue = recordToRemove[
+          recordIndexGroupFieldMetadataItem.name
+        ] as string | undefined;
+
+        const recordGroupDefinitionFromGroupValue = store.get(
+          recordGroupFromGroupValueFamilyCallbackState({ recordGroupValue }),
+        );
+
+        if (!isDefined(recordGroupDefinitionFromGroupValue)) {
+          continue;
+        }
+
+        const groupId = recordGroupDefinitionFromGroupValue.id;
+
+        if (!recordIdsToRemoveByGroup.has(groupId)) {
+          recordIdsToRemoveByGroup.set(groupId, []);
+        }
+
+        recordIdsToRemoveByGroup.get(groupId)?.push(recordIdToRemove);
+      }
+
+      for (const [
+        groupId,
+        recordIdsToRemoveInGroup,
+      ] of recordIdsToRemoveByGroup) {
+        const currentRecordIdsForGroup = store.get(
+          recordIndexRecordIdsByGroupFamilyCallbackState(groupId),
+        ) as string[];
+
+        const recordIdsWithoutRemovedRecords = currentRecordIdsForGroup.filter(
+          (recordId) => !recordIdsToRemoveInGroup.includes(recordId),
+        );
+
+        store.set(
+          recordIndexRecordIdsByGroupFamilyCallbackState(groupId),
+          recordIdsWithoutRemovedRecords,
+        );
+      }
+    },
     [
-      recordIndexGroupFieldMetadataItemCallbackState,
+      store,
+      recordIndexGroupFieldMetadataItemAtom,
       recordGroupFromGroupValueFamilyCallbackState,
       recordIndexRecordIdsByGroupFamilyCallbackState,
     ],

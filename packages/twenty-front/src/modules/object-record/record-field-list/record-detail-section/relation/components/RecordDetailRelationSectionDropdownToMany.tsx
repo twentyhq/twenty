@@ -1,5 +1,4 @@
 import { type ReactNode, useCallback, useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -16,13 +15,14 @@ import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-r
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -71,9 +71,10 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     );
   }
 
-  const fieldValue = useRecoilValue<
-    ({ id: string } & Record<string, any>) | ObjectRecord[] | null
-  >(recordStoreFamilySelector({ recordId, fieldName }));
+  const fieldValue = useFamilySelectorValueV2(recordStoreFamilySelectorV2, {
+    recordId,
+    fieldName,
+  }) as ({ id: string } & Record<string, unknown>) | ObjectRecord[] | null;
 
   const relationRecords: ObjectRecord[] = (fieldValue as ObjectRecord[]) ?? [];
 
@@ -90,18 +91,19 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     dropdownId,
   );
 
-  const setMultipleRecordPickerSearchFilter = useSetRecoilComponentState(
+  const setMultipleRecordPickerSearchFilter = useSetRecoilComponentStateV2(
     multipleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
-  const setMultipleRecordPickerPickableMorphItems = useSetRecoilComponentState(
-    multipleRecordPickerPickableMorphItemsComponentState,
-    dropdownId,
-  );
+  const setMultipleRecordPickerPickableMorphItems =
+    useSetRecoilComponentStateV2(
+      multipleRecordPickerPickableMorphItemsComponentState,
+      dropdownId,
+    );
 
   const setMultipleRecordPickerSearchableObjectMetadataItems =
-    useSetRecoilComponentState(
+    useSetRecoilComponentStateV2(
       multipleRecordPickerSearchableObjectMetadataItemsComponentState,
       dropdownId,
     );

@@ -1,51 +1,47 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useCallback } from 'react';
 
 export const useUpsertRecordField = (recordTableId?: string) => {
-  const currentRecordFieldsCallbackState = useRecoilComponentCallbackState(
+  const currentRecordFieldsAtom = useRecoilComponentStateCallbackStateV2(
     currentRecordFieldsComponentState,
     recordTableId,
   );
 
-  const upsertRecordField = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (recordFieldToUpsert: RecordField) => {
-        const currentRecordFields = getSnapshotValue(
-          snapshot,
-          currentRecordFieldsCallbackState,
-        );
+  const upsertRecordField = useCallback(
+    (recordFieldToUpsert: RecordField) => {
+      const currentRecordFields = jotaiStore.get(currentRecordFieldsAtom);
 
-        const foundRecordFieldInCurrentRecordFields = currentRecordFields.some(
-          (existingRecordField) =>
-            existingRecordField.id === recordFieldToUpsert.id,
-        );
+      const foundRecordFieldInCurrentRecordFields = currentRecordFields.some(
+        (existingRecordField) =>
+          existingRecordField.id === recordFieldToUpsert.id,
+      );
 
-        if (!foundRecordFieldInCurrentRecordFields) {
-          set(currentRecordFieldsCallbackState, [
-            ...currentRecordFields,
-            recordFieldToUpsert,
-          ]);
-        } else {
-          set(currentRecordFieldsCallbackState, (currentRecordFields) => {
-            const newCurrentRecordFields = [...currentRecordFields];
+      if (!foundRecordFieldInCurrentRecordFields) {
+        jotaiStore.set(currentRecordFieldsAtom, [
+          ...currentRecordFields,
+          recordFieldToUpsert,
+        ]);
+      } else {
+        jotaiStore.set(currentRecordFieldsAtom, (currentRecordFields) => {
+          const newCurrentRecordFields = [...currentRecordFields];
 
-            const indexOfRecordFieldToUpdate = newCurrentRecordFields.findIndex(
-              (existingRecordField) =>
-                existingRecordField.id === recordFieldToUpsert.id,
-            );
+          const indexOfRecordFieldToUpdate = newCurrentRecordFields.findIndex(
+            (existingRecordField) =>
+              existingRecordField.id === recordFieldToUpsert.id,
+          );
 
-            newCurrentRecordFields[indexOfRecordFieldToUpdate] = {
-              ...recordFieldToUpsert,
-            };
+          newCurrentRecordFields[indexOfRecordFieldToUpdate] = {
+            ...recordFieldToUpsert,
+          };
 
-            return newCurrentRecordFields;
-          });
-        }
-      },
-    [currentRecordFieldsCallbackState],
+          return newCurrentRecordFields;
+        });
+      }
+    },
+    [currentRecordFieldsAtom],
   );
 
   return {

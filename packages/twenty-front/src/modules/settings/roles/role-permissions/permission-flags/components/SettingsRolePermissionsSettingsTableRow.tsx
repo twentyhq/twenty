@@ -1,10 +1,11 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 import { Checkbox } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 
@@ -53,8 +54,13 @@ export const SettingsRolePermissionsSettingsTableRow = ({
   isEditable,
 }: SettingsRolePermissionsSettingsTableRowProps) => {
   const theme = useTheme();
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useFamilyRecoilValueV2(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+  const setSettingsDraftRole = useSetFamilyRecoilStateV2(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const isPermissionEnabled =

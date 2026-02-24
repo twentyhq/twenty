@@ -1,3 +1,6 @@
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
+
 import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -14,22 +17,20 @@ import { useReapplyRowSelection } from '@/object-record/record-table/virtualizat
 
 import { useResetTableFocuses } from '@/object-record/record-table/virtualization/hooks/useResetTableFocuses';
 import { useResetVirtualizedRowTreadmill } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizedRowTreadmill';
-import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
 import { dataPagesLoadedComponentState } from '@/object-record/record-table/virtualization/states/dataPagesLoadedComponentState';
 import { isInitializingVirtualTableDataLoadingComponentState } from '@/object-record/record-table/virtualization/states/isInitializingVirtualTableDataLoadingComponentState';
 import { lastRealIndexSetComponentState } from '@/object-record/record-table/virtualization/states/lastRealIndexSetComponentState';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
-import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 import { scrollAtRealIndexComponentState } from '@/object-record/record-table/virtualization/states/scrollAtRealIndexComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { dataLoadingStatusByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentState';
+import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useTriggerInitialRecordTableDataLoad = () => {
@@ -41,48 +42,51 @@ export const useTriggerInitialRecordTableDataLoad = () => {
     useRecordIndexTableFetchMore(objectNameSingular);
 
   const isInitializingVirtualTableDataLoadingCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentStateCallbackStateV2(
       isInitializingVirtualTableDataLoadingComponentState,
     );
 
-  const dataPagesLoadedCallbackState = useRecoilComponentCallbackState(
+  const dataPagesLoadedCallbackState = useRecoilComponentStateCallbackStateV2(
     dataPagesLoadedComponentState,
   );
 
-  const isRecordTableInitialLoadingCallbackState =
-    useRecoilComponentCallbackState(isRecordTableInitialLoadingComponentState);
+  const isRecordTableInitialLoadingAtom =
+    useRecoilComponentStateCallbackStateV2(
+      isRecordTableInitialLoadingComponentState,
+      recordTableId,
+    );
 
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
+  const recordIndexAllRecordIdsAtom = useRecoilComponentSelectorCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
+    recordTableId,
   );
 
-  const recordIdByRealIndexCallbackSelector =
-    useRecoilComponentFamilyCallbackState(
-      recordIdByRealIndexComponentFamilySelector,
+  const store = useStore();
+
+  const recordIdByRealIndexCallbackState =
+    useRecoilComponentStateCallbackStateV2(recordIdByRealIndexComponentState);
+
+  const dataLoadingStatusByRealIndexCallbackState =
+    useRecoilComponentStateCallbackStateV2(
+      dataLoadingStatusByRealIndexComponentState,
     );
 
-  const dataLoadingStatusByRealIndexCallbackSelector =
-    useRecoilComponentFamilyCallbackState(
-      dataLoadingStatusByRealIndexComponentFamilySelector,
-    );
-
-  const setIsRecordTableScrolledHorizontally = useSetRecoilComponentState(
+  const setIsRecordTableScrolledHorizontally = useSetRecoilComponentStateV2(
     isRecordTableScrolledHorizontallyComponentState,
   );
 
-  const setIsRecordTableScrolledVertically = useSetRecoilComponentState(
+  const setIsRecordTableScrolledVertically = useSetRecoilComponentStateV2(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const lastScrollPositionCallbackState = useRecoilComponentCallbackState(
-    lastScrollPositionComponentState,
-  );
+  const lastScrollPositionCallbackState =
+    useRecoilComponentStateCallbackStateV2(lastScrollPositionComponentState);
 
-  const lastRealIndexSetCallbackState = useRecoilComponentCallbackState(
+  const lastRealIndexSetCallbackState = useRecoilComponentStateCallbackStateV2(
     lastRealIndexSetComponentState,
   );
 
-  const scrollAtRealIndexCallbackState = useRecoilComponentCallbackState(
+  const scrollAtRealIndexCallbackState = useRecoilComponentStateCallbackStateV2(
     scrollAtRealIndexComponentState,
   );
 
@@ -98,108 +102,114 @@ export const useTriggerInitialRecordTableDataLoad = () => {
   const { reapplyRowSelection } = useReapplyRowSelection();
 
   const totalNumberOfRecordsToVirtualizeCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentStateCallbackStateV2(
       totalNumberOfRecordsToVirtualizeComponentState,
     );
 
-  const triggerInitialRecordTableDataLoad = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async ({
-        shouldScrollToStart = true,
-      }: { shouldScrollToStart?: boolean } = {}) => {
-        const isInitializingVirtualTableDataLoading = getSnapshotValue(
-          snapshot,
-          isInitializingVirtualTableDataLoadingCallbackState,
+  const triggerInitialRecordTableDataLoad = useCallback(
+    async ({
+      shouldScrollToStart = true,
+    }: { shouldScrollToStart?: boolean } = {}) => {
+      const isInitializingVirtualTableDataLoading = store.get(
+        isInitializingVirtualTableDataLoadingCallbackState,
+      );
+
+      if (isInitializingVirtualTableDataLoading) {
+        return;
+      }
+
+      store.set(isInitializingVirtualTableDataLoadingCallbackState, true);
+
+      resetTableFocuses();
+
+      resetVirtualizedRowTreadmill();
+
+      updateRecordTableCSSVariable(
+        RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
+        'hidden',
+      );
+
+      updateRecordTableCSSVariable(
+        RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
+        'hidden',
+      );
+
+      const currentRecordIds = store.get(recordIndexAllRecordIdsAtom);
+
+      let records: ObjectRecord[] | null = null;
+      let totalCount = 0;
+
+      if (showAuthModal) {
+        records = SIGN_IN_BACKGROUND_MOCK_COMPANIES;
+        totalCount = SIGN_IN_BACKGROUND_MOCK_COMPANIES.length;
+      } else {
+        const newRecordIdByRealIndex = new Map(
+          store.get(recordIdByRealIndexCallbackState),
+        );
+        const newDataLoadingStatusByRealIndex = new Map(
+          store.get(dataLoadingStatusByRealIndexCallbackState),
         );
 
-        if (isInitializingVirtualTableDataLoading) {
-          return;
+        for (const [realIndex] of currentRecordIds.entries()) {
+          newDataLoadingStatusByRealIndex.set(realIndex, 'not-loaded');
+          newRecordIdByRealIndex.delete(realIndex);
         }
 
-        set(isInitializingVirtualTableDataLoadingCallbackState, true);
-
-        resetTableFocuses();
-
-        resetVirtualizedRowTreadmill();
-
-        updateRecordTableCSSVariable(
-          RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
-          'hidden',
+        store.set(recordIdByRealIndexCallbackState, newRecordIdByRealIndex);
+        store.set(
+          dataLoadingStatusByRealIndexCallbackState,
+          newDataLoadingStatusByRealIndex,
         );
 
-        updateRecordTableCSSVariable(
-          RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
-          'hidden',
-        );
+        const { records: findManyRecords, totalCount: findManyTotalCount } =
+          await findManyRecordsLazy();
 
-        const currentRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRecordIdsSelector,
-        );
+        records = findManyRecords;
+        totalCount = findManyTotalCount;
+      }
 
-        let records: ObjectRecord[] | null = null;
-        let totalCount = 0;
+      store.set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
 
-        if (showAuthModal) {
-          records = SIGN_IN_BACKGROUND_MOCK_COMPANIES;
-          totalCount = SIGN_IN_BACKGROUND_MOCK_COMPANIES.length;
-        } else {
-          for (const [realIndex] of currentRecordIds.entries()) {
-            set(
-              dataLoadingStatusByRealIndexCallbackSelector(realIndex),
-              'not-loaded',
-            );
-            set(recordIdByRealIndexCallbackSelector(realIndex), undefined);
-          }
+      if (isDefined(records)) {
+        upsertRecordsInStore({ partialRecords: records });
 
-          const { records: findManyRecords, totalCount: findManyTotalCount } =
-            await findManyRecordsLazy();
+        loadRecordsToVirtualRows({
+          records,
+          startingRealIndex: 0,
+        });
 
-          records = findManyRecords;
-          totalCount = findManyTotalCount;
-        }
+        reapplyRowSelection();
+      }
 
-        set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
+      store.set(dataPagesLoadedCallbackState, []);
 
-        if (isDefined(records)) {
-          upsertRecordsInStore({ partialRecords: records });
+      store.set(isInitializingVirtualTableDataLoadingCallbackState, false);
+      store.set(isRecordTableInitialLoadingAtom, false);
 
-          loadRecordsToVirtualRows({
-            records,
-            startingRealIndex: 0,
-          });
+      store.set(lastScrollPositionCallbackState, 0);
+      store.set(lastRealIndexSetCallbackState, null);
+      store.set(scrollAtRealIndexCallbackState, 0);
 
-          reapplyRowSelection();
-        }
+      setIsRecordTableScrolledHorizontally(false);
+      setIsRecordTableScrolledVertically(false);
+      resetTableFocuses();
 
-        set(dataPagesLoadedCallbackState, []);
-
-        set(isInitializingVirtualTableDataLoadingCallbackState, false);
-        set(isRecordTableInitialLoadingCallbackState, false);
-
-        set(lastScrollPositionCallbackState, 0);
-        set(lastRealIndexSetCallbackState, null);
-        set(scrollAtRealIndexCallbackState, 0);
-
-        setIsRecordTableScrolledHorizontally(false);
-        setIsRecordTableScrolledVertically(false);
-        resetTableFocuses();
-
-        if (shouldScrollToStart) {
-          scrollTableToPosition({
-            horizontalScrollInPx: 0,
-            verticalScrollInPx: 0,
-          });
-        }
-      },
+      if (shouldScrollToStart) {
+        scrollTableToPosition({
+          horizontalScrollInPx: 0,
+          verticalScrollInPx: 0,
+        });
+      }
+    },
     [
       isInitializingVirtualTableDataLoadingCallbackState,
       resetTableFocuses,
       resetVirtualizedRowTreadmill,
-      recordIndexAllRecordIdsSelector,
+      recordIndexAllRecordIdsAtom,
+      store,
       showAuthModal,
       dataPagesLoadedCallbackState,
-      isRecordTableInitialLoadingCallbackState,
+      isRecordTableInitialLoadingAtom,
       lastScrollPositionCallbackState,
       lastRealIndexSetCallbackState,
       scrollAtRealIndexCallbackState,
@@ -207,8 +217,8 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       setIsRecordTableScrolledVertically,
       scrollTableToPosition,
       findManyRecordsLazy,
-      dataLoadingStatusByRealIndexCallbackSelector,
-      recordIdByRealIndexCallbackSelector,
+      dataLoadingStatusByRealIndexCallbackState,
+      recordIdByRealIndexCallbackState,
       totalNumberOfRecordsToVirtualizeCallbackState,
       upsertRecordsInStore,
       loadRecordsToVirtualRows,

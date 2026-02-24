@@ -29,7 +29,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { createPortal } from 'react-dom';
@@ -162,7 +162,7 @@ export const RecordDetailRelationRecordsListItem = ({
     recordId,
     instanceId: scopeInstanceId,
   });
-  const setSingleRecordPickerSelectedId = useSetRecoilComponentState(
+  const setSingleRecordPickerSelectedId = useSetRecoilComponentStateV2(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );

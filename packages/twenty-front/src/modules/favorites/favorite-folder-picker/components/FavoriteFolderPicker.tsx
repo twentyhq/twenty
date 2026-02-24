@@ -12,8 +12,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { Key } from 'ts-key-enum';
 
 type FavoriteFolderPickerProps = {
@@ -43,7 +42,7 @@ export const FavoriteFolderPicker = ({
     objectNameSingular,
   });
 
-  const [favoriteFoldersSearchFilter] = useRecoilComponentState(
+  const [favoriteFoldersSearchFilter] = useRecoilComponentStateV2(
     favoriteFolderSearchFilterComponentState,
   );
 

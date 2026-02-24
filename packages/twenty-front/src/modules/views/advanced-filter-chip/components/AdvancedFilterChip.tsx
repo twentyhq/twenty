@@ -10,7 +10,8 @@ import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRe
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { getAllRecordFilterDescendantsOfRecordFilterGroup } from '@/object-record/record-filter/utils/getAllRecordFilterDescendantsOfRecordFilterGroup';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { plural } from '@lingui/core/macro';
@@ -21,11 +22,11 @@ import { IconFilter } from 'twenty-ui/display';
 export const AdvancedFilterChip = () => {
   const { closeDropdown } = useCloseDropdown();
 
-  const currentRecordFilterGroups = useRecoilComponentValue(
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 
@@ -39,7 +40,7 @@ export const AdvancedFilterChip = () => {
   const { removeRootRecordFilterGroupIfEmpty } =
     useRemoveRootRecordFilterGroupIfEmpty();
 
-  const rootRecordFilterGroup = useRecoilComponentValue(
+  const rootRecordFilterGroup = useRecoilComponentSelectorValueV2(
     rootLevelRecordFilterGroupComponentSelector,
   );
 

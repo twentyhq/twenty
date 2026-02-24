@@ -1,7 +1,10 @@
+import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
+import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -19,6 +22,12 @@ export const FrontComponentRenderer = ({
 }: FrontComponentRendererProps) => {
   const theme = useTheme();
   const { enqueueErrorSnackBar } = useSnackBar();
+
+  const setApplicationTokenPair = useSetRecoilComponentState(
+    frontComponentApplicationTokenPairComponentState,
+    frontComponentId,
+  );
+
   const { executionContext, frontComponentHostCommunicationApi } =
     useFrontComponentExecutionContext({ frontComponentId });
 
@@ -40,6 +49,13 @@ export const FrontComponentRenderer = ({
   const { data, loading } = useFindOneFrontComponentQuery({
     variables: { id: frontComponentId },
     onError: handleError,
+    onCompleted: (completedData) => {
+      const tokenPair = completedData.frontComponent?.applicationTokenPair;
+
+      if (isDefined(tokenPair)) {
+        setApplicationTokenPair(tokenPair);
+      }
+    },
   });
 
   useOnFrontComponentUpdated({
@@ -51,25 +67,30 @@ export const FrontComponentRenderer = ({
     checksum: data?.frontComponent?.builtComponentChecksum,
   });
 
+  const applicationTokenPair =
+    data?.frontComponent?.applicationTokenPair ?? null;
+
   if (
     loading ||
     !isDefined(data?.frontComponent) ||
-    !isDefined(data.frontComponent.applicationTokenPair)
+    !isDefined(applicationTokenPair)
   ) {
     return null;
   }
 
   return (
-    <SharedFrontComponentRenderer
-      theme={theme}
-      componentUrl={componentUrl}
-      applicationAccessToken={
-        data.frontComponent.applicationTokenPair.applicationAccessToken.token
-      }
-      apiUrl={REACT_APP_SERVER_BASE_URL}
-      executionContext={executionContext}
-      frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
-      onError={handleError}
-    />
+    <FrontComponentRendererProvider frontComponentId={frontComponentId}>
+      <SharedFrontComponentRenderer
+        theme={theme}
+        componentUrl={componentUrl}
+        applicationAccessToken={
+          applicationTokenPair.applicationAccessToken.token
+        }
+        apiUrl={REACT_APP_SERVER_BASE_URL}
+        executionContext={executionContext}
+        frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+        onError={handleError}
+      />
+    </FrontComponentRendererProvider>
   );
 };

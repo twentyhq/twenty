@@ -1,7 +1,8 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
 
 export const useChangePageLayoutDragSelection = (
@@ -12,25 +13,26 @@ export const useChangePageLayoutDragSelection = (
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutSelectedCellsState = useRecoilComponentCallbackState(
+  const pageLayoutSelectedCellsState = useRecoilComponentStateCallbackStateV2(
     pageLayoutSelectedCellsComponentState,
     pageLayoutId,
   );
 
-  const changePageLayoutDragSelection = useRecoilCallback(
-    ({ set }) =>
-      (cellId: string, selected: boolean) => {
-        set(pageLayoutSelectedCellsState, (prev) => {
-          const newSet = new Set(prev);
-          if (selected) {
-            newSet.add(cellId);
-          } else {
-            newSet.delete(cellId);
-          }
-          return newSet;
-        });
-      },
-    [pageLayoutSelectedCellsState],
+  const store = useStore();
+
+  const changePageLayoutDragSelection = useCallback(
+    (cellId: string, selected: boolean) => {
+      store.set(pageLayoutSelectedCellsState, (prev) => {
+        const newSet = new Set(prev);
+        if (selected) {
+          newSet.add(cellId);
+        } else {
+          newSet.delete(cellId);
+        }
+        return newSet;
+      });
+    },
+    [pageLayoutSelectedCellsState, store],
   );
 
   return { changePageLayoutDragSelection };

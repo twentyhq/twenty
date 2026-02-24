@@ -6,7 +6,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useIncrementalUpdateManyRecords } from '@/object-record/hooks/useIncrementalUpdateManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 type UseUpdateMultipleRecordsActionsProps = {
   objectNameSingular: string;
@@ -21,22 +21,22 @@ export const useUpdateMultipleRecordsActions = ({
     contextStoreInstanceId,
   );
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
     contextStoreInstanceId,
   );
 
-  const contextStoreFilters = useRecoilComponentValue(
+  const contextStoreFilters = useRecoilComponentValueV2(
     contextStoreFiltersComponentState,
     contextStoreInstanceId,
   );
 
-  const contextStoreFilterGroups = useRecoilComponentValue(
+  const contextStoreFilterGroups = useRecoilComponentValueV2(
     contextStoreFilterGroupsComponentState,
     contextStoreInstanceId,
   );
 
-  const contextStoreAnyFieldFilterValue = useRecoilComponentValue(
+  const contextStoreAnyFieldFilterValue = useRecoilComponentValueV2(
     contextStoreAnyFieldFilterValueComponentState,
     contextStoreInstanceId,
   );

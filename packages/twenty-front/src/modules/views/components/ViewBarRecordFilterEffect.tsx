@@ -1,9 +1,9 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { useMapViewFiltersToFilters } from '@/views/hooks/useMapViewFiltersToFilters';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
@@ -12,11 +12,11 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordFilterEffect = () => {
-  const currentViewId = useRecoilComponentValue(
+  const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
 
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
 
   const currentView = useFamilySelectorValueV2(
     coreViewFromViewIdFamilySelector,
@@ -26,15 +26,16 @@ export const ViewBarRecordFilterEffect = () => {
   const [
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
-  ] = useRecoilComponentFamilyState(
+  ] = useRecoilComponentFamilyStateV2(
     hasInitializedCurrentRecordFiltersComponentFamilyState,
     {
       viewId: currentViewId ?? undefined,
     },
   );
 
-  const setCurrentRecordFilters = useSetRecoilComponentState(
+  const setCurrentRecordFilters = useSetRecoilComponentStateV2(
     currentRecordFiltersComponentState,
+    recordIndexId,
   );
 
   const { mapViewFiltersToRecordFilters } = useMapViewFiltersToFilters();

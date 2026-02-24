@@ -1,58 +1,60 @@
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
+
 import { activeRecordTableRowIndexComponentState } from '@/object-record/record-table/states/activeRecordTableRowIndexComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useActiveRecordTableRow = (recordTableId?: string) => {
-  const isRowActiveState = useRecoilComponentCallbackState(
+  const isRowActiveState = useRecoilComponentFamilyStateCallbackStateV2(
     isRecordTableRowActiveComponentFamilyState,
     recordTableId,
   );
 
-  const activeRowIndexState = useRecoilComponentCallbackState(
+  const activeRowIndexState = useRecoilComponentStateCallbackStateV2(
     activeRecordTableRowIndexComponentState,
     recordTableId,
   );
 
-  const deactivateRecordTableRow = useRecoilCallback(
-    ({ set, snapshot }) =>
-      () => {
-        const activeRowIndex = snapshot
-          .getLoadable(activeRowIndexState)
-          .getValue();
+  const store = useStore();
 
-        if (!isDefined(activeRowIndex)) {
-          return;
-        }
+  const deactivateRecordTableRow = useCallback(() => {
+    const activeRowIndex = store.get(activeRowIndexState) as
+      | number
+      | null
+      | undefined;
 
-        set(activeRowIndexState, null);
+    if (!isDefined(activeRowIndex)) {
+      return;
+    }
 
-        set(isRowActiveState(activeRowIndex), false);
-      },
-    [activeRowIndexState, isRowActiveState],
-  );
+    store.set(activeRowIndexState, null);
 
-  const activateRecordTableRow = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (rowIndex: number) => {
-        const activeRowIndex = snapshot
-          .getLoadable(activeRowIndexState)
-          .getValue();
+    store.set(isRowActiveState(activeRowIndex), false);
+  }, [activeRowIndexState, isRowActiveState, store]);
 
-        if (activeRowIndex === rowIndex) {
-          return;
-        }
+  const activateRecordTableRow = useCallback(
+    (rowIndex: number) => {
+      const activeRowIndex = store.get(activeRowIndexState) as
+        | number
+        | null
+        | undefined;
 
-        if (isDefined(activeRowIndex)) {
-          set(isRowActiveState(activeRowIndex), false);
-        }
+      if (activeRowIndex === rowIndex) {
+        return;
+      }
 
-        set(activeRowIndexState, rowIndex);
+      if (isDefined(activeRowIndex)) {
+        store.set(isRowActiveState(activeRowIndex), false);
+      }
 
-        set(isRowActiveState(rowIndex), true);
-      },
-    [activeRowIndexState, isRowActiveState],
+      store.set(activeRowIndexState, rowIndex);
+
+      store.set(isRowActiveState(rowIndex), true);
+    },
+    [activeRowIndexState, isRowActiveState, store],
   );
 
   return {

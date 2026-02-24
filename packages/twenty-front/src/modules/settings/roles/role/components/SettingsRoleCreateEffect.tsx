@@ -2,10 +2,10 @@ import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/Setti
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 type SettingsRoleCreateEffectProps = {
   roleId: string;
@@ -14,12 +14,14 @@ type SettingsRoleCreateEffectProps = {
 export const SettingsRoleCreateEffect = ({
   roleId,
 }: SettingsRoleCreateEffectProps) => {
-  const setSettingsDraftRole = useSetRecoilState(
-    settingsDraftRoleFamilyState(roleId),
+  const setSettingsDraftRole = useSetFamilyRecoilStateV2(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
-  const setSettingsPersistedRole = useSetRecoilState(
-    settingsPersistedRoleFamilyState(roleId),
+  const setSettingsPersistedRole = useSetFamilyRecoilStateV2(
+    settingsPersistedRoleFamilyState,
+    roleId,
   );
 
   const setActiveTabId = useSetRecoilComponentStateV2(

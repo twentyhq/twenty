@@ -1,25 +1,37 @@
 import { renderHook } from '@testing-library/react';
+import { act } from 'react';
 
+import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
+import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
+import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { act } from 'react';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
-import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 
-const Wrapper = getJestMetadataAndApolloMocksWrapper({
+const BaseWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
+
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <BaseWrapper>
+    <RecordFiltersComponentInstanceContext.Provider
+      value={{ instanceId: 'test' }}
+    >
+      {children}
+    </RecordFiltersComponentInstanceContext.Provider>
+  </BaseWrapper>
+);
 
 describe('useRemoveRecordFilter', () => {
   it('should remove an existing record filter', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilters = useRecoilComponentValue(
+        const currentRecordFilters = useRecoilComponentValueV2(
           currentRecordFiltersComponentState,
+          'test',
         );
 
         const { upsertRecordFilter } = useUpsertRecordFilter();
@@ -65,8 +77,9 @@ describe('useRemoveRecordFilter', () => {
   it('should not modify filters when trying to remove a non-existent filter', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilters = useRecoilComponentValue(
+        const currentRecordFilters = useRecoilComponentValueV2(
           currentRecordFiltersComponentState,
+          'test',
         );
         const { upsertRecordFilter } = useUpsertRecordFilter();
         const { removeRecordFilter } = useRemoveRecordFilter();

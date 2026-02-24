@@ -1,8 +1,8 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const totalNumberOfRecordsToVirtualizeComponentState =
-  createComponentState<number | null>({
+  createComponentStateV2<number | null>({
     key: 'totalNumberOfRecordsToVirtualizeComponentState',
     componentInstanceContext: RecordTableComponentInstanceContext,
     defaultValue: null,

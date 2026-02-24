@@ -1,7 +1,7 @@
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconSearch } from 'twenty-ui/display';
@@ -25,7 +25,7 @@ export const ViewBarFilterDropdownAnyFieldSearchButtonMenuItem = ({
 }: ViewBarFilterDropdownAnyFieldSearchButtonMenuItemProps) => {
   const { t } = useLingui();
 
-  const objectFilterDropdownSearchInput = useRecoilComponentValue(
+  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
     objectFilterDropdownSearchInputComponentState,
   );
 

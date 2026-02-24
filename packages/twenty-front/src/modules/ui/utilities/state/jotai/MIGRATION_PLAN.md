@@ -241,14 +241,13 @@ object-record/states/recordStoreFamilyState.ts (raw atomFamily)
 object-record/record-store/states/recordStoreFamilyState.ts
 ```
 
-### Selectors (6 files)
+### Selectors (1 file remaining)
 ```
-object-record/record-store/states/selectors/recordStoreFamilySelector.ts
-object-record/record-store/states/selectors/recordStoreFieldValueSelector.ts
-object-record/record-store/states/selectors/recordStoreIdentifierSelector.ts
-object-record/record-store/states/selectors/recordStoreIdentifiersSelector.ts
-object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelector.ts
-object-record/record-store/states/selectors/recordStoreRecordsSelector.ts
+object-record/record-store/states/selectors/recordStoreFieldValueSelector.ts ✅ MIGRATED (useRecordFieldValue uses V2)
+object-record/record-store/states/selectors/recordStoreIdentifierSelector.ts ✅ MIGRATED (recordStoreIdentifierFamilySelectorV2)
+object-record/record-store/states/selectors/recordStoreIdentifiersSelector.ts ✅ MIGRATED (already V2, now uses recordStoreFamilyState)
+object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelector.ts ✅ MIGRATED
+object-record/record-store/states/selectors/recordStoreRecordsSelector.ts ✅ MIGRATED (recordStoreRecordsSelectorV2)
 ```
 
 ---
@@ -264,7 +263,7 @@ object-record/record-filter-group/states/ (1 file)
 object-record/record-sort/states/ (1 file)
 object-record/record-group/states/ (3 files)
 object-record/record-drag/states/ (7 files)
-object-record/record-field/states/ (7 files)
+object-record/record-field/states/ (6 files) — filesFieldUploadState ✅ MIGRATED (deleted, use filesFieldUploadStateV2)
 object-record/record-field-list/states/ (2 files)
 object-record/record-calendar/states/ (6 files)
 object-record/record-board/states/ (18 files)

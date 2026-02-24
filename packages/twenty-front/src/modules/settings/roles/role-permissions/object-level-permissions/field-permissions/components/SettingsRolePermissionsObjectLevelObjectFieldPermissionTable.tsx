@@ -18,7 +18,6 @@ import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFami
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { H2Title, IconSearch } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -70,8 +69,9 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
     ),
   );
 
-  const settingsDraftRole = useRecoilValue(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useFamilyRecoilValueV2(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const fieldPermissions =

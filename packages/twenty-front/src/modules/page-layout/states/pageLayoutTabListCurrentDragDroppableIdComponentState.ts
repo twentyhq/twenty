@@ -1,9 +1,9 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
 export const pageLayoutTabListCurrentDragDroppableIdComponentState =
-  createComponentState<string | undefined>({
+  createComponentStateV2<string | undefined>({
     key: 'pageLayoutTabListCurrentDragDroppableIdComponentState',
     defaultValue: undefined,
     componentInstanceContext: PageLayoutComponentInstanceContext,

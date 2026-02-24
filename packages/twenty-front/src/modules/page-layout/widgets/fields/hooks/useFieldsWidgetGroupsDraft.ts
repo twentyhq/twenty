@@ -1,6 +1,6 @@
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useMemo } from 'react';
 
 type UseFieldsWidgetGroupsDraftParams = {
@@ -14,7 +14,7 @@ export const useFieldsWidgetGroupsDraft = ({
 }: UseFieldsWidgetGroupsDraftParams): {
   draftGroups: FieldsWidgetGroup[];
 } => {
-  const allDraftGroups = useRecoilComponentValue(
+  const allDraftGroups = useRecoilComponentValueV2(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );

@@ -11,12 +11,13 @@ import { multipleRecordPickerShouldShowInitialLoadingComponentState } from '@/ob
 import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
 import { multipleRecordPickerPaginationSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilCallback } from 'recoil';
 
 const StyledText = styled.div`
   align-items: center;
@@ -36,60 +37,57 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
   const [
     multipleRecordPickerIsFetchingMore,
     setMultipleRecordPickerIsFetchingMore,
-  ] = useRecoilComponentState(multipleRecordPickerIsFetchingMoreComponentState);
+  ] = useRecoilComponentStateV2(
+    multipleRecordPickerIsFetchingMoreComponentState,
+  );
 
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
 
-  const paginationState = useRecoilComponentValue(
+  const paginationState = useRecoilComponentSelectorValueV2(
     multipleRecordPickerPaginationSelector,
     componentInstanceId,
   );
 
-  const isLoading = useRecoilComponentValue(
+  const isLoading = useRecoilComponentValueV2(
     multipleRecordPickerIsLoadingComponentState,
     componentInstanceId,
   );
 
-  const searchFilter = useRecoilComponentValue(
+  const searchFilter = useRecoilComponentValueV2(
     multipleRecordPickerSearchFilterComponentState,
     componentInstanceId,
   );
 
-  const multipleRecordPickerShouldShowInitialLoading = useRecoilComponentValue(
-    multipleRecordPickerShouldShowInitialLoadingComponentState,
-  );
+  const multipleRecordPickerShouldShowInitialLoading =
+    useRecoilComponentValueV2(
+      multipleRecordPickerShouldShowInitialLoadingComponentState,
+    );
 
-  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValue(
+  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
-  const fetchMore = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
-        const paginationState = snapshot
-          .getLoadable(
-            multipleRecordPickerPaginationState.atomFamily({
-              instanceId: componentInstanceId,
-            }),
-          )
-          .getValue();
+  const fetchMore = useCallback(async () => {
+    const currentPaginationState = jotaiStore.get(
+      multipleRecordPickerPaginationState.atomFamily({
+        instanceId: componentInstanceId,
+      }),
+    );
 
-        if (isLoading || !paginationState.hasNextPage) {
-          return;
-        }
+    if (isLoading || !currentPaginationState.hasNextPage) {
+      return;
+    }
 
-        await performSearch({
-          multipleRecordPickerInstanceId: componentInstanceId,
-          forceSearchFilter: searchFilter,
-          loadMore: true,
-        });
-      },
-    [componentInstanceId, performSearch, searchFilter, isLoading],
-  );
+    await performSearch({
+      multipleRecordPickerInstanceId: componentInstanceId,
+      forceSearchFilter: searchFilter,
+      loadMore: true,
+    });
+  }, [componentInstanceId, performSearch, searchFilter, isLoading]);
 
   const { ref } = useInView({
     onChange: useCallback(

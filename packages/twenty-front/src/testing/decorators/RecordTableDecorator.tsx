@@ -3,6 +3,7 @@ import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetReco
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -25,8 +26,9 @@ import { useSetRecordTableData } from '@/object-record/record-table/hooks/intern
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -45,12 +47,13 @@ const InternalTableStateLoaderEffect = ({
 }) => {
   const { recordTableId } = useRecordTableContextOrThrow();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
-  const setCurrentRecordFields = useSetRecoilComponentState(
+  const setCurrentRecordFields = useSetRecoilComponentStateV2(
     currentRecordFieldsComponentState,
   );
 
-  const setContextStoreCurrentViewId = useSetRecoilComponentState(
+  const setContextStoreCurrentViewId = useSetRecoilComponentStateV2(
     contextStoreCurrentViewIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const setCoreViews = useSetRecoilStateV2(coreViewsState);
@@ -104,14 +107,12 @@ const InternalTableContextProviders = ({
 }) => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const currentRecordFields = useRecoilComponentValue(
+  const currentRecordFields = useRecoilComponentValueV2(
     currentRecordFieldsComponentState,
-    'record-index',
   );
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useRecoilComponentSelectorValueV2(
     visibleRecordFieldsComponentSelector,
-    'record-index',
   );
 
   const fieldMetadataItems = objectMetadataItem.fields;

@@ -2,8 +2,8 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 
 type SettingsRolePermissionsObjectLevelSeeFieldsValueForObjectProps = {
   roleId: string;
@@ -16,8 +16,9 @@ export const SettingsRolePermissionsObjectLevelSeeFieldsValueForObject = ({
 }: SettingsRolePermissionsObjectLevelSeeFieldsValueForObjectProps) => {
   const { t } = useLingui();
 
-  const settingsDraftRole = useRecoilValue(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useFamilyRecoilValueV2(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const objectMetadataItemId = objectMetadataItem.id;

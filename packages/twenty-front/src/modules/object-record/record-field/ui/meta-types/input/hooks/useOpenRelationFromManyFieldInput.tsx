@@ -8,111 +8,105 @@ import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-pic
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { useStore } from 'jotai';
+
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 export const useOpenRelationFromManyFieldInput = () => {
+  const store = useStore();
   const { performSearch } = useMultipleRecordPickerPerformSearch();
   const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const openRelationFromManyFieldInput = useRecoilCallback(
-    ({ set, snapshot }) =>
-      ({
-        fieldName,
-        objectNameSingular,
+  const openRelationFromManyFieldInput = useCallback(
+    ({
+      fieldName,
+      objectNameSingular,
+      recordId,
+      prefix,
+    }: {
+      fieldName: string;
+      objectNameSingular: string;
+      recordId: string;
+      prefix?: string;
+    }) => {
+      const recordPickerInstanceId = getRecordFieldInputInstanceId({
         recordId,
+        fieldName,
         prefix,
-      }: {
-        fieldName: string;
-        objectNameSingular: string;
-        recordId: string;
-        prefix?: string;
-      }) => {
-        const recordPickerInstanceId = getRecordFieldInputInstanceId({
-          recordId,
-          fieldName,
-          prefix,
+      });
+
+      const fieldValue =
+        (store.get(
+          recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
+        ) as FieldRelationValue<FieldRelationFromManyValue>) ?? [];
+
+      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+
+      const objectMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.nameSingular === objectNameSingular,
+      );
+
+      if (!objectMetadataItem) {
+        return;
+      }
+
+      openMultipleRecordPicker(recordPickerInstanceId);
+
+      const pickableMorphItems: RecordPickerPickableMorphItem[] =
+        fieldValue.map((record) => {
+          return {
+            objectMetadataId: objectMetadataItem.id,
+            recordId: record.id,
+            isSelected: true,
+            isMatchingSearchFilter: true,
+          };
         });
 
-        const fieldValue =
-          snapshot
-            .getLoadable<FieldRelationValue<FieldRelationFromManyValue>>(
-              recordStoreFamilySelector({
-                recordId,
-                fieldName,
-              }),
-            )
-            .getValue() ?? [];
+      for (const record of fieldValue) {
+        store.set(recordStoreFamilyState.atomFamily(record.id), record);
+      }
 
-        const objectMetadataItems = jotaiStore.get(
-          objectMetadataItemsState.atom,
-        );
+      store.set(
+        multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
+          instanceId: recordPickerInstanceId,
+        }),
+        pickableMorphItems,
+      );
 
-        const objectMetadataItem = objectMetadataItems.find(
-          (objectMetadataItem) =>
-            objectMetadataItem.nameSingular === objectNameSingular,
-        );
+      store.set(
+        multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
+          { instanceId: recordPickerInstanceId },
+        ),
+        [objectMetadataItem],
+      );
 
-        if (!objectMetadataItem) {
-          return;
-        }
+      performSearch({
+        multipleRecordPickerInstanceId: recordPickerInstanceId,
+        forceSearchFilter: '',
+        forceSearchableObjectMetadataItems: [objectMetadataItem],
+        forcePickableMorphItems: pickableMorphItems,
+      });
 
-        openMultipleRecordPicker(recordPickerInstanceId);
-
-        const pickableMorphItems: RecordPickerPickableMorphItem[] =
-          fieldValue.map((record) => {
-            return {
-              objectMetadataId: objectMetadataItem.id,
-              recordId: record.id,
-              isSelected: true,
-              isMatchingSearchFilter: true,
-            };
-          });
-
-        for (const record of fieldValue) {
-          set(recordStoreFamilyState(record.id), record);
-        }
-
-        set(
-          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
-            instanceId: recordPickerInstanceId,
-          }),
-          pickableMorphItems,
-        );
-
-        set(
-          multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
-            { instanceId: recordPickerInstanceId },
-          ),
-          [objectMetadataItem],
-        );
-
-        performSearch({
-          multipleRecordPickerInstanceId: recordPickerInstanceId,
-          forceSearchFilter: '',
-          forceSearchableObjectMetadataItems: [objectMetadataItem],
-          forcePickableMorphItems: pickableMorphItems,
-        });
-
-        pushFocusItemToFocusStack({
-          focusId: recordPickerInstanceId,
-          component: {
-            type: FocusComponentType.DROPDOWN,
-            instanceId: recordPickerInstanceId,
-          },
-          globalHotkeysConfig: {
-            enableGlobalHotkeysConflictingWithKeyboard: false,
-          },
-        });
-      },
-    [openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],
+      pushFocusItemToFocusStack({
+        focusId: recordPickerInstanceId,
+        component: {
+          type: FocusComponentType.DROPDOWN,
+          instanceId: recordPickerInstanceId,
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysConflictingWithKeyboard: false,
+        },
+      });
+    },
+    [store, openMultipleRecordPicker, performSearch, pushFocusItemToFocusStack],
   );
 
   return { openRelationFromManyFieldInput };

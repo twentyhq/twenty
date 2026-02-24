@@ -1,10 +1,11 @@
 import { useCallback, useMemo } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useAtom, useStore } from 'jotai';
 import { v4 } from 'uuid';
 
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -56,7 +57,10 @@ export const ActivityRichTextEditor = ({
   activityId,
   activityObjectNameSingular,
 }: ActivityRichTextEditorProps) => {
-  const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
+  const store = useStore();
+  const [activityInStore] = useAtom(
+    recordStoreFamilyState.atomFamily(activityId),
+  );
 
   const cache = useApolloCoreClient().cache;
   const activity = activityInStore as Task | Note | null;
@@ -122,7 +126,7 @@ export const ActivityRichTextEditor = ({
     }
   }, 300);
 
-  const [canCreateActivity, setCanCreateActivity] = useRecoilState(
+  const [canCreateActivity, setCanCreateActivity] = useRecoilStateV2(
     canCreateActivityState,
   );
 
@@ -145,47 +149,45 @@ export const ActivityRichTextEditor = ({
     [canCreateActivity, persistBodyDebounced, setCanCreateActivity],
   );
 
-  const handleBodyChange = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async (newStringifiedBody: string) => {
-        const oldActivity = snapshot
-          .getLoadable(recordStoreFamilyState(activityId))
-          .getValue();
+  const handleBodyChange = useCallback(
+    async (newStringifiedBody: string) => {
+      const oldActivity = store.get(
+        recordStoreFamilyState.atomFamily(activityId),
+      );
 
-        set(recordStoreFamilyState(activityId), (oldActivity) => {
-          return {
-            ...oldActivity,
-            id: activityId,
-            bodyV2: {
+      store.set(
+        recordStoreFamilyState.atomFamily(activityId),
+        (prev: typeof oldActivity) => ({
+          ...prev,
+          id: activityId,
+          bodyV2: {
+            blocknote: newStringifiedBody,
+            markdown: null,
+          },
+          __typename: 'Activity',
+        }),
+      );
+
+      modifyRecordFromCache({
+        recordId: activityId,
+        fieldModifiers: {
+          bodyV2: () => {
+            return {
               blocknote: newStringifiedBody,
               markdown: null,
-            },
-            __typename: 'Activity',
-          };
-        });
-
-        modifyRecordFromCache({
-          recordId: activityId,
-          fieldModifiers: {
-            bodyV2: () => {
-              return {
-                blocknote: newStringifiedBody,
-                markdown: null,
-              };
-            },
+            };
           },
-          cache,
-          objectMetadataItem: objectMetadataItemActivity,
-        });
+        },
+        cache,
+        objectMetadataItem: objectMetadataItemActivity,
+      });
 
-        handlePersistBody(newStringifiedBody);
+      handlePersistBody(newStringifiedBody);
 
-        await syncAttachments(
-          newStringifiedBody,
-          oldActivity?.bodyV2.blocknote,
-        );
-      },
+      await syncAttachments(newStringifiedBody, oldActivity?.bodyV2.blocknote);
+    },
     [
+      store,
       activityId,
       cache,
       objectMetadataItemActivity,
@@ -299,59 +301,43 @@ export const ActivityRichTextEditor = ({
   //   but this leaves the door open for unpredicted behavior with click handlers conflicts,
   //   we recently had a bug which was deleting what the user typed and closed the right drawer if he used backspace key.
   // We could maybe use the types of components in the focus stack.
-  const handleBlockEditorFocus = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        // TODO: Here we want to detect anything that is open to avoid conflicts with the library click event
-        //   that is not prevented and propagate to other click handlers in the app.
-        //  Because that is how we do in the app, for example with stacked dropdowns, we always close what's open before
-        //  letting the click being captured by a button or input that can capture it.
-        const isRecordTitleCellOpen = snapshot
-          .getLoadable(
-            isTitleCellInEditModeComponentState.atomFamily({
-              instanceId: recordTitleCellId,
-            }),
-          )
-          .getValue();
+  const handleBlockEditorFocus = useCallback(() => {
+    const isRecordTitleCellOpen = store.get(
+      isTitleCellInEditModeComponentState.atomFamily({
+        instanceId: recordTitleCellId,
+      }),
+    );
 
-        if (isRecordTitleCellOpen) {
-          editor.domElement?.blur();
-          return;
-        }
+    if (isRecordTitleCellOpen) {
+      editor.domElement?.blur();
+      return;
+    }
 
-        pushFocusItemToFocusStack({
-          component: {
-            instanceId: activityId,
-            type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
-          },
-          focusId: activityId,
-          globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
-        });
+    pushFocusItemToFocusStack({
+      component: {
+        instanceId: activityId,
+        type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
       },
-    [recordTitleCellId, activityId, editor, pushFocusItemToFocusStack],
-  );
+      focusId: activityId,
+      globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
+    });
+  }, [recordTitleCellId, activityId, editor, pushFocusItemToFocusStack, store]);
 
-  const handlerBlockEditorBlur = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const isRecordTitleCellOpen = snapshot
-          .getLoadable(
-            isTitleCellInEditModeComponentState.atomFamily({
-              instanceId: recordTitleCellId,
-            }),
-          )
-          .getValue();
+  const handlerBlockEditorBlur = useCallback(() => {
+    const isRecordTitleCellOpen = store.get(
+      isTitleCellInEditModeComponentState.atomFamily({
+        instanceId: recordTitleCellId,
+      }),
+    );
 
-        if (isRecordTitleCellOpen) {
-          return;
-        }
+    if (isRecordTitleCellOpen) {
+      return;
+    }
 
-        removeFocusItemFromFocusStackById({
-          focusId: activityId,
-        });
-      },
-    [activityId, recordTitleCellId, removeFocusItemFromFocusStackById],
-  );
+    removeFocusItemFromFocusStackById({
+      focusId: activityId,
+    });
+  }, [activityId, recordTitleCellId, removeFocusItemFromFocusStackById, store]);
 
   return (
     <>

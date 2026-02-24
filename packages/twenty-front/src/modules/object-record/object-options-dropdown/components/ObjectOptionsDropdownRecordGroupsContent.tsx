@@ -17,9 +17,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
@@ -48,27 +48,27 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const recordGroupFieldMetadata = useRecoilComponentValue(
+  const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
+  const visibleRecordGroupIds = useRecoilComponentFamilySelectorValueV2(
     visibleRecordGroupIdsComponentFamilySelector,
     viewType,
   );
 
-  const hiddenRecordGroupIds = useRecoilComponentValue(
+  const hiddenRecordGroupIds = useRecoilComponentSelectorValueV2(
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const hideEmptyRecordGroup = useRecoilComponentValue(
+  const hideEmptyRecordGroup = useRecoilComponentValueV2(
     recordIndexShouldHideEmptyRecordGroupsComponentState,
   );
 
   const shouldHideEmptyGroups =
     hideEmptyRecordGroup ?? currentView?.shouldHideEmptyGroups ?? false;
 
-  const recordGroupSort = useRecoilComponentValue(
+  const recordGroupSort = useRecoilComponentValueV2(
     recordIndexRecordGroupSortComponentState,
   );
 

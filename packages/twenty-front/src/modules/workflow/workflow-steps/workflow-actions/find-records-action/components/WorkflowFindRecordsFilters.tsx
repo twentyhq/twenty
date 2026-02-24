@@ -3,13 +3,13 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { AdvancedFilterCommandMenuContainer } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuContainer';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 
 import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const WorkflowFindRecordsFilters = ({
   objectMetadataItem,
@@ -20,39 +20,33 @@ export const WorkflowFindRecordsFilters = ({
   onChange: (filter: FindRecordsActionFilter) => void;
   readonly?: boolean;
 }) => {
-  const currentRecordFilterGroupsCallbackState =
-    useRecoilComponentCallbackState(currentRecordFilterGroupsComponentState);
+  const currentRecordFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+    currentRecordFilterGroupsComponentState,
+  );
 
-  const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
+  const currentRecordFiltersAtom = useRecoilComponentStateCallbackStateV2(
     currentRecordFiltersComponentState,
   );
 
-  const onUpdate = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const currentRecordFilterGroups = getSnapshotValue(
-          snapshot,
-          currentRecordFilterGroupsCallbackState,
-        );
+  const store = useStore();
 
-        const currentRecordFilters = getSnapshotValue(
-          snapshot,
-          currentRecordFiltersCallbackState,
-        );
+  const onUpdate = useCallback(() => {
+    const currentRecordFilterGroups = store.get(currentRecordFilterGroupsAtom);
 
-        const newFilter = {
-          recordFilterGroups: currentRecordFilterGroups,
-          recordFilters: currentRecordFilters,
-        } satisfies FindRecordsActionFilter;
+    const currentRecordFilters = store.get(currentRecordFiltersAtom);
 
-        onChange(newFilter);
-      },
-    [
-      currentRecordFilterGroupsCallbackState,
-      currentRecordFiltersCallbackState,
-      onChange,
-    ],
-  );
+    const newFilter = {
+      recordFilterGroups: currentRecordFilterGroups,
+      recordFilters: currentRecordFilters,
+    } satisfies FindRecordsActionFilter;
+
+    onChange(newFilter);
+  }, [
+    currentRecordFilterGroupsAtom,
+    currentRecordFiltersAtom,
+    onChange,
+    store,
+  ]);
 
   return (
     <AdvancedFilterCommandMenuContainer

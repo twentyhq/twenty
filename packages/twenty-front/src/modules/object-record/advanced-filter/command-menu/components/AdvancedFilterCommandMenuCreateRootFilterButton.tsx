@@ -5,8 +5,8 @@ import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/adv
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentFamilyStateV2';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { t } from '@lingui/core/macro';
@@ -23,7 +23,7 @@ export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { readonly } = useContext(AdvancedFilterContext);
-  const rootRecordFilterGroup = useRecoilComponentValue(
+  const rootRecordFilterGroup = useRecoilComponentSelectorValueV2(
     rootLevelRecordFilterGroupComponentSelector,
   );
 
@@ -49,7 +49,7 @@ export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
     useCreateEmptyRecordFilterFromFieldMetadataItem();
 
   const setHasInitializedCurrentRecordFilters =
-    useSetRecoilComponentFamilyState(
+    useSetRecoilComponentFamilyStateV2(
       hasInitializedCurrentRecordFiltersComponentFamilyState,
       {},
     );

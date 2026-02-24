@@ -1,14 +1,13 @@
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { createComponentFamilySelector } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelector';
-
+import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilySelectorV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const recordGroupFromGroupValueComponentFamilySelector =
-  createComponentFamilySelector<
+  createComponentFamilySelectorV2<
     RecordGroupDefinition | undefined,
     { recordGroupValue: Nullable<string> }
   >({
@@ -17,15 +16,14 @@ export const recordGroupFromGroupValueComponentFamilySelector =
     get:
       ({ instanceId, familyKey }) =>
       ({ get }): RecordGroupDefinition | undefined => {
-        const recordGroupIds = get(
-          recordGroupIdsComponentState.atomFamily({
-            instanceId,
-          }),
-        );
+        const recordGroupIds = get(recordGroupIdsComponentState, {
+          instanceId,
+        });
 
-        const recordGroupId = recordGroupIds.find((recordGroupId) => {
+        const recordGroupId = recordGroupIds.find((id) => {
           const recordGroupDefinition = get(
-            recordGroupDefinitionFamilyState(recordGroupId),
+            recordGroupDefinitionFamilyState,
+            id,
           );
 
           return recordGroupDefinition?.value === familyKey.recordGroupValue;
@@ -36,7 +34,8 @@ export const recordGroupFromGroupValueComponentFamilySelector =
         }
 
         const recordGroupDefinition = get(
-          recordGroupDefinitionFamilyState(recordGroupId),
+          recordGroupDefinitionFamilyState,
+          recordGroupId,
         );
 
         return recordGroupDefinition;

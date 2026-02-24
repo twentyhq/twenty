@@ -1,13 +1,13 @@
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useLingui } from '@lingui/react/macro';
 
 export const ObjectFilterDropdownAnyFieldSearchInput = () => {
   const { t } = useLingui();
 
   const [anyFieldFilterSearchValue, setAnyFieldFilterSearchValue] =
-    useRecoilComponentState(anyFieldFilterValueComponentState);
+    useRecoilComponentStateV2(anyFieldFilterValueComponentState);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;

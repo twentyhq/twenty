@@ -1,59 +1,45 @@
 import { useCommandMenuUpdateNavigationMorphItemsByPage } from '@/command-menu/hooks/useCommandMenuUpdateNavigationMorphItemsByPage';
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 const pageId = 'merge-page-id';
 const objectMetadataId = 'company-metadata-id';
 
-const Wrapper = ({
-  children,
-  initialRecordIds,
-}: {
-  children: React.ReactNode;
-  initialRecordIds: string[];
-}) => (
-  <RecoilRoot
-    initializeState={({ set }) => {
-      set(
-        commandMenuNavigationMorphItemsByPageState,
-        new Map([
-          [
-            pageId,
-            initialRecordIds.map((recordId) => ({
-              objectMetadataId,
-              recordId,
-            })),
-          ],
-        ]),
-      );
-    }}
-  >
-    {children}
-  </RecoilRoot>
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <RecoilRoot>{children}</RecoilRoot>
 );
 
-const renderHooks = (initialRecordIds: string[]) =>
-  renderHook(
+const renderHooks = (initialRecordIds: string[]) => {
+  jotaiStore.set(
+    commandMenuNavigationMorphItemsByPageState.atom,
+    new Map([
+      [
+        pageId,
+        initialRecordIds.map((recordId) => ({
+          objectMetadataId,
+          recordId,
+        })),
+      ],
+    ]),
+  );
+
+  return renderHook(
     () => {
       const { updateCommandMenuNavigationMorphItemsByPage } =
         useCommandMenuUpdateNavigationMorphItemsByPage();
-      const commandMenuNavigationMorphItemsByPage = useRecoilValue(
-        commandMenuNavigationMorphItemsByPageState,
-      );
 
       return {
         updateCommandMenuNavigationMorphItemsByPage,
-        commandMenuNavigationMorphItemsByPage,
       };
     },
     {
-      wrapper: ({ children }) => (
-        <Wrapper initialRecordIds={initialRecordIds}>{children}</Wrapper>
-      ),
+      wrapper: Wrapper,
     },
   );
+};
 
 describe('useCommandMenuUpdateNavigationMorphItemsByPage', () => {
   it('should replace existing items for a page instead of appending', async () => {
@@ -68,7 +54,9 @@ describe('useCommandMenuUpdateNavigationMorphItemsByPage', () => {
     });
 
     expect(
-      result.current.commandMenuNavigationMorphItemsByPage.get(pageId),
+      jotaiStore
+        .get(commandMenuNavigationMorphItemsByPageState.atom)
+        .get(pageId),
     ).toEqual([
       {
         objectMetadataId,
@@ -98,7 +86,9 @@ describe('useCommandMenuUpdateNavigationMorphItemsByPage', () => {
     });
 
     expect(
-      result.current.commandMenuNavigationMorphItemsByPage.get(pageId),
+      jotaiStore
+        .get(commandMenuNavigationMorphItemsByPageState.atom)
+        .get(pageId),
     ).toEqual([
       {
         objectMetadataId,

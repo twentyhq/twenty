@@ -1,10 +1,10 @@
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -51,7 +51,7 @@ type RestPlaygroundProps = {
 
 export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
   const theme = useTheme();
-  const playgroundApiKey = useRecoilValue(playgroundApiKeyState);
+  const playgroundApiKey = useRecoilValueV2(playgroundApiKeyState);
 
   if (!playgroundApiKey) {
     onError();

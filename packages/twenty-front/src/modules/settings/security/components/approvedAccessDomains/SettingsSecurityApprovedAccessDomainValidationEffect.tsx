@@ -3,7 +3,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { isDefined } from 'twenty-shared/utils';
 import { useValidateApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
 
@@ -14,7 +14,7 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
   const [searchParams] = useSearchParams();
   const approvedAccessDomainId = searchParams.get('wtdId');
   const validationToken = searchParams.get('validationToken');
-  const setApprovedAccessDomains = useSetRecoilState(
+  const setApprovedAccessDomains = useSetRecoilStateV2(
     approvedAccessDomainsState,
   );
 

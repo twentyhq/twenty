@@ -1,5 +1,3 @@
-import { useRecoilValue } from 'recoil';
-
 import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 
@@ -10,8 +8,9 @@ import { lastContextStoreVirtualizedViewIdComponentState } from '@/object-record
 import { lastContextStoreVirtualizedVisibleRecordFieldsComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedVisibleRecordFieldsComponentState';
 import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import isEmpty from 'lodash.isempty';
 import { useEffect } from 'react';
@@ -23,17 +22,18 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   const { queryIdentifier } = useRecordIndexTableFetchMore(objectNameSingular);
 
   const [lastRecordTableQueryIdentifier, setLastRecordTableQueryIdentifier] =
-    useRecoilComponentState(lastRecordTableQueryIdentifierComponentState);
+    useRecoilComponentStateV2(lastRecordTableQueryIdentifierComponentState);
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useRecoilComponentSelectorValueV2(
     visibleRecordFieldsComponentSelector,
   );
-  const [isInitializingVirtualTableDataLoading] = useRecoilComponentState(
+  const [isInitializingVirtualTableDataLoading] = useRecoilComponentStateV2(
     isInitializingVirtualTableDataLoadingComponentState,
   );
 
-  const isFetchingMoreRecords = useRecoilValue(
-    isFetchingMoreRecordsFamilyState(recordTableId),
+  const isFetchingMoreRecords = useFamilyRecoilValueV2(
+    isFetchingMoreRecordsFamilyState,
+    recordTableId,
   );
 
   const { triggerInitialRecordTableDataLoad } =
@@ -42,12 +42,14 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   const [
     lastContextStoreVirtualizedViewId,
     setLastContextStoreVirtualizedViewId,
-  ] = useRecoilComponentState(lastContextStoreVirtualizedViewIdComponentState);
+  ] = useRecoilComponentStateV2(
+    lastContextStoreVirtualizedViewIdComponentState,
+  );
 
   const [
     lastContextStoreVisibleRecordFields,
     setLastContextStoreVisibleRecordFields,
-  ] = useRecoilComponentState(
+  ] = useRecoilComponentStateV2(
     lastContextStoreVirtualizedVisibleRecordFieldsComponentState,
   );
 

@@ -3,7 +3,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
@@ -18,7 +18,7 @@ import { type CoreView } from '~/generated-metadata/graphql';
 
 export const useUpdateViewAggregate = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
-  const currentViewId = useRecoilComponentValue(
+  const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();

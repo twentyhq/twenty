@@ -8,6 +8,7 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
 import { RecordIndexLoadBaseOnContextStoreEffect } from '@/object-record/record-index/components/RecordIndexLoadBaseOnContextStoreEffect';
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
@@ -18,7 +19,7 @@ import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-sel
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import styled from '@emotion/styled';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { NotFound } from '~/pages/not-found/NotFound';
 
 const StyledIndexContainer = styled.div`
@@ -31,14 +32,10 @@ export const RecordIndexContainerGater = () => {
   const { recordIndexId, objectMetadataItem } =
     useRecordIndexIdFromCurrentContextStore();
 
-  const handleIndexRecordsLoaded = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        // TODO: find a better way to reset this state ?
-        set(lastShowPageRecordIdState, null);
-      },
-    [],
-  );
+  const handleIndexRecordsLoaded = useCallback(() => {
+    // TODO: find a better way to reset this state ?
+    jotaiStore.set(lastShowPageRecordIdState.atom, null);
+  }, []);
 
   const { indexIdentifierUrl } = useHandleIndexIdentifierClick({
     objectMetadataItem,

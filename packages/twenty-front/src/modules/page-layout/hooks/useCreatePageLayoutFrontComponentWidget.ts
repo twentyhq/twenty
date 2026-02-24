@@ -11,9 +11,10 @@ import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTab
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { WidgetType } from '~/generated-metadata/graphql';
@@ -31,93 +32,91 @@ export const useCreatePageLayoutFrontComponentWidget = (
     getTabListInstanceIdFromPageLayoutId(pageLayoutId),
   );
 
-  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+  const pageLayoutCurrentLayoutsState = useRecoilComponentStateCallbackStateV2(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutDraggedAreaState = useRecoilComponentCallbackState(
+  const pageLayoutDraggedAreaState = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraggedAreaComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutDraftState = useRecoilComponentCallbackState(
+  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const createPageLayoutFrontComponentWidget = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (title: string, frontComponentId: string): PageLayoutWidget => {
-        const allTabLayouts = snapshot
-          .getLoadable(pageLayoutCurrentLayoutsState)
-          .getValue();
+  const store = useStore();
 
-        const pageLayoutDraggedArea = snapshot
-          .getLoadable(pageLayoutDraggedAreaState)
-          .getValue();
+  const createPageLayoutFrontComponentWidget = useCallback(
+    (title: string, frontComponentId: string): PageLayoutWidget => {
+      const allTabLayouts = store.get(pageLayoutCurrentLayoutsState);
 
-        if (!isDefined(activeTabId)) {
-          throw new Error(
-            'A tab must be selected to create a new front component widget',
-          );
-        }
+      const pageLayoutDraggedArea = store.get(pageLayoutDraggedAreaState);
 
-        const widgetId = uuidv4();
-        const frontComponentSize = WIDGET_SIZES[WidgetType.FRONT_COMPONENT]!;
-        const defaultSize = frontComponentSize.default;
-        const minimumSize = frontComponentSize.minimum;
-        const position = getDefaultWidgetPosition(
-          pageLayoutDraggedArea,
-          defaultSize,
-          minimumSize,
+      if (!isDefined(activeTabId)) {
+        throw new Error(
+          'A tab must be selected to create a new front component widget',
         );
+      }
 
-        const newWidget = createDefaultFrontComponentWidget(
-          widgetId,
-          activeTabId,
-          title,
-          frontComponentId,
-          {
-            row: position.y,
-            column: position.x,
-            rowSpan: position.h,
-            columnSpan: position.w,
-          },
-        );
+      const widgetId = uuidv4();
+      const frontComponentSize = WIDGET_SIZES[WidgetType.FRONT_COMPONENT]!;
+      const defaultSize = frontComponentSize.default;
+      const minimumSize = frontComponentSize.minimum;
+      const position = getDefaultWidgetPosition(
+        pageLayoutDraggedArea,
+        defaultSize,
+        minimumSize,
+      );
 
-        const newLayout = {
-          i: widgetId,
-          x: position.x,
-          y: position.y,
-          w: position.w,
-          h: position.h,
-          minW: minimumSize.w,
-          minH: minimumSize.h,
-        };
+      const newWidget = createDefaultFrontComponentWidget(
+        widgetId,
+        activeTabId,
+        title,
+        frontComponentId,
+        {
+          row: position.y,
+          column: position.x,
+          rowSpan: position.h,
+          columnSpan: position.w,
+        },
+      );
 
-        const updatedLayouts = getUpdatedTabLayouts(
-          allTabLayouts,
-          activeTabId,
-          newLayout,
-        );
+      const newLayout = {
+        i: widgetId,
+        x: position.x,
+        y: position.y,
+        w: position.w,
+        h: position.h,
+        minW: minimumSize.w,
+        minH: minimumSize.h,
+      };
 
-        set(pageLayoutCurrentLayoutsState, updatedLayouts);
+      const updatedLayouts = getUpdatedTabLayouts(
+        allTabLayouts,
+        activeTabId,
+        newLayout,
+      );
 
-        set(pageLayoutDraftState, (prev) => ({
-          ...prev,
-          tabs: addWidgetToTab(prev.tabs, activeTabId, newWidget),
-        }));
+      store.set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
-        set(pageLayoutDraggedAreaState, null);
+      store.set(pageLayoutDraftState, (prev) => ({
+        ...prev,
+        tabs: addWidgetToTab(prev.tabs, activeTabId, newWidget),
+      }));
 
-        return newWidget;
-      },
+      store.set(pageLayoutDraggedAreaState, null);
+
+      return newWidget;
+    },
     [
       activeTabId,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutDraggedAreaState,
+      store,
     ],
   );
 

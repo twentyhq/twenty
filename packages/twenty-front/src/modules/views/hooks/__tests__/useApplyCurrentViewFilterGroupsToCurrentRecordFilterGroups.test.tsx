@@ -3,8 +3,11 @@ import { renderHook } from '@testing-library/react';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -34,6 +37,10 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
       'Missing mock object metadata item with name singular "company"',
     );
   }
+
+  beforeEach(() => {
+    resetJotaiStore();
+  });
 
   afterEach(() => {
     jotaiStore.set(coreViewsState.atom, []);
@@ -79,8 +86,9 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
           useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
 
-        const currentRecordFilterGroups = useRecoilComponentValue(
+        const currentRecordFilterGroups = useRecoilComponentValueV2(
           currentRecordFilterGroupsComponentState,
+          'recordIndexId',
         );
 
         return {
@@ -129,8 +137,9 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
           useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
 
-        const currentRecordFilterGroups = useRecoilComponentValue(
+        const currentRecordFilterGroups = useRecoilComponentValueV2(
           currentRecordFilterGroupsComponentState,
+          'recordIndexId',
         );
 
         return {
@@ -144,8 +153,8 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
+          onInitializeJotaiStore: (store) => {
+            store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
@@ -173,8 +182,9 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
         const { applyCurrentViewFilterGroupsToCurrentRecordFilterGroups } =
           useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups();
 
-        const currentRecordFilterGroups = useRecoilComponentValue(
+        const currentRecordFilterGroups = useRecoilComponentValueV2(
           currentRecordFilterGroupsComponentState,
+          'recordIndexId',
         );
 
         return {
@@ -188,8 +198,8 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
+          onInitializeJotaiStore: (store) => {
+            store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),

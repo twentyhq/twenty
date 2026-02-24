@@ -6,8 +6,9 @@ import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRec
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { CommandMenuPages } from 'twenty-shared/types';
 
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { msg, t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { IconArrowMerge } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
@@ -39,43 +40,38 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
     },
   });
 
-  const openMergeRecordsPageInCommandMenu = useRecoilCallback(
-    ({ set }) => {
-      return async () => {
-        const pageId = v4();
+  const openMergeRecordsPageInCommandMenu = useCallback(async () => {
+    const pageId = v4();
 
-        set(
-          contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-            instanceId: pageId,
-          }),
-          objectMetadataItem.id,
-        );
-
-        await updateCommandMenuNavigationMorphItemsByPage({
-          pageId,
-          objectMetadataId: objectMetadataItem.id,
-          objectRecordIds,
-        });
-        const { records } = await findManyRecordsLazy();
-        upsertRecordsInStore({ partialRecords: records ?? [] });
-
-        navigateCommandMenu({
-          page: CommandMenuPages.MergeRecords,
-          pageTitle: t(msg`Merge records`),
-          pageIcon: IconArrowMerge,
-          pageId,
-        });
-      };
-    },
-    [
+    jotaiStore.set(
+      contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
+        instanceId: pageId,
+      }),
       objectMetadataItem.id,
+    );
+
+    await updateCommandMenuNavigationMorphItemsByPage({
+      pageId,
+      objectMetadataId: objectMetadataItem.id,
       objectRecordIds,
-      findManyRecordsLazy,
-      upsertRecordsInStore,
-      navigateCommandMenu,
-      updateCommandMenuNavigationMorphItemsByPage,
-    ],
-  );
+    });
+    const { records } = await findManyRecordsLazy();
+    upsertRecordsInStore({ partialRecords: records ?? [] });
+
+    navigateCommandMenu({
+      page: CommandMenuPages.MergeRecords,
+      pageTitle: t(msg`Merge records`),
+      pageIcon: IconArrowMerge,
+      pageId,
+    });
+  }, [
+    objectMetadataItem.id,
+    objectRecordIds,
+    findManyRecordsLazy,
+    upsertRecordsInStore,
+    navigateCommandMenu,
+    updateCommandMenuNavigationMorphItemsByPage,
+  ]);
 
   return {
     openMergeRecordsPageInCommandMenu,

@@ -6,14 +6,14 @@ import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWo
 import { RoleAssignmentSection } from '@/settings/roles/role-assignment/components/RoleAssignmentSection';
 import { SettingsRoleAssignmentConfirmationModal } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal';
 import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedRoleTarget';
-import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
+import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -40,8 +40,9 @@ export const SettingsRoleAssignment = ({
 }: SettingsRoleAssignmentProps) => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  const settingsDraftRole = useRecoilValue(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useFamilyRecoilValueV2(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const navigateSettings = useNavigateSettings();
@@ -69,7 +70,7 @@ export const SettingsRoleAssignment = ({
     currentWorkspaceMembersState,
   );
   const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
-  const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
+  const settingsAllRoles = useSettingsAllRoles();
 
   const roleMaps = buildRoleMaps(settingsAllRoles);
 

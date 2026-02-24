@@ -9,9 +9,10 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Pill } from 'twenty-ui/components';
 import {
   IconCalendarMonth,
@@ -24,10 +25,10 @@ import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownCalendarViewContent = () => {
   const { resetContent } = useObjectOptionsDropdown();
-  const recordIndexCalendarLayout = useRecoilValue(
+  const recordIndexCalendarLayout = useRecoilValueV2(
     recordIndexCalendarLayoutState,
   );
-  const setRecordIndexCalendarLayout = useSetRecoilState(
+  const setRecordIndexCalendarLayout = useSetRecoilStateV2(
     recordIndexCalendarLayoutState,
   );
   const { updateCurrentView } = useUpdateCurrentView();

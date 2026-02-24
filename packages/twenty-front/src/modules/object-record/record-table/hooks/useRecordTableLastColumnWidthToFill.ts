@@ -2,16 +2,16 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
 import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
 import { computeLastRecordTableColumnWidth } from '@/object-record/record-table/utils/computeLastRecordTableColumnWidth';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 export const useRecordTableLastColumnWidthToFill = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const recordTableWidth = useRecoilComponentValue(
+  const recordTableWidth = useRecoilComponentValueV2(
     recordTableWidthComponentState,
   );
 
-  const shouldCompactRecordTableFirstColumn = useRecoilComponentValue(
+  const shouldCompactRecordTableFirstColumn = useRecoilComponentValueV2(
     shouldCompactRecordTableFirstColumnComponentState,
   );
 

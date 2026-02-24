@@ -1,20 +1,19 @@
 import { objectSortDropdownSearchInputComponentState } from '@/object-record/object-sort-dropdown/states/objectSortDropdownSearchInputComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const useResetRecordSortDropdownSearchInput = () => {
   const objectSortDropdownSearchInputCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentStateCallbackStateV2(
       objectSortDropdownSearchInputComponentState,
     );
 
-  const resetRecordSortDropdownSearchInput = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        set(objectSortDropdownSearchInputCallbackState, '');
-      },
-    [objectSortDropdownSearchInputCallbackState],
-  );
+  const store = useStore();
+
+  const resetRecordSortDropdownSearchInput = useCallback(() => {
+    store.set(objectSortDropdownSearchInputCallbackState, '');
+  }, [objectSortDropdownSearchInputCallbackState, store]);
 
   return {
     resetRecordSortDropdownSearchInput,

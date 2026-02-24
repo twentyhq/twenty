@@ -1,7 +1,7 @@
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
 
 type UseDeleteFieldsWidgetEditorGroupParams = {
   pageLayoutId: string;
@@ -12,27 +12,23 @@ export const useDeleteFieldsWidgetEditorGroup = ({
   pageLayoutId,
   widgetId,
 }: UseDeleteFieldsWidgetEditorGroupParams) => {
-  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetGroupsDraftState = useRecoilComponentStateCallbackStateV2(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
-  const deleteGroupRecoilCallback = useRecoilCallback(
-    ({ set }) =>
-      (groupId: string) => {
-        set(fieldsWidgetGroupsDraftState, (prev) => ({
-          ...prev,
-          [widgetId]: (prev[widgetId] ?? []).filter(
-            (group) => group.id !== groupId,
-          ),
-        }));
-      },
-    [fieldsWidgetGroupsDraftState, widgetId],
-  );
+  const store = useStore();
 
   const deleteGroup = useCallback(
-    (groupId: string) => deleteGroupRecoilCallback(groupId),
-    [deleteGroupRecoilCallback],
+    (groupId: string) => {
+      store.set(fieldsWidgetGroupsDraftState, (prev) => ({
+        ...prev,
+        [widgetId]: (prev[widgetId] ?? []).filter(
+          (group) => group.id !== groupId,
+        ),
+      }));
+    },
+    [fieldsWidgetGroupsDraftState, widgetId, store],
   );
 
   return { deleteGroup };

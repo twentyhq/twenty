@@ -1,8 +1,8 @@
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { SettingsRole } from '@/settings/roles/role/components/SettingsRole';
 import { SettingsRoleEditEffect } from '@/settings/roles/role/components/SettingsRoleEditEffect';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { Navigate, useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { settingsPersistedRoleFamilyState } from '~/modules/settings/roles/states/settingsPersistedRoleFamilyState';
@@ -10,8 +10,9 @@ import { settingsPersistedRoleFamilyState } from '~/modules/settings/roles/state
 export const SettingsRoleEdit = () => {
   const { roleId } = useParams();
 
-  const persistedRole = useRecoilValue(
-    settingsPersistedRoleFamilyState(roleId ?? ''),
+  const persistedRole = useFamilyRecoilValueV2(
+    settingsPersistedRoleFamilyState,
+    roleId ?? '',
   );
 
   if (!isDefined(roleId)) {

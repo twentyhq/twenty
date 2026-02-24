@@ -1,7 +1,8 @@
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { usePerformViewGroupAPIPersist } from '@/views/hooks/internal/usePerformViewGroupAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
@@ -16,59 +17,125 @@ export const useSaveCurrentViewGroups = () => {
 
   const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
-  const currentViewIdCallbackState = useRecoilComponentCallbackState(
+  const currentViewIdCallbackState = useRecoilComponentStateCallbackStateV2(
     contextStoreCurrentViewIdComponentState,
   );
 
-  const saveViewGroup = useRecoilCallback(
-    ({ snapshot }) =>
-      async (viewGroupToSave: ViewGroup) => {
-        if (!canPersistChanges) {
-          return;
-        }
+  const store = useStore();
 
-        const currentViewId = snapshot
-          .getLoadable(currentViewIdCallbackState)
-          .getValue();
+  const saveViewGroup = useCallback(
+    async (viewGroupToSave: ViewGroup) => {
+      if (!canPersistChanges) {
+        return;
+      }
 
-        if (!currentViewId) {
-          return;
-        }
+      const currentViewId = store.get(currentViewIdCallbackState);
 
-        const view = getViewFromPrefetchState(currentViewId);
+      if (!currentViewId) {
+        return;
+      }
 
-        if (isUndefinedOrNull(view)) {
-          return;
-        }
+      const view = getViewFromPrefetchState(currentViewId);
 
-        const currentViewGroups = view.viewGroups;
+      if (isUndefinedOrNull(view)) {
+        return;
+      }
 
-        const existingField = currentViewGroups.find(
-          (currentViewGroup) =>
-            currentViewGroup.fieldValue === viewGroupToSave.fieldValue,
-        );
+      const currentViewGroups = view.viewGroups;
 
-        if (isUndefinedOrNull(existingField)) {
-          return;
-        }
+      const existingField = currentViewGroups.find(
+        (currentViewGroup) =>
+          currentViewGroup.fieldValue === viewGroupToSave.fieldValue,
+      );
 
-        if (
-          isDeeplyEqual(
-            {
-              position: existingField.position,
-              isVisible: existingField.isVisible,
-            },
-            {
-              position: viewGroupToSave.position,
-              isVisible: viewGroupToSave.isVisible,
-            },
-          )
-        ) {
-          return;
-        }
+      if (isUndefinedOrNull(existingField)) {
+        return;
+      }
 
-        await performViewGroupAPIUpdate([
+      if (
+        isDeeplyEqual(
           {
+            position: existingField.position,
+            isVisible: existingField.isVisible,
+          },
+          {
+            position: viewGroupToSave.position,
+            isVisible: viewGroupToSave.isVisible,
+          },
+        )
+      ) {
+        return;
+      }
+
+      await performViewGroupAPIUpdate([
+        {
+          input: {
+            id: existingField.id,
+            update: {
+              isVisible: viewGroupToSave.isVisible,
+              position: viewGroupToSave.position,
+              fieldValue: viewGroupToSave.fieldValue,
+            },
+          },
+        },
+      ]);
+    },
+    [
+      store,
+      canPersistChanges,
+      currentViewIdCallbackState,
+      getViewFromPrefetchState,
+      performViewGroupAPIUpdate,
+    ],
+  );
+
+  const saveViewGroups = useCallback(
+    async (viewGroupsToSave: ViewGroup[]) => {
+      if (!canPersistChanges) {
+        return;
+      }
+
+      const currentViewId = store.get(currentViewIdCallbackState);
+
+      if (!currentViewId) {
+        return;
+      }
+
+      const view = getViewFromPrefetchState(currentViewId);
+
+      if (isUndefinedOrNull(view)) {
+        return;
+      }
+
+      const currentViewGroups = view.viewGroups;
+
+      const viewGroupsToUpdate = viewGroupsToSave
+        .map((viewGroupToSave) => {
+          const existingField = currentViewGroups.find(
+            (currentViewGroup) =>
+              currentViewGroup.fieldValue === viewGroupToSave.fieldValue,
+          );
+
+          if (isUndefinedOrNull(existingField)) {
+            return undefined;
+          }
+
+          if (
+            isDeeplyEqual(
+              {
+                position: existingField.position,
+                isVisible: existingField.isVisible,
+              },
+              {
+                position: viewGroupToSave.position,
+                isVisible: viewGroupToSave.isVisible,
+              },
+            )
+          ) {
+            return undefined;
+          }
+
+          return {
             input: {
               id: existingField.id,
               update: {
@@ -77,86 +144,18 @@ export const useSaveCurrentViewGroups = () => {
                 fieldValue: viewGroupToSave.fieldValue,
               },
             },
-          },
-        ]);
-      },
+          };
+        })
+        .filter(isDefined);
+
+      if (!isDefined(view.mainGroupByFieldMetadataId)) {
+        throw new Error('mainGroupByFieldMetadataId is required');
+      }
+
+      await performViewGroupAPIUpdate(viewGroupsToUpdate);
+    },
     [
-      canPersistChanges,
-      currentViewIdCallbackState,
-      getViewFromPrefetchState,
-      performViewGroupAPIUpdate,
-    ],
-  );
-
-  const saveViewGroups = useRecoilCallback(
-    ({ snapshot }) =>
-      async (viewGroupsToSave: ViewGroup[]) => {
-        if (!canPersistChanges) {
-          return;
-        }
-
-        const currentViewId = snapshot
-          .getLoadable(currentViewIdCallbackState)
-          .getValue();
-
-        if (!currentViewId) {
-          return;
-        }
-
-        const view = getViewFromPrefetchState(currentViewId);
-
-        if (isUndefinedOrNull(view)) {
-          return;
-        }
-
-        const currentViewGroups = view.viewGroups;
-
-        const viewGroupsToUpdate = viewGroupsToSave
-          .map((viewGroupToSave) => {
-            const existingField = currentViewGroups.find(
-              (currentViewGroup) =>
-                currentViewGroup.fieldValue === viewGroupToSave.fieldValue,
-            );
-
-            if (isUndefinedOrNull(existingField)) {
-              return undefined;
-            }
-
-            if (
-              isDeeplyEqual(
-                {
-                  position: existingField.position,
-                  isVisible: existingField.isVisible,
-                },
-                {
-                  position: viewGroupToSave.position,
-                  isVisible: viewGroupToSave.isVisible,
-                },
-              )
-            ) {
-              return undefined;
-            }
-
-            return {
-              input: {
-                id: existingField.id,
-                update: {
-                  isVisible: viewGroupToSave.isVisible,
-                  position: viewGroupToSave.position,
-                  fieldValue: viewGroupToSave.fieldValue,
-                },
-              },
-            };
-          })
-          .filter(isDefined);
-
-        if (!isDefined(view.mainGroupByFieldMetadataId)) {
-          throw new Error('mainGroupByFieldMetadataId is required');
-        }
-
-        await performViewGroupAPIUpdate(viewGroupsToUpdate);
-      },
-    [
+      store,
       canPersistChanges,
       currentViewIdCallbackState,
       getViewFromPrefetchState,

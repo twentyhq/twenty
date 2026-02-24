@@ -7,8 +7,8 @@ import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/use
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { DragAndDropLibraryLegacyReRenderBreaker } from '@/ui/drag-and-drop/components/DragAndDropReRenderBreaker';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilValue } from 'recoil';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledColumn = styled.div`
@@ -34,10 +34,11 @@ export const RecordBoardColumn = ({
   recordBoardColumnId,
   recordBoardColumnIndex,
 }: RecordBoardColumnProps) => {
-  const recordGroupDefinition = useRecoilValue(
-    recordGroupDefinitionFamilyState(recordBoardColumnId),
+  const recordGroupDefinition = useFamilyRecoilValueV2(
+    recordGroupDefinitionFamilyState,
+    recordBoardColumnId,
   );
-  const recordIdsByGroup = useRecoilComponentFamilyValue(
+  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
   );

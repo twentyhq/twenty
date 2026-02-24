@@ -1,17 +1,17 @@
 import { SuggestionMenu } from '@blocknote/core/extensions';
 import { useExtensionState } from '@blocknote/react';
-import { useState } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback, useState } from 'react';
 
 import { isSlashMenuOpenComponentState } from '@/blocknote-editor/states/isSlashMenuOpenComponentState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 
 export const BlockEditorDropdownFocusEffect = () => {
   const [prevShowing, setPrevShowing] = useState<boolean | null>(null);
 
-  const isSlashMenuOpenState = useRecoilComponentCallbackState(
+  const isSlashMenuOpenState = useRecoilComponentStateCallbackStateV2(
     isSlashMenuOpenComponentState,
   );
 
@@ -21,30 +21,30 @@ export const BlockEditorDropdownFocusEffect = () => {
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
+  const store = useStore();
+
   const suggestionState = useExtensionState(SuggestionMenu);
 
   const isSlashMenuShowing =
     suggestionState?.show === true && suggestionState?.triggerCharacter === '/';
 
-  const syncSlashMenuState = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (showing: boolean) => {
-        const isAlreadyOpen = snapshot
-          .getLoadable(isSlashMenuOpenState)
-          .getValue();
+  const syncSlashMenuState = useCallback(
+    (showing: boolean) => {
+      const isAlreadyOpen = store.get(isSlashMenuOpenState);
 
-        if (showing && !isAlreadyOpen) {
-          setActiveDropdownFocusIdAndMemorizePrevious('custom-slash-menu');
-          set(isSlashMenuOpenState, true);
-        } else if (!showing && isAlreadyOpen) {
-          goBackToPreviousDropdownFocusId();
-          set(isSlashMenuOpenState, false);
-        }
-      },
+      if (showing && isAlreadyOpen !== true) {
+        setActiveDropdownFocusIdAndMemorizePrevious('custom-slash-menu');
+        store.set(isSlashMenuOpenState, true);
+      } else if (!showing && isAlreadyOpen === true) {
+        goBackToPreviousDropdownFocusId();
+        store.set(isSlashMenuOpenState, false);
+      }
+    },
     [
       isSlashMenuOpenState,
       setActiveDropdownFocusIdAndMemorizePrevious,
       goBackToPreviousDropdownFocusId,
+      store,
     ],
   );
 

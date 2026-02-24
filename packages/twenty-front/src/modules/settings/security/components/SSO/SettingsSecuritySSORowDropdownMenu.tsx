@@ -1,13 +1,12 @@
 import { useDeleteSSOIdentityProvider } from '@/settings/security/hooks/useDeleteSSOIdentityProvider';
 import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
-import { type SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { type SSOIdentityProvider } from '@/settings/security/types/SSOIdentityProvider';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
-import { type UnwrapRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -15,7 +14,7 @@ import { MenuItem } from 'twenty-ui/navigation';
 import { SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
 
 type SettingsSecuritySSORowDropdownMenuProps = {
-  SSOIdp: UnwrapRecoilValue<typeof SSOIdentitiesProvidersState>[0];
+  SSOIdp: Omit<SSOIdentityProvider, '__typename'>;
 };
 
 export const SettingsSecuritySSORowDropdownMenu = ({

@@ -16,14 +16,13 @@ import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
+import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
-import { useRecoilCallback } from 'recoil';
 import {
   findById,
   findByProperty,
@@ -31,14 +30,16 @@ import {
 } from 'twenty-shared/utils';
 
 export const useResizeTableHeader = () => {
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const resizeFieldOffsetCallbackState = useRecoilComponentCallbackState(
+  const resizeFieldOffsetAtom = useRecoilComponentStateCallbackStateV2(
     resizeFieldOffsetComponentState,
+    recordTableId,
   );
 
-  const setResizeFieldOffset = useSetRecoilComponentState(
+  const setResizeFieldOffset = useSetRecoilComponentStateV2(
     resizeFieldOffsetComponentState,
+    recordTableId,
   );
 
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
@@ -46,7 +47,7 @@ export const useResizeTableHeader = () => {
   >(null);
 
   const [resizedFieldMetadataItemId, setResizedFieldMetadataItemId] =
-    useRecoilComponentState(resizedFieldMetadataIdComponentState);
+    useRecoilComponentStateV2(resizedFieldMetadataIdComponentState);
 
   const recordField = visibleRecordFields.find(
     findByProperty('fieldMetadataItemId', resizedFieldMetadataItemId),
@@ -58,12 +59,14 @@ export const useResizeTableHeader = () => {
 
   const { updateRecordField } = useUpdateRecordField();
 
-  const recordTableWidth = useRecoilComponentValue(
+  const recordTableWidth = useRecoilComponentValueV2(
     recordTableWidthComponentState,
+    recordTableId,
   );
 
-  const shouldCompactRecordTableFirstColumn = useRecoilComponentValue(
+  const shouldCompactRecordTableFirstColumn = useRecoilComponentValueV2(
     shouldCompactRecordTableFirstColumnComponentState,
+    recordTableId,
   );
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
@@ -136,52 +139,45 @@ export const useResizeTableHeader = () => {
 
   const { setDragSelectionStartEnabled } = useDragSelect();
 
-  const handleResizeHandlerEnd = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async () => {
-        throwIfNotDefined(recordField, 'recordField');
+  const store = useStore();
 
-        if (!resizedFieldMetadataItemId) return;
+  const handleResizeHandlerEnd = useCallback(async () => {
+    throwIfNotDefined(recordField, 'recordField');
 
-        const resizeFieldOffset = getSnapshotValue(
-          snapshot,
-          resizeFieldOffsetCallbackState,
-        );
+    if (!resizedFieldMetadataItemId) return;
 
-        const nextWidth = Math.round(
-          Math.max(
-            recordField.size + resizeFieldOffset,
-            RECORD_TABLE_COLUMN_MIN_WIDTH,
-          ),
-        );
+    const resizeFieldOffset = store.get(resizeFieldOffsetAtom);
 
-        set(resizeFieldOffsetCallbackState, 0);
-        setInitialPointerPositionX(null);
-        setResizedFieldMetadataItemId(null);
+    const nextWidth = Math.round(
+      Math.max(
+        recordField.size + resizeFieldOffset,
+        RECORD_TABLE_COLUMN_MIN_WIDTH,
+      ),
+    );
 
-        if (nextWidth !== recordField.size) {
-          const updatedRecordField = updateRecordField(
-            resizedFieldMetadataItemId,
-            {
-              size: nextWidth,
-            },
-          );
+    store.set(resizeFieldOffsetAtom, 0);
+    setInitialPointerPositionX(null);
+    setResizedFieldMetadataItemId(null);
 
-          saveRecordFields([updatedRecordField]);
-        }
+    if (nextWidth !== recordField.size) {
+      const updatedRecordField = updateRecordField(resizedFieldMetadataItemId, {
+        size: nextWidth,
+      });
 
-        setDragSelectionStartEnabled(true);
-      },
-    [
-      saveRecordFields,
-      resizedFieldMetadataItemId,
-      resizeFieldOffsetCallbackState,
-      setResizedFieldMetadataItemId,
-      updateRecordField,
-      setDragSelectionStartEnabled,
-      recordField,
-    ],
-  );
+      saveRecordFields([updatedRecordField]);
+    }
+
+    setDragSelectionStartEnabled(true);
+  }, [
+    saveRecordFields,
+    resizedFieldMetadataItemId,
+    resizeFieldOffsetAtom,
+    store,
+    setResizedFieldMetadataItemId,
+    updateRecordField,
+    setDragSelectionStartEnabled,
+    recordField,
+  ]);
 
   useTrackPointer({
     shouldTrackPointer: resizedFieldMetadataItemId !== null,

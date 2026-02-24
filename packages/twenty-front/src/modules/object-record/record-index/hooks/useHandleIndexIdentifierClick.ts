@@ -1,6 +1,6 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
@@ -11,7 +11,7 @@ export const useHandleIndexIdentifierClick = ({
   recordIndexId: string;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const currentViewId = useRecoilComponentValue(
+  const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
     recordIndexId,
   );

@@ -1,8 +1,8 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 export const recordIndexShouldHideEmptyRecordGroupsComponentState =
-  createComponentState<boolean>({
+  createComponentStateV2<boolean>({
     key: 'recordIndexShouldHideEmptyRecordGroupsComponentState',
     defaultValue: false,
     componentInstanceContext: ViewComponentInstanceContext,

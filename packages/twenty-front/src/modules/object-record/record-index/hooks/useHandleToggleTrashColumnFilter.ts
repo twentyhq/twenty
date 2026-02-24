@@ -6,11 +6,11 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { t } from '@lingui/core/macro';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
 import { ViewFilterOperand } from 'twenty-shared/types';
 
 type UseHandleToggleTrashColumnFilterProps = {
@@ -30,7 +30,7 @@ export const useHandleToggleTrashColumnFilter = ({
     useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
 
   const isSoftDeleteFilterActiveComponentRecoilState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentStateCallbackStateV2(
       isSoftDeleteFilterActiveComponentState,
       viewBarId,
     );
@@ -68,12 +68,13 @@ export const useHandleToggleTrashColumnFilter = ({
     upsertRecordFilter(newFilter);
   }, [columnDefinitions, objectMetadataItem, upsertRecordFilter]);
 
-  const toggleSoftDeleteFilterState = useRecoilCallback(
-    ({ set }) =>
-      (currentState: boolean) => {
-        set(isSoftDeleteFilterActiveComponentRecoilState, currentState);
-      },
-    [isSoftDeleteFilterActiveComponentRecoilState],
+  const store = useStore();
+
+  const toggleSoftDeleteFilterState = useCallback(
+    (currentState: boolean) => {
+      store.set(isSoftDeleteFilterActiveComponentRecoilState, currentState);
+    },
+    [isSoftDeleteFilterActiveComponentRecoilState, store],
   );
   return {
     handleToggleTrashColumnFilter,

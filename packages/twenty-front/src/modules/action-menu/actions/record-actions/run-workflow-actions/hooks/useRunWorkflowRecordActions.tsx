@@ -7,14 +7,16 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -28,12 +30,16 @@ export const useRunWorkflowRecordActions = ({
 }) => {
   const { getIcon } = useIcons();
   const { enqueueWarningSnackBar } = useSnackBar();
-  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
+
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
+    recordIndexId,
   );
 
-  const isPageInEditMode = useRecoilComponentValue(
+  const isPageInEditMode = useRecoilComponentValueV2(
     contextStoreIsPageInEditModeComponentState,
+    recordIndexId,
   );
 
   const selectedRecordIds =
@@ -49,69 +55,68 @@ export const useRunWorkflowRecordActions = ({
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
-  const runWorkflowVersionOnSelectedRecords = useRecoilCallback(
-    ({ snapshot }) =>
-      async (
-        selectedRecordIds: string[],
-        activeWorkflowVersion: Pick<
-          WorkflowVersion,
-          'id' | 'workflowId' | 'trigger'
-        >,
-      ) => {
-        if (selectedRecordIds.length > QUERY_MAX_RECORDS) {
-          const selectedCountFormatted =
-            selectedRecordIds.length.toLocaleString();
-          const limitFormatted = QUERY_MAX_RECORDS.toLocaleString();
+  const runWorkflowVersionOnSelectedRecords = useCallback(
+    async (
+      selectedRecordIds: string[],
+      activeWorkflowVersion: Pick<
+        WorkflowVersion,
+        'id' | 'workflowId' | 'trigger'
+      >,
+    ) => {
+      if (selectedRecordIds.length > QUERY_MAX_RECORDS) {
+        const selectedCountFormatted =
+          selectedRecordIds.length.toLocaleString();
+        const limitFormatted = QUERY_MAX_RECORDS.toLocaleString();
 
-          enqueueWarningSnackBar({
-            message: t`You selected ${selectedCountFormatted} records but manual triggers can run on at most ${limitFormatted} records at once. Only the first ${limitFormatted} records will be processed.`,
-            options: {
-              dedupeKey: 'workflow-manual-trigger-selection-limit',
-            },
-          });
-        }
+        enqueueWarningSnackBar({
+          message: t`You selected ${selectedCountFormatted} records but manual triggers can run on at most ${limitFormatted} records at once. Only the first ${limitFormatted} records will be processed.`,
+          options: {
+            dedupeKey: 'workflow-manual-trigger-selection-limit',
+          },
+        });
+      }
 
-        const limitedSelectedRecordIds = selectedRecordIds.slice(
-          0,
-          QUERY_MAX_RECORDS,
-        );
+      const limitedSelectedRecordIds = selectedRecordIds.slice(
+        0,
+        QUERY_MAX_RECORDS,
+      );
 
-        if (
-          isDefined(activeWorkflowVersion?.trigger) &&
-          isBulkRecordsManualTrigger(activeWorkflowVersion.trigger)
-        ) {
-          const objectNamePlural = objectMetadataItem.namePlural;
-          const selectedRecords = limitedSelectedRecordIds
-            .map((recordId) =>
-              snapshot.getLoadable(recordStoreFamilyState(recordId)).getValue(),
-            )
-            .filter(isDefined);
+      if (
+        isDefined(activeWorkflowVersion?.trigger) &&
+        isBulkRecordsManualTrigger(activeWorkflowVersion.trigger)
+      ) {
+        const objectNamePlural = objectMetadataItem.namePlural;
+        const selectedRecords = limitedSelectedRecordIds
+          .map((recordId) =>
+            jotaiStore.get(recordStoreFamilyState.atomFamily(recordId)),
+          )
+          .filter(isDefined);
+
+        await runWorkflowVersion({
+          workflowId: activeWorkflowVersion.workflowId,
+          workflowVersionId: activeWorkflowVersion.id,
+          payload: {
+            [objectNamePlural]: selectedRecords,
+          },
+        });
+      } else {
+        for (const selectedRecordId of limitedSelectedRecordIds) {
+          const selectedRecord = jotaiStore.get(
+            recordStoreFamilyState.atomFamily(selectedRecordId),
+          );
+
+          if (!isDefined(selectedRecord)) {
+            continue;
+          }
 
           await runWorkflowVersion({
             workflowId: activeWorkflowVersion.workflowId,
             workflowVersionId: activeWorkflowVersion.id,
-            payload: {
-              [objectNamePlural]: selectedRecords,
-            },
+            payload: selectedRecord,
           });
-        } else {
-          for (const selectedRecordId of limitedSelectedRecordIds) {
-            const selectedRecord = snapshot
-              .getLoadable(recordStoreFamilyState(selectedRecordId))
-              .getValue();
-
-            if (!isDefined(selectedRecord)) {
-              continue;
-            }
-
-            await runWorkflowVersion({
-              workflowId: activeWorkflowVersion.workflowId,
-              workflowVersionId: activeWorkflowVersion.id,
-              payload: selectedRecord,
-            });
-          }
         }
-      },
+      }
+    },
     [runWorkflowVersion, objectMetadataItem, enqueueWarningSnackBar],
   );
 

@@ -5,14 +5,14 @@ import { getAggregateOperationLabel } from '@/object-record/record-board/record-
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { UserContext } from '@/users/contexts/UserContext';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { findById, isDefined } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 
 type UsePieChartCenterMetricDataProps = {
   objectMetadataItemId: string;
@@ -80,7 +80,7 @@ export const usePieChartCenterMetricData = ({
   });
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useRecoilValue(dateLocaleState);
+  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
 
   const aggregateFieldMetadataItem = objectMetadataItem.readableFields.find(
     findById(configuration.aggregateFieldMetadataId),
