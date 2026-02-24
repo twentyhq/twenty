@@ -471,6 +471,63 @@ export class OldCrmPolicyPreprocessor {
       return existingId;
     }
 
+    // Fallback: try email lookup when phone didn't match
+    // (handles cases where old CRM has a different phone for the same person)
+    const email = ((leadDetails?.email as string) || payload.email || '')
+      .trim()
+      .toLowerCase();
+
+    if (this.isValidEmail(email)) {
+      const existingByEmail = await personRepo.findOne({
+        where: {
+          emails: {
+            primaryEmail: email,
+          },
+        },
+      });
+
+      if (existingByEmail) {
+        const existingRecord = existingByEmail as Record<string, unknown>;
+        const existingId = existingRecord.id as string;
+        const existingName = existingRecord.name as
+          | Record<string, string>
+          | undefined;
+
+        const incomingFirst = (
+          (leadDetails?.first_name as string) ||
+          payload.first_name ||
+          ''
+        )
+          .trim()
+          .toLowerCase();
+        const incomingLast = (
+          (leadDetails?.last_name as string) ||
+          payload.last_name ||
+          ''
+        )
+          .trim()
+          .toLowerCase();
+        const existingFirst = (existingName?.firstName || '')
+          .trim()
+          .toLowerCase();
+        const existingLast = (existingName?.lastName || '')
+          .trim()
+          .toLowerCase();
+
+        if (existingLast === incomingLast && existingFirst === incomingFirst) {
+          this.logger.log(
+            `Found Person ${existingId} by email fallback (${email}), phone mismatch: expected ${normalizedPhone}`,
+          );
+
+          return existingId;
+        }
+
+        this.logger.warn(
+          `Email fallback matched Person ${existingId} (${existingFirst} ${existingLast}) but name doesn't match incoming (${incomingFirst} ${incomingLast}) — skipping`,
+        );
+      }
+    }
+
     // Create person with full details from lead API or policy payload
     try {
       const personData = this.buildPersonData(
