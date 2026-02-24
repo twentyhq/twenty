@@ -1,0 +1,73 @@
+{
+  "application": {
+    "universalIdentifier": "0fac8de4-9d11-492b-9e6a-577e11e1c442",
+    "displayName": "Twenty for Twenty",
+    "description": "",
+    "defaultRoleUniversalIdentifier": "4bd740cc-f6a1-40c5-b46b-e2a4dbf5af04",
+    "applicationVariables": {
+      "CLICKHOUSE_URL": {
+        "universalIdentifier": "b204304f-d3d3-4ae2-aafa-24b21c159181",
+        "description": "The URL of the ClickHouse server, including the protocol and port (e.g., http://localhost:8123)",
+        "isSecret": true
+      },
+      "CLICKHOUSE_USERNAME": {
+        "universalIdentifier": "711e8ea8-8b19-4cf0-82ab-ab44417312bd",
+        "description": "The username for authenticating with the ClickHouse server",
+        "isSecret": true
+      },
+      "CLICKHOUSE_PASSWORD": {
+        "universalIdentifier": "faba7ed7-9f94-4202-944b-c25c683e9504",
+        "description": "The password for authenticating with the ClickHouse server",
+        "isSecret": true
+      },
+      "CLICKHOUSE_DATABASE": {
+        "universalIdentifier": "3e6698fa-0c00-49e5-9c4d-34d5b177bff3",
+        "description": "The name of the ClickHouse database to connect to",
+        "isSecret": true
+      }
+    },
+    "yarnLockChecksum": "9b20a67fa43921ab03434ae54787c482",
+    "packageJsonChecksum": "debc8ca0bbcdc383187c93b0bb528990",
+    "apiClientChecksum": null
+  },
+  "objects": [],
+  "fields": [],
+  "roles": [
+    {
+      "universalIdentifier": "4bd740cc-f6a1-40c5-b46b-e2a4dbf5af04",
+      "label": "Twenty for Twenty default function role",
+      "description": "Twenty for Twenty default function role",
+      "canReadAllObjectRecords": true,
+      "canUpdateAllObjectRecords": true,
+      "canSoftDeleteAllObjectRecords": true,
+      "canDestroyAllObjectRecords": false
+    }
+  ],
+  "skills": [],
+  "logicFunctions": [
+    {
+      "universalIdentifier": "ea5b3bbd-a8c3-48ed-880e-a0d062588f53",
+      "name": "hello-world-logic-function",
+      "description": "A simple logic function",
+      "timeoutSeconds": 5,
+      "httpRouteTriggerSettings": {
+        "path": "/hello-world-logic-function",
+        "httpMethod": "GET",
+        "isAuthRequired": false
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/hello-world.ts",
+      "builtHandlerPath": "src/logic-functions/hello-world.mjs",
+      "builtHandlerChecksum": "9ee9adbb5483ec5477fbc18d97b3112b"
+    }
+  ],
+  "frontComponents": [],
+  "publicAssets": [],
+  "views": [],
+  "navigationMenuItems": [],
+  "pageLayouts": []
+}
