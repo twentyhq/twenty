@@ -1,6 +1,10 @@
 import { UPSERT_FIELDS_WIDGET } from '@/page-layout/graphql/mutations/upsertFieldsWidget';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
+import { fieldsWidgetModeDraftComponentState } from '@/page-layout/states/fieldsWidgetModeDraftComponentState';
+import { fieldsWidgetModePersistedComponentState } from '@/page-layout/states/fieldsWidgetModePersistedComponentState';
+import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
+import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { useMutation } from '@apollo/client';
@@ -49,6 +53,27 @@ export const useSaveFieldsWidgetGroups = ({
     pageLayoutId,
   );
 
+  const fieldsWidgetUngroupedFieldsDraftState = useRecoilComponentCallbackState(
+    fieldsWidgetUngroupedFieldsDraftComponentState,
+    pageLayoutId,
+  );
+
+  const fieldsWidgetUngroupedFieldsPersistedState =
+    useRecoilComponentCallbackState(
+      fieldsWidgetUngroupedFieldsPersistedComponentState,
+      pageLayoutId,
+    );
+
+  const fieldsWidgetModeDraftState = useRecoilComponentCallbackState(
+    fieldsWidgetModeDraftComponentState,
+    pageLayoutId,
+  );
+
+  const fieldsWidgetModePersistedState = useRecoilComponentCallbackState(
+    fieldsWidgetModePersistedComponentState,
+    pageLayoutId,
+  );
+
   const [upsertFieldsWidgetMutation] = useMutation<
     UpsertFieldsWidgetResult,
     { input: UpsertFieldsWidgetInput }
@@ -65,25 +90,59 @@ export const useSaveFieldsWidgetGroups = ({
         const allPersistedGroups = snapshot
           .getLoadable(fieldsWidgetGroupsPersistedState)
           .getValue();
+        const allUngroupedFieldsDraft = snapshot
+          .getLoadable(fieldsWidgetUngroupedFieldsDraftState)
+          .getValue();
+        const allModes = snapshot
+          .getLoadable(fieldsWidgetModeDraftState)
+          .getValue();
 
         const widgetIds = new Set([
           ...Object.keys(allDraftGroups),
           ...Object.keys(allPersistedGroups),
+          ...Object.keys(allUngroupedFieldsDraft),
         ]);
 
         for (const widgetId of widgetIds) {
-          const draftGroups = allDraftGroups[widgetId] ?? [];
+          const mode = allModes[widgetId] ?? 'ungrouped';
 
-          await upsertFieldsWidgetMutation({
-            variables: {
-              input: {
-                widgetId,
-                groups: draftGroups.map((group) => ({
-                  id: group.id,
-                  name: group.name,
-                  position: group.position,
-                  isVisible: group.isVisible,
-                  fields: group.fields.flatMap((field) => {
+          if (mode === 'grouped') {
+            const draftGroups = allDraftGroups[widgetId] ?? [];
+
+            await upsertFieldsWidgetMutation({
+              variables: {
+                input: {
+                  widgetId,
+                  groups: draftGroups.map((group) => ({
+                    id: group.id,
+                    name: group.name,
+                    position: group.position,
+                    isVisible: group.isVisible,
+                    fields: group.fields.flatMap((field) => {
+                      if (!isDefined(field.viewFieldId)) {
+                        return [];
+                      }
+
+                      return [
+                        {
+                          viewFieldId: field.viewFieldId,
+                          isVisible: field.isVisible,
+                          position: field.position,
+                        },
+                      ];
+                    }),
+                  })),
+                },
+              },
+            });
+          } else {
+            const ungroupedFields = allUngroupedFieldsDraft[widgetId] ?? [];
+
+            await upsertFieldsWidgetMutation({
+              variables: {
+                input: {
+                  widgetId,
+                  fields: ungroupedFields.flatMap((field) => {
                     if (!isDefined(field.viewFieldId)) {
                       return [];
                     }
@@ -96,13 +155,15 @@ export const useSaveFieldsWidgetGroups = ({
                       },
                     ];
                   }),
-                })),
+                },
               },
-            },
-          });
+            });
+          }
         }
 
         set(fieldsWidgetGroupsPersistedState, allDraftGroups);
+        set(fieldsWidgetUngroupedFieldsPersistedState, allUngroupedFieldsDraft);
+        set(fieldsWidgetModePersistedState, allModes);
 
         await refreshAllCoreViews();
 
@@ -111,6 +172,10 @@ export const useSaveFieldsWidgetGroups = ({
     [
       fieldsWidgetGroupsDraftState,
       fieldsWidgetGroupsPersistedState,
+      fieldsWidgetUngroupedFieldsDraftState,
+      fieldsWidgetUngroupedFieldsPersistedState,
+      fieldsWidgetModeDraftState,
+      fieldsWidgetModePersistedState,
       upsertFieldsWidgetMutation,
       refreshAllCoreViews,
     ],

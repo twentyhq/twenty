@@ -1,31 +1,45 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { type FieldsWidgetEditorMode } from '@/page-layout/widgets/fields/types/FieldsWidgetEditorMode';
+import {
+  type FieldsWidgetGroup,
+  type FieldsWidgetGroupField,
+} from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { useGetViewById } from '@/views/hooks/useGetViewById';
-import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type UseFieldsWidgetEditorGroupsDataParams = {
   viewId: string | null;
   objectNameSingular: string;
 };
 
+type UseFieldsWidgetEditorGroupsDataResult = {
+  groups: FieldsWidgetGroup[];
+  ungroupedFields: FieldsWidgetGroupField[];
+  mode: FieldsWidgetEditorMode;
+  isFromView: boolean;
+};
+
 export const useFieldsWidgetEditorGroupsData = ({
   viewId,
   objectNameSingular,
-}: UseFieldsWidgetEditorGroupsDataParams) => {
-  const { t } = useLingui();
+}: UseFieldsWidgetEditorGroupsDataParams): UseFieldsWidgetEditorGroupsDataResult => {
   const { view } = useGetViewById(viewId);
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
-  const groups = useMemo<FieldsWidgetGroup[]>(() => {
+  const result = useMemo<
+    Pick<
+      UseFieldsWidgetEditorGroupsDataResult,
+      'groups' | 'ungroupedFields' | 'mode'
+    >
+  >(() => {
     if (!isDefined(objectMetadataItem)) {
-      return [];
+      return { groups: [], ungroupedFields: [], mode: 'ungrouped' };
     }
 
-    if (isDefined(view) && isDefined(view.viewFieldGroups)) {
+    if (isDefined(view) && isNonEmptyArray(view.viewFieldGroups)) {
       const viewFieldGroups = view.viewFieldGroups;
 
       const sortedGroups = [...viewFieldGroups].sort(
@@ -34,7 +48,7 @@ export const useFieldsWidgetEditorGroupsData = ({
 
       let globalIndex = 0;
 
-      return sortedGroups.map((group) => {
+      const groups = sortedGroups.map((group) => {
         const groupFields = [...(group.viewFields ?? [])].sort(
           (a, b) => a.position - b.position,
         );
@@ -67,6 +81,8 @@ export const useFieldsWidgetEditorGroupsData = ({
           fields,
         };
       });
+
+      return { groups, ungroupedFields: [], mode: 'grouped' };
     }
 
     if (isDefined(view) && view.viewFields.length > 0) {
@@ -94,23 +110,15 @@ export const useFieldsWidgetEditorGroupsData = ({
         .filter(isDefined);
 
       if (fields.length > 0) {
-        return [
-          {
-            id: `${view.id}-group-general`,
-            name: t`General`,
-            position: 0,
-            isVisible: true,
-            fields,
-          },
-        ];
+        return { groups: [], ungroupedFields: fields, mode: 'ungrouped' };
       }
     }
 
-    return [];
-  }, [objectMetadataItem, t, view]);
+    return { groups: [], ungroupedFields: [], mode: 'ungrouped' };
+  }, [objectMetadataItem, view]);
 
   return {
-    groups,
+    ...result,
     isFromView:
       isDefined(view) &&
       (isDefined(view.viewFieldGroups) || view.viewFields.length > 0),

@@ -1,6 +1,10 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
+import { fieldsWidgetModeDraftComponentState } from '@/page-layout/states/fieldsWidgetModeDraftComponentState';
+import { fieldsWidgetModePersistedComponentState } from '@/page-layout/states/fieldsWidgetModePersistedComponentState';
+import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
+import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -54,6 +58,27 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     componentInstanceId,
   );
 
+  const fieldsWidgetUngroupedFieldsDraftState = useRecoilComponentCallbackState(
+    fieldsWidgetUngroupedFieldsDraftComponentState,
+    componentInstanceId,
+  );
+
+  const fieldsWidgetUngroupedFieldsPersistedState =
+    useRecoilComponentCallbackState(
+      fieldsWidgetUngroupedFieldsPersistedComponentState,
+      componentInstanceId,
+    );
+
+  const fieldsWidgetModeDraftState = useRecoilComponentCallbackState(
+    fieldsWidgetModeDraftComponentState,
+    componentInstanceId,
+  );
+
+  const fieldsWidgetModePersistedState = useRecoilComponentCallbackState(
+    fieldsWidgetModePersistedComponentState,
+    componentInstanceId,
+  );
+
   const resetDraftPageLayoutToPersistedPageLayout = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
@@ -90,6 +115,19 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
             .getLoadable(fieldsWidgetGroupsPersistedState)
             .getValue();
           set(fieldsWidgetGroupsDraftState, fieldsWidgetGroupsPersisted);
+
+          const fieldsWidgetUngroupedFieldsPersisted = snapshot
+            .getLoadable(fieldsWidgetUngroupedFieldsPersistedState)
+            .getValue();
+          set(
+            fieldsWidgetUngroupedFieldsDraftState,
+            fieldsWidgetUngroupedFieldsPersisted,
+          );
+
+          const fieldsWidgetModePersisted = snapshot
+            .getLoadable(fieldsWidgetModePersistedState)
+            .getValue();
+          set(fieldsWidgetModeDraftState, fieldsWidgetModePersisted);
         }
       },
     [
@@ -98,6 +136,10 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
       pageLayoutCurrentLayoutsState,
       fieldsWidgetGroupsDraftState,
       fieldsWidgetGroupsPersistedState,
+      fieldsWidgetUngroupedFieldsDraftState,
+      fieldsWidgetUngroupedFieldsPersistedState,
+      fieldsWidgetModeDraftState,
+      fieldsWidgetModePersistedState,
       activeTabIdAtom,
       store,
     ],

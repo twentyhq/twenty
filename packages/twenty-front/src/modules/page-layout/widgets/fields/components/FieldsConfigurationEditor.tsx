@@ -8,11 +8,16 @@ import {
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { FieldsConfigurationGroupEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor';
+import { FieldsConfigurationUngroupedEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationUngroupedEditor';
 import { useCreateFieldsWidgetEditorGroup } from '@/page-layout/widgets/fields/hooks/useCreateFieldsWidgetEditorGroup';
 import { useFieldsWidgetGroupsDraft } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsDraft';
+import { useFieldsWidgetMode } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetMode';
+import { useFieldsWidgetUngroupedFieldsDraft } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetUngroupedFieldsDraft';
 import { useMoveFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveFieldInDraft';
+import { useMoveUngroupedFieldInDraft } from '@/page-layout/widgets/fields/hooks/useMoveUngroupedFieldInDraft';
 import { useReorderFieldsWidgetEditorGroups } from '@/page-layout/widgets/fields/hooks/useReorderFieldsWidgetEditorGroups';
 import { useToggleFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleFieldVisibilityInDraft';
+import { useToggleUngroupedFieldVisibilityInDraft } from '@/page-layout/widgets/fields/hooks/useToggleUngroupedFieldVisibilityInDraft';
 import { useLingui } from '@lingui/react/macro';
 
 const StyledGroupsDroppable = styled.div`
@@ -33,7 +38,17 @@ export const FieldsConfigurationEditor = ({
   const { t } = useLingui();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
+  const { mode } = useFieldsWidgetMode({
+    pageLayoutId,
+    widgetId,
+  });
+
   const { draftGroups } = useFieldsWidgetGroupsDraft({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const { ungroupedFields } = useFieldsWidgetUngroupedFieldsDraft({
     pageLayoutId,
     widgetId,
   });
@@ -57,6 +72,17 @@ export const FieldsConfigurationEditor = ({
     pageLayoutId,
     widgetId,
   });
+
+  const { moveField: moveUngroupedField } = useMoveUngroupedFieldInDraft({
+    pageLayoutId,
+    widgetId,
+  });
+
+  const { toggleFieldVisibility: toggleUngroupedFieldVisibility } =
+    useToggleUngroupedFieldVisibilityInDraft({
+      pageLayoutId,
+      widgetId,
+    });
 
   const handleDragEnd = (result: DropResult) => {
     const { source, destination, type } = result;
@@ -120,6 +146,17 @@ export const FieldsConfigurationEditor = ({
     const newGroupName = t`New Group`;
     createGroup(newGroupName);
   };
+
+  if (mode === 'ungrouped') {
+    return (
+      <FieldsConfigurationUngroupedEditor
+        ungroupedFields={ungroupedFields}
+        onMoveField={moveUngroupedField}
+        onToggleFieldVisibility={toggleUngroupedFieldVisibility}
+        onAddGroup={handleAddGroup}
+      />
+    );
+  }
 
   const sortedGroups = [...draftGroups].sort((a, b) => a.position - b.position);
 

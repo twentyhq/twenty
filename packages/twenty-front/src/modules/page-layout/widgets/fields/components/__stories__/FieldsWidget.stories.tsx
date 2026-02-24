@@ -1,7 +1,7 @@
 import {
-    type ApolloClient,
-    type NormalizedCacheObject,
-    useApolloClient,
+  type ApolloClient,
+  type NormalizedCacheObject,
+  useApolloClient,
 } from '@apollo/client';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
@@ -17,8 +17,8 @@ import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/re
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import {
-    PAGE_LAYOUT_TEST_INSTANCE_ID,
-    PageLayoutTestWrapper,
+  PAGE_LAYOUT_TEST_INSTANCE_ID,
+  PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -32,13 +32,13 @@ import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
-    ViewOpenRecordIn as CoreViewOpenRecordIn,
-    ViewType as CoreViewType,
-    ViewVisibility as CoreViewVisibility,
-    PageLayoutTabLayoutMode,
-    PageLayoutType,
-    WidgetConfigurationType,
-    WidgetType,
+  ViewOpenRecordIn as CoreViewOpenRecordIn,
+  ViewType as CoreViewType,
+  ViewVisibility as CoreViewVisibility,
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetConfigurationType,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
