@@ -5,7 +5,7 @@ import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelFamilyProperties';
+import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
 
 export const useAiModelOptions = (
   includeDeprecated = false,

@@ -26,10 +26,8 @@ import {
   useGetAdminAiModelsQuery,
   useSetAdminAiModelEnabledMutation,
 } from '~/generated-metadata/graphql';
-import {
-  getModelIcon,
-  getModelProviderLabel,
-} from '~/pages/settings/ai/utils/getModelFamilyProperties';
+import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
+import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
 
 const StyledSearchAndFilterContainer = styled.div`
   display: flex;

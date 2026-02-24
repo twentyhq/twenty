@@ -24,10 +24,8 @@ import {
 } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
-import {
-  getModelIcon,
-  getModelProviderLabel,
-} from '~/pages/settings/ai/utils/getModelFamilyProperties';
+import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
+import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};

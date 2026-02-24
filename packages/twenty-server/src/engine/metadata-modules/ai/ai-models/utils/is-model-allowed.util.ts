@@ -33,12 +33,3 @@ export const isModelAllowedByWorkspace = (
     ? !workspace.disabledAiModelIds.includes(modelId)
     : workspace.enabledAiModelIds.includes(modelId);
 };
-
-export const parseCommaList = (value: string): Set<string> => {
-  return new Set(
-    value
-      .split(',')
-      .map((id) => id.trim())
-      .filter((id) => id.length > 0),
-  );
-};

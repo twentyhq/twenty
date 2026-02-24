@@ -1338,20 +1338,20 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Comma-separated model IDs to disable (used when AI_AUTO_ENABLE_NEW_MODELS is true)',
-    type: ConfigVariableType.STRING,
+      'Model IDs to disable (used when AI_AUTO_ENABLE_NEW_MODELS is true)',
+    type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_DISABLED_MODEL_IDS: string = '';
+  AI_DISABLED_MODEL_IDS: string[] = [];
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Comma-separated model IDs to enable (used when AI_AUTO_ENABLE_NEW_MODELS is false)',
-    type: ConfigVariableType.STRING,
+      'Model IDs to enable (used when AI_AUTO_ENABLE_NEW_MODELS is false)',
+    type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_ENABLED_MODEL_IDS: string = '';
+  AI_ENABLED_MODEL_IDS: string[] = [];
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

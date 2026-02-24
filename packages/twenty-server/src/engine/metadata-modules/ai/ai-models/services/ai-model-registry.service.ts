@@ -32,7 +32,6 @@ import { GROQ_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/
 import { MISTRAL_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/mistral-models.const';
 import { OPENAI_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/openai-models.const';
 import { XAI_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/xai-models.const';
-import { parseCommaList } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 
 export interface RegisteredAIModel {
   modelId: string;
@@ -380,14 +379,12 @@ export class AiModelRegistryService {
     const autoEnable = this.twentyConfigService.get(
       'AI_AUTO_ENABLE_NEW_MODELS',
     );
-    const disabledIds = parseCommaList(
-      this.twentyConfigService.get('AI_DISABLED_MODEL_IDS'),
-    );
-    const enabledIds = parseCommaList(
-      this.twentyConfigService.get('AI_ENABLED_MODEL_IDS'),
-    );
+    const disabledIds = this.twentyConfigService.get('AI_DISABLED_MODEL_IDS');
+    const enabledIds = this.twentyConfigService.get('AI_ENABLED_MODEL_IDS');
 
-    return autoEnable ? !disabledIds.has(modelId) : enabledIds.has(modelId);
+    return autoEnable
+      ? !disabledIds.includes(modelId)
+      : enabledIds.includes(modelId);
   }
 
   getAdminFilteredModels(): RegisteredAIModel[] {
@@ -421,35 +418,24 @@ export class AiModelRegistryService {
     const autoEnable = this.twentyConfigService.get(
       'AI_AUTO_ENABLE_NEW_MODELS',
     );
-    const disabledIds = parseCommaList(
-      this.twentyConfigService.get('AI_DISABLED_MODEL_IDS'),
-    );
-    const enabledIds = parseCommaList(
-      this.twentyConfigService.get('AI_ENABLED_MODEL_IDS'),
-    );
+    const disabledIds = this.twentyConfigService.get('AI_DISABLED_MODEL_IDS');
+    const enabledIds = this.twentyConfigService.get('AI_ENABLED_MODEL_IDS');
 
     if (autoEnable) {
-      if (enabled) {
-        disabledIds.delete(modelId);
-      } else {
-        disabledIds.add(modelId);
-      }
+      const newDisabledIds = enabled
+        ? disabledIds.filter((id) => id !== modelId)
+        : [...disabledIds, modelId];
 
       await this.twentyConfigService.set(
         'AI_DISABLED_MODEL_IDS',
-        [...disabledIds].join(','),
+        newDisabledIds,
       );
     } else {
-      if (enabled) {
-        enabledIds.add(modelId);
-      } else {
-        enabledIds.delete(modelId);
-      }
+      const newEnabledIds = enabled
+        ? [...enabledIds, modelId]
+        : enabledIds.filter((id) => id !== modelId);
 
-      await this.twentyConfigService.set(
-        'AI_ENABLED_MODEL_IDS',
-        [...enabledIds].join(','),
-      );
+      await this.twentyConfigService.set('AI_ENABLED_MODEL_IDS', newEnabledIds);
     }
   }
 
