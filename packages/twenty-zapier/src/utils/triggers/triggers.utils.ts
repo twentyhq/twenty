@@ -20,14 +20,14 @@ export const performSubscribe = async (z: ZObject, bundle: Bundle) => {
     ],
     secret: '',
   };
-  const result = await requestDb(
-    {z,
+  const result = await requestDb({
+    z,
     bundle,
-    query:`mutation createWebhook {createWebhook(input:{${handleQueryParams(
+    query: `mutation createWebhook {createWebhook(input:{${handleQueryParams(
       data,
     )}}) {id}}`,
-    endpoint:'metadata'},
-  );
+    endpoint: 'metadata',
+  });
   return result.data.createWebhook;
 };
 
@@ -36,12 +36,12 @@ export const performUnsubscribe = async (
   bundle: Bundle,
 ): Promise<boolean> => {
   const data = { id: bundle.subscribeData?.id };
-  const result = await requestDb(
-    {z,
+  const result = await requestDb({
+    z,
     bundle,
-    query:`mutation deleteWebhook {deleteWebhook(input: {${handleQueryParams(data)}})}`,
-    endpoint:'metadata',}
-  );
+    query: `mutation deleteWebhook {deleteWebhook(input: {${handleQueryParams(data)}})}`,
+    endpoint: 'metadata',
+  });
   return result.data.deleteWebhook;
 };
 
