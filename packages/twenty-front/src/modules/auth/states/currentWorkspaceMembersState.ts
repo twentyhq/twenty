@@ -1,7 +1,7 @@
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-export const currentWorkspaceMembersState = createState<
+export const currentWorkspaceMembersState = createStateV2<
   PartialWorkspaceMember[]
 >({
   key: 'currentWorkspaceMembersState',

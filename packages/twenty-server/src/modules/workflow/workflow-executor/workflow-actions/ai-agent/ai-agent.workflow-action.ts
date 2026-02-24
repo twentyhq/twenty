@@ -78,8 +78,8 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       const executionContext =
         await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-      const { result, usage } = await this.aiAgentExecutionService.executeAgent(
-        {
+      const { result, usage, cacheCreationTokens } =
+        await this.aiAgentExecutionService.executeAgent({
           agent,
           userPrompt: resolveInput(prompt, context) as string,
           actorContext: executionContext.isActingOnBehalfOfUser
@@ -87,12 +87,11 @@ export class AiAgentWorkflowAction implements WorkflowAction {
             : undefined,
           rolePermissionConfig: executionContext.rolePermissionConfig,
           authContext: executionContext.authContext,
-        },
-      );
+        });
 
       await this.aiBillingService.calculateAndBillUsage(
         agent?.modelId ?? DEFAULT_SMART_MODEL,
-        usage,
+        { usage, cacheCreationTokens },
         workspaceId,
         agent?.id || null,
       );

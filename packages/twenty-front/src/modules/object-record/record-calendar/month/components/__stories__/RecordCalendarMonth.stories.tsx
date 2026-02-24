@@ -18,8 +18,8 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -43,7 +43,7 @@ const meta: Meta<typeof RecordCalendarMonth> = {
         instanceId,
       );
 
-      const setCoreViews = useSetRecoilState(coreViewsState);
+      const setCoreViews = useSetRecoilStateV2(coreViewsState);
 
       const mockCoreView = mockedCoreViewsData[0];
 

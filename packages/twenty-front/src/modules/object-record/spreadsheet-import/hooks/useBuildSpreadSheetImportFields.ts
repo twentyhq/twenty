@@ -14,7 +14,7 @@ import {
   type SpreadsheetImportField,
   type SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import {
   assertUnreachable,
   getUniqueConstraintsFields,
@@ -25,7 +25,7 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const useBuildSpreadsheetImportFields = () => {
   const { getIcon } = useIcons();
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
   const buildSpreadsheetImportFields = (
     fieldMetadataItems: FieldMetadataItem[],

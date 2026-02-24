@@ -1,12 +1,15 @@
 import { renderHook } from '@testing-library/react';
-import { act } from 'react';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { createElement, act } from 'react';
+import { Provider as JotaiProvider } from 'jotai';
+import { RecoilRoot } from 'recoil';
 
 import {
   type CurrentUser,
   currentUserState,
 } from '@/auth/states/currentUserState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 
@@ -22,12 +25,19 @@ const currentUser = {
   onboardingStatus: null,
 } as CurrentUser;
 
+const Wrapper = ({ children }: { children: React.ReactNode }) =>
+  createElement(
+    JotaiProvider,
+    { store: jotaiStore },
+    createElement(RecoilRoot, null, children),
+  );
+
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const onboardingStatus = useOnboardingStatus();
-      const setCurrentUser = useSetRecoilState(currentUserState);
-      const setTokenPair = useSetRecoilState(tokenPairState);
+      const setCurrentUser = useSetRecoilStateV2(currentUserState);
+      const setTokenPair = useSetRecoilStateV2(tokenPairState);
 
       return {
         onboardingStatus,
@@ -36,7 +46,7 @@ const renderHooks = () => {
       };
     },
     {
-      wrapper: RecoilRoot,
+      wrapper: Wrapper,
     },
   );
   return { result };

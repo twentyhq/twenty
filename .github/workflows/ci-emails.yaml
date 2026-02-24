@@ -56,7 +56,7 @@ jobs:
   ci-emails-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     needs: [changed-files-check, emails-test]
     steps:
       - name: Fail job if any needs failed

@@ -27,15 +27,15 @@ import {
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
 import { escapeForIlike } from 'src/engine/core-modules/search/utils/escape-for-ilike';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -151,11 +151,11 @@ export class SearchService {
     );
   }
 
-  // Runs a fast tsvector query first (uses GIN index). On the first page only,
-  // if not enough results, falls back to an ILIKE query on the searchVector
-  // text representation to catch cases where tsvector tokenization fails
-  // (e.g. continuous CJK text). Skipped on subsequent pages since any ILIKE-only
-  // matches would already have appeared on page 1 with rank 0.
+  // Runs a fast tsvector query first (uses GIN index). If tsvector returns zero
+  // results for an object type on the first page, falls back to ILIKE on the
+  // searchVector text to catch cases where tokenization fails (e.g. CJK text).
+  // Skipped when tsvector finds any results (partial results mean the data just
+  // has fewer matches, not a tokenization issue) and on paginated requests.
   async buildSearchQueryAndGetRecordsWithFallback<
     Entity extends ObjectLiteral,
   >({
@@ -191,24 +191,19 @@ export class SearchService {
     });
 
     if (
-      tsvectorResults.length >= limit ||
+      tsvectorResults.length > 0 ||
       !isNonEmptyString(searchInput.trim()) ||
       isDefined(after)
     ) {
       return tsvectorResults;
     }
 
-    const tsvectorRecordIds = new Set(
-      tsvectorResults.map((record) => record.id as string),
-    );
-
     const fallbackResults = await this.buildIlikeFallbackQuery({
       entityManager,
       flatObjectMetadata,
       flatFieldMetadataMaps,
       searchInput,
-      excludeIds: [...tsvectorRecordIds],
-      limit: limit + 1 - tsvectorResults.length,
+      limit: limit + 1,
       filter,
     });
 
@@ -321,7 +316,6 @@ export class SearchService {
     flatObjectMetadata,
     flatFieldMetadataMaps,
     searchInput,
-    excludeIds,
     limit,
     filter,
   }: {
@@ -329,7 +323,6 @@ export class SearchService {
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     searchInput: string;
-    excludeIds: string[];
     limit: number;
     filter: ObjectRecordFilterInput;
   }) {
@@ -365,23 +358,32 @@ export class SearchService {
       ...(imageIdentifierField ? [imageIdentifierField] : []),
     ].map((field) => `"${field}"`);
 
-    queryBuilder
-      .select(fieldsToSelect)
-      .addSelect('0', 'tsRankCD')
-      .addSelect('0', 'tsRank');
+    queryBuilder.select(fieldsToSelect);
 
-    const escapedInput = escapeForIlike(searchInput.trim());
+    const searchWords = searchInput
+      .trim()
+      .split(/\s+/)
+      .filter(isNonEmptyString);
 
-    queryBuilder.andWhere(
-      `public.unaccent_immutable("${SEARCH_VECTOR_FIELD.name}"::text) ILIKE public.unaccent_immutable(:ilikeFallbackPattern)`,
-      { ilikeFallbackPattern: `%${escapedInput}%` },
-    );
+    searchWords.forEach((word, index) => {
+      const paramName = `ilikeFallback${index}`;
 
-    if (excludeIds.length > 0) {
-      queryBuilder.andWhere('id NOT IN (:...excludeIds)', { excludeIds });
-    }
+      queryBuilder.andWhere(
+        `public.unaccent_immutable("${SEARCH_VECTOR_FIELD.name}"::text) ILIKE public.unaccent_immutable(:${paramName})`,
+        { [paramName]: `%${escapeForIlike(word)}%` },
+      );
+    });
 
-    return await queryBuilder.orderBy('"id"', 'ASC').take(limit).getRawMany();
+    const rawResults = await queryBuilder
+      .orderBy('"id"', 'ASC')
+      .take(limit)
+      .getRawMany();
+
+    return rawResults.map((record) => ({
+      ...record,
+      tsRankCD: 0,
+      tsRank: 0,
+    }));
   }
 
   computeCursorWhereCondition({

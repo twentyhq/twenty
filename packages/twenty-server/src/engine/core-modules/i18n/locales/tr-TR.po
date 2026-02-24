@@ -1140,6 +1140,11 @@ msgstr "Bu özelliği kullanmak için CLOUDFLARE_API_KEY ortam değişkeni tanı
 msgid "Error"
 msgstr "Hata"
 
+#. js-lingui-id: b3ictS
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Exactly one of \"groups\" or \"fields\" must be provided"
+msgstr ""
+
 #. js-lingui-id: ksMwKk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Exactly one of workflow version or front component is required"
@@ -1420,6 +1425,21 @@ msgstr "Bir görünüm grubu oluşturmak için AlanMetaVeriKimliği gereklidir."
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "Bir görünüm sıralaması oluşturmak için AlanMetaVeriKimliği gereklidir."
+
+#. js-lingui-id: VgGXR3
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
+msgstr ""
+
+#. js-lingui-id: 9HjeLQ
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Fields widget has no associated view"
+msgstr ""
+
+#. js-lingui-id: 8sAaBn
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Fields widget not found"
+msgstr ""
 
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
@@ -1766,11 +1786,13 @@ msgid "Invalid configuration type for standalone rich text widget \"{widgetTitle
 msgstr ""
 
 #. js-lingui-id: IptMRL
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
 msgid "Invalid configuration type for widget"
 msgstr ""
 
 #. js-lingui-id: nFIvYZ
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
 msgid "Invalid configuration type for widget \"{widgetTitle}\". Expected {expectedString}, got {actualString}"
 msgstr ""
@@ -4545,6 +4567,11 @@ msgstr "Kanban toplu alanı meta verileri bulunamadı."
 msgid "View not found"
 msgstr "Görünüm bulunamadı"
 
+#. js-lingui-id: BHDATQ
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "View not found after upsert"
+msgstr ""
+
 #. js-lingui-id: yheEin
 #: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
 msgid "View not found."
@@ -4694,66 +4721,16 @@ msgstr ""
 msgid "Widget row exceeds grid height"
 msgstr ""
 
-#. js-lingui-id: deSJ/B
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type CALENDAR is not supported yet."
-msgstr ""
-
-#. js-lingui-id: +IjuqI
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type EMAILS is not supported yet."
-msgstr ""
-
 #. js-lingui-id: F+TRXG
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 msgid "Widget type FIELD is not supported yet."
 msgstr ""
 
-#. js-lingui-id: nuvnbi
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type FIELD_RICH_TEXT is not supported yet."
-msgstr ""
-
-#. js-lingui-id: UZo3be
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type FILES is not supported yet."
-msgstr ""
-
-#. js-lingui-id: SL+U0X
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type NOTES is not supported yet."
-msgstr ""
-
-#. js-lingui-id: vczFIm
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type TASKS is not supported yet."
-msgstr ""
-
-#. js-lingui-id: ynJTP+
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type TIMELINE is not supported yet."
-msgstr ""
-
 #. js-lingui-id: rL2haJ
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 msgid "Widget type VIEW is not supported yet."
-msgstr ""
-
-#. js-lingui-id: geYIT7
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type WORKFLOW is not supported yet."
-msgstr ""
-
-#. js-lingui-id: RcZOVk
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type WORKFLOW_RUN is not supported yet."
-msgstr ""
-
-#. js-lingui-id: U4YrVk
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type WORKFLOW_VERSION is not supported yet."
 msgstr ""
 
 #. js-lingui-id: KSK8fH

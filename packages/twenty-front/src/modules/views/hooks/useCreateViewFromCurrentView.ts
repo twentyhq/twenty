@@ -22,6 +22,7 @@ import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicate
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
+import { useStore } from 'jotai';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -50,6 +51,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
     usePerformViewFilterGroupAPIPersist();
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
+
+  const store = useStore();
 
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
@@ -100,13 +103,11 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           return undefined;
         }
 
-        const sourceView = snapshot
-          .getLoadable(
-            coreViewFromViewIdFamilySelector({
-              viewId: currentViewId,
-            }),
-          )
-          .getValue();
+        const sourceView = store.get(
+          coreViewFromViewIdFamilySelector.selectorFamily({
+            viewId: currentViewId,
+          }),
+        );
 
         if (!isDefined(sourceView)) {
           return undefined;
@@ -244,6 +245,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       objectMetadataItem,
       performViewFieldAPICreate,
       refreshCoreViewsByObjectMetadataId,
+      store,
       currentRecordFilterGroups,
       currentRecordFilters,
       currentRecordSorts,

@@ -15,6 +15,7 @@ Mit Apps können Sie Twenty-Anpassungen **als Code** erstellen und verwalten. An
 
 * Benutzerdefinierte Objekte und Felder als Code definieren (verwaltetes Datenmodell)
 * Logikfunktionen mit benutzerdefinierten Triggern erstellen
+* Fähigkeiten für KI-Agenten definieren
 * Dieselbe App in mehreren Workspaces bereitstellen
 
 ## Voraussetzungen
@@ -45,7 +46,7 @@ yarn twenty app:dev
 Das Scaffolding-Tool unterstützt drei Modi, um zu steuern, welche Beispieldateien enthalten sind:
 
 ```bash filename="Terminal"
-# Standard (umfassend): alle Beispiele (Objekt, Feld, Logikfunktion, Frontend-Komponente, View, Navigationsmenüeintrag)
+# Standard (umfassend): alle Beispiele (Objekt, Feld, Logikfunktion, Frontend-Komponente, View, Navigationsmenüeintrag, Skill)
 npx create-twenty-app@latest my-app
 
 # Minimal: nur Kerndateien (application-config.ts und default-role.ts)
@@ -104,22 +105,24 @@ my-twenty-app/
   README.md
   public/                           # Ordner für öffentliche Assets (Bilder, Schriftarten usw.)
   src/
-  application-config.ts           # Erforderlich  Hauptkonfiguration der Anwendung
-  roles/
-     default-role.ts               # Standardrolle für Logikfunktionen
-  objects/
-     example-object.ts             # Beispiel für eine benutzerdefinierte Objektdefinition
-  fields/
-     example-field.ts              # Beispiel für eine eigenständige Felddefinition
-  logic-functions/
-     hello-world.ts                # Beispiel für eine Logikfunktion
-     post-install.ts               # Post-Installations-Logikfunktion
-  front-components/
-     hello-world.tsx               # Beispiel für eine Frontend-Komponente
-  views/
-     example-view.ts                # Beispiel für eine gespeicherte View-Definition
-  navigation-menu-items/
-      example-navigation-menu-item.ts # Beispiel für einen Navigationslink in der Seitenleiste
+  ├── application-config.ts           # Erforderlich - Hauptkonfiguration der Anwendung
+  ├── roles/
+  │   └── default-role.ts               # Standardrolle für Logikfunktionen
+  ├── objects/
+  │   └── example-object.ts             # Beispiel für eine benutzerdefinierte Objektdefinition
+  ├── fields/
+  │   └── example-field.ts              # Beispiel für eine eigenständige Felddefinition
+  ├── logic-functions/
+  │   ├── hello-world.ts                # Beispiel für eine Logikfunktion
+  │   └── post-install.ts               # Post-Installations-Logikfunktion
+  ├── front-components/
+  │   └── hello-world.tsx               # Beispiel für eine Frontend-Komponente
+  ├── views/
+  │   └── example-view.ts                # Beispiel für eine gespeicherte View-Definition
+  ├── navigation-menu-items/
+  │   └── example-navigation-menu-item.ts # Beispiel für einen Navigationslink in der Seitenleiste
+  └── skills/
+      └── example-skill.ts                # Beispiel für eine Skill-Definition eines KI-Agenten
 ```
 
 Mit `--minimal` werden nur die Kerndateien erstellt (`application-config.ts`, `roles/default-role.ts` und `logic-functions/post-install.ts`). Mit `--interactive` wählst du aus, welche Beispieldateien enthalten sein sollen.
@@ -148,6 +151,7 @@ Das SDK erkennt Entitäten, indem es Ihre TypeScript-Dateien nach Aufrufen von *
 | `defineField()`              | Felderweiterungen für bestehende Objekte  |
 | `defineView()`               | Gespeicherte View-Definitionen            |
 | `defineNavigationMenuItem()` | Definitionen von Navigationsmenüeinträgen |
+| `defineSkill()`              | Skill-Definitionen für KI-Agenten         |
 
 <Note>
   **Dateibenennung ist flexibel.** Die Entitätserkennung ist AST-basiert — das SDK durchsucht Ihre Quelldateien nach dem Muster `export default define<Entity>({...})`. Sie können Ihre Dateien und Ordner nach Belieben organisieren. Die Gruppierung nach Entitätstyp (z. B. `logic-functions/`, `roles/`) ist lediglich eine Konvention zur Codeorganisation, keine Voraussetzung.
@@ -169,7 +173,7 @@ export default defineObject({
 Spätere Befehle fügen weitere Dateien und Ordner hinzu:
 
 * `yarn twenty app:dev` generiert automatisch einen typisierten API-Client in `node_modules/twenty-sdk/generated` (typisierter Twenty-Client + Arbeitsbereichs-Typen).
-* `yarn twenty entity:add` fügt unter `src/` Entitätsdefinitionsdateien für benutzerdefinierte Objekte, Funktionen, Frontend-Komponenten oder Rollen hinzu.
+* `yarn twenty entity:add` fügt unter `src/` Entitätsdefinitionsdateien für Ihre benutzerdefinierten Objekte, Funktionen, Frontend-Komponenten, Rollen, Skills und mehr hinzu.
 
 ## Authentifizierung
 
@@ -222,6 +226,7 @@ Das SDK stellt Hilfsfunktionen bereit, um die Entitäten Ihrer App zu definieren
 | `defineField()`              | Bestehende Objekte mit zusätzlichen Feldern erweitern          |
 | `defineView()`               | Gespeicherte Views für Objekte definieren                      |
 | `defineNavigationMenuItem()` | Seitenleisten-Navigationslinks definieren                      |
+| `defineSkill()`              | Definieren Sie Skills für KI-Agenten                           |
 
 Diese Funktionen validieren Ihre Konfiguration zur Build-Zeit und bieten IDE-Autovervollständigung sowie Typsicherheit.
 
@@ -741,6 +746,41 @@ Sie können neue Frontend-Komponenten auf zwei Arten erstellen:
 * **Generiert**: Führen Sie `yarn twenty entity:add` aus und wählen Sie die Option zum Hinzufügen einer neuen Frontend-Komponente.
 * **Manuell**: Erstellen Sie eine neue `*.front-component.tsx`-Datei und verwenden Sie `defineFrontComponent()`.
 
+### Fähigkeiten
+
+Skills definieren wiederverwendbare Anweisungen und Fähigkeiten, die KI-Agenten in Ihrem Arbeitsbereich verwenden können. Verwenden Sie `defineSkill()`, um Skills mit eingebauter Validierung zu definieren:
+
+```typescript
+// src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Hauptpunkte:
+
+* `name` ist eine eindeutige Kennung (als Zeichenfolge) für den Skill (kebab-case empfohlen).
+* `label` ist der menschenlesbare Anzeigename, der in der UI angezeigt wird.
+* `content` enthält die Skill-Anweisungen — dies ist der Text, den der KI-Agent verwendet.
+* `icon` (optional) legt das in der UI angezeigte Symbol fest.
+* `description` (optional) liefert zusätzlichen Kontext zum Zweck des Skills.
+
+Sie können neue Skills auf zwei Arten erstellen:
+
+* **Generiert**: Führen Sie `yarn twenty entity:add` aus und wählen Sie die Option zum Hinzufügen eines neuen Skills.
+* **Manuell**: Erstellen Sie eine neue Datei und verwenden Sie `defineSkill()` nach demselben Muster.
+
 ### Generierter typisierter Client
 
 Der typisierte Client wird von `yarn twenty app:dev` automatisch generiert und basierend auf Ihrem Arbeitsbereichs-Schema in `node_modules/twenty-sdk/generated` gespeichert. Verwenden Sie ihn in Ihren Funktionen:
@@ -766,6 +806,53 @@ Notizen:
 * Sie müssen dem generierten Client weder URL noch API-Schlüssel übergeben. Er liest `TWENTY_API_URL` und `TWENTY_API_KEY` zur Laufzeit aus process.env.
 * Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, auf die in Ihrer `application-config.ts` über `defaultRoleUniversalIdentifier` verwiesen wird. Dies ist die Standardrolle, die von den Logikfunktionen Ihrer Anwendung verwendet wird.
 * Anwendungen können Rollen definieren, um das Least-Privilege-Prinzip einzuhalten. Gewähren Sie nur die Berechtigungen, die Ihre Funktionen benötigen, und verweisen Sie dann mit `defaultRoleUniversalIdentifier` auf den universellen Bezeichner dieser Rolle.
+
+#### Dateien hochladen
+
+Der generierte `Twenty`-Client enthält eine Methode `uploadFile`, um Dateien an Felder des Typs Datei in Ihren Arbeitsbereichsobjekten anzuhängen. Da Standard-GraphQL-Clients Multipart-Datei-Uploads nicht nativ unterstützen, stellt der Client diese dedizierte Methode bereit, die unter der Haube die [GraphQL-Multipart-Anfragespezifikation](https://github.com/jaydenseric/graphql-multipart-request-spec) implementiert.
+
+```typescript
+import Twenty from '~/generated';
+import * as fs from 'fs';
+
+const client = new Twenty();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await client.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+Die Methodensignatur:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| Parameter                          | Typ      | Beschreibung                                                                    |
+| ---------------------------------- | -------- | ------------------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Der Rohinhalt der Datei                                                         |
+| `filename`                         | `string` | Der Name der Datei (wird für Speicherung und Anzeige verwendet)                 |
+| `contentType`                      | `string` | MIME-Typ der Datei (standardmäßig `application/octet-stream`, wenn weggelassen) |
+| `fieldMetadataUniversalIdentifier` | `string` | Der `universalIdentifier` des Dateityp-Felds in Ihrem Objekt                    |
+
+Hauptpunkte:
+
+* Die Methode sendet die Datei an den **metadata endpoint** (nicht den main GraphQL endpoint), wo die Upload-Mutation ausgeführt wird.
+* Sie verwendet den `universalIdentifier` des Feldes (nicht dessen arbeitsbereichsspezifische ID), sodass Ihr Upload-Code in jedem Arbeitsbereich funktioniert, in dem Ihre App installiert ist — im Einklang damit, wie Apps Felder überall sonst referenzieren.
+* Die zurückgegebene `url` ist eine signierte URL, mit der Sie auf die hochgeladene Datei zugreifen können.
 
 ### Hello-World-Beispiel
 

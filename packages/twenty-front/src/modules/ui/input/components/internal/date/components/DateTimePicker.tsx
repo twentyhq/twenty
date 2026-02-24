@@ -451,9 +451,12 @@ export const DateTimePicker = ({
     ? highlightedDates.map((plainDate) => {
         const date = new Date();
 
-        date.setDate(plainDate.day);
-        date.setMonth(plainDate.month - 1);
+        date.setDate(1);
+
         date.setFullYear(plainDate.year);
+        date.setMonth(plainDate.month - 1);
+
+        date.setDate(plainDate.day);
 
         return date;
       })

@@ -16,8 +16,11 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
-import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-cents-to-billing-credits.util';
+import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
+import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
+import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-display-credits.util';
+import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-types.const';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
 import { AgentChatService } from './agent-chat.service';
@@ -129,20 +132,16 @@ export class AgentChatStreamingService {
                 if (part.type === 'finish-step') {
                   const stepInput = part.usage?.inputTokens ?? 0;
                   const stepCached = part.usage?.cachedInputTokens ?? 0;
-
-                  // Anthropic excludes cached/created tokens from input_tokens,
-                  // reporting them separately as cache_creation_input_tokens
-                  const anthropicUsage = (
-                    part as {
-                      providerMetadata?: {
-                        anthropic?: {
-                          usage?: { cache_creation_input_tokens?: number };
-                        };
-                      };
-                    }
-                  ).providerMetadata?.anthropic?.usage;
-                  const stepCacheCreation =
-                    anthropicUsage?.cache_creation_input_tokens ?? 0;
+                  const stepCacheCreation = extractCacheCreationTokens(
+                    (
+                      part as {
+                        providerMetadata?: Record<
+                          string,
+                          Record<string, unknown> | undefined
+                        >;
+                      }
+                    ).providerMetadata,
+                  );
 
                   totalCacheCreationTokens += stepCacheCreation;
                   lastStepConversationSize =
@@ -150,31 +149,16 @@ export class AgentChatStreamingService {
                 }
 
                 if (part.type === 'finish') {
-                  const inputTokens =
-                    (part.totalUsage?.inputTokens ?? 0) +
-                    (part.totalUsage?.cachedInputTokens ?? 0) +
-                    totalCacheCreationTokens;
-                  const outputTokens = part.totalUsage?.outputTokens ?? 0;
-                  const cachedInputTokens =
-                    part.totalUsage?.cachedInputTokens ?? 0;
-
-                  const inputCostInCents =
-                    (inputTokens / 1000) *
-                    modelConfig.inputCostPer1kTokensInCents;
-                  const outputCostInCents =
-                    (outputTokens / 1000) *
-                    modelConfig.outputCostPer1kTokensInCents;
-
-                  const inputCredits = Math.round(
-                    convertCentsToBillingCredits(inputCostInCents),
-                  );
-                  const outputCredits = Math.round(
-                    convertCentsToBillingCredits(outputCostInCents),
-                  );
+                  const { inputCredits, outputCredits, tokenCounts } =
+                    computeStreamCosts(
+                      modelConfig,
+                      part.totalUsage,
+                      totalCacheCreationTokens,
+                    );
 
                   streamUsage = {
-                    inputTokens,
-                    outputTokens,
+                    inputTokens: tokenCounts.totalInputTokens,
+                    outputTokens: tokenCounts.outputTokens,
                     inputCredits,
                     outputCredits,
                   };
@@ -182,9 +166,9 @@ export class AgentChatStreamingService {
                   return {
                     createdAt: new Date().toISOString(),
                     usage: {
-                      inputTokens,
-                      outputTokens,
-                      cachedInputTokens,
+                      inputTokens: tokenCounts.totalInputTokens,
+                      outputTokens: tokenCounts.outputTokens,
+                      cachedInputTokens: tokenCounts.cachedInputTokens,
                       inputCredits: toDisplayCredits(inputCredits),
                       outputCredits: toDisplayCredits(outputCredits),
                       conversationSize: lastStepConversationSize,
@@ -253,4 +237,39 @@ export class AgentChatStreamingService {
       throw error;
     }
   }
+}
+
+function computeStreamCosts(
+  modelConfig: AIModelConfig,
+  totalUsage:
+    | {
+        inputTokens?: number;
+        outputTokens?: number;
+        cachedInputTokens?: number;
+        reasoningTokens?: number;
+      }
+    | undefined,
+  cacheCreationTokens: number,
+) {
+  const breakdown = computeCostBreakdown(modelConfig, {
+    inputTokens: totalUsage?.inputTokens,
+    outputTokens: totalUsage?.outputTokens,
+    cachedInputTokens: totalUsage?.cachedInputTokens,
+    reasoningTokens: totalUsage?.reasoningTokens,
+    cacheCreationTokens,
+  });
+
+  return {
+    inputCredits: Math.round(
+      convertDollarsToBillingCredits(breakdown.inputCostInDollars),
+    ),
+    outputCredits: Math.round(
+      convertDollarsToBillingCredits(breakdown.outputCostInDollars),
+    ),
+    tokenCounts: {
+      totalInputTokens: breakdown.tokenCounts.totalInputTokens,
+      outputTokens: totalUsage?.outputTokens ?? 0,
+      cachedInputTokens: breakdown.tokenCounts.cachedInputTokens,
+    },
+  };
 }

@@ -1,6 +1,6 @@
 import type { DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolder, IconLink, useIcons } from 'twenty-ui/display';
 
@@ -40,7 +40,7 @@ export const useHandleAddToNavigationDrop = () => {
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const coreViews = useRecoilValue(coreViewsState);
+  const coreViews = useRecoilValueV2(coreViewsState);
   const { getIcon } = useIcons();
   const setSelectedNavigationMenuItemInEditMode = useSetRecoilStateV2(
     selectedNavigationMenuItemInEditModeStateV2,

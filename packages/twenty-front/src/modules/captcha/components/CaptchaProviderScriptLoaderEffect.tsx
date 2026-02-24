@@ -1,19 +1,19 @@
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { getCaptchaUrlByProvider } from '@/captcha/utils/getCaptchaUrlByProvider';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { captchaState } from '@/client-config/states/captchaState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
 export const CaptchaProviderScriptLoaderEffect = () => {
-  const captcha = useRecoilValue(captchaState);
-  const setIsCaptchaScriptLoaded = useSetRecoilState(
+  const captcha = useRecoilValueV2(captchaState);
+  const setIsCaptchaScriptLoaded = useSetRecoilStateV2(
     isCaptchaScriptLoadedState,
   );
   const { isCaptchaScriptLoaded, isCaptchaConfigured } = useCaptcha();

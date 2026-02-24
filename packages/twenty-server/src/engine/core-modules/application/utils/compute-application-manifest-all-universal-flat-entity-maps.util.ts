@@ -130,17 +130,14 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
   }
 
   for (const skillManifest of manifest.skills ?? []) {
-    addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
-      {
-        metadataName: 'skill',
-        universalFlatEntity: fromSkillManifestToUniversalFlatSkill({
-          skillManifest,
-          applicationUniversalIdentifier,
-          now,
-        }),
-        universalFlatEntityAndRelatedMapsToMutate: allUniversalFlatEntityMaps,
-      },
-    );
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity: fromSkillManifestToUniversalFlatSkill({
+        skillManifest,
+        applicationUniversalIdentifier,
+        now,
+      }),
+      universalFlatEntityMapsToMutate: allUniversalFlatEntityMaps.flatSkillMaps,
+    });
   }
 
   for (const viewManifest of manifest.views ?? []) {

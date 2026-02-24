@@ -8,10 +8,11 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,24 +23,25 @@ import {
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const useLoadCurrentUser = () => {
-  const setCurrentUser = useSetRecoilState(currentUserState);
-  const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
-  const setCurrentWorkspaceMember = useSetRecoilState(
+  const setCurrentUser = useSetRecoilStateV2(currentUserState);
+  const setAvailableWorkspaces = useSetRecoilStateV2(availableWorkspacesState);
+  const setCurrentWorkspaceMember = useSetRecoilStateV2(
     currentWorkspaceMemberState,
   );
   const { setLastAuthenticateWorkspaceDomain } =
     useLastAuthenticatedWorkspaceDomain();
-  const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
-  const setCurrentWorkspaceMembers = useSetRecoilState(
+  const setCurrentUserWorkspace = useSetRecoilStateV2(
+    currentUserWorkspaceState,
+  );
+  const setCurrentWorkspaceMembers = useSetRecoilStateV2(
     currentWorkspaceMembersState,
   );
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
-  const setCoreViews = useSetRecoilState(coreViewsState);
-  const setWorkspaceAuthBypassProviders = useSetRecoilState(
+  const setCoreViews = useSetRecoilStateV2(coreViewsState);
+  const setWorkspaceAuthBypassProviders = useSetRecoilStateV2(
     workspaceAuthBypassProvidersState,
   );
   const authProviders = useRecoilValueV2(authProvidersState);

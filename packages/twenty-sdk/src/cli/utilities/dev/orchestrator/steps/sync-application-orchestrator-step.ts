@@ -7,6 +7,7 @@ import {
   type OrchestratorStateStepEvent,
   type OrchestratorStateSyncStatus,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
+import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { type Manifest } from 'twenty-shared/application';
 
 export type SyncApplicationOrchestratorStepOutput = {
@@ -73,12 +74,13 @@ export class SyncApplicationOrchestratorStep {
       return;
     }
 
-    const errorMessage = `Sync failed with error ${JSON.stringify(syncResult.error, null, 2)}`;
+    const errorMessage = `Sync failed with error: ${serializeError(syncResult.error)}`;
 
     events.push({ message: errorMessage, status: 'error' });
     step.output = { syncStatus: 'error', error: errorMessage };
     step.status = 'error';
     this.state.updatePipeline({ status: 'error', error: errorMessage });
+    this.state.updateAllEntitiesStatus('error');
     this.state.applyStepEvents(events);
   }
 }

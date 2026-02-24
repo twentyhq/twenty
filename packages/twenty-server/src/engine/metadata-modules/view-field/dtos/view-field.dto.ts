@@ -30,6 +30,9 @@ export class ViewFieldDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  viewFieldGroupId?: string | null;
+
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;
 

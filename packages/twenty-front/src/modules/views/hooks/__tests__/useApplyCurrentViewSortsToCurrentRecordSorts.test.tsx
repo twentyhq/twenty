@@ -6,6 +6,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -32,6 +33,10 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
       'Missing mock object metadata item with name singular "company"',
     );
   }
+
+  afterEach(() => {
+    jotaiStore.set(coreViewsState.atom, []);
+  });
 
   const mockFieldMetadataItem = mockObjectMetadataItem.fields.find(
     (field) => field.name === 'name',
@@ -69,6 +74,8 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
   } satisfies CoreViewWithRelations;
 
   it('should apply sorts from current view', () => {
+    jotaiStore.set(coreViewsState.atom, [mockCoreView]);
+
     const { result } = renderHook(
       () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
@@ -90,9 +97,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           contextStoreCurrentViewId: mockView.id,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(coreViewsState, [mockCoreView]);
-          },
         }),
       },
     );
@@ -111,6 +115,8 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
   });
 
   it('should not apply sorts when current view is not found', () => {
+    jotaiStore.set(coreViewsState.atom, []);
+
     const { result } = renderHook(
       () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
@@ -138,8 +144,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
               }),
               mockView.id,
             );
-
-            snapshot.set(coreViewsState, []);
           },
         }),
       },
@@ -158,6 +162,8 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
       viewSorts: [],
     };
 
+    jotaiStore.set(coreViewsState.atom, [viewWithNoSorts]);
+
     const { result } = renderHook(
       () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
@@ -185,8 +191,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
               }),
               mockView.id,
             );
-
-            snapshot.set(coreViewsState, [viewWithNoSorts]);
           },
         }),
       },

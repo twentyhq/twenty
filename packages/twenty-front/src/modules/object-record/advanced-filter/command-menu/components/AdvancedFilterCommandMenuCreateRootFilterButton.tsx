@@ -8,9 +8,9 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
@@ -27,10 +27,11 @@ export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
     rootLevelRecordFilterGroupComponentSelector,
   );
 
-  const availableFieldMetadataItemsForFilter = useRecoilValue(
-    availableFieldMetadataItemsForFilterFamilySelector({
+  const availableFieldMetadataItemsForFilter = useFamilySelectorValueV2(
+    availableFieldMetadataItemsForFilterFamilySelector,
+    {
       objectMetadataItemId: objectMetadataItem.id,
-    }),
+    },
   );
 
   const defaultFieldMetadataItem =

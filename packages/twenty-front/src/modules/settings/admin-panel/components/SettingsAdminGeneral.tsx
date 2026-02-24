@@ -10,11 +10,11 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
@@ -53,13 +53,13 @@ export const SettingsAdminGeneral = () => {
 
   const [userLookup] = useUserLookupAdminPanelMutation();
 
-  const currentUser = useRecoilValue(currentUserState);
+  const currentUser = useRecoilValueV2(currentUserState);
 
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
 
   const canImpersonate = currentUser?.canImpersonate;
 
-  const canManageFeatureFlags = useRecoilValue(canManageFeatureFlagsState);
+  const canManageFeatureFlags = useRecoilValueV2(canManageFeatureFlagsState);
 
   const handleSearch = async () => {
     setActiveTabId('');

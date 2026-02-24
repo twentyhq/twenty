@@ -18,7 +18,7 @@ concurrency:
 jobs:
   qa_report:
     name: Generate QA Report
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
