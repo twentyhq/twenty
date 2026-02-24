@@ -49,32 +49,21 @@ export const ViewMetadataProviderInitialEffect = () => {
 
   useEffect(() => {
     if (isInitialized) {
-      console.log('[ViewMetadata] effect: already initialized, skipping');
       return;
     }
     if (!isCurrentUserLoaded) {
-      console.log('[ViewMetadata] effect: waiting for current user to load');
       return;
     }
 
     if (!isLoggedIn || !isWorkspaceActiveOrSuspended(currentWorkspace)) {
-      console.log('[ViewMetadata] effect: skipping view load', {
-        isLoggedIn,
-        workspaceActivationStatus: currentWorkspace?.activationStatus,
-      });
       setIsInitialized(true);
       return;
     }
 
     const loadViews = async () => {
-      console.log('[ViewMetadata] effect: loading views');
       const result = await findAllCoreViews({
         variables: { viewTypes: INDEX_VIEW_TYPES },
         fetchPolicy: 'network-only',
-      });
-
-      console.log('[ViewMetadata] effect: views loaded', {
-        viewCount: result.data?.getCoreViews?.length ?? 0,
       });
 
       if (isDefined(result.data?.getCoreViews)) {

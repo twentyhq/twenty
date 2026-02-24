@@ -41,10 +41,22 @@ export const ViewBarRecordFilterEffect = () => {
   const { mapViewFiltersToRecordFilters } = useMapViewFiltersToFilters();
 
   useEffect(() => {
+    console.log('[ViewBarRecordFilterEffect]', {
+      hasInitializedCurrentRecordFilters,
+      hasCurrentView: isDefined(currentView),
+      currentViewId: currentView?.id,
+      filterCount: currentView?.viewFilters?.length,
+    });
+
     if (!hasInitializedCurrentRecordFilters && isDefined(currentView)) {
       if (currentView.objectMetadataId !== objectMetadataItem.id) {
         return;
       }
+
+      console.log('[ViewBarRecordFilterEffect] applying filters', {
+        viewId: currentView.id,
+        filters: currentView.viewFilters,
+      });
 
       setCurrentRecordFilters(
         mapViewFiltersToRecordFilters(currentView.viewFilters),

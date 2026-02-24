@@ -129,20 +129,10 @@ export const PageChangeEffect = () => {
   useEffect(() => {
     initializeQueryParamState();
 
-    console.log('[PageChangeEffect] redirect check:', {
-      pageChangeEffectNavigateLocation,
-      isAppEffectRedirectEnabled,
-      currentPath: location.pathname,
-    });
-
     if (
       isDefined(pageChangeEffectNavigateLocation) &&
       isAppEffectRedirectEnabled
     ) {
-      console.log(
-        '[PageChangeEffect] navigating to:',
-        pageChangeEffectNavigateLocation,
-      );
       navigate(pageChangeEffectNavigateLocation);
     }
   }, [
@@ -150,7 +140,6 @@ export const PageChangeEffect = () => {
     pageChangeEffectNavigateLocation,
     initializeQueryParamState,
     isAppEffectRedirectEnabled,
-    location.pathname,
   ]);
 
   useEffect(() => {

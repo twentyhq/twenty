@@ -29,6 +29,7 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
   const recordIndexRecordIdsByGroupCallbackState =
     useRecoilComponentFamilyStateCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
+      recordBoardIndexId,
     );
 
   const recordBoardSelectedRecordIds =

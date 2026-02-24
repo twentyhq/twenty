@@ -13,25 +13,16 @@ export const useReloadWorkspaceMetadata = () => {
   const { updateDraft, applyChanges, resetMetadataStore } = useMetadataStore();
 
   const reloadWorkspaceMetadata = useCallback(async () => {
-    console.log('[ReloadWorkspaceMetadata] start: resetting store');
     resetMetadataStore();
 
-    console.log('[ReloadWorkspaceMetadata] refreshing object metadata');
     await refreshObjectMetadataItems();
     const loadedObjects = store.get(objectMetadataItemsState.atom);
-    console.log('[ReloadWorkspaceMetadata] objects loaded:', {
-      count: loadedObjects.length,
-    });
     updateDraft('objects', loadedObjects);
     applyChanges();
 
     const loadedViews = store.get(coreViewsState.atom);
-    console.log('[ReloadWorkspaceMetadata] views from store:', {
-      count: loadedViews.length,
-    });
     updateDraft('views', loadedViews);
-    const viewsPromoted = applyChanges();
-    console.log('[ReloadWorkspaceMetadata] done', { viewsPromoted });
+    applyChanges();
   }, [
     resetMetadataStore,
     refreshObjectMetadataItems,

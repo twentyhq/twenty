@@ -302,15 +302,11 @@ export const useAuth = () => {
 
   const handleLoadWorkspaceAfterAuthentication = useCallback(
     async (authTokens: AuthTokenPair) => {
-      console.log('[Auth] handleLoadWorkspaceAfterAuthentication: start');
       handleSetAuthTokens(authTokens);
       setIsAppEffectRedirectEnabled(false);
 
-      console.log('[Auth] handleLoadWorkspaceAfterAuthentication: loading current user');
       await loadCurrentUser();
-      console.log('[Auth] handleLoadWorkspaceAfterAuthentication: reloading workspace metadata');
       await reloadWorkspaceMetadata();
-      console.log('[Auth] handleLoadWorkspaceAfterAuthentication: done');
     },
     [
       loadCurrentUser,
@@ -323,7 +319,6 @@ export const useAuth = () => {
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
       try {
-        console.log('[Auth] getAuthTokensFromLoginToken: requesting tokens');
         const getAuthTokensResult = await getAuthTokensFromLoginToken({
           variables: {
             loginToken: loginToken,
@@ -339,13 +334,10 @@ export const useAuth = () => {
           throw new Error('No getAuthTokensFromLoginToken result');
         }
 
-        console.log('[Auth] getAuthTokensFromLoginToken: tokens received, loading workspace');
         await handleLoadWorkspaceAfterAuthentication(
           getAuthTokensResult.data.getAuthTokensFromLoginToken.tokens,
         );
-        console.log('[Auth] getAuthTokensFromLoginToken: complete');
       } catch (error) {
-        console.error('[Auth] getAuthTokensFromLoginToken: error', error);
         if (
           error instanceof ApolloError &&
           error.graphQLErrors[0]?.extensions?.subCode ===

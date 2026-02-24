@@ -15,9 +15,8 @@ import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   useGetCurrentUserQuery,
@@ -25,10 +24,8 @@ import {
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const UserMetadataProviderInitialEffect = () => {
-  const location = useLocation();
   const isLoggedIn = useIsLogged();
   const currentUser = useRecoilValueV2(currentUserState);
   const store = useStore();
@@ -53,10 +50,6 @@ export const UserMetadataProviderInitialEffect = () => {
 
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
 
-  const isOnAuthPath =
-    isMatchingLocation(location, AppPath.Verify) ||
-    isMatchingLocation(location, AppPath.VerifyEmail);
-
   const updateLocaleCatalog = useCallback(
     async (newLocale: keyof typeof APP_LOCALES) => {
       const localeValue = store.get(dateLocaleState.atom);
@@ -75,14 +68,6 @@ export const UserMetadataProviderInitialEffect = () => {
 
   const shouldSkipUserQuery = !isLoggedIn || isDefined(currentUser);
 
-  console.log('[UserMetadata] state:', {
-    isLoggedIn,
-    isOnAuthPath,
-    isInitialized,
-    shouldSkipUserQuery,
-    hasCurrentUser: isDefined(currentUser),
-  });
-
   const { data: userQueryData, loading: userQueryLoading } =
     useGetCurrentUserQuery({
       skip: shouldSkipUserQuery,
@@ -90,24 +75,16 @@ export const UserMetadataProviderInitialEffect = () => {
 
   useEffect(() => {
     if (isInitialized) {
-      console.log('[UserMetadata] effect: already initialized, skipping');
       return;
     }
 
     if (!isLoggedIn) {
-      console.log(
-        '[UserMetadata] effect: not logged in, marking user as loaded',
-      );
       setIsCurrentUserLoaded(true);
       setIsInitialized(true);
       return;
     }
 
     if (userQueryLoading || !isDefined(userQueryData?.currentUser)) {
-      console.log('[UserMetadata] effect: waiting for user query', {
-        userQueryLoading,
-        hasUserData: isDefined(userQueryData?.currentUser),
-      });
       return;
     }
 
@@ -183,7 +160,6 @@ export const UserMetadataProviderInitialEffect = () => {
       setAvailableWorkspaces(availableWorkspaces);
     }
 
-    console.log('[UserMetadata] effect: user loaded successfully');
     setIsCurrentUserLoaded(true);
     setIsInitialized(true);
   }, [

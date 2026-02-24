@@ -51,6 +51,13 @@ export const RecordTable = () => {
   const recordTableIsEmpty =
     !isRecordTableInitialLoading && !recordTableHasRecords;
 
+  console.log('[RecordTable] render', {
+    isRecordTableInitialLoading,
+    recordTableHasRecords,
+    recordTableIsEmpty,
+    hasRecordGroups,
+  });
+
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
   }

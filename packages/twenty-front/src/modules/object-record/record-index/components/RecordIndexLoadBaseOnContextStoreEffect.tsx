@@ -25,16 +25,31 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
 
   useEffect(() => {
     if (loadedViewId === contextStoreCurrentViewId) {
+      console.log('[RecordIndexLoadBaseOnContextStoreEffect] already loaded', {
+        viewId: contextStoreCurrentViewId,
+      });
       return;
     }
 
     if (!isDefined(objectMetadataItem)) {
+      console.log(
+        '[RecordIndexLoadBaseOnContextStoreEffect] no objectMetadataItem',
+      );
       return;
     }
 
     if (isDefined(view)) {
+      console.log('[RecordIndexLoadBaseOnContextStoreEffect] loading view', {
+        viewId: view.id,
+        filterCount: view.viewFilters?.length,
+        sortCount: view.viewSorts?.length,
+      });
       loadRecordIndexStates(view, objectMetadataItem);
       setLoadedViewId(contextStoreCurrentViewId);
+    } else {
+      console.log('[RecordIndexLoadBaseOnContextStoreEffect] no view yet', {
+        contextStoreCurrentViewId,
+      });
     }
   }, [
     contextStoreCurrentViewId,

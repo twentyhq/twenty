@@ -78,6 +78,14 @@ export const MainContextStoreProvider = () => {
     !showAuthModal &&
     viewsEntry.status === 'loaded';
 
+  console.log('[MainContextStoreProvider]', {
+    shouldComputeContextStore,
+    viewId,
+    viewsStatus: viewsEntry.status,
+    objectMetadataItemId: objectMetadataItem?.id,
+    viewIdQueryParam,
+  });
+
   if (!shouldComputeContextStore) {
     return null;
   }

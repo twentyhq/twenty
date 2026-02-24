@@ -60,9 +60,6 @@ export const useRefreshObjectMetadataItems = (
       }
 
       if (store.get(isAppEffectRedirectEnabledState.atom) === false) {
-        console.log(
-          '[RefreshObjectMetadata] re-enabling app redirect',
-        );
         store.set(isAppEffectRedirectEnabledState.atom, true);
       }
 

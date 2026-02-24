@@ -114,8 +114,16 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       );
 
       if (isInitializingVirtualTableDataLoading) {
+        console.log(
+          '[TriggerInitialDataLoad] skipping: already initializing',
+        );
         return;
       }
+
+      console.log('[TriggerInitialDataLoad] starting fetch', {
+        showAuthModal,
+        shouldScrollToStart,
+      });
 
       store.set(isInitializingVirtualTableDataLoadingCallbackState, true);
 
@@ -167,6 +175,11 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         totalCount = findManyTotalCount;
       }
 
+      console.log('[TriggerInitialDataLoad] fetch complete', {
+        recordCount: records?.length,
+        totalCount,
+      });
+
       store.set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
 
       if (isDefined(records)) {
@@ -184,6 +197,8 @@ export const useTriggerInitialRecordTableDataLoad = () => {
 
       store.set(isInitializingVirtualTableDataLoadingCallbackState, false);
       store.set(isRecordTableInitialLoading, false);
+
+      console.log('[TriggerInitialDataLoad] done, table no longer loading');
 
       store.set(lastScrollPositionCallbackState, 0);
       store.set(lastRealIndexSetCallbackState, null);

@@ -28,15 +28,6 @@ export const MetadataGater = ({ children }: React.PropsWithChildren) => {
     (!isAppMetadataReady && isLoggedIn && !isOnExcludedPath) ||
     objectMetadataItems.length === 0;
 
-  console.log('[MetadataGater]', {
-    isAppMetadataReady,
-    isLoggedIn,
-    isOnExcludedPath,
-    objectMetadataItemsCount: objectMetadataItems.length,
-    shouldShowLoader,
-    pathname: location.pathname,
-  });
-
   if (shouldShowLoader) {
     return <UserOrMetadataLoader />;
   }

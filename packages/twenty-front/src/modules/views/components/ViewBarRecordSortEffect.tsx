@@ -38,12 +38,24 @@ export const ViewBarRecordSortEffect = () => {
   );
 
   useEffect(() => {
+    console.log('[ViewBarRecordSortEffect]', {
+      hasInitializedCurrentRecordSorts,
+      hasCurrentView: isDefined(currentView),
+      currentViewId: currentView?.id,
+      sortCount: currentView?.viewSorts?.length,
+    });
+
     if (isDefined(currentView) && !hasInitializedCurrentRecordSorts) {
       if (currentView.objectMetadataId !== objectMetadataItem.id) {
         return;
       }
 
       if (isDefined(currentView)) {
+        console.log('[ViewBarRecordSortEffect] applying sorts', {
+          viewId: currentView.id,
+          sorts: currentView.viewSorts,
+        });
+
         setCurrentRecordSorts(currentView.viewSorts);
         setHasInitializedCurrentRecordSorts(true);
       }

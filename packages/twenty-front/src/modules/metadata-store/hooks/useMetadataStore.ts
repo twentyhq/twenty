@@ -59,14 +59,8 @@ export const useMetadataStore = () => {
         currentEntry.status === 'loaded' &&
         isDeeplyEqual(currentEntry.current, data)
       ) {
-        console.log(`[MetadataStore] updateDraft(${key}): no change, skipping`);
         return;
       }
-
-      console.log(`[MetadataStore] updateDraft(${key}):`, {
-        previousStatus: currentEntry.status,
-        itemCount: data.length,
-      });
 
       store.set(metadataStoreState.atomFamily(key), (prev) => ({
         ...prev,
@@ -88,7 +82,6 @@ export const useMetadataStore = () => {
       const entry = store.get(metadataStoreState.atomFamily(key));
 
       if (entry.status === 'draft_pending') {
-        console.log(`[MetadataStore] applyChanges: promoting ${key}`);
         promoteEntry(store, key);
         promoted = true;
       }
@@ -102,17 +95,11 @@ export const useMetadataStore = () => {
       if (
         areViewsConsistentWithObjects(viewsEntry.draft, objectsEntry.current)
       ) {
-        console.log('[MetadataStore] applyChanges: promoting views');
         promoteEntry(store, 'views');
         promoted = true;
-      } else {
-        console.log(
-          '[MetadataStore] applyChanges: views draft inconsistent with objects, deferring',
-        );
       }
     }
 
-    console.log('[MetadataStore] applyChanges result:', { promoted });
     return promoted;
   }, [store]);
 
