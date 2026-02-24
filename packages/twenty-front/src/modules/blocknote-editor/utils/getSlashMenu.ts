@@ -1,6 +1,6 @@
 import { getDefaultReactSlashMenuItems } from '@blocknote/react';
 
-import { type SuggestionItem } from '@/blocknote-editor/components/CustomSlashMenu';
+import { type SuggestionItem } from '@/blocknote-editor/types/types';
 
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import {
