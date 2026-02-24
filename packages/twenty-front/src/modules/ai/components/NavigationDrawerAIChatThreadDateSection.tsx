@@ -58,7 +58,7 @@ export const NavigationDrawerAIChatThreadDateSection = ({
           return (
             <NavigationDrawerItem
               key={thread.id}
-              label={thread.title || t`Untitled`}
+              label={thread.title || t`New chat`}
               Icon={IconComment}
               active={isActive}
               onClick={() => onThreadClick(thread)}
