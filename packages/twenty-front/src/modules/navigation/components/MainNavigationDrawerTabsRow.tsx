@@ -10,10 +10,11 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import {
   type NavigationDrawerActiveTab,
-  navigationDrawerActiveTabState,
-} from '@/ui/navigation/states/navigationDrawerActiveTabState';
+  NAVIGATION_DRAWER_TABS,
+} from '@/ui/navigation/states/navigationDrawerTabs';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
@@ -162,34 +163,42 @@ export const MainNavigationDrawerTabsRow = () => {
       {isExpanded && (
         <StyledTabsPill role="tablist" aria-label={t`Navigation tabs`}>
           <StyledTabWrapper
-            isActive={activeTab === 'home'}
+            isActive={activeTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU}
             role="tab"
-            aria-selected={activeTab === 'home'}
+            aria-selected={activeTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU}
             aria-label={t`Home`}
-            tabIndex={activeTab === 'home' ? 0 : -1}
-            onClick={handleTabClick('home')}
-            onKeyDown={handleTabKeyDown('home')}
+            tabIndex={
+              activeTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU ? 0 : -1
+            }
+            onClick={handleTabClick(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU)}
+            onKeyDown={handleTabKeyDown(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU)}
           >
             <StyledTabIcon>
               <IconHome
                 size={theme.icon.size.sm}
-                color={getTabIconColor(activeTab === 'home')}
+                color={getTabIconColor(
+                  activeTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+                )}
               />
             </StyledTabIcon>
           </StyledTabWrapper>
           <StyledTabWrapper
-            isActive={activeTab === 'chat'}
+            isActive={activeTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY}
             role="tab"
-            aria-selected={activeTab === 'chat'}
+            aria-selected={activeTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY}
             aria-label={t`Chat`}
-            tabIndex={activeTab === 'chat' ? 0 : -1}
-            onClick={handleTabClick('chat')}
-            onKeyDown={handleTabKeyDown('chat')}
+            tabIndex={
+              activeTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY ? 0 : -1
+            }
+            onClick={handleTabClick(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY)}
+            onKeyDown={handleTabKeyDown(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY)}
           >
             <StyledTabIcon>
               <IconComment
                 size={theme.icon.size.sm}
-                color={getTabIconColor(activeTab === 'chat')}
+                color={getTabIconColor(
+                  activeTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+                )}
               />
             </StyledTabIcon>
           </StyledTabWrapper>
