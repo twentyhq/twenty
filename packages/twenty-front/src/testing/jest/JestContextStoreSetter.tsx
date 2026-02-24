@@ -1,4 +1,4 @@
-import { type PropsWithChildren, useEffect, useState } from 'react';
+import { type PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -7,6 +7,7 @@ import { contextStoreFilterGroupsComponentState } from '@/context-store/states/c
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import {
   type ContextStoreTargetedRecordsRule,
   contextStoreTargetedRecordsRuleComponentState,
@@ -42,41 +43,47 @@ export const JestContextStoreSetter = ({
   contextStoreCurrentViewType,
   children,
 }: JestContextStoreSetterProps) => {
+  const contextStoreInstanceContext = useContext(
+    ContextStoreComponentInstanceContext,
+  );
+  const instanceId =
+    contextStoreInstanceContext?.instanceId ?? MAIN_CONTEXT_STORE_INSTANCE_ID;
+
   const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
     contextStoreTargetedRecordsRuleComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
+    instanceId,
   );
 
   const setContextStoreCurrentObjectMetadataItemId =
     useSetRecoilComponentStateV2(
       contextStoreCurrentObjectMetadataItemIdComponentState,
-      MAIN_CONTEXT_STORE_INSTANCE_ID,
+      instanceId,
     );
 
   const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
     contextStoreNumberOfSelectedRecordsComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
+    instanceId,
   );
 
   const setContextStoreFiltersComponentState = useSetRecoilComponentStateV2(
     contextStoreFiltersComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
+    instanceId,
   );
 
   const setContextStoreFilterGroupsComponentState =
     useSetRecoilComponentStateV2(
       contextStoreFilterGroupsComponentState,
-      MAIN_CONTEXT_STORE_INSTANCE_ID,
+      instanceId,
     );
 
   const setContextStoreCurrentViewId = useSetRecoilComponentStateV2(
     contextStoreCurrentViewIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
+    instanceId,
   );
 
   const setContextStoreCurrentViewType = useSetRecoilComponentStateV2(
     contextStoreCurrentViewTypeComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
+    instanceId,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({

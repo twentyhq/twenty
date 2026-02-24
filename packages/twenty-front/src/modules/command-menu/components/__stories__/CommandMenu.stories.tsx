@@ -3,12 +3,10 @@ import {
   type Meta,
   type StoryObj,
 } from '@storybook/react-vite';
-import { useEffect, useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -74,44 +72,24 @@ const meta: Meta<typeof CommandMenu> = {
   component: CommandMenuRouter,
   decorators: [
     (Story) => {
-      const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
-      const setCurrentUserWorkspace = useSetRecoilStateV2(
-        currentUserWorkspaceState,
+      jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+      jotaiStore.set(
+        currentWorkspaceMemberState.atom,
+        mockedWorkspaceMemberData,
       );
-      const setCurrentWorkspaceMember = useSetRecoilStateV2(
-        currentWorkspaceMemberState,
+      jotaiStore.set(
+        currentUserWorkspaceState.atom,
+        mockedUserData.currentUserWorkspace,
       );
-      const setCommandMenuNavigationStack = useSetRecoilStateV2(
-        commandMenuNavigationStackState,
-      );
-
-      const [isLoaded, setIsLoaded] = useState(false);
-
-      useEffect(() => {
-        setCurrentWorkspace(mockCurrentWorkspace);
-        setCurrentWorkspaceMember(mockedWorkspaceMemberData);
-        setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
-
-        jotaiStore.set(isCommandMenuOpenedStateV2.atom, true);
-        setCommandMenuNavigationStack([
-          {
-            page: CommandMenuPages.Root,
-            pageTitle: 'Command Menu',
-            pageIcon: IconDotsVertical,
-            pageId: '1',
-          },
-        ]);
-        setIsLoaded(true);
-      }, [
-        setCurrentWorkspace,
-        setCurrentWorkspaceMember,
-        setCurrentUserWorkspace,
-        setCommandMenuNavigationStack,
+      jotaiStore.set(isCommandMenuOpenedStateV2.atom, true);
+      jotaiStore.set(commandMenuNavigationStackState.atom, [
+        {
+          page: CommandMenuPages.Root,
+          pageTitle: 'Command Menu',
+          pageIcon: IconDotsVertical,
+          pageId: '1',
+        },
       ]);
-
-      if (!isLoaded) {
-        return <></>;
-      }
 
       return <Story />;
     },
@@ -151,22 +129,10 @@ export const LimitedPermissions: Story = {
   },
   decorators: [
     (Story) => {
-      const setCurrentUserWorkspace = useSetRecoilStateV2(
-        currentUserWorkspaceState,
+      jotaiStore.set(
+        currentUserWorkspaceState.atom,
+        mockedLimitedPermissionsUserData.currentUserWorkspace,
       );
-
-      const [isLoaded, setIsLoaded] = useState(false);
-
-      useEffect(() => {
-        setCurrentUserWorkspace(
-          mockedLimitedPermissionsUserData.currentUserWorkspace,
-        );
-        setIsLoaded(true);
-      }, [setCurrentUserWorkspace]);
-
-      if (!isLoaded) {
-        return <></>;
-      }
 
       return <Story />;
     },
