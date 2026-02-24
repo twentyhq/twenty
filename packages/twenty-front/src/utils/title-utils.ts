@@ -54,6 +54,6 @@ export const getPageTitleFromPath = (pathname: string): string => {
     case SettingsPathPrefixes.General:
       return t`General - Settings`;
     default:
-      return 'Twenty';
+      return 'Omnia';
   }
 };
