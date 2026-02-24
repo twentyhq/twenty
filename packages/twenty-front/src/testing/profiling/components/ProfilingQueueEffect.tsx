@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
 
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { TIME_BETWEEN_TEST_RUNS_IN_MS } from '~/testing/profiling/constants/TimeBetweenTestRunsInMs';
 import { currentProfilingRunIndexState } from '~/testing/profiling/states/currentProfilingRunIndexState';
 import { profilingQueueState } from '~/testing/profiling/states/profilingQueueState';
@@ -21,18 +21,18 @@ export const ProfilingQueueEffect = ({
   warmUpRounds: number;
 }) => {
   const [currentProfilingRunIndex, setCurrentProfilingRunIndex] =
-    useRecoilState(currentProfilingRunIndexState);
+    useRecoilStateV2(currentProfilingRunIndexState);
 
-  const [profilingSessionStatus, setProfilingSessionStatus] = useRecoilState(
+  const [profilingSessionStatus, setProfilingSessionStatus] = useRecoilStateV2(
     profilingSessionStatusState,
   );
 
-  const [profilingSessionRuns, setProfilingSessionRuns] = useRecoilState(
+  const [profilingSessionRuns, setProfilingSessionRuns] = useRecoilStateV2(
     profilingSessionRunsState,
   );
 
   const [profilingQueue, setProfilingQueue] =
-    useRecoilState(profilingQueueState);
+    useRecoilStateV2(profilingQueueState);
 
   useEffect(() => {
     (async () => {

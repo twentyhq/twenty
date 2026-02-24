@@ -1,8 +1,8 @@
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPickerModeComponentState';
 
 export const useViewPickerMode = (viewBarComponentId?: string) => {
-  const [viewPickerMode, setViewPickerMode] = useRecoilComponentState(
+  const [viewPickerMode, setViewPickerMode] = useRecoilComponentStateV2(
     viewPickerModeComponentState,
     viewBarComponentId,
   );

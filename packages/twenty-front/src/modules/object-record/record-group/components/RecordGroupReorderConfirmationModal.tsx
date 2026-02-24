@@ -1,7 +1,7 @@
 import { RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID } from '@/object-record/record-group/constants/RecordGroupReorderConfirmationModalId';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
@@ -13,7 +13,7 @@ type RecordGroupReorderConfirmationModalProps = {
 export const RecordGroupReorderConfirmationModal = ({
   onConfirmClick,
 }: RecordGroupReorderConfirmationModalProps): ReactNode => {
-  const recordGroupSort = useRecoilComponentValue(
+  const recordGroupSort = useRecoilComponentValueV2(
     recordIndexRecordGroupSortComponentState,
   );
 

@@ -1,13 +1,13 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
   const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
-  const groupFieldMetadata = useRecoilComponentValue(
+  const groupFieldMetadata = useRecoilComponentValueV2(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 

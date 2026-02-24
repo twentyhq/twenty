@@ -3,7 +3,7 @@ import { agentChatSelectedFilesStateV2 } from '@/ai/states/agentChatSelectedFile
 import { agentChatUploadedFilesStateV2 } from '@/ai/states/agentChatUploadedFilesStateV2';
 import { agentChatUsageStateV2 } from '@/ai/states/agentChatUsageStateV2';
 import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
-import { currentAIChatThreadTitleStateV2 } from '@/ai/states/currentAIChatThreadTitleStateV2';
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 
 import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
@@ -26,7 +26,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
   const { getBrowsingContext } = useGetBrowsingContext();
   const setCurrentAIChatThreadTitle = useSetRecoilStateV2(
-    currentAIChatThreadTitleStateV2,
+    currentAIChatThreadTitleState,
   );
 
   const agentChatSelectedFiles = useRecoilValueV2(

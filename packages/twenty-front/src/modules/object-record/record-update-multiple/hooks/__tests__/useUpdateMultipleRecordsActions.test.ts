@@ -1,7 +1,7 @@
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useIncrementalUpdateManyRecords } from '@/object-record/hooks/useIncrementalUpdateManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { renderHook } from '@testing-library/react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
@@ -11,7 +11,7 @@ jest.mock('@/context-store/utils/computeContextStoreFilters');
 jest.mock('@/object-record/hooks/useIncrementalUpdateManyRecords');
 jest.mock('@/object-record/record-filter/hooks/useFilterValueDependencies');
 jest.mock('@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow');
-jest.mock('@/ui/utilities/state/component-state/hooks/useRecoilComponentValue');
+jest.mock('@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2');
 
 const mockComputeContextStoreFilters = jest.mocked(computeContextStoreFilters);
 const mockUseIncrementalUpdateManyRecords = jest.mocked(
@@ -21,7 +21,7 @@ const mockUseFilterValueDependencies = jest.mocked(useFilterValueDependencies);
 const mockUseContextStoreObjectMetadataItemOrThrow = jest.mocked(
   useContextStoreObjectMetadataItemOrThrow,
 );
-const mockUseRecoilComponentValue = jest.mocked(useRecoilComponentValue);
+const mockUseRecoilComponentValueV2 = jest.mocked(useRecoilComponentValueV2);
 
 describe('useUpdateMultipleRecordsActions', () => {
   const mockIncrementalUpdateManyRecords = jest.fn();
@@ -45,7 +45,7 @@ describe('useUpdateMultipleRecordsActions', () => {
       filterValueDependencies: {},
     } as any);
 
-    mockUseRecoilComponentValue.mockReturnValue({});
+    mockUseRecoilComponentValueV2.mockReturnValue({});
 
     mockComputeContextStoreFilters.mockReturnValue('mock-filter' as any);
   });

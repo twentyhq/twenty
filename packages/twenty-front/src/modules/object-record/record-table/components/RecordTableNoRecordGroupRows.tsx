@@ -4,12 +4,12 @@ import { RecordTableVirtualizedBodyPlaceholder } from '@/object-record/record-ta
 import { RecordTableVirtualizedDebugHelper } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDebugHelper';
 import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { getContiguousIncrementalValues } from 'twenty-shared/utils';
 
 export const RecordTableNoRecordGroupRows = () => {
   const totalNumberOfRecordsToVirtualize =
-    useRecoilComponentValue(totalNumberOfRecordsToVirtualizeComponentState) ??
+    useRecoilComponentValueV2(totalNumberOfRecordsToVirtualizeComponentState) ??
     0;
 
   const numberOfRows = Math.min(

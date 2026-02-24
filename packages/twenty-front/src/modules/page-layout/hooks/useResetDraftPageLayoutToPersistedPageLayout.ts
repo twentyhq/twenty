@@ -8,9 +8,9 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useResetDraftPageLayoutToPersistedPageLayout = (
@@ -25,17 +25,17 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
   const tabListComponentInstanceId =
     getTabListInstanceIdFromPageLayoutId(componentInstanceId);
 
-  const pageLayoutDraftState = useRecoilComponentCallbackState(
+  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraftComponentState,
     componentInstanceId,
   );
 
-  const pageLayoutPersistedState = useRecoilComponentCallbackState(
+  const pageLayoutPersistedState = useRecoilComponentStateCallbackStateV2(
     pageLayoutPersistedComponentState,
     componentInstanceId,
   );
 
-  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+  const pageLayoutCurrentLayoutsState = useRecoilComponentStateCallbackStateV2(
     pageLayoutCurrentLayoutsComponentState,
     componentInstanceId,
   );
@@ -44,64 +44,56 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     instanceId: tabListComponentInstanceId,
   });
 
-  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetGroupsDraftState = useRecoilComponentStateCallbackStateV2(
     fieldsWidgetGroupsDraftComponentState,
     componentInstanceId,
   );
 
-  const fieldsWidgetGroupsPersistedState = useRecoilComponentCallbackState(
-    fieldsWidgetGroupsPersistedComponentState,
-    componentInstanceId,
-  );
+  const fieldsWidgetGroupsPersistedState =
+    useRecoilComponentStateCallbackStateV2(
+      fieldsWidgetGroupsPersistedComponentState,
+      componentInstanceId,
+    );
 
-  const resetDraftPageLayoutToPersistedPageLayout = useRecoilCallback(
-    ({ set, snapshot }) =>
-      () => {
-        const pageLayoutPersisted = snapshot
-          .getLoadable(pageLayoutPersistedState)
-          .getValue();
+  const resetDraftPageLayoutToPersistedPageLayout = useCallback(() => {
+    const pageLayoutPersisted = store.get(pageLayoutPersistedState);
 
-        if (isDefined(pageLayoutPersisted)) {
-          const currentActiveTabId = store.get(activeTabIdAtom);
+    if (isDefined(pageLayoutPersisted)) {
+      const currentActiveTabId = store.get(activeTabIdAtom);
 
-          const persistedTabIds = pageLayoutPersisted.tabs.map((tab) => tab.id);
-          const isActiveTabInPersistedTabs =
-            currentActiveTabId && persistedTabIds.includes(currentActiveTabId);
+      const persistedTabIds = pageLayoutPersisted.tabs.map((tab) => tab.id);
+      const isActiveTabInPersistedTabs =
+        currentActiveTabId && persistedTabIds.includes(currentActiveTabId);
 
-          if (
-            !isActiveTabInPersistedTabs &&
-            pageLayoutPersisted.tabs.length > 0
-          ) {
-            store.set(activeTabIdAtom, pageLayoutPersisted.tabs[0].id);
-          }
+      if (!isActiveTabInPersistedTabs && pageLayoutPersisted.tabs.length > 0) {
+        store.set(activeTabIdAtom, pageLayoutPersisted.tabs[0].id);
+      }
 
-          set(pageLayoutDraftState, {
-            id: pageLayoutPersisted.id,
-            name: pageLayoutPersisted.name,
-            type: pageLayoutPersisted.type,
-            objectMetadataId: pageLayoutPersisted.objectMetadataId,
-            tabs: pageLayoutPersisted.tabs,
-          });
+      store.set(pageLayoutDraftState, {
+        id: pageLayoutPersisted.id,
+        name: pageLayoutPersisted.name,
+        type: pageLayoutPersisted.type,
+        objectMetadataId: pageLayoutPersisted.objectMetadataId,
+        tabs: pageLayoutPersisted.tabs,
+      });
 
-          const tabLayouts = convertPageLayoutToTabLayouts(pageLayoutPersisted);
-          set(pageLayoutCurrentLayoutsState, tabLayouts);
+      const tabLayouts = convertPageLayoutToTabLayouts(pageLayoutPersisted);
+      store.set(pageLayoutCurrentLayoutsState, tabLayouts);
 
-          const fieldsWidgetGroupsPersisted = snapshot
-            .getLoadable(fieldsWidgetGroupsPersistedState)
-            .getValue();
-          set(fieldsWidgetGroupsDraftState, fieldsWidgetGroupsPersisted);
-        }
-      },
-    [
-      pageLayoutDraftState,
-      pageLayoutPersistedState,
-      pageLayoutCurrentLayoutsState,
-      fieldsWidgetGroupsDraftState,
-      fieldsWidgetGroupsPersistedState,
-      activeTabIdAtom,
-      store,
-    ],
-  );
+      const fieldsWidgetGroupsPersisted = store.get(
+        fieldsWidgetGroupsPersistedState,
+      );
+      store.set(fieldsWidgetGroupsDraftState, fieldsWidgetGroupsPersisted);
+    }
+  }, [
+    pageLayoutDraftState,
+    pageLayoutPersistedState,
+    pageLayoutCurrentLayoutsState,
+    fieldsWidgetGroupsDraftState,
+    fieldsWidgetGroupsPersistedState,
+    activeTabIdAtom,
+    store,
+  ]);
 
   return {
     resetDraftPageLayoutToPersistedPageLayout,

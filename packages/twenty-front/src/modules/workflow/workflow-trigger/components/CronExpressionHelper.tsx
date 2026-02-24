@@ -5,11 +5,11 @@ import { calculateNextExecutionsForMinuteInterval } from '@/workflow/workflow-tr
 import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/convertScheduleToCronExpression';
 import { normalizeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/normalizeCronExpression';
 import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { CronExpressionParser } from 'cron-parser';
-import { useRecoilValue } from 'recoil';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
 const getNextExecutions = (
@@ -93,7 +93,7 @@ export const CronExpressionHelper = ({
   isUpcomingExecutionVisible = true,
 }: CronExpressionHelperProps) => {
   const { timeZone, dateFormat, timeFormat } = useDateTimeFormat();
-  const dateLocale = useRecoilValue(dateLocaleState);
+  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
 
   if (!isVisible) {
     return null;

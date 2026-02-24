@@ -1,12 +1,11 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { dataLoadingStatusByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentState';
-import { createComponentFamilySelector } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelector';
-import { type DefaultValue } from 'recoil';
+import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilySelectorV2';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const dataLoadingStatusByRealIndexComponentFamilySelector =
-  createComponentFamilySelector<
+  createComponentFamilySelectorV2<
     'loaded' | 'not-loaded' | undefined,
     Nullable<number>
   >({
@@ -18,9 +17,8 @@ export const dataLoadingStatusByRealIndexComponentFamilySelector =
         const realIndex = familyKey;
 
         const dataLoadingStatusByRealIndex = get(
-          dataLoadingStatusByRealIndexComponentState.atomFamily({
-            instanceId,
-          }),
+          dataLoadingStatusByRealIndexComponentState,
+          { instanceId },
         );
 
         if (!isDefined(realIndex)) {
@@ -30,38 +28,5 @@ export const dataLoadingStatusByRealIndexComponentFamilySelector =
         const dataLoadingStatus = dataLoadingStatusByRealIndex.get(realIndex);
 
         return dataLoadingStatus;
-      },
-    set:
-      ({ familyKey, instanceId }) =>
-      (
-        { get, set },
-        newValue: 'loaded' | 'not-loaded' | DefaultValue | undefined,
-      ) => {
-        if (!isDefined(familyKey)) {
-          return;
-        }
-
-        const actualDataLoadingStatusByRealIndex = get(
-          dataLoadingStatusByRealIndexComponentState.atomFamily({
-            instanceId,
-          }),
-        );
-
-        const newDataLoadingStatusByRealIndex = new Map(
-          actualDataLoadingStatusByRealIndex,
-        );
-
-        if (newValue === 'loaded') {
-          newDataLoadingStatusByRealIndex.set(familyKey, 'loaded');
-        } else {
-          newDataLoadingStatusByRealIndex.set(familyKey, 'not-loaded');
-        }
-
-        set(
-          dataLoadingStatusByRealIndexComponentState.atomFamily({
-            instanceId,
-          }),
-          newDataLoadingStatusByRealIndex,
-        );
       },
   });

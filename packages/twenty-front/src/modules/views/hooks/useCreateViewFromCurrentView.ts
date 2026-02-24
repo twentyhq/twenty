@@ -4,9 +4,8 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { usePerformViewFilterAPIPersist } from '@/views/hooks/internal/usePerformViewFilterAPIPersist';
@@ -23,7 +22,7 @@ import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFi
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
@@ -32,13 +31,16 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { performViewAPICreate } = usePerformViewAPIPersist();
 
-  const currentViewIdCallbackState = useRecoilComponentCallbackState(
+  const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
+
+  const currentViewIdAtom = useRecoilComponentStateCallbackStateV2(
     contextStoreCurrentViewIdComponentState,
     viewBarComponentId,
   );
 
-  const anyFieldFilterValue = useRecoilComponentValue(
+  const anyFieldFilterValue = useRecoilComponentValueV2(
     anyFieldFilterValueComponentState,
+    recordIndexId,
   );
 
   const { performViewFieldAPICreate } = usePerformViewFieldAPIPersist();
@@ -50,196 +52,193 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { performViewFilterGroupAPICreate } =
     usePerformViewFilterGroupAPIPersist();
 
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
-
   const store = useStore();
 
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
 
-  const currentRecordFilterGroups = useRecoilComponentValue(
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
     currentRecordFilterGroupsComponentState,
+    recordIndexId,
   );
 
-  const currentRecordSorts = useRecoilComponentValue(
+  const currentRecordSorts = useRecoilComponentValueV2(
     currentRecordSortsComponentState,
+    recordIndexId,
   );
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
+    recordIndexId,
   );
 
-  const createViewFromCurrentView = useRecoilCallback(
-    ({ snapshot }) =>
-      async (
+  const createViewFromCurrentView = useCallback(
+    async (
+      {
+        id,
+        name,
+        icon,
+        mainGroupByFieldMetadataId,
+        calendarFieldMetadataId,
+        type,
+        visibility,
+      }: Partial<
+        Pick<
+          GraphQLView,
+          | 'id'
+          | 'name'
+          | 'icon'
+          | 'mainGroupByFieldMetadataId'
+          | 'calendarFieldMetadataId'
+          | 'type'
+          | 'visibility'
+        >
+      >,
+      shouldCopyFiltersAndSortsAndAggregate?: boolean,
+    ): Promise<string | undefined> => {
+      const currentViewId = store.get(currentViewIdAtom);
+
+      if (!isDefined(currentViewId)) {
+        return undefined;
+      }
+
+      const sourceView = store.get(
+        coreViewFromViewIdFamilySelector.selectorFamily({
+          viewId: currentViewId,
+        }),
+      );
+
+      if (!isDefined(sourceView)) {
+        return undefined;
+      }
+
+      const viewType = type ?? sourceView.type;
+
+      const result = await performViewAPICreate(
         {
-          id,
-          name,
-          icon,
-          mainGroupByFieldMetadataId,
-          calendarFieldMetadataId,
-          type,
-          visibility,
-        }: Partial<
-          Pick<
-            GraphQLView,
-            | 'id'
-            | 'name'
-            | 'icon'
-            | 'mainGroupByFieldMetadataId'
-            | 'calendarFieldMetadataId'
-            | 'type'
-            | 'visibility'
-          >
-        >,
-        shouldCopyFiltersAndSortsAndAggregate?: boolean,
-      ): Promise<string | undefined> => {
-        const currentViewId = getSnapshotValue(
-          snapshot,
-          currentViewIdCallbackState,
+          input: {
+            id: id ?? v4(),
+            name: name ?? sourceView.name,
+            icon: icon ?? sourceView.icon,
+            key: null,
+            kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
+              ? sourceView.kanbanAggregateOperation
+              : undefined,
+            kanbanAggregateOperationFieldMetadataId:
+              shouldCopyFiltersAndSortsAndAggregate
+                ? sourceView.kanbanAggregateOperationFieldMetadataId
+                : undefined,
+            mainGroupByFieldMetadataId: shouldCopyFiltersAndSortsAndAggregate
+              ? sourceView.mainGroupByFieldMetadataId
+              : mainGroupByFieldMetadataId,
+            type: convertViewTypeToCore(viewType),
+            objectMetadataId: sourceView.objectMetadataId,
+            openRecordIn: convertViewOpenRecordInToCore(
+              sourceView.openRecordIn,
+            ),
+            anyFieldFilterValue: anyFieldFilterValue,
+            calendarLayout:
+              viewType === ViewType.Calendar
+                ? ViewCalendarLayout.MONTH
+                : undefined,
+            calendarFieldMetadataId:
+              viewType === ViewType.Calendar
+                ? calendarFieldMetadataId
+                : undefined,
+            visibility,
+          },
+        },
+        objectMetadataItem.id,
+      );
+
+      if (result.status === 'failed') {
+        return undefined;
+      }
+
+      const newViewId = result.response.data?.createCoreView.id;
+
+      if (isUndefinedOrNull(newViewId)) {
+        throw new Error('Failed to create view');
+      }
+
+      const fieldResult = await performViewFieldAPICreate({
+        inputs: sourceView.viewFields.map(
+          ({ __typename, id: _id, ...viewField }) => ({
+            ...viewField,
+            id: v4(),
+            viewId: newViewId,
+          }),
+        ),
+      });
+
+      if (fieldResult.status === 'failed') {
+        return undefined;
+      }
+
+      if (shouldCopyFiltersAndSortsAndAggregate === true) {
+        const viewFilterGroupsToCopy = currentRecordFilterGroups.map(
+          (recordFilterGroup) =>
+            mapRecordFilterGroupToViewFilterGroup({
+              recordFilterGroup,
+              view: { id: newViewId },
+            }),
         );
 
-        if (!isDefined(currentViewId)) {
-          return undefined;
-        }
+        const viewFiltersToCopy = currentRecordFilters.map(
+          mapRecordFilterToViewFilter,
+        );
 
-        const sourceView = store.get(
-          coreViewFromViewIdFamilySelector.selectorFamily({
-            viewId: currentViewId,
+        const {
+          duplicatedViewFilterGroups: viewFilterGroupsToCreate,
+          duplicatedViewFilters: viewFiltersToCreate,
+        } = duplicateViewFiltersAndViewFilterGroups({
+          viewFilterGroupsToDuplicate: viewFilterGroupsToCopy,
+          viewFiltersToDuplicate: viewFiltersToCopy,
+        });
+
+        const viewSortsToCreate = currentRecordSorts
+          .map((recordSort) => mapRecordSortToViewSort(recordSort, newViewId))
+          .map((viewSort) => ({
+            ...viewSort,
+            id: v4(),
+          }));
+
+        await performViewFilterGroupAPICreate(viewFilterGroupsToCreate, {
+          id: newViewId,
+        });
+
+        const createViewFilterInputs = viewFiltersToCreate.map(
+          (viewFilter) => ({
+            input: {
+              id: viewFilter.id,
+              fieldMetadataId: viewFilter.fieldMetadataId,
+              viewId: newViewId,
+              value: viewFilter.value,
+              operand: viewFilter.operand,
+              viewFilterGroupId: viewFilter.viewFilterGroupId,
+              positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+              subFieldName: viewFilter.subFieldName ?? null,
+            },
           }),
         );
 
-        if (!isDefined(sourceView)) {
-          return undefined;
-        }
-
-        const viewType = type ?? sourceView.type;
-
-        const result = await performViewAPICreate(
-          {
-            input: {
-              id: id ?? v4(),
-              name: name ?? sourceView.name,
-              icon: icon ?? sourceView.icon,
-              key: null,
-              kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
-                ? sourceView.kanbanAggregateOperation
-                : undefined,
-              kanbanAggregateOperationFieldMetadataId:
-                shouldCopyFiltersAndSortsAndAggregate
-                  ? sourceView.kanbanAggregateOperationFieldMetadataId
-                  : undefined,
-              mainGroupByFieldMetadataId: shouldCopyFiltersAndSortsAndAggregate
-                ? sourceView.mainGroupByFieldMetadataId
-                : mainGroupByFieldMetadataId,
-              type: convertViewTypeToCore(viewType),
-              objectMetadataId: sourceView.objectMetadataId,
-              openRecordIn: convertViewOpenRecordInToCore(
-                sourceView.openRecordIn,
-              ),
-              anyFieldFilterValue: anyFieldFilterValue,
-              calendarLayout:
-                viewType === ViewType.Calendar
-                  ? ViewCalendarLayout.MONTH
-                  : undefined,
-              calendarFieldMetadataId:
-                viewType === ViewType.Calendar
-                  ? calendarFieldMetadataId
-                  : undefined,
-              visibility,
-            },
-          },
-          objectMetadataItem.id,
+        const filterResult = await performViewFilterAPICreate(
+          createViewFilterInputs,
         );
 
-        if (result.status === 'failed') {
+        if (filterResult.status === 'failed') {
           return undefined;
         }
 
-        const newViewId = result.response.data?.createCoreView.id;
+        await performViewSortAPICreate(viewSortsToCreate, { id: newViewId });
+      }
 
-        if (isUndefinedOrNull(newViewId)) {
-          throw new Error('Failed to create view');
-        }
+      await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
 
-        const fieldResult = await performViewFieldAPICreate({
-          inputs: sourceView.viewFields.map(
-            ({ __typename, id: _id, ...viewField }) => ({
-              ...viewField,
-              id: v4(),
-              viewId: newViewId,
-            }),
-          ),
-        });
-
-        if (fieldResult.status === 'failed') {
-          return undefined;
-        }
-
-        if (shouldCopyFiltersAndSortsAndAggregate === true) {
-          const viewFilterGroupsToCopy = currentRecordFilterGroups.map(
-            (recordFilterGroup) =>
-              mapRecordFilterGroupToViewFilterGroup({
-                recordFilterGroup,
-                view: { id: newViewId },
-              }),
-          );
-
-          const viewFiltersToCopy = currentRecordFilters.map(
-            mapRecordFilterToViewFilter,
-          );
-
-          const {
-            duplicatedViewFilterGroups: viewFilterGroupsToCreate,
-            duplicatedViewFilters: viewFiltersToCreate,
-          } = duplicateViewFiltersAndViewFilterGroups({
-            viewFilterGroupsToDuplicate: viewFilterGroupsToCopy,
-            viewFiltersToDuplicate: viewFiltersToCopy,
-          });
-
-          const viewSortsToCreate = currentRecordSorts
-            .map((recordSort) => mapRecordSortToViewSort(recordSort, newViewId))
-            .map((viewSort) => ({
-              ...viewSort,
-              id: v4(),
-            }));
-
-          await performViewFilterGroupAPICreate(viewFilterGroupsToCreate, {
-            id: newViewId,
-          });
-
-          const createViewFilterInputs = viewFiltersToCreate.map(
-            (viewFilter) => ({
-              input: {
-                id: viewFilter.id,
-                fieldMetadataId: viewFilter.fieldMetadataId,
-                viewId: newViewId,
-                value: viewFilter.value,
-                operand: viewFilter.operand,
-                viewFilterGroupId: viewFilter.viewFilterGroupId,
-                positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
-                subFieldName: viewFilter.subFieldName ?? null,
-              },
-            }),
-          );
-
-          const filterResult = await performViewFilterAPICreate(
-            createViewFilterInputs,
-          );
-
-          if (filterResult.status === 'failed') {
-            return undefined;
-          }
-
-          await performViewSortAPICreate(viewSortsToCreate, { id: newViewId });
-        }
-
-        await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
-
-        return newViewId;
-      },
+      return newViewId;
+    },
     [
-      currentViewIdCallbackState,
+      currentViewIdAtom,
       performViewAPICreate,
       anyFieldFilterValue,
       objectMetadataItem,

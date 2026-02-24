@@ -1,7 +1,7 @@
 import { type Client } from 'graphql-sse';
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-export const sseClientState = createState<Client | null>({
+export const sseClientState = createStateV2<Client | null>({
   key: 'sseClientState',
   defaultValue: null,
 });

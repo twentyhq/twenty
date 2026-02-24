@@ -3,8 +3,8 @@ import {
   type RecordGroupDefinition,
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { IconEye, IconEyeOff } from 'twenty-ui/display';
@@ -25,8 +25,9 @@ export const RecordGroupMenuItemDraggable = ({
   onVisibilityChange,
   isVisibleLimitReached = false,
 }: RecordGroupMenuItemDraggableProps) => {
-  const recordGroup = useRecoilValue(
-    recordGroupDefinitionFamilyState(recordGroupId),
+  const recordGroup = useFamilyRecoilValueV2(
+    recordGroupDefinitionFamilyState,
+    recordGroupId,
   );
 
   if (!isDefined(recordGroup)) {

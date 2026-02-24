@@ -1,16 +1,21 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { focusedRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/focusedRecordBoardCardIndexesComponentState';
 import { isRecordBoardCardFocusActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCardFocusActiveComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 export const RecordBoardScrollToFocusedCardEffect = () => {
-  const focusedCardIndexes = useRecoilComponentValue(
+  const { recordBoardId } = useContext(RecordBoardContext);
+
+  const focusedCardIndexes = useRecoilComponentValueV2(
     focusedRecordBoardCardIndexesComponentState,
+    recordBoardId,
   );
 
-  const isFocusActive = useRecoilComponentValue(
+  const isFocusActive = useRecoilComponentValueV2(
     isRecordBoardCardFocusActiveComponentState,
+    recordBoardId,
   );
 
   useEffect(() => {

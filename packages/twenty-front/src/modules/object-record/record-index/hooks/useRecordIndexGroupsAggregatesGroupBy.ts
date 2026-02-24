@@ -11,7 +11,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useAggregateGqlFieldsFromRecordIndexGroupAggregates } from '@/object-record/record-index/hooks/useAggregateGqlFieldsFromRecordIndexGroupAggregates';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useQuery } from '@apollo/client';
 import { type Nullable } from 'twenty-shared/types';
 import {
@@ -35,11 +35,11 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
 }) => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const currentRecordFilterGroups = useRecoilComponentValue(
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 
@@ -67,7 +67,7 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
       })
     : EMPTY_QUERY;
 
-  const anyFieldFilterValue = useRecoilComponentValue(
+  const anyFieldFilterValue = useRecoilComponentValueV2(
     anyFieldFilterValueComponentState,
   );
 

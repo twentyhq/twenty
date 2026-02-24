@@ -1,8 +1,8 @@
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 export const useObjectFilterDropdownFilterValue = () => {
-  const currentRecordFilter = useRecoilComponentValue(
+  const currentRecordFilter = useRecoilComponentValueV2(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 

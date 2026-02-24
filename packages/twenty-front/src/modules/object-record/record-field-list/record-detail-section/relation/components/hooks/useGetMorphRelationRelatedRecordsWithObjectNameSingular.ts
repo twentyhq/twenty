@@ -1,6 +1,6 @@
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
-import { recordStoreMorphOneToManyValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelector';
-import { useRecoilValue } from 'recoil';
+import { recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { CustomError, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
@@ -10,11 +10,9 @@ export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
   recordId: string;
   morphRelations: FieldMetadataItemRelation[];
 }) => {
-  const morphRelationObjectNameSingularWithValues = useRecoilValue(
-    recordStoreMorphOneToManyValueWithObjectNameFamilySelector({
-      recordId,
-      morphRelations,
-    }),
+  const morphRelationObjectNameSingularWithValues = useFamilySelectorValueV2(
+    recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2,
+    { recordId, morphRelations },
   );
 
   if (morphRelations.length < 1) {

@@ -366,8 +366,8 @@ const mocks = [
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const MetadataWrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: mocks,
-    onInitializeRecoilSnapshot: ({ set }) => {
-      set(
+    onInitializeJotaiStore: (store) => {
+      store.set(
         viewableRecordIdComponentState.atomFamily({
           instanceId: 'test-instance',
         }),

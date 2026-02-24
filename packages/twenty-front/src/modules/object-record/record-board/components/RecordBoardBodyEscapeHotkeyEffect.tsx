@@ -8,7 +8,7 @@ import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/r
 import { useResetFocusStackToRecordIndex } from '@/object-record/record-index/hooks/useResetFocusStackToRecordIndex';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 
 export const RecordBoardBodyEscapeHotkeyEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
@@ -18,7 +18,7 @@ export const RecordBoardBodyEscapeHotkeyEffect = () => {
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
   const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
 
-  const selectedRecordIds = useRecoilComponentValue(
+  const selectedRecordIds = useRecoilComponentSelectorValueV2(
     recordBoardSelectedRecordIdsComponentSelector,
     recordBoardId,
   );

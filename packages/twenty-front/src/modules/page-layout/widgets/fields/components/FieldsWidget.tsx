@@ -27,7 +27,7 @@ import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
@@ -87,7 +87,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const setRecordFieldListHoverPosition = useSetRecoilComponentState(
+  const setRecordFieldListHoverPosition = useSetRecoilComponentStateV2(
     recordFieldListHoverPositionComponentState,
     instanceId,
   );

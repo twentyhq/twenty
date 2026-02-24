@@ -1,8 +1,8 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -26,8 +26,8 @@ import { getNodeIterationCount } from '@/workflow/workflow-diagram/workflow-node
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Position } from '@xyflow/react';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useContext } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { IconCheck, IconX, useIcons } from 'twenty-ui/display';
@@ -87,13 +87,13 @@ export const WorkflowRunDiagramStepNode = ({
   const { getIcon } = useIcons();
   const theme = useTheme();
 
-  const workflowId = useRecoilComponentValue(
+  const workflowId = useRecoilComponentValueV2(
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflowRunId = useWorkflowRunIdOrThrow();
 
   const [workflowSelectedNode, setWorkflowSelectedNode] =
-    useRecoilComponentState(workflowSelectedNodeComponentState);
+    useRecoilComponentStateV2(workflowSelectedNodeComponentState);
 
   const selected = workflowSelectedNode === id;
 
@@ -101,7 +101,7 @@ export const WorkflowRunDiagramStepNode = ({
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const setCommandMenuNavigationStack = useSetRecoilState(
+  const setCommandMenuNavigationStack = useSetRecoilStateV2(
     commandMenuNavigationStackState,
   );
 

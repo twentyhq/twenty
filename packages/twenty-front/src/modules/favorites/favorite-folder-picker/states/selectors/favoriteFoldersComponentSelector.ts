@@ -2,29 +2,28 @@ import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder
 import { favoriteFolderIdsPickerComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFolderIdPickerComponentState';
 import { favoriteFolderPickerComponentFamilyState } from '@/favorites/favorite-folder-picker/states/favoriteFolderPickerComponentFamilyState';
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
-import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
+import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
 import { isDefined } from 'twenty-shared/utils';
 
-export const favoriteFoldersComponentSelector = createComponentSelector<
+export const favoriteFoldersComponentSelector = createComponentSelectorV2<
   FavoriteFolder[]
 >({
   key: 'favoriteFoldersComponentSelector',
   componentInstanceContext: FavoriteFolderPickerInstanceContext,
   get:
-    ({ instanceId }) =>
+    (componentStateKey) =>
     ({ get }) => {
       const folderIds = get(
-        favoriteFolderIdsPickerComponentState.atomFamily({ instanceId }),
-      );
+        favoriteFolderIdsPickerComponentState,
+        componentStateKey,
+      ) as string[];
 
       return folderIds
         .map((folderId: string) =>
-          get(
-            favoriteFolderPickerComponentFamilyState.atomFamily({
-              instanceId,
-              familyKey: folderId,
-            }),
-          ),
+          get(favoriteFolderPickerComponentFamilyState, {
+            instanceId: componentStateKey.instanceId,
+            familyKey: folderId,
+          }),
         )
         .filter((folder): folder is FavoriteFolder => isDefined(folder));
     },

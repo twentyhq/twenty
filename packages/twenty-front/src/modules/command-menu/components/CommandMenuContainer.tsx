@@ -8,7 +8,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 const StyledCommandMenuContainer = styled.div<{ isMobile: boolean }>`
@@ -29,7 +29,7 @@ type CommandMenuContainerProps = {
 export const CommandMenuContainer = ({
   children,
 }: CommandMenuContainerProps) => {
-  const objectMetadataItemId = useRecoilComponentValue(
+  const objectMetadataItemId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
@@ -41,7 +41,7 @@ export const CommandMenuContainer = ({
     (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
   );
 
-  const currentViewId = useRecoilComponentValue(
+  const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );

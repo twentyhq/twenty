@@ -1,3 +1,5 @@
+import { useStore } from 'jotai';
+
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -5,111 +7,101 @@ import { recordGroupIdsComponentState } from '@/object-record/record-group/state
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
 import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSetRecordGroups = () => {
-  const setRecordGroups = useRecoilCallback(
-    ({ snapshot, set }) =>
-      ({
-        mainGroupByFieldMetadataId,
-        recordGroups,
-        recordIndexId,
-        objectMetadataItemId,
-      }: {
-        mainGroupByFieldMetadataId: string;
-        recordGroups: RecordGroupDefinition[];
-        recordIndexId: string;
-        objectMetadataItemId: string;
-      }) => {
-        const objectMetadataItems = jotaiStore.get(
-          objectMetadataItemsState.atom,
+  const store = useStore();
+
+  const setRecordGroups = useCallback(
+    ({
+      mainGroupByFieldMetadataId,
+      recordGroups,
+      recordIndexId,
+      objectMetadataItemId,
+    }: {
+      mainGroupByFieldMetadataId: string;
+      recordGroups: RecordGroupDefinition[];
+      recordIndexId: string;
+      objectMetadataItemId: string;
+    }) => {
+      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+
+      const objectMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
+      );
+
+      if (!isDefined(objectMetadataItem)) {
+        return;
+      }
+
+      const currentRecordGroupIds = store.get(
+        recordGroupIdsComponentState.atomFamily({
+          instanceId: recordIndexId,
+        }),
+      );
+
+      const fieldMetadataId = mainGroupByFieldMetadataId;
+      const fieldMetadata = fieldMetadataId
+        ? objectMetadataItem.fields.find(
+            (field) => field.id === fieldMetadataId,
+          )
+        : undefined;
+      const recordIndexGroupFieldMetadataAtom =
+        recordIndexGroupFieldMetadataItemComponentState.atomFamily({
+          instanceId: recordIndexId,
+        });
+      const currentFieldMetadata = store.get(recordIndexGroupFieldMetadataAtom);
+
+      // Set the field metadata linked to the record groups
+      if (!isDeeplyEqual(fieldMetadata, currentFieldMetadata)) {
+        store.set(recordIndexGroupFieldMetadataAtom, fieldMetadata);
+      }
+
+      // Set the record groups by id
+      recordGroups.forEach((recordGroup) => {
+        const existingRecordGroup = store.get(
+          recordGroupDefinitionFamilyState.atomFamily(recordGroup.id),
         );
 
-        const objectMetadataItem = objectMetadataItems.find(
-          (objectMetadataItem) =>
-            objectMetadataItem.id === objectMetadataItemId,
-        );
-
-        if (!isDefined(objectMetadataItem)) {
+        if (isDeeplyEqual(existingRecordGroup, recordGroup)) {
           return;
         }
 
-        const currentRecordGroupIds = getSnapshotValue(
-          snapshot,
-          recordGroupIdsComponentState.atomFamily({
-            instanceId: recordIndexId,
-          }),
+        store.set(
+          recordGroupDefinitionFamilyState.atomFamily(recordGroup.id),
+          recordGroup,
         );
+      });
 
-        const fieldMetadataId = mainGroupByFieldMetadataId;
-        const fieldMetadata = fieldMetadataId
-          ? objectMetadataItem.fields.find(
-              (field) => field.id === fieldMetadataId,
-            )
-          : undefined;
-        const currentFieldMetadata = getSnapshotValue(
-          snapshot,
-          recordIndexGroupFieldMetadataItemComponentState.atomFamily({
-            instanceId: recordIndexId,
-          }),
-        );
+      const recordGroupIds = recordGroups.map(({ id }) => id);
 
-        // Set the field metadata linked to the record groups
-        if (!isDeeplyEqual(fieldMetadata, currentFieldMetadata)) {
-          set(
-            recordIndexGroupFieldMetadataItemComponentState.atomFamily({
-              instanceId: recordIndexId,
-            }),
-            fieldMetadata,
-          );
-        }
+      // Get ids that has been removed between the current and new record groups
+      const removedRecordGroupIds = currentRecordGroupIds.filter(
+        (id) => !recordGroupIds.includes(id),
+      );
 
-        // Set the record groups by id
-        recordGroups.forEach((recordGroup) => {
-          const existingRecordGroup = getSnapshotValue(
-            snapshot,
-            recordGroupDefinitionFamilyState(recordGroup.id),
-          );
+      // Remove the record groups that has been removed
+      removedRecordGroupIds.forEach((id) => {
+        store.set(recordGroupDefinitionFamilyState.atomFamily(id), undefined);
+      });
 
-          if (isDeeplyEqual(existingRecordGroup, recordGroup)) {
-            return;
-          }
+      if (isDeeplyEqual(currentRecordGroupIds, recordGroupIds)) {
+        return;
+      }
 
-          set(recordGroupDefinitionFamilyState(recordGroup.id), recordGroup);
-        });
-
-        const recordGroupIds = recordGroups.map(({ id }) => id);
-
-        // Get ids that has been removed between the current and new record groups
-        const removedRecordGroupIds = currentRecordGroupIds.filter(
-          (id) => !recordGroupIds.includes(id),
-        );
-
-        // Remove the record groups that has been removed
-        removedRecordGroupIds.forEach((id) => {
-          set(recordGroupDefinitionFamilyState(id), undefined);
-        });
-
-        if (isDeeplyEqual(currentRecordGroupIds, recordGroupIds)) {
-          return;
-        }
-
-        // Set the record group ids
-        set(
-          recordGroupIdsComponentState.atomFamily({
-            instanceId: recordIndexId,
-          }),
-          recordGroupIds,
-        );
-      },
-    [],
+      // Set the record group ids
+      store.set(
+        recordGroupIdsComponentState.atomFamily({
+          instanceId: recordIndexId,
+        }),
+        recordGroupIds,
+      );
+    },
+    [store],
   );
 
   const setRecordGroupsFromViewGroups = useCallback(

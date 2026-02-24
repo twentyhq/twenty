@@ -1,10 +1,12 @@
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { RecordTableRecordGroupBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffect';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 export const RecordTableRecordGroupBodyEffects = () => {
-  const recordGroupIds = useRecoilComponentValue(recordGroupIdsComponentState);
+  const recordGroupIds = useRecoilComponentValueV2(
+    recordGroupIdsComponentState,
+  );
 
   return recordGroupIds.map((recordGroupId) => (
     <RecordGroupContext.Provider key={recordGroupId} value={{ recordGroupId }}>

@@ -11,8 +11,8 @@ import { configurableViewFilterOperands } from '@/object-record/object-filter-dr
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
@@ -30,12 +30,13 @@ export const AdvancedFilterValueInput = ({
 }: AdvancedFilterValueInputProps) => {
   const dropdownId = `advanced-filter-view-filter-value-input-${recordFilterId}`;
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 
-  const subFieldNameUsedInDropdown = useRecoilComponentValue(
+  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
     subFieldNameUsedInDropdownComponentState,
+    dropdownId,
   );
 
   const recordFilter = currentRecordFilters.find(
@@ -44,17 +45,21 @@ export const AdvancedFilterValueInput = ({
 
   const isDisabled = !recordFilter?.fieldMetadataId || !recordFilter.operand;
 
-  const setObjectFilterDropdownSearchInput = useSetRecoilComponentState(
+  const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
     objectFilterDropdownSearchInputComponentState,
+    dropdownId,
   );
 
-  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentState(
+  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
     fieldMetadataItemIdUsedInDropdownComponentState,
+    dropdownId,
   );
 
-  const setObjectFilterDropdownCurrentRecordFilter = useSetRecoilComponentState(
-    objectFilterDropdownCurrentRecordFilterComponentState,
-  );
+  const setObjectFilterDropdownCurrentRecordFilter =
+    useSetRecoilComponentStateV2(
+      objectFilterDropdownCurrentRecordFilterComponentState,
+      dropdownId,
+    );
 
   const operandHasNoInput =
     recordFilter && !configurableViewFilterOperands.has(recordFilter.operand);

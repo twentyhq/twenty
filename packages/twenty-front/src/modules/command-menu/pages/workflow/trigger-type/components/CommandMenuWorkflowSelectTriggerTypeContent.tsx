@@ -1,7 +1,7 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import {
   type WorkflowTrigger,
@@ -29,7 +29,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
-  const setWorkflowSelectedNode = useSetRecoilComponentState(
+  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
     workflowSelectedNodeComponentState,
   );
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();

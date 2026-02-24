@@ -10,9 +10,9 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
@@ -49,11 +49,12 @@ export const MultipleRecordPickerMenuItemContent = ({
     selectableListComponentInstanceId,
   );
 
-  const isRecordSelectedWithObjectItem = useRecoilComponentFamilyValue(
-    multipleRecordPickerIsSelectedComponentFamilySelector,
-    searchRecord.recordId,
-    componentInstanceId,
-  );
+  const isRecordSelectedWithObjectItem =
+    useRecoilComponentFamilySelectorValueV2(
+      multipleRecordPickerIsSelectedComponentFamilySelector,
+      searchRecord.recordId,
+      componentInstanceId,
+    );
 
   const handleSelectChange = (isSelected: boolean) => {
     onChange({
@@ -68,7 +69,7 @@ export const MultipleRecordPickerMenuItemContent = ({
   const displayText =
     searchRecord.label?.trim() || t`Untitled ${labelSingular}`;
 
-  const searchableObjectMetadataItems = useRecoilComponentValue(
+  const searchableObjectMetadataItems = useRecoilComponentValueV2(
     multipleRecordPickerSearchableObjectMetadataItemsComponentState,
     componentInstanceId,
   );

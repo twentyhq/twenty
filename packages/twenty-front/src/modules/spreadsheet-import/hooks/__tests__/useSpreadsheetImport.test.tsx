@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
-import { RecoilRoot, useRecoilState } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
+import React, { act } from 'react';
 
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
@@ -8,10 +9,10 @@ import {
   type ImportedRow,
   type SpreadsheetImportDialogOptions,
 } from '@/spreadsheet-import/types';
-import { act } from 'react';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 export const mockedSpreadsheetOptions: SpreadsheetImportDialogOptions = {
@@ -50,13 +51,12 @@ describe('useSpreadsheetImport', () => {
     const { result } = renderHook(
       () => ({
         useSpreadsheetImport: useOpenSpreadsheetImportDialog(),
-        spreadsheetImportState: useRecoilState(spreadsheetImportDialogState)[0],
       }),
       {
         wrapper: Wrapper,
       },
     );
-    expect(result.current.spreadsheetImportState).toStrictEqual({
+    expect(jotaiStore.get(spreadsheetImportDialogState.atom)).toStrictEqual({
       isOpen: false,
       isStepBarVisible: true,
       options: null,
@@ -66,7 +66,7 @@ describe('useSpreadsheetImport', () => {
         mockedSpreadsheetOptions,
       );
     });
-    expect(result.current.spreadsheetImportState).toStrictEqual({
+    expect(jotaiStore.get(spreadsheetImportDialogState.atom)).toStrictEqual({
       isOpen: true,
       isStepBarVisible: true,
       options: mockedSpreadsheetOptions,

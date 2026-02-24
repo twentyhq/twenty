@@ -14,13 +14,16 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { type ApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useCallback } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type SearchRecord, type SearchResultEdge } from '~/generated/graphql';
 
 const MULTIPLE_RECORD_PICKER_PAGE_SIZE = 30;
 
 export const useMultipleRecordPickerPerformSearch = () => {
+  const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
 
   const { performCombinedFindManyRecords } =
@@ -28,125 +31,142 @@ export const useMultipleRecordPickerPerformSearch = () => {
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const performSearch = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async ({
-        multipleRecordPickerInstanceId,
-        forceSearchFilter = '',
-        forceSearchableObjectMetadataItems = [],
-        forcePickableMorphItems = [],
-        loadMore = false,
-      }: {
-        multipleRecordPickerInstanceId: string;
-        forceSearchFilter?: string;
-        forceSearchableObjectMetadataItems?: ObjectMetadataItem[];
-        forcePickableMorphItems?: RecordPickerPickableMorphItem[];
-        loadMore?: boolean;
-      }) => {
-        const { getLoadable } = snapshot;
+  const performSearch = useCallback(
+    async ({
+      multipleRecordPickerInstanceId,
+      forceSearchFilter = '',
+      forceSearchableObjectMetadataItems = [],
+      forcePickableMorphItems = [],
+      loadMore = false,
+    }: {
+      multipleRecordPickerInstanceId: string;
+      forceSearchFilter?: string;
+      forceSearchableObjectMetadataItems?: ObjectMetadataItem[];
+      forcePickableMorphItems?: RecordPickerPickableMorphItem[];
+      loadMore?: boolean;
+    }) => {
+      const atomFamilyKey = { instanceId: multipleRecordPickerInstanceId };
 
-        const paginationState = getLoadable(
-          multipleRecordPickerPaginationState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-        ).getValue();
+      const paginationState = jotaiStore.get(
+        multipleRecordPickerPaginationState.atomFamily(atomFamilyKey),
+      );
 
-        set(
-          multipleRecordPickerIsLoadingComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-          true,
+      jotaiStore.set(
+        multipleRecordPickerIsLoadingComponentState.atomFamily(atomFamilyKey),
+        true,
+      );
+
+      jotaiStore.set(
+        multipleRecordPickerPaginationState.atomFamily(atomFamilyKey),
+        {
+          ...paginationState,
+          endCursor: loadMore ? paginationState.endCursor : null,
+          hasNextPage: loadMore ? paginationState.hasNextPage : true,
+        },
+      );
+
+      const recordPickerSearchFilter = jotaiStore.get(
+        multipleRecordPickerSearchFilterComponentState.atomFamily(
+          atomFamilyKey,
+        ),
+      );
+
+      const searchFilter = forceSearchFilter ?? recordPickerSearchFilter;
+
+      const recordPickerSearchableObjectMetadataItems = jotaiStore.get(
+        multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
+          atomFamilyKey,
+        ),
+      );
+
+      const searchableObjectMetadataItems =
+        forceSearchableObjectMetadataItems.length > 0
+          ? forceSearchableObjectMetadataItems
+          : recordPickerSearchableObjectMetadataItems;
+
+      const recordPickerPickableMorphItems = jotaiStore.get(
+        multipleRecordPickerPickableMorphItemsComponentState.atomFamily(
+          atomFamilyKey,
+        ),
+      );
+
+      const pickableMorphItems =
+        forcePickableMorphItems.length > 0
+          ? forcePickableMorphItems
+          : recordPickerPickableMorphItems;
+      const selectedPickableMorphItems = pickableMorphItems.filter(
+        ({ isSelected }) => isSelected,
+      );
+
+      const filteredSearchableObjectMetadataItems =
+        searchableObjectMetadataItems.filter(
+          (objectMetadataItem) =>
+            getObjectPermissionsFromMapByObjectMetadataId({
+              objectPermissionsByObjectMetadataId,
+              objectMetadataId: objectMetadataItem.id,
+            }).canReadObjectRecords === true,
         );
 
-        set(
-          multipleRecordPickerPaginationState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-          {
-            ...paginationState,
-            endCursor: loadMore ? paginationState.endCursor : null,
-            hasNextPage: loadMore ? paginationState.hasNextPage : true,
-          },
-        );
+      const [
+        searchRecordsFilteredOnPickedRecords,
+        searchRecordsExcludingPickedRecords,
+        pageInfo,
+      ] = await performSearchQueries({
+        client: apolloCoreClient,
+        searchFilter,
+        searchableObjectMetadataItems: filteredSearchableObjectMetadataItems,
+        pickedRecordIds: selectedPickableMorphItems.map(
+          ({ recordId }) => recordId,
+        ),
+        after: loadMore ? paginationState.endCursor : null,
+      });
 
-        const recordPickerSearchFilter = getLoadable(
-          multipleRecordPickerSearchFilterComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-        ).getValue();
+      const existingMorphItems = jotaiStore.get(
+        multipleRecordPickerPickableMorphItemsComponentState.atomFamily(
+          atomFamilyKey,
+        ),
+      );
 
-        const searchFilter = forceSearchFilter ?? recordPickerSearchFilter;
+      const allPickedItems = [
+        ...existingMorphItems.filter(({ isSelected }) => isSelected),
+        ...pickableMorphItems.filter(({ isSelected }) => isSelected),
+      ];
 
-        const recordPickerSearchableObjectMetadataItems = getLoadable(
-          multipleRecordPickerSearchableObjectMetadataItemsComponentState.atomFamily(
-            { instanceId: multipleRecordPickerInstanceId },
-          ),
-        ).getValue();
+      const uniquePickedItems = allPickedItems.reduce(
+        (acc, item) => {
+          if (!acc.some((existing) => existing.recordId === item.recordId)) {
+            acc.push(item);
+          }
+          return acc;
+        },
+        [] as typeof allPickedItems,
+      );
 
-        const searchableObjectMetadataItems =
-          forceSearchableObjectMetadataItems.length > 0
-            ? forceSearchableObjectMetadataItems
-            : recordPickerSearchableObjectMetadataItems;
+      const updatedPickedItems = uniquePickedItems.map((morphItem) => {
+        if (!searchFilter) {
+          return {
+            ...morphItem,
+            isMatchingSearchFilter: true,
+          };
+        }
 
-        const recordPickerPickableMorphItems = getLoadable(
-          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-        ).getValue();
-
-        const pickableMorphItems =
-          forcePickableMorphItems.length > 0
-            ? forcePickableMorphItems
-            : recordPickerPickableMorphItems;
-        const selectedPickableMorphItems = pickableMorphItems.filter(
-          ({ isSelected }) => isSelected,
-        );
-
-        const filteredSearchableObjectMetadataItems =
-          searchableObjectMetadataItems.filter(
-            (objectMetadataItem) =>
-              getObjectPermissionsFromMapByObjectMetadataId({
-                objectPermissionsByObjectMetadataId,
-                objectMetadataId: objectMetadataItem.id,
-              }).canReadObjectRecords === true,
+        const isMatchingSearchFilter =
+          searchRecordsFilteredOnPickedRecords.some(
+            ({ recordId }) => recordId === morphItem.recordId,
+          ) ||
+          searchRecordsExcludingPickedRecords.some(
+            ({ recordId }) => recordId === morphItem.recordId,
           );
 
-        const [
-          searchRecordsFilteredOnPickedRecords,
-          searchRecordsExcludingPickedRecords,
-          pageInfo,
-        ] = await performSearchQueries({
-          client: apolloCoreClient,
-          searchFilter,
-          searchableObjectMetadataItems: filteredSearchableObjectMetadataItems,
-          pickedRecordIds: selectedPickableMorphItems.map(
-            ({ recordId }) => recordId,
-          ),
-          after: loadMore ? paginationState.endCursor : null,
-        });
+        return {
+          ...morphItem,
+          isMatchingSearchFilter,
+        };
+      });
 
-        const existingMorphItems = getLoadable(
-          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-        ).getValue();
-
-        const allPickedItems = [
-          ...existingMorphItems.filter(({ isSelected }) => isSelected),
-          ...pickableMorphItems.filter(({ isSelected }) => isSelected),
-        ];
-
-        const uniquePickedItems = allPickedItems.reduce(
-          (acc, item) => {
-            if (!acc.some((existing) => existing.recordId === item.recordId)) {
-              acc.push(item);
-            }
-            return acc;
-          },
-          [] as typeof allPickedItems,
-        );
-
-        const updatedPickedItems = uniquePickedItems.map((morphItem) => {
+      const updatedNonPickedExistingItems = existingMorphItems
+        .filter((item) => !item.isSelected)
+        .map((morphItem) => {
           if (!searchFilter) {
             return {
               ...morphItem,
@@ -168,211 +188,187 @@ export const useMultipleRecordPickerPerformSearch = () => {
           };
         });
 
-        const updatedNonPickedExistingItems = existingMorphItems
-          .filter((item) => !item.isSelected)
-          .map((morphItem) => {
-            if (!searchFilter) {
-              return {
-                ...morphItem,
-                isMatchingSearchFilter: true,
-              };
-            }
-
-            const isMatchingSearchFilter =
-              searchRecordsFilteredOnPickedRecords.some(
-                ({ recordId }) => recordId === morphItem.recordId,
-              ) ||
-              searchRecordsExcludingPickedRecords.some(
-                ({ recordId }) => recordId === morphItem.recordId,
-              );
-
-            return {
-              ...morphItem,
-              isMatchingSearchFilter,
-            };
-          });
-
-        const searchRecordsFilteredOnPickedRecordsWithoutDuplicates =
-          searchRecordsFilteredOnPickedRecords.filter(
-            (searchRecord) =>
-              !updatedPickedItems.some(
-                ({ recordId }) => recordId === searchRecord.recordId,
-              ) &&
-              !updatedNonPickedExistingItems.some(
-                ({ recordId }) => recordId === searchRecord.recordId,
-              ),
-          );
-
-        const searchRecordsExcludingPickedRecordsWithoutDuplicates =
-          searchRecordsExcludingPickedRecords.filter(
-            (searchRecord) =>
-              !searchRecordsFilteredOnPickedRecords.some(
-                ({ recordId }) => recordId === searchRecord.recordId,
-              ) &&
-              !updatedPickedItems.some(
-                ({ recordId }) => recordId === searchRecord.recordId,
-              ) &&
-              !updatedNonPickedExistingItems.some(
-                ({ recordId }) => recordId === searchRecord.recordId,
-              ),
-          );
-
-        const newMorphItems = [
-          ...updatedPickedItems,
-          ...updatedNonPickedExistingItems,
-          ...searchRecordsFilteredOnPickedRecordsWithoutDuplicates.map(
-            ({ recordId, objectNameSingular }) => ({
-              isMatchingSearchFilter: true,
-              isSelected: true,
-              objectMetadataId:
-                searchableObjectMetadataItems.find(
-                  (objectMetadata) =>
-                    objectMetadata.nameSingular === objectNameSingular,
-                )?.id ?? '',
-              recordId,
-            }),
-          ),
-          ...searchRecordsExcludingPickedRecordsWithoutDuplicates.map(
-            ({ recordId, objectNameSingular }) => ({
-              isMatchingSearchFilter: true,
-              isSelected: false,
-              objectMetadataId:
-                searchableObjectMetadataItems.find(
-                  (objectMetadata) =>
-                    objectMetadata.nameSingular === objectNameSingular,
-                )?.id ?? '',
-              recordId,
-            }),
-          ),
-        ];
-
-        const morphItems = loadMore
-          ? newMorphItems.reduce(
-              (acc, item) => {
-                if (
-                  !acc.some((existing) => existing.recordId === item.recordId)
-                ) {
-                  acc.push(item);
-                }
-                return acc;
-              },
-              [] as typeof newMorphItems,
-            )
-          : newMorphItems;
-
-        const sortedMorphItems = sortMorphItems(morphItems, [
-          ...searchRecordsFilteredOnPickedRecords,
-          ...searchRecordsExcludingPickedRecords,
-        ]);
-
-        set(
-          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-          sortedMorphItems,
+      const searchRecordsFilteredOnPickedRecordsWithoutDuplicates =
+        searchRecordsFilteredOnPickedRecords.filter(
+          (searchRecord) =>
+            !updatedPickedItems.some(
+              ({ recordId }) => recordId === searchRecord.recordId,
+            ) &&
+            !updatedNonPickedExistingItems.some(
+              ({ recordId }) => recordId === searchRecord.recordId,
+            ),
         );
 
-        const searchRecords = [
-          ...searchRecordsFilteredOnPickedRecords,
-          ...searchRecordsExcludingPickedRecordsWithoutDuplicates,
-        ];
+      const searchRecordsExcludingPickedRecordsWithoutDuplicates =
+        searchRecordsExcludingPickedRecords.filter(
+          (searchRecord) =>
+            !searchRecordsFilteredOnPickedRecords.some(
+              ({ recordId }) => recordId === searchRecord.recordId,
+            ) &&
+            !updatedPickedItems.some(
+              ({ recordId }) => recordId === searchRecord.recordId,
+            ) &&
+            !updatedNonPickedExistingItems.some(
+              ({ recordId }) => recordId === searchRecord.recordId,
+            ),
+        );
 
-        searchRecords.forEach((searchRecord) => {
-          set(
-            searchRecordStoreFamilyState(searchRecord.recordId),
-            searchRecord,
-          );
-        });
+      const newMorphItems = [
+        ...updatedPickedItems,
+        ...updatedNonPickedExistingItems,
+        ...searchRecordsFilteredOnPickedRecordsWithoutDuplicates.map(
+          ({ recordId, objectNameSingular }) => ({
+            isMatchingSearchFilter: true,
+            isSelected: true,
+            objectMetadataId:
+              searchableObjectMetadataItems.find(
+                (objectMetadata) =>
+                  objectMetadata.nameSingular === objectNameSingular,
+              )?.id ?? '',
+            recordId,
+          }),
+        ),
+        ...searchRecordsExcludingPickedRecordsWithoutDuplicates.map(
+          ({ recordId, objectNameSingular }) => ({
+            isMatchingSearchFilter: true,
+            isSelected: false,
+            objectMetadataId:
+              searchableObjectMetadataItems.find(
+                (objectMetadata) =>
+                  objectMetadata.nameSingular === objectNameSingular,
+              )?.id ?? '',
+            recordId,
+          }),
+        ),
+      ];
 
-        if (searchRecords.length > 0) {
-          const filterPerMetadataItemFilteredOnRecordId = Object.fromEntries(
-            searchableObjectMetadataItems
-              .map(({ nameSingular }) => {
-                const recordIdsForMetadataItem = searchRecords
-                  .filter(
-                    ({ objectNameSingular }) =>
-                      objectNameSingular === nameSingular,
-                  )
-                  .map(({ recordId }) => recordId);
+      const morphItems = loadMore
+        ? newMorphItems.reduce(
+            (acc, item) => {
+              if (
+                !acc.some((existing) => existing.recordId === item.recordId)
+              ) {
+                acc.push(item);
+              }
+              return acc;
+            },
+            [] as typeof newMorphItems,
+          )
+        : newMorphItems;
 
-                if (!isNonEmptyArray(recordIdsForMetadataItem)) {
-                  return null;
+      const sortedMorphItems = sortMorphItems(morphItems, [
+        ...searchRecordsFilteredOnPickedRecords,
+        ...searchRecordsExcludingPickedRecords,
+      ]);
+
+      jotaiStore.set(
+        multipleRecordPickerPickableMorphItemsComponentState.atomFamily(
+          atomFamilyKey,
+        ),
+        sortedMorphItems,
+      );
+
+      const searchRecords = [
+        ...searchRecordsFilteredOnPickedRecords,
+        ...searchRecordsExcludingPickedRecordsWithoutDuplicates,
+      ];
+
+      searchRecords.forEach((searchRecord) => {
+        store.set(
+          searchRecordStoreFamilyState.atomFamily(searchRecord.recordId),
+          searchRecord,
+        );
+      });
+
+      if (searchRecords.length > 0) {
+        const filterPerMetadataItemFilteredOnRecordId = Object.fromEntries(
+          searchableObjectMetadataItems
+            .map(({ nameSingular }) => {
+              const recordIdsForMetadataItem = searchRecords
+                .filter(
+                  ({ objectNameSingular }) =>
+                    objectNameSingular === nameSingular,
+                )
+                .map(({ recordId }) => recordId);
+
+              if (!isNonEmptyArray(recordIdsForMetadataItem)) {
+                return null;
+              }
+
+              return [
+                `filter${capitalize(nameSingular)}`,
+                {
+                  id: {
+                    in: recordIdsForMetadataItem,
+                  },
+                },
+              ];
+            })
+            .filter(isDefined),
+        );
+
+        const operationSignatures = searchableObjectMetadataItems
+          .filter(({ nameSingular }) =>
+            isDefined(
+              filterPerMetadataItemFilteredOnRecordId[
+                `filter${capitalize(nameSingular)}`
+              ],
+            ),
+          )
+          .map((objectMetadataItem) => ({
+            objectNameSingular: objectMetadataItem.nameSingular,
+            variables: {
+              filter:
+                filterPerMetadataItemFilteredOnRecordId[
+                  `filter${capitalize(objectMetadataItem.nameSingular)}`
+                ],
+            },
+          }));
+
+        performCombinedFindManyRecords({ operationSignatures }).then(
+          ({ result }) => {
+            Object.values(result)
+              .flat()
+              .forEach((objectRecord) => {
+                const searchRecord = searchRecords.find(
+                  ({ recordId }) => recordId === objectRecord.id,
+                );
+
+                if (!searchRecord) {
+                  return;
                 }
 
-                return [
-                  `filter${capitalize(nameSingular)}`,
+                store.set(
+                  searchRecordStoreFamilyState.atomFamily(objectRecord.id),
                   {
-                    id: {
-                      in: recordIdsForMetadataItem,
-                    },
-                  },
-                ];
-              })
-              .filter(isDefined),
-          );
-
-          const operationSignatures = searchableObjectMetadataItems
-            .filter(({ nameSingular }) =>
-              isDefined(
-                filterPerMetadataItemFilteredOnRecordId[
-                  `filter${capitalize(nameSingular)}`
-                ],
-              ),
-            )
-            .map((objectMetadataItem) => ({
-              objectNameSingular: objectMetadataItem.nameSingular,
-              variables: {
-                filter:
-                  filterPerMetadataItemFilteredOnRecordId[
-                    `filter${capitalize(objectMetadataItem.nameSingular)}`
-                  ],
-              },
-            }));
-
-          performCombinedFindManyRecords({ operationSignatures }).then(
-            ({ result }) => {
-              Object.values(result)
-                .flat()
-                .forEach((objectRecord) => {
-                  const searchRecord = searchRecords.find(
-                    ({ recordId }) => recordId === objectRecord.id,
-                  );
-
-                  if (!searchRecord) {
-                    return;
-                  }
-
-                  set(searchRecordStoreFamilyState(objectRecord.id), {
                     ...searchRecord,
                     record: objectRecord,
-                  });
-                });
-            },
-          );
-        }
-
-        set(
-          multipleRecordPickerPaginationState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-          {
-            ...paginationState,
-            endCursor: pageInfo.endCursor,
-            hasNextPage: pageInfo.hasNextPage,
+                  },
+                );
+              });
           },
         );
+      }
 
-        set(
-          multipleRecordPickerIsLoadingComponentState.atomFamily({
-            instanceId: multipleRecordPickerInstanceId,
-          }),
-          false,
-        );
-      },
+      jotaiStore.set(
+        multipleRecordPickerPaginationState.atomFamily(atomFamilyKey),
+        {
+          ...paginationState,
+          endCursor: pageInfo.endCursor,
+          hasNextPage: pageInfo.hasNextPage,
+        },
+      );
+
+      jotaiStore.set(
+        multipleRecordPickerIsLoadingComponentState.atomFamily(atomFamilyKey),
+        false,
+      );
+    },
     [
       apolloCoreClient,
       performCombinedFindManyRecords,
       objectPermissionsByObjectMetadataId,
+      store,
     ],
   );
 

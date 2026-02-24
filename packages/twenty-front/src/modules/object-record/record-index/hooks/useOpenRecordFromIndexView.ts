@@ -8,9 +8,11 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -25,73 +27,68 @@ export const useOpenRecordFromIndexView = () => {
 
   const isMobile = useIsMobile();
 
-  const currentRecordFilters = useRecoilComponentCallbackState(
+  const currentRecordFilters = useRecoilComponentStateCallbackStateV2(
     currentRecordFiltersComponentState,
     recordIndexId,
   );
 
-  const currentRecordSorts = useRecoilComponentCallbackState(
+  const currentRecordSorts = useRecoilComponentStateCallbackStateV2(
     currentRecordSortsComponentState,
     recordIndexId,
   );
 
-  const currentRecordFilterGroups = useRecoilComponentCallbackState(
+  const currentRecordFilterGroups = useRecoilComponentStateCallbackStateV2(
     currentRecordFilterGroupsComponentState,
     recordIndexId,
   );
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const openRecordFromIndexView = useRecoilCallback(
-    ({ snapshot, set }) =>
-      ({ recordId }: { recordId: string }) => {
-        const recordIndexOpenRecordIn = snapshot
-          .getLoadable(recordIndexOpenRecordInState)
-          .getValue();
+  const store = useStore();
 
-        const parentViewFilters = snapshot
-          .getLoadable(currentRecordFilters)
-          .getValue();
+  const openRecordFromIndexView = useCallback(
+    ({ recordId }: { recordId: string }) => {
+      const recordIndexOpenRecordIn = jotaiStore.get(
+        recordIndexOpenRecordInState.atom,
+      );
 
-        const parentViewSorts = snapshot
-          .getLoadable(currentRecordSorts)
-          .getValue();
+      const parentViewFilters = store.get(currentRecordFilters);
 
-        const parentViewFilterGroups = snapshot
-          .getLoadable(currentRecordFilterGroups)
-          .getValue();
+      const parentViewSorts = store.get(currentRecordSorts);
 
-        set(
-          contextStoreRecordShowParentViewComponentState.atomFamily({
-            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-          }),
-          {
-            parentViewComponentId: recordIndexId,
-            parentViewObjectNameSingular: objectNameSingular,
-            parentViewFilterGroups,
-            parentViewFilters,
-            parentViewSorts,
-          },
-        );
+      const parentViewFilterGroups = store.get(currentRecordFilterGroups);
 
-        if (
-          !isMobile &&
-          recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
-          canOpenObjectInSidePanel(objectNameSingular)
-        ) {
-          openRecordInCommandMenu({
-            recordId,
-            objectNameSingular,
-            resetNavigationStack: true,
-          });
-        } else {
-          closeCommandMenu();
-          navigate(AppPath.RecordShowPage, {
-            objectNameSingular,
-            objectRecordId: recordId,
-          });
-        }
-      },
+      store.set(
+        contextStoreRecordShowParentViewComponentState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
+        {
+          parentViewComponentId: recordIndexId,
+          parentViewObjectNameSingular: objectNameSingular,
+          parentViewFilterGroups,
+          parentViewFilters,
+          parentViewSorts,
+        },
+      );
+
+      if (
+        !isMobile &&
+        recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+        canOpenObjectInSidePanel(objectNameSingular)
+      ) {
+        openRecordInCommandMenu({
+          recordId,
+          objectNameSingular,
+          resetNavigationStack: true,
+        });
+      } else {
+        closeCommandMenu();
+        navigate(AppPath.RecordShowPage, {
+          objectNameSingular,
+          objectRecordId: recordId,
+        });
+      }
+    },
     [
       currentRecordFilters,
       currentRecordSorts,
@@ -102,6 +99,7 @@ export const useOpenRecordFromIndexView = () => {
       openRecordInCommandMenu,
       isMobile,
       closeCommandMenu,
+      store,
     ],
   );
 

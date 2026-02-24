@@ -7,7 +7,7 @@ import { RecordTableCellFirstRowFirstColumn } from '@/object-record/record-table
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const RecordTableFieldsCells = () => {
@@ -17,7 +17,7 @@ export const RecordTableFieldsCells = () => {
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const hasRecordGroups = useRecoilComponentValue(
+  const hasRecordGroups = useRecoilComponentSelectorValueV2(
     hasRecordGroupsComponentSelector,
   );
 

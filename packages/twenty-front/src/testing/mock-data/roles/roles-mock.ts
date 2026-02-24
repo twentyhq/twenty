@@ -1,4 +1,5 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   type FieldPermission,
   type ObjectPermission,
@@ -116,15 +117,15 @@ export const BASE_ROLE_MOCK_REVOKES_ALL: Role = {
   rowLevelPermissionPredicates: [],
 };
 
-export const rolesMockHookWrapper = getJestMetadataAndApolloMocksWrapper({
-  onInitializeRecoilSnapshot: (snapshot) => {
-    snapshot.set(
-      settingsDraftRoleFamilyState(MOCK_ROLE_ID_GRANTS_ALL),
-      BASE_ROLE_MOCK_GRANTS_ALL,
-    );
-    snapshot.set(
-      settingsDraftRoleFamilyState(MOCK_ROLE_ID_REVOKES_ALL),
-      BASE_ROLE_MOCK_REVOKES_ALL,
-    );
-  },
-});
+export const initializeRolesMockJotaiStore = () => {
+  jotaiStore.set(
+    settingsDraftRoleFamilyState.atomFamily(MOCK_ROLE_ID_GRANTS_ALL),
+    BASE_ROLE_MOCK_GRANTS_ALL,
+  );
+  jotaiStore.set(
+    settingsDraftRoleFamilyState.atomFamily(MOCK_ROLE_ID_REVOKES_ALL),
+    BASE_ROLE_MOCK_REVOKES_ALL,
+  );
+};
+
+export const rolesMockHookWrapper = getJestMetadataAndApolloMocksWrapper({});

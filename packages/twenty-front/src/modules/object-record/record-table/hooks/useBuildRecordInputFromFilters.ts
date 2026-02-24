@@ -4,7 +4,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
 
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const useBuildRecordInputFromFilters = ({
@@ -12,7 +12,7 @@ export const useBuildRecordInputFromFilters = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 

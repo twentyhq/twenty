@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
@@ -12,7 +12,7 @@ import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useGetAvailableFieldsForCalendar = () => {
-  const viewObjectMetadataId = useRecoilComponentValue(
+  const viewObjectMetadataId = useRecoilComponentValueV2(
     viewObjectMetadataIdComponentState,
   );
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);

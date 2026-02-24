@@ -6,7 +6,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
@@ -35,7 +34,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { t } = useLingui();
 
   const { enqueueErrorSnackBar } = useSnackBar();
-  const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
+  const SSOIdentitiesProviders = useRecoilValueV2(SSOIdentitiesProvidersState);
   const authProviders = useRecoilValueV2(authProvidersState);
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(

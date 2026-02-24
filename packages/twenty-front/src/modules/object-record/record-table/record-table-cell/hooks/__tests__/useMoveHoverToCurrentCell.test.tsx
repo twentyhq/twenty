@@ -1,8 +1,10 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider, useAtomValue } from 'jotai';
 import { act } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
@@ -15,26 +17,30 @@ import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-t
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>
-    <RecordTableComponentInstance recordTableId="test-record-table-instance-id">
-      <RecordTableRowContextProvider value={recordTableRowContextValue}>
-        <RecordTableRowDraggableContextProvider
-          value={recordTableRowDraggableContextValue}
-        >
-          <RecordTableCellContext.Provider value={recordTableCellContextValue}>
-            {children}
-          </RecordTableCellContext.Provider>
-        </RecordTableRowDraggableContextProvider>
-      </RecordTableRowContextProvider>
-    </RecordTableComponentInstance>
-  </RecoilRoot>
+  <JotaiProvider store={jotaiStore}>
+    <RecoilRoot>
+      <RecordTableComponentInstance recordTableId="test-record-table-instance-id">
+        <RecordTableRowContextProvider value={recordTableRowContextValue}>
+          <RecordTableRowDraggableContextProvider
+            value={recordTableRowDraggableContextValue}
+          >
+            <RecordTableCellContext.Provider
+              value={recordTableCellContextValue}
+            >
+              {children}
+            </RecordTableCellContext.Provider>
+          </RecordTableRowDraggableContextProvider>
+        </RecordTableRowContextProvider>
+      </RecordTableComponentInstance>
+    </RecoilRoot>
+  </JotaiProvider>
 );
 
 describe('useMoveHoverToCurrentCell', () => {
   it('should work as expected', () => {
     const { result } = renderHook(
       () => {
-        const recordTableHoverPosition = useRecoilValue(
+        const recordTableHoverPosition = useAtomValue(
           recordTableHoverPositionComponentState.atomFamily({
             instanceId: 'test-record-table-instance-id',
           }),

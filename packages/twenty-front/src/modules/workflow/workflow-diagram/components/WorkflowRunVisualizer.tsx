@@ -1,4 +1,4 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { WorkflowRunDiagramCanvas } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramCanvas';
 import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
@@ -10,7 +10,7 @@ export const WorkflowRunVisualizer = ({
   workflowRunId: string;
 }) => {
   const workflowRun = useWorkflowRun({ workflowRunId });
-  const workflowDiagramStatus = useRecoilComponentValue(
+  const workflowDiagramStatus = useRecoilComponentValueV2(
     workflowDiagramStatusComponentState,
   );
 

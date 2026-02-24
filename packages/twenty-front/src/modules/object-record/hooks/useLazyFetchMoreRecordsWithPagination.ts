@@ -8,7 +8,7 @@ import {
 import { type Unmasked } from '@apollo/client/masking';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
@@ -29,6 +29,7 @@ import {
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
@@ -89,99 +90,96 @@ export const useLazyFetchMoreRecordsWithPagination = <
 
   // TODO: put this into a util inspired from https://github.com/apollographql/apollo-client/blob/master/src/utilities/policies/pagination.ts
   // This function is equivalent to merge function + read function in field policy
-  const fetchMoreRecordsLazy = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async (limit = DEFAULT_SEARCH_REQUEST_LIMIT) => {
-        const hasNextPageLocal = snapshot
-          .getLoadable(hasNextPageFamilyState(queryIdentifier))
-          .getValue();
+  const fetchMoreRecordsLazy = useCallback(
+    async (limit = DEFAULT_SEARCH_REQUEST_LIMIT) => {
+      const hasNextPageLocal = jotaiStore.get(
+        hasNextPageFamilyState.atomFamily(queryIdentifier),
+      );
 
-        const lastCursorLocal = snapshot
-          .getLoadable(cursorFamilyState(queryIdentifier))
-          .getValue();
+      const lastCursorLocal = jotaiStore.get(
+        cursorFamilyState.atomFamily(queryIdentifier),
+      );
 
-        // Remote objects does not support hasNextPage. We cannot rely on it to fetch more records.
-        if (
-          hasNextPageLocal ||
-          (!isAggregationEnabled(objectMetadataItem) && !error)
-        ) {
-          try {
-            const { data: fetchMoreDataResult } = await fetchMore({
-              variables: {
-                limit,
-                filter,
-                orderBy,
-                lastCursor: isNonEmptyString(lastCursorLocal)
-                  ? lastCursorLocal
-                  : undefined,
-              },
-              updateQuery: (prev, { fetchMoreResult }) => {
-                const previousEdges =
-                  prev?.[objectMetadataItem.namePlural]?.edges;
-                const nextEdges =
-                  fetchMoreResult?.[objectMetadataItem.namePlural]?.edges;
+      // Remote objects does not support hasNextPage. We cannot rely on it to fetch more records.
+      if (
+        hasNextPageLocal ||
+        (!isAggregationEnabled(objectMetadataItem) && !error)
+      ) {
+        try {
+          const { data: fetchMoreDataResult } = await fetchMore({
+            variables: {
+              limit,
+              filter,
+              orderBy,
+              lastCursor: isNonEmptyString(lastCursorLocal)
+                ? lastCursorLocal
+                : undefined,
+            },
+            updateQuery: (prev, { fetchMoreResult }) => {
+              const previousEdges =
+                prev?.[objectMetadataItem.namePlural]?.edges;
+              const nextEdges =
+                fetchMoreResult?.[objectMetadataItem.namePlural]?.edges;
 
-                let newEdges: RecordGqlEdge[] = previousEdges ?? [];
+              let newEdges: RecordGqlEdge[] = previousEdges ?? [];
 
-                if (isNonEmptyArray(nextEdges)) {
-                  newEdges = filterUniqueRecordEdgesByCursor([
-                    ...newEdges,
-                    ...(fetchMoreResult?.[objectMetadataItem.namePlural]
-                      ?.edges ?? []),
-                  ]);
-                }
+              if (isNonEmptyArray(nextEdges)) {
+                newEdges = filterUniqueRecordEdgesByCursor([
+                  ...newEdges,
+                  ...(fetchMoreResult?.[objectMetadataItem.namePlural]?.edges ??
+                    []),
+                ]);
+              }
 
-                const pageInfo =
-                  fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo;
+              const pageInfo =
+                fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo;
 
-                if (isDefined(pageInfo)) {
-                  set(
-                    cursorFamilyState(queryIdentifier),
-                    pageInfo.endCursor ?? '',
-                  );
-                  set(
-                    hasNextPageFamilyState(queryIdentifier),
-                    pageInfo.hasNextPage ?? false,
-                  );
-                }
+              if (isDefined(pageInfo)) {
+                jotaiStore.set(
+                  cursorFamilyState.atomFamily(queryIdentifier),
+                  pageInfo.endCursor ?? '',
+                );
+                jotaiStore.set(
+                  hasNextPageFamilyState.atomFamily(queryIdentifier),
+                  pageInfo.hasNextPage ?? false,
+                );
+              }
 
-                return Object.assign({}, prev, {
-                  [objectMetadataItem.namePlural]: {
-                    __typename: `${capitalize(
-                      objectMetadataItem.nameSingular,
-                    )}Connection`,
-                    edges: newEdges,
-                    pageInfo:
-                      fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
-                    totalCount:
-                      fetchMoreResult?.[objectMetadataItem.namePlural]
-                        .totalCount,
-                  },
-                } as RecordGqlOperationFindManyResult);
-              },
-            });
-
-            return {
-              data: fetchMoreDataResult?.[objectMetadataItem.namePlural],
-              totalCount:
-                fetchMoreDataResult?.[objectMetadataItem.namePlural]
-                  ?.totalCount,
-              records: getRecordsFromRecordConnection({
-                recordConnection: {
-                  edges:
-                    fetchMoreDataResult?.[objectMetadataItem.namePlural]?.edges,
+              return Object.assign({}, prev, {
+                [objectMetadataItem.namePlural]: {
+                  __typename: `${capitalize(
+                    objectMetadataItem.nameSingular,
+                  )}Connection`,
+                  edges: newEdges,
                   pageInfo:
-                    fetchMoreDataResult?.[objectMetadataItem.namePlural]
-                      ?.pageInfo,
+                    fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
+                  totalCount:
+                    fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
                 },
-              }) as T[],
-            };
-          } catch (error) {
-            handleFindManyRecordsError(error as ApolloError);
-            return { error: error as ApolloError };
-          }
+              } as RecordGqlOperationFindManyResult);
+            },
+          });
+
+          return {
+            data: fetchMoreDataResult?.[objectMetadataItem.namePlural],
+            totalCount:
+              fetchMoreDataResult?.[objectMetadataItem.namePlural]?.totalCount,
+            records: getRecordsFromRecordConnection({
+              recordConnection: {
+                edges:
+                  fetchMoreDataResult?.[objectMetadataItem.namePlural]?.edges,
+                pageInfo:
+                  fetchMoreDataResult?.[objectMetadataItem.namePlural]
+                    ?.pageInfo,
+              },
+            }) as T[],
+          };
+        } catch (error) {
+          handleFindManyRecordsError(error as ApolloError);
+          return { error: error as ApolloError };
         }
-      },
+      }
+    },
     [
       queryIdentifier,
       objectMetadataItem,

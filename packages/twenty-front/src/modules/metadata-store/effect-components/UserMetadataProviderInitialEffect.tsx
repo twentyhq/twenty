@@ -14,8 +14,7 @@ import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetReco
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useStore } from 'jotai';
-import { useEffect, useState } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
@@ -24,7 +23,6 @@ import {
   useGetCurrentUserQuery,
   type WorkspaceMember,
 } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -59,21 +57,19 @@ export const UserMetadataProviderInitialEffect = () => {
     isMatchingLocation(location, AppPath.Verify) ||
     isMatchingLocation(location, AppPath.VerifyEmail);
 
-  const updateLocaleCatalog = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async (newLocale: keyof typeof APP_LOCALES) => {
-        const localeValue = snapshot.getLoadable(dateLocaleState).getValue();
-        if (localeValue.locale !== newLocale) {
-          getDateFnsLocale(newLocale).then((localeCatalog) => {
-            const newValue = {
-              locale: newLocale,
-              localeCatalog: localeCatalog || enUS,
-            };
-            set(dateLocaleState, newValue);
-            store.set(dateLocaleStateV2.atom, newValue);
-          });
-        }
-      },
+  const updateLocaleCatalog = useCallback(
+    async (newLocale: keyof typeof APP_LOCALES) => {
+      const localeValue = store.get(dateLocaleStateV2.atom);
+      if (localeValue.locale !== newLocale) {
+        getDateFnsLocale(newLocale).then((localeCatalog) => {
+          const newValue = {
+            locale: newLocale,
+            localeCatalog: localeCatalog || enUS,
+          };
+          store.set(dateLocaleStateV2.atom, newValue);
+        });
+      }
+    },
     [store],
   );
 

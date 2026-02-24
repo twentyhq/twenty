@@ -10,9 +10,9 @@ import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 
 const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
@@ -21,15 +21,15 @@ const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
 `;
 
 export const RecordBoardFetchMoreInViewTriggerComponent = () => {
-  const [shouldFetchMore, setShouldFetchMore] = useRecoilComponentState(
+  const [shouldFetchMore, setShouldFetchMore] = useRecoilComponentStateV2(
     recordBoardShouldFetchMoreComponentState,
   );
 
-  const isInitialLoading = useRecoilComponentValue(
+  const isInitialLoading = useRecoilComponentValueV2(
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
   );
 
-  const isFetchingMore = useRecoilComponentValue(
+  const isFetchingMore = useRecoilComponentValueV2(
     recordBoardIsFetchingMoreComponentState,
   );
 
@@ -40,7 +40,7 @@ export const RecordBoardFetchMoreInViewTriggerComponent = () => {
     root: scrollWrapperHTMLElement,
   });
 
-  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
+  const visibleRecordGroupIds = useRecoilComponentFamilySelectorValueV2(
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Kanban,
   );

@@ -1,20 +1,23 @@
+import { useCallback } from 'react';
+
 import { useUpsertObjectFilterDropdownCurrentFilter } from '@/object-record/object-filter-dropdown/hooks/useUpsertObjectFilterDropdownCurrentFilter';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { useCreateRecordFilterFromObjectFilterDropdownCurrentStates } from '@/object-record/record-filter/hooks/useCreateRecordFilterFromObjectFilterDropdownCurrentStates';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyObjectFilterDropdownFilterValue = () => {
-  const objectFilterDropdownCurrentRecordFilterCallbackState =
-    useRecoilComponentCallbackState(
+  const objectFilterDropdownCurrentRecordFilterAtom =
+    useRecoilComponentStateCallbackStateV2(
       objectFilterDropdownCurrentRecordFilterComponentState,
     );
 
-  const fieldMetadataItemUsedInDropdownCallbackState =
-    useRecoilComponentCallbackState(
+  const fieldMetadataItemUsedInDropdownAtom =
+    useRecoilComponentSelectorCallbackStateV2(
       fieldMetadataItemUsedInDropdownComponentSelector,
     );
 
@@ -24,51 +27,50 @@ export const useApplyObjectFilterDropdownFilterValue = () => {
   const { upsertObjectFilterDropdownCurrentFilter } =
     useUpsertObjectFilterDropdownCurrentFilter();
 
-  const applyObjectFilterDropdownFilterValue = useRecoilCallback(
-    ({ snapshot }) =>
-      (newFilterValue: string, newDisplayValue?: string) => {
-        const objectFilterDropdownCurrentRecordFilter = snapshot
-          .getLoadable(objectFilterDropdownCurrentRecordFilterCallbackState)
-          .getValue();
+  const applyObjectFilterDropdownFilterValue = useCallback(
+    (newFilterValue: string, newDisplayValue?: string) => {
+      const objectFilterDropdownCurrentRecordFilter = jotaiStore.get(
+        objectFilterDropdownCurrentRecordFilterAtom,
+      ) as RecordFilter | undefined | null;
 
-        const fieldMetadataItemUsedInDropdown = snapshot
-          .getLoadable(fieldMetadataItemUsedInDropdownCallbackState)
-          .getValue();
+      const fieldMetadataItemUsedInDropdown = jotaiStore.get(
+        fieldMetadataItemUsedInDropdownAtom,
+      );
 
-        const objectFilterDropdownFilterNotYetCreated = !isDefined(
-          objectFilterDropdownCurrentRecordFilter,
-        );
+      const objectFilterDropdownFilterNotYetCreated = !isDefined(
+        objectFilterDropdownCurrentRecordFilter,
+      );
 
-        if (objectFilterDropdownFilterNotYetCreated) {
-          if (!isDefined(fieldMetadataItemUsedInDropdown)) {
-            throw new Error(
-              `Field metadata item is not defined in object filter dropdown when setting a filter value to create it, this should not happen.`,
-            );
-          }
-
-          const { newRecordFilterFromObjectFilterDropdownStates } =
-            createRecordFilterFromObjectFilterDropdownCurrentStates();
-
-          const newCurrentRecordFilter = {
-            ...newRecordFilterFromObjectFilterDropdownStates,
-            value: newFilterValue,
-            displayValue: newDisplayValue ?? newFilterValue,
-          } satisfies RecordFilter;
-
-          upsertObjectFilterDropdownCurrentFilter(newCurrentRecordFilter);
-        } else {
-          const newCurrentRecordFilter = {
-            ...objectFilterDropdownCurrentRecordFilter,
-            value: newFilterValue,
-            displayValue: newDisplayValue ?? newFilterValue,
-          } satisfies RecordFilter;
-
-          upsertObjectFilterDropdownCurrentFilter(newCurrentRecordFilter);
+      if (objectFilterDropdownFilterNotYetCreated) {
+        if (!isDefined(fieldMetadataItemUsedInDropdown)) {
+          throw new Error(
+            `Field metadata item is not defined in object filter dropdown when setting a filter value to create it, this should not happen.`,
+          );
         }
-      },
+
+        const { newRecordFilterFromObjectFilterDropdownStates } =
+          createRecordFilterFromObjectFilterDropdownCurrentStates();
+
+        const newCurrentRecordFilter = {
+          ...newRecordFilterFromObjectFilterDropdownStates,
+          value: newFilterValue,
+          displayValue: newDisplayValue ?? newFilterValue,
+        } satisfies RecordFilter;
+
+        upsertObjectFilterDropdownCurrentFilter(newCurrentRecordFilter);
+      } else {
+        const newCurrentRecordFilter = {
+          ...objectFilterDropdownCurrentRecordFilter,
+          value: newFilterValue,
+          displayValue: newDisplayValue ?? newFilterValue,
+        } satisfies RecordFilter;
+
+        upsertObjectFilterDropdownCurrentFilter(newCurrentRecordFilter);
+      }
+    },
     [
-      objectFilterDropdownCurrentRecordFilterCallbackState,
-      fieldMetadataItemUsedInDropdownCallbackState,
+      objectFilterDropdownCurrentRecordFilterAtom,
+      fieldMetadataItemUsedInDropdownAtom,
       createRecordFilterFromObjectFilterDropdownCurrentStates,
       upsertObjectFilterDropdownCurrentFilter,
     ],

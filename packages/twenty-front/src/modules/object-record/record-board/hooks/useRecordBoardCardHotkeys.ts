@@ -9,8 +9,8 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 
@@ -27,12 +27,12 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
   const { resetRecordBoardSelection } = useResetRecordBoardSelection();
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const isRecordBoardCardSelected = useRecoilComponentFamilyValue(
+  const isRecordBoardCardSelected = useRecoilComponentFamilyValueV2(
     isRecordBoardCardSelectedComponentFamilyState,
     recordId,
   );
 
-  const selectedRecordIds = useRecoilComponentValue(
+  const selectedRecordIds = useRecoilComponentSelectorValueV2(
     recordBoardSelectedRecordIdsComponentSelector,
     recordBoardId,
   );

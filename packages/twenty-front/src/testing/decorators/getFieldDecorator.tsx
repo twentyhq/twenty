@@ -1,6 +1,5 @@
 import { type Decorator } from '@storybook/react-vite';
-import { useEffect } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useCallback, useEffect } from 'react';
 
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
@@ -8,6 +7,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
@@ -24,13 +24,9 @@ const RecordMockSetterEffect = ({
   people: ObjectRecord[];
   tasks: ObjectRecord[];
 }) => {
-  const setRecordInStores = useRecoilCallback(
-    ({ set }) =>
-      (record: ObjectRecord) => {
-        set(recordStoreFamilyState(record.id), record);
-      },
-    [],
-  );
+  const setRecordInStores = useCallback((record: ObjectRecord) => {
+    jotaiStore.set(recordStoreFamilyState.atomFamily(record.id), record);
+  }, []);
 
   useEffect(() => {
     for (const company of companies) {

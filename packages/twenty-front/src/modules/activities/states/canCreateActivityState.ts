@@ -1,5 +1,5 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
-export const canCreateActivityState = createState<boolean>({
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+export const canCreateActivityState = createStateV2<boolean>({
   key: 'canCreateActivityState',
   defaultValue: false,
 });

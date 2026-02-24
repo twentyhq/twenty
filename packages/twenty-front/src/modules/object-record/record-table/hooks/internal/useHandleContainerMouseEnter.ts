@@ -1,10 +1,10 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 
 export type HandleContainerMouseEnterArgs = {
   cellPosition: TableCellPosition;
@@ -17,24 +17,23 @@ export const useHandleContainerMouseEnter = ({
 }) => {
   const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
-  const isSomeCellInEditModeSelector = useRecoilComponentCallbackState(
-    isSomeCellInEditModeComponentSelector,
-    recordTableId,
-  );
+  const isSomeCellInEditModeSelector =
+    useRecoilComponentSelectorCallbackStateV2(
+      isSomeCellInEditModeComponentSelector,
+      recordTableId,
+    );
 
-  const handleContainerMouseEnter = useRecoilCallback(
-    ({ snapshot }) =>
-      ({ cellPosition }: HandleContainerMouseEnterArgs) => {
-        const isSomeCellInEditMode = getSnapshotValue(
-          snapshot,
-          isSomeCellInEditModeSelector,
-        );
+  const store = useStore();
 
-        if (!isSomeCellInEditMode) {
-          moveHoverToCurrentCell(cellPosition);
-        }
-      },
-    [isSomeCellInEditModeSelector, moveHoverToCurrentCell],
+  const handleContainerMouseEnter = useCallback(
+    ({ cellPosition }: HandleContainerMouseEnterArgs) => {
+      const isSomeCellInEditMode = store.get(isSomeCellInEditModeSelector);
+
+      if (!isSomeCellInEditMode) {
+        moveHoverToCurrentCell(cellPosition);
+      }
+    },
+    [isSomeCellInEditModeSelector, moveHoverToCurrentCell, store],
   );
 
   return {

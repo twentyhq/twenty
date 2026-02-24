@@ -19,7 +19,7 @@ import {
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CheckPublicDomainValidRecordsEffect } from '@/settings/domains/components/CheckPublicDomainValidRecordsEffect';
 import { selectedPublicDomainState } from '@/settings/domains/states/selectedPublicDomainState';
-import { useRecoilState } from 'recoil';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useState } from 'react';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { getDomainValidationSchema } from '@/settings/domains/utils/get-domain-validation-schema';
@@ -48,7 +48,7 @@ const StyledRecordsWrapper = styled.div`
 `;
 
 export const SettingPublicDomain = () => {
-  const [selectedPublicDomain, setSelectedPublicDomain] = useRecoilState(
+  const [selectedPublicDomain, setSelectedPublicDomain] = useRecoilStateV2(
     selectedPublicDomainState,
   );
   const { t } = useLingui();

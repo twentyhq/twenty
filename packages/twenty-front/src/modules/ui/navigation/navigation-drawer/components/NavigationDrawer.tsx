@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import { type ReactNode, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
@@ -82,7 +82,7 @@ export const NavigationDrawer = ({
   const [navigationDrawerWidth, setNavigationDrawerWidth] = useRecoilStateV2(
     navigationDrawerWidthState,
   );
-  const setTableWidthResizeIsActive = useSetRecoilState(
+  const setTableWidthResizeIsActive = useSetRecoilStateV2(
     tableWidthResizeIsActiveState,
   );
 

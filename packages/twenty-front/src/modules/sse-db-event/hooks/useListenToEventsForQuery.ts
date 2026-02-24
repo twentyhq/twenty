@@ -1,7 +1,6 @@
 import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQueryListenersState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useEffect } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useCallback, useEffect } from 'react';
 import {
   type MetadataGqlOperationSignature,
   type RecordGqlOperationSignature,
@@ -16,46 +15,43 @@ export const useListenToEventsForQuery = ({
     | RecordGqlOperationSignature
     | MetadataGqlOperationSignature;
 }) => {
-  const changeQueryIdListenState = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (
-        shouldListen: boolean,
-        targetQueryId: string,
-        targetOperationSignature:
-          | RecordGqlOperationSignature
-          | MetadataGqlOperationSignature,
-      ) => {
-        const currentRequiredQueryListeners = getSnapshotValue(
-          snapshot,
-          requiredQueryListenersState,
+  const changeQueryIdListenState = useCallback(
+    (
+      shouldListen: boolean,
+      targetQueryId: string,
+      targetOperationSignature:
+        | RecordGqlOperationSignature
+        | MetadataGqlOperationSignature,
+    ) => {
+      const currentRequiredQueryListeners = jotaiStore.get(
+        requiredQueryListenersState.atom,
+      );
+
+      const listeningForThisQueryIsActive = currentRequiredQueryListeners.some(
+        (listener) => listener.queryId === targetQueryId,
+      );
+
+      if (shouldListen === listeningForThisQueryIsActive) {
+        return;
+      }
+
+      if (shouldListen) {
+        jotaiStore.set(requiredQueryListenersState.atom, [
+          ...currentRequiredQueryListeners,
+          {
+            queryId: targetQueryId,
+            operationSignature: targetOperationSignature,
+          },
+        ]);
+      } else {
+        jotaiStore.set(
+          requiredQueryListenersState.atom,
+          currentRequiredQueryListeners.filter(
+            (listener) => listener.queryId !== targetQueryId,
+          ),
         );
-
-        const listeningForThisQueryIsActive =
-          currentRequiredQueryListeners.some(
-            (listener) => listener.queryId === targetQueryId,
-          );
-
-        if (shouldListen === listeningForThisQueryIsActive) {
-          return;
-        }
-
-        if (shouldListen) {
-          set(requiredQueryListenersState, [
-            ...currentRequiredQueryListeners,
-            {
-              queryId: targetQueryId,
-              operationSignature: targetOperationSignature,
-            },
-          ]);
-        } else {
-          set(
-            requiredQueryListenersState,
-            currentRequiredQueryListeners.filter(
-              (listener) => listener.queryId !== targetQueryId,
-            ),
-          );
-        }
-      },
+      }
+    },
     [],
   );
 

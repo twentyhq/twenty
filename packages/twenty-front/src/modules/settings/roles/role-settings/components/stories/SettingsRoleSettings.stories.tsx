@@ -1,7 +1,7 @@
 import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/SettingsRoleSettings';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { getRolesMock } from '~/testing/mock-data/roles';
@@ -9,8 +9,9 @@ import { getRolesMock } from '~/testing/mock-data/roles';
 const SettingsRoleSettingsWrapper = (
   args: React.ComponentProps<typeof SettingsRoleSettings>,
 ) => {
-  const setDraftRole = useSetRecoilState(
-    settingsDraftRoleFamilyState(args.roleId),
+  const setDraftRole = useSetFamilyRecoilStateV2(
+    settingsDraftRoleFamilyState,
+    args.roleId,
   );
 
   const role = getRolesMock().find((role) => role.id === args.roleId);

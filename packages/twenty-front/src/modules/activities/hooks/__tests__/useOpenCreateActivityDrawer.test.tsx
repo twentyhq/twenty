@@ -1,11 +1,11 @@
 import { type MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
-import { useRecoilValue } from 'recoil';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import gql from 'graphql-tag';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -83,7 +83,7 @@ describe('useOpenCreateActivityDrawer', () => {
         const openActivityRightDrawer = useOpenCreateActivityDrawer({
           activityObjectNameSingular: CoreObjectNameSingular.Note,
         });
-        const viewableRecordId = useRecoilValue(viewableRecordIdState);
+        const viewableRecordId = useRecoilValueV2(viewableRecordIdState);
         return {
           openActivityRightDrawer,
           viewableRecordId,

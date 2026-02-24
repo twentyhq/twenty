@@ -1,3 +1,5 @@
+import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 import {
@@ -10,7 +12,14 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 const meta: Meta<typeof SettingsRestPlayground> = {
   title: 'Pages/Settings/Playground/RestPlayground',
   component: SettingsRestPlayground,
-  decorators: [ComponentDecorator, ComponentWithRouterDecorator],
+  decorators: [
+    (Story) => {
+      jotaiStore.set(playgroundApiKeyState.atom, 'test-api-key');
+      return <Story />;
+    },
+    ComponentDecorator,
+    ComponentWithRouterDecorator,
+  ],
   parameters: {
     docs: {
       description: {

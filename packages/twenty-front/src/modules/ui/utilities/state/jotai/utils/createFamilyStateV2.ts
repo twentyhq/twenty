@@ -39,9 +39,9 @@ export const createFamilyStateV2 = <ValueType, FamilyKey>({
     return baseAtom;
   };
 
-  return {
-    type: 'FamilyStateV2',
+  return Object.assign(familyFunction, {
+    type: 'FamilyStateV2' as const,
     key,
     atomFamily: familyFunction,
-  };
+  });
 };

@@ -24,7 +24,7 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
@@ -43,7 +43,7 @@ import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnable
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
@@ -134,12 +134,16 @@ export const PageLayoutTabList = ({
     hasAddButton: isDefined(onAddTab),
   });
 
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+  );
+
   const dropdownId = `tab-overflow-${componentInstanceId}`;
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
   const { toggleClickOutside } = useClickOutsideListener(dropdownId);
 
-  const setIsTabDragging = useSetRecoilComponentState(
+  const setIsTabDragging = useSetRecoilComponentStateV2(
     isPageLayoutTabDraggingComponentState,
     componentInstanceId,
   );
@@ -174,9 +178,11 @@ export const PageLayoutTabList = ({
     closeDropdown(dropdownId);
   }, [closeDropdown, dropdownId]);
 
-  const setPageLayoutTabListCurrentDragDroppableId = useSetRecoilComponentState(
-    pageLayoutTabListCurrentDragDroppableIdComponentState,
-  );
+  const setPageLayoutTabListCurrentDragDroppableId =
+    useSetRecoilComponentStateV2(
+      pageLayoutTabListCurrentDragDroppableIdComponentState,
+      pageLayoutId,
+    );
 
   const handleDragUpdate: OnDragUpdateResponder = (update) => {
     setPageLayoutTabListCurrentDragDroppableId(update.destination?.droppableId);
@@ -214,17 +220,15 @@ export const PageLayoutTabList = ({
     [onReorder, setIsTabDragging, toggleClickOutside, openDropdown, dropdownId],
   );
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useRecoilComponentValueV2(
     isPageLayoutInEditModeComponentState,
+    pageLayoutId,
   );
-  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
-    PageLayoutComponentInstanceContext,
-  );
-  const tabSettingsOpenTabId = useRecoilComponentValue(
+  const tabSettingsOpenTabId = useRecoilComponentValueV2(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
-  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+  const setTabSettingsOpenTabId = useSetRecoilComponentStateV2(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );

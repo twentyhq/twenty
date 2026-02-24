@@ -8,11 +8,10 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { injectRelationWidgetsIntoLayout } from '@/page-layout/utils/injectRelationWidgetsIntoLayout';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useEffect } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useStore } from 'jotai';
+import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -26,7 +25,7 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
 }: PageLayoutRelationWidgetsSyncEffectProps) => {
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
-  const isInitialized = useRecoilComponentValue(
+  const isInitialized = useRecoilComponentValueV2(
     pageLayoutIsInitializedComponentState,
   );
 
@@ -37,41 +36,43 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
   });
 
   const pageLayoutPersistedComponentCallbackState =
-    useRecoilComponentCallbackState(pageLayoutPersistedComponentState);
+    useRecoilComponentStateCallbackStateV2(pageLayoutPersistedComponentState);
 
-  const pageLayoutDraftComponentCallbackState = useRecoilComponentCallbackState(
-    pageLayoutDraftComponentState,
-  );
+  const pageLayoutDraftComponentCallbackState =
+    useRecoilComponentStateCallbackStateV2(pageLayoutDraftComponentState);
 
   const pageLayoutCurrentLayoutsComponentCallbackState =
-    useRecoilComponentCallbackState(pageLayoutCurrentLayoutsComponentState);
+    useRecoilComponentStateCallbackStateV2(
+      pageLayoutCurrentLayoutsComponentState,
+    );
 
-  const syncPageLayoutWithRelationWidgets = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (layout: PageLayout) => {
-        const currentPersisted = getSnapshotValue(
-          snapshot,
-          pageLayoutPersistedComponentCallbackState,
-        );
+  const store = useStore();
 
-        if (!isDeeplyEqual(layout, currentPersisted)) {
-          set(pageLayoutPersistedComponentCallbackState, layout);
-          set(pageLayoutDraftComponentCallbackState, {
-            id: layout.id,
-            name: layout.name,
-            type: layout.type,
-            objectMetadataId: layout.objectMetadataId,
-            tabs: layout.tabs,
-          });
+  const syncPageLayoutWithRelationWidgets = useCallback(
+    (layout: PageLayout) => {
+      const currentPersisted = store.get(
+        pageLayoutPersistedComponentCallbackState,
+      );
 
-          const tabLayouts = convertPageLayoutToTabLayouts(layout);
-          set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
-        }
-      },
+      if (!isDeeplyEqual(layout, currentPersisted)) {
+        store.set(pageLayoutPersistedComponentCallbackState, layout);
+        store.set(pageLayoutDraftComponentCallbackState, {
+          id: layout.id,
+          name: layout.name,
+          type: layout.type,
+          objectMetadataId: layout.objectMetadataId,
+          tabs: layout.tabs,
+        });
+
+        const tabLayouts = convertPageLayoutToTabLayouts(layout);
+        store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
+      }
+    },
     [
       pageLayoutCurrentLayoutsComponentCallbackState,
       pageLayoutDraftComponentCallbackState,
       pageLayoutPersistedComponentCallbackState,
+      store,
     ],
   );
 

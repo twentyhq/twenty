@@ -13,9 +13,11 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useCallback } from 'react';
 
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
@@ -33,47 +35,46 @@ export const MultipleRecordPickerMenuItems = ({
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
-  const pickableRecordIds = useRecoilComponentValue(
+  const pickableRecordIds = useRecoilComponentSelectorValueV2(
     multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector,
     componentInstanceId,
   );
 
-  const multipleRecordPickerPickableMorphItemsState =
-    useRecoilComponentCallbackState(
+  const multipleRecordPickerPickableMorphItemsAtom =
+    useRecoilComponentStateCallbackStateV2(
       multipleRecordPickerPickableMorphItemsComponentState,
       componentInstanceId,
     );
 
-  const handleChange = useRecoilCallback(
-    ({ snapshot, set }) => {
-      return (morphItem: RecordPickerPickableMorphItem) => {
-        const previousMorphItems = snapshot
-          .getLoadable(multipleRecordPickerPickableMorphItemsState)
-          .getValue();
+  const handleChange = useCallback(
+    (morphItem: RecordPickerPickableMorphItem) => {
+      const previousMorphItems = jotaiStore.get(
+        multipleRecordPickerPickableMorphItemsAtom,
+      );
 
-        const existingMorphItemIndex = previousMorphItems.findIndex(
-          (item) => item.recordId === morphItem.recordId,
-        );
+      const existingMorphItemIndex = previousMorphItems.findIndex(
+        (item) => item.recordId === morphItem.recordId,
+      );
 
-        const newMorphItems = [...previousMorphItems];
+      const newMorphItems = [...previousMorphItems];
 
-        if (existingMorphItemIndex === -1) {
-          newMorphItems.push(morphItem);
-        } else {
-          newMorphItems[existingMorphItemIndex] = morphItem;
-        }
+      if (existingMorphItemIndex === -1) {
+        newMorphItems.push(morphItem);
+      } else {
+        newMorphItems[existingMorphItemIndex] = morphItem;
+      }
 
-        set(multipleRecordPickerPickableMorphItemsState, newMorphItems);
-      };
+      jotaiStore.set(multipleRecordPickerPickableMorphItemsAtom, newMorphItems);
     },
-    [multipleRecordPickerPickableMorphItemsState],
+    [multipleRecordPickerPickableMorphItemsAtom],
   );
 
-  const multipleRecordPickerShouldShowInitialLoading = useRecoilComponentValue(
-    multipleRecordPickerShouldShowInitialLoadingComponentState,
-  );
+  const multipleRecordPickerShouldShowInitialLoading =
+    useRecoilComponentValueV2(
+      multipleRecordPickerShouldShowInitialLoadingComponentState,
+    );
 
-  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValue(
+  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 

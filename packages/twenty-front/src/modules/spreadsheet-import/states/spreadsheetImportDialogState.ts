@@ -1,5 +1,5 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
 export type SpreadsheetImportDialogState = {
   isOpen: boolean;
@@ -8,7 +8,7 @@ export type SpreadsheetImportDialogState = {
 };
 
 export const spreadsheetImportDialogState =
-  createState<SpreadsheetImportDialogState>({
+  createStateV2<SpreadsheetImportDialogState>({
     key: 'spreadsheetImportDialogState',
     defaultValue: {
       isOpen: false,

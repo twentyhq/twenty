@@ -1,11 +1,12 @@
 import { getRoleWithUpsertedObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/getRoleWithUpsertedObjectPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useSetRecoilState } from 'recoil';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 export const useUpsertObjectPermissionInDraftRole = (roleId: string) => {
-  const setSettingsDraftRole = useSetRecoilState(
-    settingsDraftRoleFamilyState(roleId),
+  const setSettingsDraftRole = useSetFamilyRecoilStateV2(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const upsertObjectPermissionInDraftRole = (

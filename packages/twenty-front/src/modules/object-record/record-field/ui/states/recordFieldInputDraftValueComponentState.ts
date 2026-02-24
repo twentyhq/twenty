@@ -1,8 +1,8 @@
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const recordFieldInputDraftValueComponentState =
-  createComponentState<any>({
+  createComponentStateV2<any>({
     key: 'recordFieldInputDraftValueComponentState',
     defaultValue: undefined,
     componentInstanceContext: RecordFieldComponentInstanceContext,

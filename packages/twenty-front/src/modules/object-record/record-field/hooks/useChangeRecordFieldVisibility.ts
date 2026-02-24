@@ -2,7 +2,7 @@ import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpda
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,7 +12,7 @@ import { sortByProperty } from '~/utils/array/sortByProperty';
 export const useChangeRecordFieldVisibility = (
   recordFieldComponentInstanceId?: string,
 ) => {
-  const currentRecordFields = useRecoilComponentValue(
+  const currentRecordFields = useRecoilComponentValueV2(
     currentRecordFieldsComponentState,
     recordFieldComponentInstanceId,
   );

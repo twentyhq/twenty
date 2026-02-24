@@ -1,8 +1,9 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -15,50 +16,52 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutDraftState = useRecoilComponentCallbackState(
+  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+  const pageLayoutCurrentLayoutsState = useRecoilComponentStateCallbackStateV2(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const deletePageLayoutWidget = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (widgetId: string) => {
-        closeCommandMenu();
+  const store = useStore();
 
-        const pageLayoutDraft = snapshot
-          .getLoadable(pageLayoutDraftState)
-          .getValue();
-        const allTabLayouts = snapshot
-          .getLoadable(pageLayoutCurrentLayoutsState)
-          .getValue();
+  const deletePageLayoutWidget = useCallback(
+    (widgetId: string) => {
+      closeCommandMenu();
 
-        const tabWithWidget = pageLayoutDraft.tabs.find((tab) =>
-          tab.widgets.some((w) => w.id === widgetId),
+      const pageLayoutDraft = store.get(pageLayoutDraftState);
+      const allTabLayouts = store.get(pageLayoutCurrentLayoutsState);
+
+      const tabWithWidget = pageLayoutDraft.tabs.find((tab) =>
+        tab.widgets.some((w) => w.id === widgetId),
+      );
+      const tabId = tabWithWidget?.id;
+
+      if (isDefined(tabId)) {
+        const updatedLayouts = removeWidgetLayoutFromTab(
+          allTabLayouts,
+          tabId,
+          widgetId,
         );
-        const tabId = tabWithWidget?.id;
+        store.set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
-        if (isDefined(tabId)) {
-          const updatedLayouts = removeWidgetLayoutFromTab(
-            allTabLayouts,
-            tabId,
-            widgetId,
-          );
-          set(pageLayoutCurrentLayoutsState, updatedLayouts);
-
-          set(pageLayoutDraftState, (prev) => ({
-            ...prev,
-            tabs: removeWidgetFromTab(prev.tabs, tabId, widgetId),
-          }));
-        }
-      },
-    [closeCommandMenu, pageLayoutCurrentLayoutsState, pageLayoutDraftState],
+        store.set(pageLayoutDraftState, (prev) => ({
+          ...prev,
+          tabs: removeWidgetFromTab(prev.tabs, tabId, widgetId),
+        }));
+      }
+    },
+    [
+      closeCommandMenu,
+      pageLayoutCurrentLayoutsState,
+      pageLayoutDraftState,
+      store,
+    ],
   );
 
   return { deletePageLayoutWidget };

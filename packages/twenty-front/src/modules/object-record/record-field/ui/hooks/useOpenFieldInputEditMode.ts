@@ -28,16 +28,17 @@ import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenFieldInputEditMode = () => {
+  const store = useStore();
   const { openRelationToOneFieldInput } = useOpenRelationToOneFieldInput();
   const { openRelationFromManyFieldInput } =
     useOpenRelationFromManyFieldInput();
@@ -60,184 +61,171 @@ export const useOpenFieldInputEditMode = () => {
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const openFieldInput = useRecoilCallback(
-    ({ snapshot }) =>
-      ({
-        fieldDefinition,
-        recordId,
-        prefix,
-      }: {
-        fieldDefinition: FieldDefinition<FieldMetadata>;
-        recordId: string;
-        prefix?: string;
-      }) => {
-        const objectMetadataItems = jotaiStore.get(
-          objectMetadataItemsState.atom,
+  const openFieldInput = useCallback(
+    ({
+      fieldDefinition,
+      recordId,
+      prefix,
+    }: {
+      fieldDefinition: FieldDefinition<FieldMetadata>;
+      recordId: string;
+      prefix?: string;
+    }) => {
+      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+
+      const currentWorkspace = store.get(currentWorkspaceState.atom);
+
+      const isJunctionRelationsEnabled =
+        currentWorkspace?.featureFlags?.find(
+          (flag) => (flag.key as string) === 'IS_JUNCTION_RELATIONS_ENABLED',
+        )?.value ?? false;
+
+      const isOneToMany = isFieldRelationOneToMany(fieldDefinition);
+      const fieldHasJunctionConfig = hasJunctionConfig(
+        fieldDefinition.metadata.settings,
+      );
+
+      // Handle Files field with custom behavior for empty state
+      if (isFieldFiles(fieldDefinition)) {
+        const objectMetadataItem = objectMetadataItems.find(
+          (item) =>
+            item.nameSingular ===
+            fieldDefinition.metadata.objectMetadataNameSingular,
         );
 
-        const currentWorkspace = jotaiStore.get(currentWorkspaceState.atom);
-
-        const isJunctionRelationsEnabled =
-          currentWorkspace?.featureFlags?.find(
-            (flag) => (flag.key as string) === 'IS_JUNCTION_RELATIONS_ENABLED',
-          )?.value ?? false;
-
-        const isOneToMany = isFieldRelationOneToMany(fieldDefinition);
-        const fieldHasJunctionConfig = hasJunctionConfig(
-          fieldDefinition.metadata.settings,
-        );
-
-        // Handle Files field with custom behavior for empty state
-        if (isFieldFiles(fieldDefinition)) {
-          const objectMetadataItem = objectMetadataItems.find(
-            (item) =>
-              item.nameSingular ===
-              fieldDefinition.metadata.objectMetadataNameSingular,
-          );
-
-          if (isDefined(objectMetadataItem)) {
-            openFilesFieldInput({
-              fieldName: fieldDefinition.metadata.fieldName,
-              fieldMetadataId: fieldDefinition.fieldMetadataId,
-              recordId,
-              prefix,
-              updateRecord: (updateInput) => {
-                updateOneRecord({
-                  objectNameSingular: objectMetadataItem.nameSingular,
-                  idToUpdate: recordId,
-                  updateOneRecordInput: updateInput,
-                });
-              },
-              fieldDefinition: {
-                metadata: {
-                  settings: fieldDefinition.metadata.settings ?? undefined,
-                },
-              },
-            });
-            return;
-          }
-        }
-
-        if (
-          isJunctionRelationsEnabled &&
-          isOneToMany &&
-          fieldHasJunctionConfig
-        ) {
-          openJunctionRelationFieldInput({
-            fieldDefinition:
-              fieldDefinition as FieldDefinition<FieldRelationMetadata>,
-            recordId,
-            prefix,
-          });
-          return;
-        }
-
-        // Backward compatibility: hardcoded taskTarget/noteTarget check
-        // TODO: Remove this once taskTarget/noteTarget are migrated to use junction configuration
-        if (
-          isFieldRelationOneToMany(fieldDefinition) &&
-          ['taskTarget', 'noteTarget'].includes(
-            fieldDefinition.metadata.relationObjectMetadataNameSingular,
-          )
-        ) {
-          const fieldValue = snapshot
-            .getLoadable<FieldRelationValue<FieldRelationFromManyValue>>(
-              recordStoreFamilySelector({
-                recordId,
-                fieldName: fieldDefinition.metadata.fieldName,
-              }),
-            )
-            .getValue();
-
-          const activity = snapshot
-            .getLoadable(recordStoreFamilyState(recordId))
-            .getValue();
-
-          const activityTargetObjectRecords = getActivityTargetObjectRecords({
-            activityRecord: activity as Task | Note,
-            objectMetadataItems,
-            activityTargets: fieldValue as NoteTarget[] | TaskTarget[],
-          });
-
-          openActivityTargetCellEditMode({
-            recordPickerInstanceId: getRecordFieldInputInstanceId({
-              recordId,
-              fieldName: fieldDefinition.metadata.fieldName,
-              prefix,
-            }),
-            activityTargetObjectRecords,
-          });
-          return;
-        }
-
-        if (isFieldRelationManyToOne(fieldDefinition)) {
-          openRelationToOneFieldInput({
+        if (isDefined(objectMetadataItem)) {
+          openFilesFieldInput({
             fieldName: fieldDefinition.metadata.fieldName,
+            fieldMetadataId: fieldDefinition.fieldMetadataId,
             recordId,
             prefix,
-          });
-
-          return;
-        }
-
-        if (isFieldMorphRelationOneToMany(fieldDefinition)) {
-          if (!isFieldMorphRelation(fieldDefinition)) {
-            throw new Error('Field is not a morph relation one to many');
-          }
-
-          openMorphRelationOneToManyFieldInput({
-            recordId,
-            prefix,
-            fieldDefinition,
-          });
-          return;
-        }
-
-        if (isFieldRelationOneToMany(fieldDefinition)) {
-          if (
-            isDefined(
-              fieldDefinition.metadata.relationObjectMetadataNameSingular,
-            )
-          ) {
-            openRelationFromManyFieldInput({
-              fieldName: fieldDefinition.metadata.fieldName,
-              objectNameSingular:
-                fieldDefinition.metadata.relationObjectMetadataNameSingular,
-              recordId,
-              prefix,
-            });
-            return;
-          }
-        }
-
-        if (isFieldMorphRelationManyToOne(fieldDefinition)) {
-          openMorphRelationManyToOneFieldInput({
-            recordId,
-            prefix,
-            fieldDefinition,
+            updateRecord: (updateInput) => {
+              updateOneRecord({
+                objectNameSingular: objectMetadataItem.nameSingular,
+                idToUpdate: recordId,
+                updateOneRecordInput: updateInput,
+              });
+            },
+            fieldDefinition: {
+              metadata: {
+                settings: fieldDefinition.metadata.settings ?? undefined,
+              },
+            },
           });
           return;
         }
+      }
 
-        pushFocusItemToFocusStack({
-          focusId: getRecordFieldInputInstanceId({
+      if (isJunctionRelationsEnabled && isOneToMany && fieldHasJunctionConfig) {
+        openJunctionRelationFieldInput({
+          fieldDefinition:
+            fieldDefinition as FieldDefinition<FieldRelationMetadata>,
+          recordId,
+          prefix,
+        });
+        return;
+      }
+
+      // Backward compatibility: hardcoded taskTarget/noteTarget check
+      // TODO: Remove this once taskTarget/noteTarget are migrated to use junction configuration
+      if (
+        isFieldRelationOneToMany(fieldDefinition) &&
+        ['taskTarget', 'noteTarget'].includes(
+          fieldDefinition.metadata.relationObjectMetadataNameSingular,
+        )
+      ) {
+        const fieldValue = store.get(
+          recordStoreFamilySelectorV2.selectorFamily({
+            recordId,
+            fieldName: fieldDefinition.metadata.fieldName,
+          }),
+        ) as FieldRelationValue<FieldRelationFromManyValue>;
+
+        const activity = store.get(recordStoreFamilyState.atomFamily(recordId));
+
+        const activityTargetObjectRecords = getActivityTargetObjectRecords({
+          activityRecord: activity as Task | Note,
+          objectMetadataItems,
+          activityTargets: fieldValue as NoteTarget[] | TaskTarget[],
+        });
+
+        openActivityTargetCellEditMode({
+          recordPickerInstanceId: getRecordFieldInputInstanceId({
             recordId,
             fieldName: fieldDefinition.metadata.fieldName,
             prefix,
           }),
-          component: {
-            type: FocusComponentType.OPENED_FIELD_INPUT,
-            instanceId: getRecordFieldInputInstanceId({
-              recordId,
-              fieldName: fieldDefinition.metadata.fieldName,
-              prefix,
-            }),
-          },
-          globalHotkeysConfig: {
-            enableGlobalHotkeysConflictingWithKeyboard: false,
-          },
+          activityTargetObjectRecords,
         });
-      },
+        return;
+      }
+
+      if (isFieldRelationManyToOne(fieldDefinition)) {
+        openRelationToOneFieldInput({
+          fieldName: fieldDefinition.metadata.fieldName,
+          recordId,
+          prefix,
+        });
+
+        return;
+      }
+
+      if (isFieldMorphRelationOneToMany(fieldDefinition)) {
+        if (!isFieldMorphRelation(fieldDefinition)) {
+          throw new Error('Field is not a morph relation one to many');
+        }
+
+        openMorphRelationOneToManyFieldInput({
+          recordId,
+          prefix,
+          fieldDefinition,
+        });
+        return;
+      }
+
+      if (isFieldRelationOneToMany(fieldDefinition)) {
+        if (
+          isDefined(fieldDefinition.metadata.relationObjectMetadataNameSingular)
+        ) {
+          openRelationFromManyFieldInput({
+            fieldName: fieldDefinition.metadata.fieldName,
+            objectNameSingular:
+              fieldDefinition.metadata.relationObjectMetadataNameSingular,
+            recordId,
+            prefix,
+          });
+          return;
+        }
+      }
+
+      if (isFieldMorphRelationManyToOne(fieldDefinition)) {
+        openMorphRelationManyToOneFieldInput({
+          recordId,
+          prefix,
+          fieldDefinition,
+        });
+        return;
+      }
+
+      pushFocusItemToFocusStack({
+        focusId: getRecordFieldInputInstanceId({
+          recordId,
+          fieldName: fieldDefinition.metadata.fieldName,
+          prefix,
+        }),
+        component: {
+          type: FocusComponentType.OPENED_FIELD_INPUT,
+          instanceId: getRecordFieldInputInstanceId({
+            recordId,
+            fieldName: fieldDefinition.metadata.fieldName,
+            prefix,
+          }),
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysConflictingWithKeyboard: false,
+        },
+      });
+    },
     [
       openActivityTargetCellEditMode,
       openFilesFieldInput,
@@ -247,6 +235,7 @@ export const useOpenFieldInputEditMode = () => {
       openRelationFromManyFieldInput,
       openRelationToOneFieldInput,
       pushFocusItemToFocusStack,
+      store,
       updateOneRecord,
     ],
   );

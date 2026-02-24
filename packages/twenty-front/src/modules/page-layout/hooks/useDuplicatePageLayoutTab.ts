@@ -12,10 +12,10 @@ import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -25,15 +25,17 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutDraftState = useRecoilComponentCallbackState(
+  const pageLayoutDraftAtom = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+  const pageLayoutCurrentLayoutsAtom = useRecoilComponentStateCallbackStateV2(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
+
+  const store = useStore();
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
   const setActiveTabId = useSetRecoilComponentStateV2(
@@ -41,7 +43,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     tabListInstanceId,
   );
 
-  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+  const setTabSettingsOpenTabId = useSetRecoilComponentStateV2(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
@@ -50,103 +52,100 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const duplicateTab = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (tabId: string): string => {
-        const pageLayoutDraft = snapshot
-          .getLoadable(pageLayoutDraftState)
-          .getValue();
+  const duplicateTab = useCallback(
+    (tabId: string): string => {
+      const pageLayoutDraft = store.get(pageLayoutDraftAtom);
 
-        const allTabLayouts = snapshot
-          .getLoadable(pageLayoutCurrentLayoutsState)
-          .getValue();
+      const allTabLayouts = store.get(pageLayoutCurrentLayoutsAtom);
 
-        const sourceTab = pageLayoutDraft.tabs.find((t) => t.id === tabId);
+      const sourceTab = pageLayoutDraft.tabs.find((t) => t.id === tabId);
 
-        if (!isDefined(sourceTab)) {
-          throw new Error(`Tab with id ${tabId} not found`);
-        }
+      if (!isDefined(sourceTab)) {
+        throw new Error(`Tab with id ${tabId} not found`);
+      }
 
-        const newTabId = uuidv4();
-        const widgetOldIdNewIdMap = new Map<string, string>();
+      const newTabId = uuidv4();
+      const widgetOldIdNewIdMap = new Map<string, string>();
 
-        const clonedWidgets = sourceTab.widgets.map((widget) => {
-          const newWidgetId = uuidv4();
-          widgetOldIdNewIdMap.set(widget.id, newWidgetId);
+      const clonedWidgets = sourceTab.widgets.map((widget) => {
+        const newWidgetId = uuidv4();
+        widgetOldIdNewIdMap.set(widget.id, newWidgetId);
 
-          return {
-            ...widget,
-            id: newWidgetId,
-            pageLayoutTabId: newTabId,
-            ...generateDuplicatedTimestamps(),
-          };
-        });
-
-        const sortedTabs = sortTabsByPosition(pageLayoutDraft.tabs);
-        const sourceIndex = sortedTabs.findIndex((t) => t.id === tabId);
-
-        const newTabPosition = calculateNewPosition({
-          items: sortedTabs,
-          destinationIndex: sourceIndex + 1,
-          sourceIndex,
-        });
-
-        const newTab: PageLayoutTab = {
-          ...sourceTab,
-          id: newTabId,
-          title: appendCopySuffix(sourceTab.title),
-          position: newTabPosition,
-          widgets: clonedWidgets,
+        return {
+          ...widget,
+          id: newWidgetId,
+          pageLayoutTabId: newTabId,
           ...generateDuplicatedTimestamps(),
         };
+      });
 
-        const sourceLayouts = allTabLayouts[tabId] ?? {
-          desktop: [],
-          mobile: [],
-        };
+      const sortedTabs = sortTabsByPosition(pageLayoutDraft.tabs);
+      const sourceIndex = sortedTabs.findIndex((t) => t.id === tabId);
 
-        const newLayouts = {
-          desktop: sourceLayouts.desktop.map((layout) => ({
-            ...layout,
-            i: widgetOldIdNewIdMap.get(layout.i) || layout.i,
-          })),
-          mobile: sourceLayouts.mobile.map((layout) => ({
-            ...layout,
-            i: widgetOldIdNewIdMap.get(layout.i) || layout.i,
-          })),
-        };
+      const newTabPosition = calculateNewPosition({
+        items: sortedTabs,
+        destinationIndex: sourceIndex + 1,
+        sourceIndex,
+      });
 
-        set(pageLayoutCurrentLayoutsState, {
-          ...allTabLayouts,
-          [newTabId]: newLayouts,
-        });
+      const newTab: PageLayoutTab = {
+        ...sourceTab,
+        id: newTabId,
+        title: appendCopySuffix(sourceTab.title),
+        position: newTabPosition,
+        widgets: clonedWidgets,
+        ...generateDuplicatedTimestamps(),
+      };
 
-        set(pageLayoutDraftState, (prev) => ({
-          ...prev,
-          tabs: [...prev.tabs, newTab],
-        }));
+      const sourceLayouts = allTabLayouts[tabId] ?? {
+        desktop: [],
+        mobile: [],
+      };
 
-        closeCommandMenu();
+      const newLayouts = {
+        desktop: sourceLayouts.desktop.map((layout) => ({
+          ...layout,
+          i: widgetOldIdNewIdMap.get(layout.i) || layout.i,
+        })),
+        mobile: sourceLayouts.mobile.map((layout) => ({
+          ...layout,
+          i: widgetOldIdNewIdMap.get(layout.i) || layout.i,
+        })),
+      };
 
-        setActiveTabId(newTabId);
+      store.set(pageLayoutCurrentLayoutsAtom, {
+        ...allTabLayouts,
+        [newTabId]: newLayouts,
+      });
 
-        setTabSettingsOpenTabId(newTabId);
+      const prev = store.get(pageLayoutDraftAtom);
+      store.set(pageLayoutDraftAtom, {
+        ...prev,
+        tabs: [...prev.tabs, newTab],
+      });
 
-        navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
-          pageTitle: newTab.title,
-          focusTitleInput: true,
-        });
+      closeCommandMenu();
 
-        return newTabId;
-      },
+      setActiveTabId(newTabId);
+
+      setTabSettingsOpenTabId(newTabId);
+
+      navigatePageLayoutCommandMenu({
+        commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+        pageTitle: newTab.title,
+        focusTitleInput: true,
+      });
+
+      return newTabId;
+    },
     [
       closeCommandMenu,
       navigatePageLayoutCommandMenu,
-      pageLayoutCurrentLayoutsState,
-      pageLayoutDraftState,
+      pageLayoutCurrentLayoutsAtom,
+      pageLayoutDraftAtom,
       setActiveTabId,
       setTabSettingsOpenTabId,
+      store,
     ],
   );
 

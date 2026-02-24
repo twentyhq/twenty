@@ -5,11 +5,10 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { CommandMenuPages } from 'twenty-shared/types';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifiersSelector';
-import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
+import { recordStoreRecordsSelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelectorV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
@@ -24,7 +23,7 @@ const StyledIconWrapper = styled.div`
 `;
 
 export const useCommandMenuContextChips = () => {
-  const commandMenuNavigationStack = useRecoilValue(
+  const commandMenuNavigationStack = useRecoilValueV2(
     commandMenuNavigationStackState,
   );
 
@@ -38,7 +37,7 @@ export const useCommandMenuContextChips = () => {
 
   const theme = useTheme();
 
-  const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+  const commandMenuNavigationMorphItemsByPage = useRecoilValueV2(
     commandMenuNavigationMorphItemsByPageState,
   );
 
@@ -55,11 +54,9 @@ export const useCommandMenuContextChips = () => {
       allowRequestsToTwentyIcons,
     },
   );
-  const records = useRecoilValue(
-    recordStoreRecordsSelector({
-      recordIds: allRecordIds,
-    }),
-  );
+  const records = useFamilySelectorValueV2(recordStoreRecordsSelectorV2, {
+    recordIds: allRecordIds,
+  });
 
   const contextChips = useMemo(() => {
     const filteredCommandMenuNavigationStack =

@@ -1,10 +1,10 @@
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { createComponentFamilySelector } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelector';
+import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilySelectorV2';
 
 export const multipleRecordPickerSinglePickableMorphItemComponentFamilySelector =
-  createComponentFamilySelector<
+  createComponentFamilySelectorV2<
     RecordPickerPickableMorphItem | undefined,
     string
   >({
@@ -14,9 +14,8 @@ export const multipleRecordPickerSinglePickableMorphItemComponentFamilySelector 
       ({ instanceId, familyKey: recordId }) =>
       ({ get }) => {
         const pickableMorphItems = get(
-          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
-            instanceId,
-          }),
+          multipleRecordPickerPickableMorphItemsComponentState,
+          { instanceId },
         );
 
         const pickableMorphItem = pickableMorphItems.find(
