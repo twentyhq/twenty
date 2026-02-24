@@ -23,6 +23,7 @@ export const OPENAI_MODELS: AIModelConfig[] = [
     nativeCapabilities: {
       webSearch: true,
     },
+    isRecommended: true,
   },
   {
     modelId: 'gpt-5-mini',
@@ -55,6 +56,7 @@ export const OPENAI_MODELS: AIModelConfig[] = [
     nativeCapabilities: {
       webSearch: true,
     },
+    isRecommended: true,
   },
   {
     modelId: 'gpt-4.1-mini',

@@ -1,4 +1,4 @@
-import { metadataStoreState } from '@/app/states/metadataStoreState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';

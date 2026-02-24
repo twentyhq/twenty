@@ -52,6 +52,7 @@ Commands:
   auth:switch          Switch the default workspace
   auth:list            List all configured workspaces
   app:dev              Watch and sync local application changes
+  app:typecheck        Run TypeScript type checking on the application
   app:uninstall        Uninstall application from Twenty
   entity:add           Add a new entity to your application
   function:logs        Watch application function logs
@@ -124,6 +125,8 @@ Application development commands.
 - `twenty app:dev [appPath]` — Start development mode: watch and sync local application changes.
   - Behavior: Builds your application (functions and front components), computes the manifest, syncs everything to your workspace, then watches the directory for changes and re-syncs automatically. Displays an interactive UI showing build and sync status in real time. Press Ctrl+C to stop.
 
+- `twenty app:typecheck [appPath]` — Run TypeScript type checking on the application (runs `tsc --noEmit`). Exits with code 1 if type errors are found.
+
 - `twenty app:uninstall [appPath]` — Uninstall the application from the current workspace.
 
 ### Entity
@@ -165,6 +168,9 @@ twenty app:dev
 
 # Start dev mode with a custom workspace profile
 twenty app:dev --workspace my-custom-workspace
+
+# Type check the application
+twenty app:typecheck
 
 # Add a new entity interactively
 twenty entity:add
