@@ -1,5 +1,4 @@
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { DUPLICATE_DASHBOARD } from '@/dashboards/graphql/mutations/duplicateDashboard';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -9,17 +8,8 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
-
-type DuplicateDashboardResult = {
-  id: string;
-  title: string | null;
-  pageLayoutId: string | null;
-  position: number;
-  createdAt: string;
-  updatedAt: string;
-};
+import { useDuplicateDashboardMutation } from '~/generated-metadata/graphql';
 
 export const useDuplicateDashboard = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -34,10 +24,7 @@ export const useDuplicateDashboard = () => {
     objectMetadataItem,
   });
 
-  const [mutate] = useMutation<
-    { duplicateDashboard: DuplicateDashboardResult },
-    { id: string }
-  >(DUPLICATE_DASHBOARD);
+  const [mutate] = useDuplicateDashboardMutation();
 
   const duplicateDashboard = async (dashboardId: string) => {
     const result = await mutate({
