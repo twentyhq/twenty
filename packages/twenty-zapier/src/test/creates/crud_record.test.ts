@@ -49,11 +49,11 @@ describe('creates.create_company', () => {
     expect(result.data?.createCompany?.id).toBeDefined();
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
-        requestDb(
-          {z,
+        requestDb({
+          z,
           bundle,
-          query:`query findCompany {company(filter: {id: {eq: "${result.data.createCompany.id}"}}){id annualRecurringRevenue{amountMicros currencyCode}}}`},
-        ),
+          query: `query findCompany {company(filter: {id: {eq: "${result.data.createCompany.id}"}}){id annualRecurringRevenue{amountMicros currencyCode}}}`,
+        }),
       bundle,
     );
     expect(
@@ -131,8 +131,8 @@ describe('creates.update_company', () => {
         requestDb({
           z,
           bundle,
-          query:`query findCompany {company(filter: {id: {eq: "${companyId}"}}){id name}}`},
-        ),
+          query: `query findCompany {company(filter: {id: {eq: "${companyId}"}}){id name}}`,
+        }),
       updateBundle,
     );
     expect(checkDbResult.data.company.name).toEqual('Updated Company Name');
@@ -173,8 +173,8 @@ describe('creates.delete_company', () => {
         requestDb({
           z,
           bundle,
-          query:`query findCompanies {companies(filter: {id: {eq: "${companyId}"}}){edges{node{id}}}}`},
-        ),
+          query: `query findCompanies {companies(filter: {id: {eq: "${companyId}"}}){edges{node{id}}}}`,
+        }),
       deleteBundle,
     );
     expect(checkDbResult.data.companies.edges.length).toEqual(0);

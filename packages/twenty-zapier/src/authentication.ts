@@ -3,11 +3,12 @@ import type { Bundle, ZObject } from 'zapier-platform-core';
 import requestDb from './utils/requestDb';
 
 const testAuthentication = async (z: ZObject, bundle: Bundle) => {
-  return await requestDb(
-    {z,
+  return await requestDb({
+    z,
     bundle,
-    query:'query currentWorkspace {currentWorkspace {id displayName}}'},
-  );
+    query: 'query currentWorkspace {currentWorkspace {id displayName}}',
+    endpoint: 'metadata',
+  });
 };
 
 export default {
