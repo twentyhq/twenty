@@ -39,6 +39,9 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+// Check Twenty CRM integration status at startup
+twentyClient.isConfigured();
+
 // Store detected meeting information
 let detectedMeeting = null;
 
@@ -1102,10 +1105,18 @@ async function createMeetingNoteAndRecord(platformName) {
       console.error('No active meeting detected');
       return;
     }
+
+    // Guard against duplicate calls for the same meeting window
+    global.activeMeetingIds = global.activeMeetingIds || {};
+
+    if (global.activeMeetingIds[detectedMeeting.window.id]?.noteId) {
+      console.log("Meeting already being recorded for window:", detectedMeeting.window.id);
+      return global.activeMeetingIds[detectedMeeting.window.id].noteId;
+    }
+
     console.log("Detected meeting info:", detectedMeeting.window.id, detectedMeeting.window.platform);
 
     // Store the meeting window ID for later reference with transcript events
-    global.activeMeetingIds = global.activeMeetingIds || {};
     global.activeMeetingIds[detectedMeeting.window.id] = { platformName };
 
     // Read the current meetings data

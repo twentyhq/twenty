@@ -52,6 +52,7 @@ module.exports = {
     {
       name: '@electron-forge/plugin-webpack',
       config: {
+        port: 3042,
         devContentSecurityPolicy: "default-src * 'unsafe-inline' 'unsafe-eval' data: blob: filesystem: mediastream: file:;",
         mainConfig: './webpack.main.config.js',
         renderer: {
