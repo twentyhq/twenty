@@ -1,5 +1,5 @@
 import { createAppTester, tools } from 'zapier-platform-core';
-import getBundle from 'src/utils/getBundle';
+import { getBundle } from 'src/utils/getBundle';
 import App from 'src/index';
 import { findObjectNamesSingularKey } from 'src/triggers/find_object_names_singular';
 tools.env.inject();

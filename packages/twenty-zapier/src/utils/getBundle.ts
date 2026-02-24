@@ -2,7 +2,7 @@ import { type Bundle } from 'zapier-platform-core';
 
 import { type InputData } from 'src/utils/data.types';
 
-const getBundle = (inputData?: InputData): Bundle => {
+export const getBundle = (inputData?: InputData): Bundle => {
   return {
     authData: { apiKey: String(process.env.API_KEY) },
     inputData: inputData || {},
@@ -19,4 +19,3 @@ const getBundle = (inputData?: InputData): Bundle => {
     },
   };
 };
-export default getBundle;

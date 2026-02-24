@@ -2,7 +2,7 @@ import { createAppTester, tools } from 'zapier-platform-core';
 
 import App from 'src/index';
 import { listRecordIdsKey } from 'src/triggers/list_record_ids';
-import getBundle from 'src/utils/getBundle';
+import { getBundle } from 'src/utils/getBundle';
 tools.env.inject();
 
 const appTester = createAppTester(App);

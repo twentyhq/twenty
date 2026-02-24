@@ -7,7 +7,7 @@ import {
 
 import { crudRecordKey } from 'src/creates/crud_record';
 import App from 'src/index';
-import getBundle from 'src/utils/getBundle';
+import { getBundle } from 'src/utils/getBundle';
 import requestDb from 'src/utils/requestDb';
 import { DatabaseEventAction } from 'src/utils/triggers/triggers.utils';
 const appTester = createAppTester(App);

@@ -6,7 +6,7 @@ import {
 
 import App from 'src/index';
 import { triggerRecordKey } from 'src/triggers/trigger_record';
-import getBundle from 'src/utils/getBundle';
+import { getBundle } from 'src/utils/getBundle';
 import requestDb from 'src/utils/requestDb';
 import { DatabaseEventAction } from 'src/utils/triggers/triggers.utils';
 const appTester = createAppTester(App);
