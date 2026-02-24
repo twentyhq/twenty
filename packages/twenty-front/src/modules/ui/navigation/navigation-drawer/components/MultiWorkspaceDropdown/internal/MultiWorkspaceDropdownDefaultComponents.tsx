@@ -165,6 +165,11 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     text={t`Create Workspace`}
                     onClick={createWorkspace}
                   />
+                  <MenuItem
+                    LeftIcon={IconLogout}
+                    text={t`Log out`}
+                    onClick={signOut}
+                  />
                 </DropdownMenuItemsContainer>
               </DropdownContent>
             }
@@ -264,7 +269,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           text={t`Documentation`}
           onClick={handleDocumentation}
         />
-        <MenuItem LeftIcon={IconLogout} text={t`Log out`} onClick={signOut} />
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );
