@@ -71,16 +71,10 @@ export const FieldsConfigurationEditor = ({
     widgetId,
   });
 
-  const [renamingGroupId, setRenamingGroupId] = useState<string | null>(null);
   const [renamingGroupValue, setRenamingGroupValue] = useState('');
 
-  const handleStartRename = (groupId: string, groupName: string) => {
+  const handleStartRename = (groupName: string) => {
     setRenamingGroupValue(groupName);
-    setRenamingGroupId(groupId);
-  };
-
-  const handleCancelRename = () => {
-    setRenamingGroupId(null);
   };
 
   const handleRenameGroup = (groupId: string, newName: string) => {
@@ -191,7 +185,6 @@ export const FieldsConfigurationEditor = ({
                     renamingGroupValue={renamingGroupValue}
                     onRenamingGroupValueChange={setRenamingGroupValue}
                     onStartRename={handleStartRename}
-                    onCancelRename={handleCancelRename}
                   />
                 )}
               </Draggable>

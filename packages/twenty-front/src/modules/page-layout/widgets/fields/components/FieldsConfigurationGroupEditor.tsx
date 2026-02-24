@@ -67,7 +67,6 @@ type FieldsConfigurationGroupEditorProps = {
   renamingGroupValue: string;
   onRenamingGroupValueChange: (value: string) => void;
   onStartRename: (groupId: string, groupName: string) => void;
-  onCancelRename: () => void;
 };
 
 export const FieldsConfigurationGroupEditor = ({
@@ -81,7 +80,6 @@ export const FieldsConfigurationGroupEditor = ({
   renamingGroupValue,
   onRenamingGroupValueChange,
   onStartRename,
-  onCancelRename,
 }: FieldsConfigurationGroupEditorProps) => {
   const { t } = useLingui();
 
@@ -99,7 +97,6 @@ export const FieldsConfigurationGroupEditor = ({
 
   const handleCancelRename = () => {
     closeDropdown(renameDropdownId);
-    onCancelRename();
   };
 
   const handleRenameGroup = (groupId: string, newName: string) => {
