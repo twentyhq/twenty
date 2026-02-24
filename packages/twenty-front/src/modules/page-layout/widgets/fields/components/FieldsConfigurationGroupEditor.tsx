@@ -62,11 +62,11 @@ type FieldsConfigurationGroupEditorProps = {
   isDragging: boolean;
   onAddGroup?: () => void;
   onToggleFieldVisibility: (fieldMetadataId: string) => void;
-  onRenameGroup: (groupId: string, newName: string) => void;
-  onDeleteGroup: (groupId: string) => void;
+  onRenameGroup: (params: { groupId: string; newName: string }) => void;
+  onDeleteGroup: (params: { groupId: string }) => void;
   renamingGroupValue: string;
   onRenamingGroupValueChange: (value: string) => void;
-  onStartRename: (groupId: string, groupName: string) => void;
+  onStartRename: (params: { groupId: string; groupName: string }) => void;
 };
 
 export const FieldsConfigurationGroupEditor = ({
@@ -89,7 +89,7 @@ export const FieldsConfigurationGroupEditor = ({
   const { closeDropdown } = useCloseDropdown();
 
   const handleStartRename = () => {
-    onStartRename(group.id, group.name);
+    onStartRename({ groupId: group.id, groupName: group.name });
     openDropdown({
       dropdownComponentInstanceIdFromProps: renameDropdownId,
     });
@@ -99,9 +99,15 @@ export const FieldsConfigurationGroupEditor = ({
     closeDropdown(renameDropdownId);
   };
 
-  const handleRenameGroup = (groupId: string, newName: string) => {
+  const handleRenameGroup = ({
+    groupId,
+    newName,
+  }: {
+    groupId: string;
+    newName: string;
+  }) => {
     closeDropdown(renameDropdownId);
-    onRenameGroup(groupId, newName);
+    onRenameGroup({ groupId, newName });
   };
 
   const sortedFields = [...group.fields].sort(
@@ -140,7 +146,9 @@ export const FieldsConfigurationGroupEditor = ({
                 dropdownId={renameDropdownId}
                 renameValue={renamingGroupValue}
                 onRenameValueChange={onRenamingGroupValueChange}
-                onSave={(newName) => handleRenameGroup(group.id, newName)}
+                onSave={(newName) =>
+                  handleRenameGroup({ groupId: group.id, newName })
+                }
                 onCancel={handleCancelRename}
               />
             </DropdownContent>
@@ -150,7 +158,7 @@ export const FieldsConfigurationGroupEditor = ({
           <FieldsConfigurationGroupDropdown
             groupId={group.id}
             onStartRename={handleStartRename}
-            onDelete={() => onDeleteGroup(group.id)}
+            onDelete={() => onDeleteGroup({ groupId: group.id })}
           />
         </StyledDropdownContainer>
       </StyledGroupHeaderRow>

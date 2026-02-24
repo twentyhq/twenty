@@ -73,15 +73,21 @@ export const FieldsConfigurationEditor = ({
 
   const [renamingGroupValue, setRenamingGroupValue] = useState('');
 
-  const handleStartRename = (groupName: string) => {
+  const handleStartRename = ({ groupName }: { groupName: string }) => {
     setRenamingGroupValue(groupName);
   };
 
-  const handleRenameGroup = (groupId: string, newName: string) => {
+  const handleRenameGroup = ({
+    groupId,
+    newName,
+  }: {
+    groupId: string;
+    newName: string;
+  }) => {
     updateGroup({ groupId, name: newName });
   };
 
-  const handleDeleteGroup = (groupId: string) => {
+  const handleDeleteGroup = ({ groupId }: { groupId: string }) => {
     deleteGroup(groupId);
   };
 
