@@ -89,7 +89,6 @@ export const DashboardBlockDragHandleMenu = ({
       editor.setTextCursorPosition(insertedBlock);
     }
 
-    editor.openSuggestionMenu('/');
     onClose();
   };
 

@@ -1,4 +1,4 @@
-import { filterSuggestionItems } from '@blocknote/core';
+import { filterSuggestionItems } from '@blocknote/core/extensions';
 import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
 import { useTheme } from '@emotion/react';
@@ -183,10 +183,7 @@ export const DashboardsBlockEditor = ({
         {!readonly && (
           <>
             <DashboardFormattingToolbar boundaryElement={boundaryElement} />
-            <DashboardEditorSideMenu
-              editor={editor}
-              boundaryElement={boundaryElement}
-            />
+            <DashboardEditorSideMenu editor={editor} />
             <SuggestionMenuController
               triggerCharacter="/"
               getItems={async (query) => {

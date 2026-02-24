@@ -78,7 +78,6 @@ export const StandaloneRichTextEditorContent = ({
     initialContent,
     domAttributes: { editor: { class: 'editor' } },
     schema: DASHBOARD_BLOCK_SCHEMA,
-    sideMenuDetection: 'editor',
     placeholders: {
       default: t`Enter text or type '/' for commands`,
     },
