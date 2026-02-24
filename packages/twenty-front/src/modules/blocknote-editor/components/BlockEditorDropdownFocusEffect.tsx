@@ -9,6 +9,8 @@ import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/drop
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 
 export const BlockEditorDropdownFocusEffect = () => {
+  const [prevShowing, setPrevShowing] = useState<boolean | null>(null);
+
   const isSlashMenuOpenState = useRecoilComponentCallbackState(
     isSlashMenuOpenComponentState,
   );
@@ -45,8 +47,6 @@ export const BlockEditorDropdownFocusEffect = () => {
       goBackToPreviousDropdownFocusId,
     ],
   );
-
-  const [prevShowing, setPrevShowing] = useState<boolean | null>(null);
 
   if (prevShowing !== isSlashMenuShowing) {
     setPrevShowing(isSlashMenuShowing);
