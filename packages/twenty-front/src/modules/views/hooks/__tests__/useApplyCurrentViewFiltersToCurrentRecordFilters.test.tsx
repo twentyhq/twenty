@@ -4,7 +4,10 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
@@ -36,6 +39,10 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
       'Missing mock object metadata item with name singular "company"',
     );
   }
+
+  beforeEach(() => {
+    resetJotaiStore();
+  });
 
   afterEach(() => {
     jotaiStore.set(coreViewsState.atom, []);

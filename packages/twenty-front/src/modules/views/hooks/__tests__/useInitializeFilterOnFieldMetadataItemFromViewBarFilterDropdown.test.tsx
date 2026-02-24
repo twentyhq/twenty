@@ -8,7 +8,10 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown } from '@/views/hooks/useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -67,6 +70,7 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
 
 describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () => {
   beforeEach(() => {
+    resetJotaiStore();
     jest.clearAllMocks();
   });
 
