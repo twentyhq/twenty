@@ -30,7 +30,7 @@ import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/com
 import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-page-layouts.command';
 import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
-import { FixRoleAndAgentUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-role-and-agent-universal-identifiers.command';
+import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -76,7 +76,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly addMissingSystemFieldsToStandardObjectsCommand: AddMissingSystemFieldsToStandardObjectsCommand,
     protected readonly backfillMessageChannelMessageAssociationMessageFolderCommand: BackfillMessageChannelMessageAssociationMessageFolderCommand,
     protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
-    protected readonly fixRoleAndAgentUniversalIdentifiersCommand: FixRoleAndAgentUniversalIdentifiersCommand,
+    protected readonly fixRoleAndAgentUniversalIdentifiersCommand: FixInvalidStandardUniversalIdentifiersCommand,
   ) {
     super(
       workspaceRepository,

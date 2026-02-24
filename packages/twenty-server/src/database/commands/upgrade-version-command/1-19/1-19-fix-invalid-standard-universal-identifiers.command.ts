@@ -17,11 +17,11 @@ const OLD_AGENT_HELPER_UNIVERSAL_IDENTIFIER =
   '20202020-0002-0001-0001-000000000004';
 
 @Command({
-  name: 'upgrade:1-19:fix-role-and-agent-universal-identifiers',
+  name: 'upgrade:1-19:fix-invalid-standard-universal-identifiers',
   description:
-    'Fix invalid universalIdentifier values in core.role and core.agent tables to comply with UUID v4 format',
+    'Fix invalid universalIdentifier values in core tables to comply with UUID v4 format',
 })
-export class FixRoleAndAgentUniversalIdentifiersCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class FixInvalidStandardUniversalIdentifiersCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
