@@ -84,7 +84,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
 
   return (
     <>
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {fieldMetadataItemLabelIdentifier && (
           <MenuItemDraggable
             LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}

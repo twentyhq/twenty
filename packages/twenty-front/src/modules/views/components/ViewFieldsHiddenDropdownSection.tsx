@@ -52,7 +52,7 @@ export const ViewFieldsHiddenDropdownSection = () => {
 
   return (
     <>
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {availableFieldMetadataItemsToShow.length > 0 &&
           availableFieldMetadataItemsToShow.map((fieldMetadataItem) => {
             return (
