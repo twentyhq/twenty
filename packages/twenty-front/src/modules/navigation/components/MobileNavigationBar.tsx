@@ -23,7 +23,7 @@ import {
 import { NavigationBar } from 'twenty-ui/navigation';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-type NavigationBarItemName = 'main' | 'search' | 'newChat';
+type NavigationBarItemName = 'main' | 'search' | 'newAIChat';
 
 export const MobileNavigationBar = () => {
   const navigate = useNavigate();
@@ -98,7 +98,7 @@ export const MobileNavigationBar = () => {
     ...(isAiEnabled
       ? [
           {
-            name: 'newChat' as const,
+            name: 'newAIChat' as const,
             Icon: IconMessageCirclePlus,
             onClick: () => {
               setIsNavigationDrawerExpanded(false);
