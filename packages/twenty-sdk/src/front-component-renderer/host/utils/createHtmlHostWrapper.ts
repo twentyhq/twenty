@@ -45,10 +45,12 @@ const parseCssString = (
     const property = declaration.slice(0, colonIndex).trim();
     const value = declaration.slice(colonIndex + 1).trim();
 
-    const camelProperty = property.replace(/-([a-z])/g, (_, letter: string) =>
-      letter.toUpperCase(),
-    );
-    style[camelProperty] = value;
+    const key = property.startsWith('--')
+      ? property
+      : property.replace(/-([a-z])/g, (_, letter: string) =>
+          letter.toUpperCase(),
+        );
+    style[key] = value;
   }
 
   return style;
