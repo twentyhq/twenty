@@ -6,8 +6,8 @@ import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailab
 
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { useMemo } from 'react';
 
 export const useColumnDefinitionsFromObjectMetadata = (
@@ -28,13 +28,12 @@ export const useColumnDefinitionsFromObjectMetadata = (
   );
 
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] = useMemo(() => {
-    const activeFieldMetadataItems =
-      objectMetadataItem.readableFields.filter(
-        (field) =>
-          field.isActive &&
-          (!isHiddenSystemField(field) ||
-            field.id === objectMetadataItem.labelIdentifierFieldMetadataId),
-      );
+    const activeFieldMetadataItems = objectMetadataItem.readableFields.filter(
+      (field) =>
+        field.isActive &&
+        (!isHiddenSystemField(field) ||
+          field.id === objectMetadataItem.labelIdentifierFieldMetadataId),
+    );
 
     return activeFieldMetadataItems
       .map((field, index) =>
