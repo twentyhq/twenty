@@ -1,4 +1,4 @@
-import { type FieldMetadataType } from '../types/FieldMetadataType';
+import { type FieldMetadataType } from 'src/types/FieldMetadataType';
 
 export type InputData = { [x: string]: any };
 

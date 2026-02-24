@@ -24162,7 +24162,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.kebabcase@npm:^4.1.7":
+"@types/lodash.kebabcase@npm:^4.1.7, @types/lodash.kebabcase@npm:^4.1.9":
   version: 4.1.9
   resolution: "@types/lodash.kebabcase@npm:4.1.9"
   dependencies:
@@ -58672,6 +58672,7 @@ __metadata:
     "@types/fs-extra": "npm:^11.0.0"
     "@types/inquirer": "npm:^9.0.0"
     "@types/lodash.camelcase": "npm:^4.3.7"
+    "@types/lodash.kebabcase": "npm:^4.1.9"
     "@types/node": "npm:^24.0.0"
     "@types/react": "npm:18.2.66"
     "@types/react-dom": "npm:18.2.22"
@@ -58691,6 +58692,7 @@ __metadata:
     inquirer: "npm:^10.0.0"
     jsonc-parser: "npm:^3.2.0"
     lodash.camelcase: "npm:^4.3.0"
+    lodash.kebabcase: "npm:^4.1.1"
     playwright: "npm:^1.56.1"
     preact: "npm:^10.28.3"
     react: "npm:^18.2.0"
@@ -59036,6 +59038,9 @@ __metadata:
     jest: "npm:29.7.0"
     libphonenumber-js: "npm:^1.10.26"
     rimraf: "npm:^3.0.2"
+    vite: "npm:^7.0.0"
+    vite-plugin-dts: "npm:^4.5.4"
+    vite-tsconfig-paths: "npm:^4.2.1"
     zapier-platform-cli: "npm:^15.4.1"
     zapier-platform-core: "npm:15.5.1"
     zod: "npm:^4.1.11"

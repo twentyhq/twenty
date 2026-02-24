@@ -1,10 +1,10 @@
 import { type Bundle, type ZObject } from 'zapier-platform-core';
 
-import handleQueryParams from '../../utils/handleQueryParams';
 import requestDb, {
   requestDbViaRestApi,
   requestSchema,
-} from '../../utils/requestDb';
+} from 'src/utils/requestDb';
+import handleQueryParams from 'src/utils/handleQueryParams';
 
 export enum DatabaseEventAction {
   CREATED = 'created',
@@ -39,7 +39,7 @@ export const performUnsubscribe = async (
   const result = await requestDb({
     z,
     bundle,
-    query: `mutation deleteWebhook {deleteWebhook(input: {${handleQueryParams(data)}})}`,
+    query: `mutation deleteWebhook {deleteWebhook(${handleQueryParams(data)}) {id}}`,
     endpoint: 'metadata',
   });
   return result.data.deleteWebhook;

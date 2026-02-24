@@ -5,11 +5,11 @@ import {
   type ZObject,
 } from 'zapier-platform-core';
 
-import { crudRecordKey } from '../../creates/crud_record';
-import App from '../../index';
-import getBundle from '../../utils/getBundle';
-import requestDb from '../../utils/requestDb';
-import { DatabaseEventAction } from '../../utils/triggers/triggers.utils';
+import { crudRecordKey } from 'src/creates/crud_record';
+import App from 'src/index';
+import getBundle from 'src/utils/getBundle';
+import requestDb from 'src/utils/requestDb';
+import { DatabaseEventAction } from 'src/utils/triggers/triggers.utils';
 const appTester = createAppTester(App);
 tools.env.inject();
 

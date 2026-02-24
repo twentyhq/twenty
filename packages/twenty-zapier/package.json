@@ -22,6 +22,9 @@
   "devDependencies": {
     "jest": "29.7.0",
     "rimraf": "^3.0.2",
+    "vite": "^7.0.0",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-tsconfig-paths": "^4.2.1",
     "zapier-platform-cli": "^15.4.1"
   },
   "installConfig": {
