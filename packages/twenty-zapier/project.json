@@ -8,7 +8,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": ["tsc"]
+        "commands": ["npx vite build"]
       },
       "dependsOn": ["clean", "^build"]
     },
@@ -24,10 +24,9 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "NODE_ENV=test && jest --testTimeout 10000 --rootDir ./lib/test"
+          "NODE_ENV=test jest --testTimeout 10000"
         ]
-      },
-      "dependsOn": ["build"]
+      }
     },
     "lint": {
       "options": {
@@ -68,7 +67,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": ["rimraf ./lib ./build"]
+        "commands": ["rimraf ./lib"]
       }
     },
     "deploy": {
