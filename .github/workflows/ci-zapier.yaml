@@ -22,6 +22,7 @@ jobs:
         packages/twenty-zapier/**
         packages/twenty-server/**
         !packages/twenty-zapier/package.json
+        !packages/twenty-zapier/CHANGELOG.md
   zapier-test:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
