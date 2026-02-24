@@ -27,6 +27,9 @@ export const findManyObjectMetadataWithIndexes = async ({
           id
           type
           name
+          description
+          icon
+          label
           universalIdentifier
           relation {
             type

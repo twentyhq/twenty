@@ -3,10 +3,10 @@ import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/app
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
-import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { type Manifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -22,8 +22,6 @@ const TEST_OBJECT = buildDefaultObjectManifest({
   icon: 'IconTicket',
 });
 
-const FIELD_GQL_FIELDS = 'id name label type description icon isCustom';
-
 const buildManifest = (overrides?: Partial<Pick<Manifest, 'fields'>>) =>
   buildBaseManifest({
     appId: TEST_APP_ID,
@@ -31,17 +29,16 @@ const buildManifest = (overrides?: Partial<Pick<Manifest, 'fields'>>) =>
     overrides: { objects: [TEST_OBJECT], ...overrides },
   });
 
-const findCustomFields = async () => {
-  const { fields } = await findManyFieldsMetadata({
-    input: {
-      filter: { isCustom: { is: true } },
-      paging: { first: 100 },
-    },
-    gqlFields: FIELD_GQL_FIELDS,
+const findObjectFields = async () => {
+  const objects = await findManyObjectMetadataWithIndexes({
     expectToFail: false,
   });
 
-  return (fields ?? []).map(({ node }: { node: unknown }) => node);
+  const object = objects.find(
+    (o) => o.universalIdentifier === TEST_OBJECT.universalIdentifier,
+  );
+
+  return object?.fieldsList ?? [];
 };
 
 describe('Manifest update - fields', () => {
@@ -67,7 +64,8 @@ describe('Manifest update - fields', () => {
       expectToFail: false,
     });
 
-    const fieldsAfterFirstSync = await findCustomFields();
+    const fieldsAfterFirstSync = await findObjectFields();
+
     const descriptionBefore = fieldsAfterFirstSync.find(
       (field: { name: string }) => field.name === 'description',
     );
@@ -91,7 +89,7 @@ describe('Manifest update - fields', () => {
       expectToFail: false,
     });
 
-    const fieldsAfterSecondSync = await findCustomFields();
+    const fieldsAfterSecondSync = await findObjectFields();
     const descriptionAfter = fieldsAfterSecondSync.find(
       (field: { name: string }) => field.name === 'description',
     );
@@ -124,7 +122,7 @@ describe('Manifest update - fields', () => {
       expectToFail: false,
     });
 
-    const fieldsAfterFirstSync = await findCustomFields();
+    const fieldsAfterFirstSync = await findObjectFields();
     const fieldBefore = fieldsAfterFirstSync.find(
       (field: { name: string }) => field.name === 'description',
     );
@@ -152,7 +150,7 @@ describe('Manifest update - fields', () => {
       expectToFail: false,
     });
 
-    const fieldsAfterSecondSync = await findCustomFields();
+    const fieldsAfterSecondSync = await findObjectFields();
     const renamedField = fieldsAfterSecondSync.find(
       (field: { name: string }) => field.name === 'body',
     );
@@ -199,7 +197,7 @@ describe('Manifest update - fields', () => {
       expectToFail: false,
     });
 
-    const fieldsAfterFirstSync = await findCustomFields();
+    const fieldsAfterFirstSync = await findObjectFields();
 
     expect(
       fieldsAfterFirstSync.find(
@@ -229,7 +227,7 @@ describe('Manifest update - fields', () => {
       expectToFail: false,
     });
 
-    const fieldsAfterSecondSync = await findCustomFields();
+    const fieldsAfterSecondSync = await findObjectFields();
 
     expect(
       fieldsAfterSecondSync.find(
