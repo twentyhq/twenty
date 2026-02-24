@@ -17,8 +17,9 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
+      maxSurge: 1
+      maxUnavailable: 0
+  minReadySeconds: 15
   template:
     metadata:
       labels:
@@ -26,6 +27,7 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
         app.kubernetes.io/component: server
     spec:
+      terminationGracePeriodSeconds: 60
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
@@ -195,7 +197,7 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: ["sh", "-c", "sleep 5"]
+                command: ["sh", "-c", "sleep 15"]
           ports:
             - name: http-tcp
               containerPort: {{ include "twenty.server.containerPort" . }}

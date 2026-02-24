@@ -15,7 +15,10 @@ spec:
       app.kubernetes.io/name: {{ include "twenty.name" . }}
       app.kubernetes.io/component: worker
   strategy:
-    type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:

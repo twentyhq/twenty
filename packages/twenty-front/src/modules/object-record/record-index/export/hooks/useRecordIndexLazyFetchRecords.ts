@@ -151,5 +151,7 @@ export const useRecordIndexLazyFetchRecords = ({
     progress,
     isDownloading,
     getTableData: getTableData,
+    fetchAllRecords,
+    finalColumns,
   };
 };
