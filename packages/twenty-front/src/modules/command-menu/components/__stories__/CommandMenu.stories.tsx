@@ -28,12 +28,16 @@ import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/Com
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { CommandMenuPages } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
@@ -90,6 +94,19 @@ const meta: Meta<typeof CommandMenu> = {
           pageId: '1',
         },
       ]);
+
+      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+      const companyMetadataItem = objectMetadataItems.find(
+        (item) => item.nameSingular === 'company',
+      );
+      if (isDefined(companyMetadataItem)) {
+        jotaiStore.set(
+          contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
+            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          }),
+          companyMetadataItem.id,
+        );
+      }
 
       return <Story />;
     },
