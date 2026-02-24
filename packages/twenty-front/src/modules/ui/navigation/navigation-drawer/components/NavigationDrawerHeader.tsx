@@ -7,7 +7,6 @@ import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useO
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
@@ -50,9 +49,6 @@ export const NavigationDrawerHeader = ({
   const isNavigationDrawerExpanded = useRecoilValueV2(
     isNavigationDrawerExpandedState,
   );
-  const activeTab = useRecoilValueV2(navigationDrawerActiveTabState);
-
-  const showCollapseControl = showCollapseButton && activeTab !== 'chat';
 
   return (
     <StyledContainer isExpanded={isNavigationDrawerExpanded}>
@@ -61,12 +57,12 @@ export const NavigationDrawerHeader = ({
         <StyledRightActions isExpanded={isNavigationDrawerExpanded}>
           <LightIconButton
             Icon={IconSearch}
-            accent="tertiary"
+            accent="secondary"
             size="small"
             onClick={openRecordsSearchPage}
             aria-label={t`Search`}
           />
-          {isNavigationDrawerExpanded && showCollapseControl && (
+          {isNavigationDrawerExpanded && showCollapseButton && (
             <StyledNavigationDrawerCollapseButton direction="left" />
           )}
         </StyledRightActions>

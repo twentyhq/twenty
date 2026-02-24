@@ -45,7 +45,7 @@ export const NavigationDrawerCollapseButton = ({
             ? IconLayoutSidebarLeftCollapse
             : IconLayoutSidebarRightCollapse
         }
-        accent="tertiary"
+        accent="secondary"
         size="small"
       />
     </StyledCollapseButton>

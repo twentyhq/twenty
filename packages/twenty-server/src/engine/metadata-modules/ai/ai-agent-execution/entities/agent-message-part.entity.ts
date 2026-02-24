@@ -93,6 +93,6 @@ export class AgentMessagePartEntity {
   @Column({ type: 'jsonb', nullable: true })
   providerMetadata: Record<string, Record<string, JSONValue>> | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 }

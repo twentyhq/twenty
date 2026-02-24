@@ -4,7 +4,7 @@ import { IconComment } from 'twenty-ui/display';
 
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
 const StyledDateSection = styled.section`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
@@ -52,7 +52,7 @@ export const NavigationDrawerAIChatThreadDateSection = ({
       <StyledThreadList>
         {threads.map((thread) => {
           const isActive = currentThreadId === thread.id;
-          const timestamp = beautifyPastDateRelativeToNow(
+          const timestamp = beautifyPastDateRelativeToNowShort(
             thread.updatedAt ?? thread.createdAt,
           );
           return (
