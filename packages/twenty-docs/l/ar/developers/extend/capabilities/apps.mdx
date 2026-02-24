@@ -809,13 +809,13 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 
 #### رفع الملفات
 
-يتضمن العميل `Twenty` المُولَّد طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع ملف ضمن كائنات مساحة العمل الخاصة بك. نظرًا لأن عملاء GraphQL القياسيون لا يدعمون تحميل الملفات متعددة الأجزاء افتراضيًا، يوفر العميل هذه الطريقة المخصصة التي تطبق [مواصفة طلب GraphQL متعدد الأجزاء](https://github.com/jaydenseric/graphql-multipart-request-spec) في الخلفية.
+يتضمن العميل `MetadataApiClient` المُولَّد طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع ملف ضمن كائنات مساحة العمل الخاصة بك. نظرًا لأن عملاء GraphQL القياسيون لا يدعمون تحميل الملفات متعددة الأجزاء افتراضيًا، يوفر العميل هذه الطريقة المخصصة التي تطبق [مواصفة طلب GraphQL متعدد الأجزاء](https://github.com/jaydenseric/graphql-multipart-request-spec) في الخلفية.
 
 ```typescript
-import Twenty from '~/generated';
+import { MetadataApiClient } from 'twenty-sdk/metadata-api';
 import * as fs from 'fs';
 
-const client = new Twenty();
+const client = new MetadataApiClient();
 
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 

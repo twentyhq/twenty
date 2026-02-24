@@ -809,13 +809,13 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 
 #### 上传文件
 
-生成的 `Twenty` 客户端包含一个 `uploadFile` 方法，用于将文件附加到工作区对象的文件类型字段。 由于标准 GraphQL 客户端不原生支持多部分文件上传，该客户端提供了一个专用方法，在底层实现了 [GraphQL 多部分请求规范](https://github.com/jaydenseric/graphql-multipart-request-spec)。
+生成的 `MetadataApiClient` 包含一个 `uploadFile` 方法，用于将文件附加到工作区对象的文件类型字段。 由于标准 GraphQL 客户端不原生支持多部分文件上传，该客户端提供了一个专用方法，在底层实现了 [GraphQL 多部分请求规范](https://github.com/jaydenseric/graphql-multipart-request-spec)。
 
 ```typescript
-import Twenty from '~/generated';
+import { MetadataApiClient } from 'twenty-sdk/metadata-api';
 import * as fs from 'fs';
 
-const client = new Twenty();
+const client = new MetadataApiClient();
 
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 

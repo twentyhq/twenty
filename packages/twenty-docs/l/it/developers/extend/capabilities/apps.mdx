@@ -809,13 +809,13 @@ Note:
 
 #### Caricamento dei file
 
-Il client `Twenty` generato include un metodo `uploadFile` per allegare file ai campi di tipo file sugli oggetti del tuo spazio di lavoro. Poiché i client GraphQL standard non supportano nativamente il caricamento di file multipart, il client fornisce questo metodo dedicato che implementa la [specifica della richiesta GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec) dietro le quinte.
+Il client `MetadataApiClient` generato include un metodo `uploadFile` per allegare file ai campi di tipo file sugli oggetti del tuo spazio di lavoro. Poiché i client GraphQL standard non supportano nativamente il caricamento di file multipart, il client fornisce questo metodo dedicato che implementa la [specifica della richiesta GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec) dietro le quinte.
 
 ```typescript
-import Twenty from '~/generated';
+import { MetadataApiClient } from 'twenty-sdk/metadata-api';
 import * as fs from 'fs';
 
-const client = new Twenty();
+const client = new MetadataApiClient();
 
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 

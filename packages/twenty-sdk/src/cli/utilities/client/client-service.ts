@@ -104,18 +104,36 @@ export class ClientService {
     className: string,
     urlSuffix: string,
   ) {
-    const clientContent = `
+    const clientContent = this.buildApiClientCode({
+      className,
+      urlSuffix,
+      includeUploadFile: urlSuffix === '/metadata',
+    });
+
+    await fs.appendFile(join(output, 'index.ts'), clientContent);
+  }
+
+  private buildApiClientCode({
+    className,
+    urlSuffix,
+    includeUploadFile,
+  }: {
+    className: string;
+    urlSuffix: string;
+    includeUploadFile: boolean;
+  }): string {
+    const uploadFileMethod = includeUploadFile
+      ? this.buildUploadFileMethod()
+      : '';
+
+    return `
 
 // ----------------------------------------------------
 // ${className} (auto-injected)
 // ----------------------------------------------------
 
 const defaultOptions: ClientOptions = {
-  // TODO: this current branch
   url: \`\${process.env.${DEFAULT_API_URL_NAME}}${urlSuffix}\`,
-  // TODO: this PR https://github.com/twentyhq/twenty/pull/18129
-  url: \`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\`,
-  metadataUrl: \`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\`,
   headers: {
     'Content-Type': 'application/json',
     Authorization: \`Bearer \${process.env.${DEFAULT_API_KEY_NAME}}\`,
@@ -125,11 +143,10 @@ const defaultOptions: ClientOptions = {
 export class ${className} {
   private client: Client;
   private url: string;
-  private metadataUrl: string;
   private authorizationToken: string;
 
   constructor(options?: ClientOptions) {
-  const merged: ClientOptions = {
+    const merged: ClientOptions = {
       ...defaultOptions,
       ...options,
       headers: {
@@ -139,7 +156,6 @@ export class ${className} {
     };
     this.client = createClient(merged);
     this.url = merged.url;
-    this.metadataUrl = merged.metadataUrl;
     this.authorizationToken = merged.headers.Authorization;
   }
 
@@ -150,7 +166,14 @@ export class ${className} {
   mutation<R extends MutationGenqlSelection>(request: R & { __name?: string }) {
     return this.client.mutation(request);
   }
+${uploadFileMethod}
+}
 
+`;
+  }
+
+  private buildUploadFileMethod(): string {
+    return `
   async uploadFile(
     fileBuffer: Buffer,
     filename: string,
@@ -177,7 +200,7 @@ export class ${className} {
     form.append('map', JSON.stringify({ '0': ['variables.file'] }));
     form.append('0', new Blob([fileBuffer], { type: contentType }), filename);
 
-    const response = await fetch(this.metadataUrl, {
+    const response = await fetch(this.url, {
       method: 'POST',
       headers: {
         Authorization: this.authorizationToken,
@@ -192,11 +215,6 @@ export class ${className} {
     }
 
     return result.data.uploadFilesFieldFileByUniversalIdentifier;
-  }
-}
-
-`;
-
-    await fs.appendFile(join(output, 'index.ts'), clientContent);
+  }`;
   }
 }

@@ -1,7 +1,6 @@
-import { defineRole, PermissionFlag } from 'twenty-sdk';
-import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/postCard';
+import { PermissionFlag, type RoleConfig } from 'twenty-sdk';
 
-export default defineRole({
+export const functionRole: RoleConfig = {
   universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
   label: 'Default function role',
   description: 'Default role for function Twenty client',
@@ -15,7 +14,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -24,11 +23,11 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
   ],
   permissionFlags: [PermissionFlag.APPLICATIONS],
-});
+};
