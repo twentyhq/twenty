@@ -1,3 +1,4 @@
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
@@ -23,38 +24,12 @@ const TEST_OBJECT = buildDefaultObjectManifest({
 
 const FIELD_GQL_FIELDS = 'id name label type description icon isCustom';
 
-const buildBaseManifest = (
-  overrides: Partial<Pick<Manifest, 'fields'>>,
-): Manifest => ({
-  application: {
-    universalIdentifier: TEST_APP_ID,
-    defaultRoleUniversalIdentifier: TEST_ROLE_ID,
-    displayName: 'Test Application',
-    description: 'App for testing field manifest updates',
-    icon: 'IconTestPipe',
-    applicationVariables: {},
-    packageJsonChecksum: null,
-    yarnLockChecksum: null,
-    apiClientChecksum: null,
-  },
-  roles: [
-    {
-      universalIdentifier: TEST_ROLE_ID,
-      label: 'Test Role',
-      description: 'A test role',
-    },
-  ],
-  skills: [],
-  objects: [TEST_OBJECT],
-  fields: [],
-  logicFunctions: [],
-  frontComponents: [],
-  publicAssets: [],
-  views: [],
-  navigationMenuItems: [],
-  pageLayouts: [],
-  ...overrides,
-});
+const buildManifest = (overrides?: Partial<Pick<Manifest, 'fields'>>) =>
+  buildBaseManifest({
+    appId: TEST_APP_ID,
+    roleId: TEST_ROLE_ID,
+    overrides: { objects: [TEST_OBJECT], ...overrides },
+  });
 
 const findCustomFields = async () => {
   const { fields } = await findManyFieldsMetadata({
@@ -88,7 +63,7 @@ describe('Manifest update - fields', () => {
 
   it('should create a new field when added to manifest on second sync', async () => {
     await syncApplication({
-      manifest: buildBaseManifest({ fields: [] }),
+      manifest: buildManifest({ fields: [] }),
       expectToFail: false,
     });
 
@@ -100,7 +75,7 @@ describe('Manifest update - fields', () => {
     expect(descriptionBefore).toBeUndefined();
 
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         fields: [
           {
             universalIdentifier: TEST_FIELD_ID,
@@ -133,7 +108,7 @@ describe('Manifest update - fields', () => {
 
   it('should update a field when properties change in manifest on second sync', async () => {
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         fields: [
           {
             universalIdentifier: TEST_FIELD_ID,
@@ -161,7 +136,7 @@ describe('Manifest update - fields', () => {
     });
 
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         fields: [
           {
             universalIdentifier: TEST_FIELD_ID,
@@ -199,7 +174,7 @@ describe('Manifest update - fields', () => {
 
   it('should delete a field when removed from manifest on second sync', async () => {
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         fields: [
           {
             universalIdentifier: TEST_FIELD_ID,
@@ -238,7 +213,7 @@ describe('Manifest update - fields', () => {
     ).toBeDefined();
 
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         fields: [
           {
             universalIdentifier: TEST_FIELD_ID,

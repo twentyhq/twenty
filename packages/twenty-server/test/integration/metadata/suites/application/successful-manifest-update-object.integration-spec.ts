@@ -1,3 +1,4 @@
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
@@ -9,38 +10,9 @@ import { v4 as uuidv4 } from 'uuid';
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 
-const buildBaseManifest = (
-  overrides: Partial<Pick<Manifest, 'objects' | 'fields'>>,
-): Manifest => ({
-  application: {
-    universalIdentifier: TEST_APP_ID,
-    defaultRoleUniversalIdentifier: TEST_ROLE_ID,
-    displayName: 'Test Application',
-    description: 'App for testing object manifest updates',
-    icon: 'IconTestPipe',
-    applicationVariables: {},
-    packageJsonChecksum: null,
-    yarnLockChecksum: null,
-    apiClientChecksum: null,
-  },
-  roles: [
-    {
-      universalIdentifier: TEST_ROLE_ID,
-      label: 'Test Role',
-      description: 'A test role',
-    },
-  ],
-  skills: [],
-  objects: [],
-  fields: [],
-  logicFunctions: [],
-  frontComponents: [],
-  publicAssets: [],
-  views: [],
-  navigationMenuItems: [],
-  pageLayouts: [],
-  ...overrides,
-});
+const buildManifest = (
+  overrides?: Partial<Pick<Manifest, 'objects' | 'fields'>>,
+) => buildBaseManifest({ appId: TEST_APP_ID, roleId: TEST_ROLE_ID, overrides });
 
 const OBJECT_GQL_FIELDS =
   'id nameSingular namePlural labelSingular labelPlural description icon isCustom isActive';
@@ -86,7 +58,7 @@ describe('Manifest update - objects', () => {
     });
 
     await syncApplication({
-      manifest: buildBaseManifest({ objects: [ticketObject] }),
+      manifest: buildManifest({ objects: [ticketObject] }),
       expectToFail: false,
     });
 
@@ -113,7 +85,7 @@ describe('Manifest update - objects', () => {
     });
 
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         objects: [ticketObject, invoiceObject],
       }),
       expectToFail: false,
@@ -151,7 +123,7 @@ describe('Manifest update - objects', () => {
     });
 
     await syncApplication({
-      manifest: buildBaseManifest({ objects: [ticketObject] }),
+      manifest: buildManifest({ objects: [ticketObject] }),
       expectToFail: false,
     });
 
@@ -175,7 +147,7 @@ describe('Manifest update - objects', () => {
     };
 
     await syncApplication({
-      manifest: buildBaseManifest({ objects: [updatedTicketObject] }),
+      manifest: buildManifest({ objects: [updatedTicketObject] }),
       expectToFail: false,
     });
 
@@ -214,7 +186,7 @@ describe('Manifest update - objects', () => {
     });
 
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         objects: [ticketObject, invoiceObject],
       }),
       expectToFail: false,
@@ -230,7 +202,7 @@ describe('Manifest update - objects', () => {
     ).toBeDefined();
 
     await syncApplication({
-      manifest: buildBaseManifest({ objects: [ticketObject] }),
+      manifest: buildManifest({ objects: [ticketObject] }),
       expectToFail: false,
     });
 

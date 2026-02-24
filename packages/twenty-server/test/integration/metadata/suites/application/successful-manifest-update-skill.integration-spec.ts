@@ -1,3 +1,4 @@
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
@@ -12,38 +13,8 @@ const TEST_SECOND_SKILL_ID = uuidv4();
 
 const SKILL_GQL_FIELDS = 'id name label description content icon applicationId';
 
-const buildBaseManifest = (
-  overrides: Partial<Pick<Manifest, 'skills'>>,
-): Manifest => ({
-  application: {
-    universalIdentifier: TEST_APP_ID,
-    defaultRoleUniversalIdentifier: TEST_ROLE_ID,
-    displayName: 'Test Application',
-    description: 'App for testing skill manifest updates',
-    icon: 'IconTestPipe',
-    applicationVariables: {},
-    packageJsonChecksum: null,
-    yarnLockChecksum: null,
-    apiClientChecksum: null,
-  },
-  roles: [
-    {
-      universalIdentifier: TEST_ROLE_ID,
-      label: 'Test Role',
-      description: 'A test role',
-    },
-  ],
-  skills: [],
-  objects: [],
-  fields: [],
-  logicFunctions: [],
-  frontComponents: [],
-  publicAssets: [],
-  views: [],
-  navigationMenuItems: [],
-  pageLayouts: [],
-  ...overrides,
-});
+const buildManifest = (overrides?: Partial<Pick<Manifest, 'skills'>>) =>
+  buildBaseManifest({ appId: TEST_APP_ID, roleId: TEST_ROLE_ID, overrides });
 
 const findAppSkills = async () => {
   const { data } = await findSkills({
@@ -76,7 +47,7 @@ describe('Manifest update - skills', () => {
 
   it('should create a new skill when added to manifest on second sync', async () => {
     await syncApplication({
-      manifest: buildBaseManifest({ skills: [] }),
+      manifest: buildManifest({ skills: [] }),
       expectToFail: false,
     });
 
@@ -85,7 +56,7 @@ describe('Manifest update - skills', () => {
     expect(skillsAfterFirstSync).toHaveLength(0);
 
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         skills: [
           {
             universalIdentifier: TEST_SKILL_ID,
@@ -114,7 +85,7 @@ describe('Manifest update - skills', () => {
 
   it('should update a skill when properties change in manifest on second sync', async () => {
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         skills: [
           {
             universalIdentifier: TEST_SKILL_ID,
@@ -138,7 +109,7 @@ describe('Manifest update - skills', () => {
     });
 
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         skills: [
           {
             universalIdentifier: TEST_SKILL_ID,
@@ -168,7 +139,7 @@ describe('Manifest update - skills', () => {
 
   it('should delete a skill when removed from manifest on second sync', async () => {
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         skills: [
           {
             universalIdentifier: TEST_SKILL_ID,
@@ -202,7 +173,7 @@ describe('Manifest update - skills', () => {
     ).toBeDefined();
 
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         skills: [
           {
             universalIdentifier: TEST_SKILL_ID,

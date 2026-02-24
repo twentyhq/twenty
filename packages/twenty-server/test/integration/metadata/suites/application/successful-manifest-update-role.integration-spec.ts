@@ -1,3 +1,4 @@
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
@@ -9,38 +10,21 @@ const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const TEST_SECOND_ROLE_ID = uuidv4();
 
-const buildBaseManifest = (
-  overrides: Partial<Pick<Manifest, 'roles'>>,
-): Manifest => ({
-  application: {
-    universalIdentifier: TEST_APP_ID,
-    defaultRoleUniversalIdentifier: TEST_ROLE_ID,
-    displayName: 'Test Application',
-    description: 'App for testing role manifest updates',
-    icon: 'IconTestPipe',
-    applicationVariables: {},
-    packageJsonChecksum: null,
-    yarnLockChecksum: null,
-    apiClientChecksum: null,
-  },
-  roles: [
-    {
-      universalIdentifier: TEST_ROLE_ID,
-      label: 'Editor',
-      description: 'Can edit',
+const buildManifest = (overrides?: Partial<Pick<Manifest, 'roles'>>) =>
+  buildBaseManifest({
+    appId: TEST_APP_ID,
+    roleId: TEST_ROLE_ID,
+    overrides: {
+      roles: [
+        {
+          universalIdentifier: TEST_ROLE_ID,
+          label: 'Editor',
+          description: 'Can edit',
+        },
+      ],
+      ...overrides,
     },
-  ],
-  skills: [],
-  objects: [],
-  fields: [],
-  logicFunctions: [],
-  frontComponents: [],
-  publicAssets: [],
-  views: [],
-  navigationMenuItems: [],
-  pageLayouts: [],
-  ...overrides,
-});
+  });
 
 const findAppRoles = async () => {
   const { data } = await findRoles({
@@ -74,7 +58,7 @@ describe('Manifest update - roles', () => {
 
   it('should create a new role when added to manifest on second sync', async () => {
     await syncApplication({
-      manifest: buildBaseManifest({}),
+      manifest: buildManifest({}),
       expectToFail: false,
     });
 
@@ -87,7 +71,7 @@ describe('Manifest update - roles', () => {
     });
 
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         roles: [
           {
             universalIdentifier: TEST_ROLE_ID,
@@ -122,7 +106,7 @@ describe('Manifest update - roles', () => {
 
   it('should update a role when properties change in manifest on second sync', async () => {
     await syncApplication({
-      manifest: buildBaseManifest({}),
+      manifest: buildManifest({}),
       expectToFail: false,
     });
 
@@ -135,7 +119,7 @@ describe('Manifest update - roles', () => {
     });
 
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         roles: [
           {
             universalIdentifier: TEST_ROLE_ID,
@@ -158,7 +142,7 @@ describe('Manifest update - roles', () => {
 
   it('should delete a role when removed from manifest on second sync', async () => {
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         roles: [
           {
             universalIdentifier: TEST_ROLE_ID,
@@ -180,7 +164,7 @@ describe('Manifest update - roles', () => {
     expect(rolesAfterFirstSync).toHaveLength(2);
 
     await syncApplication({
-      manifest: buildBaseManifest({
+      manifest: buildManifest({
         roles: [
           {
             universalIdentifier: TEST_ROLE_ID,

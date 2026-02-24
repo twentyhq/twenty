@@ -7,10 +7,11 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
 import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-skills.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
-import { type Manifest } from 'twenty-shared/application';
+import { type FieldManifest, type Manifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -26,54 +27,38 @@ const TEST_OBJECT = buildDefaultObjectManifest({
   icon: 'IconTicket',
 });
 
-const initialManifest: Manifest = {
-  application: {
-    universalIdentifier: TEST_APP_ID,
-    defaultRoleUniversalIdentifier: TEST_ROLE_ID,
-    displayName: 'Test Application',
-    description: 'A test application for workspace migration',
-    icon: 'IconTestPipe',
-    applicationVariables: {},
-    packageJsonChecksum: null,
-    yarnLockChecksum: null,
-    apiClientChecksum: null,
-  },
-  roles: [
-    {
-      universalIdentifier: TEST_ROLE_ID,
-      label: 'Test Role',
-      description: 'A test role',
-    },
-  ],
-  skills: [
-    {
-      universalIdentifier: TEST_SKILL_ID,
-      name: 'test-skill',
-      label: 'Test Skill',
-      description: 'A skill for testing',
-      icon: 'IconBrain',
-      content: '# Test Skill\n\nThis is a test skill.',
-    },
-  ],
-  objects: [TEST_OBJECT],
-  fields: [
-    {
-      universalIdentifier: TEST_FIELD_ID,
-      type: FieldMetadataType.TEXT,
-      name: 'description',
-      label: 'Description',
-      description: 'Ticket description',
-      icon: 'IconFileDescription',
-      objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
-    },
-  ],
-  logicFunctions: [],
-  frontComponents: [],
-  publicAssets: [],
-  views: [],
-  navigationMenuItems: [],
-  pageLayouts: [],
+const TEST_SKILL = {
+  universalIdentifier: TEST_SKILL_ID,
+  name: 'test-skill',
+  label: 'Test Skill',
+  description: 'A skill for testing',
+  icon: 'IconBrain',
+  content: '# Test Skill\n\nThis is a test skill.',
 };
+
+const TEST_FIELD: FieldManifest = {
+  universalIdentifier: TEST_FIELD_ID,
+  type: FieldMetadataType.TEXT,
+  name: 'description',
+  label: 'Description',
+  description: 'Ticket description',
+  icon: 'IconFileDescription',
+  objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+};
+
+const buildManifest = (
+  overrides?: Partial<Pick<Manifest, 'fields' | 'skills' | 'objects'>>,
+) =>
+  buildBaseManifest({
+    appId: TEST_APP_ID,
+    roleId: TEST_ROLE_ID,
+    overrides: {
+      objects: [TEST_OBJECT],
+      skills: [TEST_SKILL],
+      fields: [TEST_FIELD],
+      ...overrides,
+    },
+  });
 
 describe('syncApplication', () => {
   let appCreated = false;
@@ -102,7 +87,7 @@ describe('syncApplication', () => {
 
   it('should return workspace migration actions on initial sync then on second sync with field rename and new role', async () => {
     const { data: firstSyncData } = await syncApplication({
-      manifest: initialManifest,
+      manifest: buildManifest(),
       expectToFail: false,
     });
 
@@ -196,25 +181,7 @@ describe('syncApplication', () => {
   it('should create a TEXT field on the standard Company object', async () => {
     const companyFieldId = uuidv4();
 
-    const manifest: Manifest = {
-      application: {
-        universalIdentifier: TEST_APP_ID,
-        defaultRoleUniversalIdentifier: TEST_ROLE_ID,
-        displayName: 'Test Application',
-        description: 'A test application for workspace migration',
-        icon: 'IconTestPipe',
-        applicationVariables: {},
-        packageJsonChecksum: null,
-        yarnLockChecksum: null,
-        apiClientChecksum: null,
-      },
-      roles: [
-        {
-          universalIdentifier: TEST_ROLE_ID,
-          label: 'Test Role',
-          description: 'A test role',
-        },
-      ],
+    const manifest = buildManifest({
       skills: [],
       objects: [],
       fields: [
@@ -229,13 +196,7 @@ describe('syncApplication', () => {
             STANDARD_OBJECTS.company.universalIdentifier,
         },
       ],
-      logicFunctions: [],
-      frontComponents: [],
-      publicAssets: [],
-      views: [],
-      navigationMenuItems: [],
-      pageLayouts: [],
-    };
+    });
 
     const { data: syncData } = await syncApplication({
       manifest,
