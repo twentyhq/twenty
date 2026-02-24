@@ -1,6 +1,5 @@
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { DUPLICATE_DASHBOARD } from '@/dashboards/graphql/mutations/duplicateDashboard';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -23,8 +22,6 @@ type DuplicateDashboardResult = {
 };
 
 export const useDuplicateDashboard = () => {
-  const apolloCoreClient = useApolloCoreClient();
-
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.Dashboard,
   });
@@ -40,9 +37,7 @@ export const useDuplicateDashboard = () => {
   const [mutate] = useMutation<
     { duplicateDashboard: DuplicateDashboardResult },
     { id: string }
-  >(DUPLICATE_DASHBOARD, {
-    client: apolloCoreClient,
-  });
+  >(DUPLICATE_DASHBOARD);
 
   const duplicateDashboard = async (dashboardId: string) => {
     const result = await mutate({
