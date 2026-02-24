@@ -1,8 +1,8 @@
 import { agentChatSelectedFilesStateV2 } from '@/ai/states/agentChatSelectedFilesStateV2';
 import { agentChatUploadedFilesStateV2 } from '@/ai/states/agentChatUploadedFilesStateV2';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useApolloClient } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { type FileUIPart } from 'ai';
 import { buildSignedPath, isDefined } from 'twenty-shared/utils';
@@ -13,8 +13,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useAIChatFileUpload = () => {
-  const coreClient = useApolloCoreClient();
-  const [uploadFile] = useUploadFileMutation({ client: coreClient });
+  const apolloClient = useApolloClient();
+  const [uploadFile] = useUploadFileMutation({ client: apolloClient });
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useRecoilStateV2(

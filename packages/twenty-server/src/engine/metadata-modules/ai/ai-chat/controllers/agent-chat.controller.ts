@@ -64,14 +64,19 @@ export class AgentChatController {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Res() response: Response,
   ) {
-    const availableModels = this.aiModelRegistryService.getAvailableModels();
-
-    if (availableModels.length === 0) {
+    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AgentException(
         'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY).',
         AgentExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
+
+    const resolvedModelId = workspace.smartModel;
+
+    this.aiModelRegistryService.validateModelAvailability(
+      resolvedModelId,
+      workspace,
+    );
 
     if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       const canBill = await this.billingService.canBillMeteredProduct(

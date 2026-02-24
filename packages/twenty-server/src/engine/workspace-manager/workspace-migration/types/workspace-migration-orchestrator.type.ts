@@ -21,8 +21,11 @@ export type WorkspaceMigrationOrchestratorBuildArgs = {
   workspaceId: string;
   buildOptions: WorkspaceMigrationBuilderOptions;
   fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps;
-  dependencyAllFlatEntityMaps?: Partial<AllUniversalFlatEntityMaps>;
   additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
+  /**
+   * Dependency maps must contain current application and its dependent app app flat entity maps
+   */
+  dependencyAllFlatEntityMaps?: Partial<AllUniversalFlatEntityMaps>;
 };
 
 export type OrchestratorFailureReport = {
