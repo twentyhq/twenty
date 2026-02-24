@@ -19,7 +19,6 @@ import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-ri
 
 type DashboardEditorSideMenuProps = {
   editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
-  boundaryElement?: HTMLElement | null;
 };
 
 const StyledDivToCreateGap = styled.div`

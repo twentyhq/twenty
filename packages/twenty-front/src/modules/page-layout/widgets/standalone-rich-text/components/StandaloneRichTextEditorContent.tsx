@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useState } from 'react';
 
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
@@ -69,9 +69,8 @@ export const StandaloneRichTextEditorContent = ({
     [isPageLayoutInEditModeState, pageLayoutEditingWidgetIdState, widget.id],
   );
 
-  const initialContent = useMemo(
-    () => filterSupportedBlocks(parseInitialBlocknote(currentBody)),
-    [currentBody],
+  const [initialContent] = useState(() =>
+    filterSupportedBlocks(parseInitialBlocknote(currentBody)),
   );
 
   const editor = useCreateBlockNote({
@@ -115,7 +114,7 @@ export const StandaloneRichTextEditorContent = ({
     handleAttachmentSync(newStringifiedBody, currentBody);
   };
 
-  const handleBlockEditorFocus = useCallback(() => {
+  const handleBlockEditorFocus = () => {
     pushFocusItemToFocusStack({
       component: {
         instanceId: widget.id,
@@ -124,14 +123,14 @@ export const StandaloneRichTextEditorContent = ({
       focusId: widget.id,
       globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
     });
-  }, [pushFocusItemToFocusStack, widget.id]);
+  };
 
-  const handleBlockEditorBlur = useCallback(() => {
+  const handleBlockEditorBlur = () => {
     handlePersistBody.flush();
     removeFocusItemFromFocusStackById({
       focusId: widget.id,
     });
-  }, [handlePersistBody, removeFocusItemFromFocusStackById, widget.id]);
+  };
 
   return (
     <>

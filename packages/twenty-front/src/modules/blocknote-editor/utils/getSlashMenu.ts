@@ -41,10 +41,12 @@ const Icons: Record<string, IconComponent> = {
 
 export const getSlashMenu = (editor: typeof BLOCK_SCHEMA.BlockNoteEditor) => {
   const items: SuggestionItem[] = [
-    ...getDefaultReactSlashMenuItems(editor).map((x) => ({
-      ...x,
-      Icon: Icons[x.title],
-    })),
+    ...getDefaultReactSlashMenuItems(editor)
+      .filter((item) => item.title !== 'File')
+      .map((x) => ({
+        ...x,
+        Icon: Icons[x.title],
+      })),
     {
       title: 'File',
       aliases: ['file', 'folder'],
