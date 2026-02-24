@@ -145,13 +145,18 @@ const filterProps = <T extends object>(props: T): T => {
 
 type WrapperProps = { children?: React.ReactNode } & Record<string, unknown>;
 
+const FORCED_PROPS_BY_TAG: Record<string, Record<string, unknown>> = {
+  iframe: { sandbox: '' },
+};
+
 export const createHtmlHostWrapper = (htmlTag: string) => {
   const isVoid = VOID_ELEMENTS.has(htmlTag);
+  const forcedProps = FORCED_PROPS_BY_TAG[htmlTag];
 
   return ({ children, ...props }: WrapperProps) =>
     React.createElement(
       htmlTag,
-      filterProps(props),
+      { ...filterProps(props), ...forcedProps },
       isVoid ? undefined : children,
     );
 };
