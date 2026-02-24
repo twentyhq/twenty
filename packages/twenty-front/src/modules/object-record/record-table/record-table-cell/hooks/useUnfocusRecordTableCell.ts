@@ -1,4 +1,4 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { getRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellFocusId';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
@@ -28,41 +28,36 @@ export const useUnfocusRecordTableCell = (recordTableId?: string) => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const unfocusRecordTableCell = useRecoilCallback(
-    () => {
-      return () => {
-        const currentPosition = store.get(focusPositionAtom) as
-          | { row: number; column: number }
-          | null
-          | undefined;
+  const unfocusRecordTableCell = useCallback(() => {
+    const currentPosition = store.get(focusPositionAtom) as
+      | { row: number; column: number }
+      | null
+      | undefined;
 
-        if (!isDefined(currentPosition)) {
-          return;
-        }
+    if (!isDefined(currentPosition)) {
+      return;
+    }
 
-        const currentCellFocusId = getRecordTableCellFocusId({
-          recordTableId: recordTableIdFromProps,
-          cellPosition: currentPosition,
-        });
+    const currentCellFocusId = getRecordTableCellFocusId({
+      recordTableId: recordTableIdFromProps,
+      cellPosition: currentPosition,
+    });
 
-        removeFocusItemFromFocusStackById({
-          focusId: currentCellFocusId,
-        });
+    removeFocusItemFromFocusStackById({
+      focusId: currentCellFocusId,
+    });
 
-        setIsRecordTableCellFocusActive({
-          isRecordTableFocusActive: false,
-          cellPosition: currentPosition,
-        });
-      };
-    },
-    [
-      store,
-      focusPositionAtom,
-      recordTableIdFromProps,
-      removeFocusItemFromFocusStackById,
-      setIsRecordTableCellFocusActive,
-    ],
-  );
+    setIsRecordTableCellFocusActive({
+      isRecordTableFocusActive: false,
+      cellPosition: currentPosition,
+    });
+  }, [
+    store,
+    focusPositionAtom,
+    recordTableIdFromProps,
+    removeFocusItemFromFocusStackById,
+    setIsRecordTableCellFocusActive,
+  ]);
 
   return { unfocusRecordTableCell };
 };

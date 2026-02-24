@@ -6,10 +6,9 @@ import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveRootRecordFilterGroupIfEmpty = () => {
-  const currentRecordFilterGroupsAtom =
-    useRecoilComponentStateCallbackStateV2(
-      currentRecordFilterGroupsComponentState,
-    );
+  const currentRecordFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+    currentRecordFilterGroupsComponentState,
+  );
 
   const currentRecordFiltersAtom = useRecoilComponentStateCallbackStateV2(
     currentRecordFiltersComponentState,
@@ -19,40 +18,36 @@ export const useRemoveRootRecordFilterGroupIfEmpty = () => {
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
 
   const removeRootRecordFilterGroupIfEmpty = () => {
-    const currentRecordFilterGroups = store.get(
-      currentRecordFilterGroupsAtom,
-    );
+    const currentRecordFilterGroups = store.get(currentRecordFilterGroupsAtom);
 
     const currentRecordFilters = store.get(currentRecordFiltersAtom);
 
-        const rootRecordFilterGroup = currentRecordFilterGroups.find(
-          (existingRecordFilterGroup) =>
-            !isDefined(existingRecordFilterGroup.parentRecordFilterGroupId),
+    const rootRecordFilterGroup = currentRecordFilterGroups.find(
+      (existingRecordFilterGroup) =>
+        !isDefined(existingRecordFilterGroup.parentRecordFilterGroupId),
+    );
+
+    if (isDefined(rootRecordFilterGroup)) {
+      const recordFilterGroupsInRootRecordFilterGroup =
+        currentRecordFilterGroups.filter(
+          (recordFilterGroupToFilter) =>
+            recordFilterGroupToFilter.parentRecordFilterGroupId ===
+            rootRecordFilterGroup.id,
         );
 
-        if (isDefined(rootRecordFilterGroup)) {
-          const recordFilterGroupsInRootRecordFilterGroup =
-            currentRecordFilterGroups.filter(
-              (recordFilterGroupToFilter) =>
-                recordFilterGroupToFilter.parentRecordFilterGroupId ===
-                rootRecordFilterGroup.id,
-            );
+      const recordFiltersInRootRecordFilterGroup = currentRecordFilters.filter(
+        (recordFilterToFilter) =>
+          recordFilterToFilter.recordFilterGroupId === rootRecordFilterGroup.id,
+      );
 
-          const recordFiltersInRootRecordFilterGroup =
-            currentRecordFilters.filter(
-              (recordFilterToFilter) =>
-                recordFilterToFilter.recordFilterGroupId ===
-                rootRecordFilterGroup.id,
-            );
+      const rootRecordFilterGroupIsEmpty =
+        recordFilterGroupsInRootRecordFilterGroup.length === 0 &&
+        recordFiltersInRootRecordFilterGroup.length === 0;
 
-          const rootRecordFilterGroupIsEmpty =
-            recordFilterGroupsInRootRecordFilterGroup.length === 0 &&
-            recordFiltersInRootRecordFilterGroup.length === 0;
-
-          if (rootRecordFilterGroupIsEmpty) {
-            removeRecordFilterGroup(rootRecordFilterGroup.id);
-          }
-        }
+      if (rootRecordFilterGroupIsEmpty) {
+        removeRecordFilterGroup(rootRecordFilterGroup.id);
+      }
+    }
   };
 
   return {

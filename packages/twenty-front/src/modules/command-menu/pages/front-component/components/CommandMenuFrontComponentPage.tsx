@@ -1,7 +1,7 @@
 import { Suspense, lazy } from 'react';
 
 import { viewableFrontComponentIdComponentState } from '@/command-menu/pages/front-component/states/viewableFrontComponentIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 const FrontComponentRenderer = lazy(() =>

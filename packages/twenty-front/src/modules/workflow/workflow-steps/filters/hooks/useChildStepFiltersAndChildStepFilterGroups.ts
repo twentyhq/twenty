@@ -13,7 +13,9 @@ export const useChildStepFiltersAndChildStepFilterGroups = ({
     currentStepFilterGroupsComponentState,
   );
 
-  const stepFilters = useRecoilComponentValueV2(currentStepFiltersComponentState);
+  const stepFilters = useRecoilComponentValueV2(
+    currentStepFiltersComponentState,
+  );
 
   const currentStepFilterGroup = stepFilterGroups?.find(
     (stepFilterGroup) => stepFilterGroup.id === stepFilterGroupId,

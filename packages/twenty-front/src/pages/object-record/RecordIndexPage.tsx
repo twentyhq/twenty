@@ -4,7 +4,6 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isUndefined } from '@sniptt/guards';
 
 export const RecordIndexPage = () => {

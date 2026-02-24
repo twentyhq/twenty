@@ -30,10 +30,11 @@ import { RelationManyToOneFieldInput } from '@/object-record/record-field/ui/met
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
 
 const RelationWorkspaceSetterEffect = () => {
-  const setRecordFieldInputLayoutDirectionLoading = useSetRecoilComponentStateV2(
-    recordFieldInputLayoutDirectionLoadingComponentState,
-    'relation-to-one-field-input-123-Relation',
-  );
+  const setRecordFieldInputLayoutDirectionLoading =
+    useSetRecoilComponentStateV2(
+      recordFieldInputLayoutDirectionLoadingComponentState,
+      'relation-to-one-field-input-123-Relation',
+    );
 
   useEffect(() => {
     jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);

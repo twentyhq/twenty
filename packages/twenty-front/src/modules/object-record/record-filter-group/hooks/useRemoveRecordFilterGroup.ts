@@ -5,10 +5,9 @@ import { useStore } from 'jotai';
 import { useContext } from 'react';
 
 export const useRemoveRecordFilterGroup = () => {
-  const currentRecordFilterGroupsAtom =
-    useRecoilComponentStateCallbackStateV2(
-      currentRecordFilterGroupsComponentState,
-    );
+  const currentRecordFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+    currentRecordFilterGroupsComponentState,
+  );
 
   const store = useStore();
   const { onUpdate } = useContext(AdvancedFilterContext);
@@ -16,9 +15,7 @@ export const useRemoveRecordFilterGroup = () => {
   const removeRecordFilterGroupCallback = (
     recordFilterGroupIdToRemove: string,
   ) => {
-    const currentRecordFilterGroups = store.get(
-      currentRecordFilterGroupsAtom,
-    );
+    const currentRecordFilterGroups = store.get(currentRecordFilterGroupsAtom);
 
     const hasFoundRecordFilterGroupInCurrentRecordFilterGroups =
       currentRecordFilterGroups.some(
@@ -28,25 +25,22 @@ export const useRemoveRecordFilterGroup = () => {
 
     if (hasFoundRecordFilterGroupInCurrentRecordFilterGroups) {
       store.set(currentRecordFilterGroupsAtom, (currentRecordFilterGroups) => {
-              const newCurrentRecordFilterGroups = [
-                ...currentRecordFilterGroups,
-              ];
+        const newCurrentRecordFilterGroups = [...currentRecordFilterGroups];
 
-              const indexOfRecordFilterGroupToRemove =
-                newCurrentRecordFilterGroups.findIndex(
-                  (existingRecordFilterGroup) =>
-                    existingRecordFilterGroup.id ===
-                    recordFilterGroupIdToRemove,
-                );
+        const indexOfRecordFilterGroupToRemove =
+          newCurrentRecordFilterGroups.findIndex(
+            (existingRecordFilterGroup) =>
+              existingRecordFilterGroup.id === recordFilterGroupIdToRemove,
+          );
 
-              if (indexOfRecordFilterGroupToRemove === -1) {
-                return newCurrentRecordFilterGroups;
-              }
+        if (indexOfRecordFilterGroupToRemove === -1) {
+          return newCurrentRecordFilterGroups;
+        }
 
-              newCurrentRecordFilterGroups.splice(
-                indexOfRecordFilterGroupToRemove,
-                1,
-              );
+        newCurrentRecordFilterGroups.splice(
+          indexOfRecordFilterGroupToRemove,
+          1,
+        );
 
         return newCurrentRecordFilterGroups;
       });

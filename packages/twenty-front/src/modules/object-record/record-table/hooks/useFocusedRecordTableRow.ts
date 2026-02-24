@@ -142,32 +142,31 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
   );
 
   const restoreRecordTableRowFocusFromCellPosition = useRecoilCallback(
-    () =>
-      () => {
-        const focusedRowIndex = store.get(focusedRowIndexAtom) as
-          | number
-          | null
-          | undefined;
+    () => () => {
+      const focusedRowIndex = store.get(focusedRowIndexAtom) as
+        | number
+        | null
+        | undefined;
 
-        const focusedCellPosition = store.get(focusedCellPositionAtom) as
-          | { row: number; column: number }
-          | null
-          | undefined;
+      const focusedCellPosition = store.get(focusedCellPositionAtom) as
+        | { row: number; column: number }
+        | null
+        | undefined;
 
-        const isRecordTableCellFocusActive = store.get(
-          isRecordTableCellFocusActiveAtom,
-        );
+      const isRecordTableCellFocusActive = store.get(
+        isRecordTableCellFocusActiveAtom,
+      );
 
-        if (!isDefined(focusedCellPosition) || !isRecordTableCellFocusActive) {
-          return;
-        }
+      if (!isDefined(focusedCellPosition) || !isRecordTableCellFocusActive) {
+        return;
+      }
 
-        unfocusRecordTableCell();
+      unfocusRecordTableCell();
 
-        if (isDefined(focusedRowIndex)) {
-          focusRecordTableRow(focusedCellPosition.row);
-        }
-      },
+      if (isDefined(focusedRowIndex)) {
+        focusRecordTableRow(focusedCellPosition.row);
+      }
+    },
     [
       store,
       focusedRowIndexAtom,

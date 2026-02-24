@@ -3,7 +3,6 @@ import { commandMenuWidthState } from '@/command-menu/states/commandMenuWidthSta
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
@@ -296,52 +295,49 @@ export const WorkflowDiagramCanvasBase = ({
       workflowDiagram: WorkflowDiagram | undefined;
       isInRightDrawer: boolean;
     }) => {
-        if (
-          !isDefined(containerRef.current) ||
-          !workflowDiagramFlowInitialized
-        ) {
-          return;
-        }
+      if (!isDefined(containerRef.current) || !workflowDiagramFlowInitialized) {
+        return;
+      }
 
-        const currentViewport = reactflow.getViewport();
-        const nodes = workflowDiagram?.nodes ?? [];
+      const currentViewport = reactflow.getViewport();
+      const nodes = workflowDiagram?.nodes ?? [];
 
-        const canComputeNodesBounds = nodes.every((node) =>
-          isDefined(node.measured),
-        );
+      const canComputeNodesBounds = nodes.every((node) =>
+        isDefined(node.measured),
+      );
 
-        if (!canComputeNodesBounds) {
-          setWorkflowDiagramWaitingNodesDimensions(true);
-          return;
-        }
+      if (!canComputeNodesBounds) {
+        setWorkflowDiagramWaitingNodesDimensions(true);
+        return;
+      }
 
-        setWorkflowDiagramWaitingNodesDimensions(false);
+      setWorkflowDiagramWaitingNodesDimensions(false);
 
-        const baseContainerWidth = containerRef.current.offsetWidth;
-        const hasViewportBeenMoved = currentViewport.x !== 0;
+      const baseContainerWidth = containerRef.current.offsetWidth;
+      const hasViewportBeenMoved = currentViewport.x !== 0;
 
-        let adjustedContainerWidth = baseContainerWidth;
+      let adjustedContainerWidth = baseContainerWidth;
 
-        const commandMenuWidth = jotaiStore.get(commandMenuWidthState.atom);
+      const commandMenuWidth = jotaiStore.get(commandMenuWidthState.atom);
 
-        if (!isInRightDrawer && isCommandMenuOpened) {
-          adjustedContainerWidth = baseContainerWidth - commandMenuWidth;
-        } else if (!isInRightDrawer && hasViewportBeenMoved) {
-          adjustedContainerWidth = baseContainerWidth + commandMenuWidth;
-        }
+      if (!isInRightDrawer && isCommandMenuOpened) {
+        adjustedContainerWidth = baseContainerWidth - commandMenuWidth;
+      } else if (!isInRightDrawer && hasViewportBeenMoved) {
+        adjustedContainerWidth = baseContainerWidth + commandMenuWidth;
+      }
 
-        const flowBounds = reactflow.getNodesBounds(nodes);
-        const centeredXPosition =
-          adjustedContainerWidth / 2 - flowBounds.width / 2;
+      const flowBounds = reactflow.getNodesBounds(nodes);
+      const centeredXPosition =
+        adjustedContainerWidth / 2 - flowBounds.width / 2;
 
-        reactflow.setViewport(
-          {
-            ...currentViewport,
-            x: centeredXPosition,
-            zoom: defaultFitViewOptions.maxZoom,
-          },
-          { duration: hasViewportBeenMoved ? 300 : 0 },
-        );
+      reactflow.setViewport(
+        {
+          ...currentViewport,
+          x: centeredXPosition,
+          zoom: defaultFitViewOptions.maxZoom,
+        },
+        { duration: hasViewportBeenMoved ? 300 : 0 },
+      );
     },
     [reactflow, setWorkflowDiagramWaitingNodesDimensions],
   );

@@ -35,7 +35,6 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 

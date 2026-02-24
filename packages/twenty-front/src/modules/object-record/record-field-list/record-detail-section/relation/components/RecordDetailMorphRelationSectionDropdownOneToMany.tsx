@@ -78,10 +78,11 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
     dropdownId,
   );
 
-  const setMultipleRecordPickerPickableMorphItems = useSetRecoilComponentStateV2(
-    multipleRecordPickerPickableMorphItemsComponentState,
-    dropdownId,
-  );
+  const setMultipleRecordPickerPickableMorphItems =
+    useSetRecoilComponentStateV2(
+      multipleRecordPickerPickableMorphItemsComponentState,
+      dropdownId,
+    );
 
   const setMultipleRecordPickerSearchableObjectMetadataItems =
     useSetRecoilComponentStateV2(

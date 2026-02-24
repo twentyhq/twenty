@@ -5,7 +5,6 @@ import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-r
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';

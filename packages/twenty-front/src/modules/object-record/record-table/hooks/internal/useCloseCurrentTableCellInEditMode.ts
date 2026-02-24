@@ -1,5 +1,5 @@
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
@@ -21,16 +21,14 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
   const { removeLastFocusItemFromFocusStackByComponentType } =
     useRemoveLastFocusItemFromFocusStackByComponentType();
 
-  return useRecoilCallback(() => {
-    return () => {
-      store.set(currentTableCellInEditModePositionAtom, null);
+  return useCallback(() => {
+    store.set(currentTableCellInEditModePositionAtom, null);
 
-      goBackToPreviousDropdownFocusId();
+    goBackToPreviousDropdownFocusId();
 
-      removeLastFocusItemFromFocusStackByComponentType({
-        componentType: FocusComponentType.OPENED_FIELD_INPUT,
-      });
-    };
+    removeLastFocusItemFromFocusStackByComponentType({
+      componentType: FocusComponentType.OPENED_FIELD_INPUT,
+    });
   }, [
     store,
     currentTableCellInEditModePositionAtom,

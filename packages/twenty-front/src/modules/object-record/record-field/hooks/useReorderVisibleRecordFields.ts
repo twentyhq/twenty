@@ -51,11 +51,7 @@ export const useReorderVisibleRecordFields = (recordTableId: string) => {
 
       return updatedRecordField;
     },
-    [
-      currentRecordFieldsAtom,
-      visibleRecordFieldsAtom,
-      updateRecordField,
-    ],
+    [currentRecordFieldsAtom, visibleRecordFieldsAtom, updateRecordField],
   );
 
   return { reorderVisibleRecordFields };

@@ -7,7 +7,6 @@ import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/ut
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const StyledContainer = styled.div<{ isInEditMode: boolean }>`
   height: 100%;

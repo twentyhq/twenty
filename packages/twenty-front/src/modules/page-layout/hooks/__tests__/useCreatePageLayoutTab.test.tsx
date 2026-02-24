@@ -4,7 +4,6 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilComponentValueV2V2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2V2';
-import { useRecoilComponentValueV2V2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2V2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { act, renderHook } from '@testing-library/react';
 import { useSetAtom } from 'jotai';

@@ -42,7 +42,7 @@ export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
         lastFieldMetadataItemUpdate.fieldMetadataItemId,
     );
 
-    if (isFieldInCurrentView) {
+    if (isFieldInCurrentView === true) {
       setLastProcessedFieldMetadataUpdateId(lastFieldMetadataItemUpdate.id);
       resetVirtualizationBecauseDataChanged();
     }

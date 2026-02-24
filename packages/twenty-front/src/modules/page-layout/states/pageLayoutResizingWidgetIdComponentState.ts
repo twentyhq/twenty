@@ -2,9 +2,10 @@ import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createC
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
-export const pageLayoutResizingWidgetIdComponentState =
-  createComponentStateV2<string | null>({
-    key: 'pageLayoutResizingWidgetIdComponentState',
-    defaultValue: null,
-    componentInstanceContext: PageLayoutComponentInstanceContext,
-  });
+export const pageLayoutResizingWidgetIdComponentState = createComponentStateV2<
+  string | null
+>({
+  key: 'pageLayoutResizingWidgetIdComponentState',
+  defaultValue: null,
+  componentInstanceContext: PageLayoutComponentInstanceContext,
+});

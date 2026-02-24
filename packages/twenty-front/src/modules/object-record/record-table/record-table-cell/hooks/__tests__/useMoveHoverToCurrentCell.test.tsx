@@ -24,13 +24,15 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
           <RecordTableRowDraggableContextProvider
             value={recordTableRowDraggableContextValue}
           >
-            <RecordTableCellContext.Provider value={recordTableCellContextValue}>
+            <RecordTableCellContext.Provider
+              value={recordTableCellContextValue}
+            >
               {children}
             </RecordTableCellContext.Provider>
           </RecordTableRowDraggableContextProvider>
         </RecordTableRowContextProvider>
       </RecordTableComponentInstance>
-  </RecoilRoot>
+    </RecoilRoot>
   </JotaiProvider>
 );
 

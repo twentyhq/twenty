@@ -54,11 +54,10 @@ export const ChartFiltersSettings = ({
     instanceId,
   );
 
-  const currentRecordFilterGroupsAtom =
-    useRecoilComponentStateCallbackStateV2(
-      currentRecordFilterGroupsComponentState,
-      instanceId,
-    );
+  const currentRecordFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+    currentRecordFilterGroupsComponentState,
+    instanceId,
+  );
 
   const store = useStore();
   const chartWidgetConfiguration = widget.configuration;

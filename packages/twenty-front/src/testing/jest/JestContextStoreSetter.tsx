@@ -47,10 +47,11 @@ export const JestContextStoreSetter = ({
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const setContextStoreCurrentObjectMetadataItemId = useSetRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
-  );
+  const setContextStoreCurrentObjectMetadataItemId =
+    useSetRecoilComponentStateV2(
+      contextStoreCurrentObjectMetadataItemIdComponentState,
+      MAIN_CONTEXT_STORE_INSTANCE_ID,
+    );
 
   const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
     contextStoreNumberOfSelectedRecordsComponentState,
@@ -62,10 +63,11 @@ export const JestContextStoreSetter = ({
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const setContextStoreFilterGroupsComponentState = useSetRecoilComponentStateV2(
-    contextStoreFilterGroupsComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
-  );
+  const setContextStoreFilterGroupsComponentState =
+    useSetRecoilComponentStateV2(
+      contextStoreFilterGroupsComponentState,
+      MAIN_CONTEXT_STORE_INSTANCE_ID,
+    );
 
   const setContextStoreCurrentViewId = useSetRecoilComponentStateV2(
     contextStoreCurrentViewIdComponentState,

@@ -40,9 +40,10 @@ export const ObjectFilterDropdownRecordSelect = ({
   recordFilterId,
   dropdownId,
 }: ObjectFilterDropdownRecordSelectProps) => {
-  const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentSelectorValueV2(
-    fieldMetadataItemUsedInDropdownComponentSelector,
-  );
+  const fieldMetadataItemUsedInFilterDropdown =
+    useRecoilComponentSelectorValueV2(
+      fieldMetadataItemUsedInDropdownComponentSelector,
+    );
 
   const allowRequestsToTwentyIcons = useRecoilValueV2(
     allowRequestsToTwentyIconsState,

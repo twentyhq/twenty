@@ -91,11 +91,10 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
     applyObjectFilterDropdownFilterValue(stringifyRelativeDateFilter(newValue));
   };
 
-  const fieldMetadataItemUsedInDropdown =
-    useRecoilComponentSelectorValueV2(
-      fieldMetadataItemUsedInDropdownComponentSelector,
-      dropdownInstanceId,
-    );
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
+    fieldMetadataItemUsedInDropdownComponentSelector,
+    dropdownInstanceId,
+  );
 
   const fieldDefinition = fieldMetadataItemUsedInDropdown
     ? formatFieldMetadataItemAsFieldDefinition({

@@ -51,9 +51,10 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     subFieldNameUsedInDropdownComponentState,
   );
 
-  const setObjectFilterDropdownCurrentRecordFilter = useSetRecoilComponentStateV2(
-    objectFilterDropdownCurrentRecordFilterComponentState,
-  );
+  const setObjectFilterDropdownCurrentRecordFilter =
+    useSetRecoilComponentStateV2(
+      objectFilterDropdownCurrentRecordFilterComponentState,
+    );
 
   const { upsertRecordFilter } = useUpsertRecordFilter();
   const { getInitialFilterValue } = useGetInitialFilterValue();

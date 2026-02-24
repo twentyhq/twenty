@@ -9,7 +9,7 @@ import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const useRemoveSelectedRecordsFromRecordBoard = (
@@ -40,61 +40,58 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
   const { resetRecordBoardSelection } =
     useResetRecordBoardSelection(recordBoardIndexId);
 
-  const removeSelectedRecordsFromRecordBoard = useRecoilCallback(
-    () => () => {
-      const deletedRecordIds = store.get(
-        recordBoardSelectedRecordIdsAtom,
+  const removeSelectedRecordsFromRecordBoard = useCallback(() => {
+    const deletedRecordIds = store.get(
+      recordBoardSelectedRecordIdsAtom,
+    ) as string[];
+
+    if (
+      !isDefined(groupByFieldMetadataItem) ||
+      !isNonEmptyArray(recordGroupDefinitions) ||
+      !isNonEmptyArray(deletedRecordIds)
+    ) {
+      return;
+    }
+
+    for (const recordGroup of recordGroupDefinitions) {
+      const currentRecordIds = store.get(
+        recordIndexRecordIdsByGroupCallbackState(recordGroup.id),
       ) as string[];
 
-      if (
-        !isDefined(groupByFieldMetadataItem) ||
-        !isNonEmptyArray(recordGroupDefinitions) ||
-        !isNonEmptyArray(deletedRecordIds)
-      ) {
-        return;
-      }
+      let groupRecordIdsUpdated = [...currentRecordIds];
 
-      for (const recordGroup of recordGroupDefinitions) {
-        const currentRecordIds = store.get(
-          recordIndexRecordIdsByGroupCallbackState(recordGroup.id),
-        ) as string[];
+      for (const deletedRecordId of deletedRecordIds) {
+        const indexOfDeletedRecordIdInGroupRecordIds =
+          groupRecordIdsUpdated.findIndex(
+            (recordIdInRecordGroup) =>
+              recordIdInRecordGroup === deletedRecordId,
+          );
 
-        let groupRecordIdsUpdated = [...currentRecordIds];
-
-        for (const deletedRecordId of deletedRecordIds) {
-          const indexOfDeletedRecordIdInGroupRecordIds =
-            groupRecordIdsUpdated.findIndex(
-              (recordIdInRecordGroup) =>
-                recordIdInRecordGroup === deletedRecordId,
-            );
-
-          if (indexOfDeletedRecordIdInGroupRecordIds > -1) {
-            groupRecordIdsUpdated = groupRecordIdsUpdated.toSpliced(
-              indexOfDeletedRecordIdInGroupRecordIds,
-              1,
-            );
-          }
-        }
-
-        if (groupRecordIdsUpdated.length !== currentRecordIds.length) {
-          store.set(
-            recordIndexRecordIdsByGroupCallbackState(recordGroup.id),
-            groupRecordIdsUpdated,
+        if (indexOfDeletedRecordIdInGroupRecordIds > -1) {
+          groupRecordIdsUpdated = groupRecordIdsUpdated.toSpliced(
+            indexOfDeletedRecordIdInGroupRecordIds,
+            1,
           );
         }
       }
 
-      resetRecordBoardSelection();
-    },
-    [
-      store,
-      groupByFieldMetadataItem,
-      recordIndexRecordIdsByGroupCallbackState,
-      recordGroupDefinitions,
-      recordBoardSelectedRecordIdsAtom,
-      resetRecordBoardSelection,
-    ],
-  );
+      if (groupRecordIdsUpdated.length !== currentRecordIds.length) {
+        store.set(
+          recordIndexRecordIdsByGroupCallbackState(recordGroup.id),
+          groupRecordIdsUpdated,
+        );
+      }
+    }
+
+    resetRecordBoardSelection();
+  }, [
+    store,
+    groupByFieldMetadataItem,
+    recordIndexRecordIdsByGroupCallbackState,
+    recordGroupDefinitions,
+    recordBoardSelectedRecordIdsAtom,
+    resetRecordBoardSelection,
+  ]);
 
   return {
     removeSelectedRecordsFromRecordBoard,

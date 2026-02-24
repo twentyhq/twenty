@@ -16,7 +16,7 @@ import { useRemovePageLayoutWidgetAndPreservePosition } from '@/page-layout/hook
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client';
@@ -79,7 +79,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   );
 
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
-    useRecoilComponentState(
+    useRecoilComponentStateV2(
       pageLayoutEditingWidgetIdComponentState,
       pageLayoutId,
     );

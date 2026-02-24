@@ -40,10 +40,9 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
             currentRecordFilterGroupsAtom,
           );
 
-          const newRecordFilterGroups =
-            mapViewFilterGroupsToRecordFilterGroups(
-              currentView.viewFilterGroups ?? [],
-            );
+          const newRecordFilterGroups = mapViewFilterGroupsToRecordFilterGroups(
+            currentView.viewFilterGroups ?? [],
+          );
 
           if (
             !isDeeplyEqual(currentRecordFilterGroups, newRecordFilterGroups)

@@ -13,9 +13,10 @@ export const ViewBarFilterDropdownContent = () => {
     ViewBarFilterDropdownIds.MAIN,
   );
 
-  const objectFilterDropdownAnyFieldSearchIsSelected = useRecoilComponentValueV2(
-    objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
-  );
+  const objectFilterDropdownAnyFieldSearchIsSelected =
+    useRecoilComponentValueV2(
+      objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
+    );
 
   const isAnyFieldSearchFilter = objectFilterDropdownAnyFieldSearchIsSelected;
 

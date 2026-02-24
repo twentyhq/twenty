@@ -16,9 +16,8 @@ import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -63,8 +62,8 @@ export const RecordTableContent = ({
 
   const store = useStore();
 
-  const handleDragSelectionChange = useRecoilCallback(
-    () => (rowId: string, selected: boolean) => {
+  const handleDragSelectionChange = useCallback(
+    (rowId: string, selected: boolean) => {
       store.set(isRowSelectedFamilyState(rowId), selected);
     },
     [isRowSelectedFamilyState, store],
@@ -84,16 +83,13 @@ export const RecordTableContent = ({
     recordTableId,
   );
 
-  const handleMouseLeave = useRecoilCallback(
-    () => () => {
-      const isSomeCellInEditMode = store.get(isSomeCellInEditModeAtom);
+  const handleMouseLeave = useCallback(() => {
+    const isSomeCellInEditMode = store.get(isSomeCellInEditModeAtom);
 
-      if (!isSomeCellInEditMode) {
-        setRecordTableHoverPosition(null);
-      }
-    },
-    [store, isSomeCellInEditModeAtom, setRecordTableHoverPosition],
-  );
+    if (!isSomeCellInEditMode) {
+      setRecordTableHoverPosition(null);
+    }
+  }, [store, isSomeCellInEditModeAtom, setRecordTableHoverPosition]);
 
   return (
     <StyledTableContainer ref={containerRef}>

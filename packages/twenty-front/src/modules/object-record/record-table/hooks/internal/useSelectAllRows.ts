@@ -1,4 +1,4 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
@@ -35,35 +35,30 @@ export const useSelectAllRows = (recordTableId?: string) => {
 
   const store = useStore();
 
-  const selectAllRows = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        const allRowsSelectedStatus = store.get(allRowsSelectedStatusAtom);
-        const allRecordIds = store.get(recordIndexAllRecordIdsAtom);
+  const selectAllRows = useCallback(() => {
+    const allRowsSelectedStatus = store.get(allRowsSelectedStatusAtom);
+    const allRecordIds = store.get(recordIndexAllRecordIdsAtom);
 
-        if (allRowsSelectedStatus === 'all') {
-          resetTableRowSelection();
-        }
+    if (allRowsSelectedStatus === 'all') {
+      resetTableRowSelection();
+    }
 
-        for (const recordId of allRecordIds) {
-          const isSelected =
-            allRowsSelectedStatus === 'none' ||
-            allRowsSelectedStatus === 'some';
+    for (const recordId of allRecordIds) {
+      const isSelected =
+        allRowsSelectedStatus === 'none' || allRowsSelectedStatus === 'some';
 
-          store.set(isRowSelectedFamilyState(recordId), isSelected);
-        }
+      store.set(isRowSelectedFamilyState(recordId), isSelected);
+    }
 
-        store.set(hasUserSelectedAllRowsAtom, true);
-      },
-    [
-      allRowsSelectedStatusAtom,
-      recordIndexAllRecordIdsAtom,
-      resetTableRowSelection,
-      isRowSelectedFamilyState,
-      hasUserSelectedAllRowsAtom,
-      store,
-    ],
-  );
+    store.set(hasUserSelectedAllRowsAtom, true);
+  }, [
+    allRowsSelectedStatusAtom,
+    recordIndexAllRecordIdsAtom,
+    resetTableRowSelection,
+    isRowSelectedFamilyState,
+    hasUserSelectedAllRowsAtom,
+    store,
+  ]);
 
   return {
     selectAllRows,

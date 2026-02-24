@@ -80,10 +80,9 @@ export const SingleRecordPickerMenuItems = ({
     singleRecordPickerShouldShowSkeletonComponentState,
   );
 
-  const singleRecordPickerShouldShowInitialLoading =
-    useRecoilComponentValueV2(
-      singleRecordPickerShouldShowInitialLoadingComponentState,
-    );
+  const singleRecordPickerShouldShowInitialLoading = useRecoilComponentValueV2(
+    singleRecordPickerShouldShowInitialLoadingComponentState,
+  );
 
   const itemsMatchingSearchFilter = pickableMorphItems.filter(
     (morphItem) => morphItem.isMatchingSearchFilter,

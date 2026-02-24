@@ -11,7 +11,7 @@ import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { type ViewType } from '@/views/types/ViewType';
 import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -46,61 +46,60 @@ export const useReorderRecordGroups = ({
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const reorderRecordGroups = useRecoilCallback(
-    () =>
-      ({ fromIndex, toIndex }: ReorderRecordGroupsParams) => {
-        const visibleRecordGroupIds = store.get(
-          visibleRecordGroupIdsFamilySelector(viewType),
+  const reorderRecordGroups = useCallback(
+    ({ fromIndex, toIndex }: ReorderRecordGroupsParams) => {
+      const visibleRecordGroupIds = store.get(
+        visibleRecordGroupIdsFamilySelector(viewType),
+      );
+
+      const reorderedVisibleRecordGroupIds = moveArrayItem(
+        visibleRecordGroupIds,
+        {
+          fromIndex,
+          toIndex,
+        },
+      );
+
+      if (
+        isDeeplyEqual(visibleRecordGroupIds, reorderedVisibleRecordGroupIds)
+      ) {
+        return;
+      }
+
+      const updatedRecordGroups = reorderedVisibleRecordGroupIds.reduce<
+        RecordGroupDefinition[]
+      >((acc, recordGroupId, reorderIndex) => {
+        const recordGroupDefinition = store.get(
+          recordGroupDefinitionFamilyState.atomFamily(recordGroupId),
         );
 
-        const reorderedVisibleRecordGroupIds = moveArrayItem(
-          visibleRecordGroupIds,
+        if (!isDefined(recordGroupDefinition)) {
+          return acc;
+        }
+
+        return [
+          ...acc,
           {
-            fromIndex,
-            toIndex,
+            ...recordGroupDefinition,
+            position: reorderIndex,
           },
-        );
+        ];
+      }, []);
 
-        if (
-          isDeeplyEqual(visibleRecordGroupIds, reorderedVisibleRecordGroupIds)
-        ) {
-          return;
-        }
+      if (!isDefined(groupFieldMetadata?.id)) {
+        throw new Error('mainGroupByFieldMetadataId is required');
+      }
 
-        const updatedRecordGroups = reorderedVisibleRecordGroupIds.reduce<
-          RecordGroupDefinition[]
-        >((acc, recordGroupId, reorderIndex) => {
-          const recordGroupDefinition = store.get(
-            recordGroupDefinitionFamilyState.atomFamily(recordGroupId),
-          );
-
-          if (!isDefined(recordGroupDefinition)) {
-            return acc;
-          }
-
-          return [
-            ...acc,
-            {
-              ...recordGroupDefinition,
-              position: reorderIndex,
-            },
-          ];
-        }, []);
-
-        if (!isDefined(groupFieldMetadata?.id)) {
-          throw new Error('mainGroupByFieldMetadataId is required');
-        }
-
-        setRecordGroups({
-          mainGroupByFieldMetadataId: groupFieldMetadata?.id,
-          recordGroups: updatedRecordGroups,
-          recordIndexId,
-          objectMetadataItemId: objectMetadataItem.id,
-        });
-        saveViewGroups(
-          mapRecordGroupDefinitionsToViewGroups(updatedRecordGroups),
-        );
-      },
+      setRecordGroups({
+        mainGroupByFieldMetadataId: groupFieldMetadata?.id,
+        recordGroups: updatedRecordGroups,
+        recordIndexId,
+        objectMetadataItemId: objectMetadataItem.id,
+      });
+      saveViewGroups(
+        mapRecordGroupDefinitionsToViewGroups(updatedRecordGroups),
+      );
+    },
     [
       objectMetadataItem.id,
       groupFieldMetadata?.id,

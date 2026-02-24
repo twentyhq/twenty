@@ -1,4 +1,4 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useStore } from 'jotai';
@@ -21,15 +21,14 @@ export const useMoveHoverToCurrentCell = (recordTableId: string) => {
 
   const store = useStore();
 
-  const moveHoverToCurrentCell = useRecoilCallback(
-    () =>
-      (cellPosition: TableCellPosition) => {
-        const isSomeCellInEditMode = store.get(isSomeCellInEditModeAtom);
+  const moveHoverToCurrentCell = useCallback(
+    (cellPosition: TableCellPosition) => {
+      const isSomeCellInEditMode = store.get(isSomeCellInEditModeAtom);
 
-        if (!isSomeCellInEditMode) {
-          setHoverPosition(cellPosition);
-        }
-      },
+      if (!isSomeCellInEditMode) {
+        setHoverPosition(cellPosition);
+      }
+    },
     [store, isSomeCellInEditModeAtom, setHoverPosition],
   );
 

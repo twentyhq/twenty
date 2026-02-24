@@ -1,5 +1,3 @@
-import { useRecoilCallback } from 'recoil';
-
 import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -29,6 +27,7 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 
 export type OpenTableCellArgs = {
@@ -77,97 +76,94 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  const openTableCell = useRecoilCallback(
-    () =>
-      ({
-        initialValue,
-        cellPosition,
-        isReadOnly,
+  const openTableCell = useCallback(
+    ({
+      initialValue,
+      cellPosition,
+      isReadOnly,
+      fieldDefinition,
+      recordId,
+      isNavigating,
+    }: OpenTableCellArgs) => {
+      store.set(
+        clickOutsideListenerIsActivatedComponentState.atomFamily({
+          instanceId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
+        }),
+        false,
+      );
+
+      const isFirstColumnCell = cellPosition.column === 0;
+
+      const fieldValue = store.get(
+        recordStoreFamilySelectorV2.selectorFamily({
+          recordId,
+          fieldName: fieldDefinition.metadata.fieldName,
+        }),
+      );
+
+      const isEmpty = isFieldValueEmpty({
+        fieldDefinition,
+        fieldValue,
+      });
+
+      if ((isFirstColumnCell && !isEmpty) || isNavigating) {
+        leaveTableFocus();
+
+        const openRecordIn = jotaiStore.get(recordIndexOpenRecordInState.atom);
+
+        if (openRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
+          activateRecordTableRow(cellPosition.row);
+          unfocusRecordTableRow();
+        }
+
+        openRecordFromIndexView({ recordId });
+
+        return;
+      }
+
+      // Block editing for read-only records, but allow navigation (handled above)
+      if (isReadOnly) {
+        return;
+      }
+
+      deactivateRecordTableRow();
+
+      focusRecordTableCell(cellPosition);
+
+      setIsRowFocusActive(false);
+
+      setDragSelectionStartEnabled(false);
+
+      openFieldInput({
         fieldDefinition,
         recordId,
-        isNavigating,
-      }: OpenTableCellArgs) => {
-        store.set(
-          clickOutsideListenerIsActivatedComponentState.atomFamily({
-            instanceId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
-          }),
-          false,
-        );
+        prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+      });
 
-        const isFirstColumnCell = cellPosition.column === 0;
+      setCurrentTableCellInEditModePosition(cellPosition);
 
-        const fieldValue = store.get(
-          recordStoreFamilySelectorV2.selectorFamily({
-            recordId,
-            fieldName: fieldDefinition.metadata.fieldName,
-          }),
-        );
-
-        const isEmpty = isFieldValueEmpty({
-          fieldDefinition,
-          fieldValue,
-        });
-
-        if ((isFirstColumnCell && !isEmpty) || isNavigating) {
-          leaveTableFocus();
-
-          const openRecordIn = jotaiStore.get(
-            recordIndexOpenRecordInState.atom,
-          );
-
-          if (openRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
-            activateRecordTableRow(cellPosition.row);
-            unfocusRecordTableRow();
-          }
-
-          openRecordFromIndexView({ recordId });
-
-          return;
-        }
-
-        // Block editing for read-only records, but allow navigation (handled above)
-        if (isReadOnly) {
-          return;
-        }
-
-        deactivateRecordTableRow();
-
-        focusRecordTableCell(cellPosition);
-
-        setIsRowFocusActive(false);
-
-        setDragSelectionStartEnabled(false);
-
-        openFieldInput({
-          fieldDefinition,
+      initDraftValue({
+        value: initialValue,
+        recordId,
+        fieldDefinition,
+        fieldComponentInstanceId: getRecordFieldInputInstanceId({
           recordId,
+          fieldName: fieldDefinition.metadata.fieldName,
           prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
-        });
+        }),
+      });
 
-        setCurrentTableCellInEditModePosition(cellPosition);
+      toggleClickOutside(false);
 
-        initDraftValue({
-          value: initialValue,
+      setActiveDropdownFocusIdAndMemorizePrevious(
+        getDropdownFocusIdForRecordField({
           recordId,
-          fieldDefinition,
-          fieldComponentInstanceId: getRecordFieldInputInstanceId({
-            recordId,
-            fieldName: fieldDefinition.metadata.fieldName,
-            prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
-          }),
-        });
-
-        toggleClickOutside(false);
-
-        setActiveDropdownFocusIdAndMemorizePrevious(
-          getDropdownFocusIdForRecordField({
-            recordId,
-            fieldMetadataId: fieldDefinition.fieldMetadataId,
-            componentType: 'table-cell',
-            instanceId: scopeInstanceId,
-          }),
-        );
-      },
+          fieldMetadataId: fieldDefinition.fieldMetadataId,
+          componentType: 'table-cell',
+          instanceId: scopeInstanceId,
+        }),
+      );
+    },
     [
       deactivateRecordTableRow,
       focusRecordTableCell,

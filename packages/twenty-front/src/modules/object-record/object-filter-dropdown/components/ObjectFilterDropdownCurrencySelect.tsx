@@ -30,9 +30,10 @@ export const ObjectFilterDropdownCurrencySelect = () => {
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
 
-  const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentSelectorValueV2(
-    fieldMetadataItemUsedInDropdownComponentSelector,
-  );
+  const fieldMetadataItemUsedInFilterDropdown =
+    useRecoilComponentSelectorValueV2(
+      fieldMetadataItemUsedInDropdownComponentSelector,
+    );
 
   const currenciesAsSelectableItems = CURRENCIES.map(
     turnCurrencyIntoSelectableItem,

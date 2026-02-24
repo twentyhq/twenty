@@ -31,9 +31,10 @@ export const ObjectFilterDropdownCountrySelect = () => {
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
 
-  const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentSelectorValueV2(
-    fieldMetadataItemUsedInDropdownComponentSelector,
-  );
+  const fieldMetadataItemUsedInFilterDropdown =
+    useRecoilComponentSelectorValueV2(
+      fieldMetadataItemUsedInDropdownComponentSelector,
+    );
 
   const countries = useCountries();
 

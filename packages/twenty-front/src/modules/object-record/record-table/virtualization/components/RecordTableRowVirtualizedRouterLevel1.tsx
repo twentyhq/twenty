@@ -15,7 +15,7 @@ export const RecordTableRowVirtualizedRouterLevel1 = ({
     lowDetailsActivatedComponentState,
   );
 
-  if (lowDetailsActivated) {
+  if (lowDetailsActivated === true) {
     return <RecordTableRowVirtualizedSkeleton />;
   }
 

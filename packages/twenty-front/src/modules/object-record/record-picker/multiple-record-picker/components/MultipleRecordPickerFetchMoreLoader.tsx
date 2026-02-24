@@ -69,26 +69,23 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
 
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
-  const fetchMore = useCallback(
-    async () => {
-      const currentPaginationState = jotaiStore.get(
-        multipleRecordPickerPaginationState.atomFamily({
-          instanceId: componentInstanceId,
-        }),
-      );
+  const fetchMore = useCallback(async () => {
+    const currentPaginationState = jotaiStore.get(
+      multipleRecordPickerPaginationState.atomFamily({
+        instanceId: componentInstanceId,
+      }),
+    );
 
-      if (isLoading || !currentPaginationState.hasNextPage) {
-        return;
-      }
+    if (isLoading || !currentPaginationState.hasNextPage) {
+      return;
+    }
 
-      await performSearch({
-        multipleRecordPickerInstanceId: componentInstanceId,
-        forceSearchFilter: searchFilter,
-        loadMore: true,
-      });
-    },
-    [componentInstanceId, performSearch, searchFilter, isLoading],
-  );
+    await performSearch({
+      multipleRecordPickerInstanceId: componentInstanceId,
+      forceSearchFilter: searchFilter,
+      loadMore: true,
+    });
+  }, [componentInstanceId, performSearch, searchFilter, isLoading]);
 
   const { ref } = useInView({
     onChange: useCallback(

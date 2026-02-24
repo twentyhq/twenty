@@ -23,7 +23,6 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/u
 import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
-import { useRecoilCallback } from 'recoil';
 import {
   findById,
   findByProperty,
@@ -142,50 +141,43 @@ export const useResizeTableHeader = () => {
 
   const store = useStore();
 
-  const handleResizeHandlerEnd = useRecoilCallback(
-    () =>
-      async () => {
-        throwIfNotDefined(recordField, 'recordField');
+  const handleResizeHandlerEnd = useCallback(async () => {
+    throwIfNotDefined(recordField, 'recordField');
 
-        if (!resizedFieldMetadataItemId) return;
+    if (!resizedFieldMetadataItemId) return;
 
-        const resizeFieldOffset = store.get(resizeFieldOffsetAtom);
+    const resizeFieldOffset = store.get(resizeFieldOffsetAtom);
 
-        const nextWidth = Math.round(
-          Math.max(
-            recordField.size + resizeFieldOffset,
-            RECORD_TABLE_COLUMN_MIN_WIDTH,
-          ),
-        );
+    const nextWidth = Math.round(
+      Math.max(
+        recordField.size + resizeFieldOffset,
+        RECORD_TABLE_COLUMN_MIN_WIDTH,
+      ),
+    );
 
-        store.set(resizeFieldOffsetAtom, 0);
-        setInitialPointerPositionX(null);
-        setResizedFieldMetadataItemId(null);
+    store.set(resizeFieldOffsetAtom, 0);
+    setInitialPointerPositionX(null);
+    setResizedFieldMetadataItemId(null);
 
-        if (nextWidth !== recordField.size) {
-          const updatedRecordField = updateRecordField(
-            resizedFieldMetadataItemId,
-            {
-              size: nextWidth,
-            },
-          );
+    if (nextWidth !== recordField.size) {
+      const updatedRecordField = updateRecordField(resizedFieldMetadataItemId, {
+        size: nextWidth,
+      });
 
-          saveRecordFields([updatedRecordField]);
-        }
+      saveRecordFields([updatedRecordField]);
+    }
 
-        setDragSelectionStartEnabled(true);
-      },
-    [
-      saveRecordFields,
-      resizedFieldMetadataItemId,
-      resizeFieldOffsetAtom,
-      store,
-      setResizedFieldMetadataItemId,
-      updateRecordField,
-      setDragSelectionStartEnabled,
-      recordField,
-    ],
-  );
+    setDragSelectionStartEnabled(true);
+  }, [
+    saveRecordFields,
+    resizedFieldMetadataItemId,
+    resizeFieldOffsetAtom,
+    store,
+    setResizedFieldMetadataItemId,
+    updateRecordField,
+    setDragSelectionStartEnabled,
+    recordField,
+  ]);
 
   useTrackPointer({
     shouldTrackPointer: resizedFieldMetadataItemId !== null,

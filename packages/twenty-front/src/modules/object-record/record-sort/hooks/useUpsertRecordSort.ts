@@ -28,7 +28,9 @@ export const useUpsertRecordSort = () => {
           recordSortToSet,
         ]);
       } else {
-        store.set(currentRecordSortsAtom, (currentRecordSorts: RecordSort[]) => {
+        store.set(
+          currentRecordSortsAtom,
+          (currentRecordSorts: RecordSort[]) => {
             const newCurrentRecordSorts = [...currentRecordSorts];
 
             const indexOfSortToUpdate = newCurrentRecordSorts.findIndex(
@@ -45,8 +47,9 @@ export const useUpsertRecordSort = () => {
               ...recordSortToSet,
             };
 
-          return newCurrentRecordSorts;
-        });
+            return newCurrentRecordSorts;
+          },
+        );
       }
     },
     [currentRecordSortsAtom, store],

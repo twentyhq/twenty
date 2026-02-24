@@ -6,19 +6,16 @@ import { useStore } from 'jotai';
 import { useContext } from 'react';
 
 export const useUpsertRecordFilterGroup = () => {
-  const currentRecordFilterGroupsAtom =
-    useRecoilComponentStateCallbackStateV2(
-      currentRecordFilterGroupsComponentState,
-    );
+  const currentRecordFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+    currentRecordFilterGroupsComponentState,
+  );
   const store = useStore();
   const { onUpdate } = useContext(AdvancedFilterContext);
 
   const upsertRecordFilterGroupCallback = (
     recordFilterGroupToSet: RecordFilterGroup,
   ) => {
-    const currentRecordFilterGroups = store.get(
-      currentRecordFilterGroupsAtom,
-    );
+    const currentRecordFilterGroups = store.get(currentRecordFilterGroupsAtom);
 
     const hasFoundRecordFilterGroupInCurrentRecordFilterGroups =
       currentRecordFilterGroups.some(
@@ -33,23 +30,21 @@ export const useUpsertRecordFilterGroup = () => {
       ]);
     } else {
       store.set(currentRecordFilterGroupsAtom, (currentRecordFilterGroups) => {
-              const newCurrentRecordFilterGroups = [
-                ...currentRecordFilterGroups,
-              ];
+        const newCurrentRecordFilterGroups = [...currentRecordFilterGroups];
 
-              const indexOfRecordFilterGroupToUpdate =
-                newCurrentRecordFilterGroups.findIndex(
-                  (existingRecordFilterGroup) =>
-                    existingRecordFilterGroup.id === recordFilterGroupToSet.id,
-                );
+        const indexOfRecordFilterGroupToUpdate =
+          newCurrentRecordFilterGroups.findIndex(
+            (existingRecordFilterGroup) =>
+              existingRecordFilterGroup.id === recordFilterGroupToSet.id,
+          );
 
-              if (indexOfRecordFilterGroupToUpdate === -1) {
-                return newCurrentRecordFilterGroups;
-              }
+        if (indexOfRecordFilterGroupToUpdate === -1) {
+          return newCurrentRecordFilterGroups;
+        }
 
-              newCurrentRecordFilterGroups[indexOfRecordFilterGroupToUpdate] = {
-                ...recordFilterGroupToSet,
-              };
+        newCurrentRecordFilterGroups[indexOfRecordFilterGroupToUpdate] = {
+          ...recordFilterGroupToSet,
+        };
 
         return newCurrentRecordFilterGroups;
       });

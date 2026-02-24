@@ -32,9 +32,10 @@ export const useInitDraftValue = <FieldValue>() => {
         }),
       ) as FieldValue;
 
-      const draftValueAtom = recordFieldInputDraftValueComponentState.atomFamily(
-        { instanceId: fieldComponentInstanceId },
-      );
+      const draftValueAtom =
+        recordFieldInputDraftValueComponentState.atomFamily({
+          instanceId: fieldComponentInstanceId,
+        });
 
       if (
         isUndefined(value) ||

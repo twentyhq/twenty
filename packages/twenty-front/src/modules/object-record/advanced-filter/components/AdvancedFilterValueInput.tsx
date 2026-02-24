@@ -55,10 +55,11 @@ export const AdvancedFilterValueInput = ({
     dropdownId,
   );
 
-  const setObjectFilterDropdownCurrentRecordFilter = useSetRecoilComponentStateV2(
-    objectFilterDropdownCurrentRecordFilterComponentState,
-    dropdownId,
-  );
+  const setObjectFilterDropdownCurrentRecordFilter =
+    useSetRecoilComponentStateV2(
+      objectFilterDropdownCurrentRecordFilterComponentState,
+      dropdownId,
+    );
 
   const operandHasNoInput =
     recordFilter && !configurableViewFilterOperands.has(recordFilter.operand);

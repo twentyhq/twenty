@@ -1,20 +1,18 @@
 import { singleRecordPickerShouldShowInitialLoadingComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShouldShowInitialLoadingComponentState';
 import { singleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShouldShowSkeletonComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useRecoilCallback } from 'recoil';
 import { useCallback } from 'react';
 
 export const useSingleRecordPickerOpen = () => {
-  const setInitialLoading = useRecoilCallback(
-    ({ set }) =>
-      (recordPickerComponentInstanceId: string, value: boolean) => {
-        set(
-          singleRecordPickerShouldShowInitialLoadingComponentState.atomFamily({
-            instanceId: recordPickerComponentInstanceId,
-          }),
-          value,
-        );
-      },
+  const setInitialLoading = useCallback(
+    (recordPickerComponentInstanceId: string, value: boolean) => {
+      jotaiStore.set(
+        singleRecordPickerShouldShowInitialLoadingComponentState.atomFamily({
+          instanceId: recordPickerComponentInstanceId,
+        }),
+        value,
+      );
+    },
     [],
   );
 

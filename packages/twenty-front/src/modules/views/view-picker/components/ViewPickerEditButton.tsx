@@ -15,7 +15,9 @@ export const ViewPickerEditButton = () => {
     useGetAvailableFieldsToGroupRecordsBy();
 
   const { viewPickerMode } = useViewPickerMode();
-  const viewPickerType = useRecoilComponentValueV2(viewPickerTypeComponentState);
+  const viewPickerType = useRecoilComponentValueV2(
+    viewPickerTypeComponentState,
+  );
   const viewPickerIsPersisting = useRecoilComponentValueV2(
     viewPickerIsPersistingComponentState,
   );

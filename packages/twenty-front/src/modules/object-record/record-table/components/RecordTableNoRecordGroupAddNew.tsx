@@ -9,7 +9,7 @@ import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 
@@ -37,28 +37,25 @@ export const RecordTableNoRecordGroupAddNew = () => {
   const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const handleButtonClick = useRecoilCallback(
-    () => async () => {
-      const createdRecord = await createNewIndexRecord({
-        position: 'last',
+  const handleButtonClick = useCallback(async () => {
+    const createdRecord = await createNewIndexRecord({
+      position: 'last',
+    });
+
+    upsertRecordsInStore({ partialRecords: [createdRecord] });
+
+    if (isDefined(totalNumberOfRecordsToVirtualize)) {
+      loadRecordsToVirtualRows({
+        records: [createdRecord],
+        startingRealIndex: totalNumberOfRecordsToVirtualize,
       });
-
-      upsertRecordsInStore({ partialRecords: [createdRecord] });
-
-      if (isDefined(totalNumberOfRecordsToVirtualize)) {
-        loadRecordsToVirtualRows({
-          records: [createdRecord],
-          startingRealIndex: totalNumberOfRecordsToVirtualize,
-        });
-      }
-    },
-    [
-      createNewIndexRecord,
-      upsertRecordsInStore,
-      loadRecordsToVirtualRows,
-      totalNumberOfRecordsToVirtualize,
-    ],
-  );
+    }
+  }, [
+    createNewIndexRecord,
+    upsertRecordsInStore,
+    loadRecordsToVirtualRows,
+    totalNumberOfRecordsToVirtualize,
+  ]);
 
   if (hasAnySoftDeleteFilterOnView) {
     return null;

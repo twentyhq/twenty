@@ -19,10 +19,9 @@ export const useUpsertRecordFilter = () => {
         currentRecordFiltersAtom,
       ) as RecordFilter[];
 
-      const foundRecordFilterInCurrentRecordFilters =
-        currentRecordFilters.some(
-          (existingFilter) => existingFilter.id === recordFilterToSet.id,
-        );
+      const foundRecordFilterInCurrentRecordFilters = currentRecordFilters.some(
+        (existingFilter) => existingFilter.id === recordFilterToSet.id,
+      );
 
       if (!foundRecordFilterInCurrentRecordFilters) {
         store.set(currentRecordFiltersAtom, [
@@ -30,7 +29,9 @@ export const useUpsertRecordFilter = () => {
           recordFilterToSet,
         ]);
       } else {
-        store.set(currentRecordFiltersAtom, (currentRecordFilters: RecordFilter[]) => {
+        store.set(
+          currentRecordFiltersAtom,
+          (currentRecordFilters: RecordFilter[]) => {
             const newCurrentRecordFilters = [...currentRecordFilters];
 
             const indexOfFilterToUpdate = newCurrentRecordFilters.findIndex(
@@ -41,8 +42,9 @@ export const useUpsertRecordFilter = () => {
               ...recordFilterToSet,
             };
 
-          return newCurrentRecordFilters;
-        });
+            return newCurrentRecordFilters;
+          },
+        );
       }
     },
     [currentRecordFiltersAtom, store],

@@ -22,7 +22,9 @@ export const useRemoveRecordSort = () => {
       );
 
       if (hasFoundRecordSortInCurrentRecordSorts) {
-        store.set(currentRecordSortsAtom, (currentRecordSorts: RecordSort[]) => {
+        store.set(
+          currentRecordSortsAtom,
+          (currentRecordSorts: RecordSort[]) => {
             const newCurrentRecordSorts = [...currentRecordSorts];
 
             const indexOfSortToRemove = newCurrentRecordSorts.findIndex(
@@ -36,8 +38,9 @@ export const useRemoveRecordSort = () => {
 
             newCurrentRecordSorts.splice(indexOfSortToRemove, 1);
 
-          return newCurrentRecordSorts;
-        });
+            return newCurrentRecordSorts;
+          },
+        );
       }
     },
     [currentRecordSortsAtom, store],

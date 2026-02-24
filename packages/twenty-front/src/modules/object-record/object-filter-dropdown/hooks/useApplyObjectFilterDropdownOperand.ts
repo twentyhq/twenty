@@ -24,10 +24,9 @@ import {
 
 export const useApplyObjectFilterDropdownOperand = () => {
   const { userTimezone } = useUserTimezone();
-  const objectFilterDropdownCurrentRecordFilter =
-    useRecoilComponentValueV2(
-      objectFilterDropdownCurrentRecordFilterComponentState,
-    );
+  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
+    objectFilterDropdownCurrentRecordFilterComponentState,
+  );
 
   const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
     selectedOperandInDropdownComponentState,
@@ -37,10 +36,9 @@ export const useApplyObjectFilterDropdownOperand = () => {
     objectFilterDropdownCurrentRecordFilter,
   );
 
-  const fieldMetadataItemUsedInDropdown =
-    useRecoilComponentSelectorValueV2(
-      fieldMetadataItemUsedInDropdownComponentSelector,
-    );
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
+    fieldMetadataItemUsedInDropdownComponentSelector,
+  );
 
   const { upsertObjectFilterDropdownCurrentFilter } =
     useUpsertObjectFilterDropdownCurrentFilter();

@@ -7,7 +7,6 @@ import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
 import { createVirtualElementFromContainerOffset } from '@/page-layout/widgets/graph/utils/createVirtualElementFromContainerOffset';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 

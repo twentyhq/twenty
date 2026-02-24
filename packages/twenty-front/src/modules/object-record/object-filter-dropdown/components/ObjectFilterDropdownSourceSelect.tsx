@@ -25,9 +25,10 @@ export const ObjectFilterDropdownSourceSelect = ({
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentSelectorValueV2(
-    fieldMetadataItemUsedInDropdownComponentSelector,
-  );
+  const fieldMetadataItemUsedInFilterDropdown =
+    useRecoilComponentSelectorValueV2(
+      fieldMetadataItemUsedInDropdownComponentSelector,
+    );
 
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
     objectFilterDropdownCurrentRecordFilterComponentState,

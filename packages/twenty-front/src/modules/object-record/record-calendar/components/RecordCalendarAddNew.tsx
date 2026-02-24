@@ -60,10 +60,10 @@ export const RecordCalendarAddNew = ({
     : false;
 
   if (
-    hasAnySoftDeleteFilterOnView ||
-    !hasObjectUpdatePermissions ||
-    !calendarFieldMetadataItem ||
-    isCalendarFieldReadOnly
+    hasAnySoftDeleteFilterOnView === true ||
+    hasObjectUpdatePermissions === false ||
+    calendarFieldMetadataItem === undefined ||
+    isCalendarFieldReadOnly === true
   ) {
     return null;
   }

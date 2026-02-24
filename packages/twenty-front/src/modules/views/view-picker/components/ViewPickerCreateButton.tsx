@@ -20,7 +20,9 @@ export const ViewPickerCreateButton = () => {
     useGetAvailableFieldsForCalendar();
 
   const { viewPickerMode } = useViewPickerMode();
-  const viewPickerType = useRecoilComponentValueV2(viewPickerTypeComponentState);
+  const viewPickerType = useRecoilComponentValueV2(
+    viewPickerTypeComponentState,
+  );
   const viewPickerIsPersisting = useRecoilComponentValueV2(
     viewPickerIsPersistingComponentState,
   );

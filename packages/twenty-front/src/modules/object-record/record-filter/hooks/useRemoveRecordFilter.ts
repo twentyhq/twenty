@@ -28,7 +28,9 @@ export const useRemoveRecordFilter = () => {
         return;
       }
 
-      store.set(currentRecordFiltersAtom, (currentRecordFilters: RecordFilter[]) => {
+      store.set(
+        currentRecordFiltersAtom,
+        (currentRecordFilters: RecordFilter[]) => {
           const newCurrentRecordFilters = [...currentRecordFilters];
 
           const indexOfFilterToRemove = newCurrentRecordFilters.findIndex(
@@ -37,8 +39,9 @@ export const useRemoveRecordFilter = () => {
 
           newCurrentRecordFilters.splice(indexOfFilterToRemove, 1);
 
-        return newCurrentRecordFilters;
-      });
+          return newCurrentRecordFilters;
+        },
+      );
     },
     [currentRecordFiltersAtom, store],
   );

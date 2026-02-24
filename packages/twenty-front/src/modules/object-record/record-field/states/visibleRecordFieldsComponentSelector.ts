@@ -8,31 +8,32 @@ import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/crea
 import { findById } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
-export const visibleRecordFieldsComponentSelector =
-  createComponentSelectorV2<RecordField[]>({
-    key: 'visibleRecordFieldsComponentSelector',
-    componentInstanceContext: RecordFieldsComponentInstanceContext,
-    get:
-      (componentStateKey) =>
-      ({ get }) => {
-        const currentRecordFields = get(
-          currentRecordFieldsComponentState,
-          componentStateKey,
-        );
+export const visibleRecordFieldsComponentSelector = createComponentSelectorV2<
+  RecordField[]
+>({
+  key: 'visibleRecordFieldsComponentSelector',
+  componentInstanceContext: RecordFieldsComponentInstanceContext,
+  get:
+    (componentStateKey) =>
+    ({ get }) => {
+      const currentRecordFields = get(
+        currentRecordFieldsComponentState,
+        componentStateKey,
+      );
 
-        const objectMetadataItems = get(objectMetadataItemsState);
+      const objectMetadataItems = get(objectMetadataItemsState);
 
-        return filterVisibleAndReadableRecordFields(
-          currentRecordFields,
-          objectMetadataItems,
-        );
-      },
-  });
+      return filterVisibleAndReadableRecordFields(
+        currentRecordFields,
+        objectMetadataItems,
+      );
+    },
+});
 
-function filterVisibleAndReadableRecordFields(
+const filterVisibleAndReadableRecordFields = (
   currentRecordFields: RecordField[],
   objectMetadataItems: ObjectMetadataItem[],
-): RecordField[] {
+): RecordField[] => {
   const filteredVisibleAndReadableRecordFields = currentRecordFields.filter(
     (recordFieldToFilter) => {
       if (!recordFieldToFilter.isVisible) {
@@ -43,8 +44,7 @@ function filterVisibleAndReadableRecordFields(
         (objectMetadataItem) =>
           objectMetadataItem.fields.some(
             (fieldMetadataItem) =>
-              fieldMetadataItem.id ===
-              recordFieldToFilter.fieldMetadataItemId,
+              fieldMetadataItem.id === recordFieldToFilter.fieldMetadataItemId,
           ),
       );
 
@@ -83,4 +83,4 @@ function filterVisibleAndReadableRecordFields(
   return [...filteredVisibleAndReadableRecordFields].sort(
     sortByProperty('position'),
   );
-}
+};

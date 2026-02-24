@@ -11,7 +11,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,7 +31,7 @@ export const CommandMenuPageLayoutTabSettings = () => {
     pageLayoutId,
   );
 
-  const [openTabId, setOpenTabId] = useRecoilComponentState(
+  const [openTabId, setOpenTabId] = useRecoilComponentStateV2(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );

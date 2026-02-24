@@ -35,22 +35,22 @@ export const JestRecordIndexContextProviderWrapper = ({
         >
           <RecordIndexContextProvider
             value={{
-        objectPermissionsByObjectMetadataId: {},
-        indexIdentifierUrl: () => 'indexIdentifierUrl',
-        onIndexRecordsLoaded: () => {},
-        objectNamePlural: objectMetadataItem.namePlural,
-        objectNameSingular: objectMetadataItem.nameSingular,
-        objectMetadataItem: objectMetadataItem,
-        recordIndexId: RECORD_INDEX_ID,
-        viewBarInstanceId: RECORD_INDEX_ID,
-        labelIdentifierFieldMetadataItem,
-        recordFieldByFieldMetadataItemId,
-        fieldDefinitionByFieldMetadataItemId,
-        fieldMetadataItemByFieldMetadataItemId,
-      }}
-    >
-      {children}
-    </RecordIndexContextProvider>
+              objectPermissionsByObjectMetadataId: {},
+              indexIdentifierUrl: () => 'indexIdentifierUrl',
+              onIndexRecordsLoaded: () => {},
+              objectNamePlural: objectMetadataItem.namePlural,
+              objectNameSingular: objectMetadataItem.nameSingular,
+              objectMetadataItem: objectMetadataItem,
+              recordIndexId: RECORD_INDEX_ID,
+              viewBarInstanceId: RECORD_INDEX_ID,
+              labelIdentifierFieldMetadataItem,
+              recordFieldByFieldMetadataItemId,
+              fieldDefinitionByFieldMetadataItemId,
+              fieldMetadataItemByFieldMetadataItemId,
+            }}
+          >
+            {children}
+          </RecordIndexContextProvider>
         </RecordSortsComponentInstanceContext.Provider>
       </RecordFiltersComponentInstanceContext.Provider>
     </RecordFilterGroupsComponentInstanceContext.Provider>

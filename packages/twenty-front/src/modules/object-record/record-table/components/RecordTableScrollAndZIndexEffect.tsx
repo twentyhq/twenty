@@ -28,9 +28,10 @@ export const RecordTableScrollAndZIndexEffect = () => {
     shouldCompactRecordTableFirstColumnComponentState,
   );
 
-  const setShouldCompactRecordIndexLabelIdentifier = useSetRecoilComponentStateV2(
-    shouldCompactRecordIndexLabelIdentifierComponentState,
-  );
+  const setShouldCompactRecordIndexLabelIdentifier =
+    useSetRecoilComponentStateV2(
+      shouldCompactRecordIndexLabelIdentifierComponentState,
+    );
 
   const [isRecordTableScrolledVertically, setIsRecordTableScrolledVertically] =
     useRecoilComponentStateV2(isRecordTableScrolledVerticallyComponentState);

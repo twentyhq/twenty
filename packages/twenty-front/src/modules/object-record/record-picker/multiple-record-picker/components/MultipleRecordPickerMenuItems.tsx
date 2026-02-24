@@ -64,10 +64,7 @@ export const MultipleRecordPickerMenuItems = ({
         newMorphItems[existingMorphItemIndex] = morphItem;
       }
 
-      jotaiStore.set(
-        multipleRecordPickerPickableMorphItemsAtom,
-        newMorphItems,
-      );
+      jotaiStore.set(multipleRecordPickerPickableMorphItemsAtom, newMorphItems);
     },
     [multipleRecordPickerPickableMorphItemsAtom],
   );
