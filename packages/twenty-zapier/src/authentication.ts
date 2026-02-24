@@ -4,9 +4,9 @@ import requestDb from './utils/requestDb';
 
 const testAuthentication = async (z: ZObject, bundle: Bundle) => {
   return await requestDb(
-    z,
+    {z,
     bundle,
-    'query currentWorkspace {currentWorkspace {id displayName}}',
+    query:'query currentWorkspace {currentWorkspace {id displayName}}'},
   );
 };
 

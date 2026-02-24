@@ -30,15 +30,20 @@ export const requestSchema = async (
     }
   }`;
   const endpoint = 'metadata';
-  return await requestDb(z, bundle, query, endpoint);
+  return await requestDb({ z, bundle, query, endpoint });
 };
 
-const requestDb = async (
-  z: ZObject,
-  bundle: Bundle,
-  query: string,
+const requestDb = async ({
+  z,
+  bundle,
+  query,
   endpoint = 'graphql',
-) => {
+}: {
+  z: ZObject;
+  bundle: Bundle;
+  query: string;
+  endpoint?: string;
+}) => {
   const options = {
     url: `${bundle.authData.apiUrl || process.env.SERVER_BASE_URL}/${endpoint}`,
     method: 'POST',
