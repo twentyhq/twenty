@@ -12,13 +12,14 @@ import {
 export const validateUUIDFieldOrThrow = (
   value: unknown,
   fieldName: string,
+  exceptionCode: CommonQueryRunnerExceptionCode = CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
 ): string | null => {
   if (!isValidUuid(value as string) && !isNull(value)) {
     const inspectedValue = inspect(value);
 
     throw new CommonQueryRunnerException(
       `Invalid UUID value ${inspectedValue} for field "${fieldName}"`,
-      CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      exceptionCode,
       { userFriendlyMessage: msg`Invalid value for UUID: "${inspectedValue}"` },
     );
   }

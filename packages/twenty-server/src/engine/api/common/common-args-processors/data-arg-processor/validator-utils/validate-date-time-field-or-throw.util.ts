@@ -49,6 +49,7 @@ const isValidDateTimeFormat = (value: string): boolean => {
 export const validateDateTimeFieldOrThrow = (
   value: unknown,
   fieldName: string,
+  exceptionCode: CommonQueryRunnerExceptionCode = CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
 ): unknown => {
   if (isNull(value)) return null;
 
@@ -64,7 +65,7 @@ export const validateDateTimeFieldOrThrow = (
 
   throw new CommonQueryRunnerException(
     `Invalid value ${inspectedValue} for date-time field "${fieldName}". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'`,
-    CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+    exceptionCode,
     {
       userFriendlyMessage: msg`Invalid value for date-time: "${inspectedValue}". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'`,
     },

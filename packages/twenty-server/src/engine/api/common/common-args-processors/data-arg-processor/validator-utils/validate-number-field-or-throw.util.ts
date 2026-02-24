@@ -11,6 +11,7 @@ import {
 export const validateNumberFieldOrThrow = (
   value: unknown,
   fieldName: string,
+  exceptionCode: CommonQueryRunnerExceptionCode = CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
 ): number | null => {
   if (
     (typeof value !== 'number' && !isNull(value)) ||
@@ -21,7 +22,7 @@ export const validateNumberFieldOrThrow = (
 
     throw new CommonQueryRunnerException(
       `Invalid number value ${inspectedValue} for field "${fieldName}"`,
-      CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      exceptionCode,
       {
         userFriendlyMessage: msg`Invalid value for number: "${inspectedValue}"`,
       },
