@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { useStore } from 'jotai';
+import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -10,6 +10,7 @@ import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -59,14 +60,15 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigateSettings();
   const { apiKeyId = '' } = useParams();
 
-  const apiKeyToken = useRecoilValue(apiKeyTokenFamilyState(apiKeyId));
+  const jotaiStore = useStore();
 
-  const setApiKeyTokenCallback = useRecoilCallback(
-    ({ set }) =>
-      (apiKeyId: string, token: string) => {
-        set(apiKeyTokenFamilyState(apiKeyId), token);
-      },
-    [],
+  const apiKeyToken = useFamilyRecoilValueV2(apiKeyTokenFamilyState, apiKeyId);
+
+  const setApiKeyTokenCallback = useCallback(
+    (apiKeyId: string, token: string) => {
+      jotaiStore.set(apiKeyTokenFamilyState.atomFamily(apiKeyId), token);
+    },
+    [jotaiStore],
   );
 
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();

@@ -1,25 +1,22 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
-import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
+import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
 
 export const fieldMetadataItemUsedInDropdownComponentSelector =
-  createComponentSelector<FieldMetadataItem | null | undefined>({
+  createComponentSelectorV2<FieldMetadataItem | null | undefined>({
     key: 'fieldMetadataItemUsedInDropdownComponentSelector',
+    componentInstanceContext: ObjectFilterDropdownComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      (componentStateKey) =>
       ({ get }) => {
         const fieldMetadataItemIdUsedInDropdown = get(
-          fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
-            instanceId,
-          }),
+          fieldMetadataItemIdUsedInDropdownComponentState,
+          componentStateKey,
         );
 
-        const objectMetadataItems = jotaiStore.get(
-          objectMetadataItemsState.atom,
-        );
+        const objectMetadataItems = get(objectMetadataItemsState);
 
         const correspondingFieldMetadataItem = objectMetadataItems
           .flatMap((objectMetadataItem) => objectMetadataItem.fields)
@@ -30,5 +27,4 @@ export const fieldMetadataItemUsedInDropdownComponentSelector =
 
         return correspondingFieldMetadataItem;
       },
-    componentInstanceContext: ObjectFilterDropdownComponentInstanceContext,
   });

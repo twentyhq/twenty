@@ -2,7 +2,7 @@ import { RecordTableRowVirtualizedRouterLevel2 } from '@/object-record/record-ta
 import { RecordTableRowVirtualizedSkeleton } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedSkeleton';
 import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
 
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 type RecordTableRowVirtualizedRouterLevel1Props = {
   realIndex: number;
@@ -11,11 +11,11 @@ type RecordTableRowVirtualizedRouterLevel1Props = {
 export const RecordTableRowVirtualizedRouterLevel1 = ({
   realIndex,
 }: RecordTableRowVirtualizedRouterLevel1Props) => {
-  const lowDetailsActivated = useRecoilComponentValue(
+  const lowDetailsActivated = useRecoilComponentValueV2(
     lowDetailsActivatedComponentState,
   );
 
-  if (lowDetailsActivated) {
+  if (lowDetailsActivated === true) {
     return <RecordTableRowVirtualizedSkeleton />;
   }
 

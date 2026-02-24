@@ -5,10 +5,10 @@ import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/r
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import { type Temporal } from 'temporal-polyfill';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -40,11 +40,11 @@ export const RecordCalendarAddNew = ({
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+  const hasAnySoftDeleteFilterOnView = useRecoilComponentSelectorValueV2(
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
-  const recordIndexCalendarFieldMetadataId = useRecoilValue(
+  const recordIndexCalendarFieldMetadataId = useRecoilValueV2(
     recordIndexCalendarFieldMetadataIdState,
   );
 
@@ -60,10 +60,10 @@ export const RecordCalendarAddNew = ({
     : false;
 
   if (
-    hasAnySoftDeleteFilterOnView ||
-    !hasObjectUpdatePermissions ||
-    !calendarFieldMetadataItem ||
-    isCalendarFieldReadOnly
+    hasAnySoftDeleteFilterOnView === true ||
+    hasObjectUpdatePermissions === false ||
+    calendarFieldMetadataItem === undefined ||
+    isCalendarFieldReadOnly === true
   ) {
     return null;
   }

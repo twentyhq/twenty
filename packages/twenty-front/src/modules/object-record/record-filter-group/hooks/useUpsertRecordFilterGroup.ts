@@ -1,64 +1,55 @@
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
 import { useContext } from 'react';
-import { useRecoilCallback } from 'recoil';
 
 export const useUpsertRecordFilterGroup = () => {
-  const currentRecordFilterGroupsCallbackState =
-    useRecoilComponentCallbackState(currentRecordFilterGroupsComponentState);
+  const currentRecordFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+    currentRecordFilterGroupsComponentState,
+  );
+  const store = useStore();
   const { onUpdate } = useContext(AdvancedFilterContext);
 
-  const upsertRecordFilterGroupCallback = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (recordFilterGroupToSet: RecordFilterGroup) => {
-        const currentRecordFilterGroups = getSnapshotValue(
-          snapshot,
-          currentRecordFilterGroupsCallbackState,
-        );
+  const upsertRecordFilterGroupCallback = (
+    recordFilterGroupToSet: RecordFilterGroup,
+  ) => {
+    const currentRecordFilterGroups = store.get(currentRecordFilterGroupsAtom);
 
-        const hasFoundRecordFilterGroupInCurrentRecordFilterGroups =
-          currentRecordFilterGroups.some(
+    const hasFoundRecordFilterGroupInCurrentRecordFilterGroups =
+      currentRecordFilterGroups.some(
+        (existingRecordFilterGroup) =>
+          existingRecordFilterGroup.id === recordFilterGroupToSet.id,
+      );
+
+    if (!hasFoundRecordFilterGroupInCurrentRecordFilterGroups) {
+      store.set(currentRecordFilterGroupsAtom, [
+        ...currentRecordFilterGroups,
+        recordFilterGroupToSet,
+      ]);
+    } else {
+      store.set(currentRecordFilterGroupsAtom, (currentRecordFilterGroups) => {
+        const newCurrentRecordFilterGroups = [...currentRecordFilterGroups];
+
+        const indexOfRecordFilterGroupToUpdate =
+          newCurrentRecordFilterGroups.findIndex(
             (existingRecordFilterGroup) =>
               existingRecordFilterGroup.id === recordFilterGroupToSet.id,
           );
 
-        if (!hasFoundRecordFilterGroupInCurrentRecordFilterGroups) {
-          set(currentRecordFilterGroupsCallbackState, [
-            ...currentRecordFilterGroups,
-            recordFilterGroupToSet,
-          ]);
-        } else {
-          set(
-            currentRecordFilterGroupsCallbackState,
-            (currentRecordFilterGroups) => {
-              const newCurrentRecordFilterGroups = [
-                ...currentRecordFilterGroups,
-              ];
-
-              const indexOfRecordFilterGroupToUpdate =
-                newCurrentRecordFilterGroups.findIndex(
-                  (existingRecordFilterGroup) =>
-                    existingRecordFilterGroup.id === recordFilterGroupToSet.id,
-                );
-
-              if (indexOfRecordFilterGroupToUpdate === -1) {
-                return newCurrentRecordFilterGroups;
-              }
-
-              newCurrentRecordFilterGroups[indexOfRecordFilterGroupToUpdate] = {
-                ...recordFilterGroupToSet,
-              };
-
-              return newCurrentRecordFilterGroups;
-            },
-          );
+        if (indexOfRecordFilterGroupToUpdate === -1) {
+          return newCurrentRecordFilterGroups;
         }
-      },
-    [currentRecordFilterGroupsCallbackState],
-  );
+
+        newCurrentRecordFilterGroups[indexOfRecordFilterGroupToUpdate] = {
+          ...recordFilterGroupToSet,
+        };
+
+        return newCurrentRecordFilterGroups;
+      });
+    }
+  };
 
   const upsertRecordFilterGroup = (
     recordFilterGroupToSet: RecordFilterGroup,

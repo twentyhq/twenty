@@ -1,12 +1,14 @@
 import { renderHook } from '@testing-library/react';
+import { useAtomValue } from 'jotai';
 import React, { act } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { useSetIsRecordTableCellFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableCellFocusActive';
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const mockClassList = {
   add: jest.fn(),
@@ -15,26 +17,10 @@ const mockClassList = {
 
 const mockGetElementById = jest.spyOn(document, 'getElementById');
 
+const instanceId = { instanceId: 'test-table-id' };
+
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot
-    initializeState={({ set }) => {
-      set(
-        isRecordTableCellFocusActiveComponentState.atomFamily({
-          instanceId: 'test-table-id',
-        }),
-        false,
-      );
-      set(
-        recordTableFocusPositionComponentState.atomFamily({
-          instanceId: 'test-table-id',
-        }),
-        {
-          column: 1,
-          row: 0,
-        },
-      );
-    }}
-  >
+  <RecoilRoot>
     <RecordTableComponentInstance recordTableId="test-table-id">
       {children}
     </RecordTableComponentInstance>
@@ -47,16 +33,12 @@ const renderHooks = () => {
       const { setIsRecordTableCellFocusActive } =
         useSetIsRecordTableCellFocusActive('test-table-id');
 
-      const isRecordTableFocusActive = useRecoilValue(
-        isRecordTableCellFocusActiveComponentState.atomFamily({
-          instanceId: 'test-table-id',
-        }),
+      const isRecordTableFocusActive = useAtomValue(
+        isRecordTableCellFocusActiveComponentState.atomFamily(instanceId),
       );
 
-      const focusPosition = useRecoilValue(
-        recordTableFocusPositionComponentState.atomFamily({
-          instanceId: 'test-table-id',
-        }),
+      const focusPosition = useAtomValue(
+        recordTableFocusPositionComponentState.atomFamily(instanceId),
       );
       return {
         setIsRecordTableCellFocusActive,
@@ -73,6 +55,15 @@ const renderHooks = () => {
 describe('useSetIsRecordTableFocusActive', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    jotaiStore.set(
+      isRecordTableCellFocusActiveComponentState.atomFamily(instanceId),
+      false,
+    );
+    jotaiStore.set(
+      recordTableFocusPositionComponentState.atomFamily(instanceId),
+      { column: 1, row: 0 },
+    );
 
     mockGetElementById.mockReturnValue({
       classList: mockClassList,

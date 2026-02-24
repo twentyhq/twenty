@@ -1,27 +1,30 @@
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useRecoilCallback } from 'recoil';
+import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const useRemoveRecordSort = () => {
-  const currentRecordSortsCallbackState = useRecoilComponentCallbackState(
+  const currentRecordSortsAtom = useRecoilComponentStateCallbackStateV2(
     currentRecordSortsComponentState,
   );
 
-  const removeRecordSort = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (fieldMetadataId: string) => {
-        const currentRecordSorts = getSnapshotValue(
-          snapshot,
-          currentRecordSortsCallbackState,
-        );
+  const store = useStore();
 
-        const hasFoundRecordSortInCurrentRecordSorts = currentRecordSorts.some(
-          (existingSort) => existingSort.fieldMetadataId === fieldMetadataId,
-        );
+  const removeRecordSort = useCallback(
+    (fieldMetadataId: string) => {
+      const currentRecordSorts = store.get(
+        currentRecordSortsAtom,
+      ) as RecordSort[];
 
-        if (hasFoundRecordSortInCurrentRecordSorts) {
-          set(currentRecordSortsCallbackState, (currentRecordSorts) => {
+      const hasFoundRecordSortInCurrentRecordSorts = currentRecordSorts.some(
+        (existingSort) => existingSort.fieldMetadataId === fieldMetadataId,
+      );
+
+      if (hasFoundRecordSortInCurrentRecordSorts) {
+        store.set(
+          currentRecordSortsAtom,
+          (currentRecordSorts: RecordSort[]) => {
             const newCurrentRecordSorts = [...currentRecordSorts];
 
             const indexOfSortToRemove = newCurrentRecordSorts.findIndex(
@@ -36,10 +39,11 @@ export const useRemoveRecordSort = () => {
             newCurrentRecordSorts.splice(indexOfSortToRemove, 1);
 
             return newCurrentRecordSorts;
-          });
-        }
-      },
-    [currentRecordSortsCallbackState],
+          },
+        );
+      }
+    },
+    [currentRecordSortsAtom, store],
   );
 
   return {

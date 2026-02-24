@@ -1,4 +1,4 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 import { type CommandMenuPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 
@@ -10,7 +10,7 @@ export type CommandMenuNavigationStackItem = {
   pageId: string;
 };
 
-export const commandMenuNavigationStackState = createState<
+export const commandMenuNavigationStackState = createStateV2<
   CommandMenuNavigationStackItem[]
 >({
   key: 'command-menu/commandMenuNavigationStackState',

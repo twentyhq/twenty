@@ -6,7 +6,6 @@ import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import {
   Avatar,
@@ -15,7 +14,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
@@ -61,7 +60,7 @@ export const SettingsRoleAssignmentTableRow = ({
   );
   const { getIcon } = useIcons();
   const { dateFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useRecoilValue(dateLocaleState);
+  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
 
   const renderIcon = () => {
     switch (roleTarget.type) {

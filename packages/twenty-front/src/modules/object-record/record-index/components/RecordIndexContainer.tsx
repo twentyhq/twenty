@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { ObjectOptionsDropdown } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdown';
 import { RecordBoardContainer } from '@/object-record/record-board/components/RecordBoardContainer';
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -32,7 +32,7 @@ const StyledContainerWithPadding = styled.div`
 `;
 
 export const RecordIndexContainer = () => {
-  const [recordIndexViewType] = useRecoilState(recordIndexViewTypeState);
+  const recordIndexViewType = useRecoilValueV2(recordIndexViewTypeState);
 
   const {
     objectNamePlural,

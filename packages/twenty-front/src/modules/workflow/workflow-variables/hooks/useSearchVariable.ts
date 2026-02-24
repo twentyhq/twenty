@@ -1,8 +1,8 @@
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import { searchVariableThroughOutputSchemaV2 } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchemaV2';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
@@ -25,11 +25,12 @@ export const useSearchVariable = ({
 }): VariableSearchResult => {
   const workflowVersionId = useWorkflowVersionIdOrThrow();
   const flow = useFlowOrThrow();
-  const [stepOutputSchema] = useRecoilValue(
-    stepsOutputSchemaFamilySelector({
+  const [stepOutputSchema] = useFamilySelectorValueV2(
+    stepsOutputSchemaFamilySelector,
+    {
       workflowVersionId,
       stepIds: [stepId],
-    }),
+    },
   );
 
   if (!isDefined(stepOutputSchema)) {

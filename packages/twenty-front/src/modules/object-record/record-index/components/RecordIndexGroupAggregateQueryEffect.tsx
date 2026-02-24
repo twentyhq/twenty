@@ -9,8 +9,8 @@ import { useSetRecordIndexAggregateDisplayValueForRecordGroupValue } from '@/obj
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue } from '@/object-record/record-index/utils/turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useEffect } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,8 +40,8 @@ export const RecordIndexGroupAggregateQueryEffect = ({
       recordIndexGroupAggregateOperation,
     });
 
-  const recordIndexAggregateDisplayLabelCallbackState =
-    useRecoilComponentCallbackState(
+  const recordIndexAggregateDisplayLabelAtom =
+    useRecoilComponentStateCallbackStateV2(
       recordIndexAggregateDisplayLabelComponentState,
     );
 
@@ -51,7 +51,7 @@ export const RecordIndexGroupAggregateQueryEffect = ({
   const { setRecordIndexAggregateDisplayValueForRecordGroupValue } =
     useSetRecordIndexAggregateDisplayValueForRecordGroupValue();
 
-  const recordGroupDefinitions = useRecoilComponentValue(
+  const recordGroupDefinitions = useRecoilComponentSelectorValueV2(
     recordGroupDefinitionsComponentSelector,
   );
 
@@ -112,7 +112,7 @@ export const RecordIndexGroupAggregateQueryEffect = ({
     recordIndexGroupAggregateFieldMetadataItem,
     recordIndexGroupAggregateOperation,
     recordAggregateGqlField,
-    recordIndexAggregateDisplayLabelCallbackState,
+    recordIndexAggregateDisplayLabelAtom,
     objectMetadataItem,
     recordGroupDefinitions,
   ]);

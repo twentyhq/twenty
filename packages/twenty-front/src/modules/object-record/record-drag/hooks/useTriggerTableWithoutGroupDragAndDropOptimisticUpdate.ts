@@ -1,3 +1,6 @@
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
+
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
@@ -7,120 +10,106 @@ import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/
 import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorCallbackStateV2';
 import { findById, isDefined } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
-// TODO: does not work when scrolling while dragging and does not work if not paired with a network refetch right after
-// But it's sufficient right now for the main use case
 export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
+  const store = useStore();
   const recordIdByRealIndexCallbackSelector =
-    useRecoilComponentFamilyCallbackState(
+    useRecoilComponentFamilySelectorCallbackStateV2(
       recordIdByRealIndexComponentFamilySelector,
     );
 
-  const lastScrollPositionCallbackState = useRecoilComponentCallbackState(
-    lastScrollPositionComponentState,
-  );
+  const lastScrollPositionCallbackState =
+    useRecoilComponentStateCallbackStateV2(lastScrollPositionComponentState);
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
   const totalNumberOfRecordsToVirtualizeCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentStateCallbackStateV2(
       totalNumberOfRecordsToVirtualizeComponentState,
     );
 
   const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
 
-  const triggerTableWithoutGroupDragAndDropOptimisticUpdate = useRecoilCallback(
-    ({ snapshot }) =>
-      (updatedRecords: RecordWithPosition[]) => {
-        const tableScrollWrapperHeight =
-          scrollWrapperHTMLElement?.clientHeight ?? 0;
+  const triggerTableWithoutGroupDragAndDropOptimisticUpdate = useCallback(
+    (updatedRecords: RecordWithPosition[]) => {
+      const tableScrollWrapperHeight =
+        scrollWrapperHTMLElement?.clientHeight ?? 0;
 
-        const lastScrollPosition = getSnapshotValue(
-          snapshot,
-          lastScrollPositionCallbackState,
-        );
+      const lastScrollPosition = store.get(lastScrollPositionCallbackState);
 
-        const totalNumberOfRecordsToVirtualize =
-          getSnapshotValue(
-            snapshot,
-            totalNumberOfRecordsToVirtualizeCallbackState,
-          ) ?? 0;
+      const totalNumberOfRecordsToVirtualize =
+        store.get(totalNumberOfRecordsToVirtualizeCallbackState) ?? 0;
 
-        const {
-          firstRealIndexInOverscanWindow,
-          lastRealIndexInOverscanWindow,
-        } = getVirtualizationOverscanWindow(
+      const { firstRealIndexInOverscanWindow, lastRealIndexInOverscanWindow } =
+        getVirtualizationOverscanWindow(
           lastScrollPosition,
           tableScrollWrapperHeight,
           totalNumberOfRecordsToVirtualize,
         );
 
-        const recordsInOverscanWindowToReorder: RecordWithPosition[] = [];
+      const recordsInOverscanWindowToReorder: RecordWithPosition[] = [];
 
-        for (
-          let realIndex = firstRealIndexInOverscanWindow;
-          realIndex <= lastRealIndexInOverscanWindow;
-          realIndex++
+      for (
+        let realIndex = firstRealIndexInOverscanWindow;
+        realIndex <= lastRealIndexInOverscanWindow;
+        realIndex++
+      ) {
+        const recordIdAtRealIndex = store.get(
+          recordIdByRealIndexCallbackSelector(realIndex),
+        );
+
+        if (!isDefined(recordIdAtRealIndex)) {
+          continue;
+        }
+
+        const correspondingRecordInStore = store.get(
+          recordStoreFamilyState.atomFamily(recordIdAtRealIndex),
+        ) as { id: string; position?: number } | null | undefined;
+
+        if (
+          isDefined(correspondingRecordInStore) &&
+          isDefined(correspondingRecordInStore.position)
         ) {
-          const recordIdAtRealIndex = getSnapshotValue(
-            snapshot,
-            recordIdByRealIndexCallbackSelector(realIndex),
+          const correspondingDraggedRecord = updatedRecords.find(
+            findById(correspondingRecordInStore.id),
           );
 
-          if (!isDefined(recordIdAtRealIndex)) {
-            continue;
-          }
+          const hasRecordBeenDragged = isDefined(correspondingDraggedRecord);
 
-          const correspondingRecordInStore = getSnapshotValue(
-            snapshot,
-            recordStoreFamilyState(recordIdAtRealIndex),
-          );
+          const positionToUse = hasRecordBeenDragged
+            ? correspondingDraggedRecord.position
+            : correspondingRecordInStore.position;
 
-          if (
-            isDefined(correspondingRecordInStore) &&
-            isDefined(correspondingRecordInStore.position)
-          ) {
-            const correspondingDraggedRecord = updatedRecords.find(
-              findById(correspondingRecordInStore.id),
-            );
-
-            const hasRecordBeenDragged = isDefined(correspondingDraggedRecord);
-
-            const positionToUse = hasRecordBeenDragged
-              ? correspondingDraggedRecord.position
-              : correspondingRecordInStore.position;
-
-            recordsInOverscanWindowToReorder.push({
-              id: correspondingRecordInStore.id,
-              position: positionToUse,
-            });
-          }
+          recordsInOverscanWindowToReorder.push({
+            id: correspondingRecordInStore.id,
+            position: positionToUse,
+          });
         }
+      }
 
-        const shouldReorderRecordsInOverscanWindow =
-          recordsInOverscanWindowToReorder.length > 0;
+      const shouldReorderRecordsInOverscanWindow =
+        recordsInOverscanWindowToReorder.length > 0;
 
-        if (!shouldReorderRecordsInOverscanWindow) {
-          return;
-        }
+      if (!shouldReorderRecordsInOverscanWindow) {
+        return;
+      }
 
-        const reorderedRecordsWithPosition =
-          recordsInOverscanWindowToReorder.toSorted(sortByProperty('position'));
+      const reorderedRecordsWithPosition =
+        recordsInOverscanWindowToReorder.toSorted(sortByProperty('position'));
 
-        loadRecordsToVirtualRows({
-          records: reorderedRecordsWithPosition as any[],
-          startingRealIndex: firstRealIndexInOverscanWindow,
-        });
-      },
+      loadRecordsToVirtualRows({
+        records: reorderedRecordsWithPosition as any[],
+        startingRealIndex: firstRealIndexInOverscanWindow,
+      });
+    },
     [
       lastScrollPositionCallbackState,
       loadRecordsToVirtualRows,
       recordIdByRealIndexCallbackSelector,
       scrollWrapperHTMLElement?.clientHeight,
+      store,
       totalNumberOfRecordsToVirtualizeCallbackState,
     ],
   );

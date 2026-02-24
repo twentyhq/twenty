@@ -2,6 +2,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { type MockedResponse } from '@apollo/client/testing';
 import { type ReactNode } from 'react';
+import type { Store } from 'jotai/vanilla/store';
 import { type MutableSnapshot } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -17,12 +18,14 @@ export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
   onInitializeRecoilSnapshot?: (snapshot: MutableSnapshot) => void;
+  onInitializeJotaiStore?: (store: Store) => void;
   componentInstanceId: string;
 } & JestContextStoreSetterMocks;
 
 export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
   apolloMocks,
   onInitializeRecoilSnapshot,
+  onInitializeJotaiStore,
   contextStoreTargetedRecordsRule,
   contextStoreCurrentViewId,
   contextStoreCurrentViewType,
@@ -34,6 +37,7 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks,
     onInitializeRecoilSnapshot,
+    onInitializeJotaiStore,
   });
 
   const mockObjectMetadataItem = getMockObjectMetadataItemOrThrow(

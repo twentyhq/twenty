@@ -1,53 +1,54 @@
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useCallback } from 'react';
 import { type IconComponent, IconDotsVertical } from 'twenty-ui/display';
 
 export const useUpdateCommandMenuPageInfo = () => {
-  const updateCommandMenuPageInfo = useRecoilCallback(
-    ({ snapshot, set }) =>
-      ({
-        pageTitle,
-        pageIcon,
-      }: {
-        pageTitle?: string;
-        pageIcon?: IconComponent;
-      }) => {
-        const commandMenuPageInfo = snapshot
-          .getLoadable(commandMenuPageInfoState)
-          .getValue();
+  const updateCommandMenuPageInfo = useCallback(
+    ({
+      pageTitle,
+      pageIcon,
+    }: {
+      pageTitle?: string;
+      pageIcon?: IconComponent;
+    }) => {
+      const commandMenuPageInfo = jotaiStore.get(commandMenuPageInfoState.atom);
 
-        const newCommandMenuPageInfo = {
-          ...commandMenuPageInfo,
-          title: pageTitle ?? commandMenuPageInfo.title ?? '',
-          Icon: pageIcon ?? commandMenuPageInfo.Icon ?? IconDotsVertical,
-        };
+      const newCommandMenuPageInfo = {
+        ...commandMenuPageInfo,
+        title: pageTitle ?? commandMenuPageInfo.title ?? '',
+        Icon: pageIcon ?? commandMenuPageInfo.Icon ?? IconDotsVertical,
+      };
 
-        set(commandMenuPageInfoState, newCommandMenuPageInfo);
+      jotaiStore.set(commandMenuPageInfoState.atom, newCommandMenuPageInfo);
 
-        const commandMenuNavigationStack = snapshot
-          .getLoadable(commandMenuNavigationStackState)
-          .getValue();
+      const commandMenuNavigationStack = jotaiStore.get(
+        commandMenuNavigationStackState.atom,
+      );
 
-        const lastCommandMenuNavigationStackItem =
-          commandMenuNavigationStack.at(-1);
+      const lastCommandMenuNavigationStackItem =
+        commandMenuNavigationStack.at(-1);
 
-        if (!lastCommandMenuNavigationStackItem) {
-          return;
-        }
+      if (!lastCommandMenuNavigationStackItem) {
+        return;
+      }
 
-        const newCommandMenuNavigationStack = [
-          ...commandMenuNavigationStack.slice(0, -1),
-          {
-            page: lastCommandMenuNavigationStackItem.page,
-            pageTitle: newCommandMenuPageInfo.title,
-            pageIcon: newCommandMenuPageInfo.Icon,
-            pageId: lastCommandMenuNavigationStackItem.pageId,
-          },
-        ];
+      const newCommandMenuNavigationStack = [
+        ...commandMenuNavigationStack.slice(0, -1),
+        {
+          page: lastCommandMenuNavigationStackItem.page,
+          pageTitle: newCommandMenuPageInfo.title,
+          pageIcon: newCommandMenuPageInfo.Icon,
+          pageId: lastCommandMenuNavigationStackItem.pageId,
+        },
+      ];
 
-        set(commandMenuNavigationStackState, newCommandMenuNavigationStack);
-      },
+      jotaiStore.set(
+        commandMenuNavigationStackState.atom,
+        newCommandMenuNavigationStack,
+      );
+    },
     [],
   );
 

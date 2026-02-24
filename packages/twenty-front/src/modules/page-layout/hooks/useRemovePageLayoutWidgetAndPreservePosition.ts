@@ -6,8 +6,9 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { removeWidgetLayoutFromTab } from '@/page-layout/utils/removeWidgetLayoutFromTab';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemovePageLayoutWidgetAndPreservePosition = (
@@ -18,80 +19,78 @@ export const useRemovePageLayoutWidgetAndPreservePosition = (
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutDraftState = useRecoilComponentCallbackState(
+  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+  const pageLayoutCurrentLayoutsState = useRecoilComponentStateCallbackStateV2(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutDraggedAreaState = useRecoilComponentCallbackState(
+  const pageLayoutDraggedAreaState = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraggedAreaComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutEditingWidgetIdState = useRecoilComponentCallbackState(
+  const pageLayoutEditingWidgetIdState = useRecoilComponentStateCallbackStateV2(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );
 
-  const removePageLayoutWidgetAndPreservePosition = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (widgetId: string) => {
-        const pageLayoutDraft = snapshot
-          .getLoadable(pageLayoutDraftState)
-          .getValue();
-        const allTabLayouts = snapshot
-          .getLoadable(pageLayoutCurrentLayoutsState)
-          .getValue();
+  const store = useStore();
 
-        const tabWithWidget = pageLayoutDraft.tabs.find((tab) =>
-          tab.widgets.some((w) => w.id === widgetId),
-        );
-        const tabId = tabWithWidget?.id;
+  const removePageLayoutWidgetAndPreservePosition = useCallback(
+    (widgetId: string) => {
+      const pageLayoutDraft = store.get(pageLayoutDraftState);
+      const allTabLayouts = store.get(pageLayoutCurrentLayoutsState);
 
-        if (!isDefined(tabId)) {
-          return;
-        }
+      const tabWithWidget = pageLayoutDraft.tabs.find((tab) =>
+        tab.widgets.some((w) => w.id === widgetId),
+      );
+      const tabId = tabWithWidget?.id;
 
-        const tabLayouts = allTabLayouts[tabId];
-        const widgetLayout = tabLayouts?.desktop?.find(
-          (layout) => layout.i === widgetId,
-        );
+      if (!isDefined(tabId)) {
+        return;
+      }
 
-        if (!isDefined(widgetLayout)) {
-          return;
-        }
+      const tabLayouts = allTabLayouts[tabId];
+      const widgetLayout = tabLayouts?.desktop?.find(
+        (layout) => layout.i === widgetId,
+      );
 
-        set(pageLayoutDraggedAreaState, {
-          x: widgetLayout.x,
-          y: widgetLayout.y,
-          w: widgetLayout.w,
-          h: widgetLayout.h,
-        });
+      if (!isDefined(widgetLayout)) {
+        return;
+      }
 
-        const updatedLayouts = removeWidgetLayoutFromTab(
-          allTabLayouts,
-          tabId,
-          widgetId,
-        );
-        set(pageLayoutCurrentLayoutsState, updatedLayouts);
+      store.set(pageLayoutDraggedAreaState, {
+        x: widgetLayout.x,
+        y: widgetLayout.y,
+        w: widgetLayout.w,
+        h: widgetLayout.h,
+      });
 
-        set(pageLayoutDraftState, (prev) => ({
-          ...prev,
-          tabs: removeWidgetFromTab(prev.tabs, tabId, widgetId),
-        }));
+      const updatedLayouts = removeWidgetLayoutFromTab(
+        allTabLayouts,
+        tabId,
+        widgetId,
+      );
+      store.set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
-        set(pageLayoutEditingWidgetIdState, null);
-      },
+      store.set(pageLayoutDraftState, (prev) => ({
+        ...prev,
+        tabs: removeWidgetFromTab(prev.tabs, tabId, widgetId),
+      }));
+
+      store.set(pageLayoutEditingWidgetIdState, null);
+    },
     [
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutDraggedAreaState,
       pageLayoutEditingWidgetIdState,
+      store,
     ],
   );
 

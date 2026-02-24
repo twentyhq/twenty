@@ -2,8 +2,9 @@ import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { isSlashMenuOpenComponentState } from '@/blocknote-editor/states/isSlashMenuOpenComponentState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export type BlockEditorDropdownFocusEffectProps = {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
@@ -12,7 +13,7 @@ export type BlockEditorDropdownFocusEffectProps = {
 export const BlockEditorDropdownFocusEffect = ({
   editor,
 }: BlockEditorDropdownFocusEffectProps) => {
-  const isSlashMenuOpenState = useRecoilComponentCallbackState(
+  const isSlashMenuOpenState = useRecoilComponentStateCallbackStateV2(
     isSlashMenuOpenComponentState,
   );
 
@@ -22,41 +23,39 @@ export const BlockEditorDropdownFocusEffect = ({
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const updateCallBack = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (event: any) => {
-        // TODO: This triggers before the onClick event of the slash menu item, so the click outside of the editor dropdown is triggered and everything closes.
-        // This is due to useRecoilCallback being executed before the onClick event of the slash menu item.
-        const eventWantsToOpen = event.show === true;
+  const store = useStore();
 
-        const isAlreadyOpen = snapshot
-          .getLoadable(isSlashMenuOpenState)
-          .getValue();
+  const updateCallBack = useCallback(
+    (event: any) => {
+      const eventWantsToOpen = event.show === true;
 
-        const shouldOpen = eventWantsToOpen && !isAlreadyOpen;
+      const isAlreadyOpen = store.get(isSlashMenuOpenState);
 
-        if (shouldOpen) {
-          setActiveDropdownFocusIdAndMemorizePrevious('custom-slash-menu');
-          set(isSlashMenuOpenState, true);
-          return;
-        }
+      const shouldOpen = eventWantsToOpen && !isAlreadyOpen;
 
-        const eventWantsToClose = event.show === false;
+      if (shouldOpen) {
+        setActiveDropdownFocusIdAndMemorizePrevious('custom-slash-menu');
+        store.set(isSlashMenuOpenState, true);
+        return;
+      }
 
-        const isAlreadyClosed = !isAlreadyOpen;
+      const eventWantsToClose = event.show === false;
 
-        const shouldClose = eventWantsToClose && !isAlreadyClosed;
+      const isAlreadyClosed = !isAlreadyOpen;
 
-        if (shouldClose) {
-          goBackToPreviousDropdownFocusId();
-          set(isSlashMenuOpenState, false);
-          return;
-        }
-      },
+      const shouldClose = eventWantsToClose && !isAlreadyClosed;
+
+      if (shouldClose) {
+        goBackToPreviousDropdownFocusId();
+        store.set(isSlashMenuOpenState, false);
+        return;
+      }
+    },
     [
       isSlashMenuOpenState,
       setActiveDropdownFocusIdAndMemorizePrevious,
       goBackToPreviousDropdownFocusId,
+      store,
     ],
   );
 

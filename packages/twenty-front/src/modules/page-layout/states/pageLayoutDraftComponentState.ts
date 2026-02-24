@@ -1,11 +1,11 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
 export const pageLayoutDraftComponentState =
-  createComponentState<DraftPageLayout>({
+  createComponentStateV2<DraftPageLayout>({
     key: 'pageLayoutDraftComponentState',
     defaultValue: {
       id: '',

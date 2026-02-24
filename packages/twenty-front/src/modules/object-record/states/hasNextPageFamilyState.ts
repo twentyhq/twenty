@@ -1,6 +1,6 @@
-import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
+import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
 
-export const hasNextPageFamilyState = createFamilyState<
+export const hasNextPageFamilyState = createFamilyStateV2<
   boolean,
   string | undefined
 >({

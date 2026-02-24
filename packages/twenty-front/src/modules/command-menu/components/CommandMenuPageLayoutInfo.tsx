@@ -3,11 +3,11 @@ import { CommandMenuRecordPageLayoutInfo } from '@/command-menu/components/Comma
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuPageLayoutInfo = () => {
-  const objectMetadataId = useRecoilComponentValue(
+  const objectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 

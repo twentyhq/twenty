@@ -1,8 +1,8 @@
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
 
 export const useCloseRightClickMenu = () => {
-  const setWorkflowDiagramRightClickMenuPosition = useSetRecoilComponentState(
+  const setWorkflowDiagramRightClickMenuPosition = useSetRecoilComponentStateV2(
     workflowDiagramRightClickMenuPositionState,
   );
 

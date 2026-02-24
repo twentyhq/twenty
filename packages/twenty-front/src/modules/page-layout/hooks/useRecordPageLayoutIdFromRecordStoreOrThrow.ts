@@ -2,7 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
 import { getDefaultRecordPageLayoutId } from '@/page-layout/utils/getDefaultRecordPageLayoutId';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
-import { useRecoilValue } from 'recoil';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordPageLayoutIdFromRecordStoreOrThrow = ({
@@ -12,10 +12,9 @@ export const useRecordPageLayoutIdFromRecordStoreOrThrow = ({
     objectNameSingular: targetObjectNameSingular,
   });
 
-  const recordPageLayout = useRecoilValue(
-    recordPageLayoutByObjectMetadataIdFamilySelector({
-      objectMetadataId: objectMetadataItem.id,
-    }),
+  const recordPageLayout = useFamilySelectorValueV2(
+    recordPageLayoutByObjectMetadataIdFamilySelector,
+    { objectMetadataId: objectMetadataItem.id },
   );
 
   const pageLayoutId = isDefined(recordPageLayout)

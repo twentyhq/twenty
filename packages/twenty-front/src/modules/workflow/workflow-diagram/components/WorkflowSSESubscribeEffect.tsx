@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
 
 export const WorkflowSSESubscribeEffect = ({
@@ -14,8 +14,9 @@ export const WorkflowSSESubscribeEffect = ({
 }) => {
   const queryId = `workflow-versions-for-workflow-${workflowId}`;
 
-  const setShouldWorkflowRefetchRequest = useSetRecoilState(
-    shouldWorkflowRefetchRequestFamilyState(workflowId),
+  const setShouldWorkflowRefetchRequest = useSetFamilyRecoilStateV2(
+    shouldWorkflowRefetchRequestFamilyState,
+    workflowId,
   );
 
   const { objectMetadataItem: workflowVersionMetadataItem } =

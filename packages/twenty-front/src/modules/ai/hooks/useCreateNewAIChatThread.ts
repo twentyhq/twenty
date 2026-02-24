@@ -1,6 +1,6 @@
 import { agentChatUsageStateV2 } from '@/ai/states/agentChatUsageStateV2';
 import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
-import { currentAIChatThreadTitleStateV2 } from '@/ai/states/currentAIChatThreadTitleStateV2';
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
@@ -12,7 +12,7 @@ export const useCreateNewAIChatThread = () => {
   );
   const setAgentChatUsage = useSetRecoilStateV2(agentChatUsageStateV2);
   const setCurrentAIChatThreadTitle = useSetRecoilStateV2(
-    currentAIChatThreadTitleStateV2,
+    currentAIChatThreadTitleState,
   );
 
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();

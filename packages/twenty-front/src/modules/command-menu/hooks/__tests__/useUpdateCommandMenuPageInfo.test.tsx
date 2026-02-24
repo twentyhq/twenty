@@ -1,9 +1,10 @@
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { RecoilRoot } from 'recoil';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconArrowDown, IconDotsVertical } from 'twenty-ui/display';
 
@@ -23,30 +24,22 @@ const mockedNavigationStack = [
 ];
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot
-    initializeState={({ set }) => {
-      set(commandMenuNavigationStackState, mockedNavigationStack);
-      set(commandMenuPageInfoState, mockedPageInfo);
-    }}
-  >
-    {children}
-  </RecoilRoot>
+  <RecoilRoot>{children}</RecoilRoot>
 );
 
 describe('useUpdateCommandMenuPageInfo', () => {
+  beforeEach(() => {
+    jotaiStore.set(commandMenuNavigationStackState.atom, mockedNavigationStack);
+    jotaiStore.set(commandMenuPageInfoState.atom, mockedPageInfo);
+  });
+
   const renderHooks = () => {
     const { result } = renderHook(
       () => {
         const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
-        const commandMenuNavigationStack = useRecoilValue(
-          commandMenuNavigationStackState,
-        );
-        const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
 
         return {
           updateCommandMenuPageInfo,
-          commandMenuNavigationStack,
-          commandMenuPageInfo,
         };
       },
       { wrapper: Wrapper },
@@ -67,7 +60,10 @@ describe('useUpdateCommandMenuPageInfo', () => {
       });
     });
 
-    expect(result.current.commandMenuNavigationStack).toEqual([
+    const commandMenuNavigationStack = jotaiStore.get(
+      commandMenuNavigationStackState.atom,
+    );
+    expect(commandMenuNavigationStack).toEqual([
       {
         page: CommandMenuPages.Root,
         pageTitle: 'New Title',
@@ -76,7 +72,8 @@ describe('useUpdateCommandMenuPageInfo', () => {
       },
     ]);
 
-    expect(result.current.commandMenuPageInfo).toEqual({
+    const commandMenuPageInfo = jotaiStore.get(commandMenuPageInfoState.atom);
+    expect(commandMenuPageInfo).toEqual({
       title: 'New Title',
       Icon: IconArrowDown,
       instanceId: 'test-instance',
@@ -92,7 +89,10 @@ describe('useUpdateCommandMenuPageInfo', () => {
       });
     });
 
-    expect(result.current.commandMenuNavigationStack).toEqual([
+    const commandMenuNavigationStack = jotaiStore.get(
+      commandMenuNavigationStackState.atom,
+    );
+    expect(commandMenuNavigationStack).toEqual([
       {
         page: CommandMenuPages.Root,
         pageTitle: 'New Title',
@@ -101,7 +101,8 @@ describe('useUpdateCommandMenuPageInfo', () => {
       },
     ]);
 
-    expect(result.current.commandMenuPageInfo).toEqual({
+    const commandMenuPageInfo = jotaiStore.get(commandMenuPageInfoState.atom);
+    expect(commandMenuPageInfo).toEqual({
       title: 'New Title',
       Icon: IconDotsVertical,
       instanceId: 'test-instance',
@@ -117,7 +118,10 @@ describe('useUpdateCommandMenuPageInfo', () => {
       });
     });
 
-    expect(result.current.commandMenuNavigationStack).toEqual([
+    const commandMenuNavigationStack = jotaiStore.get(
+      commandMenuNavigationStackState.atom,
+    );
+    expect(commandMenuNavigationStack).toEqual([
       {
         page: CommandMenuPages.Root,
         pageTitle: 'Initial Title',
@@ -126,7 +130,8 @@ describe('useUpdateCommandMenuPageInfo', () => {
       },
     ]);
 
-    expect(result.current.commandMenuPageInfo).toEqual({
+    const commandMenuPageInfo = jotaiStore.get(commandMenuPageInfoState.atom);
+    expect(commandMenuPageInfo).toEqual({
       title: 'Initial Title',
       Icon: IconArrowDown,
       instanceId: 'test-instance',

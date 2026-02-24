@@ -11,21 +11,22 @@ import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValu
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 export const SSEEventStreamEffect = () => {
   const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
 
-  const sseEventStreamId = useRecoilValue(sseEventStreamIdState);
-  const isCreatingSseEventStream = useRecoilValue(
+  const sseEventStreamId = useRecoilValueV2(sseEventStreamIdState);
+  const isCreatingSseEventStream = useRecoilValueV2(
     isCreatingSseEventStreamState,
   );
-  const shouldDestroyEventStream = useRecoilValue(
+  const shouldDestroyEventStream = useRecoilValueV2(
     shouldDestroyEventStreamState,
   );
-  const isDestroyingEventStream = useRecoilValue(isDestroyingEventStreamState);
+  const isDestroyingEventStream = useRecoilValueV2(
+    isDestroyingEventStreamState,
+  );
 
   const isLoggedIn = useIsLogged();
   const currentUser = useRecoilValueV2(currentUserState);

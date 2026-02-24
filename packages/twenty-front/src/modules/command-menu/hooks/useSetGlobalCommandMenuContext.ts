@@ -10,75 +10,71 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useCallback } from 'react';
 
 export const useSetGlobalCommandMenuContext = () => {
   const { copyContextStoreStates } = useCopyContextStoreStates();
 
-  const setGlobalCommandMenuContext = useRecoilCallback(
-    ({ set }) => {
-      return () => {
-        copyContextStoreStates({
-          instanceIdToCopyFrom: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          instanceIdToCopyTo: COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID,
-        });
+  const setGlobalCommandMenuContext = useCallback(() => {
+    copyContextStoreStates({
+      instanceIdToCopyFrom: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+      instanceIdToCopyTo: COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID,
+    });
 
-        set(
-          contextStoreTargetedRecordsRuleComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
-          {
-            mode: 'selection',
-            selectedRecordIds: [],
-          },
-        );
+    jotaiStore.set(
+      contextStoreTargetedRecordsRuleComponentState.atomFamily({
+        instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+      }),
+      {
+        mode: 'selection',
+        selectedRecordIds: [],
+      },
+    );
 
-        set(
-          contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
-          0,
-        );
+    jotaiStore.set(
+      contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+        instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+      }),
+      0,
+    );
 
-        set(
-          contextStoreFiltersComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
-          [],
-        );
+    jotaiStore.set(
+      contextStoreFiltersComponentState.atomFamily({
+        instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+      }),
+      [],
+    );
 
-        set(
-          contextStoreFilterGroupsComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
-          [],
-        );
+    jotaiStore.set(
+      contextStoreFilterGroupsComponentState.atomFamily({
+        instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+      }),
+      [],
+    );
 
-        set(
-          contextStoreAnyFieldFilterValueComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
-          '',
-        );
+    jotaiStore.set(
+      contextStoreAnyFieldFilterValueComponentState.atomFamily({
+        instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+      }),
+      '',
+    );
 
-        set(
-          contextStoreCurrentViewTypeComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
-          ContextStoreViewType.Table,
-        );
+    jotaiStore.set(
+      contextStoreCurrentViewTypeComponentState.atomFamily({
+        instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+      }),
+      ContextStoreViewType.Table,
+    );
 
-        set(commandMenuPageInfoState, {
-          title: undefined,
-          Icon: undefined,
-          instanceId: '',
-        });
+    jotaiStore.set(commandMenuPageInfoState.atom, {
+      title: undefined,
+      Icon: undefined,
+      instanceId: '',
+    });
 
-        set(hasUserSelectedCommandState, false);
-      };
-    },
-    [copyContextStoreStates],
-  );
+    jotaiStore.set(hasUserSelectedCommandState.atom, false);
+  }, [copyContextStoreStates]);
 
   return {
     setGlobalCommandMenuContext,

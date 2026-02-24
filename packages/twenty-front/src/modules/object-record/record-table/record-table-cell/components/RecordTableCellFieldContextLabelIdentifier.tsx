@@ -7,7 +7,7 @@ import { RecordUpdateContext } from '@/object-record/record-table/contexts/Entit
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useContext, type ReactNode } from 'react';
 
 type RecordTableCellFieldContextLabelIdentifierProps = {
@@ -33,7 +33,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     objectMetadataItem.id,
   );
 
-  const shouldCompactRecordIndexLabelIdentifier = useRecoilComponentValue(
+  const shouldCompactRecordIndexLabelIdentifier = useRecoilComponentValueV2(
     shouldCompactRecordIndexLabelIdentifierComponentState,
   );
 

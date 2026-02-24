@@ -10,4 +10,4 @@ export type FamilyStateV2<ValueType, FamilyKey> = {
   type: 'FamilyStateV2';
   key: string;
   atomFamily: (key: FamilyKey) => JotaiWritableAtom<ValueType>;
-};
+} & ((key: FamilyKey) => JotaiWritableAtom<ValueType>);

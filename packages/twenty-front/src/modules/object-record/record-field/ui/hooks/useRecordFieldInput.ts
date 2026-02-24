@@ -1,18 +1,21 @@
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
 import { type FieldInputDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const useRecordFieldInput = <FieldValue>() => {
-  const recordFieldInputDraftValueCallbackState =
-    useRecoilComponentCallbackState(recordFieldInputDraftValueComponentState);
+  const recordFieldInputDraftValueAtom = useRecoilComponentStateCallbackStateV2(
+    recordFieldInputDraftValueComponentState,
+  );
 
-  const setDraftValue = useRecoilCallback(
-    ({ set }) =>
-      (newValue: unknown) => {
-        set(recordFieldInputDraftValueCallbackState, newValue);
-      },
-    [recordFieldInputDraftValueCallbackState],
+  const store = useStore();
+
+  const setDraftValue = useCallback(
+    (newValue: unknown) => {
+      store.set(recordFieldInputDraftValueAtom, newValue);
+    },
+    [store, recordFieldInputDraftValueAtom],
   );
 
   const isDraftValueEmpty = (

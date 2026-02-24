@@ -1,4 +1,4 @@
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
@@ -9,6 +9,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
@@ -26,8 +27,11 @@ export const useFrontComponentExecutionContext = ({
 } => {
   const currentUser = useRecoilValueV2(currentUserState);
   const navigateApp = useNavigateApp();
+  const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
+    frontComponentId,
+  });
   const { navigateCommandMenu } = useNavigateCommandMenu();
-  const setCommandMenuSearchState = useSetRecoilState(commandMenuSearchState);
+  const setCommandMenuSearchState = useSetRecoilStateV2(commandMenuSearchState);
   const { getIcon } = useIcons();
   const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();
   const {
@@ -115,6 +119,7 @@ export const useFrontComponentExecutionContext = ({
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
+      requestAccessTokenRefresh,
       openSidePanelPage,
       enqueueSnackbar,
       unmountFrontComponent,

@@ -2,7 +2,7 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -54,7 +54,7 @@ export const RecordTableHeaderResizeHandler = ({
   const columnResizeDisabled = isMobile;
 
   const [resizedFieldMetadataItemId, setResizedFieldMetadataItemId] =
-    useRecoilComponentState(resizedFieldMetadataIdComponentState);
+    useRecoilComponentStateV2(resizedFieldMetadataIdComponentState);
 
   const isResizing =
     recordField?.fieldMetadataItemId === resizedFieldMetadataItemId;

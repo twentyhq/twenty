@@ -6,10 +6,10 @@ import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -28,7 +28,7 @@ export const LazyMetadataLoadEffect = () => {
   const isLoggedIn = useIsLogged();
   const store = useStore();
 
-  const setLogicFunctions = useSetRecoilState(logicFunctionsState);
+  const setLogicFunctions = useSetRecoilStateV2(logicFunctionsState);
   const { updateDraft, applyChanges } = useMetadataStore();
 
   const isOnAuthPath =
@@ -66,18 +66,15 @@ export const LazyMetadataLoadEffect = () => {
     [store],
   );
 
-  const setRecordPageLayouts = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (recordPageLayouts: PageLayout[]) => {
-        const existingRecordPageLayouts = snapshot
-          .getLoadable(recordPageLayoutsState)
-          .getValue();
+  const setRecordPageLayouts = useCallback(
+    (recordPageLayouts: PageLayout[]) => {
+      const existingRecordPageLayouts = store.get(recordPageLayoutsState.atom);
 
-        if (!isDeeplyEqual(existingRecordPageLayouts, recordPageLayouts)) {
-          set(recordPageLayoutsState, recordPageLayouts);
-        }
-      },
-    [],
+      if (!isDeeplyEqual(existingRecordPageLayouts, recordPageLayouts)) {
+        store.set(recordPageLayoutsState.atom, recordPageLayouts);
+      }
+    },
+    [store],
   );
 
   useEffect(() => {

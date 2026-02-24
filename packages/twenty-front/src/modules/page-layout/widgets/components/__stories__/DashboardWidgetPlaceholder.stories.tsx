@@ -11,7 +11,6 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { DashboardWidgetPlaceholder } from '@/page-layout/widgets/components/DashboardWidgetPlaceholder';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type MutableSnapshot } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   PageLayoutTabLayoutMode,
@@ -34,22 +33,20 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
   component: DashboardWidgetPlaceholder,
   decorators: [
     (Story) => {
-      const initializeState = (snapshot: MutableSnapshot) => {
-        jotaiStore.set(
-          objectMetadataItemsState.atom,
-          generatedMockObjectMetadataItems,
-        );
-        jotaiStore.set(isAppMetadataReadyState.atom, true);
-        snapshot.set(
-          pageLayoutPersistedComponentState.atomFamily({
-            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-          }),
-          mockPageLayout,
-        );
-      };
+      jotaiStore.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
+      jotaiStore.set(
+        pageLayoutPersistedComponentState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
+        mockPageLayout,
+      );
 
       return (
-        <PageLayoutTestWrapper initializeState={initializeState}>
+        <PageLayoutTestWrapper store={jotaiStore}>
           <LayoutRenderingProvider
             value={{
               isInRightDrawer: false,

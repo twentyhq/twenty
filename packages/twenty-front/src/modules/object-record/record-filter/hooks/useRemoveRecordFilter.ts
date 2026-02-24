@@ -1,35 +1,36 @@
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useContext } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
+import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveRecordFilter = () => {
-  const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
+  const currentRecordFiltersAtom = useRecoilComponentStateCallbackStateV2(
     currentRecordFiltersComponentState,
   );
 
+  const store = useStore();
   const { onUpdate } = useContext(AdvancedFilterContext);
 
-  const removeRecordFilterCallback = useRecoilCallback(
-    ({ set, snapshot }) =>
-      ({ recordFilterId }: { recordFilterId: string }) => {
-        const currentRecordFilters = getSnapshotValue(
-          snapshot,
-          currentRecordFiltersCallbackState,
-        );
+  const removeRecordFilterCallback = useCallback(
+    ({ recordFilterId }: { recordFilterId: string }) => {
+      const currentRecordFilters = store.get(
+        currentRecordFiltersAtom,
+      ) as RecordFilter[];
 
-        const filterToRemove = currentRecordFilters.find(
-          (existingFilter) => existingFilter.id === recordFilterId,
-        );
+      const filterToRemove = currentRecordFilters.find(
+        (existingFilter) => existingFilter.id === recordFilterId,
+      );
 
-        if (!isDefined(filterToRemove)) {
-          return;
-        }
+      if (!isDefined(filterToRemove)) {
+        return;
+      }
 
-        set(currentRecordFiltersCallbackState, (currentRecordFilters) => {
+      store.set(
+        currentRecordFiltersAtom,
+        (currentRecordFilters: RecordFilter[]) => {
           const newCurrentRecordFilters = [...currentRecordFilters];
 
           const indexOfFilterToRemove = newCurrentRecordFilters.findIndex(
@@ -39,9 +40,10 @@ export const useRemoveRecordFilter = () => {
           newCurrentRecordFilters.splice(indexOfFilterToRemove, 1);
 
           return newCurrentRecordFilters;
-        });
-      },
-    [currentRecordFiltersCallbackState],
+        },
+      );
+    },
+    [currentRecordFiltersAtom, store],
   );
 
   const removeRecordFilter = ({

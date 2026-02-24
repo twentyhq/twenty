@@ -1,9 +1,9 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const recordIndexGroupAggregateOperationComponentState =
-  createComponentState<ExtendedAggregateOperations | null>({
+  createComponentStateV2<ExtendedAggregateOperations | null>({
     key: 'recordIndexGroupAggregateOperationComponentState',
     defaultValue: null,
     componentInstanceContext: ContextStoreComponentInstanceContext,

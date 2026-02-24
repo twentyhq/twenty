@@ -3,10 +3,10 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useEffect, useState } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -19,25 +19,25 @@ export const SettingsRoleEditEffect = ({
 }: SettingsRoleEditEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const role = useRecoilValue(settingsPersistedRoleFamilyState(roleId));
+  const role = useFamilyRecoilValueV2(settingsPersistedRoleFamilyState, roleId);
   const setActiveTabId = useSetRecoilComponentStateV2(
     activeTabIdComponentState,
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );
 
-  const updateDraftRoleIfNeeded = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (newRole: RoleWithPartialMembers) => {
-        const currentPersistedRole = getSnapshotValue(
-          snapshot,
-          settingsPersistedRoleFamilyState(newRole.id),
-        );
+  const store = useStore();
 
-        if (!isDeeplyEqual(newRole, currentPersistedRole)) {
-          set(settingsDraftRoleFamilyState(newRole.id), newRole);
-        }
-      },
-    [],
+  const updateDraftRoleIfNeeded = useCallback(
+    (newRole: RoleWithPartialMembers) => {
+      const currentPersistedRole = store.get(
+        settingsPersistedRoleFamilyState.atomFamily(newRole.id),
+      );
+
+      if (!isDeeplyEqual(newRole, currentPersistedRole)) {
+        store.set(settingsDraftRoleFamilyState.atomFamily(newRole.id), newRole);
+      }
+    },
+    [store],
   );
 
   useEffect(() => {

@@ -1,23 +1,22 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
-import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
+import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
 
 export const hasAnySoftDeleteFilterOnViewComponentSelector =
-  createComponentSelector<boolean>({
+  createComponentSelectorV2<boolean>({
     key: 'hasAnySoftDeleteFilterOnViewComponentSelector',
     componentInstanceContext: RecordFiltersComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      (componentStateKey) =>
       ({ get }) => {
-        const objectMetadataItems = jotaiStore.get(
-          objectMetadataItemsState.atom,
-        );
+        const objectMetadataItems = get(objectMetadataItemsState);
         const currentRecordFilters = get(
-          currentRecordFiltersComponentState.atomFamily({ instanceId }),
-        );
+          currentRecordFiltersComponentState,
+          componentStateKey,
+        ) as RecordFilter[];
 
         const hasAnySoftDeleteFilterOnView = currentRecordFilters.some(
           (recordFilter) => {

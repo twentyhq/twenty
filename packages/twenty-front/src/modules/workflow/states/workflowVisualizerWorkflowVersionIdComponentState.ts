@@ -1,8 +1,8 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 export const workflowVisualizerWorkflowVersionIdComponentState =
-  createComponentState<string | undefined>({
+  createComponentStateV2<string | undefined>({
     key: 'workflowVisualizerWorkflowVersionIdComponentState',
     defaultValue: undefined,
     componentInstanceContext: WorkflowVisualizerComponentInstanceContext,

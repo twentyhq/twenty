@@ -1,4 +1,4 @@
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
 import { workflowHoveredEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowHoveredEdgeComponentState';
 import { workflowSelectedEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowSelectedEdgeComponentState';
@@ -9,11 +9,10 @@ export const useEdgeState = () => {
   const reactflow = useReactFlow();
 
   const [workflowSelectedEdge, setWorkflowSelectedEdge] =
-    useRecoilComponentState(workflowSelectedEdgeComponentState);
+    useRecoilComponentStateV2(workflowSelectedEdgeComponentState);
 
-  const [workflowHoveredEdge, setWorkflowHoveredEdge] = useRecoilComponentState(
-    workflowHoveredEdgeComponentState,
-  );
+  const [workflowHoveredEdge, setWorkflowHoveredEdge] =
+    useRecoilComponentStateV2(workflowHoveredEdgeComponentState);
 
   const isSourceSelected = ({
     nodeId,

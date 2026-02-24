@@ -16,13 +16,13 @@ import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBloc
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
 import { useDebouncedCallback } from 'use-debounce';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
@@ -45,29 +45,28 @@ export const StandaloneRichTextEditorContent = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
-  const isPageLayoutInEditModeState = useRecoilComponentCallbackState(
+  const isPageLayoutInEditModeState = useRecoilComponentStateCallbackStateV2(
     isPageLayoutInEditModeComponentState,
   );
-  const pageLayoutEditingWidgetIdState = useRecoilComponentCallbackState(
+  const pageLayoutEditingWidgetIdState = useRecoilComponentStateCallbackStateV2(
     pageLayoutEditingWidgetIdComponentState,
   );
 
   const { syncAttachments } = useAttachmentSync(attachments);
 
-  const shouldPersistDraft = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const isPageLayoutInEditMode = snapshot
-          .getLoadable(isPageLayoutInEditModeState)
-          .getValue();
-        const editingWidgetId = snapshot
-          .getLoadable(pageLayoutEditingWidgetIdState)
-          .getValue();
+  const store = useStore();
 
-        return isPageLayoutInEditMode && editingWidgetId === widget.id;
-      },
-    [isPageLayoutInEditModeState, pageLayoutEditingWidgetIdState, widget.id],
-  );
+  const shouldPersistDraft = useCallback(() => {
+    const isPageLayoutInEditMode = store.get(isPageLayoutInEditModeState);
+    const editingWidgetId = store.get(pageLayoutEditingWidgetIdState);
+
+    return isPageLayoutInEditMode && editingWidgetId === widget.id;
+  }, [
+    isPageLayoutInEditModeState,
+    pageLayoutEditingWidgetIdState,
+    widget.id,
+    store,
+  ]);
 
   const initialContent = useMemo(
     () => filterSupportedBlocks(parseInitialBlocknote(currentBody)),

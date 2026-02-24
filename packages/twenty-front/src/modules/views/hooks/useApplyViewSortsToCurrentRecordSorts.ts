@@ -1,9 +1,9 @@
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 
 export const useApplyViewSortsToCurrentRecordSorts = () => {
-  const setCurrentRecordSorts = useSetRecoilComponentState(
+  const setCurrentRecordSorts = useSetRecoilComponentStateV2(
     currentRecordSortsComponentState,
   );
 

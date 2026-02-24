@@ -1,6 +1,5 @@
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useCallback, useMemo } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -12,7 +11,8 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { produce } from 'immer';
@@ -32,7 +32,7 @@ export const useObjectOptionsForBoard = ({
   recordBoardId,
 }: useObjectOptionsForBoardParams) => {
   const [recordIndexFieldDefinitions, setRecordIndexFieldDefinitions] =
-    useRecoilState(recordIndexFieldDefinitionsState);
+    useRecoilStateV2(recordIndexFieldDefinitionsState);
 
   const { saveViewFields } = useSaveCurrentViewFields();
 
@@ -130,7 +130,7 @@ export const useObjectOptionsForBoard = ({
     ],
   );
 
-  const currentRecordFields = useRecoilComponentValue(
+  const currentRecordFields = useRecoilComponentValueV2(
     currentRecordFieldsComponentState,
     recordBoardId,
   );

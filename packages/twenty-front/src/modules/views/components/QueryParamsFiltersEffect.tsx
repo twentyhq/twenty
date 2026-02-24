@@ -6,7 +6,7 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useFiltersFromQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
 import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -31,11 +31,11 @@ export const QueryParamsFiltersEffect = () => {
   const { mapViewFiltersToRecordFilters } = useMapViewFiltersToFilters();
 
   const { recordIndexId } = useRecordIndexContextOrThrow();
-  const setCurrentRecordFilters = useSetRecoilComponentState(
+  const setCurrentRecordFilters = useSetRecoilComponentStateV2(
     currentRecordFiltersComponentState,
     recordIndexId,
   );
-  const setCurrentRecordFilterGroups = useSetRecoilComponentState(
+  const setCurrentRecordFilterGroups = useSetRecoilComponentStateV2(
     currentRecordFilterGroupsComponentState,
     recordIndexId,
   );

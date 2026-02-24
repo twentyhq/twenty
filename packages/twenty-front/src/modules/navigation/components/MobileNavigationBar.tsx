@@ -9,7 +9,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useNavigate } from 'react-router-dom';
 import {
   type IconComponent,
@@ -39,7 +39,7 @@ export const MobileNavigationBar = () => {
     useFilteredObjectMetadataItems();
 
   const [, setContextStoreCurrentObjectMetadataItemId] =
-    useRecoilComponentState(
+    useRecoilComponentStateV2(
       contextStoreCurrentObjectMetadataItemIdComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     );

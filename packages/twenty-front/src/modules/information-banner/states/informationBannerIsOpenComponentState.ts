@@ -1,8 +1,8 @@
 import { InformationBannerComponentInstanceContext } from '@/information-banner/states/contexts/InformationBannerComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const informationBannerIsOpenComponentState =
-  createComponentState<boolean>({
+  createComponentStateV2<boolean>({
     key: 'informationBannerIsOpenComponentState',
     defaultValue: true,
     componentInstanceContext: InformationBannerComponentInstanceContext,

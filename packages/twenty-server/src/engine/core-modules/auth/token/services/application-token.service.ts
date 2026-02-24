@@ -27,6 +27,8 @@ import {
 
 const APPLICATION_ACCESS_TOKEN_EXPIRY_SECONDS = 1800;
 const APPLICATION_REFRESH_TOKEN_EXPIRY_SECONDS = 60 * 60 * 24 * 60; // 60 days
+const APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_MESSAGE =
+  'Application refresh token invalid or expired';
 
 @Injectable()
 export class ApplicationTokenService {
@@ -107,22 +109,37 @@ export class ApplicationTokenService {
   validateApplicationRefreshToken(
     refreshToken: string,
   ): ApplicationRefreshTokenJwtPayload {
-    this.jwtWrapperService.verifyJwtToken(refreshToken);
+    try {
+      this.jwtWrapperService.verifyJwtToken(refreshToken);
 
-    const payload =
-      this.jwtWrapperService.decode<ApplicationRefreshTokenJwtPayload>(
-        refreshToken,
-        { json: true },
-      );
+      const payload =
+        this.jwtWrapperService.decode<ApplicationRefreshTokenJwtPayload>(
+          refreshToken,
+          { json: true },
+        );
 
-    if (payload.type !== JwtTokenTypeEnum.APPLICATION_REFRESH) {
-      throw new AuthException(
-        'Expected an application refresh token',
-        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
-      );
+      if (payload.type !== JwtTokenTypeEnum.APPLICATION_REFRESH) {
+        throw new AuthException(
+          'Expected an application refresh token',
+          AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+        );
+      }
+
+      return payload;
+    } catch (error) {
+      if (
+        error instanceof AuthException &&
+        (error.code === AuthExceptionCode.UNAUTHENTICATED ||
+          error.code === AuthExceptionCode.INVALID_JWT_TOKEN_TYPE)
+      ) {
+        throw new AuthException(
+          APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_MESSAGE,
+          AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
+        );
+      }
+
+      throw error;
     }
-
-    return payload;
   }
 
   async renewApplicationTokens(payload: {

@@ -2,7 +2,7 @@ import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObje
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -33,7 +33,7 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
     objectMetadataItem,
   });
 
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+  const hasAnySoftDeleteFilterOnView = useRecoilComponentSelectorValueV2(
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 

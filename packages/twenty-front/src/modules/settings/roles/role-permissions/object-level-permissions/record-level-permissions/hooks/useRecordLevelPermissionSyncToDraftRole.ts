@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { useCallback, useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -12,6 +11,7 @@ import {
   convertRecordFilterToPredicate,
 } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/recordLevelPermissionPredicateConversion';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 
 type UseRecordLevelPermissionSyncToDraftRoleProps = {
   roleId: string;
@@ -28,8 +28,9 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
   currentRecordFilterGroups,
   hasInitialized,
 }: UseRecordLevelPermissionSyncToDraftRoleProps) => {
-  const setSettingsDraftRole = useSetRecoilState(
-    settingsDraftRoleFamilyState(roleId),
+  const setSettingsDraftRole = useSetFamilyRecoilStateV2(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const syncToDraftRole = useCallback(() => {

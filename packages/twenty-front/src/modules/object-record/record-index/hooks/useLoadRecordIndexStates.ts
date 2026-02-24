@@ -22,45 +22,47 @@ import { type ColumnDefinition } from '@/object-record/record-table/types/Column
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { type View } from '@/views/types/View';
 import { type ViewField } from '@/views/types/ViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useStore } from 'jotai';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLoadRecordIndexStates = () => {
   const store = useStore();
 
   const setContextStoreTargetedRecordsRuleComponentState =
-    useSetRecoilComponentState(contextStoreTargetedRecordsRuleComponentState);
+    useSetRecoilComponentStateV2(contextStoreTargetedRecordsRuleComponentState);
 
-  const setRecordIndexViewType = useSetRecoilState(recordIndexViewTypeState);
-  const setRecordIndexOpenRecordIn = useSetRecoilState(
+  const setRecordIndexViewType = useSetRecoilStateV2(recordIndexViewTypeState);
+  const setRecordIndexOpenRecordIn = useSetRecoilStateV2(
     recordIndexOpenRecordInState,
   );
 
-  const setRecordIndexGroupFieldMetadataItem = useSetRecoilComponentState(
+  const setRecordIndexGroupFieldMetadataItem = useSetRecoilComponentStateV2(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const setRecordIndexGroupAggregateOperation = useSetRecoilComponentState(
+  const setRecordIndexGroupAggregateOperation = useSetRecoilComponentStateV2(
     recordIndexGroupAggregateOperationComponentState,
   );
 
   const setRecordIndexGroupAggregateFieldMetadataItem =
-    useSetRecoilComponentState(
+    useSetRecoilComponentStateV2(
       recordIndexGroupAggregateFieldMetadataItemComponentState,
     );
 
-  const setRecordIndexShouldHideEmptyRecordGroups = useSetRecoilComponentState(
-    recordIndexShouldHideEmptyRecordGroupsComponentState,
-  );
+  const setRecordIndexShouldHideEmptyRecordGroups =
+    useSetRecoilComponentStateV2(
+      recordIndexShouldHideEmptyRecordGroupsComponentState,
+    );
 
-  const setRecordIndexCalendarFieldMetadataIdState = useSetRecoilState(
+  const setRecordIndexCalendarFieldMetadataIdState = useSetRecoilStateV2(
     recordIndexCalendarFieldMetadataIdState,
   );
 
@@ -69,111 +71,107 @@ export const useLoadRecordIndexStates = () => {
 
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
-  const onViewFieldsChange = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (viewFields: ViewField[], objectMetadataItem: ObjectMetadataItem) => {
-        const activeFieldMetadataItems = objectMetadataItem.fields.filter(
-          (field) => field.isActive && !isHiddenSystemField(field),
-        );
+  const onViewFieldsChange = useCallback(
+    (viewFields: ViewField[], objectMetadataItem: ObjectMetadataItem) => {
+      const activeFieldMetadataItems = objectMetadataItem.fields.filter(
+        (field) => field.isActive && !isHiddenSystemField(field),
+      );
 
-        const filterableFieldMetadataItems = jotaiStore.get(
-          availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
-            objectMetadataItemId: objectMetadataItem.id,
+      const filterableFieldMetadataItems = jotaiStore.get(
+        availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
+          objectMetadataItemId: objectMetadataItem.id,
+        }),
+      );
+
+      const sortableFieldMetadataItems = jotaiStore.get(
+        availableFieldMetadataItemsForSortFamilySelector.selectorFamily({
+          objectMetadataItemId: objectMetadataItem.id,
+        }),
+      );
+
+      const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
+        activeFieldMetadataItems
+          .map((field, index) =>
+            formatFieldMetadataItemAsColumnDefinition({
+              position: index,
+              field,
+              objectMetadataItem,
+            }),
+          )
+          .filter(filterAvailableTableColumns)
+          .map((column) => {
+            const existsInFilterDefinitions = filterableFieldMetadataItems.some(
+              (fieldMetadataItem) =>
+                fieldMetadataItem.id === column.fieldMetadataId,
+            );
+
+            const existsInSortDefinitions = sortableFieldMetadataItems.some(
+              (fieldMetadataItem) =>
+                fieldMetadataItem.id === column.fieldMetadataId,
+            );
+
+            return {
+              ...column,
+              isFilterable: existsInFilterDefinitions,
+              isSortable: existsInSortDefinitions,
+            };
+          });
+
+      const newFieldDefinitions = mapViewFieldsToColumnDefinitions({
+        viewFields,
+        columnDefinitions,
+      });
+
+      const existingRecordIndexFieldDefinitions = jotaiStore.get(
+        recordIndexFieldDefinitionsState.atom,
+      );
+
+      if (
+        !isDeeplyEqual(existingRecordIndexFieldDefinitions, newFieldDefinitions)
+      ) {
+        jotaiStore.set(
+          recordIndexFieldDefinitionsState.atom,
+          newFieldDefinitions,
+        );
+      }
+
+      for (const viewField of viewFields) {
+        const viewFieldMetadataType = objectMetadataItem.fields?.find(
+          (field) => field.id === viewField.fieldMetadataId,
+        )?.type;
+
+        const aggregateOperationForViewField = jotaiStore.get(
+          viewFieldAggregateOperationState.atomFamily({
+            viewFieldId: viewField.id,
           }),
         );
-
-        const sortableFieldMetadataItems = jotaiStore.get(
-          availableFieldMetadataItemsForSortFamilySelector.selectorFamily({
-            objectMetadataItemId: objectMetadataItem.id,
-          }),
-        );
-
-        const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
-          activeFieldMetadataItems
-            .map((field, index) =>
-              formatFieldMetadataItemAsColumnDefinition({
-                position: index,
-                field,
-                objectMetadataItem,
-              }),
+        const convertedViewFieldAggregateOperation = isDefined(
+          viewField.aggregateOperation,
+        )
+          ? convertAggregateOperationToExtendedAggregateOperation(
+              viewField.aggregateOperation,
+              viewFieldMetadataType,
             )
-            .filter(filterAvailableTableColumns)
-            .map((column) => {
-              const existsInFilterDefinitions =
-                filterableFieldMetadataItems.some(
-                  (fieldMetadataItem) =>
-                    fieldMetadataItem.id === column.fieldMetadataId,
-                );
-
-              const existsInSortDefinitions = sortableFieldMetadataItems.some(
-                (fieldMetadataItem) =>
-                  fieldMetadataItem.id === column.fieldMetadataId,
-              );
-
-              return {
-                ...column,
-                isFilterable: existsInFilterDefinitions,
-                isSortable: existsInSortDefinitions,
-              };
-            });
-
-        const newFieldDefinitions = mapViewFieldsToColumnDefinitions({
-          viewFields,
-          columnDefinitions,
-        });
-
-        const existingRecordIndexFieldDefinitions = snapshot
-          .getLoadable(recordIndexFieldDefinitionsState)
-          .getValue();
+          : viewField.aggregateOperation;
 
         if (
-          !isDeeplyEqual(
-            existingRecordIndexFieldDefinitions,
-            newFieldDefinitions,
-          )
+          aggregateOperationForViewField !==
+          convertedViewFieldAggregateOperation
         ) {
-          set(recordIndexFieldDefinitionsState, newFieldDefinitions);
+          jotaiStore.set(
+            viewFieldAggregateOperationState.atomFamily({
+              viewFieldId: viewField.id,
+            }),
+            convertedViewFieldAggregateOperation,
+          );
         }
-
-        for (const viewField of viewFields) {
-          const viewFieldMetadataType = objectMetadataItem.fields?.find(
-            (field) => field.id === viewField.fieldMetadataId,
-          )?.type;
-
-          const aggregateOperationForViewField = snapshot
-            .getLoadable(
-              viewFieldAggregateOperationState({
-                viewFieldId: viewField.id,
-              }),
-            )
-            .getValue();
-          const convertedViewFieldAggregateOperation = isDefined(
-            viewField.aggregateOperation,
-          )
-            ? convertAggregateOperationToExtendedAggregateOperation(
-                viewField.aggregateOperation,
-                viewFieldMetadataType,
-              )
-            : viewField.aggregateOperation;
-
-          if (
-            aggregateOperationForViewField !==
-            convertedViewFieldAggregateOperation
-          ) {
-            set(
-              viewFieldAggregateOperationState({
-                viewFieldId: viewField.id,
-              }),
-              convertedViewFieldAggregateOperation,
-            );
-          }
-        }
-      },
+      }
+    },
     [],
   );
 
-  const loadRecordIndexStates = useRecoilCallback(
-    () => async (view: View, objectMetadataItem: ObjectMetadataItem) => {
+  const loadRecordIndexStates = useCallback(
+    async (view: View, objectMetadataItem: ObjectMetadataItem) => {
       const filterableFieldMetadataItems = jotaiStore.get(
         availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
           objectMetadataItemId: objectMetadataItem.id,

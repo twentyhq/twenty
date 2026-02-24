@@ -1,7 +1,7 @@
 import { type MorphItem } from '@/object-record/multiple-objects/types/MorphItem';
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-export const commandMenuNavigationMorphItemsByPageState = createState<
+export const commandMenuNavigationMorphItemsByPageState = createStateV2<
   Map<string, MorphItem[]>
 >({
   key: 'command-menu/commandMenuNavigationMorphItemsByPageState',

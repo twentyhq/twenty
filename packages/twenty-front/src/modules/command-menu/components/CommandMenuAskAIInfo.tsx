@@ -1,4 +1,4 @@
-import { currentAIChatThreadTitleStateV2 } from '@/ai/states/currentAIChatThreadTitleStateV2';
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -12,7 +12,7 @@ const StyledPageTitle = styled.div`
 
 export const CommandMenuAskAIInfo = () => {
   const currentAIChatThreadTitle = useRecoilValueV2(
-    currentAIChatThreadTitleStateV2,
+    currentAIChatThreadTitleState,
   );
 
   return (

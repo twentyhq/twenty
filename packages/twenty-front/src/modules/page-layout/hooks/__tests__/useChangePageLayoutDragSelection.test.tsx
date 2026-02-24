@@ -1,5 +1,6 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { act, renderHook } from '@testing-library/react';
+import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
 import {
@@ -10,28 +11,27 @@ import { useChangePageLayoutDragSelection } from '@/page-layout/hooks/useChangeP
 
 describe('useChangePageLayoutDragSelection', () => {
   it('should add cell to selection when selected is true', () => {
+    const store = createStore();
+    store.set(
+      pageLayoutSelectedCellsComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      new Set(['cell-1']),
+    );
+
     const { result } = renderHook(
       () => ({
         changeDragSelection: useChangePageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValue(
+        selectedCells: useRecoilComponentValueV2(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
-          <PageLayoutTestWrapper
-            initializeState={({ set }) => {
-              set(
-                pageLayoutSelectedCellsComponentState.atomFamily({
-                  instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-                }),
-                new Set(['cell-1']),
-              );
-            }}
-          >
+          <PageLayoutTestWrapper store={store}>
             {children}
           </PageLayoutTestWrapper>
         ),
@@ -54,28 +54,27 @@ describe('useChangePageLayoutDragSelection', () => {
   });
 
   it('should remove cell from selection when selected is false', () => {
+    const store = createStore();
+    store.set(
+      pageLayoutSelectedCellsComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      new Set(['cell-1', 'cell-2']),
+    );
+
     const { result } = renderHook(
       () => ({
         changeDragSelection: useChangePageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValue(
+        selectedCells: useRecoilComponentValueV2(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
-          <PageLayoutTestWrapper
-            initializeState={({ set }) => {
-              set(
-                pageLayoutSelectedCellsComponentState.atomFamily({
-                  instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-                }),
-                new Set(['cell-1', 'cell-2']),
-              );
-            }}
-          >
+          <PageLayoutTestWrapper store={store}>
             {children}
           </PageLayoutTestWrapper>
         ),
@@ -103,7 +102,7 @@ describe('useChangePageLayoutDragSelection', () => {
         changeDragSelection: useChangePageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValue(
+        selectedCells: useRecoilComponentValueV2(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -133,28 +132,27 @@ describe('useChangePageLayoutDragSelection', () => {
   });
 
   it('should handle removing non-existent cell', () => {
+    const store = createStore();
+    store.set(
+      pageLayoutSelectedCellsComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      new Set(['cell-1']),
+    );
+
     const { result } = renderHook(
       () => ({
         changeDragSelection: useChangePageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValue(
+        selectedCells: useRecoilComponentValueV2(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
-          <PageLayoutTestWrapper
-            initializeState={({ set }) => {
-              set(
-                pageLayoutSelectedCellsComponentState.atomFamily({
-                  instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-                }),
-                new Set(['cell-1']),
-              );
-            }}
-          >
+          <PageLayoutTestWrapper store={store}>
             {children}
           </PageLayoutTestWrapper>
         ),

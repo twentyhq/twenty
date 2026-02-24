@@ -601,6 +601,120 @@ export const HtmlHrElement = createRemoteElement<
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 
+export type HtmlIframeProperties = HtmlCommonProperties & {
+  src?: string;
+  width?: string;
+  height?: string;
+  allow?: string;
+  sandbox?: string;
+  allowFullScreen?: boolean;
+};
+
+export const HtmlIframeElement = createRemoteElement<
+  HtmlIframeProperties,
+  Record<string, never>,
+  Record<string, never>,
+  HtmlCommonEvents
+>({
+  properties: {
+    ...HTML_COMMON_PROPERTIES_CONFIG,
+    src: { type: String },
+    width: { type: String },
+    height: { type: String },
+    allow: { type: String },
+    sandbox: { type: String },
+    allowFullScreen: { type: Boolean },
+  },
+  events: [...HTML_COMMON_EVENTS_ARRAY],
+});
+
+export type HtmlVideoProperties = HtmlCommonProperties & {
+  src?: string;
+  poster?: string;
+  controls?: boolean;
+  autoPlay?: boolean;
+  loop?: boolean;
+  muted?: boolean;
+  preload?: string;
+  width?: string;
+  height?: string;
+  crossOrigin?: string;
+  playsInline?: boolean;
+};
+
+export const HtmlVideoElement = createRemoteElement<
+  HtmlVideoProperties,
+  Record<string, never>,
+  Record<string, never>,
+  HtmlCommonEvents
+>({
+  properties: {
+    ...HTML_COMMON_PROPERTIES_CONFIG,
+    src: { type: String },
+    poster: { type: String },
+    controls: { type: Boolean },
+    autoPlay: { type: Boolean },
+    loop: { type: Boolean },
+    muted: { type: Boolean },
+    preload: { type: String },
+    width: { type: String },
+    height: { type: String },
+    crossOrigin: { type: String },
+    playsInline: { type: Boolean },
+  },
+  events: [...HTML_COMMON_EVENTS_ARRAY],
+});
+
+export type HtmlAudioProperties = HtmlCommonProperties & {
+  src?: string;
+  controls?: boolean;
+  autoPlay?: boolean;
+  loop?: boolean;
+  muted?: boolean;
+  preload?: string;
+  crossOrigin?: string;
+};
+
+export const HtmlAudioElement = createRemoteElement<
+  HtmlAudioProperties,
+  Record<string, never>,
+  Record<string, never>,
+  HtmlCommonEvents
+>({
+  properties: {
+    ...HTML_COMMON_PROPERTIES_CONFIG,
+    src: { type: String },
+    controls: { type: Boolean },
+    autoPlay: { type: Boolean },
+    loop: { type: Boolean },
+    muted: { type: Boolean },
+    preload: { type: String },
+    crossOrigin: { type: String },
+  },
+  events: [...HTML_COMMON_EVENTS_ARRAY],
+});
+
+export type HtmlSourceProperties = HtmlCommonProperties & {
+  src?: string;
+  type?: string;
+  media?: string;
+};
+
+export const HtmlSourceElement = createRemoteElement<
+  HtmlSourceProperties,
+  Record<string, never>,
+  Record<string, never>,
+  HtmlCommonEvents
+>({
+  properties: {
+    ...HTML_COMMON_PROPERTIES_CONFIG,
+    src: { type: String },
+    type: { type: String },
+    media: { type: String },
+  },
+  events: [...HTML_COMMON_EVENTS_ARRAY],
+});
+
 export type RemoteStyleProperties = {
   cssText?: string;
   styleKey?: string;
@@ -660,6 +774,10 @@ customElements.define('html-th', HtmlThElement);
 customElements.define('html-td', HtmlTdElement);
 customElements.define('html-br', HtmlBrElement);
 customElements.define('html-hr', HtmlHrElement);
+customElements.define('html-iframe', HtmlIframeElement);
+customElements.define('html-video', HtmlVideoElement);
+customElements.define('html-audio', HtmlAudioElement);
+customElements.define('html-source', HtmlSourceElement);
 customElements.define('remote-style', RemoteStyleElement);
 customElements.define('remote-root', RemoteRootElement);
 customElements.define('remote-fragment', RemoteFragmentElement);
@@ -709,6 +827,10 @@ declare global {
     'html-td': InstanceType<typeof HtmlTdElement>;
     'html-br': InstanceType<typeof HtmlBrElement>;
     'html-hr': InstanceType<typeof HtmlHrElement>;
+    'html-iframe': InstanceType<typeof HtmlIframeElement>;
+    'html-video': InstanceType<typeof HtmlVideoElement>;
+    'html-audio': InstanceType<typeof HtmlAudioElement>;
+    'html-source': InstanceType<typeof HtmlSourceElement>;
     'remote-style': InstanceType<typeof RemoteStyleElement>;
     'remote-root': InstanceType<typeof RemoteRootElement>;
     'remote-fragment': InstanceType<typeof RemoteFragmentElement>;

@@ -1,11 +1,11 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 import { WorkflowRunVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowRunVisualizerComponentInstanceContext';
 import { type WorkflowDiagramStatus } from '@/workflow/workflow-diagram/types/WorkflowDiagramStatus';
 
 // This state must be fresh every time the Reactflow component is mounted.
 // We use another instance context whose instanceId is an id unique to the component hierarchy.
 export const workflowDiagramStatusComponentState =
-  createComponentState<WorkflowDiagramStatus>({
+  createComponentStateV2<WorkflowDiagramStatus>({
     key: 'workflowDiagramStatusComponentState',
     defaultValue: 'computing-diagram',
     componentInstanceContext: WorkflowRunVisualizerComponentInstanceContext,

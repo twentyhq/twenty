@@ -4,52 +4,48 @@ import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroying
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useCallback } from 'react';
 
 export const useTriggerEventStreamDestroy = () => {
-  const setIsDestroyingEventStream = useSetRecoilState(
+  const setIsDestroyingEventStream = useSetRecoilStateV2(
     isDestroyingEventStreamState,
   );
 
-  const triggerEventStreamDestroy = useRecoilCallback(
-    ({ snapshot, set }) =>
-      () => {
-        const isDestroyingEventStream = snapshot
-          .getLoadable(isDestroyingEventStreamState)
-          .getValue();
+  const triggerEventStreamDestroy = useCallback(() => {
+    const isDestroyingEventStream = jotaiStore.get(
+      isDestroyingEventStreamState.atom,
+    );
 
-        const isCreatingSseEventStream = snapshot
-          .getLoadable(isCreatingSseEventStreamState)
-          .getValue();
+    const isCreatingSseEventStream = jotaiStore.get(
+      isCreatingSseEventStreamState.atom,
+    );
 
-        if (isDestroyingEventStream || isCreatingSseEventStream) {
-          return;
-        }
+    if (isDestroyingEventStream || isCreatingSseEventStream) {
+      return;
+    }
 
-        setIsDestroyingEventStream(true);
+    setIsDestroyingEventStream(true);
 
-        const eventStreamId = snapshot
-          .getLoadable(sseEventStreamIdState)
-          .getValue();
+    const eventStreamId = jotaiStore.get(sseEventStreamIdState.atom);
 
-        const disposeFunctionForEventStream = snapshot
-          .getLoadable(disposeFunctionForEventStreamState)
-          .getValue();
+    const disposeFunctionForEventStream = jotaiStore.get(
+      disposeFunctionForEventStreamState.atom,
+    );
 
-        if (isNonEmptyString(eventStreamId)) {
-          disposeFunctionForEventStream?.dispose();
+    if (isNonEmptyString(eventStreamId)) {
+      disposeFunctionForEventStream?.dispose();
 
-          set(sseEventStreamIdState, null);
-          set(sseEventStreamReadyState, false);
-          set(disposeFunctionForEventStreamState, null);
-          set(shouldDestroyEventStreamState, false);
-        }
+      jotaiStore.set(sseEventStreamIdState.atom, null);
+      jotaiStore.set(sseEventStreamReadyState.atom, false);
+      jotaiStore.set(disposeFunctionForEventStreamState.atom, null);
+      jotaiStore.set(shouldDestroyEventStreamState.atom, false);
+    }
 
-        setIsDestroyingEventStream(false);
-      },
-    [setIsDestroyingEventStream],
-  );
+    setIsDestroyingEventStream(false);
+  }, [setIsDestroyingEventStream]);
 
   return {
     triggerEventStreamDestroy,

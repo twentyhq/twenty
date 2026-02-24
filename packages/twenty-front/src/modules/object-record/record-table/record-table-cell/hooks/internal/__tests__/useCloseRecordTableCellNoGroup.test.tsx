@@ -20,7 +20,7 @@ import {
 import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -79,8 +79,9 @@ describe('useCloseRecordTableCellNoGroup', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
-        const currentTableCellInEditModePosition = useRecoilComponentValue(
+        const currentTableCellInEditModePosition = useRecoilComponentValueV2(
           recordTableCellEditModePositionComponentState,
+          recordTableId,
         );
 
         return {

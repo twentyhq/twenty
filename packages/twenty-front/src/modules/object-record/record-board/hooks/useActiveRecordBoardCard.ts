@@ -1,60 +1,62 @@
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
+
 import { activeRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/activeRecordBoardCardIndexesComponentState';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { type BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useActiveRecordBoardCard = (recordBoardId?: string) => {
-  const isCardActiveState = useRecoilComponentCallbackState(
+  const isCardActiveState = useRecoilComponentFamilyStateCallbackStateV2(
     isRecordBoardCardActiveComponentFamilyState,
     recordBoardId,
   );
 
-  const activeBoardCardIndexesState = useRecoilComponentCallbackState(
+  const activeBoardCardIndexesState = useRecoilComponentStateCallbackStateV2(
     activeRecordBoardCardIndexesComponentState,
     recordBoardId,
   );
 
-  const deactivateBoardCard = useRecoilCallback(
-    ({ set, snapshot }) =>
-      () => {
-        const activeBoardCardIndexes = snapshot
-          .getLoadable(activeBoardCardIndexesState)
-          .getValue();
+  const store = useStore();
 
-        if (!isDefined(activeBoardCardIndexes)) {
-          return;
-        }
+  const deactivateBoardCard = useCallback(() => {
+    const activeBoardCardIndexes = store.get(activeBoardCardIndexesState) as
+      | BoardCardIndexes
+      | null
+      | undefined;
 
-        set(activeBoardCardIndexesState, null);
-        set(isCardActiveState(activeBoardCardIndexes), false);
-      },
-    [activeBoardCardIndexesState, isCardActiveState],
-  );
+    if (!isDefined(activeBoardCardIndexes)) {
+      return;
+    }
 
-  const activateBoardCard = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (boardCardIndexes: BoardCardIndexes) => {
-        const activeBoardCardIndexes = snapshot
-          .getLoadable(activeBoardCardIndexesState)
-          .getValue();
+    store.set(activeBoardCardIndexesState, null);
+    store.set(isCardActiveState(activeBoardCardIndexes), false);
+  }, [activeBoardCardIndexesState, isCardActiveState, store]);
 
-        if (
-          activeBoardCardIndexes?.rowIndex === boardCardIndexes.rowIndex &&
-          activeBoardCardIndexes?.columnIndex === boardCardIndexes.columnIndex
-        ) {
-          return;
-        }
+  const activateBoardCard = useCallback(
+    (boardCardIndexes: BoardCardIndexes) => {
+      const activeBoardCardIndexes = store.get(activeBoardCardIndexesState) as
+        | BoardCardIndexes
+        | null
+        | undefined;
 
-        if (isDefined(activeBoardCardIndexes)) {
-          set(isCardActiveState(activeBoardCardIndexes), false);
-        }
+      if (
+        activeBoardCardIndexes?.rowIndex === boardCardIndexes.rowIndex &&
+        activeBoardCardIndexes?.columnIndex === boardCardIndexes.columnIndex
+      ) {
+        return;
+      }
 
-        set(activeBoardCardIndexesState, boardCardIndexes);
-        set(isCardActiveState(boardCardIndexes), true);
-      },
-    [activeBoardCardIndexesState, isCardActiveState],
+      if (isDefined(activeBoardCardIndexes)) {
+        store.set(isCardActiveState(activeBoardCardIndexes), false);
+      }
+
+      store.set(activeBoardCardIndexesState, boardCardIndexes);
+      store.set(isCardActiveState(boardCardIndexes), true);
+    },
+    [activeBoardCardIndexesState, isCardActiveState, store],
   );
 
   return {

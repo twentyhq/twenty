@@ -1,11 +1,9 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
+import { createComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilyStateV2';
 
-export const widgetCardHoveredComponentFamilyState = createComponentFamilyState<
-  boolean,
-  string
->({
-  key: 'widgetCardHoveredComponentFamilyState',
-  defaultValue: false,
-  componentInstanceContext: PageLayoutComponentInstanceContext,
-});
+export const widgetCardHoveredComponentFamilyState =
+  createComponentFamilyStateV2<boolean, string>({
+    key: 'widgetCardHoveredComponentFamilyState',
+    defaultValue: false,
+    componentInstanceContext: PageLayoutComponentInstanceContext,
+  });

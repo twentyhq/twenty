@@ -6,7 +6,7 @@ import { getViewType } from '@/context-store/utils/getViewType';
 import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLastVisitedObjectMetadataId';
 import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useEffect } from 'react';
@@ -33,13 +33,13 @@ export const MainContextStoreProviderEffect = ({
     useSetLastVisitedObjectMetadataId();
 
   const [contextStoreCurrentViewId, setContextStoreCurrentViewId] =
-    useRecoilComponentState(
+    useRecoilComponentStateV2(
       contextStoreCurrentViewIdComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     );
 
   const [contextStoreCurrentViewType, setContextStoreCurrentViewType] =
-    useRecoilComponentState(
+    useRecoilComponentStateV2(
       contextStoreCurrentViewTypeComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     );
@@ -47,7 +47,7 @@ export const MainContextStoreProviderEffect = ({
   const [
     contextStoreCurrentObjectMetadataItemId,
     setContextStoreCurrentObjectMetadataItemId,
-  ] = useRecoilComponentState(
+  ] = useRecoilComponentStateV2(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
