@@ -57,19 +57,18 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
 
   useEffect(() => {
     if (isInitializingVirtualTableDataLoading) {
-      console.log(
-        '[VirtualizedInitialDataLoad] skipping: already initializing',
-      );
       return;
     }
 
     (async () => {
       if ((currentView?.id ?? null) !== lastContextStoreVirtualizedViewId) {
-        console.log('[VirtualizedInitialDataLoad] trigger: view changed', {
-          currentViewId: currentView?.id,
-          lastViewId: lastContextStoreVirtualizedViewId,
-          queryIdentifier,
-        });
+        // Wait for the atomic batch from loadRecordIndexStates to populate
+        // visibleRecordFields before triggering a fetch. On the next render
+        // after the batch, fields will be populated and we'll proceed.
+        if (isEmpty(visibleRecordFields)) {
+          return;
+        }
+
         setLastContextStoreVirtualizedViewId(currentView?.id ?? null);
         setLastRecordTableQueryIdentifier(queryIdentifier);
         setLastContextStoreVisibleRecordFields(visibleRecordFields);
@@ -79,13 +78,6 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
         queryIdentifier !== lastRecordTableQueryIdentifier &&
         !isFetchingMoreRecords
       ) {
-        console.log(
-          '[VirtualizedInitialDataLoad] trigger: queryIdentifier changed',
-          {
-            queryIdentifier,
-            lastQueryIdentifier: lastRecordTableQueryIdentifier,
-          },
-        );
         setLastRecordTableQueryIdentifier(queryIdentifier);
 
         await triggerInitialRecordTableDataLoad();
@@ -99,15 +91,6 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
         setLastContextStoreVisibleRecordFields(visibleRecordFields);
 
         const shouldRefetchData = currentFields.length > lastFields.length;
-
-        console.log(
-          '[VirtualizedInitialDataLoad] trigger: visibleRecordFields changed',
-          {
-            lastFieldsCount: lastFields.length,
-            currentFieldsCount: currentFields.length,
-            shouldRefetchData,
-          },
-        );
 
         if (shouldRefetchData) {
           await triggerInitialRecordTableDataLoad({

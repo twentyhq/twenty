@@ -16,10 +16,15 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import isEmpty from 'lodash.isempty';
 
 export const RecordTable = () => {
-  const { recordTableId, objectNameSingular, objectMetadataItem } =
-    useRecordTableContextOrThrow();
+  const {
+    recordTableId,
+    objectNameSingular,
+    objectMetadataItem,
+    visibleRecordFields,
+  } = useRecordTableContextOrThrow();
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
@@ -51,13 +56,6 @@ export const RecordTable = () => {
   const recordTableIsEmpty =
     !isRecordTableInitialLoading && !recordTableHasRecords;
 
-  console.log('[RecordTable] render', {
-    isRecordTableInitialLoading,
-    recordTableHasRecords,
-    recordTableIsEmpty,
-    hasRecordGroups,
-  });
-
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
   }
@@ -83,7 +81,7 @@ export const RecordTable = () => {
           <RecordTableScrollToFocusedRowEffect />
         </>
       )}
-      {recordTableIsEmpty && !hasRecordGroups ? (
+      {isRecordTableInitialLoading && isEmpty(visibleRecordFields) ? null : recordTableIsEmpty && !hasRecordGroups ? (
         <RecordTableEmpty tableBodyRef={tableBodyRef} />
       ) : (
         <RecordTableContent

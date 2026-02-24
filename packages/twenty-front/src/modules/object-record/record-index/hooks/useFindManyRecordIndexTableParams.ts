@@ -72,14 +72,6 @@ export const useFindManyRecordIndexTableParams = (
     anyFieldFilter,
   ]);
 
-  console.log('[FindManyRecordIndexTableParams]', {
-    objectNameSingular,
-    filterCount: currentRecordFilters.length,
-    sortCount: currentRecordSorts.length,
-    hasFilter: !!currentFilters,
-    orderByLength: orderBy?.length,
-  });
-
   return {
     objectNameSingular,
     filter: combinedFilter,

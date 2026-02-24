@@ -77,10 +77,6 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
     };
 
     if (isNonEmptyString(lastShowPageRecordId)) {
-      console.log(
-        '[ScrollToPreviousRecordEffect] triggering reload for lastShowPageRecordId',
-        { lastShowPageRecordId, allRecordIdsCount: allRecordIds.length },
-      );
       run();
     }
   }, [
