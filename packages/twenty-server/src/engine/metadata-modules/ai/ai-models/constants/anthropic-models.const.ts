@@ -40,6 +40,7 @@ export const ANTHROPIC_MODELS: AIModelConfig[] = [
     nativeCapabilities: {
       webSearch: true,
     },
+    isRecommended: true,
   },
   {
     modelId: 'claude-sonnet-4-6',
@@ -75,6 +76,7 @@ export const ANTHROPIC_MODELS: AIModelConfig[] = [
     nativeCapabilities: {
       webSearch: true,
     },
+    isRecommended: true,
   },
   {
     modelId: 'claude-sonnet-4-5-20250929',

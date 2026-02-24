@@ -58,6 +58,45 @@ export class ClientAIModelConfig {
 
   @Field(() => Boolean, { nullable: true })
   deprecated?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  isRecommended?: boolean;
+}
+
+@ObjectType()
+export class AdminAIModelConfig {
+  @Field(() => String)
+  modelId: string;
+
+  @Field(() => String)
+  label: string;
+
+  @Field(() => ModelFamily, { nullable: true })
+  modelFamily?: ModelFamily;
+
+  @Field(() => InferenceProvider)
+  inferenceProvider: InferenceProvider;
+
+  @Field(() => Boolean)
+  isAvailable: boolean;
+
+  @Field(() => Boolean)
+  isAdminEnabled: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  deprecated?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  isRecommended?: boolean;
+}
+
+@ObjectType()
+export class AdminAIModelsOutput {
+  @Field(() => Boolean)
+  autoEnableNewModels: boolean;
+
+  @Field(() => [AdminAIModelConfig])
+  models: AdminAIModelConfig[];
 }
 
 @ObjectType()
