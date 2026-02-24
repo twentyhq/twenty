@@ -43,7 +43,8 @@ export class ClientConfigService {
       'CALENDAR_BOOKING_PAGE_ID',
     );
 
-    const availableModels = this.aiModelRegistryService.getAvailableModels();
+    const availableModels =
+      this.aiModelRegistryService.getAdminFilteredModels();
 
     const aiModels: ClientAIModelConfig[] = availableModels.map(
       (registeredModel) => {
@@ -68,6 +69,7 @@ export class ClientConfigService {
               )
             : 0,
           deprecated: builtInModel?.deprecated,
+          isRecommended: builtInModel?.isRecommended,
         };
       },
     );
@@ -96,14 +98,14 @@ export class ClientConfigService {
       aiModels.unshift(
         {
           modelId: DEFAULT_SMART_MODEL,
-          label: `Smart (${defaultPerformanceModelLabel})`,
+          label: `Best (${defaultPerformanceModelLabel})`,
           inferenceProvider: InferenceProvider.NONE,
           inputCostPerMillionTokensInCredits: 0,
           outputCostPerMillionTokensInCredits: 0,
         },
         {
           modelId: DEFAULT_FAST_MODEL,
-          label: `Fast (${defaultSpeedModelLabel})`,
+          label: `Best (${defaultSpeedModelLabel})`,
           inferenceProvider: InferenceProvider.NONE,
           inputCostPerMillionTokensInCredits: 0,
           outputCostPerMillionTokensInCredits: 0,

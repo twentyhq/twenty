@@ -207,7 +207,6 @@ Core metadata states used by record-table, record-board, views, etc.
 ```
 object-metadata/states/lastFieldMetadataItemUpdateState.ts
 object-metadata/states/objectMetadataItemsState.ts
-object-metadata/states/shouldAppBeLoadingState.ts
 ```
 
 ### Selectors (12 files)

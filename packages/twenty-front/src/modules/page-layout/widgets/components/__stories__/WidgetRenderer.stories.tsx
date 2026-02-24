@@ -13,7 +13,7 @@ import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
+import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -284,7 +284,7 @@ export const WithNumberChart: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(widget);
       snapshot.set(
         pageLayoutPersistedComponentState.atomFamily({
@@ -372,7 +372,7 @@ export const WithGaugeChart: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(widget);
       snapshot.set(
         pageLayoutPersistedComponentState.atomFamily({
@@ -464,7 +464,7 @@ export const WithBarChart: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(widget);
       snapshot.set(
         pageLayoutPersistedComponentState.atomFamily({
@@ -559,7 +559,7 @@ export const SmallWidget: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(widget);
       snapshot.set(
         pageLayoutPersistedComponentState.atomFamily({
@@ -658,7 +658,7 @@ export const MediumWidget: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(widget);
       snapshot.set(
         pageLayoutPersistedComponentState.atomFamily({
@@ -757,7 +757,7 @@ export const LargeWidget: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(widget);
       snapshot.set(
         pageLayoutPersistedComponentState.atomFamily({
@@ -852,7 +852,7 @@ export const WideWidget: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(widget);
       snapshot.set(
         pageLayoutPersistedComponentState.atomFamily({
@@ -951,7 +951,7 @@ export const TallWidget: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(widget);
       snapshot.set(
         pageLayoutPersistedComponentState.atomFamily({
@@ -1046,7 +1046,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         PageLayoutType.RECORD_PAGE,
@@ -1163,7 +1163,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         PageLayoutType.RECORD_PAGE,
@@ -1272,7 +1272,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         PageLayoutType.RECORD_PAGE,
@@ -1408,7 +1408,7 @@ export const OnMobile: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         PageLayoutType.RECORD_PAGE,
@@ -1507,7 +1507,7 @@ export const InSidePanel: Story = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
       const pageLayoutData = createPageLayoutWithWidget(
         widget,
         PageLayoutType.RECORD_PAGE,
@@ -1667,7 +1667,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(shouldAppBeLoadingState.atom, false);
+      jotaiStore.set(isAppMetadataReadyState.atom, true);
 
       if (state === 'hover') {
         snapshot.set(

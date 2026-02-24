@@ -12,6 +12,9 @@ type MetadataSerializedRelationProperties = {
     : Partial<Record<AllMetadataName, true>>;
 };
 
+export type MetadataSerializedRelatedMetadataName<T extends AllMetadataName> =
+  keyof (typeof ALL_METADATA_SERIALIZED_RELATION)[T];
+
 export const ALL_METADATA_SERIALIZED_RELATION = {
   agent: {},
   skill: {},

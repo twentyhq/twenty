@@ -1327,6 +1327,33 @@ export class ConfigVariables {
   AWS_BEDROCK_SESSION_TOKEN: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'When true, newly added models are automatically available to all workspaces',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  AI_AUTO_ENABLE_NEW_MODELS = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Model IDs to disable (used when AI_AUTO_ENABLE_NEW_MODELS is true)',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_DISABLED_MODEL_IDS: string[] = [];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Model IDs to enable (used when AI_AUTO_ENABLE_NEW_MODELS is false)',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_ENABLED_MODEL_IDS: string[] = [];
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,

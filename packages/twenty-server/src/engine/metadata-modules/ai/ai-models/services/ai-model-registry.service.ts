@@ -32,6 +32,10 @@ import { GROQ_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/
 import { MISTRAL_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/mistral-models.const';
 import { OPENAI_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/openai-models.const';
 import { XAI_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/xai-models.const';
+import {
+  isModelAllowedByWorkspace,
+  type WorkspaceModelAvailabilitySettings,
+} from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 
 export interface RegisteredAIModel {
   modelId: string;
@@ -369,6 +373,97 @@ export class AiModelRegistryService {
     };
 
     return providerToFamily[inferenceProvider] ?? ModelFamily.OPENAI;
+  }
+
+  isModelAdminAllowed(modelId: string): boolean {
+    if (modelId === DEFAULT_FAST_MODEL || modelId === DEFAULT_SMART_MODEL) {
+      return true;
+    }
+
+    const autoEnable = this.twentyConfigService.get(
+      'AI_AUTO_ENABLE_NEW_MODELS',
+    );
+    const disabledIds = this.twentyConfigService.get('AI_DISABLED_MODEL_IDS');
+    const enabledIds = this.twentyConfigService.get('AI_ENABLED_MODEL_IDS');
+
+    return autoEnable
+      ? !disabledIds.includes(modelId)
+      : enabledIds.includes(modelId);
+  }
+
+  validateModelAvailability(
+    modelId: string,
+    workspace: WorkspaceModelAvailabilitySettings,
+  ): void {
+    if (!this.isModelAdminAllowed(modelId)) {
+      throw new AgentException(
+        'The selected model has been disabled by the administrator.',
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+
+    if (!isModelAllowedByWorkspace(modelId, workspace)) {
+      throw new AgentException(
+        'The selected model is not available in this workspace.',
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+  }
+
+  getAdminFilteredModels(): RegisteredAIModel[] {
+    return this.getAvailableModels().filter((model) =>
+      this.isModelAdminAllowed(model.modelId),
+    );
+  }
+
+  getAllModelsWithStatus(): Array<{
+    modelConfig: AIModelConfig;
+    isAvailable: boolean;
+    isAdminEnabled: boolean;
+  }> {
+    return AI_MODELS.map((model) => ({
+      modelConfig: model,
+      isAvailable: this.modelRegistry.has(model.modelId),
+      isAdminEnabled: this.isModelAdminAllowed(model.modelId),
+    }));
+  }
+
+  async setModelAdminEnabled(modelId: string, enabled: boolean): Promise<void> {
+    const isKnownModel = AI_MODELS.some((model) => model.modelId === modelId);
+
+    if (!isKnownModel) {
+      throw new AgentException(
+        `Unknown model ID: ${modelId}`,
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+
+    const autoEnable = this.twentyConfigService.get(
+      'AI_AUTO_ENABLE_NEW_MODELS',
+    );
+    const disabledIds = this.twentyConfigService.get('AI_DISABLED_MODEL_IDS');
+    const enabledIds = this.twentyConfigService.get('AI_ENABLED_MODEL_IDS');
+
+    if (autoEnable) {
+      const newDisabledIds = enabled
+        ? disabledIds.filter((id) => id !== modelId)
+        : disabledIds.includes(modelId)
+          ? disabledIds
+          : [...disabledIds, modelId];
+
+      await this.twentyConfigService.set(
+        'AI_DISABLED_MODEL_IDS',
+        newDisabledIds,
+      );
+    } else {
+      const newEnabledIds = enabled
+        ? enabledIds.includes(modelId)
+          ? enabledIds
+          : [...enabledIds, modelId]
+        : enabledIds.filter((id) => id !== modelId);
+
+      await this.twentyConfigService.set('AI_ENABLED_MODEL_IDS', newEnabledIds);
+    }
   }
 
   refreshRegistry(): void {
