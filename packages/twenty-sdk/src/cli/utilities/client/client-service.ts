@@ -185,10 +185,6 @@ export default class Twenty {
     const merged: TwentyClientOptions = {
       ...defaultOptions,
       ...options,
-      headers: {
-        ...defaultOptions.headers,
-        ...(options?.headers ?? {}),
-      },
     }
 
     const {
@@ -351,7 +347,9 @@ export default class Twenty {
       new Headers(headers).forEach((value, key) => requestHeaders.set(key, value));
     }
 
-    if (!(operation instanceof FormData)) {
+    if (operation instanceof FormData) {
+      requestHeaders.delete('Content-Type');
+    } else {
       requestHeaders.set('Content-Type', 'application/json');
     }
 
