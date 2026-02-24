@@ -32,7 +32,7 @@ describe('triggers.trigger_record.created', () => {
         requestDb({
           z,
           bundle,
-          query: `query webhook {webhook(input: {id: "${result.id}"}){id operations}}`,
+          query: `query webhook {webhook(id: "${result.id}"){id operations}}`,
         }),
       bundle,
     );
@@ -65,7 +65,11 @@ describe('triggers.trigger_record.created', () => {
 
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
-        requestDb({ z, bundle, query: `query webhook {webhooks {id}}` }),
+        requestDb({
+          z,
+          bundle,
+          query: `query webhook {webhooks {id}}`,
+        }),
       bundle,
     );
     expect(
@@ -144,7 +148,7 @@ describe('triggers.trigger_record.update', () => {
         requestDb({
           z,
           bundle,
-          query: `query webhook {webhook(input: {id: "${result.id}"}){id operations}}`,
+          query: `query webhook {webhook(id: "${result.id}"){id operations }}`,
         }),
       bundle,
     );
@@ -176,7 +180,11 @@ describe('triggers.trigger_record.update', () => {
 
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
-        requestDb({ z, bundle, query: `query webhook {webhooks {id}}` }),
+        requestDb({
+          z,
+          bundle,
+          query: `query webhook {webhooks {id}}`,
+        }),
       bundle,
     );
     expect(
@@ -226,7 +234,7 @@ describe('triggers.trigger_record.delete', () => {
         requestDb({
           z,
           bundle,
-          query: `query webhook {webhook(input: {id: "${result.id}"}){id operations}}`,
+          query: `query webhook {webhook(id: "${result.id}"){id operations }}`,
         }),
       bundle,
     );
@@ -258,7 +266,11 @@ describe('triggers.trigger_record.delete', () => {
 
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
-        requestDb({ z, bundle, query: `query webhook {webhooks {id}}` }),
+        requestDb({
+          z,
+          bundle,
+          query: `query webhook {webhooks {id}}`,
+        }),
       bundle,
     );
     expect(
