@@ -1,4 +1,4 @@
-import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER, CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER, ENDED_AT_FIELD_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
+import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER, CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER, ENDED_AT_FIELD_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER, RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
 import { defineView } from 'twenty-sdk';
 
 export const CALL_RECORDING_VIEW_UNIVERSAL_IDENTIFIER =
@@ -31,6 +31,13 @@ export default defineView({
       isVisible: true,
       size: 12,
       position: 2,
+    },
+    {
+      universalIdentifier: 'a7bce6c7-39ce-406a-bc6f-00b495951b4a',
+      fieldMetadataUniversalIdentifier: RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+      isVisible: true,
+      size: 12,
+      position: 3,
     },
   ],
 });

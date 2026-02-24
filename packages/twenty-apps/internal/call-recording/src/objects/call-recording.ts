@@ -12,6 +12,9 @@ export const CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
 export const ENDED_AT_FIELD_UNIVERSAL_IDENTIFIER =
   '56185e64-6591-41c1-a3e0-af8de20a5471';
 
+export const RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER =
+  'e78d41fd-a493-4d06-b036-0dd7b7617dbe';
+
 export default defineObject({
   universalIdentifier: CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
   nameSingular: 'callRecording',
@@ -45,6 +48,15 @@ export default defineObject({
       label: 'Ended at',
       description: 'When the call ended',
       icon: 'IconCalendar',
+    },
+    {
+      universalIdentifier: RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.FILES,
+      name: 'recordingFile',
+      label: 'Recording file',
+      description: 'The recording file of the call recording',
+      icon: 'IconFile',
+      universalSettings: { maxNumberOfValues: 1 },
     },
   ],
 });

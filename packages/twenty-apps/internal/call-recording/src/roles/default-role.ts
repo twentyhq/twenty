@@ -1,4 +1,5 @@
 import { defineRole } from 'twenty-sdk';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'f9cfb3ce-cb1e-4f55-af85-be45f6059054';
@@ -11,4 +12,5 @@ export default defineRole({
   canUpdateAllObjectRecords: true,
   canSoftDeleteAllObjectRecords: true,
   canDestroyAllObjectRecords: false,
+  permissionFlags: [PermissionFlagType.UPLOAD_FILE],
 });
