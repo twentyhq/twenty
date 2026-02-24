@@ -33,6 +33,7 @@ const StyledRow = styled.div<{ isExpanded: boolean }>`
 const StyledTabsPill = styled.div`
   align-items: center;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
+  background: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.pill};
   padding: ${({ theme }) => theme.spacing(0.75)};
   height: ${({ theme }) => theme.spacing(7)};
@@ -74,6 +75,7 @@ const StyledTabIcon = styled.div`
 const StyledNewChatButtonWrapper = styled.div<{ isExpanded: boolean }>`
   align-items: center;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
+  background: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.pill};
   box-sizing: border-box;
   display: flex;
