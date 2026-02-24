@@ -2,7 +2,7 @@ import { version as platformVersion } from 'zapier-platform-core';
 
 import 'dotenv/config';
 
-const { version } = require('../package.json');
+import { version } from '../package.json';
 
 import crudRecord, { crudRecordKey } from 'src/creates/crud_record';
 import findObjectNamesSingular, {
