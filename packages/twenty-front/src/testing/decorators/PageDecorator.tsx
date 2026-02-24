@@ -16,16 +16,16 @@ import { ClientConfigProviderEffect } from '@/client-config/components/ClientCon
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+import { MetadataGater } from '@/metadata-store/components/MetadataGater';
+import { MetadataProviderInitialEffects } from '@/metadata-store/effect-components/MetadataProviderInitialEffects';
+import { IsAppMetadataReadyEffect } from '@/metadata-store/effect-components/IsAppMetadataReadyEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { MetadataProviderEffect } from '@/users/components/MetadataProviderEffect';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
-import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
-import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
-import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
@@ -88,12 +88,12 @@ const Providers = () => {
               <ApolloStorybookDevLogEffect />
               <ClientConfigProviderEffect />
               <ClientConfigProvider>
-                <MetadataProviderEffect />
+                <MetadataProviderInitialEffects />
+                <IsAppMetadataReadyEffect />
                 <WorkspaceProviderEffect />
-                <UserProvider>
+                <MetadataGater>
                   <ApolloCoreClientMockedProvider>
-                    <ObjectMetadataItemsLoadEffect />
-                    <ObjectMetadataItemsProvider>
+                    <PreComputedChipGeneratorsProvider>
                       <FullHeightStorybookLayout>
                         <HelmetProvider>
                           <IconsProvider>
@@ -105,10 +105,10 @@ const Providers = () => {
                           </IconsProvider>
                         </HelmetProvider>
                       </FullHeightStorybookLayout>
-                    </ObjectMetadataItemsProvider>
+                    </PreComputedChipGeneratorsProvider>
                     <MainContextStoreProvider />
                   </ApolloCoreClientMockedProvider>
-                </UserProvider>
+                </MetadataGater>
               </ClientConfigProvider>
             </I18nProvider>
           </ApolloProvider>

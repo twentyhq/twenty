@@ -2,6 +2,7 @@ import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -15,6 +16,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 import { AgentService } from './agent.service';
 
@@ -35,7 +37,10 @@ import { AgentGraphqlApiExceptionInterceptor } from './interceptors/agent-graphq
 )
 @MetadataResolver()
 export class AgentResolver {
-  constructor(private readonly agentService: AgentService) {}
+  constructor(
+    private readonly agentService: AgentService,
+    private readonly aiModelRegistryService: AiModelRegistryService,
+  ) {}
 
   @Query(() => [AgentDTO])
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
@@ -67,11 +72,18 @@ export class AgentResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async createOneAgent(
     @Args('input') input: CreateAgentInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
+    if (isDefined(input.modelId)) {
+      this.aiModelRegistryService.validateModelAvailability(
+        input.modelId,
+        workspace,
+      );
+    }
+
     const createdAgent = await this.agentService.createOneAgent(
       { ...input, isCustom: true },
-      workspaceId,
+      workspace.id,
     );
 
     return fromFlatAgentWithRoleIdToAgentDto(createdAgent);
@@ -82,11 +94,18 @@ export class AgentResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async updateOneAgent(
     @Args('input') input: UpdateAgentInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
+    if (isDefined(input.modelId)) {
+      this.aiModelRegistryService.validateModelAvailability(
+        input.modelId,
+        workspace,
+      );
+    }
+
     const updatedAgent = await this.agentService.updateOneAgent({
       input,
-      workspaceId,
+      workspaceId: workspace.id,
     });
 
     return fromFlatAgentWithRoleIdToAgentDto(updatedAgent);

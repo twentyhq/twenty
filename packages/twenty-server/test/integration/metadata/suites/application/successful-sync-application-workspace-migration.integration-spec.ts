@@ -4,6 +4,7 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { type Manifest } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -205,6 +206,60 @@ describe('syncApplication', () => {
 
     expect(secondSyncData).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny(secondSyncData),
+    );
+  }, 60000);
+
+  it('should create a TEXT field on the standard Company object', async () => {
+    const companyFieldId = uuidv4();
+
+    const manifest: Manifest = {
+      application: {
+        universalIdentifier: TEST_APP_ID,
+        defaultRoleUniversalIdentifier: TEST_ROLE_ID,
+        displayName: 'Test Application',
+        description: 'A test application for workspace migration',
+        icon: 'IconTestPipe',
+        applicationVariables: {},
+        packageJsonChecksum: null,
+        yarnLockChecksum: null,
+        apiClientChecksum: null,
+      },
+      roles: [
+        {
+          universalIdentifier: TEST_ROLE_ID,
+          label: 'Test Role',
+          description: 'A test role',
+        },
+      ],
+      skills: [],
+      objects: [],
+      fields: [
+        {
+          universalIdentifier: companyFieldId,
+          type: FieldMetadataType.TEXT,
+          name: 'industry',
+          label: 'Industry',
+          description: 'The industry of the company',
+          icon: 'IconBuildingFactory2',
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.company.universalIdentifier,
+        },
+      ],
+      logicFunctions: [],
+      frontComponents: [],
+      publicAssets: [],
+      views: [],
+      navigationMenuItems: [],
+      pageLayouts: [],
+    };
+
+    const { data: syncData } = await syncApplication({
+      manifest,
+      expectToFail: false,
+    });
+
+    expect(syncData).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(syncData),
     );
   }, 60000);
 });
