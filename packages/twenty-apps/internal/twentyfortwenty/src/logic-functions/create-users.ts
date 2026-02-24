@@ -1,5 +1,8 @@
 import { defineLogicFunction } from 'twenty-sdk';
+import Twenty from 'twenty-sdk/generated';
 import { z } from 'zod';
+
+const client = new Twenty();
 
 const applicationConfigSchema = z.object({
   CLICKHOUSE_DATABASE: z.string().nonempty(),
@@ -39,25 +42,25 @@ const clickHouseUserSchema = z.object({
   deletedAt: z.string(),
   locale: z.string(),
   createdDate: z.string(),
-  workspaceCount: z.number(),
+  workspaceCount: z.coerce.number(),
   workspaceIds: z.string(),
   workspaceDomains: z.string(),
   firstActivityDate: z.string(),
   lastActivityDate: z.string(),
   lastWorkspaceId: z.string(),
-  totalPageviews: z.number(),
-  pageviewsLast30d: z.number(),
-  pageviewsLast7d: z.number(),
-  pageviewsLast24h: z.number(),
-  userAgeDays: z.number(),
-  daysSinceLastActivity: z.number(),
+  totalPageviews: z.coerce.number(),
+  pageviewsLast30d: z.coerce.number(),
+  pageviewsLast7d: z.coerce.number(),
+  pageviewsLast24h: z.coerce.number(),
+  userAgeDays: z.coerce.number(),
+  daysSinceLastActivity: z.coerce.number(),
   isActiveLast30d: z.boolean(),
   isActiveLast7d: z.boolean(),
   isActiveLast24h: z.boolean(),
   activityStatus: z.string().transform((val) => val.toUpperCase()),
-  avgDailyPageviewsLast30d: z.number(),
-  isTwenty: z.number(),
-  maxWorkspaceMembers: z.number(),
+  avgDailyPageviewsLast30d: z.coerce.number(),
+  isTwenty: z.coerce.number(),
+  maxWorkspaceMembers: z.coerce.number(),
   inTrial: z.boolean(),
 });
 
@@ -74,17 +77,15 @@ const fetchUsersFromClickHouse = async (): Promise<{
   } = getApplicationConfig();
 
   const findUsersWithRecentActivity = `
-      SELECT
-        *
-      FROM
-        ${clickHouseDatabase}.user
-      WHERE
-        lastActivityDate >= now() - INTERVAL 500 MINUTE
-          AND
-        lastActivityDate <= now()
-      FORMAT
-        JSONEachRow;
-    `;
+    SELECT
+      *
+    FROM
+      ${clickHouseDatabase}.user
+    LIMIT
+      20
+    FORMAT
+      JSONEachRow;
+  `;
 
   const res = await fetch(clickHouseUrl, {
     method: 'POST',
@@ -120,12 +121,48 @@ const fetchUsersFromClickHouse = async (): Promise<{
   return { users };
 };
 
-const handler = async (): Promise<{ message: string }> => {
-  const { users } = await fetchUsersFromClickHouse();
+const fetchAllPeopleFromTwentyByEmail = async (emails: string[]) => {
+  const allPeople = await client.query({
+    people: {
+      edges: {
+        node: {
+          id: true,
+          emails: {
+            primaryEmail: true,
+          },
+        },
+      },
+      __args: {
+        filter: {
+          emails: {
+            primaryEmail: {
+              in: emails,
+            },
+          },
+        },
+      },
+    },
+  });
 
-  return {
-    message: `Successfully fetched ${users.length} users from ClickHouse`,
-  };
+  return allPeople.people?.edges.map((edge) => edge.node) ?? [];
+};
+
+const handler = async (): Promise<{ message: string }> => {
+  try {
+    const { users } = await fetchUsersFromClickHouse();
+
+    const emails = users.map((user) => user.email);
+
+    const people = await fetchAllPeopleFromTwentyByEmail(emails);
+
+    return {
+      message: `Successfully fetched ${users.length} users from ClickHouse`,
+    };
+  } catch (err) {
+    console.log(err);
+
+    throw err;
+  }
 };
 
 export default defineLogicFunction({

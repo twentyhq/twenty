@@ -60,26 +60,7 @@
       "handlerName": "default.config.handler",
       "sourceHandlerPath": "src/logic-functions/create-users.ts",
       "builtHandlerPath": "src/logic-functions/create-users.mjs",
-      "builtHandlerChecksum": "14e98fd071eac8a9ea3ea08b364f1f35"
-    },
-    {
-      "universalIdentifier": "ea5b3bbd-a8c3-48ed-880e-a0d062588f53",
-      "name": "hello-world-logic-function",
-      "description": "A simple logic function",
-      "timeoutSeconds": 5,
-      "httpRouteTriggerSettings": {
-        "path": "/hello-world-logic-function",
-        "httpMethod": "GET",
-        "isAuthRequired": false
-      },
-      "toolInputSchema": {
-        "type": "object",
-        "properties": {}
-      },
-      "handlerName": "default.config.handler",
-      "sourceHandlerPath": "src/logic-functions/hello-world.ts",
-      "builtHandlerPath": "src/logic-functions/hello-world.mjs",
-      "builtHandlerChecksum": "9ee9adbb5483ec5477fbc18d97b3112b"
+      "builtHandlerChecksum": "f6c7eafb1b70e06599bb79ef382e773a"
     }
   ],
   "frontComponents": [],

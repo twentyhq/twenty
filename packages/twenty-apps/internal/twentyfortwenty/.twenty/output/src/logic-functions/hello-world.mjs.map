@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../../src/logic-functions/hello-world.ts"],
-  "sourcesContent": ["import { defineLogicFunction } from 'twenty-sdk';\n\nconst handler = async (): Promise<{ message: string }> => {\n  return { message: 'Hello, World!' };\n};\n\nexport default defineLogicFunction({\n  universalIdentifier: 'ea5b3bbd-a8c3-48ed-880e-a0d062588f53',\n  name: 'hello-world-logic-function',\n  description: 'A simple logic function',\n  timeoutSeconds: 5,\n  handler,\n  httpRouteTriggerSettings: {\n    path: '/hello-world-logic-function',\n    httpMethod: 'GET',\n    isAuthRequired: false,\n  },\n});\n"],
-  "mappings": ";;;;AAAA,SAAS,2BAA2B;AAEpC,IAAM,UAAU,YAA0C;AACxD,SAAO,EAAE,SAAS,gBAAgB;AACpC;AAEA,IAAO,sBAAQ,oBAAoB;AAAA,EACjC,qBAAqB;AAAA,EACrB,MAAM;AAAA,EACN,aAAa;AAAA,EACb,gBAAgB;AAAA,EAChB;AAAA,EACA,0BAA0B;AAAA,IACxB,MAAM;AAAA,IACN,YAAY;AAAA,IACZ,gBAAgB;AAAA,EAClB;AACF,CAAC;",
-  "names": []
-}
