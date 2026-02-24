@@ -52092,23 +52092,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-transform@npm:1.10.4":
-  version: 1.10.4
-  resolution: "prosemirror-transform@npm:1.10.4"
+"prosemirror-transform@npm:^1.0.0, prosemirror-transform@npm:^1.1.0, prosemirror-transform@npm:^1.10.2, prosemirror-transform@npm:^1.10.5, prosemirror-transform@npm:^1.7.1, prosemirror-transform@npm:^1.7.3":
+  version: 1.11.0
+  resolution: "prosemirror-transform@npm:1.11.0"
   dependencies:
     prosemirror-model: "npm:^1.21.0"
-  checksum: 10c0/01a7b79d8e2bf61b3414f60f8790a19f2cebb85a2050f64594cbff54f62d5c5f56160a66bbfa089462239189b4667952ede738e68b9e154a3505845720230a1c
+  checksum: 10c0/07f5b4ff6c0e05f7f68fbb067d0f4a2030242c4d2312b0b979bb7553059d80c13b3e86e8f4ba71a5a7352fa8c4c4a1fd4ba3dfbf73efed94631b5a53915fbe89
   languageName: node
   linkType: hard
 
-"prosemirror-view@npm:1.40.0":
-  version: 1.40.0
-  resolution: "prosemirror-view@npm:1.40.0"
+"prosemirror-view@npm:^1.0.0, prosemirror-view@npm:^1.1.0, prosemirror-view@npm:^1.27.0, prosemirror-view@npm:^1.30.2, prosemirror-view@npm:^1.31.0, prosemirror-view@npm:^1.38.1, prosemirror-view@npm:^1.41.4":
+  version: 1.41.6
+  resolution: "prosemirror-view@npm:1.41.6"
   dependencies:
     prosemirror-model: "npm:^1.20.0"
     prosemirror-state: "npm:^1.0.0"
     prosemirror-transform: "npm:^1.1.0"
-  checksum: 10c0/9fde9b415b9beeeda823acc170871f420f8e8646be83d9af5b9b5c124419d9a4b5c1293d9536dd06910b6154a001401d79cdc57a902fb7a0ea19501966f8dfdd
+  checksum: 10c0/a0dd304cabf11deb5b396c3568cf0ea39dcddc71b1834924a9a08bca73ce148779a8d66859f90acdeb8d5e68b3aaf1c0adbbc343af80840683c27f43596bdade
   languageName: node
   linkType: hard
 
