@@ -32,6 +32,7 @@ export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
+  requestAccessTokenRefresh?: RequestAccessTokenRefreshFunction;
   openSidePanelPage?: OpenSidePanelPageFunction;
   unmountFrontComponent?: UnmountFrontComponentFunction;
   enqueueSnackbar?: EnqueueSnackbarFunction;

@@ -24,7 +24,6 @@ import { type FrontComponentHostCommunicationApi } from '../../types/FrontCompon
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { exposeGlobals } from '../utils/exposeGlobals';
-import { setupFetchInterceptor } from './utils/setupFetchInterceptor';
 import { setWorkerEnv } from './utils/setWorkerEnv';
 
 installStylePropertyOnRemoteElements();
@@ -38,14 +37,6 @@ const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
   renderContext: HostToWorkerRenderContext,
 ) => {
-  if (isDefined(renderContext.apiUrl)) {
-    setupFetchInterceptor({
-      requestRefresh: () =>
-        frontComponentWorkerThread.imports.requestAccessTokenRefresh(),
-      trustedBaseUrl: renderContext.apiUrl,
-    });
-  }
-
   const batchedConnection = new BatchingRemoteConnection(connection);
   const root = document.createElement('remote-root') as RemoteRootElement;
   const renderContainer = document.createElement('remote-fragment');
@@ -102,6 +93,8 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
       ThreadWebWorker.self.import<FrontComponentHostCommunicationApi>();
 
     frontComponentHostCommunicationApi.navigate = hostApi.navigate;
+    frontComponentHostCommunicationApi.requestAccessTokenRefresh =
+      hostApi.requestAccessTokenRefresh;
     frontComponentHostCommunicationApi.openSidePanelPage =
       hostApi.openSidePanelPage;
     frontComponentHostCommunicationApi.unmountFrontComponent =
@@ -117,13 +110,8 @@ const updateContext: WorkerExports['updateContext'] = async (
   setFrontComponentExecutionContext(context);
 };
 
-const frontComponentWorkerThread = ThreadWebWorker.self<
-  FrontComponentHostCommunicationApi,
-  WorkerExports
->({
-  exports: {
-    render,
-    initializeHostCommunicationApi,
-    updateContext,
-  },
+ThreadWebWorker.self.export({
+  render,
+  initializeHostCommunicationApi,
+  updateContext,
 });
