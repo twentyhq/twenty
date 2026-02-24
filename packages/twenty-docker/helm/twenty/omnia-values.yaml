@@ -32,12 +32,12 @@ server:
       nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
       nginx.ingress.kubernetes.io/proxy-buffering: "off"
-      nginx.ingress.kubernetes.io/server-snippet: |
-        location ~* \.(?:js|css|woff2?|svg|png|jpg|jpeg|gif|ico)$ {
-          add_header Cache-Control "public, max-age=31536000, immutable";
+      nginx.ingress.kubernetes.io/configuration-snippet: |
+        if ($request_uri ~* \.(?:js|css|woff2?|svg|png|jpg|jpeg|gif|ico)$) {
+          add_header Cache-Control "public, max-age=31536000, immutable" always;
         }
-        location = /index.html {
-          add_header Cache-Control "no-cache, no-store, must-revalidate";
+        if ($request_uri = /index.html) {
+          add_header Cache-Control "no-cache, no-store, must-revalidate" always;
         }
     hosts:
       - host: crm.omniaagent.com
