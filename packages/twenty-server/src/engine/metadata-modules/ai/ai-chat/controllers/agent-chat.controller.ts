@@ -65,10 +65,7 @@ export class AgentChatController {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Res() response: Response,
   ) {
-    const availableModels =
-      this.aiModelRegistryService.getAdminFilteredModels();
-
-    if (availableModels.length === 0) {
+    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AgentException(
         'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY).',
         AgentExceptionCode.API_KEY_NOT_CONFIGURED,
@@ -80,14 +77,14 @@ export class AgentChatController {
     if (!this.aiModelRegistryService.isModelAdminAllowed(resolvedModelId)) {
       throw new AgentException(
         'The selected model has been disabled by the administrator.',
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
 
     if (!isModelAllowedByWorkspace(resolvedModelId, workspace)) {
       throw new AgentException(
         'The selected model is not available in this workspace.',
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
 

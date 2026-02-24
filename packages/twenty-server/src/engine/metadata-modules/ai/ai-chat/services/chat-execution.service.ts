@@ -139,7 +139,7 @@ export class ChatExecutionService {
     ) {
       throw new AgentException(
         'The selected model is not available in this workspace.',
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
 
