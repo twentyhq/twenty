@@ -57,15 +57,8 @@ describe('Install application should fail when entity does not exist', () => {
     const { errors } = await installApplication({
       expectToFail: true,
       input: {
-        workspaceMigration: {
-          actions: [
-            {
-              type: 'delete',
-              metadataName: 'fieldMetadata',
-              universalIdentifier: '20202020-6110-4547-9fd0-2525257a2c3f',
-            },
-          ],
-        },
+        applicationUniversalIdentifier: '20202020-6110-4547-9fd0-2525257a2c3f',
+        version: '0.0.1',
       },
     });
 

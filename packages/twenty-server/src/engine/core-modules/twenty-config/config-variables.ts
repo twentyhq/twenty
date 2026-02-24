@@ -1606,6 +1606,16 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   PG_DATABASE_REPLICA_TIMEOUT_MS: number = 10000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
+    description:
+      'Base URL for downloading application tarballs. The full URL is {APPLICATION_REGISTRY_URL}/{id}@{version}/app.tar.gz',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  APPLICATION_REGISTRY_URL: string =
+    'https://github.com/twentyhq/twenty-apps/releases/download';
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

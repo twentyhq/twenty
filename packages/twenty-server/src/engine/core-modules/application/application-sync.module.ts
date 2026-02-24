@@ -5,12 +5,14 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ApplicationDevelopmentResolver } from 'src/engine/core-modules/application/resolvers/application-development.resolver';
 import { ApplicationResolver } from 'src/engine/core-modules/application/resolvers/application.resolver';
 import { MarketplaceResolver } from 'src/engine/core-modules/application/resolvers/marketplace.resolver';
+import { ApplicationInstallService } from 'src/engine/core-modules/application/services/application-install.service';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/services/application-manifest-migration.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
 import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -36,11 +38,13 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
     FileStorageModule,
     WorkspaceCacheModule,
     WorkspaceMigrationRunnerModule,
+    SecureHttpClientModule,
   ],
   providers: [
     ApplicationResolver,
     ApplicationDevelopmentResolver,
     MarketplaceResolver,
+    ApplicationInstallService,
     ApplicationManifestMigrationService,
     ApplicationSyncService,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,

@@ -1,4 +1,5 @@
 export type OutboundRequestSource =
   | 'webhook'
   | 'workflow-http'
-  | 'logic-function';
+  | 'logic-function'
+  | 'application-install';

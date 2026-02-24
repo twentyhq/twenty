@@ -1,0 +1,355 @@
+import { Injectable, Logger } from '@nestjs/common';
+
+import * as fs from 'fs/promises';
+import { join } from 'path';
+import { tmpdir } from 'os';
+
+import { v4 } from 'uuid';
+import { extract, type ReadEntry } from 'tar';
+import { type Manifest } from 'twenty-shared/application';
+import { FileFolder } from 'twenty-shared/types';
+
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const MAX_EXTRACTED_SIZE_BYTES = 500 * 1024 * 1024;
+
+type FileFolderMapping = {
+  fileFolder: FileFolder;
+  resourcePath: string;
+};
+
+@Injectable()
+export class ApplicationInstallService {
+  private readonly logger = new Logger(ApplicationInstallService.name);
+
+  constructor(
+    private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly fileStorageService: FileStorageService,
+    private readonly applicationSyncService: ApplicationSyncService,
+    private readonly twentyConfigService: TwentyConfigService,
+  ) {}
+
+  async installApplication({
+    applicationUniversalIdentifier,
+    version,
+    workspaceId,
+  }: {
+    applicationUniversalIdentifier: string;
+    version: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const temporaryDir = join(
+      tmpdir(),
+      `application-install-${v4()}`,
+    );
+
+    try {
+      await fs.mkdir(temporaryDir, { recursive: true });
+
+      const tarballPath = await this.downloadTarball({
+        applicationUniversalIdentifier,
+        version,
+        temporaryDir,
+        workspaceId,
+      });
+
+      await this.extractTarball({ tarballPath, temporaryDir });
+
+      const manifest = await this.readManifest(temporaryDir);
+
+      await this.writeExtractedFilesToStorage({
+        extractedDir: temporaryDir,
+        applicationUniversalIdentifier,
+        workspaceId,
+      });
+
+      await this.applicationSyncService.synchronizeFromManifest({
+        workspaceId,
+        manifest,
+      });
+
+      this.logger.log(
+        `Application ${applicationUniversalIdentifier}@${version} installed successfully`,
+      );
+
+      return true;
+    } finally {
+      await fs.rm(temporaryDir, { recursive: true, force: true });
+    }
+  }
+
+  private async downloadTarball({
+    applicationUniversalIdentifier,
+    version,
+    temporaryDir,
+    workspaceId,
+  }: {
+    applicationUniversalIdentifier: string;
+    version: string;
+    temporaryDir: string;
+    workspaceId: string;
+  }): Promise<string> {
+    const registryUrl = this.twentyConfigService.get(
+      'APPLICATION_REGISTRY_URL',
+    );
+    const tarballUrl = `${registryUrl}/${applicationUniversalIdentifier}@${version}/app.tar.gz`;
+
+    this.logger.log(`Downloading tarball from ${tarballUrl}`);
+
+    const httpClient = this.secureHttpClientService.getHttpClient(
+      { responseType: 'arraybuffer', timeout: 60_000 },
+      {
+        workspaceId,
+        source: 'application-install',
+      },
+    );
+
+    let response: { data: ArrayBuffer; status: number };
+
+    try {
+      response = await httpClient.get(tarballUrl);
+    } catch (error: unknown) {
+      const isAxiosError =
+        error !== null &&
+        typeof error === 'object' &&
+        'response' in error &&
+        typeof (error as { response?: { status?: number } }).response
+          ?.status === 'number';
+
+      if (isAxiosError) {
+        const status = (error as { response: { status: number } }).response
+          .status;
+
+        if (status === 404) {
+          throw new ApplicationException(
+            `Tarball not found for ${applicationUniversalIdentifier}@${version}`,
+            ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+          );
+        }
+      }
+
+      throw new ApplicationException(
+        `Failed to download tarball for ${applicationUniversalIdentifier}@${version}: ${error instanceof Error ? error.message : String(error)}`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const tarballPath = join(temporaryDir, 'app.tar.gz');
+
+    await fs.writeFile(tarballPath, Buffer.from(response.data));
+
+    return tarballPath;
+  }
+
+  private async extractTarball({
+    tarballPath,
+    temporaryDir,
+  }: {
+    tarballPath: string;
+    temporaryDir: string;
+  }): Promise<void> {
+    let totalExtractedSize = 0;
+
+    try {
+      await extract({
+        file: tarballPath,
+        cwd: temporaryDir,
+        filter: (path, entry) => {
+          if (path.includes('..')) {
+            this.logger.warn(
+              `Skipping path traversal entry: ${path}`,
+            );
+
+            return false;
+          }
+
+          if ('type' in entry) {
+            const readEntry = entry as ReadEntry;
+
+            if (
+              readEntry.type === 'SymbolicLink' ||
+              readEntry.type === 'Link'
+            ) {
+              this.logger.warn(`Skipping symlink entry: ${path}`);
+
+              return false;
+            }
+          }
+
+          totalExtractedSize += entry.size ?? 0;
+
+          if (totalExtractedSize > MAX_EXTRACTED_SIZE_BYTES) {
+            throw new ApplicationException(
+              `Extracted tarball exceeds maximum allowed size of ${MAX_EXTRACTED_SIZE_BYTES} bytes`,
+              ApplicationExceptionCode.INVALID_INPUT,
+            );
+          }
+
+          return true;
+        },
+      });
+    } catch (error) {
+      if (error instanceof ApplicationException) {
+        throw error;
+      }
+
+      throw new ApplicationException(
+        `Failed to extract tarball: ${error instanceof Error ? error.message : String(error)}`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    await fs.rm(tarballPath);
+  }
+
+  private async readManifest(extractedDir: string): Promise<Manifest> {
+    const manifestPath = join(extractedDir, 'manifest.json');
+
+    let manifestContent: string;
+
+    try {
+      manifestContent = await fs.readFile(manifestPath, 'utf-8');
+    } catch {
+      throw new ApplicationException(
+        'manifest.json not found in tarball',
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    try {
+      return JSON.parse(manifestContent) as Manifest;
+    } catch {
+      throw new ApplicationException(
+        'Failed to parse manifest.json',
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+  }
+
+  private resolveFileFolderMapping(
+    relativePath: string,
+  ): FileFolderMapping | null {
+    if (relativePath === 'manifest.json') {
+      return null;
+    }
+
+    if (relativePath === 'package.json') {
+      return {
+        fileFolder: FileFolder.Dependencies,
+        resourcePath: 'package.json',
+      };
+    }
+
+    if (relativePath === 'yarn.lock') {
+      return {
+        fileFolder: FileFolder.Dependencies,
+        resourcePath: 'yarn.lock',
+      };
+    }
+
+    if (relativePath.startsWith('public/')) {
+      return {
+        fileFolder: FileFolder.PublicAsset,
+        resourcePath: relativePath,
+      };
+    }
+
+    if (relativePath.startsWith('src/')) {
+      if (
+        relativePath.endsWith('.front-component.mjs') ||
+        relativePath.endsWith('.front-component.mjs.map')
+      ) {
+        return {
+          fileFolder: FileFolder.BuiltFrontComponent,
+          resourcePath: relativePath,
+        };
+      }
+
+      if (
+        relativePath.endsWith('.function.mjs') ||
+        relativePath.endsWith('.function.mjs.map')
+      ) {
+        return {
+          fileFolder: FileFolder.BuiltLogicFunction,
+          resourcePath: relativePath,
+        };
+      }
+
+      return {
+        fileFolder: FileFolder.Source,
+        resourcePath: relativePath,
+      };
+    }
+
+    return {
+      fileFolder: FileFolder.Source,
+      resourcePath: relativePath,
+    };
+  }
+
+  private async writeExtractedFilesToStorage({
+    extractedDir,
+    applicationUniversalIdentifier,
+    workspaceId,
+  }: {
+    extractedDir: string;
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const filePaths = await this.collectFilePaths(extractedDir, '');
+
+    for (const relativePath of filePaths) {
+      const mapping = this.resolveFileFolderMapping(relativePath);
+
+      if (mapping === null) {
+        continue;
+      }
+
+      const absolutePath = join(extractedDir, relativePath);
+      const fileContent = await fs.readFile(absolutePath);
+
+      await this.fileStorageService.writeFileLegacy({
+        file: fileContent,
+        name: mapping.resourcePath,
+        folder: join(
+          workspaceId,
+          applicationUniversalIdentifier,
+          mapping.fileFolder,
+        ),
+        mimeType: undefined,
+      });
+    }
+  }
+
+  private async collectFilePaths(
+    directory: string,
+    prefix: string,
+  ): Promise<string[]> {
+    const entries = await fs.readdir(directory, { withFileTypes: true });
+    const filePaths: string[] = [];
+
+    for (const entry of entries) {
+      const relativePath = prefix ? `${prefix}/${entry.name}` : entry.name;
+
+      if (entry.isDirectory()) {
+        const nestedPaths = await this.collectFilePaths(
+          join(directory, entry.name),
+          relativePath,
+        );
+
+        filePaths.push(...nestedPaths);
+      } else if (entry.isFile()) {
+        filePaths.push(relativePath);
+      }
+    }
+
+    return filePaths;
+  }
+}

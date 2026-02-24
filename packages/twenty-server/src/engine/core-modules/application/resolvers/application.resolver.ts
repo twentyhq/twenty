@@ -18,8 +18,8 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/dtos/application-token-pair.dto';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
-import { InstallApplicationInput } from 'src/engine/core-modules/application/dtos/install-application.input';
 import { UninstallApplicationInput } from 'src/engine/core-modules/application/dtos/uninstallApplicationInput';
+import { ApplicationInstallService } from 'src/engine/core-modules/application/services/application-install.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -33,7 +33,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -42,7 +41,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 @UseGuards(WorkspaceAuthGuard)
 export class ApplicationResolver {
   constructor(
-    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    private readonly applicationInstallService: ApplicationInstallService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationService: ApplicationService,
     private readonly applicationTokenService: ApplicationTokenService,
@@ -102,7 +101,11 @@ export class ApplicationResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async installApplication(
-    @Args() { workspaceMigration: { actions } }: InstallApplicationInput,
+    @Args('applicationUniversalIdentifier', {
+      type: () => UUIDScalarType,
+    })
+    applicationUniversalIdentifier: string,
+    @Args('version', { type: () => String }) version: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
@@ -121,23 +124,11 @@ export class ApplicationResolver {
       );
     }
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    await this.workspaceMigrationRunnerService.run({
-      workspaceMigration: {
-        actions,
-        applicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-      },
+    return this.applicationInstallService.installApplication({
+      applicationUniversalIdentifier,
+      version,
       workspaceId,
     });
-
-    return true;
   }
 
   @Mutation(() => Boolean)

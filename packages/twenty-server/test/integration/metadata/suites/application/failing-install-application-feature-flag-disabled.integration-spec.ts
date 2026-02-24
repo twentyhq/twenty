@@ -6,15 +6,8 @@ describe('Install application should fail when feature flag is disabled', () => 
     const { errors } = await installApplication({
       expectToFail: true,
       input: {
-        workspaceMigration: {
-          actions: [
-            {
-              type: 'delete',
-              metadataName: 'fieldMetadata',
-              universalIdentifier: '20202020-784f-4042-b58f-ae8dbf718f6e',
-            },
-          ],
-        },
+        applicationUniversalIdentifier: '20202020-784f-4042-b58f-ae8dbf718f6e',
+        version: '0.0.1',
       },
     });
 
