@@ -9,9 +9,9 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
@@ -39,18 +39,18 @@ export const SingleRecordPickerMenuItem = ({
   const selectableListComponentInstanceId =
     getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
-  const isSelectedByKeyboard = useRecoilComponentFamilyValueV2(
+  const isSelectedByKeyboard = useAtomComponentFamilyValue(
     isSelectedItemIdComponentFamilyState,
     morphItem.recordId,
     selectableListComponentInstanceId,
   );
 
-  const searchRecord = useFamilyRecoilValueV2(
+  const searchRecord = useFamilyAtomValue(
     searchRecordStoreFamilyState,
     morphItem.recordId,
   );
 
-  const searchableObjectMetadataItems = useRecoilComponentValueV2(
+  const searchableObjectMetadataItems = useAtomComponentValue(
     singleRecordPickerSearchableObjectMetadataItemsComponentState,
     recordPickerComponentInstanceId,
   );

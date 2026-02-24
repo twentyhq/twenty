@@ -1,9 +1,8 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
-export const lowDetailsActivatedComponentState =
-  createComponentStateV2<boolean>({
-    key: 'lowDetailsActivatedComponentState',
-    componentInstanceContext: RecordTableComponentInstanceContext,
-    defaultValue: false,
-  });
+export const lowDetailsActivatedComponentState = createComponentState<boolean>({
+  key: 'lowDetailsActivatedComponentState',
+  componentInstanceContext: RecordTableComponentInstanceContext,
+  defaultValue: false,
+});

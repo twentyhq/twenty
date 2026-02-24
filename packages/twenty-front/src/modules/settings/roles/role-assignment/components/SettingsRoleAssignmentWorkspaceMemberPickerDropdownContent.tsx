@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
 import { type SearchRecord } from '~/generated/graphql';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;
@@ -19,9 +19,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
   filteredWorkspaceMembers,
   onSelect,
 }: SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps) => {
-  const currentWorkspaceMembers = useRecoilValueV2(
-    currentWorkspaceMembersState,
-  );
+  const currentWorkspaceMembers = useAtomValue(currentWorkspaceMembersState);
 
   if (loading) {
     return null;

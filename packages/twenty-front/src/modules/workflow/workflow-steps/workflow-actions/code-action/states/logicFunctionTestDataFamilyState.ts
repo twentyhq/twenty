@@ -1,4 +1,4 @@
-import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
+import { createFamilyState } from '@/ui/utilities/state/jotai/utils/createFamilyState';
 import { LogicFunctionExecutionStatus } from '~/generated-metadata/graphql';
 
 export type LogicFunctionTestData = {
@@ -21,7 +21,7 @@ export const DEFAULT_OUTPUT_VALUE = {
   status: LogicFunctionExecutionStatus.IDLE,
 };
 
-export const logicFunctionTestDataFamilyState = createFamilyStateV2<
+export const logicFunctionTestDataFamilyState = createFamilyState<
   LogicFunctionTestData,
   string
 >({

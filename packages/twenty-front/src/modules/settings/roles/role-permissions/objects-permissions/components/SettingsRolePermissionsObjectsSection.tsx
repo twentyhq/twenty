@@ -2,8 +2,8 @@ import { SettingsRolePermissionsObjectsTableHeader } from '@/settings/roles/role
 import { SettingsRolePermissionsObjectsTableRow } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow';
 import { type SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
@@ -27,11 +27,11 @@ export const SettingsRolePermissionsObjectsSection = ({
   roleId,
   isEditable,
 }: SettingsRolePermissionsObjectsSectionProps) => {
-  const settingsDraftRole = useFamilyRecoilValueV2(
+  const settingsDraftRole = useFamilyAtomValue(
     settingsDraftRoleFamilyState,
     roleId,
   );
-  const setSettingsDraftRole = useSetFamilyRecoilStateV2(
+  const setSettingsDraftRole = useSetFamilyAtomState(
     settingsDraftRoleFamilyState,
     roleId,
   );

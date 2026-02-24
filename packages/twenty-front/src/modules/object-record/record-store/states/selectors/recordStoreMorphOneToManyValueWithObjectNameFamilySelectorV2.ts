@@ -1,7 +1,7 @@
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
+import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
 import { type RelationType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 
@@ -16,7 +16,7 @@ type MorphValueWithObjectName = {
 };
 
 export const recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2 =
-  createFamilySelectorV2<MorphValueWithObjectName[], MorphOneToManyFamilyKey>({
+  createFamilySelector<MorphValueWithObjectName[], MorphOneToManyFamilyKey>({
     key: 'recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2',
     get:
       ({ recordId, morphRelations }: MorphOneToManyFamilyKey) =>

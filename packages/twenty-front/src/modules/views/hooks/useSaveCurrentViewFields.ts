@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
@@ -21,7 +21,7 @@ export const useSaveCurrentViewFields = () => {
 
   const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
 
-  const currentViewIdCallbackState = useRecoilComponentStateCallbackStateV2(
+  const currentViewIdCallbackState = useAtomComponentStateCallbackState(
     contextStoreCurrentViewIdComponentState,
   );
 

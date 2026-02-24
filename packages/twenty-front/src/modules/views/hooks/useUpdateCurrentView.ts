@@ -1,11 +1,11 @@
 import { useStore } from 'jotai';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
@@ -21,12 +21,12 @@ import { useUpdateCoreViewMutation } from '~/generated-metadata/graphql';
 
 export const useUpdateCurrentView = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
-  const currentViewIdCallbackState = useRecoilComponentStateCallbackStateV2(
+  const currentViewIdCallbackState = useAtomComponentStateCallbackState(
     contextStoreCurrentViewIdComponentState,
   );
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
-  const setRecordIndexViewType = useSetRecoilStateV2(recordIndexViewTypeState);
+  const setRecordIndexViewType = useSetAtomState(recordIndexViewTypeState);
 
   const store = useStore();
 

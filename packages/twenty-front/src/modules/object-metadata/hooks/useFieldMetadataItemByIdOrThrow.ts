@@ -1,9 +1,9 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 export const useFieldMetadataItemByIdOrThrow = (fieldMetadataId: string) => {
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
 
   return getFieldMetadataItemByIdOrThrow({
     fieldMetadataId,

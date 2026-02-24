@@ -1,7 +1,7 @@
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const domainConfigurationState = createStateV2<
+export const domainConfigurationState = createState<
   Pick<ClientConfig, 'frontDomain' | 'defaultSubdomain'>
 >({
   key: 'domainConfiguration',

@@ -8,8 +8,8 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 const StyledCommandMenuContainer = styled.div<{ isMobile: boolean }>`
   max-height: ${({ theme, isMobile }) => {
@@ -29,19 +29,19 @@ type CommandMenuContainerProps = {
 export const CommandMenuContainer = ({
   children,
 }: CommandMenuContainerProps) => {
-  const objectMetadataItemId = useRecoilComponentValueV2(
+  const objectMetadataItemId = useAtomComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
   const isMobile = useIsMobile();
 
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
   );
 
-  const currentViewId = useRecoilComponentValueV2(
+  const currentViewId = useAtomComponentValue(
     contextStoreCurrentViewIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );

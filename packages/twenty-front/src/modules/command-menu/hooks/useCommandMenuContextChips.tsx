@@ -11,8 +11,8 @@ import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 const StyledIconWrapper = styled.div`
   background: ${({ theme }) => theme.background.primary};
@@ -23,21 +23,21 @@ const StyledIconWrapper = styled.div`
 `;
 
 export const useCommandMenuContextChips = () => {
-  const commandMenuNavigationStack = useRecoilValueV2(
+  const commandMenuNavigationStack = useAtomValue(
     commandMenuNavigationStackState,
   );
 
-  const allowRequestsToTwentyIcons = useRecoilValueV2(
+  const allowRequestsToTwentyIcons = useAtomValue(
     allowRequestsToTwentyIconsState,
   );
 
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
 
   const { navigateCommandMenuHistory } = useCommandMenuHistory();
 
   const theme = useTheme();
 
-  const commandMenuNavigationMorphItemsByPage = useRecoilValueV2(
+  const commandMenuNavigationMorphItemsByPage = useAtomValue(
     commandMenuNavigationMorphItemsByPageState,
   );
 
@@ -47,14 +47,14 @@ export const useCommandMenuContextChips = () => {
     morphItems.map((morphItem) => morphItem.recordId),
   );
 
-  const recordIdentifiers = useFamilySelectorValueV2(
+  const recordIdentifiers = useFamilySelectorValue(
     recordStoreIdentifiersFamilySelector,
     {
       recordIds: allRecordIds,
       allowRequestsToTwentyIcons,
     },
   );
-  const records = useFamilySelectorValueV2(recordStoreRecordsSelectorV2, {
+  const records = useFamilySelectorValue(recordStoreRecordsSelectorV2, {
     recordIds: allRecordIds,
   });
 

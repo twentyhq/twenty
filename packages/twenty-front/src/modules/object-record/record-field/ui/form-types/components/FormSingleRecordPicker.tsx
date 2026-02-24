@@ -12,7 +12,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -116,7 +116,7 @@ export const FormSingleRecordPicker = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+  const setRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
@@ -148,7 +148,7 @@ export const FormSingleRecordPicker = ({
     onClear?.();
   };
 
-  const setRecordPickerSelectedId = useSetRecoilComponentStateV2(
+  const setRecordPickerSelectedId = useSetAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );

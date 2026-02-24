@@ -1,11 +1,11 @@
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 import { type AgentMessage } from '~/generated-metadata/graphql';
 
 export const AgentChatMessagesComponentInstanceContext =
   createComponentInstanceContext();
 
-export const agentChatMessagesComponentState = createComponentStateV2<
+export const agentChatMessagesComponentState = createComponentState<
   AgentMessage[]
 >({
   key: 'agentChatMessagesComponentState',

@@ -9,8 +9,8 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 export const useFindManyRecordsSelectedInContextStore = ({
   instanceId,
@@ -19,7 +19,7 @@ export const useFindManyRecordsSelectedInContextStore = ({
   instanceId?: string;
   limit?: number;
 }) => {
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     instanceId,
   );
@@ -28,29 +28,29 @@ export const useFindManyRecordsSelectedInContextStore = ({
     objectId: contextStoreCurrentObjectMetadataItemId ?? '',
   });
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useAtomComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
     instanceId,
   );
 
-  const contextStoreFilters = useRecoilComponentValueV2(
+  const contextStoreFilters = useAtomComponentValue(
     contextStoreFiltersComponentState,
     instanceId,
   );
 
-  const contextStoreFilterGroups = useRecoilComponentValueV2(
+  const contextStoreFilterGroups = useAtomComponentValue(
     contextStoreFilterGroupsComponentState,
     instanceId,
   );
 
-  const contextStoreAnyFieldFilterValue = useRecoilComponentValueV2(
+  const contextStoreAnyFieldFilterValue = useAtomComponentValue(
     contextStoreAnyFieldFilterValueComponentState,
     instanceId,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
 
   const allFieldMetadataItems = objectMetadataItems.flatMap(
     (objectMetadataItem) => objectMetadataItem.fields,

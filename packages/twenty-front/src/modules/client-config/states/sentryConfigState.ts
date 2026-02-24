@@ -1,7 +1,7 @@
 import { type Sentry } from '~/generated-metadata/graphql';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const sentryConfigState = createStateV2<Sentry | null>({
+export const sentryConfigState = createState<Sentry | null>({
   key: 'sentryConfigState',
   defaultValue: null,
 });

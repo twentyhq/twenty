@@ -13,8 +13,8 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { Key } from 'ts-key-enum';
 
 export const useRecordTableRowHotkeys = (focusId: string) => {
@@ -27,7 +27,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
 
   const { activateRecordTableRow } = useActiveRecordTableRow();
 
-  const setIsRowFocusActive = useSetRecoilComponentStateV2(
+  const setIsRowFocusActive = useSetAtomComponentState(
     isRecordTableRowFocusActiveComponentState,
   );
 
@@ -86,7 +86,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
 
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
-  const isAtLeastOneRecordSelected = useRecoilComponentSelectorValueV2(
+  const isAtLeastOneRecordSelected = useAtomComponentSelectorValue(
     isAtLeastOneTableRowSelectedSelector,
     recordTableId,
   );

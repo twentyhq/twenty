@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const spreadsheetImportCreatedRecordsProgressState = createStateV2({
+export const spreadsheetImportCreatedRecordsProgressState = createState({
   key: 'spreadsheetImportCreatedRecordsProgressState',
   defaultValue: 0,
 });

@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const isKeyboardShortcutMenuOpenedStateV2 = createStateV2<boolean>({
+export const isKeyboardShortcutMenuOpenedStateV2 = createState<boolean>({
   key: 'keyboard-shortcut-menu/isKeyboardShortcutMenuOpenedStateV2',
   defaultValue: false,
 });

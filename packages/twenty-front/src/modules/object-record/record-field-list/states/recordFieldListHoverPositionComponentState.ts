@@ -1,9 +1,10 @@
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
-export const recordFieldListHoverPositionComponentState =
-  createComponentStateV2<number | null>({
-    key: 'recordFieldListHoverPositionComponentState',
-    defaultValue: null,
-    componentInstanceContext: RecordFieldListComponentInstanceContext,
-  });
+export const recordFieldListHoverPositionComponentState = createComponentState<
+  number | null
+>({
+  key: 'recordFieldListHoverPositionComponentState',
+  defaultValue: null,
+  componentInstanceContext: RecordFieldListComponentInstanceContext,
+});

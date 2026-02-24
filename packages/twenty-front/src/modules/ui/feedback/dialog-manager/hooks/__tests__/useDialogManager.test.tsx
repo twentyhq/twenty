@@ -7,7 +7,7 @@ import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/con
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
 import { type DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -84,7 +84,7 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => ({
       dialogManager: useDialogManager(),
-      dialogInternal: useRecoilComponentValueV2(dialogInternalComponentState),
+      dialogInternal: useAtomComponentValue(dialogInternalComponentState),
     }),
     renderHookConfig,
   );

@@ -4,7 +4,7 @@ import { getSelectedRecordsContextText } from '@/command-menu/utils/getRecordCon
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 export const CommandMenuContextRecordsChip = ({
   objectMetadataItemId,
@@ -16,7 +16,7 @@ export const CommandMenuContextRecordsChip = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
-  const allowRequestsToTwentyIcons = useRecoilValueV2(
+  const allowRequestsToTwentyIcons = useAtomValue(
     allowRequestsToTwentyIconsState,
   );
 

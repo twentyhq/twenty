@@ -1,6 +1,6 @@
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
@@ -8,12 +8,12 @@ export const useIsPrefetchLoading = () => {
   const isWorkspaceActive = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.ACTIVE,
   );
-  const isFavoriteFoldersPrefetched = useFamilyRecoilValueV2(
+  const isFavoriteFoldersPrefetched = useFamilyAtomValue(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavoritesFolders,
   );
 
-  const areFavoritesPrefetched = useFamilyRecoilValueV2(
+  const areFavoritesPrefetched = useFamilyAtomValue(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavorites,
   );

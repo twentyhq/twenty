@@ -1,7 +1,7 @@
 import { type Captcha } from '~/generated-metadata/graphql';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const captchaState = createStateV2<Captcha | null>({
+export const captchaState = createState<Captcha | null>({
   key: 'captchaState',
   defaultValue: null,
 });

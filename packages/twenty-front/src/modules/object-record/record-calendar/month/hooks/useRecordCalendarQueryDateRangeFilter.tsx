@@ -7,7 +7,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
@@ -34,19 +34,19 @@ export const useRecordCalendarQueryDateRangeFilter = (
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const currentRecordFilterGroups = useRecoilComponentValueV2(
+  const currentRecordFilterGroups = useAtomComponentValue(
     currentRecordFilterGroupsComponentState,
     viewBarInstanceId,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useAtomComponentValue(
     currentRecordFiltersComponentState,
     viewBarInstanceId,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const anyFieldFilterValue = useRecoilComponentValueV2(
+  const anyFieldFilterValue = useAtomComponentValue(
     anyFieldFilterValueComponentState,
     viewBarInstanceId,
   );

@@ -3,19 +3,19 @@ import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/obje
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordIndexGroupAggregatesDataLoader = () => {
-  const recordIndexGroupFieldMetadataItem = useRecoilComponentValueV2(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const recordIndexGroupAggregateFieldMetadataItem = useRecoilComponentValueV2(
+  const recordIndexGroupAggregateFieldMetadataItem = useAtomComponentValue(
     recordIndexGroupAggregateFieldMetadataItemComponentState,
   );
 
-  const recordIndexGroupAggregateOperation = useRecoilComponentValueV2(
+  const recordIndexGroupAggregateOperation = useAtomComponentValue(
     recordIndexGroupAggregateOperationComponentState,
   );
 

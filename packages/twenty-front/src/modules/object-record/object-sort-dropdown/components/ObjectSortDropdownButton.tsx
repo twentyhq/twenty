@@ -25,11 +25,11 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { findByProperty } from 'twenty-shared/utils';
 import { IconX, useIcons } from 'twenty-ui/display';
@@ -41,7 +41,7 @@ export const ObjectSortDropdownButton = () => {
   const { resetRecordSortDropdownSearchInput } =
     useResetRecordSortDropdownSearchInput();
 
-  const setObjectSortDropdownSearchInput = useSetRecoilComponentStateV2(
+  const setObjectSortDropdownSearchInput = useSetAtomComponentState(
     objectSortDropdownSearchInputComponentState,
   );
 
@@ -49,11 +49,11 @@ export const ObjectSortDropdownButton = () => {
 
   const { recordIndexId, objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const objectSortDropdownSearchInput = useRecoilComponentValueV2(
+  const objectSortDropdownSearchInput = useAtomComponentValue(
     objectSortDropdownSearchInputComponentState,
   );
 
-  const sortableFieldMetadataItems = useFamilySelectorValueV2(
+  const sortableFieldMetadataItems = useFamilySelectorValue(
     availableFieldMetadataItemsForSortFamilySelector,
     {
       objectMetadataItemId: objectMetadataItem.id,
@@ -62,7 +62,7 @@ export const ObjectSortDropdownButton = () => {
 
   const { getIcon } = useIcons();
 
-  const visibleRecordFields = useRecoilComponentSelectorValueV2(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
     recordIndexId,
   );
@@ -129,9 +129,9 @@ export const ObjectSortDropdownButton = () => {
   };
 
   const [selectedRecordSortDirection, setSelectedRecordSortDirection] =
-    useRecoilComponentStateV2(selectedRecordSortDirectionComponentState);
+    useAtomComponentState(selectedRecordSortDirectionComponentState);
 
-  const setIsRecordSortDirectionMenuUnfolded = useSetRecoilComponentStateV2(
+  const setIsRecordSortDirectionMenuUnfolded = useSetAtomComponentState(
     isRecordSortDirectionDropdownMenuUnfoldedComponentState,
   );
 
@@ -140,7 +140,7 @@ export const ObjectSortDropdownButton = () => {
     setIsRecordSortDirectionMenuUnfolded(false);
   };
 
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useAtomComponentValue(
     isDropdownOpenComponentState,
     OBJECT_SORT_DROPDOWN_ID,
   );
@@ -152,12 +152,12 @@ export const ObjectSortDropdownButton = () => {
     ...hiddenFieldMetadataItemsSorted.map((item) => item.id),
   ];
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useAtomComponentValue(
     selectedItemIdComponentState,
     OBJECT_SORT_DROPDOWN_ID,
   );
 
-  const setSelectedItemId = useSetRecoilComponentStateV2(
+  const setSelectedItemId = useSetAtomComponentState(
     selectedItemIdComponentState,
     OBJECT_SORT_DROPDOWN_ID,
   );

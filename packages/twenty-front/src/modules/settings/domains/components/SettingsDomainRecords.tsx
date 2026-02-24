@@ -8,14 +8,14 @@ import {
   type DomainRecord,
   type DomainValidRecords,
 } from '~/generated-metadata/graphql';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 export const SettingsDomainRecords = ({
   records,
 }: {
   records: DomainValidRecords['records'];
 }) => {
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomValue(currentWorkspaceState);
 
   const rowsDefinitions = [
     { name: 'Domain Setup', validationType: 'redirection' as const },

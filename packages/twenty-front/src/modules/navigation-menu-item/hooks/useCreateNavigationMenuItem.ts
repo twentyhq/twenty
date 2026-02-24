@@ -3,13 +3,13 @@ import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphq
 
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const useCreateNavigationMenuItem = () => {
   const { navigationMenuItems, currentWorkspaceMemberId } =
     usePrefetchedNavigationMenuItemsData();
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
 
   const [createNavigationMenuItemMutation] =
     useCreateNavigationMenuItemMutation({

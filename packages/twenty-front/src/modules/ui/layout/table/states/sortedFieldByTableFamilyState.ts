@@ -1,11 +1,11 @@
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
-import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
+import { createFamilyState } from '@/ui/utilities/state/jotai/utils/createFamilyState';
 
 export type SortedFieldByTableFamilyStateKey = {
   tableId: string;
 };
 
-export const sortedFieldByTableFamilyState = createFamilyStateV2<
+export const sortedFieldByTableFamilyState = createFamilyState<
   TableSortValue | null,
   SortedFieldByTableFamilyStateKey
 >({

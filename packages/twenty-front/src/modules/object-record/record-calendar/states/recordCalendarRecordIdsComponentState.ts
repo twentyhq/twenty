@@ -1,7 +1,7 @@
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
-export const recordCalendarRecordIdsComponentState = createComponentStateV2<
+export const recordCalendarRecordIdsComponentState = createComponentState<
   string[]
 >({
   key: 'recordCalendarRecordIdsComponentState',

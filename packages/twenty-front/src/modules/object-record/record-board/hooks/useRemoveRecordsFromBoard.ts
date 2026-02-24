@@ -4,26 +4,25 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { useStore } from 'jotai';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorCallbackStateV2';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveRecordsFromBoard = () => {
   const store = useStore();
-  const recordIndexGroupFieldMetadataItem =
-    useRecoilComponentStateCallbackStateV2(
-      recordIndexGroupFieldMetadataItemComponentState,
-    );
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateCallbackState(
+    recordIndexGroupFieldMetadataItemComponentState,
+  );
 
   const recordGroupFromGroupValueFamilyCallbackState =
-    useRecoilComponentFamilySelectorCallbackStateV2(
+    useAtomComponentFamilySelectorCallbackState(
       recordGroupFromGroupValueComponentFamilySelector,
     );
 
   const recordIndexRecordIdsByGroupFamilyCallbackState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 

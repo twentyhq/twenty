@@ -1,11 +1,11 @@
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/jotai/utils/createComponentSelector';
 import { isDefined } from 'twenty-shared/utils';
 
 export const rootLevelRecordFilterGroupComponentSelector =
-  createComponentSelectorV2<RecordFilterGroup | undefined>({
+  createComponentSelector<RecordFilterGroup | undefined>({
     key: 'rootLevelRecordFilterGroupComponentSelector',
     componentInstanceContext: RecordFilterGroupsComponentInstanceContext,
     get:

@@ -1,22 +1,24 @@
 import { atom, type Atom } from 'jotai';
 
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
-import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type ComponentSelectorV2 } from '@/ui/utilities/state/jotai/types/ComponentSelectorV2';
+import { type ComponentFamilySelectorV2 } from '@/ui/utilities/state/jotai/types/ComponentFamilySelectorV2';
+import { type ComponentFamilyStateKey } from '@/ui/utilities/state/jotai/types/ComponentFamilyStateV2';
 import { type SelectorGetterV2 } from '@/ui/utilities/state/jotai/types/SelectorCallbacksV2';
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
 import { isDefined } from 'twenty-shared/utils';
 
-export const createComponentSelectorV2 = <ValueType>({
+export const createComponentFamilySelector = <ValueType, FamilyKey>({
   key,
   get,
   componentInstanceContext,
 }: {
   key: string;
-  get: (key: ComponentStateKey) => (callbacks: SelectorGetterV2) => ValueType;
+  get: (
+    key: ComponentFamilyStateKey<FamilyKey>,
+  ) => (callbacks: SelectorGetterV2) => ValueType;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-}): ComponentSelectorV2<ValueType> => {
+}): ComponentFamilySelectorV2<ValueType, FamilyKey> => {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
@@ -24,15 +26,20 @@ export const createComponentSelectorV2 = <ValueType>({
   const atomCache = new Map<string, Atom<ValueType>>();
 
   const selectorFamily = (
-    componentStateKey: ComponentStateKey,
+    componentFamilyStateKey: ComponentFamilyStateKey<FamilyKey>,
   ): Atom<ValueType> => {
-    const existing = atomCache.get(componentStateKey.instanceId);
+    const familyKeyStr =
+      typeof componentFamilyStateKey.familyKey === 'string'
+        ? componentFamilyStateKey.familyKey
+        : JSON.stringify(componentFamilyStateKey.familyKey);
+    const cacheKey = `${componentFamilyStateKey.instanceId}__${familyKeyStr}`;
+    const existing = atomCache.get(cacheKey);
 
     if (existing !== undefined) {
       return existing;
     }
 
-    const getForKey = get(componentStateKey);
+    const getForKey = get(componentFamilyStateKey);
 
     const derivedAtom = atom((jotaiGet) => {
       const getHelper = buildGetHelper(jotaiGet);
@@ -40,14 +47,14 @@ export const createComponentSelectorV2 = <ValueType>({
       return getForKey({ get: getHelper });
     });
 
-    derivedAtom.debugLabel = `${key}__${componentStateKey.instanceId}`;
-    atomCache.set(componentStateKey.instanceId, derivedAtom);
+    derivedAtom.debugLabel = `${key}__${cacheKey}`;
+    atomCache.set(cacheKey, derivedAtom);
 
     return derivedAtom;
   };
 
   return {
-    type: 'ComponentSelectorV2',
+    type: 'ComponentFamilySelectorV2',
     key,
     selectorFamily,
   };

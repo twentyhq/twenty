@@ -10,8 +10,8 @@ import { RecordInlineCellDisplayMode } from '@/object-record/record-inline-cell/
 import { RecordInlineCellHoveredPortalContent } from '@/object-record/record-inline-cell/components/RecordInlineCellHoveredPortalContent';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
 
 export const RecordBoardCardCellHoveredPortalContent = () => {
@@ -32,9 +32,9 @@ export const RecordBoardCardCellHoveredPortalContent = () => {
     !isRecordFieldReadOnly && !editModeContentOnly;
 
   const [recordBoardCardHoverPosition, setRecordBoardCardHoverPosition] =
-    useRecoilComponentStateV2(recordBoardCardHoverPositionComponentState);
+    useAtomComponentState(recordBoardCardHoverPositionComponentState);
 
-  const setRecordBoardCardEditModePosition = useSetRecoilComponentStateV2(
+  const setRecordBoardCardEditModePosition = useSetAtomComponentState(
     recordBoardCardEditModePositionComponentState,
   );
   const { openFieldInput } = useOpenFieldInputEditMode();

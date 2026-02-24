@@ -16,8 +16,8 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -59,7 +59,7 @@ export const useRecordIndexLazyFetchRecords = ({
     viewBarId: recordIndexId,
   });
 
-  const recordGroupFieldMetadata = useRecoilComponentValueV2(
+  const recordGroupFieldMetadata = useAtomComponentValue(
     recordIndexGroupFieldMetadataItemComponentState,
     recordIndexId,
   );
@@ -68,22 +68,22 @@ export const useRecordIndexLazyFetchRecords = ({
     (column) => column.metadata.fieldName === recordGroupFieldMetadata?.name,
   );
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useAtomComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
     recordIndexId,
   );
 
-  const contextStoreFilters = useRecoilComponentValueV2(
+  const contextStoreFilters = useAtomComponentValue(
     contextStoreFiltersComponentState,
     recordIndexId,
   );
 
-  const contextStoreFilterGroups = useRecoilComponentValueV2(
+  const contextStoreFilterGroups = useAtomComponentValue(
     contextStoreFilterGroupsComponentState,
     recordIndexId,
   );
 
-  const contextStoreAnyFieldFilterValue = useRecoilComponentValueV2(
+  const contextStoreAnyFieldFilterValue = useAtomComponentValue(
     contextStoreAnyFieldFilterValueComponentState,
     recordIndexId,
   );
@@ -103,7 +103,7 @@ export const useRecordIndexLazyFetchRecords = ({
     contextStoreAnyFieldFilterValue,
   });
 
-  const visibleRecordFields = useRecoilComponentSelectorValueV2(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 

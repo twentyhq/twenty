@@ -10,9 +10,9 @@ import { lastSelectedRowIndexComponentState } from '@/object-record/record-table
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 
 export const useResetTableRowSelection = (recordTableId?: string) => {
   const recordTableIdFromContext = useAvailableComponentInstanceIdOrThrow(
@@ -20,23 +20,23 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const recordIndexAllRecordIds = useRecoilComponentSelectorCallbackStateV2(
+  const recordIndexAllRecordIds = useAtomComponentSelectorCallbackState(
     recordIndexAllRecordIdsComponentSelector,
     recordTableIdFromContext,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
+  const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
     isRowSelectedComponentFamilyState,
     recordTableIdFromContext,
   );
 
-  const hasUserSelectedAllRows = useRecoilComponentStateCallbackStateV2(
+  const hasUserSelectedAllRows = useAtomComponentStateCallbackState(
     hasUserSelectedAllRowsComponentState,
     recordTableIdFromContext,
   );
 
   const lastSelectedRowIndexComponentCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       lastSelectedRowIndexComponentState,
       recordTableIdFromContext,
     );

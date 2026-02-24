@@ -6,7 +6,7 @@ import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -28,7 +28,7 @@ export const LazyMetadataLoadEffect = () => {
   const isLoggedIn = useIsLogged();
   const store = useStore();
 
-  const setLogicFunctions = useSetRecoilStateV2(logicFunctionsState);
+  const setLogicFunctions = useSetAtomState(logicFunctionsState);
   const { updateDraft, applyChanges } = useMetadataStore();
 
   const isOnAuthPath =

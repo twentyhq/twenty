@@ -1,7 +1,7 @@
 import { type ApiConfig } from '~/generated-metadata/graphql';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const apiConfigState = createStateV2<ApiConfig | null>({
+export const apiConfigState = createState<ApiConfig | null>({
   key: 'apiConfigState',
   defaultValue: null,
 });

@@ -1,8 +1,8 @@
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 
 export const useSelectedRecordIds = () => {
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useAtomComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 

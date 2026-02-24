@@ -1,8 +1,8 @@
 import { RecordTitleCellComponentInstanceContext } from '@/object-record/record-title-cell/states/contexts/RecordTitleCellComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
 export const isTitleCellInEditModeComponentState =
-  createComponentStateV2<boolean>({
+  createComponentState<boolean>({
     key: 'isTitleCellInEditModeComponentState',
     defaultValue: false,
     componentInstanceContext: RecordTitleCellComponentInstanceContext,

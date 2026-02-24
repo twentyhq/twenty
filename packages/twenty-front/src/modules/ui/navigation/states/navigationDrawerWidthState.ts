@@ -1,9 +1,9 @@
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
 export const NAVIGATION_DRAWER_WIDTH_VAR = '--navigation-drawer-width';
 
-export const navigationDrawerWidthState = createStateV2<number>({
+export const navigationDrawerWidthState = createState<number>({
   key: 'navigationDrawerWidth',
   defaultValue: NAVIGATION_DRAWER_CONSTRAINTS.default,
   useLocalStorage: true,

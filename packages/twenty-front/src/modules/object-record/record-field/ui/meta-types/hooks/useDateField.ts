@@ -8,7 +8,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
-import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
+import { useFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorState';
 
 export const useDateField = () => {
   const { recordId, fieldDefinition, clearable } = useContext(FieldContext);
@@ -17,7 +17,7 @@ export const useDateField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useFamilySelectorStateV2(
+  const [fieldValue, setFieldValue] = useFamilySelectorState(
     recordStoreFamilySelectorV2,
     { recordId, fieldName },
   );

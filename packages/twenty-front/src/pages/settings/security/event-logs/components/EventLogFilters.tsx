@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -38,9 +38,7 @@ export const EventLogFilters = ({
   onChange,
 }: EventLogFiltersProps) => {
   const { t } = useLingui();
-  const currentWorkspaceMembers = useRecoilValueV2(
-    currentWorkspaceMembersState,
-  );
+  const currentWorkspaceMembers = useAtomValue(currentWorkspaceMembersState);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { getIcon } = useIcons();
 

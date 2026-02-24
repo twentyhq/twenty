@@ -1,8 +1,8 @@
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
 export const graphWidgetHighlightedLegendIdComponentState =
-  createComponentStateV2<string | null>({
+  createComponentState<string | null>({
     key: 'graphWidgetHighlightedLegendIdComponentState',
     defaultValue: null,
     componentInstanceContext: WidgetComponentInstanceContext,

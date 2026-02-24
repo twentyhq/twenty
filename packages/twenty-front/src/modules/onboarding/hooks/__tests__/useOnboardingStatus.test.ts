@@ -8,7 +8,7 @@ import {
   currentUserState,
 } from '@/auth/states/currentUserState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
@@ -36,8 +36,8 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const onboardingStatus = useOnboardingStatus();
-      const setCurrentUser = useSetRecoilStateV2(currentUserState);
-      const setTokenPair = useSetRecoilStateV2(tokenPairState);
+      const setCurrentUser = useSetAtomState(currentUserState);
+      const setTokenPair = useSetAtomState(tokenPairState);
 
       return {
         onboardingStatus,

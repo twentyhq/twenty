@@ -1,10 +1,10 @@
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/jotai/utils/createComponentSelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 export const allRecordIdsOfAllRecordGroupsComponentSelector =
-  createComponentSelectorV2<string[]>({
+  createComponentSelector<string[]>({
     key: 'allRecordIdsOfAllRecordGroupsComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:

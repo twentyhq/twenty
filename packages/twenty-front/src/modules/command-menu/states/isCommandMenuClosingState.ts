@@ -1,5 +1,5 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
-export const isCommandMenuClosingState = createStateV2({
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+export const isCommandMenuClosingState = createState({
   key: 'command-menu/isCommandMenuClosingState',
   defaultValue: false,
 });

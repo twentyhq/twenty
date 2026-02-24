@@ -1,7 +1,7 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
 export const workflowAiAgentPermissionsIsAddingPermissionStateV2 =
-  createStateV2<boolean>({
+  createState<boolean>({
     key: 'workflowAiAgentPermissionsIsAddingPermissionStateV2',
     defaultValue: false,
   });

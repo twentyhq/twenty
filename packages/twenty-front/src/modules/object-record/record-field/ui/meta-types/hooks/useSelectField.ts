@@ -5,8 +5,8 @@ import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
-import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorState';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { type FieldSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
@@ -20,7 +20,7 @@ export const useSelectField = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const [fieldValue, setFieldValue] = useFamilySelectorStateV2(
+  const [fieldValue, setFieldValue] = useFamilySelectorState(
     recordStoreFamilySelectorV2,
     { recordId, fieldName },
   );
@@ -29,7 +29,7 @@ export const useSelectField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldSelectValue>();
 
-  const draftValue = useRecoilComponentValueV2(
+  const draftValue = useAtomComponentValue(
     recordFieldInputDraftValueComponentState,
   );
 

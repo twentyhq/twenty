@@ -1,7 +1,7 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
-export const isMultiDragActiveComponentState = createComponentStateV2<boolean>({
+export const isMultiDragActiveComponentState = createComponentState<boolean>({
   key: 'isMultiDragActiveComponentState',
   defaultValue: false,
   componentInstanceContext: ContextStoreComponentInstanceContext,

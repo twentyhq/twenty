@@ -3,10 +3,10 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/jotai/utils/createComponentSelector';
 
 export const hasAnySoftDeleteFilterOnViewComponentSelector =
-  createComponentSelectorV2<boolean>({
+  createComponentSelector<boolean>({
     key: 'hasAnySoftDeleteFilterOnViewComponentSelector',
     componentInstanceContext: RecordFiltersComponentInstanceContext,
     get:

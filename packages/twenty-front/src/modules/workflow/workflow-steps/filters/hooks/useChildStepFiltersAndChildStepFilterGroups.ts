@@ -1,4 +1,4 @@
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
@@ -9,13 +9,11 @@ export const useChildStepFiltersAndChildStepFilterGroups = ({
 }: {
   stepFilterGroupId: string;
 }) => {
-  const stepFilterGroups = useRecoilComponentValueV2(
+  const stepFilterGroups = useAtomComponentValue(
     currentStepFilterGroupsComponentState,
   );
 
-  const stepFilters = useRecoilComponentValueV2(
-    currentStepFiltersComponentState,
-  );
+  const stepFilters = useAtomComponentValue(currentStepFiltersComponentState);
 
   const currentStepFilterGroup = stepFilterGroups?.find(
     (stepFilterGroup) => stepFilterGroup.id === stepFilterGroupId,

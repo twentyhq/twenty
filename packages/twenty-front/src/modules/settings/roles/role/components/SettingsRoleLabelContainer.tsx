@@ -1,6 +1,6 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -23,11 +23,11 @@ type SettingsRoleLabelContainerProps = {
 export const SettingsRoleLabelContainer = ({
   roleId,
 }: SettingsRoleLabelContainerProps) => {
-  const settingsDraftRole = useFamilyRecoilValueV2(
+  const settingsDraftRole = useFamilyAtomValue(
     settingsDraftRoleFamilyState,
     roleId,
   );
-  const setSettingsDraftRole = useSetFamilyRecoilStateV2(
+  const setSettingsDraftRole = useSetFamilyAtomState(
     settingsDraftRoleFamilyState,
     roleId,
   );

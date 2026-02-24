@@ -1,6 +1,6 @@
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { lazy, Suspense } from 'react';
@@ -51,7 +51,7 @@ type RestPlaygroundProps = {
 
 export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
   const theme = useTheme();
-  const playgroundApiKey = useRecoilValueV2(playgroundApiKeyState);
+  const playgroundApiKey = useAtomValue(playgroundApiKeyState);
 
   if (!playgroundApiKey) {
     onError();

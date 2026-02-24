@@ -6,8 +6,8 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ActionMenuContextProvider = ({
@@ -20,12 +20,12 @@ export const ActionMenuContextProvider = ({
   children: React.ReactNode;
   objectMetadataItemOverride?: ObjectMetadataItem;
 }) => {
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
 
   const objectMetadataItem =
     objectMetadataItemOverride ??

@@ -1,8 +1,8 @@
 import { RecordFieldsComponentInstanceContext } from '@/object-record/record-field/states/context/RecordFieldsComponentInstanceContext';
-import { createComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilyStateV2';
+import { createComponentFamilyState } from '@/ui/utilities/state/jotai/utils/createComponentFamilyState';
 
 export const hasInitializedCurrentRecordFieldsComponentFamilyState =
-  createComponentFamilyStateV2<boolean, { viewId?: string }>({
+  createComponentFamilyState<boolean, { viewId?: string }>({
     key: 'hasInitializedCurrentRecordFieldsComponentFamilyState',
     defaultValue: false,
     componentInstanceContext: RecordFieldsComponentInstanceContext,

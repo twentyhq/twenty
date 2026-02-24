@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
@@ -27,7 +27,7 @@ const StyledContainer = styled.div`
 export const LocalePicker = () => {
   const { t } = useLingui();
   const store = useStore();
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilStateV2(
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
     currentWorkspaceMemberState,
   );
   const { updateOneRecord } = useUpdateOneRecord();

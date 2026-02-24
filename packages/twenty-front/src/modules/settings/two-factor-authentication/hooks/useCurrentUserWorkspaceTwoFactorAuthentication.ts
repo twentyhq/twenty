@@ -4,10 +4,10 @@ import {
   type TwoFactorAuthenticationMethodDto,
   useInitiateOtpProvisioningMutation,
 } from '~/generated-metadata/graphql';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 export const useCurrentUserWorkspaceTwoFactorAuthentication = () => {
-  const currentUserWorkspace = useRecoilValueV2(currentUserWorkspaceState);
+  const currentUserWorkspace = useAtomValue(currentUserWorkspaceState);
   const [initiateCurrentUserWorkspaceOtpProvisioning] =
     useInitiateOtpProvisioningMutation();
 

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { useContext } from 'react';
 
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
@@ -13,7 +13,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -93,20 +93,17 @@ export const EventRow = ({
   event,
   mainObjectMetadataItem,
 }: EventRowProps) => {
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
 
-  const allowRequestsToTwentyIcons = useRecoilValueV2(
+  const allowRequestsToTwentyIcons = useAtomValue(
     allowRequestsToTwentyIconsState,
   );
 
-  const { localeCatalog } = useRecoilValueV2(dateLocaleState);
+  const { localeCatalog } = useAtomValue(dateLocaleState);
 
   const { recordId } = useContext(TimelineActivityContext);
 
-  const recordFromStore = useFamilyRecoilValueV2(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const recordFromStore = useFamilyAtomValue(recordStoreFamilyState, recordId);
 
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
     event.createdAt,

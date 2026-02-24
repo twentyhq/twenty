@@ -1,11 +1,11 @@
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const useUpsertRecordSort = () => {
-  const currentRecordSorts = useRecoilComponentStateCallbackStateV2(
+  const currentRecordSorts = useAtomComponentStateCallbackState(
     currentRecordSortsComponentState,
   );
 

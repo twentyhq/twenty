@@ -1,7 +1,7 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
-export const resizeFieldOffsetComponentState = createComponentStateV2<number>({
+export const resizeFieldOffsetComponentState = createComponentState<number>({
   key: 'resizeFieldOffsetComponentState',
   defaultValue: 0,
   componentInstanceContext: RecordTableComponentInstanceContext,

@@ -1,11 +1,11 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 import {
   type WorkflowAction,
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
-export const flowComponentState = createComponentStateV2<
+export const flowComponentState = createComponentState<
   | {
       workflowVersionId: string;
       trigger: WorkflowTrigger | null;

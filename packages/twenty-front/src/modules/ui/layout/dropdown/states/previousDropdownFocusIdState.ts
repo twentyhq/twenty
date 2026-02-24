@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const previousDropdownFocusIdState = createStateV2<string | null>({
+export const previousDropdownFocusIdState = createState<string | null>({
   key: 'previousDropdownFocusIdState',
   defaultValue: null,
 });

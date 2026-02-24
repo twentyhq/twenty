@@ -14,7 +14,7 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -71,32 +71,32 @@ describe('useSetGlobalCommandMenuContext', () => {
         const { setGlobalCommandMenuContext } =
           useSetGlobalCommandMenuContext();
 
-        const targetedRecordsRule = useRecoilComponentValueV2(
+        const targetedRecordsRule = useAtomComponentValue(
           contextStoreTargetedRecordsRuleComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const numberOfSelectedRecords = useRecoilComponentValueV2(
+        const numberOfSelectedRecords = useAtomComponentValue(
           contextStoreNumberOfSelectedRecordsComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const filters = useRecoilComponentValueV2(
+        const filters = useAtomComponentValue(
           contextStoreFiltersComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const filterGroups = useRecoilComponentValueV2(
+        const filterGroups = useAtomComponentValue(
           contextStoreFilterGroupsComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const anyFieldFilterValue = useRecoilComponentValueV2(
+        const anyFieldFilterValue = useAtomComponentValue(
           contextStoreAnyFieldFilterValueComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const currentViewType = useRecoilComponentValueV2(
+        const currentViewType = useAtomComponentValue(
           contextStoreCurrentViewTypeComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );

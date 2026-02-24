@@ -13,7 +13,7 @@ import {
 } from './DateTimePicker';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
@@ -57,7 +57,7 @@ export const DatePickerHeader = ({
   nextMonthButtonDisabled,
   hideInput = false,
 }: DatePickerHeaderProps) => {
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
   const dateParsed = isDefined(date) ? Temporal.PlainDate.from(date) : null;

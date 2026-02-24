@@ -7,8 +7,8 @@ import {
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import styled from '@emotion/styled';
 
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
@@ -82,19 +82,17 @@ const StandardContent = ({
 
 export const SignInUp = () => {
   const { t } = useLingui();
-  const setSignInUpStep = useSetRecoilStateV2(signInUpStepState);
-  const clientConfigApiStatus = useRecoilValueV2(clientConfigApiStatusState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
+  const clientConfigApiStatus = useAtomValue(clientConfigApiStatusState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
-  const workspacePublicData = useRecoilValueV2(workspacePublicDataState);
+  const workspacePublicData = useAtomValue(workspacePublicDataState);
   const { loading: getPublicWorkspaceDataLoading } =
     useGetPublicWorkspaceDataByDomain();
-  const isMultiWorkspaceEnabled = useRecoilValueV2(
-    isMultiWorkspaceEnabledState,
-  );
+  const isMultiWorkspaceEnabled = useAtomValue(isMultiWorkspaceEnabledState);
   const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
     useWorkspaceFromInviteHash();
 

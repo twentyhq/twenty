@@ -17,9 +17,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
@@ -48,27 +48,27 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const recordGroupFieldMetadata = useRecoilComponentValueV2(
+  const recordGroupFieldMetadata = useAtomComponentValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentFamilySelectorValueV2(
+  const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
     viewType,
   );
 
-  const hiddenRecordGroupIds = useRecoilComponentSelectorValueV2(
+  const hiddenRecordGroupIds = useAtomComponentSelectorValue(
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const hideEmptyRecordGroup = useRecoilComponentValueV2(
+  const hideEmptyRecordGroup = useAtomComponentValue(
     recordIndexShouldHideEmptyRecordGroupsComponentState,
   );
 
   const shouldHideEmptyGroups =
     hideEmptyRecordGroup ?? currentView?.shouldHideEmptyGroups ?? false;
 
-  const recordGroupSort = useRecoilComponentValueV2(
+  const recordGroupSort = useAtomComponentValue(
     recordIndexRecordGroupSortComponentState,
   );
 
@@ -91,7 +91,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     }
   }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useAtomComponentValue(
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );

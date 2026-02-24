@@ -2,16 +2,13 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
 import { useResetLocationHash } from 'twenty-ui/utilities';
 
 export const EditDashboardSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
-  const selectedRecord = useFamilyRecoilValueV2(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const selectedRecord = useFamilyAtomValue(recordStoreFamilyState, recordId);
 
   const pageLayoutId = selectedRecord?.pageLayoutId;
 

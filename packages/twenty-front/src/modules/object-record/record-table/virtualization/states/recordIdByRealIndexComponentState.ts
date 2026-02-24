@@ -1,7 +1,7 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
-export const recordIdByRealIndexComponentState = createComponentStateV2<
+export const recordIdByRealIndexComponentState = createComponentState<
   Map<number, string>
 >({
   key: 'recordIdByRealIndexComponentState',

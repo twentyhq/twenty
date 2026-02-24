@@ -3,7 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -25,7 +25,7 @@ describe('useClickOutsideListener', () => {
       () => {
         return {
           useClickOutside: useClickOutsideListener(componentId),
-          isActivated: useRecoilComponentValueV2(
+          isActivated: useAtomComponentValue(
             clickOutsideListenerIsActivatedComponentState,
             componentId,
           ),

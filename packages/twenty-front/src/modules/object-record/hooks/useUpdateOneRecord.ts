@@ -21,7 +21,7 @@ import { getUpdatedFieldsFromRecordInput } from '@/object-record/utils/getUpdate
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isNull } from '@sniptt/guards';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { isDefined } from 'twenty-shared/utils';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
@@ -37,7 +37,7 @@ export const useUpdateOneRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();

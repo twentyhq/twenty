@@ -1,8 +1,8 @@
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { createWritableFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createWritableFamilySelectorV2';
+import { createWritableFamilySelector } from '@/ui/utilities/state/jotai/utils/createWritableFamilySelector';
 
-export const recordStoreFamilySelectorV2 = createWritableFamilySelectorV2<
+export const recordStoreFamilySelectorV2 = createWritableFamilySelector<
   unknown,
   { recordId: string; fieldName: string }
 >({

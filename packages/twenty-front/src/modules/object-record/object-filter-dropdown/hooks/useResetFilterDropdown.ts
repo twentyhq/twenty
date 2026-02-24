@@ -7,48 +7,46 @@ import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-rec
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 
 export const useResetFilterDropdown = (componentInstanceId?: string) => {
   const store = useStore();
-  const objectFilterDropdownSearchInput =
-    useRecoilComponentStateCallbackStateV2(
-      objectFilterDropdownSearchInputComponentState,
-      componentInstanceId,
-    );
+  const objectFilterDropdownSearchInput = useAtomComponentStateCallbackState(
+    objectFilterDropdownSearchInputComponentState,
+    componentInstanceId,
+  );
 
-  const fieldMetadataItemIdUsedInDropdown =
-    useRecoilComponentStateCallbackStateV2(
-      fieldMetadataItemIdUsedInDropdownComponentState,
-      componentInstanceId,
-    );
+  const fieldMetadataItemIdUsedInDropdown = useAtomComponentStateCallbackState(
+    fieldMetadataItemIdUsedInDropdownComponentState,
+    componentInstanceId,
+  );
 
-  const selectedOperandInDropdown = useRecoilComponentStateCallbackStateV2(
+  const selectedOperandInDropdown = useAtomComponentStateCallbackState(
     selectedOperandInDropdownComponentState,
     componentInstanceId,
   );
 
   const objectFilterDropdownFilterIsSelected =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       objectFilterDropdownFilterIsSelectedComponentState,
       componentInstanceId,
     );
 
   const objectFilterDropdownAnyFieldSearchIsSelected =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
       componentInstanceId,
     );
 
   const objectFilterDropdownIsSelectingCompositeField =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       objectFilterDropdownIsSelectingCompositeFieldComponentState,
       componentInstanceId,
     );
 
   const objectFilterDropdownCurrentRecordFilter =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       objectFilterDropdownCurrentRecordFilterComponentState,
       componentInstanceId,
     );

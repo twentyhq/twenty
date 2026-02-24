@@ -1,7 +1,7 @@
 import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
@@ -12,19 +12,19 @@ import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/r
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellHoveredPortal = () => {
-  const hoverPosition = useRecoilComponentValueV2(
+  const hoverPosition = useAtomComponentValue(
     recordTableHoverPositionComponentState,
   );
 
-  const isRecordTableScrolledVertically = useRecoilComponentValueV2(
+  const isRecordTableScrolledVertically = useAtomComponentValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const isRecordTableScrolledHorizontally = useRecoilComponentValueV2(
+  const isRecordTableScrolledHorizontally = useAtomComponentValue(
     isRecordTableScrolledHorizontallyComponentState,
   );
 
-  const hasRecordGroups = useRecoilComponentSelectorValueV2(
+  const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
 

@@ -1,4 +1,4 @@
-import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
+import { createFamilyState } from '@/ui/utilities/state/jotai/utils/createFamilyState';
 
 type FilesFieldUploadStateKey = {
   recordId: string;
@@ -7,7 +7,7 @@ type FilesFieldUploadStateKey = {
 
 type FilesFieldUploadState = 'UPLOAD_WINDOW_OPEN' | 'UPLOADING_FILE' | null;
 
-export const filesFieldUploadStateV2 = createFamilyStateV2<
+export const filesFieldUploadStateV2 = createFamilyState<
   FilesFieldUploadState,
   FilesFieldUploadStateKey
 >({

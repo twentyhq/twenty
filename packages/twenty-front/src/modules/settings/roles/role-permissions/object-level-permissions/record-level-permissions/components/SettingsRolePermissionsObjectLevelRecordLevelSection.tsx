@@ -10,7 +10,7 @@ import { billingState } from '@/client-config/states/billingState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { Button } from 'twenty-ui/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -46,7 +46,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
   hasOrganizationPlan,
 }: SettingsRolePermissionsObjectLevelRecordLevelSectionProps) => {
   const navigateSettings = useNavigateSettings();
-  const billing = useRecoilValueV2(billingState);
+  const billing = useAtomValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
 
   if (!hasOrganizationPlan) {

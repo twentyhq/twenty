@@ -1,9 +1,9 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
+import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
 import { findById, isDefined } from 'twenty-shared/utils';
 
-export const fieldMetadataItemByIdSelector = createFamilySelectorV2({
+export const fieldMetadataItemByIdSelector = createFamilySelector({
   key: 'fieldMetadataItemByIdSelector',
   get:
     ({ fieldMetadataItemId }: { fieldMetadataItemId: string }) =>

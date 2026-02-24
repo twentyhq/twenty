@@ -1,10 +1,10 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 import { type PageLayoutBreakpoint } from '@/page-layout/constants/PageLayoutBreakpoints';
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
 export const pageLayoutCurrentBreakpointComponentState =
-  createComponentStateV2<PageLayoutBreakpoint>({
+  createComponentState<PageLayoutBreakpoint>({
     key: 'pageLayoutCurrentBreakpointComponentState',
     defaultValue: 'desktop',
     componentInstanceContext: PageLayoutComponentInstanceContext,

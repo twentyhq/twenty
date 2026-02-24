@@ -1,7 +1,7 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 import { type AuthTokenPair } from '~/generated-metadata/graphql';
 
-export const tokenPairState = createStateV2<AuthTokenPair | null>({
+export const tokenPairState = createState<AuthTokenPair | null>({
   key: 'tokenPairState',
   defaultValue: null,
   useCookieStorage: {

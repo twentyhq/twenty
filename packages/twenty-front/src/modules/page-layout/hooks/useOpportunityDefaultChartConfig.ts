@@ -1,12 +1,12 @@
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 
 export const useOpportunityDefaultChartConfig = () => {
-  const opportunityObjectMetadata = useFamilySelectorValueV2(
+  const opportunityObjectMetadata = useFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
       objectName: CoreObjectNameSingular.Opportunity,

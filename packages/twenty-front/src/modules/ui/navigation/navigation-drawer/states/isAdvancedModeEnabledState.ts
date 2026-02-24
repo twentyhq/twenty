@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const isAdvancedModeEnabledState = createStateV2<boolean>({
+export const isAdvancedModeEnabledState = createState<boolean>({
   key: 'isAdvancedModeEnabledAtom',
   defaultValue: false,
   useLocalStorage: true,

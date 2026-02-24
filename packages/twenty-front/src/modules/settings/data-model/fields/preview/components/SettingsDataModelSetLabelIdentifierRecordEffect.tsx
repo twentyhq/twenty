@@ -1,6 +1,6 @@
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
 import { useEffect } from 'react';
 
 type SettingsDataModelSetLabelIdentifierRecordEffectProps = {
@@ -16,7 +16,7 @@ export const SettingsDataModelSetLabelIdentifierRecordEffect = ({
     objectNameSingular: objectNameSingular,
   });
 
-  const setRecord = useSetFamilyRecoilStateV2(recordStoreFamilyState, recordId);
+  const setRecord = useSetFamilyAtomState(recordStoreFamilyState, recordId);
 
   useEffect(() => {
     setRecord(recordPreviewForLabelIdentifier);

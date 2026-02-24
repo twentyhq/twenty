@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const isEmailingDomainsEnabledState = createStateV2<boolean>({
+export const isEmailingDomainsEnabledState = createState<boolean>({
   key: 'isEmailingDomainsEnabled',
   defaultValue: false,
 });

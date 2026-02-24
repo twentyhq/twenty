@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
@@ -30,7 +30,7 @@ export const SettingsAccountsConfiguration = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [startChannelSyncMutation, { loading: isSubmitting }] =
     useStartChannelSyncMutation();
-  const setSelectedMessageChannel = useSetRecoilStateV2(
+  const setSelectedMessageChannel = useSetAtomState(
     settingsAccountsSelectedMessageChannelStateV2,
   );
 

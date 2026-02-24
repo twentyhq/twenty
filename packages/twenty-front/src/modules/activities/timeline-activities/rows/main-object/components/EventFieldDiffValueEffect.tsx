@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const EventFieldDiffValueEffect = ({
@@ -17,7 +17,7 @@ export const EventFieldDiffValueEffect = ({
   mainObjectMetadataItem: ObjectMetadataItem;
   fieldMetadataItem: FieldMetadataItem;
 }) => {
-  const setEntity = useSetFamilyRecoilStateV2(
+  const setEntity = useSetFamilyAtomState(
     recordStoreFamilyState,
     diffArtificialRecordStoreId,
   );

@@ -6,7 +6,7 @@ import { globalComponentInstanceContextMap } from '@/ui/utilities/state/componen
 import { type ComponentStateV2 } from '@/ui/utilities/state/jotai/types/ComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
 
-export const createComponentStateV2 = <ValueType>({
+export const createComponentState = <ValueType>({
   key,
   defaultValue,
   componentInstanceContext,

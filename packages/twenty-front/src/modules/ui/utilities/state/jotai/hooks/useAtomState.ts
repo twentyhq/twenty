@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { type StateV2 } from '@/ui/utilities/state/jotai/types/StateV2';
 import { type WritableSelectorV2 } from '@/ui/utilities/state/jotai/types/WritableSelectorV2';
 
-export const useRecoilStateV2 = <ValueType>(
+export const useAtomState = <ValueType>(
   state: StateV2<ValueType> | WritableSelectorV2<ValueType>,
 ): [
   ValueType,

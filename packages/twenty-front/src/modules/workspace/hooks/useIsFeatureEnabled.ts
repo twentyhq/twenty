@@ -1,9 +1,9 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useIsFeatureEnabled = (featureKey: FeatureFlagKey | null) => {
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomValue(currentWorkspaceState);
 
   if (!featureKey) {
     return false;

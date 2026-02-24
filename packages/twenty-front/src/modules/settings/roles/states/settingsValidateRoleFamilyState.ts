@@ -1,7 +1,7 @@
-import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
+import { createFamilyState } from '@/ui/utilities/state/jotai/utils/createFamilyState';
 import { type Role } from '~/generated-metadata/graphql';
 
-export const settingsValidateRoleFamilyState = createFamilyStateV2<
+export const settingsValidateRoleFamilyState = createFamilyState<
   Record<keyof Pick<Role, 'label'>, boolean>,
   string
 >({

@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const verifyEmailRedirectPathState = createStateV2<string | undefined>({
+export const verifyEmailRedirectPathState = createState<string | undefined>({
   key: 'verifyEmailRedirectPathState',
   defaultValue: undefined,
 });

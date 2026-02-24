@@ -1,12 +1,12 @@
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { useLingui } from '@lingui/react/macro';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const { isErrored, error } = useRecoilValueV2(clientConfigApiStatusState);
+  const { isErrored, error } = useAtomValue(clientConfigApiStatusState);
   const { t } = useLingui();
 
   return isErrored && error instanceof Error ? (

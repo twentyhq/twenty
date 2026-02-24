@@ -8,7 +8,7 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 const StyledDomainFormWrapper = styled.div`
   align-items: center;
@@ -16,10 +16,10 @@ const StyledDomainFormWrapper = styled.div`
 `;
 
 export const SettingsSubdomain = () => {
-  const domainConfiguration = useRecoilValueV2(domainConfigurationState);
+  const domainConfiguration = useAtomValue(domainConfigurationState);
   const { t } = useLingui();
 
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomValue(currentWorkspaceState);
 
   const { control } = useFormContext<{
     subdomain: string;

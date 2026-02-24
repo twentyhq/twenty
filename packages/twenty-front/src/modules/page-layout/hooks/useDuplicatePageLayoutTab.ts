@@ -12,8 +12,8 @@ import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
@@ -25,12 +25,12 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutDraft = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraft = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutCurrentLayouts = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutCurrentLayouts = useAtomComponentStateCallbackState(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
@@ -38,12 +38,12 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   const store = useStore();
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
-  const setActiveTabId = useSetRecoilComponentStateV2(
+  const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     tabListInstanceId,
   );
 
-  const setTabSettingsOpenTabId = useSetRecoilComponentStateV2(
+  const setTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );

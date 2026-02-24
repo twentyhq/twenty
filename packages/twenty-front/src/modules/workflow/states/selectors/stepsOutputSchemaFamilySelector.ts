@@ -1,10 +1,10 @@
-import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
+import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
 import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
 import { stepsOutputSchemaFamilyState } from '@/workflow/workflow-variables/states/stepsOutputSchemaFamilyState';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { isDefined } from 'twenty-shared/utils';
 
-export const stepsOutputSchemaFamilySelector = createFamilySelectorV2<
+export const stepsOutputSchemaFamilySelector = createFamilySelector<
   StepOutputSchemaV2[],
   { workflowVersionId: string; stepIds: string[] }
 >({

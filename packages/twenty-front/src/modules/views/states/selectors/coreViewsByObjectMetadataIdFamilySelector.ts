@@ -1,9 +1,9 @@
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
-import { createWritableFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createWritableFamilySelectorV2';
+import { createWritableFamilySelector } from '@/ui/utilities/state/jotai/utils/createWritableFamilySelector';
 
 export const coreViewsByObjectMetadataIdFamilySelector =
-  createWritableFamilySelectorV2<CoreViewWithRelations[], string>({
+  createWritableFamilySelector<CoreViewWithRelations[], string>({
     key: 'coreViewsByObjectMetadataIdFamilySelector',
     get:
       (objectMetadataId) =>

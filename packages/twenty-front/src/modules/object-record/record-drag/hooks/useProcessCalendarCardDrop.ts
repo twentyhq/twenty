@@ -10,7 +10,7 @@ import { extractRecordPositions } from '@/object-record/record-drag/utils/extrac
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { computeNewPositionOfDraggedRecord } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorCallbackStateV2';
+import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -25,7 +25,7 @@ export const useProcessCalendarCardDrop = () => {
   const { userTimezone } = useUserTimezone();
 
   const calendarDayRecordIdsSelector =
-    useRecoilComponentFamilySelectorCallbackStateV2(
+    useAtomComponentFamilySelectorCallbackState(
       calendarDayRecordIdsComponentFamilySelector,
     );
 

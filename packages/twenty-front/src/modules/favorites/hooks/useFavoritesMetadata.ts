@@ -4,11 +4,11 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 export const useFavoritesMetadata = () => {
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
-  const allowRequestsToTwentyIcons = useRecoilValueV2(
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const allowRequestsToTwentyIcons = useAtomValue(
     allowRequestsToTwentyIconsState,
   );
   const getObjectRecordIdentifierByNameSingular =

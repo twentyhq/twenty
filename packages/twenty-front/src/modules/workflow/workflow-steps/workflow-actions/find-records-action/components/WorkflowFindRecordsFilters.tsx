@@ -3,7 +3,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { AdvancedFilterCommandMenuContainer } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuContainer';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -20,11 +20,11 @@ export const WorkflowFindRecordsFilters = ({
   onChange: (filter: FindRecordsActionFilter) => void;
   readonly?: boolean;
 }) => {
-  const currentRecordFilterGroups = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilterGroups = useAtomComponentStateCallbackState(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilters = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
   );
 

@@ -1,9 +1,9 @@
 /* @license Enterprise */
 
 import { type SSOIdentityProvider } from '@/settings/security/types/SSOIdentityProvider';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const SSOIdentitiesProvidersState = createStateV2<
+export const SSOIdentitiesProvidersState = createState<
   Omit<SSOIdentityProvider, '__typename'>[]
 >({
   key: 'SSOIdentitiesProvidersState',

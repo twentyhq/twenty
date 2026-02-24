@@ -6,7 +6,7 @@ import Skeleton from 'react-loading-skeleton';
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -55,7 +55,7 @@ const StyledFooterContainer = styled.div`
 `;
 
 export const SettingsToolsTable = () => {
-  const logicFunctions = useRecoilValueV2(logicFunctionsState);
+  const logicFunctions = useAtomValue(logicFunctionsState);
   const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();
   const { createLogicFunction } = usePersistLogicFunction();
 

@@ -4,7 +4,7 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordStoreFieldValueSelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFieldValueSelectorV2';
 
-export const useRecordFieldValueV2 = <T extends unknown>(
+export const useRecordFieldValue = <T extends unknown>(
   recordId: string,
   fieldName: string,
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>,

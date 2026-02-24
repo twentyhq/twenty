@@ -1,10 +1,10 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
 import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
@@ -12,28 +12,27 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordFilterGroupEffect = () => {
-  const currentViewId = useRecoilComponentValueV2(
+  const currentViewId = useAtomComponentValue(
     contextStoreCurrentViewIdComponentState,
   );
 
   const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
 
-  const currentView = useFamilySelectorValueV2(
-    coreViewFromViewIdFamilySelector,
-    { viewId: currentViewId ?? '' },
-  );
+  const currentView = useFamilySelectorValue(coreViewFromViewIdFamilySelector, {
+    viewId: currentViewId ?? '',
+  });
 
   const [
     hasInitializedCurrentRecordFilterGroups,
     setHasInitializedCurrentRecordFilterGroups,
-  ] = useRecoilComponentFamilyStateV2(
+  ] = useAtomComponentFamilyState(
     hasInitializedCurrentRecordFilterGroupsComponentFamilyState,
     {
       viewId: currentViewId ?? undefined,
     },
   );
 
-  const setCurrentRecordFilterGroups = useSetRecoilComponentStateV2(
+  const setCurrentRecordFilterGroups = useSetAtomComponentState(
     currentRecordFilterGroupsComponentState,
     recordIndexId,
   );

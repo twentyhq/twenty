@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const currentFavoriteFolderIdStateV2 = createStateV2<string | null>({
+export const currentFavoriteFolderIdStateV2 = createState<string | null>({
   key: 'currentFavoriteFolderIdStateV2',
   defaultValue: null,
 });

@@ -17,9 +17,9 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
@@ -80,7 +80,7 @@ export const RecordDetailRelationSectionDropdownToOne = ({
     );
   }
 
-  const fieldValue = useFamilySelectorValueV2(recordStoreFamilySelectorV2, {
+  const fieldValue = useFamilySelectorValue(recordStoreFamilySelectorV2, {
     recordId,
     fieldName,
   }) as ({ id: string } & Record<string, unknown>) | ObjectRecord[] | null;
@@ -97,17 +97,17 @@ export const RecordDetailRelationSectionDropdownToOne = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const dropdownPlacement = useRecoilComponentValueV2(
+  const dropdownPlacement = useAtomComponentValue(
     dropdownPlacementComponentState,
     dropdownId,
   );
 
-  const setSingleRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+  const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
-  const setSingleRecordPickerSelectedId = useSetRecoilComponentStateV2(
+  const setSingleRecordPickerSelectedId = useSetAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );

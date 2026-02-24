@@ -1,5 +1,5 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useGetObjectPermissionDerivedStates = ({
@@ -7,7 +7,7 @@ export const useGetObjectPermissionDerivedStates = ({
 }: {
   roleId: string;
 }) => {
-  const settingsDraftRole = useFamilyRecoilValueV2(
+  const settingsDraftRole = useFamilyAtomValue(
     settingsDraftRoleFamilyState,
     roleId,
   );

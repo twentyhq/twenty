@@ -9,8 +9,8 @@ import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
@@ -24,17 +24,17 @@ export const useDuplicatePageLayoutWidget = (
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutCurrentLayoutsState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
 
-  const setEditingWidgetId = useSetRecoilComponentStateV2(
+  const setEditingWidgetId = useSetAtomComponentState(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );

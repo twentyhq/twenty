@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getRecordChipGenerators } from '@/object-record/utils/getRecordChipGenerators';
@@ -11,8 +11,8 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const PreComputedChipGeneratorsProvider = ({
   children,
 }: React.PropsWithChildren) => {
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
-  const allowRequestsToTwentyIcons = useRecoilValueV2(
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const allowRequestsToTwentyIcons = useAtomValue(
     allowRequestsToTwentyIconsState,
   );
   const isFilesFieldMigrated = useIsFeatureEnabled(

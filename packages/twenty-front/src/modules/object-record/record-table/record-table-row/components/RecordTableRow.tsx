@@ -11,8 +11,8 @@ import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 
 type RecordTableRowProps = {
   recordId: string;
@@ -29,11 +29,11 @@ export const RecordTableRow = ({
 }: RecordTableRowProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isFocused = useRecoilComponentFamilyValueV2(
+  const isFocused = useAtomComponentFamilyValue(
     isRecordTableRowFocusedComponentFamilyState,
     rowIndexForFocus,
   );
-  const isRowFocusActive = useRecoilComponentValueV2(
+  const isRowFocusActive = useAtomComponentValue(
     isRecordTableRowFocusActiveComponentState,
     recordTableId,
   );

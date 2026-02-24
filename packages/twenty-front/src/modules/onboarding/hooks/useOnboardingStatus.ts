@@ -1,10 +1,10 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { type OnboardingStatus } from '~/generated-metadata/graphql';
 
 export const useOnboardingStatus = (): OnboardingStatus | null | undefined => {
-  const currentUser = useRecoilValueV2(currentUserState);
+  const currentUser = useAtomValue(currentUserState);
   const isLoggedIn = useIsLogged();
   return isLoggedIn ? currentUser?.onboardingStatus : undefined;
 };

@@ -1,7 +1,7 @@
 import { type AuthProviders } from '~/generated-metadata/graphql';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const workspaceAuthProvidersState = createStateV2<AuthProviders | null>({
+export const workspaceAuthProvidersState = createState<AuthProviders | null>({
   key: 'workspaceAuthProvidersState',
   defaultValue: null,
 });

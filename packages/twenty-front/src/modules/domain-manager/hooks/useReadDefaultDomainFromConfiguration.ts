@@ -1,12 +1,10 @@
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 export const useReadDefaultDomainFromConfiguration = () => {
-  const domainConfiguration = useRecoilValueV2(domainConfigurationState);
-  const isMultiWorkspaceEnabled = useRecoilValueV2(
-    isMultiWorkspaceEnabledState,
-  );
+  const domainConfiguration = useAtomValue(domainConfigurationState);
+  const isMultiWorkspaceEnabled = useAtomValue(isMultiWorkspaceEnabledState);
 
   const defaultDomain = isMultiWorkspaceEnabled
     ? `${domainConfiguration.defaultSubdomain}.${domainConfiguration.frontDomain}`

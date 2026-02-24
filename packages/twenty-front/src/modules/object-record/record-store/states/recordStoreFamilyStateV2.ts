@@ -1,7 +1,7 @@
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
+import { createFamilyState } from '@/ui/utilities/state/jotai/utils/createFamilyState';
 
-export const recordStoreFamilyStateV2 = createFamilyStateV2<
+export const recordStoreFamilyStateV2 = createFamilyState<
   ObjectRecord | null | undefined,
   string
 >({

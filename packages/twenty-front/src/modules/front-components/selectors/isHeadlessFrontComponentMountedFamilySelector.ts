@@ -1,8 +1,8 @@
 import { mountedHeadlessFrontComponentIdsState } from '@/front-components/states/mountedHeadlessFrontComponentIdsState';
-import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
+import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
 
 export const isHeadlessFrontComponentMountedFamilySelector =
-  createFamilySelectorV2<boolean, string>({
+  createFamilySelector<boolean, string>({
     key: 'isHeadlessFrontComponentMountedFamilySelector',
     get:
       (frontComponentId: string) =>

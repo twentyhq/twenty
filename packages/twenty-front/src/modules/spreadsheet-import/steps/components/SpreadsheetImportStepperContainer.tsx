@@ -8,7 +8,7 @@ import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { useLingui } from '@lingui/react/macro';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
@@ -28,9 +28,7 @@ const StyledHeader = styled(Modal.Header)`
 export const SpreadsheetImportStepperContainer = () => {
   const { t } = useLingui();
 
-  const spreadsheetImportDialog = useRecoilValueV2(
-    spreadsheetImportDialogState,
-  );
+  const spreadsheetImportDialog = useAtomValue(spreadsheetImportDialogState);
 
   const stepTitles = {
     uploadStep: t`Upload File`,

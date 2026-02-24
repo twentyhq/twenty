@@ -5,7 +5,7 @@ import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCu
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useLocation, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -23,7 +23,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const location = useLocation();
-  const calendarBookingPageId = useRecoilValueV2(calendarBookingPageIdState);
+  const calendarBookingPageId = useAtomValue(calendarBookingPageIdState);
 
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
@@ -45,13 +45,11 @@ export const usePageChangeEffectNavigateLocation = () => {
   ];
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
   const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
-  const verifyEmailRedirectPath = useRecoilValueV2(
-    verifyEmailRedirectPathState,
-  );
+  const verifyEmailRedirectPath = useAtomValue(verifyEmailRedirectPathState);
 
   if (
     (!isLoggedIn || (isLoggedIn && !isOnAWorkspace)) &&

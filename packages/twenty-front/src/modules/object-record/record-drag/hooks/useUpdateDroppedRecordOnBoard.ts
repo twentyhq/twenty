@@ -8,8 +8,8 @@ import { type RecordGroupDefinition } from '@/object-record/record-group/types/R
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useCallback, useContext } from 'react';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
@@ -20,11 +20,11 @@ export const useUpdateDroppedRecordOnBoard = () => {
     useContext(RecordBoardContext);
 
   const recordIndexRecordIdsByGroupCallbackFamilyState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const recordGroupDefinitions = useRecoilComponentSelectorValueV2(
+  const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
   );
 

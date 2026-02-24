@@ -1,8 +1,8 @@
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
 export const recordFieldInputLayoutDirectionLoadingComponentState =
-  createComponentStateV2<boolean>({
+  createComponentState<boolean>({
     key: 'recordFieldInputLayoutDirectionLoadingComponentState',
     defaultValue: true,
     componentInstanceContext: RecordFieldComponentInstanceContext,

@@ -1,7 +1,7 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
-export const workflowLastCreatedStepIdComponentState = createComponentStateV2<
+export const workflowLastCreatedStepIdComponentState = createComponentState<
   string | undefined
 >({
   key: 'workflowLastCreatedStepIdComponentState',

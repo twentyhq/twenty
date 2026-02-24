@@ -1,9 +1,9 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
 export const recordIndexGroupAggregateFieldMetadataItemComponentState =
-  createComponentStateV2<FieldMetadataItem | null>({
+  createComponentState<FieldMetadataItem | null>({
     key: 'recordIndexGroupAggregateFieldMetadataItemComponentState',
     defaultValue: null,
     componentInstanceContext: ContextStoreComponentInstanceContext,

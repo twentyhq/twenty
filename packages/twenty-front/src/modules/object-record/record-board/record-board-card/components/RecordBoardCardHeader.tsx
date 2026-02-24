@@ -12,10 +12,10 @@ import { RecordCardHeaderContainer } from '@/object-record/record-card/component
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
@@ -54,7 +54,7 @@ export const RecordBoardCardHeader = () => {
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const [isCardExpanded, setIsCardExpanded] = useRecoilComponentStateV2(
+  const [isCardExpanded, setIsCardExpanded] = useAtomComponentState(
     recordBoardCardIsExpandedComponentState,
   );
 
@@ -62,18 +62,16 @@ export const RecordBoardCardHeader = () => {
     useRecordBoardSelection(recordBoardId);
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] =
-    useRecoilComponentFamilyStateV2(
+    useAtomComponentFamilyState(
       isRecordBoardCardSelectedComponentFamilyState,
       recordId,
     );
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  const recordIndexOpenRecordIn = useRecoilValueV2(
-    recordIndexOpenRecordInState,
-  );
+  const recordIndexOpenRecordIn = useAtomValue(recordIndexOpenRecordInState);
 
-  const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
+  const record = useFamilyAtomValue(recordStoreFamilyState, recordId);
 
   const triggerEvent =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL

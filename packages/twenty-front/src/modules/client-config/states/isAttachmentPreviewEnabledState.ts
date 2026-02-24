@@ -1,5 +1,5 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
-export const isAttachmentPreviewEnabledState = createStateV2<boolean>({
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+export const isAttachmentPreviewEnabledState = createState<boolean>({
   key: 'isAttachmentPreviewEnabled',
   defaultValue: false,
 });

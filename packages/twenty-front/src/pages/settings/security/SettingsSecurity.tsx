@@ -34,8 +34,8 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -63,13 +63,11 @@ export const SettingsSecurity = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const isMultiWorkspaceEnabled = useRecoilValueV2(
-    isMultiWorkspaceEnabledState,
-  );
-  const isClickHouseConfigured = useRecoilValueV2(isClickHouseConfiguredState);
-  const authProviders = useRecoilValueV2(authProvidersState);
-  const SSOIdentitiesProviders = useRecoilValueV2(SSOIdentitiesProvidersState);
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
+  const isMultiWorkspaceEnabled = useAtomValue(isMultiWorkspaceEnabledState);
+  const isClickHouseConfigured = useAtomValue(isClickHouseConfiguredState);
+  const authProviders = useAtomValue(authProvidersState);
+  const SSOIdentitiesProviders = useAtomValue(SSOIdentitiesProvidersState);
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();

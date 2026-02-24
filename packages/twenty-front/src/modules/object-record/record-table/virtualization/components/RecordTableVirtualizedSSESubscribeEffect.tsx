@@ -7,22 +7,22 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { computeRecordGqlOperationFilter } from 'twenty-shared/utils';
 
 export const RecordTableVirtualizedSSESubscribeEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useAtomComponentValue(
     currentRecordFiltersComponentState,
   );
 
-  const currentRecordSorts = useRecoilComponentValueV2(
+  const currentRecordSorts = useAtomComponentValue(
     currentRecordSortsComponentState,
   );
 
-  const currentRecordFilterGroups = useRecoilComponentValueV2(
+  const currentRecordFilterGroups = useAtomComponentValue(
     currentRecordFilterGroupsComponentState,
   );
 

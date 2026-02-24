@@ -1,5 +1,5 @@
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
 export type CurrentWorkspaceMember = Omit<
   WorkspaceMember,
@@ -7,7 +7,7 @@ export type CurrentWorkspaceMember = Omit<
 >;
 
 export const currentWorkspaceMemberState =
-  createStateV2<CurrentWorkspaceMember | null>({
+  createState<CurrentWorkspaceMember | null>({
     key: 'currentWorkspaceMemberState',
     defaultValue: null,
   });

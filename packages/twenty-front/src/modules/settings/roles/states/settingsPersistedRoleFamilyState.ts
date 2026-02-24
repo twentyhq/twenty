@@ -1,7 +1,7 @@
-import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
+import { createFamilyState } from '@/ui/utilities/state/jotai/utils/createFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
-export const settingsPersistedRoleFamilyState = createFamilyStateV2<
+export const settingsPersistedRoleFamilyState = createFamilyState<
   RoleWithPartialMembers | undefined,
   string
 >({

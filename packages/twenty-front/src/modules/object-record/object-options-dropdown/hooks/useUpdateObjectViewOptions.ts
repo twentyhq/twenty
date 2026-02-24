@@ -1,7 +1,7 @@
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -13,15 +13,15 @@ import { useCallback } from 'react';
 export const useUpdateObjectViewOptions = () => {
   const store = useStore();
 
-  const setRecordIndexOpenRecordIn = useSetRecoilStateV2(
+  const setRecordIndexOpenRecordIn = useSetAtomState(
     recordIndexOpenRecordInState,
   );
 
-  const setRecordIndexViewName = useSetRecoilComponentStateV2(
+  const setRecordIndexViewName = useSetAtomComponentState(
     viewPickerInputNameComponentState,
   );
 
-  const setRecordIndexViewIcon = useSetRecoilComponentStateV2(
+  const setRecordIndexViewIcon = useSetAtomComponentState(
     viewPickerSelectedIconComponentState,
   );
 

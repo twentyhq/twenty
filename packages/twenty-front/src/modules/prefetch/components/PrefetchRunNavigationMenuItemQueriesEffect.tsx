@@ -4,9 +4,9 @@ import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedF
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,16 +27,16 @@ export const PrefetchRunNavigationMenuItemQueriesEffect = () => {
 
   const showAuthModal = useShowAuthModal();
   const isSettingsPage = useIsSettingsPage();
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomValue(currentWorkspaceState);
   const isWorkspaceActive =
     currentWorkspace?.activationStatus === WorkspaceActivationStatus.ACTIVE;
 
-  const setIsPrefetchNavigationMenuItemsLoaded = useSetFamilyRecoilStateV2(
+  const setIsPrefetchNavigationMenuItemsLoaded = useSetFamilyAtomState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllNavigationMenuItems,
   );
 
-  const setNavigationMenuItemsState = useSetRecoilStateV2(
+  const setNavigationMenuItemsState = useSetAtomState(
     prefetchNavigationMenuItemsState,
   );
 

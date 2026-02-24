@@ -6,7 +6,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useRecordIdsFromFindManyCacheRootQuery';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
 import { AppPath } from 'twenty-shared/types';
@@ -27,9 +27,7 @@ export const useRecordShowPagePagination = (
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('viewId');
 
-  const setLastShowPageRecordId = useSetRecoilStateV2(
-    lastShowPageRecordIdState,
-  );
+  const setLastShowPageRecordId = useSetAtomState(lastShowPageRecordIdState);
 
   const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;

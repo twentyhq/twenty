@@ -2,15 +2,15 @@ import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { isDefined } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCaptcha = () => {
-  const captcha = useRecoilValueV2(captchaState);
-  const captchaToken = useRecoilValueV2(captchaTokenState);
-  const clientConfigApiStatus = useRecoilValueV2(clientConfigApiStatusState);
-  const isCaptchaScriptLoaded = useRecoilValueV2(isCaptchaScriptLoadedState);
+  const captcha = useAtomValue(captchaState);
+  const captchaToken = useAtomValue(captchaTokenState);
+  const clientConfigApiStatus = useAtomValue(clientConfigApiStatusState);
+  const isCaptchaScriptLoaded = useAtomValue(isCaptchaScriptLoadedState);
 
   const isClientConfigLoaded = clientConfigApiStatus.isLoadedOnce;
   const isSiteKeyDefined = isDefined(captcha?.siteKey);

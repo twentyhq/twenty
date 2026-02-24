@@ -17,10 +17,10 @@ import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -39,7 +39,7 @@ export const useShouldActionBeRegisteredParams = ({
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useAtomComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
@@ -76,7 +76,7 @@ export const useShouldActionBeRegisteredParams = ({
   ]);
 
   const selectedRecord =
-    useFamilyRecoilValueV2(recordStoreFamilyState, recordId ?? '') || undefined;
+    useFamilyAtomValue(recordStoreFamilyState, recordId ?? '') || undefined;
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem?.id ?? '',
@@ -90,23 +90,23 @@ export const useShouldActionBeRegisteredParams = ({
 
   const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
 
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentSelectorValueV2(
+  const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
     recordIndexId,
   );
 
   const isShowPage =
-    useRecoilComponentValueV2(
+    useAtomComponentValue(
       contextStoreCurrentViewTypeComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     ) === ContextStoreViewType.ShowPage;
 
-  const numberOfSelectedRecords = useRecoilComponentValueV2(
+  const numberOfSelectedRecords = useAtomComponentValue(
     contextStoreNumberOfSelectedRecordsComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const contextStoreCurrentViewType = useRecoilComponentValueV2(
+  const contextStoreCurrentViewType = useAtomComponentValue(
     contextStoreCurrentViewTypeComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
@@ -140,11 +140,11 @@ export const useShouldActionBeRegisteredParams = ({
     [store],
   );
 
-  const forceRegisteredActionsByKey = useRecoilValueV2(
+  const forceRegisteredActionsByKey = useAtomValue(
     forceRegisteredActionsByKeyState,
   );
 
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomValue(currentWorkspaceState);
 
   const isFeatureFlagEnabled = (featureFlagKey: FeatureFlagKey) => {
     const featureFlag = currentWorkspace?.featureFlags?.find(

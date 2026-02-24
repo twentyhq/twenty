@@ -5,8 +5,8 @@ import { Provider } from 'jotai';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 const selectableListComponentInstanceId = 'testId';
 const testArr = [['1'], ['2'], ['3']];
@@ -16,12 +16,12 @@ describe('useSelectableList', () => {
   it('Should setSelectableItemIds', async () => {
     const { result } = renderHook(
       () => {
-        const setSelectableItemIds = useSetRecoilComponentStateV2(
+        const setSelectableItemIds = useSetAtomComponentState(
           selectableItemIdsComponentState,
           selectableListComponentInstanceId,
         );
 
-        const selectableItemIds = useRecoilComponentValueV2(
+        const selectableItemIds = useAtomComponentValue(
           selectableItemIdsComponentState,
           selectableListComponentInstanceId,
         );
@@ -52,11 +52,11 @@ describe('useSelectableList', () => {
           selectableListComponentInstanceId,
         );
 
-        const selectedItemId = useRecoilComponentValueV2(
+        const selectedItemId = useAtomComponentValue(
           selectedItemIdComponentState,
           selectableListComponentInstanceId,
         );
-        const setSelectedItemId = useSetRecoilComponentStateV2(
+        const setSelectedItemId = useSetAtomComponentState(
           selectedItemIdComponentState,
           selectableListComponentInstanceId,
         );

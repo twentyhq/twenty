@@ -1,6 +1,6 @@
 import { useHotkeysOnFocusedElementCallback } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElementCallback';
 import { pendingHotkeyState } from '@/ui/utilities/hotkey/states/internal/pendingHotkeysState';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useHotkeys } from 'react-hotkeys-hook';
 import {
   type HotkeyCallback,
@@ -24,8 +24,7 @@ export const useHotkeysOnFocusedElement = ({
   dependencies?: unknown[];
   options?: UseHotkeysOptionsWithoutBuggyOptions;
 }) => {
-  const [pendingHotkey, setPendingHotkey] =
-    useRecoilStateV2(pendingHotkeyState);
+  const [pendingHotkey, setPendingHotkey] = useAtomState(pendingHotkeyState);
 
   const callScopedHotkeyCallback =
     useHotkeysOnFocusedElementCallback(dependencies);

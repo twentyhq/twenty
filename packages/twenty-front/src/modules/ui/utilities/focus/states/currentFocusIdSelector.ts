@@ -1,7 +1,7 @@
-import { createSelectorV2 } from '@/ui/utilities/state/jotai/utils/createSelectorV2';
+import { createSelector } from '@/ui/utilities/state/jotai/utils/createSelector';
 import { focusStackState } from './focusStackState';
 
-export const currentFocusIdSelector = createSelectorV2<string | undefined>({
+export const currentFocusIdSelector = createSelector<string | undefined>({
   key: 'currentFocusIdSelector',
   get: ({ get }) => {
     const focusStack = get(focusStackState);

@@ -2,7 +2,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -12,7 +12,7 @@ export const useUpdatePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );

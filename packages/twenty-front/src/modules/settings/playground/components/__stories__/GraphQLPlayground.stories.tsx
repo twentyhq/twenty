@@ -1,6 +1,6 @@
 import { GraphQLPlayground } from '@/settings/playground/components/GraphQLPlayground';
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { action } from 'storybook/actions';
@@ -11,7 +11,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const PlaygroundApiKeySetterEffect = () => {
-  const setPlaygroundApiKey = useSetRecoilStateV2(playgroundApiKeyState);
+  const setPlaygroundApiKey = useSetAtomState(playgroundApiKeyState);
 
   useEffect(() => {
     setPlaygroundApiKey('test-api-key-123');

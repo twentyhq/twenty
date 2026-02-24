@@ -1,9 +1,9 @@
 import { COMMAND_MENU_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/CommandMenuConstraints';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
 export const COMMAND_MENU_WIDTH_VAR = '--command-menu-width';
 
-export const commandMenuWidthState = createStateV2<number>({
+export const commandMenuWidthState = createState<number>({
   key: 'commandMenuWidth',
   defaultValue: COMMAND_MENU_CONSTRAINTS.default,
   useLocalStorage: true,

@@ -20,8 +20,8 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -81,7 +81,7 @@ export const RecordDetailRelationSection = ({
     );
   }
 
-  const fieldValue = useFamilySelectorValueV2(recordStoreFamilySelectorV2, {
+  const fieldValue = useFamilySelectorValue(recordStoreFamilySelectorV2, {
     recordId,
     fieldName,
   }) as ({ id: string } & Record<string, unknown>) | ObjectRecord[] | null;
@@ -101,12 +101,12 @@ export const RecordDetailRelationSection = ({
     instanceId: scopeInstanceId,
   });
 
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useAtomComponentValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
 
-  const indexViewId = useFamilySelectorValueV2(
+  const indexViewId = useFamilySelectorValue(
     coreIndexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: relationObjectMetadataItem.id },
   );

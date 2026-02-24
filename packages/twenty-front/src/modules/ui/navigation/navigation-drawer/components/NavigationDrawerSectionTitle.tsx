@@ -4,7 +4,7 @@ import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import styled from '@emotion/styled';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -60,11 +60,11 @@ export const NavigationDrawerSectionTitle = ({
   alwaysShowRightIcon = false,
 }: NavigationDrawerSectionTitleProps) => {
   const isMobile = useIsMobile();
-  const isNavigationDrawerExpanded = useRecoilValueV2(
+  const isNavigationDrawerExpanded = useAtomValue(
     isNavigationDrawerExpandedState,
   );
   const isSettingsPage = useIsSettingsPage();
-  const currentUser = useRecoilValueV2(currentUserState);
+  const currentUser = useAtomValue(currentUserState);
   const loading = useIsPrefetchLoading();
   const handleTitleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();

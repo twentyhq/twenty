@@ -10,9 +10,9 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
-import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorCallbackStateV2';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,15 +25,14 @@ export const RecordBoardDataChangedEffect = () => {
     useGetShouldInitializeRecordBoardForUpdateInputs();
 
   const recordGroupFromGroupValueCallbackState =
-    useRecoilComponentFamilySelectorCallbackStateV2(
+    useAtomComponentFamilySelectorCallbackState(
       recordGroupFromGroupValueComponentFamilySelector,
     );
-  const recordIndexGroupFieldMetadataItem =
-    useRecoilComponentStateCallbackStateV2(
-      recordIndexGroupFieldMetadataItemComponentState,
-    );
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateCallbackState(
+    recordIndexGroupFieldMetadataItemComponentState,
+  );
   const recordIndexRecordIdsByGroupCallbackState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 

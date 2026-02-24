@@ -11,7 +11,7 @@ import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingCon
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import styled from '@emotion/styled';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
@@ -43,13 +43,10 @@ export const PageLayoutRecordPageRenderer = ({
   targetRecordIdentifier: TargetRecordIdentifier;
   isInRightDrawer: boolean;
 }) => {
-  const recordDeletedAt = useFamilySelectorValueV2(
-    recordStoreFamilySelectorV2,
-    {
-      recordId: targetRecordIdentifier.id,
-      fieldName: 'deletedAt',
-    },
-  ) as string | null;
+  const recordDeletedAt = useFamilySelectorValue(recordStoreFamilySelectorV2, {
+    recordId: targetRecordIdentifier.id,
+    fieldName: 'deletedAt',
+  }) as string | null;
 
   const { pageLayoutId } = usePageLayoutIdForRecord({
     id: targetRecordIdentifier.id,

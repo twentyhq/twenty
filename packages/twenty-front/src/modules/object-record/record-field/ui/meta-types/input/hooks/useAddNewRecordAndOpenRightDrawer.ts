@@ -10,7 +10,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
 import { getOperationName } from '@apollo/client/utilities';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
@@ -33,8 +33,8 @@ export const useAddNewRecordAndOpenRightDrawer = ({
   relationFieldMetadataItem,
   recordId,
 }: useAddNewRecordAndOpenRightDrawerProps) => {
-  const setViewableRecordId = useSetRecoilStateV2(viewableRecordIdState);
-  const setViewableRecordNameSingular = useSetRecoilStateV2(
+  const setViewableRecordId = useSetAtomState(viewableRecordIdState);
+  const setViewableRecordNameSingular = useSetAtomState(
     viewableRecordNameSingularState,
   );
 

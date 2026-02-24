@@ -8,7 +8,7 @@ import {
 } from '@/ui/utilities/state/jotai/types/ComponentFamilyStateV2';
 import { isDefined } from 'twenty-shared/utils';
 
-export const createComponentFamilyStateV2 = <ValueType, FamilyKey>({
+export const createComponentFamilyState = <ValueType, FamilyKey>({
   key,
   defaultValue,
   componentInstanceContext,

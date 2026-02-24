@@ -5,10 +5,10 @@ import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRo
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
 import { t } from '@lingui/core/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
@@ -281,8 +281,8 @@ const MarketplaceRoleEffect = ({
     items: ObjectMetadataItem[],
   ) => void;
 }) => {
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
-  const setDraftRole = useSetFamilyRecoilStateV2(
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const setDraftRole = useSetFamilyAtomState(
     settingsDraftRoleFamilyState,
     defaultRole.id,
   );

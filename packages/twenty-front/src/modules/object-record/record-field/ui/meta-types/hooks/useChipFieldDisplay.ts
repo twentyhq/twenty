@@ -9,7 +9,7 @@ import { useContext } from 'react';
 import { isFieldActor } from '@/object-record/record-field/ui/types/guards/isFieldActor';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
@@ -50,10 +50,7 @@ export const useChipFieldDisplay = () => {
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 
-  const recordValue = useFamilyRecoilValueV2(
-    recordStoreFamilyStateV2,
-    recordId,
-  );
+  const recordValue = useFamilyAtomValue(recordStoreFamilyStateV2, recordId);
 
   if (!isNonEmptyString(objectNameSingular)) {
     throw new Error('Object metadata name singular is not a non-empty string');

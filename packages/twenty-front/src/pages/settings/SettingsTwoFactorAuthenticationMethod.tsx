@@ -18,7 +18,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledQRCodeContainer = styled.div`
@@ -79,7 +79,7 @@ const StyledDivider = styled.div`
 export const SettingsTwoFactorAuthenticationMethod = () => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
-  const qrCode = useRecoilValueV2(qrCodeState);
+  const qrCode = useAtomValue(qrCodeState);
 
   const { currentUserWorkspaceTwoFactorAuthenticationMethods } =
     useCurrentUserWorkspaceTwoFactorAuthentication();

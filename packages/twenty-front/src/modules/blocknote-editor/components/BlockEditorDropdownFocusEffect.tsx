@@ -2,7 +2,7 @@ import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { isSlashMenuOpenComponentState } from '@/blocknote-editor/states/isSlashMenuOpenComponentState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -13,7 +13,7 @@ export type BlockEditorDropdownFocusEffectProps = {
 export const BlockEditorDropdownFocusEffect = ({
   editor,
 }: BlockEditorDropdownFocusEffectProps) => {
-  const isSlashMenuOpenState = useRecoilComponentStateCallbackStateV2(
+  const isSlashMenuOpenState = useAtomComponentStateCallbackState(
     isSlashMenuOpenComponentState,
   );
 

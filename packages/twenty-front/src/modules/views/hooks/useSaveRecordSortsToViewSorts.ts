@@ -1,5 +1,5 @@
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewSortAPIPersist } from '@/views/hooks/internal/usePerformViewSortAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -21,8 +21,9 @@ export const useSaveRecordSortsToViewSorts = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const currentRecordSortsCallbackState =
-    useRecoilComponentStateCallbackStateV2(currentRecordSortsComponentState);
+  const currentRecordSortsCallbackState = useAtomComponentStateCallbackState(
+    currentRecordSortsComponentState,
+  );
 
   const store = useStore();
 

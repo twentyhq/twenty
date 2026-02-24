@@ -13,9 +13,9 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
@@ -36,13 +36,13 @@ export const MultipleRecordPickerMenuItems = ({
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
-  const pickableRecordIds = useRecoilComponentSelectorValueV2(
+  const pickableRecordIds = useAtomComponentSelectorValue(
     multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector,
     componentInstanceId,
   );
 
   const multipleRecordPickerPickableMorphItems =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       multipleRecordPickerPickableMorphItemsComponentState,
       componentInstanceId,
     );
@@ -70,12 +70,11 @@ export const MultipleRecordPickerMenuItems = ({
     [multipleRecordPickerPickableMorphItems, store],
   );
 
-  const multipleRecordPickerShouldShowInitialLoading =
-    useRecoilComponentValueV2(
-      multipleRecordPickerShouldShowInitialLoadingComponentState,
-    );
+  const multipleRecordPickerShouldShowInitialLoading = useAtomComponentValue(
+    multipleRecordPickerShouldShowInitialLoadingComponentState,
+  );
 
-  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
+  const multipleRecordPickerShouldShowSkeleton = useAtomComponentValue(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 

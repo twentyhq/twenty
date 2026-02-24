@@ -8,7 +8,7 @@ import {
   type CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
@@ -34,7 +34,7 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const subscriptionStatus = useSubscriptionStatus();
-      const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
+      const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
       return {
         subscriptionStatus,

@@ -3,7 +3,7 @@ import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settin
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
 import { settingsRolesIsLoadingStateV2 } from '@/settings/roles/states/settingsRolesIsLoadingStateV2';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,7 +15,7 @@ export const SettingsRolesQueryEffect = () => {
     fetchPolicy: 'network-only',
   });
 
-  const setSettingsRolesIsLoading = useSetRecoilStateV2(
+  const setSettingsRolesIsLoading = useSetAtomState(
     settingsRolesIsLoadingStateV2,
   );
 

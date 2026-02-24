@@ -1,8 +1,8 @@
 import { type ConfigVariableGroupFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableGroupFilter';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
 export const configVariableGroupFilterState =
-  createStateV2<ConfigVariableGroupFilter>({
+  createState<ConfigVariableGroupFilter>({
     key: 'configVariableGroupFilterState',
     defaultValue: 'all',
   });

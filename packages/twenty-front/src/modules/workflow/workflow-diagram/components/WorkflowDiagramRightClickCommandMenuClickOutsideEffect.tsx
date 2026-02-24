@@ -1,6 +1,6 @@
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { WORKFLOW_DIAGRAM_RIGHT_CLICK_MENU_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramRightClickMenuClickOutsideId';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
 
@@ -9,7 +9,7 @@ export const WorkflowDiagramRightClickCommandMenuClickOutsideEffect = ({
 }: {
   rightClickCommandMenuRef: React.RefObject<HTMLDivElement>;
 }) => {
-  const setWorkflowDiagramRightClickMenuPosition = useSetRecoilComponentStateV2(
+  const setWorkflowDiagramRightClickMenuPosition = useSetAtomComponentState(
     workflowDiagramRightClickMenuPositionState,
   );
 

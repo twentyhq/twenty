@@ -22,7 +22,7 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -78,7 +78,7 @@ export const useCreateManyRecords = <
     objectMetadataItem,
   });
 
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();

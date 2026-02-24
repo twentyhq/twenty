@@ -1,8 +1,8 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
 export const shouldCompactRecordIndexLabelIdentifierComponentState =
-  createComponentStateV2<boolean>({
+  createComponentState<boolean>({
     key: 'shouldCompactRecordIndexLabelIdentifierComponentState',
     componentInstanceContext: ContextStoreComponentInstanceContext,
     defaultValue: false,

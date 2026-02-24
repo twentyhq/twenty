@@ -1,10 +1,10 @@
 import { isFavoriteFolderCreatingStateV2 } from '@/favorites/states/isFavoriteFolderCreatingStateV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/display';
@@ -16,10 +16,10 @@ export const FavoriteFolderPickerFooter = ({
   dropdownId: string;
 }) => {
   const { t } = useLingui();
-  const [, setIsFavoriteFolderCreating] = useRecoilStateV2(
+  const [, setIsFavoriteFolderCreating] = useAtomState(
     isFavoriteFolderCreatingStateV2,
   );
-  const setIsNavigationDrawerExpanded = useSetRecoilStateV2(
+  const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
   );
   const { openNavigationSection } = useNavigationSection('Favorites');

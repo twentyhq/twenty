@@ -1,8 +1,8 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 export const isCurrentViewKeyIndexComponentState =
-  createComponentStateV2<boolean>({
+  createComponentState<boolean>({
     key: 'isCurrentViewKeyIndexComponentState',
     defaultValue: true,
     componentInstanceContext: ViewComponentInstanceContext,

@@ -1,7 +1,8 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const shouldNavigateBackToMemorizedUrlOnSaveState =
-  createStateV2<boolean>({
+export const shouldNavigateBackToMemorizedUrlOnSaveState = createState<boolean>(
+  {
     key: 'shouldNavigateBackToMemorizedUrlOnSaveState',
     defaultValue: false,
-  });
+  },
+);

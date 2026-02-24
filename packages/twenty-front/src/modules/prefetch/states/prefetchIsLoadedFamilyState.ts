@@ -1,7 +1,7 @@
 import { type PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
+import { createFamilyState } from '@/ui/utilities/state/jotai/utils/createFamilyState';
 
-export const prefetchIsLoadedFamilyState = createFamilyStateV2<
+export const prefetchIsLoadedFamilyState = createFamilyState<
   boolean,
   PrefetchKey
 >({

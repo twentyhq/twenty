@@ -1,9 +1,9 @@
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 export const useSelectedNavigationMenuItemEditItem = () => {
-  const selectedNavigationMenuItemInEditMode = useRecoilValueV2(
+  const selectedNavigationMenuItemInEditMode = useAtomValue(
     selectedNavigationMenuItemInEditModeStateV2,
   );
   const items = useWorkspaceSectionItems();

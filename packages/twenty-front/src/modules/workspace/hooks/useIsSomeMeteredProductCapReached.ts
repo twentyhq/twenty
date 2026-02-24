@@ -1,8 +1,8 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 export const useIsSomeMeteredProductCapReached = (): boolean => {
-  const billingSubscriptionItems = useRecoilValueV2(currentWorkspaceState)
+  const billingSubscriptionItems = useAtomValue(currentWorkspaceState)
     ?.currentBillingSubscription?.billingSubscriptionItems;
 
   if (!billingSubscriptionItems) {

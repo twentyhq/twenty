@@ -8,7 +8,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
 
@@ -19,8 +19,8 @@ type NavigationMenuItemFolder = {
 };
 
 export const useNavigationMenuItemsByFolder = () => {
-  const coreViews = useRecoilValueV2(coreViewsState);
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const coreViews = useAtomValue(coreViewsState);
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();

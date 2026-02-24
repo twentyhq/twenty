@@ -7,24 +7,24 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowBackUp } from 'twenty-ui/display';
 
 export const ResetContextToSelectionCommandButton = () => {
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useAtomComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
     'command-menu-previous',
   );
 
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     'command-menu-previous',
   );
 
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>

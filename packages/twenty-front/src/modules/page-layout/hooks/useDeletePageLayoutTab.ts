@@ -6,7 +6,7 @@ import { removeTabLayouts } from '@/page-layout/utils/removeTabLayouts';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -16,12 +16,12 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutCurrentLayoutsState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );

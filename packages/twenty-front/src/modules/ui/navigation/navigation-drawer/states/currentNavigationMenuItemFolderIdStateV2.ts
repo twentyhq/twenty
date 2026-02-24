@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const currentNavigationMenuItemFolderIdStateV2 = createStateV2<
+export const currentNavigationMenuItemFolderIdStateV2 = createState<
   string | null
 >({
   key: 'currentNavigationMenuItemFolderIdStateV2',

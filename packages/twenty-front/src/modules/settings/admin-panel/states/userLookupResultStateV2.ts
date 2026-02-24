@@ -1,8 +1,8 @@
 import { type UserLookup } from '@/settings/admin-panel/types/UserLookup';
 
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const userLookupResultStateV2 = createStateV2<UserLookup | null>({
+export const userLookupResultStateV2 = createState<UserLookup | null>({
   key: 'userLookupResultStateV2',
   defaultValue: null,
 });

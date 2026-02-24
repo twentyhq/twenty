@@ -1,8 +1,8 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 export const useUserTimezone = () => {
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
   const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const userTimezone =

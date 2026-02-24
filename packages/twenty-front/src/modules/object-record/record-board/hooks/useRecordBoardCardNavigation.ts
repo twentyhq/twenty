@@ -5,9 +5,9 @@ import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/us
 import { focusedRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/focusedRecordBoardCardIndexesComponentState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,17 +17,17 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
   const store = useStore();
   const { focusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const focusedBoardCardIndexes = useRecoilComponentStateCallbackStateV2(
+  const focusedBoardCardIndexes = useAtomComponentStateCallbackState(
     focusedRecordBoardCardIndexesComponentState,
     recordBoardId,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentFamilySelectorValueV2(
+  const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Kanban,
   );
 
-  const recordIdsByGroupState = useRecoilComponentFamilyStateCallbackStateV2(
+  const recordIdsByGroupState = useAtomComponentFamilyStateCallbackState(
     recordIndexRecordIdsByGroupComponentFamilyState,
   );
 

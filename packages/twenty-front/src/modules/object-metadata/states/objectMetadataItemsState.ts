@@ -1,7 +1,7 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const objectMetadataItemsState = createStateV2<ObjectMetadataItem[]>({
+export const objectMetadataItemsState = createState<ObjectMetadataItem[]>({
   key: 'objectMetadataItemsState',
   defaultValue: [],
 });

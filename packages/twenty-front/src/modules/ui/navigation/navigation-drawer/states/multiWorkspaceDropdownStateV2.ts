@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const multiWorkspaceDropdownStateV2 = createStateV2<
+export const multiWorkspaceDropdownStateV2 = createState<
   'default' | 'workspaces-list' | 'themes'
 >({
   key: 'multiWorkspaceDropdownStateV2',

@@ -12,7 +12,7 @@ import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
@@ -20,7 +20,7 @@ export const RestoreMultipleRecordsAction = () => {
   const { recordIndexId, objectMetadataItem } =
     useRecordIndexIdFromCurrentContextStore();
 
-  const contextStoreCurrentViewId = useRecoilComponentValueV2(
+  const contextStoreCurrentViewId = useAtomComponentValue(
     contextStoreCurrentViewIdComponentState,
     recordIndexId,
   );
@@ -37,22 +37,22 @@ export const RestoreMultipleRecordsAction = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useAtomComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
     recordIndexId,
   );
 
-  const contextStoreFilters = useRecoilComponentValueV2(
+  const contextStoreFilters = useAtomComponentValue(
     contextStoreFiltersComponentState,
     recordIndexId,
   );
 
-  const contextStoreFilterGroups = useRecoilComponentValueV2(
+  const contextStoreFilterGroups = useAtomComponentValue(
     contextStoreFilterGroupsComponentState,
     recordIndexId,
   );
 
-  const contextStoreAnyFieldFilterValue = useRecoilComponentValueV2(
+  const contextStoreAnyFieldFilterValue = useAtomComponentValue(
     contextStoreAnyFieldFilterValueComponentState,
     recordIndexId,
   );

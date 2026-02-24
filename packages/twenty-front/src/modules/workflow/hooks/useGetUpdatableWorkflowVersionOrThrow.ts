@@ -1,4 +1,4 @@
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const useGetUpdatableWorkflowVersionOrThrow = (instanceId?: string) => {
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+  const workflowVisualizerWorkflowId = useAtomComponentValue(
     workflowVisualizerWorkflowIdComponentState,
     instanceId,
   );

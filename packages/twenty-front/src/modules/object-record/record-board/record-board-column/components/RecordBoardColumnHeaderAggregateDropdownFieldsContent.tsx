@@ -9,7 +9,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -35,19 +35,19 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
 
   const { getIcon } = useIcons();
 
-  const aggregateOperation = useRecoilComponentValueV2(
+  const aggregateOperation = useAtomComponentValue(
     aggregateOperationComponentState,
   );
 
-  const availableFieldsIdsForAggregateOperation = useRecoilComponentValueV2(
+  const availableFieldsIdsForAggregateOperation = useAtomComponentValue(
     availableFieldIdsForAggregateOperationComponentState,
   );
 
-  const recordIndexGroupAggregateOperation = useRecoilComponentValueV2(
+  const recordIndexGroupAggregateOperation = useAtomComponentValue(
     recordIndexGroupAggregateOperationComponentState,
   );
 
-  const recordIndexGroupAggregateFieldMetadataItem = useRecoilComponentValueV2(
+  const recordIndexGroupAggregateFieldMetadataItem = useAtomComponentValue(
     recordIndexGroupAggregateFieldMetadataItemComponentState,
   );
 

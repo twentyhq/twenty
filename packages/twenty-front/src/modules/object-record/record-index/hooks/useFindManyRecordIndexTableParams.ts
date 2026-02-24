@@ -8,7 +8,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
@@ -29,15 +29,15 @@ export const useFindManyRecordIndexTableParams = (
 
   const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
 
-  const currentRecordFilterGroups = useRecoilComponentValueV2(
+  const currentRecordFilterGroups = useAtomComponentValue(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordSorts = useRecoilComponentValueV2(
+  const currentRecordSorts = useAtomComponentValue(
     currentRecordSortsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useAtomComponentValue(
     currentRecordFiltersComponentState,
   );
 
@@ -50,7 +50,7 @@ export const useFindManyRecordIndexTableParams = (
     filterValueDependencies,
   });
 
-  const anyFieldFilterValue = useRecoilComponentValueV2(
+  const anyFieldFilterValue = useAtomComponentValue(
     anyFieldFilterValueComponentState,
   );
 

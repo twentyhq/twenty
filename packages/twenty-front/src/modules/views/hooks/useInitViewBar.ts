@@ -1,14 +1,14 @@
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { availableFieldDefinitionsComponentState } from '@/views/states/availableFieldDefinitionsComponentState';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 
 export const useInitViewBar = (viewBarInstanceId?: string) => {
-  const setAvailableFieldDefinitions = useSetRecoilComponentStateV2(
+  const setAvailableFieldDefinitions = useSetAtomComponentState(
     availableFieldDefinitionsComponentState,
     viewBarInstanceId,
   );
 
-  const setViewObjectMetadataId = useSetRecoilComponentStateV2(
+  const setViewObjectMetadataId = useSetAtomComponentState(
     viewObjectMetadataIdComponentState,
     viewBarInstanceId,
   );

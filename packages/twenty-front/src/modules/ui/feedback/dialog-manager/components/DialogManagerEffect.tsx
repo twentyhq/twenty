@@ -5,12 +5,10 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 
 import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 
 export const DialogManagerEffect = () => {
-  const dialogInternal = useRecoilComponentValueV2(
-    dialogInternalComponentState,
-  );
+  const dialogInternal = useAtomComponentValue(dialogInternalComponentState);
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 

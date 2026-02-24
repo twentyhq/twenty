@@ -22,7 +22,7 @@ import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -144,7 +144,7 @@ export const AIChatTab = () => {
   const hasMessages = messages.length > 0;
 
   const { uploadFiles } = useAIChatFileUpload();
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomValue(currentWorkspaceState);
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
 
   const { editor, handleSendAndClear } = useAIChatEditor({

@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
 import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
 import {
   type Workflow,
@@ -21,11 +21,11 @@ type WorkflowWithAllVersions = Omit<Workflow, 'versions'> & {
 export const useWorkflowWithCurrentVersion = (
   workflowId: string | undefined,
 ): WorkflowWithCurrentVersion | undefined => {
-  const shouldWorkflowRefetchRequest = useFamilyRecoilValueV2(
+  const shouldWorkflowRefetchRequest = useFamilyAtomValue(
     shouldWorkflowRefetchRequestFamilyState,
     workflowId ?? '',
   );
-  const setShouldWorkflowRefetchRequest = useSetFamilyRecoilStateV2(
+  const setShouldWorkflowRefetchRequest = useSetFamilyAtomState(
     shouldWorkflowRefetchRequestFamilyState,
     workflowId ?? '',
   );

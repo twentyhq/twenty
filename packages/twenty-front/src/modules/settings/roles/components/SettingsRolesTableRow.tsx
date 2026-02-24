@@ -4,7 +4,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import React from 'react';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -65,9 +65,7 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
   const { getIcon } = useIcons();
   const Icon = getIcon(role.icon ?? 'IconUser');
 
-  const currentWorkspaceMembers = useRecoilValueV2(
-    currentWorkspaceMembersState,
-  );
+  const currentWorkspaceMembers = useAtomValue(currentWorkspaceMembersState);
 
   const enrichedWorkspaceMembers = role.workspaceMembers
     .map((workspaceMember) =>

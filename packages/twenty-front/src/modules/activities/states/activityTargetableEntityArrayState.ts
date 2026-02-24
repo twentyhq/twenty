@@ -1,7 +1,7 @@
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const activityTargetableEntityArrayState = createStateV2<
+export const activityTargetableEntityArrayState = createState<
   ActivityTargetableObject[]
 >({
   key: 'activities/targetable-entity-array',

@@ -16,9 +16,9 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { cx } from '@linaria/core';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -36,34 +36,34 @@ export const RecordTableHeaderFirstCell = () => {
 
   const [iconIsVisible, setIconIsVisible] = useState(false);
 
-  const isFirstRowActive = useRecoilComponentFamilyValueV2(
+  const isFirstRowActive = useAtomComponentFamilyValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useRecoilComponentFamilyValueV2(
+  const isFirstRowFocused = useAtomComponentFamilyValue(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );
 
   const recordField = getVisibleFieldWithLowestPosition(visibleRecordFields);
 
-  const isScrolledVertically = useRecoilComponentValueV2(
+  const isScrolledVertically = useAtomComponentValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const isRowFocusActive = useRecoilComponentValueV2(
+  const isRowFocusActive = useAtomComponentValue(
     isRecordTableRowFocusActiveComponentState,
   );
 
   const isFirstRowActiveOrFocused =
     isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
 
-  const hasRecordGroups = useRecoilComponentSelectorValueV2(
+  const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
 
-  const resizedFieldMetadataItemId = useRecoilComponentValueV2(
+  const resizedFieldMetadataItemId = useAtomComponentValue(
     resizedFieldMetadataIdComponentState,
   );
 

@@ -1,5 +1,5 @@
 import { type ObjectPermissions } from 'twenty-shared/types';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 import { type UserWorkspace } from '~/generated-metadata/graphql';
 
 export type CurrentUserWorkspace = Pick<
@@ -10,7 +10,7 @@ export type CurrentUserWorkspace = Pick<
 };
 
 export const currentUserWorkspaceState =
-  createStateV2<CurrentUserWorkspace | null>({
+  createState<CurrentUserWorkspace | null>({
     key: 'currentUserWorkspaceState',
     defaultValue: null,
   });

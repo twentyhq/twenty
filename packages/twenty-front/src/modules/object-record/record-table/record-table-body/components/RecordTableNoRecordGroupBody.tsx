@@ -11,15 +11,15 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
 import { RecordTableVirtualizedSSESubscribeEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedSSESubscribeEffect';
 import { RecordTableVirtualizedRowTreadmillEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedRowTreadmillEffect';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 
 export const RecordTableNoRecordGroupBody = () => {
-  const recordTableHasRecords = useRecoilComponentSelectorValueV2(
+  const recordTableHasRecords = useAtomComponentSelectorValue(
     recordIndexHasRecordsComponentSelector,
   );
 
-  const isRecordTableInitialLoading = useRecoilComponentValueV2(
+  const isRecordTableInitialLoading = useAtomComponentValue(
     isRecordTableInitialLoadingComponentState,
   );
 

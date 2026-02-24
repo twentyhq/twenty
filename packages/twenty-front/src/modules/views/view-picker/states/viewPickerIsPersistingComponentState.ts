@@ -1,8 +1,8 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 export const viewPickerIsPersistingComponentState =
-  createComponentStateV2<boolean>({
+  createComponentState<boolean>({
     key: 'viewPickerIsPersistingComponentState',
     defaultValue: false,
     componentInstanceContext: ViewComponentInstanceContext,

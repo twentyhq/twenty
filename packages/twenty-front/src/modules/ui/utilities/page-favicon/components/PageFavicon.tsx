@@ -1,12 +1,12 @@
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { Helmet } from 'react-helmet-async';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const PageFavicon = () => {
-  const workspacePublicData = useRecoilValueV2(workspacePublicDataState);
+  const workspacePublicData = useAtomValue(workspacePublicDataState);
   return (
     <Helmet>
       <link

@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui/display';
@@ -50,7 +50,7 @@ export const SettingsAgentRoleTab = ({
   const { data: rolesData } = useGetRolesQuery();
   const [createRole] = useCreateOneRoleMutation();
   const [assignRoleToAgent] = useAssignRoleToAgentMutation();
-  const setSettingsDraftRole = useSetFamilyRecoilStateV2(
+  const setSettingsDraftRole = useSetFamilyAtomState(
     settingsDraftRoleFamilyState,
     formValues.role || '',
   );

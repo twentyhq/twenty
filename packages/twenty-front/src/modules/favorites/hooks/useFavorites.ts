@@ -8,19 +8,19 @@ import { useMemo } from 'react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 export const useFavorites = () => {
   const { favorites } = usePrefetchedFavoritesData();
-  const favoriteViewsWithMinimalData = useRecoilValueV2(
+  const favoriteViewsWithMinimalData = useAtomValue(
     favoriteViewsWithMinimalDataSelector,
   );
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Favorite,
     });
-  const allowRequestsToTwentyIcons = useRecoilValueV2(
+  const allowRequestsToTwentyIcons = useAtomValue(
     allowRequestsToTwentyIconsState,
   );
   const getObjectRecordIdentifierByNameSingular =

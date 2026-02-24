@@ -1,8 +1,8 @@
 import { RecordBoardCardComponentInstanceContext } from '@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
 export const recordBoardCardEditModePositionComponentState =
-  createComponentStateV2<number | null>({
+  createComponentState<number | null>({
     key: 'recordBoardCardEditModePositionComponentState',
     defaultValue: null,
     componentInstanceContext: RecordBoardCardComponentInstanceContext,

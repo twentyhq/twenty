@@ -12,7 +12,7 @@ import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { convertViewTypeToCore } from '@/views/utils/convertViewTypeToCore';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -20,7 +20,7 @@ import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { updateCurrentView } = useUpdateCurrentView();
-  const setRecordIndexViewType = useSetRecoilStateV2(recordIndexViewTypeState);
+  const setRecordIndexViewType = useSetAtomState(recordIndexViewTypeState);
   const { availableFieldsForGrouping } =
     useGetAvailableFieldsToGroupRecordsBy();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();

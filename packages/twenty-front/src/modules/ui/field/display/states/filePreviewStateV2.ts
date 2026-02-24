@@ -1,7 +1,7 @@
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const filePreviewStateV2 = createStateV2<FieldFilesValue | null>({
+export const filePreviewStateV2 = createState<FieldFilesValue | null>({
   key: 'filePreviewStateV2',
   defaultValue: null,
 });

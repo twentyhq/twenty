@@ -2,19 +2,20 @@ import { useAtomValue } from 'jotai';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type ComponentSelectorV2 } from '@/ui/utilities/state/jotai/types/ComponentSelectorV2';
+import { type ComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/types/ComponentFamilyStateV2';
 
-export const useRecoilComponentSelectorValueV2 = <StateType>(
-  componentSelector: ComponentSelectorV2<StateType>,
+export const useAtomComponentFamilyValue = <StateType, FamilyKey>(
+  componentState: ComponentFamilyStateV2<StateType, FamilyKey>,
+  familyKey: FamilyKey,
   instanceIdFromProps?: string,
 ): StateType => {
   const componentInstanceContext = globalComponentInstanceContextMap.get(
-    componentSelector.key,
+    componentState.key,
   );
 
   if (!componentInstanceContext) {
     throw new Error(
-      `Instance context for key "${componentSelector.key}" is not defined`,
+      `Instance context for key "${componentState.key}" is not defined`,
     );
   }
 
@@ -23,5 +24,5 @@ export const useRecoilComponentSelectorValueV2 = <StateType>(
     instanceIdFromProps,
   );
 
-  return useAtomValue(componentSelector.selectorFamily({ instanceId }));
+  return useAtomValue(componentState.atomFamily({ instanceId, familyKey }));
 };

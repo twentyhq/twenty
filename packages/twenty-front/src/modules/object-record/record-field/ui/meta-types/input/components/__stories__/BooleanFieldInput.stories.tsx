@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -23,7 +23,7 @@ const BooleanFieldValueSetterEffect = ({
   value: boolean;
   recordId: string;
 }) => {
-  const setField = useSetFamilyRecoilStateV2(recordStoreFamilyState, recordId);
+  const setField = useSetFamilyAtomState(recordStoreFamilyState, recordId);
 
   useEffect(() => {
     setField({ id: recordId, Boolean: value, __typename: 'Person' });

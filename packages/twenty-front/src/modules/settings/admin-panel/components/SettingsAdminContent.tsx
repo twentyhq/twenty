@@ -10,10 +10,10 @@ import {
   IconSparkles,
   IconVariable,
 } from 'twenty-ui/display';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 export const SettingsAdminContent = () => {
-  const currentUser = useRecoilValueV2(currentUserState);
+  const currentUser = useAtomValue(currentUserState);
 
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
   const canImpersonate = currentUser?.canImpersonate;

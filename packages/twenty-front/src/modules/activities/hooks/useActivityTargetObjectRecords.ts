@@ -5,8 +5,8 @@ import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,9 +14,9 @@ export const useActivityTargetObjectRecords = (
   activityRecordId?: string,
   activityTargets?: Nullable<NoteTarget[] | TaskTarget[]>,
 ) => {
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
 
-  const activity = useFamilyRecoilValueV2(
+  const activity = useFamilyAtomValue(
     recordStoreFamilyState,
     activityRecordId ?? '',
   ) as Note | Task | null;

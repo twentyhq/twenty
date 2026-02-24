@@ -9,7 +9,7 @@ import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -17,7 +17,7 @@ const StyledContentContainer = styled.div`
 `;
 
 export const SignInUpSSOIdentityProviderSelection = () => {
-  const workspaceAuthProviders = useRecoilValueV2(workspaceAuthProvidersState);
+  const workspaceAuthProviders = useAtomValue(workspaceAuthProvidersState);
 
   const { redirectToSSOLoginPage } = useSSO();
 

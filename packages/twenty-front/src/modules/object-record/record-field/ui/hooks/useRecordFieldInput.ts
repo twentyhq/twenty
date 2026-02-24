@@ -1,11 +1,11 @@
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
 import { type FieldInputDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const useRecordFieldInput = <FieldValue>() => {
-  const recordFieldInputDraftValue = useRecoilComponentStateCallbackStateV2(
+  const recordFieldInputDraftValue = useAtomComponentStateCallbackState(
     recordFieldInputDraftValueComponentState,
   );
 

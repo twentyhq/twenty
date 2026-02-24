@@ -3,7 +3,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { mapById } from 'twenty-shared/utils';
 
@@ -14,11 +14,11 @@ export const useGetShouldResetTableVirtualizationForUpdateInputs = () => {
     objectMetadataItem,
   });
 
-  const currentRecordSorts = useRecoilComponentValueV2(
+  const currentRecordSorts = useAtomComponentValue(
     currentRecordSortsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useAtomComponentValue(
     currentRecordFiltersComponentState,
   );
 

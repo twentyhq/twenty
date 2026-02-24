@@ -3,8 +3,8 @@ import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/rol
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
 import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 
@@ -33,11 +33,11 @@ export const SettingsRolePermissionsToolSection = ({
   roleId,
   isEditable,
 }: SettingsRolePermissionsToolSectionProps) => {
-  const settingsDraftRole = useFamilyRecoilValueV2(
+  const settingsDraftRole = useFamilyAtomValue(
     settingsDraftRoleFamilyState,
     roleId,
   );
-  const setSettingsDraftRole = useSetFamilyRecoilStateV2(
+  const setSettingsDraftRole = useSetFamilyAtomState(
     settingsDraftRoleFamilyState,
     roleId,
   );

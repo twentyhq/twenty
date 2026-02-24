@@ -2,7 +2,7 @@ import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fiel
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
 import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 
@@ -17,19 +17,18 @@ export const useInitializeFieldsWidgetGroupsDraft = ({
   widgetId,
   serverGroups,
 }: UseInitializeFieldsWidgetGroupsDraftParams) => {
-  const fieldsWidgetGroupsDraftState = useRecoilComponentStateCallbackStateV2(
+  const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetGroupsPersistedState =
-    useRecoilComponentStateCallbackStateV2(
-      fieldsWidgetGroupsPersistedComponentState,
-      pageLayoutId,
-    );
+  const fieldsWidgetGroupsPersistedState = useAtomComponentStateCallbackState(
+    fieldsWidgetGroupsPersistedComponentState,
+    pageLayoutId,
+  );
 
   const hasInitializedFieldsWidgetGroupsDraftState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       hasInitializedFieldsWidgetGroupsDraftComponentState,
       pageLayoutId,
     );

@@ -1,8 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const lastVisitedObjectMetadataItemIdState = createStateV2<
-  string | null
->({
+export const lastVisitedObjectMetadataItemIdState = createState<string | null>({
   key: 'lastVisitedObjectMetadataItemIdState',
   defaultValue: null,
   useLocalStorage: true,

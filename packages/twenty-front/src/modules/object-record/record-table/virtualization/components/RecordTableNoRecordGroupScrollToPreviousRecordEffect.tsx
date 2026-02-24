@@ -6,19 +6,19 @@ import { useProcessTreadmillScrollTop } from '@/object-record/record-table/virtu
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
 import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 
 export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
-  const allRecordIds = useRecoilComponentSelectorValueV2(
+  const allRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const [lastShowPageRecordId, setLastShowPageRecordId] = useRecoilStateV2(
+  const [lastShowPageRecordId, setLastShowPageRecordId] = useAtomState(
     lastShowPageRecordIdState,
   );
 

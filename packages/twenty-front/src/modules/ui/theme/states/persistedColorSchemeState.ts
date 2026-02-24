@@ -1,7 +1,7 @@
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const persistedColorSchemeState = createStateV2<ColorScheme>({
+export const persistedColorSchemeState = createState<ColorScheme>({
   key: 'persistedColorSchemeState',
   defaultValue: 'System',
   useLocalStorage: true,

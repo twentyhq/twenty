@@ -1,10 +1,10 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
 export type ProfilingQueue = {
   [runName: string]: string[];
 };
 
-export const profilingQueueState = createStateV2<ProfilingQueue>({
+export const profilingQueueState = createState<ProfilingQueue>({
   key: 'profilingQueueState',
   defaultValue: {},
 });

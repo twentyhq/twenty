@@ -11,7 +11,7 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -135,7 +135,7 @@ export const AttachmentList = ({
   const [previewedAttachment, setPreviewedAttachment] =
     useState<Attachment | null>(null);
 
-  const isAttachmentPreviewEnabled = useRecoilValueV2(
+  const isAttachmentPreviewEnabled = useAtomValue(
     isAttachmentPreviewEnabledState,
   );
 

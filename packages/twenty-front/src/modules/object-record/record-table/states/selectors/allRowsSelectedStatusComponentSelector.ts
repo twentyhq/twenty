@@ -1,11 +1,11 @@
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/jotai/utils/createComponentSelector';
 import { type AllRowsSelectedStatus } from '@/object-record/record-table/types/AllRowSelectedStatus';
 
 export const allRowsSelectedStatusComponentSelector =
-  createComponentSelectorV2<AllRowsSelectedStatus>({
+  createComponentSelector<AllRowsSelectedStatus>({
     key: 'allRowsSelectedStatusComponentSelector',
     componentInstanceContext: RecordTableComponentInstanceContext,
     get:

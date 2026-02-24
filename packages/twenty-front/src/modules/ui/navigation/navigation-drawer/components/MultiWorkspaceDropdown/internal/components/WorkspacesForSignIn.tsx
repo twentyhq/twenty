@@ -3,7 +3,7 @@ import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/Sty
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useFilteredAvailableWorkspaces } from '@/ui/navigation/navigation-drawer/hooks/useFilteredAvailableWorkspaces';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { AvailableWorkspaceItem } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/AvailableWorkspaceItem';
 
@@ -14,8 +14,8 @@ export const WorkspacesForSignIn = ({
 }) => {
   const { t } = useLingui();
 
-  const availableWorkspaces = useRecoilValueV2(availableWorkspacesState);
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const availableWorkspaces = useAtomValue(availableWorkspacesState);
+  const currentWorkspace = useAtomValue(currentWorkspaceState);
 
   const { searchAvailableWorkspaces } = useFilteredAvailableWorkspaces();
 

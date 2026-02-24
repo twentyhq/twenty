@@ -1,10 +1,10 @@
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type View } from '@/views/types/View';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
+import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
 
 export const coreViewsFromObjectMetadataItemFamilySelector =
-  createFamilySelectorV2<View[], { objectMetadataItemId: string }>({
+  createFamilySelector<View[], { objectMetadataItemId: string }>({
     key: 'coreViewsFromObjectMetadataItemFamilySelector',
     get:
       ({ objectMetadataItemId }) =>

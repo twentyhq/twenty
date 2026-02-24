@@ -10,7 +10,7 @@ import { lowDetailsActivatedComponentState } from '@/object-record/record-table/
 import { scrollAtRealIndexComponentState } from '@/object-record/record-table/virtualization/states/scrollAtRealIndexComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_ACTIVATE_LOW_DETAILS = 120;
@@ -25,20 +25,19 @@ const LAST_SCROLL_DEBOUNCE_TIME = 300;
 export const RecordTableVirtualizedRowTreadmillEffect = () => {
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const scrollAtRealIndexCallbackState = useRecoilComponentStateCallbackStateV2(
+  const scrollAtRealIndexCallbackState = useAtomComponentStateCallbackState(
     scrollAtRealIndexComponentState,
   );
 
-  const lowDetailsActivatedCallbackState =
-    useRecoilComponentStateCallbackStateV2(lowDetailsActivatedComponentState);
+  const lowDetailsActivatedCallbackState = useAtomComponentStateCallbackState(
+    lowDetailsActivatedComponentState,
+  );
 
   const lastScrollMeasurementsCallbackState =
-    useRecoilComponentStateCallbackStateV2(
-      lastScrollMeasurementsComponentState,
-    );
+    useAtomComponentStateCallbackState(lastScrollMeasurementsComponentState);
 
   const totalNumberOfRecordsToVirtualizeCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       totalNumberOfRecordsToVirtualizeComponentState,
     );
 

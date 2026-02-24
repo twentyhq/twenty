@@ -1,11 +1,9 @@
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { useEffect } from 'react';
 
 export const RecordBoardStickyHeaderEffect = () => {
-  const scrollTop = useRecoilComponentValueV2(
-    scrollWrapperScrollTopComponentState,
-  );
+  const scrollTop = useAtomComponentValue(scrollWrapperScrollTopComponentState);
 
   // TODO: move this outside because it might cause way too many re-renders for other hooks
   useEffect(() => {

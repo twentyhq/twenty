@@ -9,7 +9,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export const useNotes = (targetableObject: ActivityTargetableObject) => {
   const notesQueryVariables = useMemo(
@@ -34,7 +34,7 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
   });
 
   const [currentNotesQueryVariables, setCurrentNotesQueryVariables] =
-    useRecoilStateV2(currentNotesQueryVariablesStateV2);
+    useAtomState(currentNotesQueryVariablesStateV2);
 
   // TODO: fix useEffect, remove with better pattern
   useEffect(() => {

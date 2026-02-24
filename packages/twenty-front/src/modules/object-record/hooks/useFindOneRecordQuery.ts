@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -21,7 +21,7 @@ export const useFindOneRecordQuery = ({
     objectNameSingular,
   });
 
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 

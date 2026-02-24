@@ -3,7 +3,7 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,8 +26,9 @@ export const useHandleToggleColumnSort = ({
 
   const { upsertRecordSort } = useUpsertRecordSort();
 
-  const currentRecordSortsCallbackState =
-    useRecoilComponentStateCallbackStateV2(currentRecordSortsComponentState);
+  const currentRecordSortsCallbackState = useAtomComponentStateCallbackState(
+    currentRecordSortsComponentState,
+  );
 
   const store = useStore();
 

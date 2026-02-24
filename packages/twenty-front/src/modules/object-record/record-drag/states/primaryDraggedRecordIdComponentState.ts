@@ -1,7 +1,7 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
 
-export const primaryDraggedRecordIdComponentState = createComponentStateV2<
+export const primaryDraggedRecordIdComponentState = createComponentState<
   string | null
 >({
   key: 'primaryDraggedRecordIdComponentState',

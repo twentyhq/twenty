@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createState } from '@/ui/utilities/state/jotai/utils/createState';
 
-export const isSidePanelAnimatingStateV2 = createStateV2<boolean>({
+export const isSidePanelAnimatingStateV2 = createState<boolean>({
   key: 'command-menu/isSidePanelAnimatingStateV2',
   defaultValue: false,
 });

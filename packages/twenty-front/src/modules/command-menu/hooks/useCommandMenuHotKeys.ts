@@ -11,10 +11,10 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
 import { Key } from 'ts-key-enum';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -30,15 +30,15 @@ export const useCommandMenuHotKeys = () => {
 
   const { setGlobalCommandMenuContext } = useSetGlobalCommandMenuContext();
 
-  const commandMenuSearch = useRecoilValueV2(commandMenuSearchState);
+  const commandMenuSearch = useAtomValue(commandMenuSearchState);
 
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
-  const commandMenuPage = useRecoilValueV2(commandMenuPageState);
+  const commandMenuPage = useAtomValue(commandMenuPageState);
 
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  const contextStoreTargetedRecordsRuleComponent = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRuleComponent = useAtomComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );

@@ -2,8 +2,8 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
@@ -12,17 +12,17 @@ import { v4 } from 'uuid';
 export const useCreateRecordFilterFromObjectFilterDropdownCurrentStates =
   () => {
     const fieldMetadataItemUsedInDropdownCallbackState =
-      useRecoilComponentSelectorCallbackStateV2(
+      useAtomComponentSelectorCallbackState(
         fieldMetadataItemUsedInDropdownComponentSelector,
       );
 
     const selectedOperandInDropdownCallbackState =
-      useRecoilComponentStateCallbackStateV2(
+      useAtomComponentStateCallbackState(
         selectedOperandInDropdownComponentState,
       );
 
     const subFieldNameUsedInDropdownCallbackState =
-      useRecoilComponentStateCallbackStateV2(
+      useAtomComponentStateCallbackState(
         subFieldNameUsedInDropdownComponentState,
       );
 

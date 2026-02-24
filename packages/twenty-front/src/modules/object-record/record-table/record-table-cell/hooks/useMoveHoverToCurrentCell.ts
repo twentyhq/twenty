@@ -5,16 +5,16 @@ import { useStore } from 'jotai';
 
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export const useMoveHoverToCurrentCell = (recordTableId: string) => {
-  const setHoverPosition = useSetRecoilComponentStateV2(
+  const setHoverPosition = useSetAtomComponentState(
     recordTableHoverPositionComponentState,
     recordTableId,
   );
 
-  const isSomeCellInEditMode = useRecoilComponentSelectorCallbackStateV2(
+  const isSomeCellInEditMode = useAtomComponentSelectorCallbackState(
     isSomeCellInEditModeComponentSelector,
     recordTableId,
   );

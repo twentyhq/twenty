@@ -3,7 +3,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -13,7 +13,7 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
