@@ -636,8 +636,8 @@ export type HtmlVideoProperties = HtmlCommonProperties & {
   loop?: boolean;
   muted?: boolean;
   preload?: string;
-  width?: number;
-  height?: number;
+  width?: string;
+  height?: string;
   crossOrigin?: string;
   playsInline?: boolean;
 };
@@ -657,8 +657,8 @@ export const HtmlVideoElement = createRemoteElement<
     loop: { type: Boolean },
     muted: { type: Boolean },
     preload: { type: String },
-    width: { type: Number },
-    height: { type: Number },
+    width: { type: String },
+    height: { type: String },
     crossOrigin: { type: String },
     playsInline: { type: Boolean },
   },
