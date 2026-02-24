@@ -9,6 +9,7 @@ import {
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import {
@@ -26,8 +27,9 @@ const StyledRow = styled.div<{ isExpanded: boolean }>`
   display: flex;
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'space-between' : 'center'};
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme, isExpanded }) => (isExpanded ? theme.spacing(2) : 0)};
   width: 100%;
+  transition: gap ${({ theme }) => theme.animation.duration.normal}s ease;
 `;
 
 const StyledTabsPill = styled.div`
@@ -86,6 +88,9 @@ const StyledNewChatButtonWrapper = styled.div<{ isExpanded: boolean }>`
     isExpanded ? theme.spacing(0.75) : theme.spacing(0.5)};
   width: ${({ theme, isExpanded }) =>
     isExpanded ? theme.spacing(25.75) : theme.spacing(6)};
+  transition:
+    height ${({ theme }) => theme.animation.duration.normal}s ease,
+    padding ${({ theme }) => theme.animation.duration.normal}s ease;
 `;
 
 const StyledNewChatButton = styled.div`
@@ -162,7 +167,7 @@ export const MainNavigationDrawerTabsRow = () => {
 
   return (
     <StyledRow isExpanded={isExpanded}>
-      {isExpanded && (
+      <NavigationDrawerAnimatedCollapseWrapper>
         <StyledTabsPill role="tablist" aria-label={t`Navigation tabs`}>
           <StyledTabWrapper
             isActive={activeTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU}
@@ -205,7 +210,7 @@ export const MainNavigationDrawerTabsRow = () => {
             </StyledTabIcon>
           </StyledTabWrapper>
         </StyledTabsPill>
-      )}
+      </NavigationDrawerAnimatedCollapseWrapper>
       <StyledNewChatButtonWrapper isExpanded={isExpanded}>
         <StyledNewChatButton
           role="button"

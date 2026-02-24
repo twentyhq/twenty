@@ -19,6 +19,7 @@ const StyledContainer = styled.div<{ isExpanded: boolean }>`
   user-select: none;
   padding-right: ${({ theme }) => theme.spacing(2)};
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
+  transition: gap ${({ theme }) => theme.animation.duration.normal}s ease;
 `;
 
 const StyledRightActions = styled.div<{ isExpanded: boolean }>`
@@ -27,6 +28,7 @@ const StyledRightActions = styled.div<{ isExpanded: boolean }>`
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   gap: ${({ theme, isExpanded }) => (isExpanded ? 0 : theme.spacing(1))};
   margin-left: ${({ isExpanded }) => (isExpanded ? 'auto' : 0)};
+  transition: gap ${({ theme }) => theme.animation.duration.normal}s ease;
 `;
 
 const StyledNavigationDrawerCollapseButton = styled(
