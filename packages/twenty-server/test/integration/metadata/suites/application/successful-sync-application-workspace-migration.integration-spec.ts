@@ -2,7 +2,6 @@ import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/app
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
-import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
 import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-skills.util';
@@ -12,6 +11,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -121,21 +121,20 @@ describe('syncApplication', () => {
       isCustom: true,
     });
 
-    const { fields: fieldsAfterSync } = await findManyFieldsMetadata({
-      input: {
-        filter: { isCustom: { is: true } },
-        paging: { first: 100 },
-      },
-      gqlFields: 'id name label type description icon isCustom',
+    const objects = await findManyObjectMetadataWithIndexes({
       expectToFail: false,
     });
 
+    const fieldsAfterSync = objects.find(
+      (o) => o.universalIdentifier === TEST_OBJECT.universalIdentifier,
+    )?.fieldsList;
+
     const descriptionField = fieldsAfterSync?.find(
-      ({ node }: { node: { name: string } }) => node.name === 'description',
+      (f) => f.universalIdentifier === TEST_FIELD_ID,
     );
 
     expect(descriptionField).toBeDefined();
-    expect(descriptionField?.node).toMatchObject({
+    expect(descriptionField).toMatchObject({
       name: 'description',
       label: 'Description',
       type: FieldMetadataType.TEXT,
