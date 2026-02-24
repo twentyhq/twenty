@@ -50,9 +50,9 @@ describe('creates.create_company', () => {
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
         requestDb(
-          z,
+          {z,
           bundle,
-          `query findCompany {company(filter: {id: {eq: "${result.data.createCompany.id}"}}){id annualRecurringRevenue{amountMicros currencyCode}}}`,
+          query:`query findCompany {company(filter: {id: {eq: "${result.data.createCompany.id}"}}){id annualRecurringRevenue{amountMicros currencyCode}}}`},
         ),
       bundle,
     );
@@ -83,11 +83,11 @@ describe('creates.create_company', () => {
     expect(result.data?.createPerson?.id).toBeDefined();
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
-        requestDb(
+        requestDb({
           z,
           bundle,
-          `query findPerson {person(filter: {id: {eq: "${result.data.createPerson.id}"}}){phones{primaryPhoneNumber}}}`,
-        ),
+          query: `query findPerson {person(filter: {id: {eq: "${result.data.createPerson.id}"}}){phones{primaryPhoneNumber}}}`,
+        }),
       bundle,
     );
     expect(checkDbResult.data.person.phones.primaryPhoneNumber).toEqual(
@@ -128,10 +128,10 @@ describe('creates.update_company', () => {
     expect(updateResult.data?.updateCompany?.id).toBeDefined();
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
-        requestDb(
+        requestDb({
           z,
           bundle,
-          `query findCompany {company(filter: {id: {eq: "${companyId}"}}){id name}}`,
+          query:`query findCompany {company(filter: {id: {eq: "${companyId}"}}){id name}}`},
         ),
       updateBundle,
     );
@@ -170,10 +170,10 @@ describe('creates.delete_company', () => {
     expect(deleteResult.data?.deleteCompany?.id).toBeDefined();
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
-        requestDb(
+        requestDb({
           z,
           bundle,
-          `query findCompanies {companies(filter: {id: {eq: "${companyId}"}}){edges{node{id}}}}`,
+          query:`query findCompanies {companies(filter: {id: {eq: "${companyId}"}}){edges{node{id}}}}`},
         ),
       deleteBundle,
     );

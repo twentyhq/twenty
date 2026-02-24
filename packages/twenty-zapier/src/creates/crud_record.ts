@@ -103,7 +103,7 @@ const perform = async (z: ZObject, bundle: Bundle) => {
     )
     {id}
   }`;
-  return await requestDb(z, bundle, query);
+  return await requestDb({ z, bundle, query });
 };
 
 export const crudRecordKey = 'crud_record';
