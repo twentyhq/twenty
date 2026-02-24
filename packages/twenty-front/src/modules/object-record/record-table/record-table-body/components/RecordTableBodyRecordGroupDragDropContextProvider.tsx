@@ -1,6 +1,7 @@
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
 import { useProcessTableWithGroupRecordDrop } from '@/object-record/record-drag/hooks/useProcessTableWithGroupRecordDrop';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
@@ -18,6 +19,7 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
+  const { recordIndexId } = useRecordIndexContextOrThrow();
   const { recordTableId } = useRecordTableContextOrThrow();
 
   const selectedRowIdsAtom = useRecoilComponentSelectorCallbackStateV2(
@@ -27,8 +29,8 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
 
   const store = useStore();
 
-  const { startRecordDrag } = useStartRecordDrag();
-  const { endRecordDrag } = useEndRecordDrag();
+  const { startRecordDrag } = useStartRecordDrag(recordIndexId);
+  const { endRecordDrag } = useEndRecordDrag(recordIndexId);
 
   const { processTableWithGroupRecordDrop } =
     useProcessTableWithGroupRecordDrop();

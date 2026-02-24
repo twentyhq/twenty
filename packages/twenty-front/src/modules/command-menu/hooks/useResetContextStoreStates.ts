@@ -5,63 +5,62 @@ import { contextStoreFilterGroupsComponentState } from '@/context-store/states/c
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useRecoilCallback } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useCallback } from 'react';
 
 export const useResetContextStoreStates = () => {
-  const resetContextStoreStates = useRecoilCallback(({ set }) => {
-    return (instanceId: string) => {
-      set(
-        contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-          instanceId,
-        }),
-        undefined,
-      );
+  const resetContextStoreStates = useCallback((instanceId: string) => {
+    jotaiStore.set(
+      contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
+        instanceId,
+      }),
+      undefined,
+    );
 
-      set(
-        contextStoreTargetedRecordsRuleComponentState.atomFamily({
-          instanceId,
-        }),
-        {
-          mode: 'selection',
-          selectedRecordIds: [],
-        },
-      );
+    jotaiStore.set(
+      contextStoreTargetedRecordsRuleComponentState.atomFamily({
+        instanceId,
+      }),
+      {
+        mode: 'selection',
+        selectedRecordIds: [],
+      },
+    );
 
-      set(
-        contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-          instanceId,
-        }),
-        0,
-      );
+    jotaiStore.set(
+      contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+        instanceId,
+      }),
+      0,
+    );
 
-      set(
-        contextStoreFiltersComponentState.atomFamily({
-          instanceId,
-        }),
-        [],
-      );
+    jotaiStore.set(
+      contextStoreFiltersComponentState.atomFamily({
+        instanceId,
+      }),
+      [],
+    );
 
-      set(
-        contextStoreFilterGroupsComponentState.atomFamily({
-          instanceId,
-        }),
-        [],
-      );
+    jotaiStore.set(
+      contextStoreFilterGroupsComponentState.atomFamily({
+        instanceId,
+      }),
+      [],
+    );
 
-      set(
-        contextStoreAnyFieldFilterValueComponentState.atomFamily({
-          instanceId,
-        }),
-        '',
-      );
+    jotaiStore.set(
+      contextStoreAnyFieldFilterValueComponentState.atomFamily({
+        instanceId,
+      }),
+      '',
+    );
 
-      set(
-        contextStoreCurrentViewIdComponentState.atomFamily({
-          instanceId,
-        }),
-        undefined,
-      );
-    };
+    jotaiStore.set(
+      contextStoreCurrentViewIdComponentState.atomFamily({
+        instanceId,
+      }),
+      undefined,
+    );
   }, []);
 
   return { resetContextStoreStates };

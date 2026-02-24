@@ -1,7 +1,7 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
@@ -26,7 +26,7 @@ export const ViewBarRecordFieldEffect = () => {
   const [
     hasInitializedCurrentRecordFields,
     setHasInitializedCurrentRecordFields,
-  ] = useRecoilComponentFamilyState(
+  ] = useRecoilComponentFamilyStateV2(
     hasInitializedCurrentRecordFieldsComponentFamilyState,
     {
       viewId: currentViewId ?? undefined,

@@ -13,19 +13,20 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useStore } from 'jotai';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useProcessTableWithoutGroupRecordDrop = () => {
   const store = useStore();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
   const { objectNameSingular } = useRecordTableContextOrThrow();
 
   const { updateOneRecord } = useUpdateOneRecord();
@@ -39,8 +40,9 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
     selectedRowIdsComponentSelector,
   );
 
-  const originalDragSelectionCallbackState = useRecoilComponentCallbackState(
+  const originalDragSelectionAtom = useRecoilComponentStateCallbackStateV2(
     originalDragSelectionComponentState,
+    recordIndexId,
   );
 
   const currentRecordSorts = useRecoilComponentValueV2(
@@ -53,7 +55,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
     useTriggerTableWithoutGroupDragAndDropOptimisticUpdate();
 
   const processTableWithoutGroupRecordDrop = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot: _snapshot }) =>
       async (tableRecordDropResult: DropResult) => {
         if (!tableRecordDropResult.destination) return;
 
@@ -137,10 +139,9 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
             );
           }
 
-          const originalDragSelection = getSnapshotValue(
-            snapshot,
-            originalDragSelectionCallbackState,
-          );
+          const originalDragSelection = store.get(
+            originalDragSelectionAtom,
+          ) as string[];
 
           const multiDragResult = processMultiDrag({
             draggedRecordId,
@@ -172,7 +173,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
       updateOneRecord,
       openModal,
       currentRecordSorts,
-      originalDragSelectionCallbackState,
+      originalDragSelectionAtom,
       allRecordIdsWithoutGroupAtom,
       triggerTableWithoutGroupDragAndDropOptimisticUpdate,
     ],

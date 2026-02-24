@@ -6,7 +6,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 
 export const ObjectFilterDropdownSearchInput = () => {
   const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
@@ -21,7 +21,7 @@ export const ObjectFilterDropdownSearchInput = () => {
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const setObjectFilterDropdownSearchInput = useSetRecoilComponentState(
+  const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
     objectFilterDropdownSearchInputComponentState,
   );
 

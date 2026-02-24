@@ -12,18 +12,18 @@ import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-ind
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 export const useProcessTableWithGroupRecordDrop = () => {
   const store = useStore();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
   const { objectNameSingular, objectMetadataItem, recordTableId } =
     useRecordTableContextOrThrow();
 
@@ -46,12 +46,14 @@ export const useProcessTableWithGroupRecordDrop = () => {
     recordTableId,
   );
 
-  const isDraggingRecordCallbackState = useRecoilComponentCallbackState(
+  const isDraggingRecordAtom = useRecoilComponentStateCallbackStateV2(
     isDraggingRecordComponentState,
+    recordIndexId,
   );
 
-  const originalDragSelectionCallbackState = useRecoilComponentCallbackState(
+  const originalDragSelectionAtom = useRecoilComponentStateCallbackStateV2(
     originalDragSelectionComponentState,
+    recordIndexId,
   );
 
   const groupFieldMetadata = useRecoilComponentValueV2(
@@ -59,7 +61,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
   );
 
   const processTableWithGroupRecordDrop = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot: _snapshot }) =>
       (result: DropResult) => {
         if (!result.destination) return;
 
@@ -80,15 +82,11 @@ export const useProcessTableWithGroupRecordDrop = () => {
           throw new Error('Field metadata is not defined');
         }
 
-        const originalDragSelection = getSnapshotValue(
-          snapshot,
-          originalDragSelectionCallbackState,
-        );
+        const originalDragSelection = store.get(
+          originalDragSelectionAtom,
+        ) as string[];
 
-        const isDraggingRecord = getSnapshotValue(
-          snapshot,
-          isDraggingRecordCallbackState,
-        );
+        const isDraggingRecord = store.get(isDraggingRecordAtom);
 
         const selectedRecordIds = isDraggingRecord
           ? originalDragSelection
@@ -123,10 +121,9 @@ export const useProcessTableWithGroupRecordDrop = () => {
       store,
       objectNameSingular,
       objectMetadataItem.fields,
-      originalDragSelectionCallbackState,
-      isDraggingRecordCallbackState,
+      originalDragSelectionAtom,
+      isDraggingRecordAtom,
       selectedRowIdsAtom,
-      currentRecordSortsAtom,
       recordIdsByGroupFamilyState,
       groupFieldMetadata?.id,
       openModal,

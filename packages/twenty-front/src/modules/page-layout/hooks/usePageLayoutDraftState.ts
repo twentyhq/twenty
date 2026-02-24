@@ -1,6 +1,6 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -12,7 +12,7 @@ export const usePageLayoutDraftState = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const [pageLayoutDraft, setPageLayoutDraft] = useRecoilComponentState(
+  const [pageLayoutDraft, setPageLayoutDraft] = useRecoilComponentStateV2(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );

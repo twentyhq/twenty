@@ -8,7 +8,7 @@ import { lastContextStoreVirtualizedViewIdComponentState } from '@/object-record
 import { lastContextStoreVirtualizedVisibleRecordFieldsComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedVisibleRecordFieldsComponentState';
 import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -22,12 +22,12 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   const { queryIdentifier } = useRecordIndexTableFetchMore(objectNameSingular);
 
   const [lastRecordTableQueryIdentifier, setLastRecordTableQueryIdentifier] =
-    useRecoilComponentState(lastRecordTableQueryIdentifierComponentState);
+    useRecoilComponentStateV2(lastRecordTableQueryIdentifierComponentState);
 
   const visibleRecordFields = useRecoilComponentSelectorValueV2(
     visibleRecordFieldsComponentSelector,
   );
-  const [isInitializingVirtualTableDataLoading] = useRecoilComponentState(
+  const [isInitializingVirtualTableDataLoading] = useRecoilComponentStateV2(
     isInitializingVirtualTableDataLoadingComponentState,
   );
 
@@ -42,12 +42,14 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   const [
     lastContextStoreVirtualizedViewId,
     setLastContextStoreVirtualizedViewId,
-  ] = useRecoilComponentState(lastContextStoreVirtualizedViewIdComponentState);
+  ] = useRecoilComponentStateV2(
+    lastContextStoreVirtualizedViewIdComponentState,
+  );
 
   const [
     lastContextStoreVisibleRecordFields,
     setLastContextStoreVisibleRecordFields,
-  ] = useRecoilComponentState(
+  ] = useRecoilComponentStateV2(
     lastContextStoreVirtualizedVisibleRecordFieldsComponentState,
   );
 

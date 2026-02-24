@@ -20,6 +20,7 @@ export const RecordBoardClickOutsideEffect = () => {
 
   const isDraggingRecord = useRecoilComponentValueV2(
     isDraggingRecordComponentState,
+    recordBoardId,
   );
 
   const { deactivateBoardCard } = useActiveRecordBoardCard(recordBoardId);

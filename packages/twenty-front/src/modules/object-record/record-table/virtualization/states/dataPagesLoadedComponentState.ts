@@ -1,7 +1,7 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
-export const dataPagesLoadedComponentState = createComponentState<number[]>({
+export const dataPagesLoadedComponentState = createComponentStateV2<number[]>({
   key: 'dataPagesLoadedComponentState',
   componentInstanceContext: RecordTableComponentInstanceContext,
   defaultValue: [],

@@ -8,7 +8,8 @@ import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-re
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -45,17 +46,17 @@ type RecordTableRowVirtualizedDebugRowHelperProps = {
 export const RecordTableRowVirtualizedDebugRowHelper = ({
   virtualIndex,
 }: RecordTableRowVirtualizedDebugRowHelperProps) => {
-  const realIndex = useRecoilComponentFamilyValue(
+  const realIndex = useRecoilComponentFamilyValueV2(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
   );
 
-  const recordId = useRecoilComponentFamilyValue(
+  const recordId = useRecoilComponentFamilySelectorValueV2(
     recordIdByRealIndexComponentFamilySelector,
     realIndex,
   );
 
-  const dataLoadingStatus = useRecoilComponentFamilyValue(
+  const dataLoadingStatus = useRecoilComponentFamilySelectorValueV2(
     dataLoadingStatusByRealIndexComponentFamilySelector,
     realIndex,
   );

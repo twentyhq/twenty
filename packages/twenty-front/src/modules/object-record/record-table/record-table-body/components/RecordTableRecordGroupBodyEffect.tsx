@@ -11,7 +11,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
-import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
+import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentFamilyStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -33,7 +33,7 @@ export const RecordTableRecordGroupBodyEffect = () => {
     useRecordIndexTableQuery(objectNameSingular);
 
   const setHasRecordFetchedAllRecordsComponents =
-    useSetRecoilComponentFamilyState(
+    useSetRecoilComponentFamilyStateV2(
       recordIndexHasFetchedAllRecordsByGroupComponentState,
       recordGroupId,
     );

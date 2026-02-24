@@ -15,7 +15,6 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
 import { type CommandMenuPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
@@ -73,75 +72,73 @@ export const useNavigateCommandMenu = () => {
     pushFocusItemToFocusStack,
   ]);
 
-  const navigateCommandMenu = useRecoilCallback(
-    ({ set }) => {
-      return ({
-        page,
-        pageTitle,
-        pageIcon,
-        pageIconColor,
-        pageId,
-        focusTitleInput = false,
-        resetNavigationStack = false,
-      }: CommandMenuNavigationStackItem & {
-        resetNavigationStack?: boolean;
-        focusTitleInput?: boolean;
-      }) => {
-        const computedPageId = pageId || v4();
+  const navigateCommandMenu = useCallback(
+    ({
+      page,
+      pageTitle,
+      pageIcon,
+      pageIconColor,
+      pageId,
+      focusTitleInput = false,
+      resetNavigationStack = false,
+    }: CommandMenuNavigationStackItem & {
+      resetNavigationStack?: boolean;
+      focusTitleInput?: boolean;
+    }) => {
+      const computedPageId = pageId || v4();
 
-        openCommandMenu();
-        jotaiStore.set(commandMenuPageState.atom, page);
-        jotaiStore.set(commandMenuPageInfoState.atom, {
-          title: pageTitle,
-          Icon: pageIcon,
-          instanceId: computedPageId,
-        });
+      openCommandMenu();
+      jotaiStore.set(commandMenuPageState.atom, page);
+      jotaiStore.set(commandMenuPageInfoState.atom, {
+        title: pageTitle,
+        Icon: pageIcon,
+        instanceId: computedPageId,
+      });
 
-        if (focusTitleInput) {
-          set(
-            commandMenuShouldFocusTitleInputComponentState.atomFamily({
-              instanceId: computedPageId,
-            }),
-            true,
-          );
-        }
-
-        const isCommandMenuClosing = jotaiStore.get(
-          isCommandMenuClosingState.atom,
+      if (focusTitleInput) {
+        jotaiStore.set(
+          commandMenuShouldFocusTitleInputComponentState.atomFamily({
+            instanceId: computedPageId,
+          }),
+          true,
         );
+      }
 
-        const currentNavigationStack = isCommandMenuClosing
-          ? []
-          : jotaiStore.get(commandMenuNavigationStackState.atom);
+      const isCommandMenuClosing = jotaiStore.get(
+        isCommandMenuClosingState.atom,
+      );
 
-        if (resetNavigationStack) {
-          jotaiStore.set(commandMenuNavigationStackState.atom, [
-            {
-              page,
-              pageTitle,
-              pageIcon,
-              pageIconColor,
-              pageId: computedPageId,
-            },
-          ]);
+      const currentNavigationStack = isCommandMenuClosing
+        ? []
+        : jotaiStore.get(commandMenuNavigationStackState.atom);
 
-          jotaiStore.set(
-            commandMenuNavigationMorphItemsByPageState.atom,
-            new Map(),
-          );
-        } else {
-          jotaiStore.set(commandMenuNavigationStackState.atom, [
-            ...currentNavigationStack,
-            {
-              page,
-              pageTitle,
-              pageIcon,
-              pageIconColor,
-              pageId: computedPageId,
-            },
-          ]);
-        }
-      };
+      if (resetNavigationStack) {
+        jotaiStore.set(commandMenuNavigationStackState.atom, [
+          {
+            page,
+            pageTitle,
+            pageIcon,
+            pageIconColor,
+            pageId: computedPageId,
+          },
+        ]);
+
+        jotaiStore.set(
+          commandMenuNavigationMorphItemsByPageState.atom,
+          new Map(),
+        );
+      } else {
+        jotaiStore.set(commandMenuNavigationStackState.atom, [
+          ...currentNavigationStack,
+          {
+            page,
+            pageTitle,
+            pageIcon,
+            pageIconColor,
+            pageId: computedPageId,
+          },
+        ]);
+      }
     },
     [openCommandMenu],
   );

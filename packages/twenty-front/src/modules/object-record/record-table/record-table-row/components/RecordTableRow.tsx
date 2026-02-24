@@ -11,7 +11,7 @@ import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 type RecordTableRowProps = {
@@ -29,7 +29,7 @@ export const RecordTableRow = ({
 }: RecordTableRowProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isFocused = useRecoilComponentFamilyValue(
+  const isFocused = useRecoilComponentFamilyValueV2(
     isRecordTableRowFocusedComponentFamilyState,
     rowIndexForFocus,
   );

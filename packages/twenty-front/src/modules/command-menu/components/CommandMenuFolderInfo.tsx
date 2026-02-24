@@ -16,7 +16,7 @@ import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValu
 import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 
 const StyledClickableIconWrapper = styled.div`
   cursor: pointer;
@@ -28,7 +28,7 @@ export const CommandMenuFolderInfo = () => {
   const { getIcon } = useIcons();
   const commandMenuPageInfo = useRecoilValueV2(commandMenuPageInfoState);
   const [shouldFocusTitleInput, setShouldFocusTitleInput] =
-    useRecoilComponentState(
+    useRecoilComponentStateV2(
       commandMenuShouldFocusTitleInputComponentState,
       commandMenuPageInfo.instanceId,
     );

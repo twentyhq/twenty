@@ -1,5 +1,5 @@
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
@@ -43,11 +43,11 @@ export const WorkflowDiagramCanvasEditable = () => {
     workflowVisualizerWorkflowId,
   );
 
-  const setWorkflowDiagram = useSetRecoilComponentState(
+  const setWorkflowDiagram = useSetRecoilComponentStateV2(
     workflowDiagramComponentState,
   );
 
-  const setWorkflowDiagramRightClickMenuPosition = useSetRecoilComponentState(
+  const setWorkflowDiagramRightClickMenuPosition = useSetRecoilComponentStateV2(
     workflowDiagramRightClickMenuPositionState,
   );
 

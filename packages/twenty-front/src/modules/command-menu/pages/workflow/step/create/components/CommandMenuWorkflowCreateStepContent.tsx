@@ -4,7 +4,7 @@ import {
   type WorkflowActionSelection,
 } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -41,7 +41,7 @@ export const CommandMenuWorkflowCreateStepContent = () => {
   );
 
   const [workflowInsertStepIds, setWorkflowInsertStepIds] =
-    useRecoilComponentState(workflowInsertStepIdsComponentState);
+    useRecoilComponentStateV2(workflowInsertStepIdsComponentState);
 
   const handleIfElseParentStep = async ({
     parentStep,

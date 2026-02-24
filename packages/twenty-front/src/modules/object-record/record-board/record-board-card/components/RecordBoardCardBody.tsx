@@ -16,7 +16,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useContext } from 'react';
 
 export const RecordBoardCardBody = () => {
@@ -49,7 +49,7 @@ export const RecordBoardCardBody = () => {
       recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
   );
 
-  const setRecordBoardCardHoverPosition = useSetRecoilComponentState(
+  const setRecordBoardCardHoverPosition = useSetRecoilComponentStateV2(
     recordBoardCardHoverPositionComponentState,
   );
 

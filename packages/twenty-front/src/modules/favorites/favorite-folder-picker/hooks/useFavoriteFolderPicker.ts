@@ -7,7 +7,7 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -35,7 +35,7 @@ export const useFavoriteFolderPicker = ({
   const { createFavorite } = useCreateFavorite();
   const { deleteFavorite } = useDeleteFavorite();
 
-  const favoriteFolders = useRecoilComponentValue(
+  const favoriteFolders = useRecoilComponentSelectorValueV2(
     favoriteFoldersComponentSelector,
   );
 

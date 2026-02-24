@@ -2,7 +2,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { multipleRecordPickerSinglePickableMorphItemComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerSinglePickableMorphItemComponentFamilySelector';
 import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordPickerGetRecordAndObjectMetadataItemFromRecordIdProps = {
@@ -15,7 +15,7 @@ export const useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId =
   }: UseRecordPickerGetRecordAndObjectMetadataItemFromRecordIdProps) => {
     const { objectMetadataItems } = useObjectMetadataItems();
 
-    const pickableMorphItem = useRecoilComponentFamilyValue(
+    const pickableMorphItem = useRecoilComponentFamilySelectorValueV2(
       multipleRecordPickerSinglePickableMorphItemComponentFamilySelector,
       recordId,
     );

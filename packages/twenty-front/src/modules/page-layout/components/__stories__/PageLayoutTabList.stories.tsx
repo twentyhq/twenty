@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useMemo, useState } from 'react';
-import { RecoilRoot } from 'recoil';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
@@ -183,13 +182,11 @@ const meta: Meta<typeof PageLayoutTabListPlayground> = {
   decorators: [
     ComponentWithRouterDecorator,
     (Story) => (
-      <RecoilRoot>
-        <PageLayoutComponentInstanceContext.Provider
-          value={{ instanceId: 'instance-id' }}
-        >
-          <Story />
-        </PageLayoutComponentInstanceContext.Provider>
-      </RecoilRoot>
+      <PageLayoutComponentInstanceContext.Provider
+        value={{ instanceId: 'instance-id' }}
+      >
+        <Story />
+      </PageLayoutComponentInstanceContext.Provider>
     ),
   ],
 };

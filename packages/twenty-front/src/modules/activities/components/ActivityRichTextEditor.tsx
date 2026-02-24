@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { useAtom, useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -302,55 +301,43 @@ export const ActivityRichTextEditor = ({
   //   but this leaves the door open for unpredicted behavior with click handlers conflicts,
   //   we recently had a bug which was deleting what the user typed and closed the right drawer if he used backspace key.
   // We could maybe use the types of components in the focus stack.
-  const handleBlockEditorFocus = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const isRecordTitleCellOpen = snapshot
-          .getLoadable(
-            isTitleCellInEditModeComponentState.atomFamily({
-              instanceId: recordTitleCellId,
-            }),
-          )
-          .getValue();
+  const handleBlockEditorFocus = useCallback(() => {
+    const isRecordTitleCellOpen = store.get(
+      isTitleCellInEditModeComponentState.atomFamily({
+        instanceId: recordTitleCellId,
+      }),
+    );
 
-        if (isRecordTitleCellOpen) {
-          editor.domElement?.blur();
-          return;
-        }
+    if (isRecordTitleCellOpen) {
+      editor.domElement?.blur();
+      return;
+    }
 
-        pushFocusItemToFocusStack({
-          component: {
-            instanceId: activityId,
-            type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
-          },
-          focusId: activityId,
-          globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
-        });
+    pushFocusItemToFocusStack({
+      component: {
+        instanceId: activityId,
+        type: FocusComponentType.ACTIVITY_RICH_TEXT_EDITOR,
       },
-    [recordTitleCellId, activityId, editor, pushFocusItemToFocusStack],
-  );
+      focusId: activityId,
+      globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
+    });
+  }, [recordTitleCellId, activityId, editor, pushFocusItemToFocusStack, store]);
 
-  const handlerBlockEditorBlur = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const isRecordTitleCellOpen = snapshot
-          .getLoadable(
-            isTitleCellInEditModeComponentState.atomFamily({
-              instanceId: recordTitleCellId,
-            }),
-          )
-          .getValue();
+  const handlerBlockEditorBlur = useCallback(() => {
+    const isRecordTitleCellOpen = store.get(
+      isTitleCellInEditModeComponentState.atomFamily({
+        instanceId: recordTitleCellId,
+      }),
+    );
 
-        if (isRecordTitleCellOpen) {
-          return;
-        }
+    if (isRecordTitleCellOpen) {
+      return;
+    }
 
-        removeFocusItemFromFocusStackById({
-          focusId: activityId,
-        });
-      },
-    [activityId, recordTitleCellId, removeFocusItemFromFocusStackById],
-  );
+    removeFocusItemFromFocusStackById({
+      focusId: activityId,
+    });
+  }, [activityId, recordTitleCellId, removeFocusItemFromFocusStackById, store]);
 
   return (
     <>

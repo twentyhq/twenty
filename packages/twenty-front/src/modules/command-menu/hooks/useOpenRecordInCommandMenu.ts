@@ -21,7 +21,7 @@ import { CommandMenuPages } from 'twenty-shared/types';
 import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInCommandMenuSideEffects';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
@@ -34,171 +34,163 @@ export const useOpenRecordInCommandMenu = () => {
   const { runWorkflowRunOpeningInCommandMenuSideEffects } =
     useRunWorkflowRunOpeningInCommandMenuSideEffects();
 
-  const openRecordInCommandMenu = useRecoilCallback(
-    ({ set, snapshot }) => {
-      return ({
-        recordId,
-        objectNameSingular,
-        isNewRecord = false,
-        resetNavigationStack = false,
-      }: {
-        recordId: string;
-        objectNameSingular: string;
-        isNewRecord?: boolean;
-        resetNavigationStack?: boolean;
-      }) => {
-        const navigationStack = jotaiStore.get(
-          commandMenuNavigationStackState.atom,
-        );
+  const openRecordInCommandMenu = useCallback(
+    ({
+      recordId,
+      objectNameSingular,
+      isNewRecord = false,
+      resetNavigationStack = false,
+    }: {
+      recordId: string;
+      objectNameSingular: string;
+      isNewRecord?: boolean;
+      resetNavigationStack?: boolean;
+    }) => {
+      const navigationStack = jotaiStore.get(
+        commandMenuNavigationStackState.atom,
+      );
 
-        const currentNavigationStackItem = navigationStack.at(-1);
+      const currentNavigationStackItem = navigationStack.at(-1);
 
-        if (isDefined(currentNavigationStackItem)) {
-          const currentRecordId = snapshot
-            .getLoadable(
-              viewableRecordIdComponentState.atomFamily({
-                instanceId: currentNavigationStackItem.pageId,
-              }),
-            )
-            .getValue();
-
-          if (currentRecordId === recordId) {
-            return;
-          }
-        }
-
-        const pageComponentInstanceId = v4();
-
-        set(
-          viewableRecordNameSingularComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          objectNameSingular,
-        );
-        set(
+      if (isDefined(currentNavigationStackItem)) {
+        const currentRecordId = jotaiStore.get(
           viewableRecordIdComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          recordId,
-        );
-        jotaiStore.set(viewableRecordIdState.atom, recordId);
-
-        const objectMetadataItem = jotaiStore.get(
-          objectMetadataItemFamilySelector.selectorFamily({
-            objectName: objectNameSingular,
-            objectNameType: 'singular',
+            instanceId: currentNavigationStackItem.pageId,
           }),
         );
 
-        if (!objectMetadataItem) {
-          throw new Error(
-            `No object metadata item found for object name ${objectNameSingular}`,
-          );
+        if (currentRecordId === recordId) {
+          return;
         }
+      }
 
-        set(
-          contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          objectMetadataItem.id,
+      const pageComponentInstanceId = v4();
+
+      jotaiStore.set(
+        viewableRecordNameSingularComponentState.atomFamily({
+          instanceId: pageComponentInstanceId,
+        }),
+        objectNameSingular,
+      );
+      jotaiStore.set(
+        viewableRecordIdComponentState.atomFamily({
+          instanceId: pageComponentInstanceId,
+        }),
+        recordId,
+      );
+      jotaiStore.set(viewableRecordIdState.atom, recordId);
+
+      const objectMetadataItem = jotaiStore.get(
+        objectMetadataItemFamilySelector.selectorFamily({
+          objectName: objectNameSingular,
+          objectNameType: 'singular',
+        }),
+      );
+
+      if (!objectMetadataItem) {
+        throw new Error(
+          `No object metadata item found for object name ${objectNameSingular}`,
         );
+      }
 
-        set(
-          contextStoreTargetedRecordsRuleComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          {
-            mode: 'selection',
-            selectedRecordIds: [recordId],
-          },
-        );
+      jotaiStore.set(
+        contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
+          instanceId: pageComponentInstanceId,
+        }),
+        objectMetadataItem.id,
+      );
 
-        set(
-          contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          1,
-        );
+      jotaiStore.set(
+        contextStoreTargetedRecordsRuleComponentState.atomFamily({
+          instanceId: pageComponentInstanceId,
+        }),
+        {
+          mode: 'selection',
+          selectedRecordIds: [recordId],
+        },
+      );
 
-        set(
-          contextStoreCurrentViewTypeComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
-          }),
-          ContextStoreViewType.ShowPage,
-        );
+      jotaiStore.set(
+        contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+          instanceId: pageComponentInstanceId,
+        }),
+        1,
+      );
 
-        set(
+      jotaiStore.set(
+        contextStoreCurrentViewTypeComponentState.atomFamily({
+          instanceId: pageComponentInstanceId,
+        }),
+        ContextStoreViewType.ShowPage,
+      );
+
+      jotaiStore.set(
+        contextStoreCurrentViewIdComponentState.atomFamily({
+          instanceId: pageComponentInstanceId,
+        }),
+        jotaiStore.get(
           contextStoreCurrentViewIdComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
+            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
-          snapshot
-            .getLoadable(
-              contextStoreCurrentViewIdComponentState.atomFamily({
-                instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-              }),
-            )
-            .getValue(),
-        );
+        ),
+      );
 
-        set(
+      jotaiStore.set(
+        contextStoreIsPageInEditModeComponentState.atomFamily({
+          instanceId: pageComponentInstanceId,
+        }),
+        jotaiStore.get(
           contextStoreIsPageInEditModeComponentState.atomFamily({
-            instanceId: pageComponentInstanceId,
+            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
-          snapshot
-            .getLoadable(
-              contextStoreIsPageInEditModeComponentState.atomFamily({
-                instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-              }),
-            )
-            .getValue(),
-        );
+        ),
+      );
 
-        const currentMorphItems = jotaiStore.get(
-          commandMenuNavigationMorphItemsByPageState.atom,
-        );
+      const currentMorphItems = jotaiStore.get(
+        commandMenuNavigationMorphItemsByPageState.atom,
+      );
 
-        const morphItemToAdd = {
-          objectMetadataId: objectMetadataItem.id,
-          recordId,
-        };
-
-        const newMorphItemsMap = new Map(currentMorphItems);
-        newMorphItemsMap.set(pageComponentInstanceId, [morphItemToAdd]);
-
-        jotaiStore.set(
-          commandMenuNavigationMorphItemsByPageState.atom,
-          newMorphItemsMap,
-        );
-
-        const Icon = objectMetadataItem?.icon
-          ? getIcon(objectMetadataItem.icon)
-          : getIcon('IconList');
-
-        const IconColor = getIconColorForObjectType({
-          objectType: objectMetadataItem.nameSingular,
-          theme,
-        });
-
-        const objectLabelSingular = objectMetadataItem.labelSingular;
-
-        navigateCommandMenu({
-          page: CommandMenuPages.ViewRecord,
-          pageTitle: isNewRecord
-            ? t`New ${objectLabelSingular}`
-            : objectLabelSingular,
-          pageIcon: Icon,
-          pageIconColor: IconColor,
-          pageId: pageComponentInstanceId,
-          resetNavigationStack,
-        });
-
-        if (objectNameSingular === CoreObjectNameSingular.WorkflowRun) {
-          runWorkflowRunOpeningInCommandMenuSideEffects({
-            objectMetadataItem,
-            recordId,
-          });
-        }
+      const morphItemToAdd = {
+        objectMetadataId: objectMetadataItem.id,
+        recordId,
       };
+
+      const newMorphItemsMap = new Map(currentMorphItems);
+      newMorphItemsMap.set(pageComponentInstanceId, [morphItemToAdd]);
+
+      jotaiStore.set(
+        commandMenuNavigationMorphItemsByPageState.atom,
+        newMorphItemsMap,
+      );
+
+      const Icon = objectMetadataItem?.icon
+        ? getIcon(objectMetadataItem.icon)
+        : getIcon('IconList');
+
+      const IconColor = getIconColorForObjectType({
+        objectType: objectMetadataItem.nameSingular,
+        theme,
+      });
+
+      const objectLabelSingular = objectMetadataItem.labelSingular;
+
+      navigateCommandMenu({
+        page: CommandMenuPages.ViewRecord,
+        pageTitle: isNewRecord
+          ? t`New ${objectLabelSingular}`
+          : objectLabelSingular,
+        pageIcon: Icon,
+        pageIconColor: IconColor,
+        pageId: pageComponentInstanceId,
+        resetNavigationStack,
+      });
+
+      if (objectNameSingular === CoreObjectNameSingular.WorkflowRun) {
+        runWorkflowRunOpeningInCommandMenuSideEffects({
+          objectMetadataItem,
+          recordId,
+        });
+      }
     },
     [
       getIcon,

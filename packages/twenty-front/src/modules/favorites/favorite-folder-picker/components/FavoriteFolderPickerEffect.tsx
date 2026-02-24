@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useCallback, useEffect } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { favoriteFolderIdsPickerComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFolderIdPickerComponentState';
@@ -9,9 +8,10 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { usePrefetchedFavoritesFoldersData } from '@/favorites/hooks/usePrefetchedFavoritesFoldersData';
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
 
 type FavoriteFolderPickerEffectProps = {
@@ -22,33 +22,32 @@ export const FavoriteFolderPickerEffect = ({
   record,
 }: FavoriteFolderPickerEffectProps) => {
   const [favoriteFolderIdsPicker, setFavoriteFolderIdsPicker] =
-    useRecoilComponentState(favoriteFolderIdsPickerComponentState);
+    useRecoilComponentStateV2(favoriteFolderIdsPickerComponentState);
 
-  const favoriteFolderPickerFamilyState = useRecoilComponentCallbackState(
-    favoriteFolderPickerComponentFamilyState,
-  );
+  const favoriteFolderPickerFamilyAtom =
+    useRecoilComponentFamilyStateCallbackStateV2(
+      favoriteFolderPickerComponentFamilyState,
+    );
 
   const { favoriteFolders } = usePrefetchedFavoritesFoldersData();
 
   const { sortedFavorites: favorites } = useFavorites();
-  const setCheckedState = useSetRecoilComponentState(
+  const setCheckedState = useSetRecoilComponentStateV2(
     favoriteFolderPickerCheckedComponentState,
   );
 
-  const updateFolders = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (folders: FavoriteFolder[]) => {
-        folders.forEach((folder) => {
-          const currentFolder = snapshot
-            .getLoadable(favoriteFolderPickerFamilyState(folder.id))
-            .getValue();
+  const updateFolders = useCallback(
+    (folders: FavoriteFolder[]) => {
+      folders.forEach((folder) => {
+        const atom = favoriteFolderPickerFamilyAtom(folder.id);
+        const currentFolder = jotaiStore.get(atom);
 
-          if (!isDeeplyEqual(folder, currentFolder)) {
-            set(favoriteFolderPickerFamilyState(folder.id), folder);
-          }
-        });
-      },
-    [favoriteFolderPickerFamilyState],
+        if (!isDeeplyEqual(folder, currentFolder)) {
+          jotaiStore.set(atom, folder);
+        }
+      });
+    },
+    [favoriteFolderPickerFamilyAtom],
   );
 
   useEffect(() => {

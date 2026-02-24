@@ -3,8 +3,8 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizationBecauseDataChanged';
 import { lastProcessedFieldMetadataUpdateIdComponentState } from '@/object-record/record-table/virtualization/states/lastProcessedFieldMetadataUpdateIdComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useEffect } from 'react';
 
@@ -25,7 +25,9 @@ export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
   const [
     lastProcessedFieldMetadataUpdateId,
     setLastProcessedFieldMetadataUpdateId,
-  ] = useRecoilComponentState(lastProcessedFieldMetadataUpdateIdComponentState);
+  ] = useRecoilComponentStateV2(
+    lastProcessedFieldMetadataUpdateIdComponentState,
+  );
 
   useEffect(() => {
     if (!lastFieldMetadataItemUpdate) {

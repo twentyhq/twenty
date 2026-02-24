@@ -6,7 +6,7 @@ import { RecordCalendarComponentInstanceContext } from '@/object-record/record-c
 import { recordCalendarRecordIdsComponentState } from '@/object-record/record-calendar/states/recordCalendarRecordIdsComponentState';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { createComponentFamilySelector } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelector';
+import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilySelectorV2';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { Temporal } from 'temporal-polyfill';
@@ -14,7 +14,7 @@ import { isDefined, isSamePlainDate } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const calendarDayRecordIdsComponentFamilySelector =
-  createComponentFamilySelector<
+  createComponentFamilySelectorV2<
     string[],
     { day: Temporal.PlainDate; timeZone: string }
   >({
@@ -51,11 +51,9 @@ export const calendarDayRecordIdsComponentFamilySelector =
           return [];
         }
 
-        const allRecordIds = get(
-          recordCalendarRecordIdsComponentState.atomFamily({
-            instanceId,
-          }),
-        );
+        const allRecordIds = get(recordCalendarRecordIdsComponentState, {
+          instanceId,
+        });
 
         const recordIds = allRecordIds.filter((recordId) => {
           const record = jotaiStore.get(

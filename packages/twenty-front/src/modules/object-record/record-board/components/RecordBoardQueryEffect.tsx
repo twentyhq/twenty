@@ -12,7 +12,7 @@ import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-
 import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 
@@ -23,9 +23,9 @@ export const RecordBoardQueryEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const [lastRecordBoardQueryIdentifier, setLastRecordBoardQueryIdentifier] =
-    useRecoilComponentState(lastRecordBoardQueryIdentifierComponentState);
+    useRecoilComponentStateV2(lastRecordBoardQueryIdentifierComponentState);
 
-  const [lastRecordGroupIds, setLastRecordGroupIds] = useRecoilComponentState(
+  const [lastRecordGroupIds, setLastRecordGroupIds] = useRecoilComponentStateV2(
     lastRecordGroupIdsComponentState,
   );
 
@@ -51,7 +51,7 @@ export const RecordBoardQueryEffect = () => {
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const [shouldFetchMore] = useRecoilComponentState(
+  const [shouldFetchMore] = useRecoilComponentStateV2(
     recordBoardShouldFetchMoreComponentState,
   );
 

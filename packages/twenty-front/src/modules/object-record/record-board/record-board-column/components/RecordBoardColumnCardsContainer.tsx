@@ -10,7 +10,6 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnLoadingSkeletonCards';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 
 const StyledColumnCardsContainer = styled.div`
@@ -39,7 +38,7 @@ export const RecordBoardColumnCardsContainer = ({
     recordBoardColumnId,
   );
 
-  const recordBoardShouldFetchMoreInColumn = useRecoilComponentFamilyValue(
+  const recordBoardShouldFetchMoreInColumn = useRecoilComponentFamilyValueV2(
     recordBoardShouldFetchMoreInColumnComponentFamilyState,
     recordBoardColumnId,
   );

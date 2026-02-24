@@ -23,7 +23,7 @@ import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/W
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
+import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentFamilyStateV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type MouseEvent } from 'react';
@@ -109,7 +109,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     deletePageLayoutWidget(widget.id);
   };
 
-  const setIsHovered = useSetRecoilComponentFamilyState(
+  const setIsHovered = useSetRecoilComponentFamilyStateV2(
     widgetCardHoveredComponentFamilyState,
     widget.id,
   );

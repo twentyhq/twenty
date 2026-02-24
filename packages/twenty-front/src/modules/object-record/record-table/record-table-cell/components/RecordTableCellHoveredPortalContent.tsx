@@ -10,7 +10,7 @@ import { RecordTableCellFieldInput } from '@/object-record/record-table/record-t
 
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
@@ -66,7 +66,7 @@ export const RecordTableCellHoveredPortalContent = () => {
 
   const { rowIndex } = useRecordTableRowContextOrThrow();
 
-  const isRowActive = useRecoilComponentFamilyValue(
+  const isRowActive = useRecoilComponentFamilyValueV2(
     isRecordTableRowActiveComponentFamilyState,
     rowIndex,
   );

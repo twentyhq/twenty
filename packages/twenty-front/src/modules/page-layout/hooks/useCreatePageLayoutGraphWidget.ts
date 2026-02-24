@@ -15,9 +15,9 @@ import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { getWidgetTitle } from '@/page-layout/utils/getWidgetTitle';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -39,133 +39,124 @@ export const useCreatePageLayoutGraphWidget = (
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
-  const pageLayoutDraftState = useRecoilComponentCallbackState(
+  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+  const pageLayoutCurrentLayoutsState = useRecoilComponentStateCallbackStateV2(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutDraggedAreaState = useRecoilComponentCallbackState(
+  const pageLayoutDraggedAreaState = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraggedAreaComponentState,
     pageLayoutId,
   );
 
-  const createPageLayoutGraphWidget = useRecoilCallback(
-    ({ snapshot, set }) =>
-      ({
-        fieldSelection,
-      }: {
-        fieldSelection?: GraphWidgetFieldSelection;
-      }): PageLayoutWidget => {
-        const activeTabId = store.get(
-          activeTabIdComponentState.atomFamily({
-            instanceId: tabListInstanceId,
-          }),
-        );
+  const createPageLayoutGraphWidget = useCallback(
+    ({
+      fieldSelection,
+    }: {
+      fieldSelection?: GraphWidgetFieldSelection;
+    }): PageLayoutWidget => {
+      const activeTabId = store.get(
+        activeTabIdComponentState.atomFamily({
+          instanceId: tabListInstanceId,
+        }),
+      );
 
-        if (!isDefined(activeTabId)) {
-          throw new Error(
-            'A tab must be selected to create a new graph widget',
-          );
+      if (!isDefined(activeTabId)) {
+        throw new Error('A tab must be selected to create a new graph widget');
+      }
+
+      const pageLayoutDraft = store.get(pageLayoutDraftState);
+
+      const allTabLayouts = store.get(pageLayoutCurrentLayoutsState);
+
+      const pageLayoutDraggedArea = store.get(pageLayoutDraggedAreaState);
+
+      const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+      const existingWidgetCount = allWidgets.filter((widget) => {
+        if (widget.type !== WidgetType.GRAPH) {
+          return false;
         }
 
-        const pageLayoutDraft = snapshot
-          .getLoadable(pageLayoutDraftState)
-          .getValue();
+        if (
+          !isWidgetConfigurationOfType(
+            widget.configuration,
+            'BarChartConfiguration',
+          )
+        ) {
+          return false;
+        }
+        return widget.configuration.layout === BarChartLayout.VERTICAL;
+      }).length;
 
-        const allTabLayouts = snapshot
-          .getLoadable(pageLayoutCurrentLayoutsState)
-          .getValue();
+      const title = getWidgetTitle(
+        {
+          configurationType: WidgetConfigurationType.BAR_CHART,
+          layout: BarChartLayout.VERTICAL,
+        },
+        existingWidgetCount,
+      );
+      const widgetId = uuidv4();
 
-        const pageLayoutDraggedArea = snapshot
-          .getLoadable(pageLayoutDraggedAreaState)
-          .getValue();
+      const defaultSize = getWidgetSize(
+        WidgetConfigurationType.BAR_CHART,
+        'default',
+      );
+      const minimumSize = getWidgetSize(
+        WidgetConfigurationType.BAR_CHART,
+        'minimum',
+      );
+      const position = getDefaultWidgetPosition(
+        pageLayoutDraggedArea,
+        defaultSize,
+        minimumSize,
+      );
 
-        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
-        const existingWidgetCount = allWidgets.filter((widget) => {
-          if (widget.type !== WidgetType.GRAPH) {
-            return false;
-          }
+      const newWidget = createDefaultGraphWidget({
+        id: widgetId,
+        pageLayoutTabId: activeTabId,
+        title,
+        gridPosition: {
+          row: position.y,
+          column: position.x,
+          rowSpan: position.h,
+          columnSpan: position.w,
+        },
+        fieldSelection,
+        timezone: timeZone,
+        firstDayOfTheWeek: calendarStartDay,
+      });
 
-          if (
-            !isWidgetConfigurationOfType(
-              widget.configuration,
-              'BarChartConfiguration',
-            )
-          ) {
-            return false;
-          }
-          return widget.configuration.layout === BarChartLayout.VERTICAL;
-        }).length;
+      const newLayout = {
+        i: widgetId,
+        x: position.x,
+        y: position.y,
+        w: position.w,
+        h: position.h,
+        minW: minimumSize.w,
+        minH: minimumSize.h,
+      };
 
-        const title = getWidgetTitle(
-          {
-            configurationType: WidgetConfigurationType.BAR_CHART,
-            layout: BarChartLayout.VERTICAL,
-          },
-          existingWidgetCount,
-        );
-        const widgetId = uuidv4();
+      const updatedLayouts = getUpdatedTabLayouts(
+        allTabLayouts,
+        activeTabId,
+        newLayout,
+      );
+      store.set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
-        const defaultSize = getWidgetSize(
-          WidgetConfigurationType.BAR_CHART,
-          'default',
-        );
-        const minimumSize = getWidgetSize(
-          WidgetConfigurationType.BAR_CHART,
-          'minimum',
-        );
-        const position = getDefaultWidgetPosition(
-          pageLayoutDraggedArea,
-          defaultSize,
-          minimumSize,
-        );
+      store.set(pageLayoutDraftState, (prev) => ({
+        ...prev,
+        tabs: addWidgetToTab(prev.tabs, activeTabId, newWidget),
+      }));
 
-        const newWidget = createDefaultGraphWidget({
-          id: widgetId,
-          pageLayoutTabId: activeTabId,
-          title,
-          gridPosition: {
-            row: position.y,
-            column: position.x,
-            rowSpan: position.h,
-            columnSpan: position.w,
-          },
-          fieldSelection,
-          timezone: timeZone,
-          firstDayOfTheWeek: calendarStartDay,
-        });
+      store.set(pageLayoutDraggedAreaState, null);
 
-        const newLayout = {
-          i: widgetId,
-          x: position.x,
-          y: position.y,
-          w: position.w,
-          h: position.h,
-          minW: minimumSize.w,
-          minH: minimumSize.h,
-        };
-
-        const updatedLayouts = getUpdatedTabLayouts(
-          allTabLayouts,
-          activeTabId,
-          newLayout,
-        );
-        set(pageLayoutCurrentLayoutsState, updatedLayouts);
-
-        set(pageLayoutDraftState, (prev) => ({
-          ...prev,
-          tabs: addWidgetToTab(prev.tabs, activeTabId, newWidget),
-        }));
-
-        set(pageLayoutDraggedAreaState, null);
-
-        return newWidget;
-      },
+      return newWidget;
+    },
     [
       tabListInstanceId,
       pageLayoutCurrentLayoutsState,

@@ -1,7 +1,7 @@
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
 
 type UseToggleFieldVisibilityInDraftParams = {
   pageLayoutId: string;
@@ -12,41 +12,36 @@ export const useToggleFieldVisibilityInDraft = ({
   pageLayoutId,
   widgetId,
 }: UseToggleFieldVisibilityInDraftParams) => {
-  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetGroupsDraftState = useRecoilComponentStateCallbackStateV2(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
-  const toggleFieldVisibilityRecoilCallback = useRecoilCallback(
-    ({ set }) =>
-      (groupId: string, fieldMetadataId: string) => {
-        set(fieldsWidgetGroupsDraftState, (prev) => {
-          const currentGroups = prev[widgetId] ?? [];
-
-          return {
-            ...prev,
-            [widgetId]: currentGroups.map((group) =>
-              group.id === groupId
-                ? {
-                    ...group,
-                    fields: group.fields.map((field) =>
-                      field.fieldMetadataItem.id === fieldMetadataId
-                        ? { ...field, isVisible: !field.isVisible }
-                        : field,
-                    ),
-                  }
-                : group,
-            ),
-          };
-        });
-      },
-    [fieldsWidgetGroupsDraftState, widgetId],
-  );
+  const store = useStore();
 
   const toggleFieldVisibility = useCallback(
-    (groupId: string, fieldMetadataId: string) =>
-      toggleFieldVisibilityRecoilCallback(groupId, fieldMetadataId),
-    [toggleFieldVisibilityRecoilCallback],
+    (groupId: string, fieldMetadataId: string) => {
+      store.set(fieldsWidgetGroupsDraftState, (prev) => {
+        const currentGroups = prev[widgetId] ?? [];
+
+        return {
+          ...prev,
+          [widgetId]: currentGroups.map((group) =>
+            group.id === groupId
+              ? {
+                  ...group,
+                  fields: group.fields.map((field) =>
+                    field.fieldMetadataItem.id === fieldMetadataId
+                      ? { ...field, isVisible: !field.isVisible }
+                      : field,
+                  ),
+                }
+              : group,
+          ),
+        };
+      });
+    },
+    [fieldsWidgetGroupsDraftState, widgetId, store],
   );
 
   return { toggleFieldVisibility };

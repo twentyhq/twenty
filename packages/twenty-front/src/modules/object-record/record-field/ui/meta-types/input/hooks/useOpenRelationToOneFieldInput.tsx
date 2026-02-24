@@ -9,7 +9,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenRelationToOneFieldInput = () => {
@@ -17,48 +17,47 @@ export const useOpenRelationToOneFieldInput = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { openSingleRecordPicker } = useSingleRecordPickerOpen();
 
-  const openRelationToOneFieldInput = useRecoilCallback(
-    ({ set }) =>
-      ({
-        fieldName,
+  const openRelationToOneFieldInput = useCallback(
+    ({
+      fieldName,
+      recordId,
+      prefix,
+    }: {
+      fieldName: string;
+      recordId: string;
+      prefix?: string;
+    }) => {
+      const recordPickerInstanceId = getRecordFieldInputInstanceId({
         recordId,
+        fieldName,
         prefix,
-      }: {
-        fieldName: string;
-        recordId: string;
-        prefix?: string;
-      }) => {
-        const recordPickerInstanceId = getRecordFieldInputInstanceId({
-          recordId,
-          fieldName,
-          prefix,
-        });
-        const fieldValue = store.get(
-          recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
-        ) as FieldRelationValue<FieldRelationToOneValue>;
+      });
+      const fieldValue = store.get(
+        recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
+      ) as FieldRelationValue<FieldRelationToOneValue>;
 
-        if (isDefined(fieldValue)) {
-          set(
-            singleRecordPickerSelectedIdComponentState.atomFamily({
-              instanceId: recordPickerInstanceId,
-            }),
-            fieldValue.id,
-          );
-        }
-
-        openSingleRecordPicker(recordPickerInstanceId);
-
-        pushFocusItemToFocusStack({
-          focusId: recordPickerInstanceId,
-          component: {
-            type: FocusComponentType.OPENED_FIELD_INPUT,
+      if (isDefined(fieldValue)) {
+        store.set(
+          singleRecordPickerSelectedIdComponentState.atomFamily({
             instanceId: recordPickerInstanceId,
-          },
-          globalHotkeysConfig: {
-            enableGlobalHotkeysConflictingWithKeyboard: false,
-          },
-        });
-      },
+          }),
+          fieldValue.id,
+        );
+      }
+
+      openSingleRecordPicker(recordPickerInstanceId);
+
+      pushFocusItemToFocusStack({
+        focusId: recordPickerInstanceId,
+        component: {
+          type: FocusComponentType.OPENED_FIELD_INPUT,
+          instanceId: recordPickerInstanceId,
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysConflictingWithKeyboard: false,
+        },
+      });
+    },
     [openSingleRecordPicker, pushFocusItemToFocusStack, store],
   );
 

@@ -7,8 +7,9 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -16,46 +17,48 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     pageLayoutIdFromProps,
   );
 
-  const isPageLayoutInEditModeState = useRecoilComponentCallbackState(
+  const isPageLayoutInEditModeState = useRecoilComponentStateCallbackStateV2(
     isPageLayoutInEditModeComponentState,
     pageLayoutId,
   );
 
   const contextStoreIsFullTabWidgetInEditModeState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentStateCallbackStateV2(
       contextStoreIsPageInEditModeComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     );
 
-  const setIsPageLayoutInEditMode = useRecoilCallback(
-    ({ set }) =>
-      (value: boolean) => {
-        set(isPageLayoutInEditModeState, value);
+  const store = useStore();
 
-        set(contextStoreIsFullTabWidgetInEditModeState, value);
+  const setIsPageLayoutInEditMode = useCallback(
+    (value: boolean) => {
+      store.set(isPageLayoutInEditModeState, value);
 
-        jotaiStore.set(
-          currentPageLayoutIdState.atom,
-          value ? pageLayoutId : null,
+      store.set(contextStoreIsFullTabWidgetInEditModeState, value);
+
+      jotaiStore.set(
+        currentPageLayoutIdState.atom,
+        value ? pageLayoutId : null,
+      );
+
+      const isCommandMenuOpened = jotaiStore.get(
+        isCommandMenuOpenedStateV2.atom,
+      );
+
+      if (isCommandMenuOpened) {
+        store.set(
+          contextStoreIsPageInEditModeComponentState.atomFamily({
+            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          }),
+          value,
         );
-
-        const isCommandMenuOpened = jotaiStore.get(
-          isCommandMenuOpenedStateV2.atom,
-        );
-
-        if (isCommandMenuOpened) {
-          set(
-            contextStoreIsPageInEditModeComponentState.atomFamily({
-              instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-            }),
-            value,
-          );
-        }
-      },
+      }
+    },
     [
       isPageLayoutInEditModeState,
       contextStoreIsFullTabWidgetInEditModeState,
       pageLayoutId,
+      store,
     ],
   );
 

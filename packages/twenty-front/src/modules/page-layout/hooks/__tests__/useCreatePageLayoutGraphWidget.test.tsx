@@ -4,7 +4,6 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilComponentValueV2V2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2V2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { act, renderHook } from '@testing-library/react';
 import { useSetAtom } from 'jotai';
@@ -40,7 +39,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const pageLayoutDraft = useRecoilComponentValueV2V2(
+        const pageLayoutDraft = useRecoilComponentValueV2(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
@@ -119,7 +118,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
             instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
           }),
         );
-        const pageLayoutDraft = useRecoilComponentValueV2V2(
+        const pageLayoutDraft = useRecoilComponentValueV2(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );

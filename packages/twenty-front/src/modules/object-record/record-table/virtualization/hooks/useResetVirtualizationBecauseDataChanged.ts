@@ -1,3 +1,6 @@
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
+
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
@@ -11,10 +14,7 @@ import { recordIdByRealIndexComponentState } from '@/object-record/record-table/
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
@@ -29,7 +29,6 @@ export const useResetVirtualizationBecauseDataChanged = (
 
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
-  // TODO: we could optimize this by using an aggregate or using only id: true in recordGqlFields
   const recordGqlFields = useRecordsFieldVisibleGqlFields({
     objectMetadataItem,
   });
@@ -42,113 +41,100 @@ export const useResetVirtualizationBecauseDataChanged = (
   });
 
   const totalNumberOfRecordsToVirtualizeCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentStateCallbackStateV2(
       totalNumberOfRecordsToVirtualizeComponentState,
     );
 
-  const dataPagesLoadedCallbackState = useRecoilComponentCallbackState(
+  const dataPagesLoadedCallbackState = useRecoilComponentStateCallbackStateV2(
     dataPagesLoadedComponentState,
   );
 
   const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
 
-  const lastScrollPositionCallbackState = useRecoilComponentCallbackState(
-    lastScrollPositionComponentState,
-  );
+  const lastScrollPositionCallbackState =
+    useRecoilComponentStateCallbackStateV2(lastScrollPositionComponentState);
 
-  const recordIdByRealIndexCallbackState = useRecoilComponentCallbackState(
-    recordIdByRealIndexComponentState,
-  );
+  const recordIdByRealIndexCallbackState =
+    useRecoilComponentStateCallbackStateV2(recordIdByRealIndexComponentState);
 
   const dataLoadingStatusByRealIndexCallbackState =
-    useRecoilComponentCallbackState(dataLoadingStatusByRealIndexComponentState);
+    useRecoilComponentStateCallbackStateV2(
+      dataLoadingStatusByRealIndexComponentState,
+    );
 
-  const resetVirtualization = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async () => {
-        const { totalCount } = await findManyRecordsLazy();
+  const store = useStore();
 
-        const tableScrollWrapperHeight =
-          scrollWrapperHTMLElement?.clientHeight ?? 0;
+  const resetVirtualization = useCallback(async () => {
+    const { totalCount } = await findManyRecordsLazy();
 
-        const lastScrollPosition = getSnapshotValue(
-          snapshot,
-          lastScrollPositionCallbackState,
-        );
+    const tableScrollWrapperHeight =
+      scrollWrapperHTMLElement?.clientHeight ?? 0;
 
-        const totalNumberOfRecordsToVirtualize =
-          getSnapshotValue(
-            snapshot,
-            totalNumberOfRecordsToVirtualizeCallbackState,
-          ) ?? 0;
+    const lastScrollPosition = store.get(lastScrollPositionCallbackState);
 
-        const {
-          firstRealIndexInOverscanWindow,
-          lastRealIndexInOverscanWindow,
-        } = getVirtualizationOverscanWindow(
-          lastScrollPosition,
-          tableScrollWrapperHeight,
-          totalNumberOfRecordsToVirtualize,
-        );
+    const totalNumberOfRecordsToVirtualize =
+      store.get(totalNumberOfRecordsToVirtualizeCallbackState) ?? 0;
 
-        const recordIdByRealIndex = getSnapshotValue(
-          snapshot,
-          recordIdByRealIndexCallbackState,
-        );
+    const { firstRealIndexInOverscanWindow, lastRealIndexInOverscanWindow } =
+      getVirtualizationOverscanWindow(
+        lastScrollPosition,
+        tableScrollWrapperHeight,
+        totalNumberOfRecordsToVirtualize,
+      );
 
-        const dataLoadingStatusByRealIndex = getSnapshotValue(
-          snapshot,
-          dataLoadingStatusByRealIndexCallbackState,
-        );
+    const recordIdByRealIndex = store.get(recordIdByRealIndexCallbackState);
 
-        const lengthOfOverscanWindow =
-          lastRealIndexInOverscanWindow - firstRealIndexInOverscanWindow + 1;
-
-        const newRecordIdByRealIndex = new Map<number, string>();
-        const newDataLoadingStatusByRealIndex = new Map<
-          number,
-          'loaded' | 'not-loaded'
-        >();
-
-        for (let i = 0; i < lengthOfOverscanWindow; i++) {
-          const realIndex = firstRealIndexInOverscanWindow + i;
-
-          const existingRecordId = recordIdByRealIndex.get(realIndex);
-
-          if (isDefined(existingRecordId)) {
-            newRecordIdByRealIndex.set(realIndex, existingRecordId);
-          }
-
-          const existingDataLoadingStatus =
-            dataLoadingStatusByRealIndex.get(realIndex);
-
-          if (isDefined(existingDataLoadingStatus)) {
-            newDataLoadingStatusByRealIndex.set(
-              realIndex,
-              existingDataLoadingStatus,
-            );
-          }
-        }
-
-        set(recordIdByRealIndexCallbackState, newRecordIdByRealIndex);
-        set(
-          dataLoadingStatusByRealIndexCallbackState,
-          newDataLoadingStatusByRealIndex,
-        );
-
-        set(dataPagesLoadedCallbackState, []);
-        set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
-      },
-    [
-      findManyRecordsLazy,
-      scrollWrapperHTMLElement?.clientHeight,
-      lastScrollPositionCallbackState,
-      totalNumberOfRecordsToVirtualizeCallbackState,
-      dataPagesLoadedCallbackState,
+    const dataLoadingStatusByRealIndex = store.get(
       dataLoadingStatusByRealIndexCallbackState,
-      recordIdByRealIndexCallbackState,
-    ],
-  );
+    );
+
+    const lengthOfOverscanWindow =
+      lastRealIndexInOverscanWindow - firstRealIndexInOverscanWindow + 1;
+
+    const newRecordIdByRealIndex = new Map<number, string>();
+    const newDataLoadingStatusByRealIndex = new Map<
+      number,
+      'loaded' | 'not-loaded'
+    >();
+
+    for (let i = 0; i < lengthOfOverscanWindow; i++) {
+      const realIndex = firstRealIndexInOverscanWindow + i;
+
+      const existingRecordId = recordIdByRealIndex.get(realIndex);
+
+      if (isDefined(existingRecordId)) {
+        newRecordIdByRealIndex.set(realIndex, existingRecordId);
+      }
+
+      const existingDataLoadingStatus =
+        dataLoadingStatusByRealIndex.get(realIndex);
+
+      if (isDefined(existingDataLoadingStatus)) {
+        newDataLoadingStatusByRealIndex.set(
+          realIndex,
+          existingDataLoadingStatus,
+        );
+      }
+    }
+
+    store.set(recordIdByRealIndexCallbackState, newRecordIdByRealIndex);
+    store.set(
+      dataLoadingStatusByRealIndexCallbackState,
+      newDataLoadingStatusByRealIndex,
+    );
+
+    store.set(dataPagesLoadedCallbackState, []);
+    store.set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
+  }, [
+    findManyRecordsLazy,
+    scrollWrapperHTMLElement?.clientHeight,
+    lastScrollPositionCallbackState,
+    totalNumberOfRecordsToVirtualizeCallbackState,
+    dataPagesLoadedCallbackState,
+    dataLoadingStatusByRealIndexCallbackState,
+    recordIdByRealIndexCallbackState,
+    store,
+  ]);
 
   const resetVirtualizationBecauseDataChanged = useCallback(async () => {
     await resetVirtualization();

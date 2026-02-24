@@ -1,6 +1,6 @@
 import { objectFilterDropdownAnyFieldSearchIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownAnyFieldSearchIsSelectedComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { ViewBarFilterDropdownAnyFieldSearchInput } from '@/views/components/ViewBarFilterDropdownAnyFieldSearchInput';
 import { ViewBarFilterDropdownFieldSelectMenu } from '@/views/components/ViewBarFilterDropdownFieldSelectMenu';
@@ -8,7 +8,7 @@ import { ViewBarFilterDropdownFilterInput } from '@/views/components/ViewBarFilt
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 
 export const ViewBarFilterDropdownContent = () => {
-  const [objectFilterDropdownFilterIsSelected] = useRecoilComponentState(
+  const [objectFilterDropdownFilterIsSelected] = useRecoilComponentStateV2(
     objectFilterDropdownFilterIsSelectedComponentState,
     ViewBarFilterDropdownIds.MAIN,
   );

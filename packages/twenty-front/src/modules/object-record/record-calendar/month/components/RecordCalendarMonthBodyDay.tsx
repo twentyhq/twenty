@@ -2,7 +2,7 @@ import { RecordCalendarCardDraggableContainer } from '@/object-record/record-cal
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -114,7 +114,7 @@ export const RecordCalendarMonthBodyDay = ({
 
   const dayKey = day.toString();
 
-  const recordIds = useRecoilComponentFamilyValue(
+  const recordIds = useRecoilComponentFamilySelectorValueV2(
     calendarDayRecordIdsComponentFamilySelector,
     {
       day: day,

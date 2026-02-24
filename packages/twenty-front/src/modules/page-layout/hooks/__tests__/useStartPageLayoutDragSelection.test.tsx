@@ -1,5 +1,6 @@
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { act, renderHook } from '@testing-library/react';
+import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
@@ -9,21 +10,23 @@ import {
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
 
-const createInitializeState =
-  (initialSelectedCells?: Set<string>) =>
-  ({ set }: { set: any }) => {
-    if (isDefined(initialSelectedCells)) {
-      set(
-        pageLayoutSelectedCellsComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        initialSelectedCells,
-      );
-    }
-  };
+const createTestStore = (initialSelectedCells?: Set<string>) => {
+  const store = createStore();
+  if (isDefined(initialSelectedCells)) {
+    store.set(
+      pageLayoutSelectedCellsComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      initialSelectedCells,
+    );
+  }
+  return store;
+};
 
 describe('useStartPageLayoutDragSelection', () => {
   it('should clear selected cells when starting drag selection', () => {
+    const store = createTestStore(new Set(['cell-1', 'cell-2']));
+
     const { result } = renderHook(
       () => ({
         startDragSelection: useStartPageLayoutDragSelection(
@@ -36,11 +39,7 @@ describe('useStartPageLayoutDragSelection', () => {
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
-          <PageLayoutTestWrapper
-            initializeState={createInitializeState(
-              new Set(['cell-1', 'cell-2']),
-            )}
-          >
+          <PageLayoutTestWrapper store={store}>
             {children}
           </PageLayoutTestWrapper>
         ),
@@ -72,6 +71,8 @@ describe('useStartPageLayoutDragSelection', () => {
   });
 
   it('should handle multiple calls correctly', () => {
+    const store = createTestStore(new Set(['cell-1']));
+
     const { result } = renderHook(
       () => ({
         startDragSelection: useStartPageLayoutDragSelection(
@@ -84,9 +85,7 @@ describe('useStartPageLayoutDragSelection', () => {
       }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
-          <PageLayoutTestWrapper
-            initializeState={createInitializeState(new Set(['cell-1']))}
-          >
+          <PageLayoutTestWrapper store={store}>
             {children}
           </PageLayoutTestWrapper>
         ),

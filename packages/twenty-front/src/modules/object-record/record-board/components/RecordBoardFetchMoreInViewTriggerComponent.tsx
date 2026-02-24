@@ -11,7 +11,7 @@ import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/re
 import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 
@@ -21,7 +21,7 @@ const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
 `;
 
 export const RecordBoardFetchMoreInViewTriggerComponent = () => {
-  const [shouldFetchMore, setShouldFetchMore] = useRecoilComponentState(
+  const [shouldFetchMore, setShouldFetchMore] = useRecoilComponentStateV2(
     recordBoardShouldFetchMoreComponentState,
   );
 

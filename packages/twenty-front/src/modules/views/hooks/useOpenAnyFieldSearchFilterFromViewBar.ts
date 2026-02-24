@@ -3,19 +3,19 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const useOpenAnyFieldSearchFilterFromViewBar = () => {
-  const setAnyFieldFilterValue = useSetRecoilComponentState(
+  const setAnyFieldFilterValue = useSetRecoilComponentStateV2(
     anyFieldFilterValueComponentState,
   );
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const setObjectFilterDropdownAnyFieldSearchIsSelectedComponentState =
-    useSetRecoilComponentState(
+    useSetRecoilComponentStateV2(
       objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
     );
 

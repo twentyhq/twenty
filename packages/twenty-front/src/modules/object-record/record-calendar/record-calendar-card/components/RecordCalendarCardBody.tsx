@@ -16,7 +16,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 
 const StyledRecordCardBodyContainer = styled(RecordCardBodyContainer)`
@@ -63,7 +63,7 @@ export const RecordCalendarCardBody = ({
       recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
   );
 
-  const setRecordCalendarCardHoverPosition = useSetRecoilComponentState(
+  const setRecordCalendarCardHoverPosition = useSetRecoilComponentStateV2(
     recordCalendarCardHoverPositionComponentState,
   );
 

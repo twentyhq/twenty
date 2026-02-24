@@ -23,8 +23,8 @@ import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/h
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
@@ -41,8 +41,9 @@ export const AdvancedFilterFieldSelectMenu = ({
     advancedFilterFieldSelectDropdownId,
   } = useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-  const [objectFilterDropdownSearchInput] = useRecoilComponentState(
+  const [objectFilterDropdownSearchInput] = useRecoilComponentStateV2(
     objectFilterDropdownSearchInputComponentState,
+    advancedFilterFieldSelectDropdownId,
   );
 
   const { objectMetadataItem } = useContext(AdvancedFilterContext);
@@ -90,17 +91,20 @@ export const AdvancedFilterFieldSelectMenu = ({
   const { selectFieldUsedInAdvancedFilterDropdown } =
     useSelectFieldUsedInAdvancedFilterDropdown();
 
-  const [, setObjectFilterDropdownSubMenuFieldType] = useRecoilComponentState(
+  const [, setObjectFilterDropdownSubMenuFieldType] = useRecoilComponentStateV2(
     objectFilterDropdownSubMenuFieldTypeComponentState,
+    advancedFilterFieldSelectDropdownId,
   );
 
   const [, setObjectFilterDropdownIsSelectingCompositeField] =
-    useRecoilComponentState(
+    useRecoilComponentStateV2(
       objectFilterDropdownIsSelectingCompositeFieldComponentState,
+      advancedFilterFieldSelectDropdownId,
     );
 
-  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentState(
+  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
     fieldMetadataItemIdUsedInDropdownComponentState,
+    advancedFilterFieldSelectDropdownId,
   );
 
   const handleFieldMetadataItemSelect = (

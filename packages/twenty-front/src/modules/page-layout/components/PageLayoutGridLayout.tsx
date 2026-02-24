@@ -25,7 +25,7 @@ import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prep
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useRef } from 'react';
@@ -100,15 +100,15 @@ type PageLayoutGridLayoutProps = {
 };
 
 export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
-  const setPageLayoutCurrentBreakpoint = useSetRecoilComponentState(
+  const setPageLayoutCurrentBreakpoint = useSetRecoilComponentStateV2(
     pageLayoutCurrentBreakpointComponentState,
   );
 
-  const setDraggingWidgetId = useSetRecoilComponentState(
+  const setDraggingWidgetId = useSetRecoilComponentStateV2(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const setResizingWidgetId = useSetRecoilComponentState(
+  const setResizingWidgetId = useSetRecoilComponentStateV2(
     pageLayoutResizingWidgetIdComponentState,
   );
 

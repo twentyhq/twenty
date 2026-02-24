@@ -69,7 +69,7 @@ export const ObjectFilterDropdownOptionSelect = ({
 
   const { resetSelectedItem } = useSelectableList(componentInstanceId);
 
-  const selectedItemId = useRecoilComponentValueV2V2(
+  const selectedItemId = useRecoilComponentValueV2(
     selectedItemIdComponentState,
     componentInstanceId,
   );

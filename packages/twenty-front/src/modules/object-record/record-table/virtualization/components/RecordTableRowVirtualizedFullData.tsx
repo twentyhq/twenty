@@ -12,7 +12,8 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { RecordTableRowVirtualizedSkeleton } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedSkeleton';
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,7 +27,7 @@ export const RecordTableRowVirtualizedFullData = ({
 }: RecordTableRowVirtualizedFullDataProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isFocused = useRecoilComponentFamilyValue(
+  const isFocused = useRecoilComponentFamilyValueV2(
     isRecordTableRowFocusedComponentFamilyState,
     realIndex,
   );
@@ -36,7 +37,7 @@ export const RecordTableRowVirtualizedFullData = ({
     recordTableId,
   );
 
-  const recordId = useRecoilComponentFamilyValue(
+  const recordId = useRecoilComponentFamilySelectorValueV2(
     recordIdByRealIndexComponentFamilySelector,
     realIndex,
   );

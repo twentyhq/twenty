@@ -1,10 +1,11 @@
 import { UPSERT_FIELDS_WIDGET } from '@/page-layout/graphql/mutations/upsertFieldsWidget';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { useMutation } from '@apollo/client';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type ViewFragmentFragment } from '~/generated-metadata/graphql';
 
@@ -39,15 +40,16 @@ type UseSaveFieldsWidgetGroupsParams = {
 export const useSaveFieldsWidgetGroups = ({
   pageLayoutId,
 }: UseSaveFieldsWidgetGroupsParams) => {
-  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetGroupsDraftState = useRecoilComponentStateCallbackStateV2(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetGroupsPersistedState = useRecoilComponentCallbackState(
-    fieldsWidgetGroupsPersistedComponentState,
-    pageLayoutId,
-  );
+  const fieldsWidgetGroupsPersistedState =
+    useRecoilComponentStateCallbackStateV2(
+      fieldsWidgetGroupsPersistedComponentState,
+      pageLayoutId,
+    );
 
   const [upsertFieldsWidgetMutation] = useMutation<
     UpsertFieldsWidgetResult,
@@ -56,65 +58,60 @@ export const useSaveFieldsWidgetGroups = ({
 
   const { refreshAllCoreViews } = useRefreshAllCoreViews();
 
-  const saveFieldsWidgetGroups = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async () => {
-        const allDraftGroups = snapshot
-          .getLoadable(fieldsWidgetGroupsDraftState)
-          .getValue();
-        const allPersistedGroups = snapshot
-          .getLoadable(fieldsWidgetGroupsPersistedState)
-          .getValue();
+  const store = useStore();
 
-        const widgetIds = new Set([
-          ...Object.keys(allDraftGroups),
-          ...Object.keys(allPersistedGroups),
-        ]);
+  const saveFieldsWidgetGroups = useCallback(async () => {
+    const allDraftGroups = store.get(fieldsWidgetGroupsDraftState);
+    const allPersistedGroups = store.get(fieldsWidgetGroupsPersistedState);
 
-        for (const widgetId of widgetIds) {
-          const draftGroups = allDraftGroups[widgetId] ?? [];
+    const widgetIds = new Set([
+      ...Object.keys(allDraftGroups),
+      ...Object.keys(allPersistedGroups),
+    ]);
 
-          await upsertFieldsWidgetMutation({
-            variables: {
-              input: {
-                widgetId,
-                groups: draftGroups.map((group) => ({
-                  id: group.id,
-                  name: group.name,
-                  position: group.position,
-                  isVisible: group.isVisible,
-                  fields: group.fields.flatMap((field) => {
-                    if (!isDefined(field.viewFieldId)) {
-                      return [];
-                    }
+    for (const widgetId of widgetIds) {
+      const draftGroups = allDraftGroups[widgetId] ?? [];
 
-                    return [
-                      {
-                        viewFieldId: field.viewFieldId,
-                        isVisible: field.isVisible,
-                        position: field.position,
-                      },
-                    ];
-                  }),
-                })),
-              },
-            },
-          });
-        }
+      await upsertFieldsWidgetMutation({
+        variables: {
+          input: {
+            widgetId,
+            groups: draftGroups.map((group) => ({
+              id: group.id,
+              name: group.name,
+              position: group.position,
+              isVisible: group.isVisible,
+              fields: group.fields.flatMap((field) => {
+                if (!isDefined(field.viewFieldId)) {
+                  return [];
+                }
 
-        set(fieldsWidgetGroupsPersistedState, allDraftGroups);
+                return [
+                  {
+                    viewFieldId: field.viewFieldId,
+                    isVisible: field.isVisible,
+                    position: field.position,
+                  },
+                ];
+              }),
+            })),
+          },
+        },
+      });
+    }
 
-        await refreshAllCoreViews();
+    store.set(fieldsWidgetGroupsPersistedState, allDraftGroups);
 
-        return { status: 'successful' as const };
-      },
-    [
-      fieldsWidgetGroupsDraftState,
-      fieldsWidgetGroupsPersistedState,
-      upsertFieldsWidgetMutation,
-      refreshAllCoreViews,
-    ],
-  );
+    await refreshAllCoreViews();
+
+    return { status: 'successful' as const };
+  }, [
+    fieldsWidgetGroupsDraftState,
+    fieldsWidgetGroupsPersistedState,
+    upsertFieldsWidgetMutation,
+    refreshAllCoreViews,
+    store,
+  ]);
 
   return { saveFieldsWidgetGroups };
 };

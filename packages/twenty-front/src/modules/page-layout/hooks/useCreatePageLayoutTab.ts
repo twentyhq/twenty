@@ -6,9 +6,10 @@ import { getEmptyTabLayout } from '@/page-layout/utils/getEmptyTabLayout';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
@@ -17,12 +18,12 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutDraftState = useRecoilComponentCallbackState(
+  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutCurrentLayoutsState = useRecoilComponentCallbackState(
+  const pageLayoutCurrentLayoutsState = useRecoilComponentStateCallbackStateV2(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
@@ -33,51 +34,51 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     tabListInstanceId,
   );
 
-  const createPageLayoutTab = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (title?: string): string => {
-        const pageLayoutDraft = snapshot
-          .getLoadable(pageLayoutDraftState)
-          .getValue();
+  const store = useStore();
 
-        const newTabId = uuidv4();
-        const tabsLength = pageLayoutDraft.tabs.length;
-        const maxPosition =
-          tabsLength > 0
-            ? Math.max(...pageLayoutDraft.tabs.map((t) => t.position))
-            : -1;
-        const newTab: PageLayoutTab = {
-          id: newTabId,
-          applicationId: '',
-          title: title || `Tab ${tabsLength + 1}`,
-          position: maxPosition + 1,
-          pageLayoutId: pageLayoutId,
-          widgets: [],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          deletedAt: null,
-        };
+  const createPageLayoutTab = useCallback(
+    (title?: string): string => {
+      const pageLayoutDraft = store.get(pageLayoutDraftState);
 
-        const updatedTabs = [...(pageLayoutDraft.tabs || []), newTab];
+      const newTabId = uuidv4();
+      const tabsLength = pageLayoutDraft.tabs.length;
+      const maxPosition =
+        tabsLength > 0
+          ? Math.max(...pageLayoutDraft.tabs.map((t) => t.position))
+          : -1;
+      const newTab: PageLayoutTab = {
+        id: newTabId,
+        applicationId: '',
+        title: title || `Tab ${tabsLength + 1}`,
+        position: maxPosition + 1,
+        pageLayoutId: pageLayoutId,
+        widgets: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        deletedAt: null,
+      };
 
-        set(pageLayoutDraftState, (prev) => ({
-          ...prev,
-          tabs: updatedTabs,
-        }));
+      const updatedTabs = [...(pageLayoutDraft.tabs || []), newTab];
 
-        set(pageLayoutCurrentLayoutsState, (prev) =>
-          getEmptyTabLayout(prev, newTabId),
-        );
+      store.set(pageLayoutDraftState, (prev) => ({
+        ...prev,
+        tabs: updatedTabs,
+      }));
 
-        setActiveTabId(newTabId);
+      store.set(pageLayoutCurrentLayoutsState, (prev) =>
+        getEmptyTabLayout(prev, newTabId),
+      );
 
-        return newTabId;
-      },
+      setActiveTabId(newTabId);
+
+      return newTabId;
+    },
     [
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutId,
       setActiveTabId,
+      store,
     ],
   );
 

@@ -11,12 +11,12 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useEffect } from 'react';
 
 export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
   () => {
-    const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentState(
+    const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
       contextStoreNumberOfSelectedRecordsComponentState,
     );
 

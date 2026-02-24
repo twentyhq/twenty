@@ -9,7 +9,6 @@ import { calculateTotalGridRows } from '@/page-layout/utils/calculateTotalGridRo
 import { generateCellId } from '@/page-layout/utils/generateCellId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilComponentValueV2V2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2V2';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 
@@ -61,7 +60,7 @@ export const PageLayoutGridOverlay = () => {
     pageLayoutCurrentLayoutsComponentState,
   );
 
-  const activeTabId = useRecoilComponentValueV2V2(activeTabIdComponentState);
+  const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
 
   const { createWidgetFromClick } = useCreateWidgetFromClick();
 

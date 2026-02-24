@@ -6,6 +6,7 @@ import {
 import { type ReactNode } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useStore } from 'jotai';
@@ -20,6 +21,7 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
+  const { recordIndexId } = useRecordIndexContextOrThrow();
   const { recordTableId } = useRecordTableContextOrThrow();
 
   const selectedRowIdsAtom = useRecoilComponentSelectorCallbackStateV2(
@@ -29,8 +31,8 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
 
   const store = useStore();
 
-  const { startRecordDrag } = useStartRecordDrag();
-  const { endRecordDrag } = useEndRecordDrag();
+  const { startRecordDrag } = useStartRecordDrag(recordIndexId);
+  const { endRecordDrag } = useEndRecordDrag(recordIndexId);
   const { processTableWithoutGroupRecordDrop } =
     useProcessTableWithoutGroupRecordDrop();
 

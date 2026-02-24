@@ -26,8 +26,8 @@ import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/u
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
@@ -59,12 +59,12 @@ export const RecordBoardCard = () => {
     RecordBoardComponentInstanceContext,
   );
 
-  const isRecordIdPrimaryDragMultiple = useRecoilComponentFamilyValue(
+  const isRecordIdPrimaryDragMultiple = useRecoilComponentFamilyValueV2(
     isRecordIdPrimaryDragMultipleComponentFamilyState,
     { recordId },
   );
 
-  const isRecordIdSecondaryDragMultiple = useRecoilComponentFamilyValue(
+  const isRecordIdSecondaryDragMultiple = useRecoilComponentFamilyValueV2(
     isRecordIdSecondaryDragMultipleComponentFamilyState,
     { recordId },
   );
@@ -73,7 +73,7 @@ export const RecordBoardCard = () => {
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const [isCardExpanded, setIsCardExpanded] = useRecoilComponentState(
+  const [isCardExpanded, setIsCardExpanded] = useRecoilComponentStateV2(
     recordBoardCardIsExpandedComponentState,
     `record-board-card-${recordId}`,
   );
@@ -84,7 +84,7 @@ export const RecordBoardCard = () => {
       recordId,
     );
 
-  const isCurrentCardFocused = useRecoilComponentFamilyValue(
+  const isCurrentCardFocused = useRecoilComponentFamilyValueV2(
     isRecordBoardCardFocusedComponentFamilyState,
     {
       rowIndex,
@@ -92,7 +92,7 @@ export const RecordBoardCard = () => {
     },
   );
 
-  const isCurrentCardActive = useRecoilComponentFamilyValue(
+  const isCurrentCardActive = useRecoilComponentFamilyValueV2(
     isRecordBoardCardActiveComponentFamilyState,
     {
       rowIndex,

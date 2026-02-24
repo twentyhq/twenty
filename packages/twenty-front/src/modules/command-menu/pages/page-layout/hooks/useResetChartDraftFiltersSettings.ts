@@ -6,7 +6,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useResetChartDraftFiltersSettings = () => {
@@ -14,45 +14,42 @@ export const useResetChartDraftFiltersSettings = () => {
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const resetChartDraftFiltersSettings = useRecoilCallback(
-    ({ set }) =>
-      (objectMetadataItemId: string) => {
-        if (!isDefined(widgetInEditMode)) {
-          return;
-        }
+  const resetChartDraftFiltersSettings = useCallback(
+    (objectMetadataItemId: string) => {
+      if (!isDefined(widgetInEditMode)) {
+        return;
+      }
 
-        const { instanceId } = getChartFiltersSettingsInstanceId({
-          widgetId: widgetInEditMode.id,
-          objectMetadataItemId: objectMetadataItemId,
-        });
+      const { instanceId } = getChartFiltersSettingsInstanceId({
+        widgetId: widgetInEditMode.id,
+        objectMetadataItemId: objectMetadataItemId,
+      });
 
-        set(
-          hasInitializedCurrentRecordFilterGroupsComponentFamilyState.atomFamily(
-            {
-              familyKey: {},
-              instanceId,
-            },
-          ),
-          false,
-        );
+      jotaiStore.set(
+        hasInitializedCurrentRecordFilterGroupsComponentFamilyState.atomFamily({
+          familyKey: {},
+          instanceId,
+        }),
+        false,
+      );
 
-        set(
-          hasInitializedCurrentRecordFiltersComponentFamilyState.atomFamily({
-            familyKey: {},
-            instanceId,
-          }),
-          false,
-        );
+      jotaiStore.set(
+        hasInitializedCurrentRecordFiltersComponentFamilyState.atomFamily({
+          familyKey: {},
+          instanceId,
+        }),
+        false,
+      );
 
-        jotaiStore.set(
-          currentRecordFiltersComponentState.atomFamily({ instanceId }),
-          [],
-        );
-        jotaiStore.set(
-          currentRecordFilterGroupsComponentState.atomFamily({ instanceId }),
-          [],
-        );
-      },
+      jotaiStore.set(
+        currentRecordFiltersComponentState.atomFamily({ instanceId }),
+        [],
+      );
+      jotaiStore.set(
+        currentRecordFilterGroupsComponentState.atomFamily({ instanceId }),
+        [],
+      );
+    },
     [widgetInEditMode],
   );
 

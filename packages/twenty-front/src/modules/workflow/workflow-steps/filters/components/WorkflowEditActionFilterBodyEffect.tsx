@@ -1,4 +1,4 @@
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
@@ -31,7 +31,7 @@ export const WorkflowEditActionFilterBodyEffect = ({
   const [
     hasInitializedCurrentStepFilters,
     setHasInitializedCurrentStepFilters,
-  ] = useRecoilComponentFamilyState(
+  ] = useRecoilComponentFamilyStateV2(
     hasInitializedCurrentStepFiltersComponentFamilyState,
     { stepId },
   );
@@ -39,7 +39,7 @@ export const WorkflowEditActionFilterBodyEffect = ({
   const [
     hasInitializedCurrentStepFilterGroups,
     setHasInitializedCurrentStepFilterGroups,
-  ] = useRecoilComponentFamilyState(
+  ] = useRecoilComponentFamilyStateV2(
     hasInitializedCurrentStepFilterGroupsComponentFamilyState,
     { stepId },
   );

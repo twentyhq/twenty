@@ -368,6 +368,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
       apolloCoreClient,
       performCombinedFindManyRecords,
       objectPermissionsByObjectMetadataId,
+      store,
     ],
   );
 

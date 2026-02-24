@@ -1,9 +1,9 @@
 import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder-picker/states/context/FavoriteFolderPickerInstanceContext';
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
+import { createComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilyStateV2';
 
 export const favoriteFolderPickerComponentFamilyState =
-  createComponentFamilyState<FavoriteFolder | undefined, string>({
+  createComponentFamilyStateV2<FavoriteFolder | undefined, string>({
     key: 'favoriteFolderPickerComponentFamilyState',
     defaultValue: undefined,
     componentInstanceContext: FavoriteFolderPickerInstanceContext,

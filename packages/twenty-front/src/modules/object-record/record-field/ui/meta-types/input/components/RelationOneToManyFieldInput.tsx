@@ -1,6 +1,5 @@
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
@@ -34,7 +33,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
@@ -164,120 +163,119 @@ export const RelationOneToManyFieldInput = () => {
   );
 
   const multipleRecordPickerPickableMorphItemsCallbackState =
-    useRecoilComponentCallbackState(
+    useRecoilComponentStateCallbackStateV2(
       multipleRecordPickerPickableMorphItemsComponentState,
       instanceId,
     );
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
 
-  const handleCreateNew = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async (searchInput?: string) => {
-        const updatePickerState = (
-          newRecordId: string,
-          targetObjectMetadataId: string,
-          searchableObjectMetadataItems: (typeof relationObjectMetadataItem)[],
-        ) => {
-          const currentMorphItems = snapshot
-            .getLoadable(multipleRecordPickerPickableMorphItemsCallbackState)
-            .getValue();
+  const handleCreateNew = useCallback(
+    async (searchInput?: string) => {
+      const updatePickerState = (
+        newRecordId: string,
+        targetObjectMetadataId: string,
+        searchableObjectMetadataItems: (typeof relationObjectMetadataItem)[],
+      ) => {
+        const currentMorphItems = store.get(
+          multipleRecordPickerPickableMorphItemsCallbackState,
+        );
 
-          const newMorphItems = currentMorphItems.concat({
-            recordId: newRecordId,
-            objectMetadataId: targetObjectMetadataId,
-            isSelected: true,
-            isMatchingSearchFilter: true,
-          });
+        const newMorphItems = currentMorphItems.concat({
+          recordId: newRecordId,
+          objectMetadataId: targetObjectMetadataId,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        });
 
-          set(
-            multipleRecordPickerPickableMorphItemsCallbackState,
-            newMorphItems,
-          );
+        store.set(
+          multipleRecordPickerPickableMorphItemsCallbackState,
+          newMorphItems,
+        );
 
-          multipleRecordPickerPerformSearch({
-            multipleRecordPickerInstanceId: instanceId,
-            forceSearchFilter: searchInput,
-            forceSearchableObjectMetadataItems: searchableObjectMetadataItems,
-            forcePickableMorphItems: newMorphItems,
-          });
-        };
+        multipleRecordPickerPerformSearch({
+          multipleRecordPickerInstanceId: instanceId,
+          forceSearchFilter: searchInput,
+          forceSearchableObjectMetadataItems: searchableObjectMetadataItems,
+          forcePickableMorphItems: newMorphItems,
+        });
+      };
 
-        if (
-          isJunctionRelation &&
-          isDefined(junctionConfig) &&
-          !isMorphJunction &&
-          isDefined(junctionTargetObjectMetadata)
-        ) {
-          const { targetFields, sourceField } = junctionConfig;
-          const targetField = targetFields[0];
+      if (
+        isJunctionRelation &&
+        isDefined(junctionConfig) &&
+        !isMorphJunction &&
+        isDefined(junctionTargetObjectMetadata)
+      ) {
+        const { targetFields, sourceField } = junctionConfig;
+        const targetField = targetFields[0];
 
-          if (!targetField || !sourceField) {
-            return;
-          }
-
-          const sourceJoinColumnName = getSourceJoinColumnName({
-            sourceField,
-            sourceObjectMetadata: objectMetadataItem,
-          });
-
-          const targetJoinColumnName = getJoinColumnName(targetField.settings);
-
-          if (!sourceJoinColumnName || !targetJoinColumnName) {
-            return;
-          }
-
-          const newTargetId = v4();
-          const targetPayload = buildRecordLabelPayload({
-            id: newTargetId,
-            searchInput,
-            objectMetadataItem: junctionTargetObjectMetadata,
-          });
-
-          await createTargetRecord(targetPayload);
-
-          const newJunctionId = v4();
-          const createdJunction = await createJunctionRecord({
-            id: newJunctionId,
-            [sourceJoinColumnName]: recordId,
-            [targetJoinColumnName]: newTargetId,
-          });
-
-          if (isDefined(createdJunction)) {
-            store.set(
-              recordStoreFamilyState.atomFamily(recordId),
-              (currentRecord: ObjectRecord | null | undefined) => {
-                if (!isDefined(currentRecord)) {
-                  return currentRecord;
-                }
-                const currentFieldValue = currentRecord[fieldName];
-                const updatedJunctionRecords = Array.isArray(currentFieldValue)
-                  ? [...currentFieldValue, createdJunction]
-                  : [createdJunction];
-
-                return {
-                  ...currentRecord,
-                  [fieldName]: updatedJunctionRecords,
-                } as ObjectRecord;
-              },
-            );
-          }
-
-          updatePickerState(newTargetId, junctionTargetObjectMetadata.id, [
-            junctionTargetObjectMetadata,
-          ]);
+        if (!targetField || !sourceField) {
           return;
         }
 
-        const newRecordId =
-          await createNewRecordAndOpenRightDrawer?.(searchInput);
+        const sourceJoinColumnName = getSourceJoinColumnName({
+          sourceField,
+          sourceObjectMetadata: objectMetadataItem,
+        });
 
-        if (isDefined(newRecordId)) {
-          updatePickerState(newRecordId, relationObjectMetadataItem.id, [
-            relationObjectMetadataItem,
-          ]);
+        const targetJoinColumnName = getJoinColumnName(targetField.settings);
+
+        if (!sourceJoinColumnName || !targetJoinColumnName) {
+          return;
         }
-      },
+
+        const newTargetId = v4();
+        const targetPayload = buildRecordLabelPayload({
+          id: newTargetId,
+          searchInput,
+          objectMetadataItem: junctionTargetObjectMetadata,
+        });
+
+        await createTargetRecord(targetPayload);
+
+        const newJunctionId = v4();
+        const createdJunction = await createJunctionRecord({
+          id: newJunctionId,
+          [sourceJoinColumnName]: recordId,
+          [targetJoinColumnName]: newTargetId,
+        });
+
+        if (isDefined(createdJunction)) {
+          store.set(
+            recordStoreFamilyState.atomFamily(recordId),
+            (currentRecord: ObjectRecord | null | undefined) => {
+              if (!isDefined(currentRecord)) {
+                return currentRecord;
+              }
+              const currentFieldValue = currentRecord[fieldName];
+              const updatedJunctionRecords = Array.isArray(currentFieldValue)
+                ? [...currentFieldValue, createdJunction]
+                : [createdJunction];
+
+              return {
+                ...currentRecord,
+                [fieldName]: updatedJunctionRecords,
+              } as ObjectRecord;
+            },
+          );
+        }
+
+        updatePickerState(newTargetId, junctionTargetObjectMetadata.id, [
+          junctionTargetObjectMetadata,
+        ]);
+        return;
+      }
+
+      const newRecordId =
+        await createNewRecordAndOpenRightDrawer?.(searchInput);
+
+      if (isDefined(newRecordId)) {
+        updatePickerState(newRecordId, relationObjectMetadataItem.id, [
+          relationObjectMetadataItem,
+        ]);
+      }
+    },
     [
       createNewRecordAndOpenRightDrawer,
       createTargetRecord,

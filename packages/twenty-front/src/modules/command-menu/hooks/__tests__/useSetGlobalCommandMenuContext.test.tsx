@@ -1,6 +1,5 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
@@ -15,6 +14,7 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -71,40 +71,34 @@ describe('useSetGlobalCommandMenuContext', () => {
         const { setGlobalCommandMenuContext } =
           useSetGlobalCommandMenuContext();
 
-        const targetedRecordsRule = useRecoilValue(
-          contextStoreTargetedRecordsRuleComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
+        const targetedRecordsRule = useRecoilComponentValueV2(
+          contextStoreTargetedRecordsRuleComponentState,
+          COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const numberOfSelectedRecords = useRecoilValue(
-          contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
+        const numberOfSelectedRecords = useRecoilComponentValueV2(
+          contextStoreNumberOfSelectedRecordsComponentState,
+          COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const filters = useRecoilValue(
-          contextStoreFiltersComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
+        const filters = useRecoilComponentValueV2(
+          contextStoreFiltersComponentState,
+          COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const filterGroups = useRecoilValue(
-          contextStoreFilterGroupsComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
+        const filterGroups = useRecoilComponentValueV2(
+          contextStoreFilterGroupsComponentState,
+          COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const anyFieldFilterValue = useRecoilValue(
-          contextStoreAnyFieldFilterValueComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
+        const anyFieldFilterValue = useRecoilComponentValueV2(
+          contextStoreAnyFieldFilterValueComponentState,
+          COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const currentViewType = useRecoilValue(
-          contextStoreCurrentViewTypeComponentState.atomFamily({
-            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-          }),
+        const currentViewType = useRecoilComponentValueV2(
+          contextStoreCurrentViewTypeComponentState,
+          COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
         return {

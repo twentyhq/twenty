@@ -8,11 +8,9 @@ import { originalDragSelectionComponentState } from '@/object-record/record-drag
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useStore } from 'jotai';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import {
   DragDropContext,
   type DragStart,
@@ -39,12 +37,13 @@ export const RecordBoardDragDropContext = ({
 
   const store = useStore();
 
-  const originalDragSelectionCallbackState = useRecoilComponentCallbackState(
+  const originalDragSelectionAtom = useRecoilComponentStateCallbackStateV2(
     originalDragSelectionComponentState,
+    recordBoardId,
   );
 
-  const { startRecordDrag } = useStartRecordDrag();
-  const { endRecordDrag } = useEndRecordDrag();
+  const { startRecordDrag } = useStartRecordDrag(recordBoardId);
+  const { endRecordDrag } = useEndRecordDrag(recordBoardId);
 
   const { processBoardCardDrop } = useProcessBoardCardDrop();
 
@@ -62,29 +61,27 @@ export const RecordBoardDragDropContext = ({
   );
 
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
-    ({ snapshot }) =>
-      (result) => {
-        endRecordDrag();
+    () => (result) => {
+      endRecordDrag();
 
-        if (!result.destination) return;
+      if (!result.destination) return;
 
-        const currentRecordSorts = store.get(currentRecordSortsAtom);
+      const currentRecordSorts = store.get(currentRecordSortsAtom);
 
-        if (currentRecordSorts.length > 0) {
-          openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
-          return;
-        }
+      if (currentRecordSorts.length > 0) {
+        openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+        return;
+      }
 
-        const originalSelection = getSnapshotValue(
-          snapshot,
-          originalDragSelectionCallbackState,
-        );
+      const originalSelection = store.get(
+        originalDragSelectionAtom,
+      ) as string[];
 
-        processBoardCardDrop(result, originalSelection);
-      },
+      processBoardCardDrop(result, originalSelection);
+    },
     [
       processBoardCardDrop,
-      originalDragSelectionCallbackState,
+      originalDragSelectionAtom,
       endRecordDrag,
       currentRecordSortsAtom,
       openModal,

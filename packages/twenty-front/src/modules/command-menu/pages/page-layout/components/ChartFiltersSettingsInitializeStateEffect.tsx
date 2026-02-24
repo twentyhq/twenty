@@ -3,7 +3,7 @@ import { type ChartFilters } from '@/command-menu/pages/page-layout/types/ChartF
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,7 +16,7 @@ export const ChartFiltersSettingsInitializeStateEffect = ({
   initialChartFilters,
 }: ChartFiltersSettingsInitializeStateEffectProps) => {
   const [hasInitializedChartFilters, setHasInitializedChartFilters] =
-    useRecoilComponentState(hasInitializedChartFiltersComponentState);
+    useRecoilComponentStateV2(hasInitializedChartFiltersComponentState);
 
   const setCurrentRecordFilters = useSetRecoilComponentStateV2(
     currentRecordFiltersComponentState,
