@@ -64,6 +64,7 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
           limit: recordGroupsLimit,
         },
         client: apolloCoreClient,
+        fetchPolicy: 'no-cache',
       },
     );
 
