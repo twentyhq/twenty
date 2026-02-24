@@ -1,17 +1,15 @@
-import { useMutation } from '@apollo/client';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { UPDATE_ONE_APPLICATION_VARIABLE } from '@/application-variables/graphql/mutations/updateOneApplicationVariable';
+import { useMutation } from '@apollo/client';
 import {
   type UpdateOneApplicationVariableMutation,
   type UpdateOneApplicationVariableMutationVariables,
 } from '~/generated-metadata/graphql';
 
 export const useUpdateOneApplicationVariable = () => {
-  const apolloMetadataClient = useApolloCoreClient();
   const [mutate] = useMutation<
     UpdateOneApplicationVariableMutation,
     UpdateOneApplicationVariableMutationVariables
-  >(UPDATE_ONE_APPLICATION_VARIABLE, { client: apolloMetadataClient });
+  >(UPDATE_ONE_APPLICATION_VARIABLE);
 
   const updateOneApplicationVariable = async ({
     key,
