@@ -1,6 +1,6 @@
 import { type DropResult } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -60,62 +60,61 @@ export const useProcessTableWithGroupRecordDrop = () => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const processTableWithGroupRecordDrop = useRecoilCallback(
-    ({ snapshot: _snapshot }) =>
-      (result: DropResult) => {
-        if (!result.destination) return;
+  const processTableWithGroupRecordDrop = useCallback(
+    (result: DropResult) => {
+      if (!result.destination) return;
 
-        const destinationRecordGroupId = result.destination.droppableId;
-        const destinationRecordGroup = store.get(
-          recordGroupDefinitionFamilyState.atomFamily(destinationRecordGroupId),
-        );
+      const destinationRecordGroupId = result.destination.droppableId;
+      const destinationRecordGroup = store.get(
+        recordGroupDefinitionFamilyState.atomFamily(destinationRecordGroupId),
+      );
 
-        if (!isDefined(destinationRecordGroup)) {
-          throw new Error('Record group is not defined');
-        }
+      if (!isDefined(destinationRecordGroup)) {
+        throw new Error('Record group is not defined');
+      }
 
-        const fieldMetadata = objectMetadataItem.fields.find(
-          (field) => field.id === groupFieldMetadata?.id,
-        );
+      const fieldMetadata = objectMetadataItem.fields.find(
+        (field) => field.id === groupFieldMetadata?.id,
+      );
 
-        if (!isDefined(fieldMetadata)) {
-          throw new Error('Field metadata is not defined');
-        }
+      if (!isDefined(fieldMetadata)) {
+        throw new Error('Field metadata is not defined');
+      }
 
-        const originalDragSelection = store.get(
-          originalDragSelectionAtom,
-        ) as string[];
+      const originalDragSelection = store.get(
+        originalDragSelectionAtom,
+      ) as string[];
 
-        const isDraggingRecord = store.get(isDraggingRecordAtom);
+      const isDraggingRecord = store.get(isDraggingRecordAtom);
 
-        const selectedRecordIds = isDraggingRecord
-          ? originalDragSelection
-          : (store.get(selectedRowIdsAtom) as string[]);
+      const selectedRecordIds = isDraggingRecord
+        ? originalDragSelection
+        : (store.get(selectedRowIdsAtom) as string[]);
 
-        const currentRecordSorts = store.get(currentRecordSortsAtom);
+      const currentRecordSorts = store.get(currentRecordSortsAtom);
 
-        if (currentRecordSorts.length > 0) {
-          openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
-          return;
-        }
+      if (currentRecordSorts.length > 0) {
+        openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+        return;
+      }
 
-        processGroupDrop({
-          groupDropResult: result,
-          store,
-          selectedRecordIds,
-          recordIdsByGroupFamilyState,
-          onUpdateRecord: ({ recordId, position }) => {
-            updateOneRecord({
-              objectNameSingular,
-              idToUpdate: recordId,
-              updateOneRecordInput: {
-                position,
-                [fieldMetadata.name]: destinationRecordGroup.value,
-              },
-            });
-          },
-        });
-      },
+      processGroupDrop({
+        groupDropResult: result,
+        store,
+        selectedRecordIds,
+        recordIdsByGroupFamilyState,
+        onUpdateRecord: ({ recordId, position }) => {
+          updateOneRecord({
+            objectNameSingular,
+            idToUpdate: recordId,
+            updateOneRecordInput: {
+              position,
+              [fieldMetadata.name]: destinationRecordGroup.value,
+            },
+          });
+        },
+      });
+    },
     [
       currentRecordSortsAtom,
       store,

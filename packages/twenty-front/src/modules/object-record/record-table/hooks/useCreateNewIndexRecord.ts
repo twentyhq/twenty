@@ -21,7 +21,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useR
 import { useStore } from 'jotai';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -72,8 +72,8 @@ export const useCreateNewIndexRecord = ({
       objectMetadataItem,
     });
 
-  const createNewIndexRecord = useRecoilCallback(
-    () => async (recordInput?: Partial<ObjectRecord>) => {
+  const createNewIndexRecord = useCallback(
+    async (recordInput?: Partial<ObjectRecord>) => {
       const recordId = v4();
       const recordInputFromRLSPredicates = buildRecordInputFromRLSPredicates();
       const recordInputFromFilters = buildRecordInputFromFilters();

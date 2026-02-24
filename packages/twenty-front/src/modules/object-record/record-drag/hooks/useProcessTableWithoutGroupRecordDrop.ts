@@ -21,7 +21,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useProcessTableWithoutGroupRecordDrop = () => {
@@ -54,118 +54,115 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
   const { triggerTableWithoutGroupDragAndDropOptimisticUpdate } =
     useTriggerTableWithoutGroupDragAndDropOptimisticUpdate();
 
-  const processTableWithoutGroupRecordDrop = useRecoilCallback(
-    ({ snapshot: _snapshot }) =>
-      async (tableRecordDropResult: DropResult) => {
-        if (!tableRecordDropResult.destination) return;
+  const processTableWithoutGroupRecordDrop = useCallback(
+    async (tableRecordDropResult: DropResult) => {
+      if (!tableRecordDropResult.destination) return;
 
-        if (currentRecordSorts.length > 0) {
-          openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+      if (currentRecordSorts.length > 0) {
+        openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+        return;
+      }
+
+      const allSparseRecordIds = store.get(
+        allRecordIdsWithoutGroupAtom,
+      ) as string[];
+
+      const draggedRecordId = tableRecordDropResult.draggableId;
+      const selectedRecordIds = store.get(selectedRowIdsAtom) as string[];
+
+      const isDroppedAfterList =
+        tableRecordDropResult.destination.index + 1 >=
+        allSparseRecordIds.length;
+
+      const recordsWithPosition: RecordWithPosition[] = allSparseRecordIds
+        .filter((recordId): recordId is string => isDefined(recordId))
+        .map((recordId: string) => {
+          const record = store.get(
+            recordStoreFamilyState.atomFamily(recordId),
+          ) as { position?: number } | null | undefined;
+          return {
+            id: recordId,
+            position: record?.position ?? 0,
+          };
+        });
+
+      const contiguousRecordsWithPosition =
+        recordsWithPosition.filter(isDefined);
+
+      const dragOperationType = getDragOperationType({
+        draggedRecordId,
+        selectedRecordIds,
+      });
+
+      if (dragOperationType === 'single') {
+        const targetRecordId = allSparseRecordIds.at(
+          tableRecordDropResult.destination.index,
+        );
+
+        if (!isDefined(targetRecordId)) {
+          throw new Error(
+            `Target record id cannot be found, this should not happen`,
+          );
+        }
+
+        const singleDragResult = processSingleDrag({
+          sourceRecordId: draggedRecordId,
+          targetRecordId: targetRecordId ?? '',
+          recordsWithPosition: contiguousRecordsWithPosition,
+          isDroppedAfterList,
+        });
+
+        if (!isDefined(singleDragResult.position)) {
           return;
         }
 
-        const allSparseRecordIds = store.get(
-          allRecordIdsWithoutGroupAtom,
+        triggerTableWithoutGroupDragAndDropOptimisticUpdate([singleDragResult]);
+
+        updateOneRecord({
+          objectNameSingular,
+          idToUpdate: singleDragResult.id,
+          updateOneRecordInput: {
+            position: singleDragResult.position,
+          },
+        });
+      } else {
+        const targetRecordId = allSparseRecordIds.at(
+          tableRecordDropResult.destination.index,
+        );
+
+        if (!isDefined(targetRecordId)) {
+          throw new Error(
+            `Target record id cannot be found, this should not happen`,
+          );
+        }
+
+        const originalDragSelection = store.get(
+          originalDragSelectionAtom,
         ) as string[];
 
-        const draggedRecordId = tableRecordDropResult.draggableId;
-        const selectedRecordIds = store.get(selectedRowIdsAtom) as string[];
-
-        const isDroppedAfterList =
-          tableRecordDropResult.destination.index + 1 >=
-          allSparseRecordIds.length;
-
-        const recordsWithPosition: RecordWithPosition[] = allSparseRecordIds
-          .filter((recordId): recordId is string => isDefined(recordId))
-          .map((recordId: string) => {
-            const record = store.get(
-              recordStoreFamilyState.atomFamily(recordId),
-            ) as { position?: number } | null | undefined;
-            return {
-              id: recordId,
-              position: record?.position ?? 0,
-            };
-          });
-
-        const contiguousRecordsWithPosition =
-          recordsWithPosition.filter(isDefined);
-
-        const dragOperationType = getDragOperationType({
+        const multiDragResult = processMultiDrag({
           draggedRecordId,
-          selectedRecordIds,
+          targetRecordId: targetRecordId ?? '',
+          selectedRecordIds: originalDragSelection,
+          recordsWithPosition: contiguousRecordsWithPosition,
+          isDroppedAfterList,
         });
 
-        if (dragOperationType === 'single') {
-          const targetRecordId = allSparseRecordIds.at(
-            tableRecordDropResult.destination.index,
-          );
+        triggerTableWithoutGroupDragAndDropOptimisticUpdate(
+          multiDragResult.recordUpdates,
+        );
 
-          if (!isDefined(targetRecordId)) {
-            throw new Error(
-              `Target record id cannot be found, this should not happen`,
-            );
-          }
-
-          const singleDragResult = processSingleDrag({
-            sourceRecordId: draggedRecordId,
-            targetRecordId: targetRecordId ?? '',
-            recordsWithPosition: contiguousRecordsWithPosition,
-            isDroppedAfterList,
-          });
-
-          if (!isDefined(singleDragResult.position)) {
-            return;
-          }
-
-          triggerTableWithoutGroupDragAndDropOptimisticUpdate([
-            singleDragResult,
-          ]);
-
+        for (const update of multiDragResult.recordUpdates) {
           updateOneRecord({
             objectNameSingular,
-            idToUpdate: singleDragResult.id,
+            idToUpdate: update.id,
             updateOneRecordInput: {
-              position: singleDragResult.position,
+              position: update.position,
             },
           });
-        } else {
-          const targetRecordId = allSparseRecordIds.at(
-            tableRecordDropResult.destination.index,
-          );
-
-          if (!isDefined(targetRecordId)) {
-            throw new Error(
-              `Target record id cannot be found, this should not happen`,
-            );
-          }
-
-          const originalDragSelection = store.get(
-            originalDragSelectionAtom,
-          ) as string[];
-
-          const multiDragResult = processMultiDrag({
-            draggedRecordId,
-            targetRecordId: targetRecordId ?? '',
-            selectedRecordIds: originalDragSelection,
-            recordsWithPosition: contiguousRecordsWithPosition,
-            isDroppedAfterList,
-          });
-
-          triggerTableWithoutGroupDragAndDropOptimisticUpdate(
-            multiDragResult.recordUpdates,
-          );
-
-          for (const update of multiDragResult.recordUpdates) {
-            updateOneRecord({
-              objectNameSingular,
-              idToUpdate: update.id,
-              updateOneRecordInput: {
-                position: update.position,
-              },
-            });
-          }
         }
-      },
+      }
+    },
     [
       objectNameSingular,
       selectedRowIdsAtom,

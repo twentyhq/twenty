@@ -1,5 +1,5 @@
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { focusedRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/focusedRecordBoardCardIndexesComponentState';
@@ -31,33 +31,30 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
     recordIndexRecordIdsByGroupComponentFamilyState,
   );
 
-  const focusFirstAvailableRecord = useRecoilCallback(
-    () => () => {
-      if (visibleRecordGroupIds.length === 0) {
-        return;
-      }
+  const focusFirstAvailableRecord = useCallback(() => {
+    if (visibleRecordGroupIds.length === 0) {
+      return;
+    }
 
-      const firstColumnWithRecords = visibleRecordGroupIds.findIndex(
-        (groupId) => {
-          const recordIdsInGroup = store.get(
-            recordIdsByGroupState(groupId),
-          ) as string[];
-          return Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0;
-        },
-      );
+    const firstColumnWithRecords = visibleRecordGroupIds.findIndex(
+      (groupId) => {
+        const recordIdsInGroup = store.get(
+          recordIdsByGroupState(groupId),
+        ) as string[];
+        return Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0;
+      },
+    );
 
-      if (firstColumnWithRecords !== -1) {
-        focusBoardCard({
-          columnIndex: firstColumnWithRecords,
-          rowIndex: 0,
-        });
-      }
-    },
-    [store, visibleRecordGroupIds, recordIdsByGroupState, focusBoardCard],
-  );
+    if (firstColumnWithRecords !== -1) {
+      focusBoardCard({
+        columnIndex: firstColumnWithRecords,
+        rowIndex: 0,
+      });
+    }
+  }, [store, visibleRecordGroupIds, recordIdsByGroupState, focusBoardCard]);
 
-  const moveHorizontally = useRecoilCallback(
-    () => (direction: 'left' | 'right') => {
+  const moveHorizontally = useCallback(
+    (direction: 'left' | 'right') => {
       const focusedBoardCardIndexes = store.get(focusedBoardCardIndexesAtom) as
         | { rowIndex: number; columnIndex: number }
         | null
@@ -144,8 +141,8 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
     ],
   );
 
-  const moveVertically = useRecoilCallback(
-    () => (direction: 'up' | 'down') => {
+  const moveVertically = useCallback(
+    (direction: 'up' | 'down') => {
       const focusedBoardCardIndexes = store.get(focusedBoardCardIndexesAtom) as
         | { rowIndex: number; columnIndex: number }
         | null

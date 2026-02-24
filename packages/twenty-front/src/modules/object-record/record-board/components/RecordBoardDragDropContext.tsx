@@ -16,8 +16,7 @@ import {
   type DragStart,
   type OnDragEndResponder,
 } from '@hello-pangea/dnd';
-import { useContext } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useCallback, useContext } from 'react';
 
 export const RecordBoardDragDropContext = ({
   children,
@@ -49,8 +48,8 @@ export const RecordBoardDragDropContext = ({
 
   const { openModal } = useModal();
 
-  const handleDragStart = useRecoilCallback(
-    () => (start: DragStart) => {
+  const handleDragStart = useCallback(
+    (start: DragStart) => {
       const currentSelectedRecordIds = store.get(
         recordBoardSelectedRecordIdsAtom,
       );
@@ -60,8 +59,8 @@ export const RecordBoardDragDropContext = ({
     [recordBoardSelectedRecordIdsAtom, startRecordDrag, store],
   );
 
-  const handleDragEnd: OnDragEndResponder = useRecoilCallback(
-    () => (result) => {
+  const handleDragEnd: OnDragEndResponder = useCallback(
+    (result) => {
       endRecordDrag();
 
       if (!result.destination) return;

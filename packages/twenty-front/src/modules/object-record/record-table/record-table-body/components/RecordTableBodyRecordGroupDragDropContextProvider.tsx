@@ -11,8 +11,7 @@ import {
   type DragStart,
   type DropResult,
 } from '@hello-pangea/dnd';
-import { type ReactNode } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { type ReactNode, useCallback } from 'react';
 
 export const RecordTableBodyRecordGroupDragDropContextProvider = ({
   children,
@@ -35,8 +34,8 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
   const { processTableWithGroupRecordDrop } =
     useProcessTableWithGroupRecordDrop();
 
-  const handleDragStart = useRecoilCallback(
-    () => (start: DragStart) => {
+  const handleDragStart = useCallback(
+    (start: DragStart) => {
       const currentSelectedRecordIds = store.get(
         selectedRowIdsAtom,
       ) as string[];
@@ -46,8 +45,8 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
     [selectedRowIdsAtom, startRecordDrag, store],
   );
 
-  const handleDragEnd = useRecoilCallback(
-    () => (result: DropResult) => {
+  const handleDragEnd = useCallback(
+    (result: DropResult) => {
       processTableWithGroupRecordDrop(result);
 
       endRecordDrag();

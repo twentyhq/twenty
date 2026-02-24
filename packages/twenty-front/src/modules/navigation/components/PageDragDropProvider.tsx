@@ -5,8 +5,7 @@ import {
   type OnDragUpdateResponder,
   type ResponderProvided,
 } from '@hello-pangea/dnd';
-import { type ReactNode, useState } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { type ReactNode, useCallback, useState } from 'react';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
@@ -80,39 +79,38 @@ export const PageDragDropProvider = ({
     }
   };
 
-  const handleDragUpdate = useRecoilCallback(
-    () =>
-      ((update: Parameters<OnDragUpdateResponder>[0]) => {
-        const { source, destination } = update;
-        if (source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
-          return;
-        }
-        if (
-          destination !== null &&
-          isWorkspaceDroppableId(destination.droppableId)
-        ) {
-          setAddToNavigationFallbackDestination(destination);
-          const dropTargetId = getDropTargetIdFromDestination(destination);
-          setActiveDropTargetId(dropTargetId);
+  const handleDragUpdate = useCallback(
+    ((update: Parameters<OnDragUpdateResponder>[0]) => {
+      const { source, destination } = update;
+      if (source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
+        return;
+      }
+      if (
+        destination !== null &&
+        isWorkspaceDroppableId(destination.droppableId)
+      ) {
+        setAddToNavigationFallbackDestination(destination);
+        const dropTargetId = getDropTargetIdFromDestination(destination);
+        setActiveDropTargetId(dropTargetId);
 
-          const payload =
-            store
-              .get(addToNavPayloadRegistryStateV2.atom)
-              .get(update.draggableId) ?? null;
-          const folderId = validateAndExtractWorkspaceFolderId(
-            destination.droppableId,
-          );
-          const isFolderOverFolder =
-            payload?.type === 'folder' && folderId !== null;
-          setForbiddenDropTargetId(isFolderOverFolder ? dropTargetId : null);
-        } else {
-          setForbiddenDropTargetId(null);
-          const fallback = addToNavigationFallbackDestination;
-          setActiveDropTargetId(
-            fallback ? getDropTargetIdFromDestination(fallback) : null,
-          );
-        }
-      }) as OnDragUpdateResponder,
+        const payload =
+          store
+            .get(addToNavPayloadRegistryStateV2.atom)
+            .get(update.draggableId) ?? null;
+        const folderId = validateAndExtractWorkspaceFolderId(
+          destination.droppableId,
+        );
+        const isFolderOverFolder =
+          payload?.type === 'folder' && folderId !== null;
+        setForbiddenDropTargetId(isFolderOverFolder ? dropTargetId : null);
+      } else {
+        setForbiddenDropTargetId(null);
+        const fallback = addToNavigationFallbackDestination;
+        setActiveDropTargetId(
+          fallback ? getDropTargetIdFromDestination(fallback) : null,
+        );
+      }
+    }) as OnDragUpdateResponder,
     [addToNavigationFallbackDestination, store],
   );
 

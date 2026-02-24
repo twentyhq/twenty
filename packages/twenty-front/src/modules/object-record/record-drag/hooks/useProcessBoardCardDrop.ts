@@ -1,6 +1,6 @@
 import { type DropResult } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { useCallback, useContext } from 'react';
 
 import { processGroupDrop } from '@/object-record/record-drag/utils/processGroupDrop';
 
@@ -8,7 +8,6 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { useUpdateDroppedRecordOnBoard } from '@/object-record/record-drag/hooks/useUpdateDroppedRecordOnBoard';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useContext } from 'react';
 
 export const useProcessBoardCardDrop = () => {
   const store = useStore();
@@ -21,8 +20,8 @@ export const useProcessBoardCardDrop = () => {
 
   const { updateDroppedRecordOnBoard } = useUpdateDroppedRecordOnBoard();
 
-  const processBoardCardDrop = useRecoilCallback(
-    () => (boardCardDropResult: DropResult, selectedRecordIds: string[]) => {
+  const processBoardCardDrop = useCallback(
+    (boardCardDropResult: DropResult, selectedRecordIds: string[]) => {
       if (!selectFieldMetadataItem) return;
 
       processGroupDrop({

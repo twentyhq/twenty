@@ -1,4 +1,4 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
@@ -36,24 +36,21 @@ export const useRecordCalendarSelection = (recordCalendarId?: string) => {
     getActionMenuIdFromRecordIndexId(instanceIdFromProps),
   );
 
-  const resetRecordSelection = useRecoilCallback(
-    () => () => {
-      closeDropdown(dropdownId);
+  const resetRecordSelection = useCallback(() => {
+    closeDropdown(dropdownId);
 
-      const recordIds = store.get(recordCalendarSelectedRecordIdsAtom);
+    const recordIds = store.get(recordCalendarSelectedRecordIdsAtom);
 
-      for (const recordId of recordIds) {
-        store.set(isRecordCalendarCardSelectedFamilyState(recordId), false);
-      }
-    },
-    [
-      closeDropdown,
-      dropdownId,
-      recordCalendarSelectedRecordIdsAtom,
-      isRecordCalendarCardSelectedFamilyState,
-      store,
-    ],
-  );
+    for (const recordId of recordIds) {
+      store.set(isRecordCalendarCardSelectedFamilyState(recordId), false);
+    }
+  }, [
+    closeDropdown,
+    dropdownId,
+    recordCalendarSelectedRecordIdsAtom,
+    isRecordCalendarCardSelectedFamilyState,
+    store,
+  ]);
 
   return {
     resetRecordSelection,

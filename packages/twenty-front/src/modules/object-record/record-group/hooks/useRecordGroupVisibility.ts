@@ -7,7 +7,7 @@ import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jot
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefinitionToViewGroup';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 export const useRecordGroupVisibility = () => {
   const store = useStore();
@@ -20,8 +20,8 @@ export const useRecordGroupVisibility = () => {
   const { saveViewGroup } = useSaveCurrentViewGroups();
   const { updateCurrentView } = useUpdateCurrentView();
 
-  const handleVisibilityChange = useRecoilCallback(
-    () => async (updatedRecordGroup: RecordGroupDefinition) => {
+  const handleVisibilityChange = useCallback(
+    async (updatedRecordGroup: RecordGroupDefinition) => {
       store.set(
         recordGroupDefinitionFamilyState.atomFamily(updatedRecordGroup.id),
         updatedRecordGroup,
@@ -32,22 +32,19 @@ export const useRecordGroupVisibility = () => {
     [saveViewGroup, store],
   );
 
-  const handleHideEmptyRecordGroupChange = useRecoilCallback(
-    () => async () => {
-      const currentHideState = store.get(
-        recordIndexShouldHideEmptyRecordGroupsAtom,
-      );
+  const handleHideEmptyRecordGroupChange = useCallback(async () => {
+    const currentHideState = store.get(
+      recordIndexShouldHideEmptyRecordGroupsAtom,
+    );
 
-      const newHideState = !currentHideState;
+    const newHideState = !currentHideState;
 
-      store.set(recordIndexShouldHideEmptyRecordGroupsAtom, newHideState);
+    store.set(recordIndexShouldHideEmptyRecordGroupsAtom, newHideState);
 
-      await updateCurrentView({
-        shouldHideEmptyGroups: newHideState,
-      });
-    },
-    [store, recordIndexShouldHideEmptyRecordGroupsAtom, updateCurrentView],
-  );
+    await updateCurrentView({
+      shouldHideEmptyGroups: newHideState,
+    });
+  }, [store, recordIndexShouldHideEmptyRecordGroupsAtom, updateCurrentView]);
 
   return {
     handleVisibilityChange,

@@ -1,5 +1,5 @@
 import { useStore } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -27,76 +27,27 @@ export const useMorphPersistManyToOne = ({
 
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const persistMorphManyToOne = useRecoilCallback(
-    () =>
-      async ({
-        recordId,
+  const persistMorphManyToOne = useCallback(
+    async ({
+      recordId,
+      fieldDefinition,
+      valueToPersist,
+      targetObjectMetadataNameSingular,
+    }: {
+      recordId: string;
+      fieldDefinition: FieldDefinition<FieldMetadata>;
+      valueToPersist: string | null | undefined;
+      targetObjectMetadataNameSingular?: string;
+    }) => {
+      assertFieldMetadata(
+        FieldMetadataType.MORPH_RELATION,
+        isFieldMorphRelation,
         fieldDefinition,
-        valueToPersist,
-        targetObjectMetadataNameSingular,
-      }: {
-        recordId: string;
-        fieldDefinition: FieldDefinition<FieldMetadata>;
-        valueToPersist: string | null | undefined;
-        targetObjectMetadataNameSingular?: string;
-      }) => {
-        assertFieldMetadata(
-          FieldMetadataType.MORPH_RELATION,
-          isFieldMorphRelation,
-          fieldDefinition,
-        );
+      );
 
-        const fieldName = fieldDefinition.metadata.fieldName;
+      const fieldName = fieldDefinition.metadata.fieldName;
 
-        if (!isDefined(valueToPersist)) {
-          const recordWithAllMorphObjectIdsToNull =
-            buildRecordWithAllMorphObjectIdsToNull({
-              morphRelations: fieldDefinition.metadata.morphRelations,
-              fieldName,
-              relationType: fieldDefinition.metadata.relationType,
-            });
-
-          updateOneRecord?.({
-            objectNameSingular: objectMetadataNameSingular,
-            idToUpdate: recordId,
-            updateOneRecordInput: recordWithAllMorphObjectIdsToNull,
-          });
-
-          return;
-        }
-
-        const targetObjectMetadataItem = objectMetadataItems.find(
-          (objectMetadataItem) =>
-            objectMetadataItem.nameSingular ===
-            targetObjectMetadataNameSingular,
-        );
-
-        if (!isDefined(targetObjectMetadataItem)) {
-          throw new Error('Object metadata item not found');
-        }
-
-        const computedFieldName = computeMorphRelationFieldName({
-          fieldName,
-          relationType: fieldDefinition.metadata.relationType,
-          targetObjectMetadataNameSingular:
-            targetObjectMetadataItem.nameSingular,
-          targetObjectMetadataNamePlural: targetObjectMetadataItem.namePlural,
-        });
-
-        const currentValue: unknown = store.get(
-          recordStoreFamilySelectorV2.selectorFamily({
-            recordId,
-            fieldName: computedFieldName,
-          }),
-        );
-
-        if (
-          isDefined(currentValue) &&
-          (currentValue as ObjectRecord).id === valueToPersist
-        ) {
-          return;
-        }
-
+      if (!isDefined(valueToPersist)) {
         const recordWithAllMorphObjectIdsToNull =
           buildRecordWithAllMorphObjectIdsToNull({
             morphRelations: fieldDefinition.metadata.morphRelations,
@@ -104,17 +55,63 @@ export const useMorphPersistManyToOne = ({
             relationType: fieldDefinition.metadata.relationType,
           });
 
-        updateOneRecord({
+        updateOneRecord?.({
           objectNameSingular: objectMetadataNameSingular,
           idToUpdate: recordId,
-          updateOneRecordInput: {
-            ...recordWithAllMorphObjectIdsToNull,
-            [`${computedFieldName}Id`]: valueToPersist,
-          },
+          updateOneRecordInput: recordWithAllMorphObjectIdsToNull,
         });
 
         return;
-      },
+      }
+
+      const targetObjectMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.nameSingular === targetObjectMetadataNameSingular,
+      );
+
+      if (!isDefined(targetObjectMetadataItem)) {
+        throw new Error('Object metadata item not found');
+      }
+
+      const computedFieldName = computeMorphRelationFieldName({
+        fieldName,
+        relationType: fieldDefinition.metadata.relationType,
+        targetObjectMetadataNameSingular: targetObjectMetadataItem.nameSingular,
+        targetObjectMetadataNamePlural: targetObjectMetadataItem.namePlural,
+      });
+
+      const currentValue: unknown = store.get(
+        recordStoreFamilySelectorV2.selectorFamily({
+          recordId,
+          fieldName: computedFieldName,
+        }),
+      );
+
+      if (
+        isDefined(currentValue) &&
+        (currentValue as ObjectRecord).id === valueToPersist
+      ) {
+        return;
+      }
+
+      const recordWithAllMorphObjectIdsToNull =
+        buildRecordWithAllMorphObjectIdsToNull({
+          morphRelations: fieldDefinition.metadata.morphRelations,
+          fieldName,
+          relationType: fieldDefinition.metadata.relationType,
+        });
+
+      updateOneRecord({
+        objectNameSingular: objectMetadataNameSingular,
+        idToUpdate: recordId,
+        updateOneRecordInput: {
+          ...recordWithAllMorphObjectIdsToNull,
+          [`${computedFieldName}Id`]: valueToPersist,
+        },
+      });
+
+      return;
+    },
     [objectMetadataItems, objectMetadataNameSingular, store, updateOneRecord],
   );
 
