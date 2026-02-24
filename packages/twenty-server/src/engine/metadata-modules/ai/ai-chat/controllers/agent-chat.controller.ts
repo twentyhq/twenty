@@ -35,7 +35,6 @@ import { AgentRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/ai-a
 import type { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 
 @Controller('rest/agent-chat')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
@@ -74,19 +73,10 @@ export class AgentChatController {
 
     const resolvedModelId = workspace.smartModel;
 
-    if (!this.aiModelRegistryService.isModelAdminAllowed(resolvedModelId)) {
-      throw new AgentException(
-        'The selected model has been disabled by the administrator.',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
-
-    if (!isModelAllowedByWorkspace(resolvedModelId, workspace)) {
-      throw new AgentException(
-        'The selected model is not available in this workspace.',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
+    this.aiModelRegistryService.validateModelAvailability(
+      resolvedModelId,
+      workspace,
+    );
 
     if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       const canBill = await this.billingService.canBillMeteredProduct(

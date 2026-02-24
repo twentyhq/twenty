@@ -32,7 +32,6 @@ import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/co
 import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -113,23 +112,14 @@ export class AgentAsyncExecutorService {
   }): Promise<AgentExecutionResult> {
     try {
       if (agent) {
-        const agentModelId = agent.modelId;
-
-        if (!this.aiModelRegistryService.isModelAdminAllowed(agentModelId)) {
-          throw new AgentException(
-            'The selected model has been disabled by the administrator.',
-            AgentExceptionCode.AGENT_EXECUTION_FAILED,
-          );
-        }
-
         const workspace = await this.workspaceRepository.findOneBy({
           id: agent.workspaceId,
         });
 
-        if (workspace && !isModelAllowedByWorkspace(agentModelId, workspace)) {
-          throw new AgentException(
-            'The selected model is not available in this workspace.',
-            AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        if (workspace) {
+          this.aiModelRegistryService.validateModelAvailability(
+            agent.modelId,
+            workspace,
           );
         }
       }

@@ -90,66 +90,37 @@ export const SettingsAIModelsTab = () => {
     fastModelOptions.unshift(fastAutoOption);
   }
 
-  const handleSmartModelChange = async (value: string) => {
+  const handleModelFieldChange = async (
+    field: 'smartModel' | 'fastModel',
+    value: string,
+  ) => {
     if (!currentWorkspace?.id) {
       return;
     }
 
-    const previousSmartModel = currentWorkspace.smartModel;
+    const previousValue = currentWorkspace[field];
 
     try {
       setCurrentWorkspace({
         ...currentWorkspace,
-        smartModel: value,
+        [field]: value,
       });
 
       await updateWorkspace({
         variables: {
           input: {
-            smartModel: value,
+            [field]: value,
           },
         },
       });
     } catch {
       setCurrentWorkspace({
         ...currentWorkspace,
-        smartModel: previousSmartModel,
+        [field]: previousValue,
       });
 
       enqueueErrorSnackBar({
-        message: t`Failed to update smart model`,
-      });
-    }
-  };
-
-  const handleFastModelChange = async (value: string) => {
-    if (!currentWorkspace?.id) {
-      return;
-    }
-
-    const previousFastModel = currentWorkspace.fastModel;
-
-    try {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        fastModel: value,
-      });
-
-      await updateWorkspace({
-        variables: {
-          input: {
-            fastModel: value,
-          },
-        },
-      });
-    } catch {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        fastModel: previousFastModel,
-      });
-
-      enqueueErrorSnackBar({
-        message: t`Failed to update fast model`,
+        message: t`Failed to update model`,
       });
     }
   };
@@ -338,7 +309,7 @@ export const SettingsAIModelsTab = () => {
             <Select
               dropdownId="smart-model-select"
               value={currentSmartModel}
-              onChange={handleSmartModelChange}
+              onChange={(value) => handleModelFieldChange('smartModel', value)}
               options={smartModelOptions}
               selectSizeVariant="small"
               dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
@@ -352,7 +323,7 @@ export const SettingsAIModelsTab = () => {
             <Select
               dropdownId="fast-model-select"
               value={currentFastModel}
-              onChange={handleFastModelChange}
+              onChange={(value) => handleModelFieldChange('fastModel', value)}
               options={fastModelOptions}
               selectSizeVariant="small"
               dropdownWidth={GenericDropdownContentWidth.ExtraLarge}

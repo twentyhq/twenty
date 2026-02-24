@@ -33,10 +33,6 @@ import {
 } from 'src/engine/core-modules/tool-provider/tools';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
-import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
@@ -53,7 +49,6 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -133,15 +128,7 @@ export class ChatExecutionService {
 
     const modelId = workspace.smartModel;
 
-    if (
-      !this.aiModelRegistryService.isModelAdminAllowed(modelId) ||
-      !isModelAllowedByWorkspace(modelId, workspace)
-    ) {
-      throw new AgentException(
-        'The selected model is not available in this workspace.',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
+    this.aiModelRegistryService.validateModelAvailability(modelId, workspace);
 
     const registeredModel =
       await this.aiModelRegistryService.resolveModelForAgent({

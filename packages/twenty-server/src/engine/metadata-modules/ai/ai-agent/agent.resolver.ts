@@ -16,12 +16,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
-import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 
 import { AgentService } from './agent.service';
 
@@ -80,7 +75,10 @@ export class AgentResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
     if (isDefined(input.modelId)) {
-      this.validateModelAvailability(input.modelId, workspace);
+      this.aiModelRegistryService.validateModelAvailability(
+        input.modelId,
+        workspace,
+      );
     }
 
     const createdAgent = await this.agentService.createOneAgent(
@@ -99,7 +97,10 @@ export class AgentResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
     if (isDefined(input.modelId)) {
-      this.validateModelAvailability(input.modelId, workspace);
+      this.aiModelRegistryService.validateModelAvailability(
+        input.modelId,
+        workspace,
+      );
     }
 
     const updatedAgent = await this.agentService.updateOneAgent({
@@ -123,24 +124,5 @@ export class AgentResolver {
     );
 
     return fromFlatAgentWithRoleIdToAgentDto(deletedFlatAgent);
-  }
-
-  private validateModelAvailability(
-    modelId: string,
-    workspace: WorkspaceEntity,
-  ): void {
-    if (!this.aiModelRegistryService.isModelAdminAllowed(modelId)) {
-      throw new AgentException(
-        'The selected model has been disabled by the administrator.',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
-
-    if (!isModelAllowedByWorkspace(modelId, workspace)) {
-      throw new AgentException(
-        'The selected model is not available in this workspace.',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
   }
 }
