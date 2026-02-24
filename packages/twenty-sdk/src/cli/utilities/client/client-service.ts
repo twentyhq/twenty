@@ -140,15 +140,11 @@ const getTokenFromHeaders = (headers: HeadersInit | undefined): string | null =>
     return getTokenFromAuthorizationHeader(matchedAuthorizationHeader?.[1]);
   }
 
-  if (typeof headers === 'object') {
-    const headersRecord = headers as Record<string, string | undefined>;
+  const headersRecord = headers as Record<string, string | undefined>;
 
-    return getTokenFromAuthorizationHeader(
-      headersRecord.Authorization ?? headersRecord.authorization,
-    );
-  }
-
-  return null;
+  return getTokenFromAuthorizationHeader(
+    headersRecord.Authorization ?? headersRecord.authorization,
+  );
 }
 
 const hasAuthenticationErrorInGraphqlPayload = (
@@ -159,7 +155,11 @@ const hasAuthenticationErrorInGraphqlPayload = (
   }
 
   return payload.errors.some((error) => {
-    return error.extensions?.code === 'UNAUTHENTICATED' || error.message === 'Unauthorized';
+    return (
+      error.extensions?.code === 'UNAUTHENTICATED' ||
+      // Fallback for payloads that don't provide structured error codes.
+      error.message?.toLowerCase() === 'unauthorized'
+    );
   });
 }
 
@@ -212,6 +212,7 @@ export default class Twenty {
       typeof headers === 'function' ? undefined : headers,
     );
 
+    // Priority: explicit header > TWENTY_APP_ACCESS_TOKEN > TWENTY_API_KEY (legacy fallback).
     this.authorizationToken =
       tokenFromHeaders ??
       processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] ??
@@ -442,7 +443,11 @@ export default class Twenty {
 
           return refreshedAccessToken;
         })
-        .catch(() => null)
+        .catch((error) => {
+          console.error('Twenty client: token refresh failed', error);
+
+          return null;
+        })
         .finally(() => {
           this.refreshAccessTokenPromise = null;
         });

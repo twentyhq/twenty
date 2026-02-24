@@ -1,7 +1,7 @@
 import { ApolloError, useApolloClient } from '@apollo/client';
 import { type GraphQLFormattedError } from 'graphql';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -74,10 +74,13 @@ export const useRequestApplicationTokenRefresh = ({
 
         if (!isDefined(applicationTokenPair)) {
           throw new Error(
-            'Application token pair not defined, should not happen',
+            'Application token pair must be initialized before requesting a refresh. Ensure the front component has loaded its token pair before invoking refresh.',
           );
         }
 
+        // First try renewing via the refresh token (fast path).
+        // If the refresh token itself is expired, fall back to refetching
+        // the front component which issues a fresh token pair server-side.
         try {
           const renewResult = await apolloClient.mutate<
             RenewApplicationTokenMutation,
@@ -90,7 +93,7 @@ export const useRequestApplicationTokenRefresh = ({
             },
           });
 
-          if (isDefined(renewResult.errors) && renewResult.errors.length > 0) {
+          if (isNonEmptyArray(renewResult.errors)) {
             if (
               hasApplicationRefreshTokenInvalidOrExpiredSubCode(
                 renewResult.errors,

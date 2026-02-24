@@ -193,7 +193,6 @@ describe('ApplicationTokenService', () => {
     });
 
     it('should throw when token type is not APPLICATION_REFRESH', () => {
-      expect.assertions(2);
       const mockToken = 'access-token';
 
       jest
@@ -206,18 +205,14 @@ describe('ApplicationTokenService', () => {
         type: JwtTokenTypeEnum.APPLICATION_ACCESS,
       });
 
-      try {
-        service.validateApplicationRefreshToken(mockToken);
-      } catch (error) {
-        expect(error).toBeInstanceOf(AuthException);
-        expect((error as AuthException).code).toBe(
-          AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
-        );
-      }
+      expect(() => service.validateApplicationRefreshToken(mockToken)).toThrow(
+        expect.objectContaining({
+          code: AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
+        }),
+      );
     });
 
     it('should throw dedicated code when token verification fails', () => {
-      expect.assertions(2);
       const mockToken = 'invalid-token';
 
       jest.spyOn(jwtWrapperService, 'verifyJwtToken').mockImplementation(() => {
@@ -227,14 +222,11 @@ describe('ApplicationTokenService', () => {
         );
       });
 
-      try {
-        service.validateApplicationRefreshToken(mockToken);
-      } catch (error) {
-        expect(error).toBeInstanceOf(AuthException);
-        expect((error as AuthException).code).toBe(
-          AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
-        );
-      }
+      expect(() => service.validateApplicationRefreshToken(mockToken)).toThrow(
+        expect.objectContaining({
+          code: AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
+        }),
+      );
     });
 
     it('should rethrow unexpected token verification errors', () => {

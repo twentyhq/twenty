@@ -27,7 +27,7 @@ type TwentyClassType = new (options?: {
   metadataUrl?: string;
   fetch?: typeof globalThis.fetch;
 }) => {
-  query: (request: Record<string, unknown>) => Promise<any>;
+  query: (request: Record<string, unknown>) => Promise<unknown>;
   uploadFile: (
     fileBuffer: Buffer,
     filename: string,
@@ -51,16 +51,16 @@ export type ClientOptions = {
   url?: string
   metadataUrl?: string
   headers?: HeadersInit | (() => HeadersInit | Promise<HeadersInit>)
-  fetcher?: (operation: GraphqlOperation | GraphqlOperation[]) => Promise<any>
+  fetcher?: (operation: GraphqlOperation | GraphqlOperation[]) => Promise<unknown>
   fetch?: typeof globalThis.fetch
   batch?: unknown
 }
 
 export type Client = {
-  query: (request: QueryGenqlSelection & { __name?: string }) => Promise<any>
+  query: (request: QueryGenqlSelection & { __name?: string }) => Promise<unknown>
   mutation: (
     request: MutationGenqlSelection & { __name?: string },
-  ) => Promise<any>
+  ) => Promise<unknown>
 }
 
 export class GenqlError extends Error {
@@ -393,6 +393,80 @@ describe('ClientService generated Twenty auth behavior', () => {
     expect(uploadResult.id).toBe('uploaded-file-id');
     expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('bubbles auth error when refresh callback throws', async () => {
+    process.env.TWENTY_APP_ACCESS_TOKEN = 'stale-token';
+
+    const requestAccessTokenRefresh = vi
+      .fn<() => Promise<string>>()
+      .mockRejectedValue(new Error('refresh failed'));
+
+    (globalThis as Record<string, unknown>).frontComponentHostCommunicationApi =
+      {
+        requestAccessTokenRefresh,
+      };
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    const fetchMock = vi.fn(async () => {
+      return createJsonResponse({
+        body: { message: 'Unauthorized' },
+        status: 401,
+        statusText: 'Unauthorized',
+      });
+    });
+
+    const twentyClient = new TwentyClass({
+      url: 'https://example.com/graphql',
+      fetch: fetchMock as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(twentyClient.query({ record: { id: true } })).rejects.toThrow(
+      'Unauthorized',
+    );
+    expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Twenty client: token refresh failed',
+      expect.any(Error),
+    );
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('bubbles auth error when refresh callback returns an empty token', async () => {
+    process.env.TWENTY_APP_ACCESS_TOKEN = 'stale-token';
+
+    const requestAccessTokenRefresh = vi
+      .fn<() => Promise<string>>()
+      .mockResolvedValue('');
+
+    (globalThis as Record<string, unknown>).frontComponentHostCommunicationApi =
+      {
+        requestAccessTokenRefresh,
+      };
+
+    const fetchMock = vi.fn(async () => {
+      return createJsonResponse({
+        body: { message: 'Unauthorized' },
+        status: 401,
+        statusText: 'Unauthorized',
+      });
+    });
+
+    const twentyClient = new TwentyClass({
+      url: 'https://example.com/graphql',
+      fetch: fetchMock as unknown as typeof globalThis.fetch,
+    });
+
+    await expect(twentyClient.query({ record: { id: true } })).rejects.toThrow(
+      'Unauthorized',
+    );
+    expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('bubbles auth error without retry when refresh callback is unavailable', async () => {
