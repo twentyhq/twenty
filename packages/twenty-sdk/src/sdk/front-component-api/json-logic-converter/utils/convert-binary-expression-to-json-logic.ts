@@ -1,5 +1,6 @@
 import { type Expression, Node, SyntaxKind } from 'ts-morph';
 
+import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 import { type JsonLogicRule } from '../types/json-logic-rule';
 
 import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
@@ -9,7 +10,11 @@ export const convertBinaryExpressionToJsonLogic = (
   node: Expression,
 ): JsonLogicRule => {
   if (!Node.isBinaryExpression(node)) {
-    throw new Error('Expected BinaryExpression');
+    throw new JsonLogicConversionError(
+      'Expected BinaryExpression',
+      node.getText(),
+      node.getKindName(),
+    );
   }
 
   const leftOperand = node.getLeft();
@@ -61,8 +66,10 @@ export const convertBinaryExpressionToJsonLogic = (
     case SyntaxKind.GreaterThanEqualsToken:
       return { '>=': [convertedLeftExpression, convertedRightExpression] };
     default:
-      throw new Error(
+      throw new JsonLogicConversionError(
         `Unsupported binary operator: ${node.getOperatorToken().getText()}`,
+        node.getText(),
+        node.getKindName(),
       );
   }
 };

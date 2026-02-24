@@ -1,9 +1,8 @@
 import { Node, SyntaxKind } from 'ts-morph';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type JsonLogicRule } from '../types/json-logic-rule';
 
-import { tryResolveKnownConstant } from './try-resolve-known-constant';
+import { resolveArrayLiteralElements } from './resolve-array-literal-elements';
 
 export const resolveLocalArrayVariable = (
   identifier: Node,
@@ -33,21 +32,5 @@ export const resolveLocalArrayVariable = (
     return undefined;
   }
 
-  return initializer.getElements().map((element) => {
-    if (Node.isStringLiteral(element)) {
-      return element.getLiteralValue();
-    }
-
-    if (Node.isNumericLiteral(element)) {
-      return element.getLiteralValue();
-    }
-
-    const resolvedConstantValue = tryResolveKnownConstant(element.getText());
-
-    if (isDefined(resolvedConstantValue)) {
-      return resolvedConstantValue;
-    }
-
-    throw new Error(`Cannot resolve array element: ${element.getText()}`);
-  });
+  return resolveArrayLiteralElements(initializer);
 };

@@ -1,30 +1,46 @@
 import { type Expression } from 'ts-morph';
+import { isDefined } from 'twenty-shared/utils';
 
-import { type JsonLogicRule } from '../types/json-logic-rule';
+import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
+import {
+  type JsonLogicObject,
+  type JsonLogicOperator,
+  type JsonLogicRule,
+} from '../types/json-logic-rule';
 
 import { resolveExpressionToStringValue } from './resolve-expression-to-string-value';
+
+const KNOWN_FUNCTION_TO_OPERATOR: Record<string, JsonLogicOperator> = {
+  getTargetObjectReadPermission: 'hasReadPermission',
+  getTargetObjectWritePermission: 'hasWritePermission',
+  isFeatureFlagEnabled: 'isFeatureFlagEnabled',
+};
 
 export const convertKnownFunctionCallToJsonLogic = (
   functionName: string,
   args: Expression[],
 ): JsonLogicRule => {
-  switch (functionName) {
-    case 'getTargetObjectReadPermission': {
-      const resolvedArgumentString = resolveExpressionToStringValue(args[0]);
+  const operatorName = KNOWN_FUNCTION_TO_OPERATOR[functionName];
 
-      return { hasReadPermission: [resolvedArgumentString] };
-    }
-    case 'getTargetObjectWritePermission': {
-      const resolvedArgumentString = resolveExpressionToStringValue(args[0]);
-
-      return { hasWritePermission: [resolvedArgumentString] };
-    }
-    case 'isFeatureFlagEnabled': {
-      const resolvedArgumentString = resolveExpressionToStringValue(args[0]);
-
-      return { isFeatureFlagEnabled: [resolvedArgumentString] };
-    }
-    default:
-      throw new Error(`Unknown param function: ${functionName}`);
+  if (!isDefined(operatorName)) {
+    throw new JsonLogicConversionError(
+      `Unknown param function: ${functionName}`,
+    );
   }
+
+  const firstArgument = args[0];
+
+  if (!isDefined(firstArgument)) {
+    throw new JsonLogicConversionError(
+      `Expected at least 1 argument for ${functionName}()`,
+    );
+  }
+
+  const resolvedArgumentString = resolveExpressionToStringValue(firstArgument);
+
+  const rule: JsonLogicObject = {};
+
+  rule[operatorName] = [resolvedArgumentString];
+
+  return rule;
 };

@@ -1,15 +1,19 @@
-import { isPlainObject } from 'twenty-shared/utils';
-
-import { type JsonLogicRule } from '../types/json-logic-rule';
+import {
+  isJsonLogicObject,
+  type JsonLogicOperator,
+  type JsonLogicRule,
+} from '../types/json-logic-rule';
 
 export const extractJsonLogicOperands = (
   rule: JsonLogicRule,
-  operatorKey: string,
+  operatorKey: JsonLogicOperator,
 ): JsonLogicRule[] => {
-  if (isPlainObject(rule) && operatorKey in rule) {
-    return (rule as Record<string, JsonLogicRule>)[
-      operatorKey
-    ] as JsonLogicRule[];
+  if (isJsonLogicObject(rule) && operatorKey in rule) {
+    const operands = rule[operatorKey];
+
+    if (Array.isArray(operands)) {
+      return operands;
+    }
   }
 
   return [rule];

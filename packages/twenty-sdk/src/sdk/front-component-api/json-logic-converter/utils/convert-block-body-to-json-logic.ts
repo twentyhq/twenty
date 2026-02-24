@@ -1,16 +1,13 @@
 import { type Block, Node } from 'ts-morph';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 import { type JsonLogicRule } from '../types/json-logic-rule';
 
 import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
 import { convertIfStatementToJsonLogic } from './convert-if-statement-to-json-logic';
-import { handleLocalVariableDeclaration } from './handle-local-variable-declaration';
 
-export const convertBlockBodyToJsonLogic = (
-  block: Block,
-  localVariablesMap: Map<string, JsonLogicRule>,
-): JsonLogicRule => {
+export const convertBlockBodyToJsonLogic = (block: Block): JsonLogicRule => {
   const statements = block.getStatements();
 
   const conditionalBranches: Array<{
@@ -22,11 +19,6 @@ export const convertBlockBodyToJsonLogic = (
 
   for (const statement of statements) {
     if (Node.isVariableStatement(statement)) {
-      for (const variableDeclaration of statement
-        .getDeclarationList()
-        .getDeclarations()) {
-        handleLocalVariableDeclaration(variableDeclaration, localVariablesMap);
-      }
       continue;
     }
 
@@ -43,10 +35,15 @@ export const convertBlockBodyToJsonLogic = (
       if (returnExpression) {
         defaultReturnValue = convertExpressionToJsonLogic(returnExpression);
       }
+
       continue;
     }
 
-    throw new Error(`Unsupported block statement: ${statement.getKindName()}`);
+    throw new JsonLogicConversionError(
+      'Unsupported block statement',
+      statement.getText(),
+      statement.getKindName(),
+    );
   }
 
   if (!isNonEmptyArray(conditionalBranches) && isDefined(defaultReturnValue)) {
@@ -67,5 +64,7 @@ export const convertBlockBodyToJsonLogic = (
     return { if: jsonLogicIfArguments };
   }
 
-  throw new Error('Block body has no return or if statements');
+  throw new JsonLogicConversionError(
+    'Block body has no return or if statements',
+  );
 };

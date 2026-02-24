@@ -1,7 +1,7 @@
 import { isString } from '@sniptt/guards';
 import { type Expression, Node } from 'ts-morph';
 
-import { resolvePropertyAccess } from '../resolve-constants';
+import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 
 import { tryResolveKnownConstant } from './try-resolve-known-constant';
 
@@ -19,11 +19,9 @@ export const resolveExpressionToStringValue = (
     return resolvedConstant;
   }
 
-  const resolvedPropertyAccessValue = resolvePropertyAccess(argumentText);
-
-  if (isString(resolvedPropertyAccessValue)) {
-    return resolvedPropertyAccessValue;
-  }
-
-  throw new Error(`Cannot resolve argument to string: ${argumentText}`);
+  throw new JsonLogicConversionError(
+    'Cannot resolve argument to string',
+    argumentExpression.getText(),
+    argumentExpression.getKindName(),
+  );
 };

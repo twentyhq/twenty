@@ -1,8 +1,6 @@
-import { isPlainObject } from 'twenty-shared/utils';
+type KnownConstantValue = string | number | Record<string, string | number>;
 
-import { type JsonLogicRule } from './types/json-logic-rule';
-
-export const KNOWN_CONSTANTS: Record<string, JsonLogicRule> = {
+export const KNOWN_CONSTANTS: Record<string, KnownConstantValue> = {
   BACKEND_BATCH_REQUEST_MAX_COUNT: 10000,
   MUTATION_MAX_MERGE_RECORDS: 9,
 
@@ -57,25 +55,4 @@ export const KNOWN_CONSTANTS: Record<string, JsonLogicRule> = {
     SHOW_PAGE: 'SHOW_PAGE',
     PAGE_EDIT_MODE: 'PAGE_EDIT_MODE',
   },
-};
-
-export const resolvePropertyAccess = (
-  text: string,
-): JsonLogicRule | undefined => {
-  const parts = text.split('.');
-
-  if (parts.length === 2) {
-    const [enumName, memberName] = parts;
-    const enumObj = KNOWN_CONSTANTS[enumName];
-
-    if (isPlainObject(enumObj) && memberName in enumObj) {
-      return (enumObj as Record<string, JsonLogicRule>)[memberName];
-    }
-  }
-
-  if (text in KNOWN_CONSTANTS) {
-    return KNOWN_CONSTANTS[text];
-  }
-
-  return undefined;
 };

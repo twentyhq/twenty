@@ -1,5 +1,7 @@
 import { type Expression, Node } from 'ts-morph';
 
+import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
+
 export const flattenPropertyAccessToDotPath = (node: Expression): string => {
   if (Node.isIdentifier(node)) {
     return node.getText();
@@ -16,7 +18,9 @@ export const flattenPropertyAccessToDotPath = (node: Expression): string => {
     return flattenPropertyAccessToDotPath(node.getExpression());
   }
 
-  throw new Error(
-    `Cannot flatten property access for node kind: ${node.getKindName()} — "${node.getText()}"`,
+  throw new JsonLogicConversionError(
+    'Cannot flatten property access',
+    node.getText(),
+    node.getKindName(),
   );
 };

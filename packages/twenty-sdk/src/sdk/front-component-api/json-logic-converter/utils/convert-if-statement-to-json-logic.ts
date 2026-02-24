@@ -1,8 +1,8 @@
 import { type IfStatement, Node } from 'ts-morph';
-
-import { type JsonLogicRule } from '../types/json-logic-rule';
-
 import { isDefined } from 'twenty-shared/utils';
+
+import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
+import { type JsonLogicRule } from '../types/json-logic-rule';
 import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
 
 export const convertIfStatementToJsonLogic = (
@@ -16,7 +16,11 @@ export const convertIfStatementToJsonLogic = (
     const returnStatement = thenBlockStatements.find(Node.isReturnStatement);
 
     if (!isDefined(returnStatement)) {
-      throw new Error('If block must have a return statement');
+      throw new JsonLogicConversionError(
+        'If block must have a return statement',
+        thenBranchStatement.getText(),
+        thenBranchStatement.getKindName(),
+      );
     }
 
     const returnExpression = returnStatement.getExpression();
@@ -38,7 +42,9 @@ export const convertIfStatementToJsonLogic = (
     return { condition, result };
   }
 
-  throw new Error(
-    `Unsupported then statement: ${thenBranchStatement.getKindName()}`,
+  throw new JsonLogicConversionError(
+    'Unsupported then statement',
+    thenBranchStatement.getText(),
+    thenBranchStatement.getKindName(),
   );
 };

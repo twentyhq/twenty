@@ -1,20 +1,47 @@
 import { type Expression, Node } from 'ts-morph';
 import { isDefined } from 'twenty-shared/utils';
 
+import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 import { type JsonLogicRule } from '../types/json-logic-rule';
 
 import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
+import { convertIncludesCallToJsonLogic } from './convert-includes-call-to-json-logic';
 import { convertKnownFunctionCallToJsonLogic } from './convert-known-function-call-to-json-logic';
-import { flattenPropertyAccessToDotPath } from './flatten-property-access-to-dot-path';
+import { convertSomeCallToJsonLogic } from './convert-some-call-to-json-logic';
 import { isKnownParamReference } from './is-known-param-reference';
-import { resolveLocalArrayVariable } from './resolve-local-array-variable';
-import { tryResolveKnownConstant } from './try-resolve-known-constant';
+
+const getRequiredFirstArgument = (
+  callArguments: Node[],
+  context: string,
+): Expression => {
+  const firstArgument = callArguments[0];
+
+  if (!isDefined(firstArgument)) {
+    throw new JsonLogicConversionError(
+      `Expected at least 1 argument for ${context}`,
+    );
+  }
+
+  if (!Node.isExpression(firstArgument)) {
+    throw new JsonLogicConversionError(
+      `Expected expression argument for ${context}`,
+      firstArgument.getText(),
+      firstArgument.getKindName(),
+    );
+  }
+
+  return firstArgument;
+};
 
 export const convertCallExpressionToJsonLogic = (
   node: Expression,
 ): JsonLogicRule => {
   if (!Node.isCallExpression(node)) {
-    throw new Error('Expected CallExpression');
+    throw new JsonLogicConversionError(
+      'Expected CallExpression',
+      node.getText(),
+      node.getKindName(),
+    );
   }
 
   const calleeExpression = node.getExpression();
@@ -25,32 +52,39 @@ export const convertCallExpressionToJsonLogic = (
 
     switch (functionName) {
       case 'isDefined': {
-        return {
-          isDefined: [
-            convertExpressionToJsonLogic(callArguments[0] as Expression),
-          ],
-        };
+        const argument = getRequiredFirstArgument(callArguments, 'isDefined()');
+
+        return { isDefined: [convertExpressionToJsonLogic(argument)] };
       }
       case 'isNonEmptyString': {
+        const argument = getRequiredFirstArgument(
+          callArguments,
+          'isNonEmptyString()',
+        );
+
         return {
-          isNonEmptyString: [
-            convertExpressionToJsonLogic(callArguments[0] as Expression),
-          ],
+          isNonEmptyString: [convertExpressionToJsonLogic(argument)],
         };
       }
       case 'Boolean': {
-        return {
-          '!!': [convertExpressionToJsonLogic(callArguments[0] as Expression)],
-        };
+        const argument = getRequiredFirstArgument(callArguments, 'Boolean()');
+
+        return { '!!': [convertExpressionToJsonLogic(argument)] };
       }
       default: {
         if (isKnownParamReference(functionName)) {
+          const expressionArguments = callArguments.filter(
+            (argument): argument is Expression => Node.isExpression(argument),
+          );
+
           return convertKnownFunctionCallToJsonLogic(
             functionName,
-            callArguments as Expression[],
+            expressionArguments,
           );
         }
-        throw new Error(`Unknown function call: ${functionName}`);
+        throw new JsonLogicConversionError(
+          `Unknown function call: ${functionName}`,
+        );
       }
     }
   }
@@ -60,109 +94,41 @@ export const convertCallExpressionToJsonLogic = (
     const receiverExpression = calleeExpression.getExpression();
 
     if (methodName === 'includes') {
-      const receiverIdentifierText = receiverExpression.getText();
-
-      if (
-        Node.isIdentifier(receiverExpression) &&
-        !isKnownParamReference(receiverIdentifierText)
-      ) {
-        const resolvedArrayElements =
-          resolveLocalArrayVariable(receiverExpression);
-
-        if (isDefined(resolvedArrayElements)) {
-          return {
-            in: [
-              convertExpressionToJsonLogic(callArguments[0] as Expression),
-              resolvedArrayElements,
-            ],
-          };
-        }
-      }
-
-      if (Node.isArrayLiteralExpression(receiverExpression)) {
-        const arrayLiteralElements = receiverExpression
-          .getElements()
-          .map((element) => {
-            if (Node.isStringLiteral(element)) {
-              return element.getLiteralValue();
-            }
-            const resolvedConstantValue = tryResolveKnownConstant(
-              element.getText(),
-            );
-
-            if (isDefined(resolvedConstantValue)) {
-              return resolvedConstantValue;
-            }
-            throw new Error(
-              `Cannot resolve array element: ${element.getText()}`,
-            );
-          });
-
-        return {
-          in: [
-            convertExpressionToJsonLogic(callArguments[0] as Expression),
-            arrayLiteralElements,
-          ],
-        };
-      }
-
-      const flattenedPropertyPath =
-        flattenPropertyAccessToDotPath(receiverExpression);
-
-      if (isKnownParamReference(flattenedPropertyPath)) {
-        return {
-          in: [
-            convertExpressionToJsonLogic(callArguments[0] as Expression),
-            { var: flattenedPropertyPath },
-          ],
-        };
-      }
-
-      throw new Error(
-        `Cannot handle .includes() on: ${receiverExpression.getText()}`,
+      const searchArgument = getRequiredFirstArgument(
+        callArguments,
+        '.includes()',
       );
+
+      return convertIncludesCallToJsonLogic(receiverExpression, searchArgument);
     }
 
     if (methodName === 'some') {
-      const flattenedPropertyPath =
-        flattenPropertyAccessToDotPath(receiverExpression);
+      const predicateArgument = getRequiredFirstArgument(
+        callArguments,
+        '.some()',
+      );
 
-      const predicateArgument = callArguments[0] as Expression;
-
-      if (Node.isArrowFunction(predicateArgument)) {
-        const predicateBodyExpression = predicateArgument.getBody();
-
-        return {
-          some: [
-            { var: flattenedPropertyPath },
-            convertExpressionToJsonLogic(predicateBodyExpression as Expression),
-          ],
-        };
-      }
-
-      throw new Error('Cannot handle .some() with non-arrow predicate');
+      return convertSomeCallToJsonLogic(receiverExpression, predicateArgument);
     }
 
     if (
       Node.isIdentifier(receiverExpression) &&
       isKnownParamReference(methodName)
     ) {
+      const expressionArguments = callArguments.filter(
+        (argument): argument is Expression => Node.isExpression(argument),
+      );
+
       return convertKnownFunctionCallToJsonLogic(
         methodName,
-        callArguments as Expression[],
+        expressionArguments,
       );
     }
   }
 
-  if (
-    Node.isIdentifier(calleeExpression) &&
-    isKnownParamReference(calleeExpression.getText())
-  ) {
-    return convertKnownFunctionCallToJsonLogic(
-      calleeExpression.getText(),
-      callArguments as Expression[],
-    );
-  }
-
-  throw new Error(`Unsupported call expression: ${node.getText()}`);
+  throw new JsonLogicConversionError(
+    'Unsupported call expression',
+    node.getText(),
+    node.getKindName(),
+  );
 };

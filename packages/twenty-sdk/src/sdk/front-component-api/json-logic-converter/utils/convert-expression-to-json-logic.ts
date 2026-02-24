@@ -1,6 +1,7 @@
 import { type Expression, Node, SyntaxKind } from 'ts-morph';
 import { isDefined } from 'twenty-shared/utils';
 
+import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 import { type JsonLogicRule } from '../types/json-logic-rule';
 
 import { convertArrowFunctionToJsonLogic } from './convert-arrow-function-to-json-logic';
@@ -88,7 +89,11 @@ export const convertExpressionToJsonLogic = (
       return { '!': [convertExpressionToJsonLogic(unaryOperand)] };
     }
 
-    throw new Error(`Unsupported prefix unary operator: ${prefixOperatorKind}`);
+    throw new JsonLogicConversionError(
+      `Unsupported prefix unary operator: ${prefixOperatorKind}`,
+      node.getText(),
+      node.getKindName(),
+    );
   }
 
   if (Node.isBinaryExpression(node)) {
@@ -103,7 +108,9 @@ export const convertExpressionToJsonLogic = (
     return convertArrowFunctionToJsonLogic(node);
   }
 
-  throw new Error(
-    `Unsupported expression kind: ${node.getKindName()} — "${node.getText()}"`,
+  throw new JsonLogicConversionError(
+    'Unsupported expression kind',
+    node.getText(),
+    node.getKindName(),
   );
 };

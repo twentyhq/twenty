@@ -1,28 +1,39 @@
+import { isNumber, isString } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
 
 import { KNOWN_CONSTANTS } from '../resolve-constants';
-import { type JsonLogicRule } from '../types/json-logic-rule';
+
+const isResolvedPrimitive = (value: unknown): value is string | number =>
+  isString(value) || isNumber(value);
 
 export const tryResolveKnownConstant = (
   constantPath: string,
-): JsonLogicRule | undefined => {
+): string | number | undefined => {
   if (constantPath in KNOWN_CONSTANTS) {
-    return KNOWN_CONSTANTS[constantPath];
+    const constantValue = KNOWN_CONSTANTS[constantPath];
+
+    return isResolvedPrimitive(constantValue) ? constantValue : undefined;
   }
 
   const pathSegments = constantPath.split('.');
 
-  if (pathSegments.length === 2) {
-    const [objectName, propertyName] = pathSegments;
-
-    if (objectName in KNOWN_CONSTANTS) {
-      const constantObject = KNOWN_CONSTANTS[objectName];
-
-      if (isPlainObject(constantObject) && propertyName in constantObject) {
-        return constantObject[propertyName] as JsonLogicRule;
-      }
-    }
+  if (pathSegments.length !== 2) {
+    return undefined;
   }
 
-  return undefined;
+  const [objectName, propertyName] = pathSegments;
+
+  if (!(objectName in KNOWN_CONSTANTS)) {
+    return undefined;
+  }
+
+  const constantObject = KNOWN_CONSTANTS[objectName];
+
+  if (!isPlainObject(constantObject) || !(propertyName in constantObject)) {
+    return undefined;
+  }
+
+  const propertyValue = constantObject[propertyName];
+
+  return isResolvedPrimitive(propertyValue) ? propertyValue : undefined;
 };
