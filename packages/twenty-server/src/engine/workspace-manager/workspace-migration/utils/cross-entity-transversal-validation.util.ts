@@ -1,4 +1,4 @@
-import { validateObjectMetadataSystemFieldsIntegrity } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity';
+import { validateObjectMetadataCrossEntity } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-cross-entity.util';
 import {
   type OrchestratorActionsReport,
   type OrchestratorFailureReport,
@@ -12,7 +12,7 @@ export const crossEntityTransversalValidation = ({
   optimisticUniversalFlatMaps: AllUniversalFlatEntityMaps;
   orchestratorActionsReport: OrchestratorActionsReport;
 }): Pick<OrchestratorFailureReport, 'objectMetadata'> => {
-  const { objectMetadata } = validateObjectMetadataSystemFieldsIntegrity({
+  const { objectMetadata } = validateObjectMetadataCrossEntity({
     optimisticUniversalFlatMaps,
     orchestratorActionsReport,
   });
