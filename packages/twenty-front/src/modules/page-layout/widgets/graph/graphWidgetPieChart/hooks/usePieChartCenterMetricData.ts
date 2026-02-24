@@ -12,7 +12,7 @@ import { useContext, useMemo } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { findById, isDefined } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated-metadata/graphql';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 type UsePieChartCenterMetricDataProps = {
   objectMetadataItemId: string;
@@ -80,7 +80,7 @@ export const usePieChartCenterMetricData = ({
   });
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
+  const dateLocale = useRecoilValueV2(dateLocaleState);
 
   const aggregateFieldMetadataItem = objectMetadataItem.readableFields.find(
     findById(configuration.aggregateFieldMetadataId),

@@ -8,15 +8,16 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useCommandMenuHistory = () => {
+  const store = useStore();
   const { closeCommandMenu } = useCommandMenu();
 
   const goBackFromCommandMenu = useCallback(() => {
-    const currentNavigationStack = jotaiStore.get(
+    const currentNavigationStack = store.get(
       commandMenuNavigationStackState.atom,
     );
 
@@ -28,17 +29,17 @@ export const useCommandMenuHistory = () => {
       return;
     }
 
-    jotaiStore.set(commandMenuPageState.atom, lastNavigationStackItem.page);
+    store.set(commandMenuPageState.atom, lastNavigationStackItem.page);
 
-    jotaiStore.set(commandMenuPageInfoState.atom, {
+    store.set(commandMenuPageInfoState.atom, {
       title: lastNavigationStackItem.pageTitle,
       Icon: lastNavigationStackItem.pageIcon,
       instanceId: lastNavigationStackItem.pageId,
     });
 
-    jotaiStore.set(commandMenuNavigationStackState.atom, newNavigationStack);
+    store.set(commandMenuNavigationStackState.atom, newNavigationStack);
 
-    const currentMorphItems = jotaiStore.get(
+    const currentMorphItems = store.get(
       commandMenuNavigationMorphItemsByPageState.atom,
     );
 
@@ -48,14 +49,14 @@ export const useCommandMenuHistory = () => {
       if (isDefined(removedItem)) {
         const newMorphItems = new Map(currentMorphItems);
         newMorphItems.delete(removedItem.pageId);
-        jotaiStore.set(
+        store.set(
           commandMenuNavigationMorphItemsByPageState.atom,
           newMorphItems,
         );
 
         const morphItems = currentMorphItems.get(removedItem.pageId);
         if (isNonEmptyArray(morphItems)) {
-          jotaiStore.set(
+          store.set(
             activeTabIdComponentState.atomFamily({
               instanceId: getShowPageTabListComponentId({
                 pageId: removedItem.pageId,
@@ -68,63 +69,63 @@ export const useCommandMenuHistory = () => {
       }
     }
 
-    jotaiStore.set(hasUserSelectedCommandState.atom, false);
-  }, [closeCommandMenu]);
+    store.set(hasUserSelectedCommandState.atom, false);
+  }, [closeCommandMenu, store]);
 
-  const navigateCommandMenuHistory = useCallback((pageIndex: number) => {
-    const currentNavigationStack = jotaiStore.get(
-      commandMenuNavigationStackState.atom,
-    );
-
-    const newNavigationStack = currentNavigationStack.slice(0, pageIndex + 1);
-
-    jotaiStore.set(commandMenuNavigationStackState.atom, newNavigationStack);
-
-    const newNavigationStackItem = newNavigationStack.at(-1);
-
-    if (!isDefined(newNavigationStackItem)) {
-      throw new Error(
-        `No command menu navigation stack item found for index ${pageIndex}`,
+  const navigateCommandMenuHistory = useCallback(
+    (pageIndex: number) => {
+      const currentNavigationStack = store.get(
+        commandMenuNavigationStackState.atom,
       );
-    }
 
-    jotaiStore.set(commandMenuPageState.atom, newNavigationStackItem.page);
-    jotaiStore.set(commandMenuPageInfoState.atom, {
-      title: newNavigationStackItem.pageTitle,
-      Icon: newNavigationStackItem.pageIcon,
-      instanceId: newNavigationStackItem.pageId,
-    });
-    const currentMorphItems = jotaiStore.get(
-      commandMenuNavigationMorphItemsByPageState.atom,
-    );
+      const newNavigationStack = currentNavigationStack.slice(0, pageIndex + 1);
 
-    for (const [pageId, morphItems] of currentMorphItems.entries()) {
-      if (!newNavigationStack.some((item) => item.pageId === pageId)) {
-        jotaiStore.set(
-          activeTabIdComponentState.atomFamily({
-            instanceId: getShowPageTabListComponentId({
-              pageId,
-              targetObjectId: morphItems[0].recordId,
-            }),
-          }),
-          null,
+      store.set(commandMenuNavigationStackState.atom, newNavigationStack);
+
+      const newNavigationStackItem = newNavigationStack.at(-1);
+
+      if (!isDefined(newNavigationStackItem)) {
+        throw new Error(
+          `No command menu navigation stack item found for index ${pageIndex}`,
         );
       }
-    }
 
-    const newMorphItems = new Map(
-      Array.from(currentMorphItems.entries()).filter(([pageId]) =>
-        newNavigationStack.some((item) => item.pageId === pageId),
-      ),
-    );
+      store.set(commandMenuPageState.atom, newNavigationStackItem.page);
+      store.set(commandMenuPageInfoState.atom, {
+        title: newNavigationStackItem.pageTitle,
+        Icon: newNavigationStackItem.pageIcon,
+        instanceId: newNavigationStackItem.pageId,
+      });
+      const currentMorphItems = store.get(
+        commandMenuNavigationMorphItemsByPageState.atom,
+      );
 
-    jotaiStore.set(
-      commandMenuNavigationMorphItemsByPageState.atom,
-      newMorphItems,
-    );
+      for (const [pageId, morphItems] of currentMorphItems.entries()) {
+        if (!newNavigationStack.some((item) => item.pageId === pageId)) {
+          store.set(
+            activeTabIdComponentState.atomFamily({
+              instanceId: getShowPageTabListComponentId({
+                pageId,
+                targetObjectId: morphItems[0].recordId,
+              }),
+            }),
+            null,
+          );
+        }
+      }
 
-    jotaiStore.set(hasUserSelectedCommandState.atom, false);
-  }, []);
+      const newMorphItems = new Map(
+        Array.from(currentMorphItems.entries()).filter(([pageId]) =>
+          newNavigationStack.some((item) => item.pageId === pageId),
+        ),
+      );
+
+      store.set(commandMenuNavigationMorphItemsByPageState.atom, newMorphItems);
+
+      store.set(hasUserSelectedCommandState.atom, false);
+    },
+    [store],
+  );
 
   return {
     goBackFromCommandMenu,

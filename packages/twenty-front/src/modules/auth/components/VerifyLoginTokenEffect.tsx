@@ -21,13 +21,28 @@ export const VerifyLoginTokenEffect = () => {
     clientConfigApiStatusState,
   );
 
+  console.log('[VerifyLoginToken] state:', {
+    clientConfigLoaded,
+    hasLoginToken: isDefined(loginToken),
+    isLogged,
+  });
+
   useEffect(() => {
-    if (!clientConfigLoaded) return;
+    if (!clientConfigLoaded) {
+      console.log('[VerifyLoginToken] effect: waiting for client config');
+      return;
+    }
 
     if (isDefined(loginToken)) {
+      console.log('[VerifyLoginToken] effect: verifying login token');
       verifyLoginToken(loginToken);
     } else if (!isLogged) {
+      console.log(
+        '[VerifyLoginToken] effect: no token, not logged, redirecting to sign-in',
+      );
       navigate(AppPath.SignInUp);
+    } else {
+      console.log('[VerifyLoginToken] effect: already logged in, no token');
     }
     // Verify only needs to run once at mount
     // eslint-disable-next-line react-hooks/exhaustive-deps

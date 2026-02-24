@@ -23,7 +23,7 @@ export const useRecordCalendarSelection = (recordCalendarId?: string) => {
       recordCalendarId,
     );
 
-  const recordCalendarSelectedRecordIdsAtom =
+  const recordCalendarSelectedRecordIds =
     useRecoilComponentSelectorCallbackStateV2(
       recordCalendarSelectedRecordIdsComponentSelector,
       recordCalendarId,
@@ -39,7 +39,7 @@ export const useRecordCalendarSelection = (recordCalendarId?: string) => {
   const resetRecordSelection = useCallback(() => {
     closeDropdown(dropdownId);
 
-    const recordIds = store.get(recordCalendarSelectedRecordIdsAtom);
+    const recordIds = store.get(recordCalendarSelectedRecordIds);
 
     for (const recordId of recordIds) {
       store.set(isRecordCalendarCardSelectedFamilyState(recordId), false);
@@ -47,7 +47,7 @@ export const useRecordCalendarSelection = (recordCalendarId?: string) => {
   }, [
     closeDropdown,
     dropdownId,
-    recordCalendarSelectedRecordIdsAtom,
+    recordCalendarSelectedRecordIds,
     isRecordCalendarCardSelectedFamilyState,
     store,
   ]);

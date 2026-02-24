@@ -31,7 +31,7 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const recordBoardSelectedRecordIdsAtom =
+  const recordBoardSelectedRecordIds =
     useRecoilComponentSelectorCallbackStateV2(
       recordBoardSelectedRecordIdsComponentSelector,
       recordBoardIndexId,
@@ -42,7 +42,7 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
 
   const removeSelectedRecordsFromRecordBoard = useCallback(() => {
     const deletedRecordIds = store.get(
-      recordBoardSelectedRecordIdsAtom,
+      recordBoardSelectedRecordIds,
     ) as string[];
 
     if (
@@ -89,7 +89,7 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
     groupByFieldMetadataItem,
     recordIndexRecordIdsByGroupCallbackState,
     recordGroupDefinitions,
-    recordBoardSelectedRecordIdsAtom,
+    recordBoardSelectedRecordIds,
     resetRecordBoardSelection,
   ]);
 

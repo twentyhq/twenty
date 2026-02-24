@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { Temporal } from 'temporal-polyfill';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 import { EllipsisDisplay } from './EllipsisDisplay';
 
@@ -24,7 +24,7 @@ export const DateTimeDisplay = ({
   dateFieldSettings,
 }: DateTimeDisplayProps) => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
+  const dateLocale = useRecoilValueV2(dateLocaleState);
 
   const formattedDate = formatDateTimeString({
     value,

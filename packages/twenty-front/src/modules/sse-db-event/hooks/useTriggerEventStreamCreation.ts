@@ -9,7 +9,6 @@ import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestr
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { captureException } from '@sentry/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -19,8 +18,10 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { type EventSubscription } from '~/generated-metadata/graphql';
+import { useStore } from 'jotai';
 
 export const useTriggerEventStreamCreation = () => {
+  const store = useStore();
   const setIsCreatingSseEventStream = useSetRecoilStateV2(
     isCreatingSseEventStreamState,
   );
@@ -35,17 +36,17 @@ export const useTriggerEventStreamCreation = () => {
     useTriggerOptimisticEffectFromSseEvents();
 
   const triggerEventStreamCreation = useCallback(() => {
-    const sseClient = jotaiStore.get(sseClientState.atom);
+    const sseClient = store.get(sseClientState.atom);
 
-    const isCreatingSseEventStream = jotaiStore.get(
+    const isCreatingSseEventStream = store.get(
       isCreatingSseEventStreamState.atom,
     );
 
-    const isDestroyingEventStream = jotaiStore.get(
+    const isDestroyingEventStream = store.get(
       isDestroyingEventStreamState.atom,
     );
 
-    const currentSseEventStreamId = jotaiStore.get(sseEventStreamIdState.atom);
+    const currentSseEventStreamId = store.get(sseEventStreamIdState.atom);
 
     if (
       isCreatingSseEventStream ||
@@ -60,8 +61,8 @@ export const useTriggerEventStreamCreation = () => {
 
     const newSseEventStreamId = v4();
 
-    jotaiStore.set(sseEventStreamIdState.atom, newSseEventStreamId);
-    jotaiStore.set(sseEventStreamReadyState.atom, false);
+    store.set(sseEventStreamIdState.atom, newSseEventStreamId);
+    store.set(sseEventStreamReadyState.atom, false);
 
     let hasReceivedFirstEvent = false;
 
@@ -82,14 +83,14 @@ export const useTriggerEventStreamCreation = () => {
             captureException(
               new Error(`SSE subscription error: ${value.errors[0]?.message}`),
             );
-            jotaiStore.set(shouldDestroyEventStreamState.atom, true);
+            store.set(shouldDestroyEventStreamState.atom, true);
 
             return;
           }
 
           if (!hasReceivedFirstEvent) {
             hasReceivedFirstEvent = true;
-            jotaiStore.set(sseEventStreamReadyState.atom, true);
+            store.set(sseEventStreamReadyState.atom, true);
           }
 
           const eventSubscription = value?.data?.onEventSubscription;
@@ -134,7 +135,7 @@ export const useTriggerEventStreamCreation = () => {
 
                 switch (subCode) {
                   case 'EVENT_STREAM_ALREADY_EXISTS': {
-                    jotaiStore.set(shouldDestroyEventStreamState.atom, true);
+                    store.set(shouldDestroyEventStreamState.atom, true);
                     break;
                   }
                   default: {
@@ -144,11 +145,11 @@ export const useTriggerEventStreamCreation = () => {
                   }
                 }
 
-                jotaiStore.set(shouldDestroyEventStreamState.atom, true);
+                store.set(shouldDestroyEventStreamState.atom, true);
               } else {
                 if (!hasReceivedFirstEvent) {
                   hasReceivedFirstEvent = true;
-                  jotaiStore.set(sseEventStreamReadyState.atom, true);
+                  store.set(sseEventStreamReadyState.atom, true);
                 }
 
                 const objectRecordEventsWithQueryIds =
@@ -182,7 +183,7 @@ export const useTriggerEventStreamCreation = () => {
       },
     );
 
-    jotaiStore.set(disposeFunctionForEventStreamState.atom, { dispose });
+    store.set(disposeFunctionForEventStreamState.atom, { dispose });
 
     setIsCreatingSseEventStream(false);
   }, [
@@ -190,6 +191,7 @@ export const useTriggerEventStreamCreation = () => {
     dispatchObjectRecordEventsFromSseToBrowserEvents,
     setIsCreatingSseEventStream,
     triggerOptimisticEffectFromSseEvents,
+    store,
   ]);
 
   return {

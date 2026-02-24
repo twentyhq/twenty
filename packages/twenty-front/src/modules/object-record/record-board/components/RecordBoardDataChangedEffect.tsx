@@ -28,7 +28,7 @@ export const RecordBoardDataChangedEffect = () => {
     useRecoilComponentFamilySelectorCallbackStateV2(
       recordGroupFromGroupValueComponentFamilySelector,
     );
-  const recordIndexGroupFieldMetadataItemAtom =
+  const recordIndexGroupFieldMetadataItem =
     useRecoilComponentStateCallbackStateV2(
       recordIndexGroupFieldMetadataItemComponentState,
     );
@@ -73,17 +73,17 @@ export const RecordBoardDataChangedEffect = () => {
               return;
             }
 
-            const recordIndexGroupFieldMetadataItem = store.get(
-              recordIndexGroupFieldMetadataItemAtom,
+            const currentRecordIndexGroupFieldMetadataItem = store.get(
+              recordIndexGroupFieldMetadataItem,
             );
 
-            if (!isDefined(recordIndexGroupFieldMetadataItem)) {
+            if (!isDefined(currentRecordIndexGroupFieldMetadataItem)) {
               return;
             }
 
             const recordGroupValue =
               objectRecordOperation.createdRecord[
-                recordIndexGroupFieldMetadataItem.name
+                currentRecordIndexGroupFieldMetadataItem.name
               ];
 
             const recordGroupDefinitionFromGroupValue = store.get(
@@ -157,7 +157,7 @@ export const RecordBoardDataChangedEffect = () => {
       store,
       triggerRecordBoardInitialQuery,
       getShouldInitializeRecordBoardForUpdateInputs,
-      recordIndexGroupFieldMetadataItemAtom,
+      recordIndexGroupFieldMetadataItem,
       recordGroupFromGroupValueCallbackState,
       recordIndexRecordIdsByGroupCallbackState,
       removeRecordsFromBoard,

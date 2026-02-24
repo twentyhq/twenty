@@ -31,8 +31,8 @@ import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamily
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
@@ -81,6 +81,7 @@ export const useFetchMoreRecordsWithPagination = <
   objectMetadataItem,
   onCompleted,
 }: UseFindManyRecordsStateParams<T>) => {
+  const store = useStore();
   const queryIdentifier = getQueryIdentifier({
     objectNameSingular,
     filter,
@@ -105,11 +106,11 @@ export const useFetchMoreRecordsWithPagination = <
   // TODO: put this into a util inspired from https://github.com/apollographql/apollo-client/blob/master/src/utilities/policies/pagination.ts
   // This function is equivalent to merge function + read function in field policy
   const fetchMoreRecords = useCallback(async () => {
-    const hasNextPageLocal = jotaiStore.get(
+    const hasNextPageLocal = store.get(
       hasNextPageFamilyState.atomFamily(queryIdentifier),
     );
 
-    const lastCursorLocal = jotaiStore.get(
+    const lastCursorLocal = store.get(
       cursorFamilyState.atomFamily(queryIdentifier),
     );
 
@@ -147,11 +148,11 @@ export const useFetchMoreRecordsWithPagination = <
               fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo;
 
             if (isDefined(pageInfo)) {
-              jotaiStore.set(
+              store.set(
                 cursorFamilyState.atomFamily(queryIdentifier),
                 pageInfo.endCursor ?? '',
               );
-              jotaiStore.set(
+              store.set(
                 hasNextPageFamilyState.atomFamily(queryIdentifier),
                 pageInfo.hasNextPage ?? false,
               );
@@ -205,6 +206,7 @@ export const useFetchMoreRecordsWithPagination = <
     onCompleted,
     handleFindManyRecordsError,
     queryIdentifier,
+    store,
   ]);
 
   const totalCount = data?.[objectMetadataItem.namePlural]?.totalCount;

@@ -1,6 +1,5 @@
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -36,14 +35,9 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
 
       store.set(contextStoreIsFullTabWidgetInEditModeState, value);
 
-      jotaiStore.set(
-        currentPageLayoutIdState.atom,
-        value ? pageLayoutId : null,
-      );
+      store.set(currentPageLayoutIdState.atom, value ? pageLayoutId : null);
 
-      const isCommandMenuOpened = jotaiStore.get(
-        isCommandMenuOpenedStateV2.atom,
-      );
+      const isCommandMenuOpened = store.get(isCommandMenuOpenedStateV2.atom);
 
       if (isCommandMenuOpened) {
         store.set(

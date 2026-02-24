@@ -13,11 +13,11 @@ import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuO
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
 import { type CommandMenuPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 import { v4 } from 'uuid';
+import { useStore } from 'jotai';
 
 export type CommandMenuNavigationStackItem = {
   page: CommandMenuPages;
@@ -28,6 +28,7 @@ export type CommandMenuNavigationStackItem = {
 };
 
 export const useNavigateCommandMenu = () => {
+  const store = useStore();
   const { copyContextStoreStates } = useCopyContextStoreStates();
 
   const { commandMenuCloseAnimationCompleteCleanup } =
@@ -36,9 +37,9 @@ export const useNavigateCommandMenu = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = jotaiStore.get(isCommandMenuOpenedStateV2.atom);
+    const isCommandMenuOpened = store.get(isCommandMenuOpenedStateV2.atom);
 
-    const isCommandMenuClosing = jotaiStore.get(isCommandMenuClosingState.atom);
+    const isCommandMenuClosing = store.get(isCommandMenuClosingState.atom);
 
     if (isCommandMenuClosing) {
       commandMenuCloseAnimationCompleteCleanup();
@@ -64,12 +65,13 @@ export const useNavigateCommandMenu = () => {
       instanceIdToCopyTo: COMMAND_MENU_COMPONENT_INSTANCE_ID,
     });
 
-    jotaiStore.set(isCommandMenuOpenedStateV2.atom, true);
-    jotaiStore.set(hasUserSelectedCommandState.atom, false);
+    store.set(isCommandMenuOpenedStateV2.atom, true);
+    store.set(hasUserSelectedCommandState.atom, false);
   }, [
     copyContextStoreStates,
     commandMenuCloseAnimationCompleteCleanup,
     pushFocusItemToFocusStack,
+    store,
   ]);
 
   const navigateCommandMenu = useCallback(
@@ -88,15 +90,15 @@ export const useNavigateCommandMenu = () => {
       const computedPageId = pageId || v4();
 
       openCommandMenu();
-      jotaiStore.set(commandMenuPageState.atom, page);
-      jotaiStore.set(commandMenuPageInfoState.atom, {
+      store.set(commandMenuPageState.atom, page);
+      store.set(commandMenuPageInfoState.atom, {
         title: pageTitle,
         Icon: pageIcon,
         instanceId: computedPageId,
       });
 
       if (focusTitleInput) {
-        jotaiStore.set(
+        store.set(
           commandMenuShouldFocusTitleInputComponentState.atomFamily({
             instanceId: computedPageId,
           }),
@@ -104,16 +106,14 @@ export const useNavigateCommandMenu = () => {
         );
       }
 
-      const isCommandMenuClosing = jotaiStore.get(
-        isCommandMenuClosingState.atom,
-      );
+      const isCommandMenuClosing = store.get(isCommandMenuClosingState.atom);
 
       const currentNavigationStack = isCommandMenuClosing
         ? []
-        : jotaiStore.get(commandMenuNavigationStackState.atom);
+        : store.get(commandMenuNavigationStackState.atom);
 
       if (resetNavigationStack) {
-        jotaiStore.set(commandMenuNavigationStackState.atom, [
+        store.set(commandMenuNavigationStackState.atom, [
           {
             page,
             pageTitle,
@@ -123,12 +123,9 @@ export const useNavigateCommandMenu = () => {
           },
         ]);
 
-        jotaiStore.set(
-          commandMenuNavigationMorphItemsByPageState.atom,
-          new Map(),
-        );
+        store.set(commandMenuNavigationMorphItemsByPageState.atom, new Map());
       } else {
-        jotaiStore.set(commandMenuNavigationStackState.atom, [
+        store.set(commandMenuNavigationStackState.atom, [
           ...currentNavigationStack,
           {
             page,
@@ -140,7 +137,7 @@ export const useNavigateCommandMenu = () => {
         ]);
       }
     },
-    [openCommandMenu],
+    [openCommandMenu, store],
   );
 
   return {

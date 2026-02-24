@@ -22,7 +22,6 @@ import { searchRecordStoreFamilyState } from '@/object-record/record-picker/mult
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type SearchRecord } from '~/generated/graphql';
 
 type UseUpdateJunctionRelationFromCellArgs = {
   fieldMetadataItem: FieldMetadataItem;
@@ -116,7 +115,7 @@ export const useUpdateJunctionRelationFromCell = ({
 
       const recordFromStore = store.get(
         recordStoreFamilyState.atomFamily(recordId),
-      ) as Record<string, unknown> | null | undefined;
+      );
       const currentJunctionRecords =
         (recordFromStore?.[fieldName] as
           | FieldRelationValue<FieldRelationFromManyValue>
@@ -138,7 +137,7 @@ export const useUpdateJunctionRelationFromCell = ({
 
         const recordFromStoreForDelete = store.get(
           recordStoreFamilyState.atomFamily(recordId),
-        ) as Record<string, unknown> | null | undefined;
+        );
         const currentFieldValue = recordFromStoreForDelete?.[fieldName] as
           | FieldRelationValue<FieldRelationFromManyValue>
           | undefined;
@@ -169,7 +168,7 @@ export const useUpdateJunctionRelationFromCell = ({
       } else {
         const searchRecord = store.get(
           searchRecordStoreFamilyState.atomFamily(morphItem.recordId),
-        ) as (SearchRecord & { record?: ObjectRecord }) | undefined;
+        );
 
         if (!isDefined(searchRecord?.record)) {
           return;

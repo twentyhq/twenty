@@ -1,4 +1,3 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { recordGroupFromGroupValueComponentFamilySelector } from '@/object-record/record-group/states/selectors/recordGroupFromGroupValueComponentFamilySelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -13,7 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveRecordsFromBoard = () => {
   const store = useStore();
-  const recordIndexGroupFieldMetadataItemAtom =
+  const recordIndexGroupFieldMetadataItem =
     useRecoilComponentStateCallbackStateV2(
       recordIndexGroupFieldMetadataItemComponentState,
     );
@@ -35,22 +34,22 @@ export const useRemoveRecordsFromBoard = () => {
       for (const recordIdToRemove of recordIdsToRemove) {
         const recordToRemove = store.get(
           recordStoreFamilyState.atomFamily(recordIdToRemove),
-        ) as Record<string, unknown> | null | undefined;
+        );
 
         if (!isDefined(recordToRemove)) {
           continue;
         }
 
-        const recordIndexGroupFieldMetadataItem = store.get(
-          recordIndexGroupFieldMetadataItemAtom,
-        ) as FieldMetadataItem | undefined;
+        const currentRecordIndexGroupFieldMetadataItem = store.get(
+          recordIndexGroupFieldMetadataItem,
+        );
 
-        if (!isDefined(recordIndexGroupFieldMetadataItem)) {
+        if (!isDefined(currentRecordIndexGroupFieldMetadataItem)) {
           continue;
         }
 
         const recordGroupValue = recordToRemove[
-          recordIndexGroupFieldMetadataItem.name
+          currentRecordIndexGroupFieldMetadataItem.name
         ] as string | undefined;
 
         const recordGroupDefinitionFromGroupValue = store.get(
@@ -76,7 +75,7 @@ export const useRemoveRecordsFromBoard = () => {
       ] of recordIdsToRemoveByGroup) {
         const currentRecordIdsForGroup = store.get(
           recordIndexRecordIdsByGroupFamilyCallbackState(groupId),
-        ) as string[];
+        );
 
         const recordIdsWithoutRemovedRecords = currentRecordIdsForGroup.filter(
           (recordId) => !recordIdsToRemoveInGroup.includes(recordId),
@@ -90,7 +89,7 @@ export const useRemoveRecordsFromBoard = () => {
     },
     [
       store,
-      recordIndexGroupFieldMetadataItemAtom,
+      recordIndexGroupFieldMetadataItem,
       recordGroupFromGroupValueFamilyCallbackState,
       recordIndexRecordIdsByGroupFamilyCallbackState,
     ],

@@ -4,7 +4,6 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -40,7 +39,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         }),
       );
 
-      const existingCoreViews = jotaiStore.get(coreViewsState.atom);
+      const existingCoreViews = store.get(coreViewsState.atom);
 
       if (!isDefined(currentViewId)) {
         throw new Error('No view id found');
@@ -75,7 +74,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           }
 
           setRecordIndexViewType(viewType);
-          jotaiStore.set(coreViewsState.atom, [
+          store.set(coreViewsState.atom, [
             ...existingCoreViews.filter(
               (coreView) => coreView.id !== currentView.id,
             ),
@@ -96,7 +95,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           updateCurrentViewParams.mainGroupByFieldMetadataId = null;
           await updateCurrentView(updateCurrentViewParams);
           setRecordIndexViewType(viewType);
-          jotaiStore.set(coreViewsState.atom, [
+          store.set(coreViewsState.atom, [
             ...existingCoreViews.filter(
               (coreView) => coreView.id !== currentView.id,
             ),
@@ -116,7 +115,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           const calendarFieldMetadataId = availableFieldsForCalendar[0].id;
 
           setRecordIndexViewType(viewType);
-          jotaiStore.set(coreViewsState.atom, [
+          store.set(coreViewsState.atom, [
             ...existingCoreViews.filter(
               (coreView) => coreView.id !== currentView.id,
             ),

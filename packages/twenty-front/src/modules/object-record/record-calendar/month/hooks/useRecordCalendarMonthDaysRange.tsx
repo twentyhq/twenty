@@ -16,7 +16,7 @@ import {
   turnJSDateToPlainDate,
   turnPlainDateToShiftedDateInSystemTimeZone,
 } from 'twenty-shared/utils';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 // TODO: we could refactor this to use Temporal.PlainDate directly
 // But it would require recoding the utils here, not really worth it for now
@@ -24,7 +24,7 @@ export const useRecordCalendarMonthDaysRange = (
   selectedDate: Temporal.PlainDate,
 ) => {
   const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
-  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
+  const dateLocale = useRecoilValueV2(dateLocaleState);
 
   if (!currentWorkspaceMember) {
     throw new Error('Current workspace member not found');

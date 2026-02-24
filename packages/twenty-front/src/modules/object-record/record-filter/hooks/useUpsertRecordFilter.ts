@@ -6,7 +6,7 @@ import { useStore } from 'jotai';
 import { useCallback, useContext } from 'react';
 
 export const useUpsertRecordFilter = () => {
-  const currentRecordFiltersAtom = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilters = useRecoilComponentStateCallbackStateV2(
     currentRecordFiltersComponentState,
   );
 
@@ -15,24 +15,25 @@ export const useUpsertRecordFilter = () => {
 
   const upsertRecordFilterCallback = useCallback(
     (recordFilterToSet: RecordFilter) => {
-      const currentRecordFilters = store.get(
-        currentRecordFiltersAtom,
+      const existingRecordFilters = store.get(
+        currentRecordFilters,
       ) as RecordFilter[];
 
-      const foundRecordFilterInCurrentRecordFilters = currentRecordFilters.some(
-        (existingFilter) => existingFilter.id === recordFilterToSet.id,
-      );
+      const foundRecordFilterInCurrentRecordFilters =
+        existingRecordFilters.some(
+          (existingFilter) => existingFilter.id === recordFilterToSet.id,
+        );
 
       if (!foundRecordFilterInCurrentRecordFilters) {
-        store.set(currentRecordFiltersAtom, [
-          ...currentRecordFilters,
+        store.set(currentRecordFilters, [
+          ...existingRecordFilters,
           recordFilterToSet,
         ]);
       } else {
         store.set(
-          currentRecordFiltersAtom,
-          (currentRecordFilters: RecordFilter[]) => {
-            const newCurrentRecordFilters = [...currentRecordFilters];
+          currentRecordFilters,
+          (previousRecordFilters: RecordFilter[]) => {
+            const newCurrentRecordFilters = [...previousRecordFilters];
 
             const indexOfFilterToUpdate = newCurrentRecordFilters.findIndex(
               (existingFilter) => existingFilter.id === recordFilterToSet.id,
@@ -47,7 +48,7 @@ export const useUpsertRecordFilter = () => {
         );
       }
     },
-    [currentRecordFiltersAtom, store],
+    [currentRecordFilters, store],
   );
 
   const upsertRecordFilter = (recordFilterToSet: RecordFilter) => {

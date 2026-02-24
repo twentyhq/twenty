@@ -62,22 +62,22 @@ export const useTriggerRecordBoardFetchMore = () => {
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const recordBoardIsFetchingMoreAtom = useRecoilComponentStateCallbackStateV2(
+  const recordBoardIsFetchingMore = useRecoilComponentStateCallbackStateV2(
     recordBoardIsFetchingMoreComponentState,
   );
 
   const triggerRecordBoardFetchMore = useCallback(async () => {
-    const isAlreadyFetchingMore = store.get(recordBoardIsFetchingMoreAtom);
+    const isAlreadyFetchingMore = store.get(recordBoardIsFetchingMore);
 
     const cleanStateBeforeExit = () => {
-      store.set(recordBoardIsFetchingMoreAtom, false);
+      store.set(recordBoardIsFetchingMore, false);
     };
 
     if (isAlreadyFetchingMore) {
       return;
     }
 
-    store.set(recordBoardIsFetchingMoreAtom, true);
+    store.set(recordBoardIsFetchingMore, true);
 
     const currentOffset = store.get(
       recordBoardCurrentGroupByQueryOffsetCallbackState,
@@ -214,7 +214,7 @@ export const useTriggerRecordBoardFetchMore = () => {
     upsertRecordsInStore,
     executeRecordIndexGroupsRecordsLazyGroupBy,
     recordIndexRecordIdsByGroupCallbackState,
-    recordBoardIsFetchingMoreAtom,
+    recordBoardIsFetchingMore,
     recordBoardCurrentGroupByQueryOffsetCallbackState,
     recordBoardShouldFetchMoreInColumnFamilyCallbackState,
     combinedFilters,

@@ -20,33 +20,28 @@ export const WorkflowFindRecordsFilters = ({
   onChange: (filter: FindRecordsActionFilter) => void;
   readonly?: boolean;
 }) => {
-  const currentRecordFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilterGroups = useRecoilComponentStateCallbackStateV2(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFiltersAtom = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilters = useRecoilComponentStateCallbackStateV2(
     currentRecordFiltersComponentState,
   );
 
   const store = useStore();
 
   const onUpdate = useCallback(() => {
-    const currentRecordFilterGroups = store.get(currentRecordFilterGroupsAtom);
+    const existingRecordFilterGroups = store.get(currentRecordFilterGroups);
 
-    const currentRecordFilters = store.get(currentRecordFiltersAtom);
+    const existingRecordFilters = store.get(currentRecordFilters);
 
     const newFilter = {
-      recordFilterGroups: currentRecordFilterGroups,
-      recordFilters: currentRecordFilters,
+      recordFilterGroups: existingRecordFilterGroups,
+      recordFilters: existingRecordFilters,
     } satisfies FindRecordsActionFilter;
 
     onChange(newFilter);
-  }, [
-    currentRecordFilterGroupsAtom,
-    currentRecordFiltersAtom,
-    onChange,
-    store,
-  ]);
+  }, [currentRecordFilterGroups, currentRecordFilters, onChange, store]);
 
   return (
     <AdvancedFilterCommandMenuContainer

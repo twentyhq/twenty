@@ -2,28 +2,30 @@ import { useCallback } from 'react';
 
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
 
 export const useEmptyRecordFilter = (componentInstanceId?: string) => {
-  const objectFilterDropdownSearchInputAtom =
+  const store = useStore();
+  const objectFilterDropdownSearchInput =
     useRecoilComponentStateCallbackStateV2(
       objectFilterDropdownSearchInputComponentState,
       componentInstanceId,
     );
 
-  const objectFilterDropdownCurrentRecordFilterAtom =
+  const objectFilterDropdownCurrentRecordFilter =
     useRecoilComponentStateCallbackStateV2(
       objectFilterDropdownCurrentRecordFilterComponentState,
       componentInstanceId,
     );
 
   const emptyRecordFilter = useCallback(() => {
-    jotaiStore.set(objectFilterDropdownSearchInputAtom, '');
-    jotaiStore.set(objectFilterDropdownCurrentRecordFilterAtom, undefined);
+    store.set(objectFilterDropdownSearchInput, '');
+    store.set(objectFilterDropdownCurrentRecordFilter, undefined);
   }, [
-    objectFilterDropdownSearchInputAtom,
-    objectFilterDropdownCurrentRecordFilterAtom,
+    objectFilterDropdownSearchInput,
+    objectFilterDropdownCurrentRecordFilter,
+    store,
   ]);
 
   return {

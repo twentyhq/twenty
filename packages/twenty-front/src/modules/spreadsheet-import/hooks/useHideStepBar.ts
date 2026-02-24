@@ -1,20 +1,21 @@
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useHideStepBar = () => {
+  const store = useStore();
   const hideStepBar = useCallback(() => {
-    const isStepBarVisible = jotaiStore.get(
+    const isStepBarVisible = store.get(
       spreadsheetImportDialogState.atom,
     ).isStepBarVisible;
 
     if (isStepBarVisible) {
-      jotaiStore.set(spreadsheetImportDialogState.atom, (state) => ({
+      store.set(spreadsheetImportDialogState.atom, (state) => ({
         ...state,
         isStepBarVisible: false,
       }));
     }
-  }, []);
+  }, [store]);
 
   return hideStepBar;
 };

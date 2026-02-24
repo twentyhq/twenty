@@ -9,8 +9,8 @@ type DateLocaleState = {
   localeCatalog: Locale;
 };
 
-export const dateLocaleStateV2 = createStateV2<DateLocaleState>({
-  key: 'dateLocaleStateV2',
+export const dateLocaleState = createStateV2<DateLocaleState>({
+  key: 'dateLocaleState',
   defaultValue: {
     locale: undefined,
     localeCatalog: enUS,

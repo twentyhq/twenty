@@ -19,7 +19,6 @@ import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/sta
 import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useStore } from 'jotai';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
@@ -84,7 +83,7 @@ export const useCreateNewIndexRecord = ({
         ...recordInput,
       };
 
-      const recordIndexOpenRecordIn = jotaiStore.get(
+      const recordIndexOpenRecordIn = store.get(
         recordIndexOpenRecordInState.atom,
       );
 
@@ -150,7 +149,7 @@ export const useCreateNewIndexRecord = ({
         if (isDefined(recordGroup)) {
           const currentRecordIds = store.get(
             recordIndexRecordIdsByGroupCallbackState(recordGroup.id),
-          ) as string[];
+          );
 
           if (recordInput?.position === 'first') {
             const newRecordIds = [createdRecord.id, ...currentRecordIds];

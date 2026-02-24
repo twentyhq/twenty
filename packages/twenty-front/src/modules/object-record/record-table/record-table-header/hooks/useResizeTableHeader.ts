@@ -32,7 +32,7 @@ import {
 export const useResizeTableHeader = () => {
   const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const resizeFieldOffsetAtom = useRecoilComponentStateCallbackStateV2(
+  const resizeFieldOffset = useRecoilComponentStateCallbackStateV2(
     resizeFieldOffsetComponentState,
     recordTableId,
   );
@@ -146,16 +146,16 @@ export const useResizeTableHeader = () => {
 
     if (!resizedFieldMetadataItemId) return;
 
-    const resizeFieldOffset = store.get(resizeFieldOffsetAtom);
+    const currentResizeFieldOffset = store.get(resizeFieldOffset);
 
     const nextWidth = Math.round(
       Math.max(
-        recordField.size + resizeFieldOffset,
+        recordField.size + currentResizeFieldOffset,
         RECORD_TABLE_COLUMN_MIN_WIDTH,
       ),
     );
 
-    store.set(resizeFieldOffsetAtom, 0);
+    store.set(resizeFieldOffset, 0);
     setInitialPointerPositionX(null);
     setResizedFieldMetadataItemId(null);
 
@@ -171,7 +171,7 @@ export const useResizeTableHeader = () => {
   }, [
     saveRecordFields,
     resizedFieldMetadataItemId,
-    resizeFieldOffsetAtom,
+    resizeFieldOffset,
     store,
     setResizedFieldMetadataItemId,
     updateRecordField,

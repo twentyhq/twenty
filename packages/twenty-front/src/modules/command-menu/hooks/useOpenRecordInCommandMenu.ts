@@ -15,7 +15,6 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CommandMenuPages } from 'twenty-shared/types';
 
 import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInCommandMenuSideEffects';
@@ -25,8 +24,10 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
+import { useStore } from 'jotai';
 
 export const useOpenRecordInCommandMenu = () => {
+  const store = useStore();
   const theme = useTheme();
   const { getIcon } = useIcons();
 
@@ -46,14 +47,12 @@ export const useOpenRecordInCommandMenu = () => {
       isNewRecord?: boolean;
       resetNavigationStack?: boolean;
     }) => {
-      const navigationStack = jotaiStore.get(
-        commandMenuNavigationStackState.atom,
-      );
+      const navigationStack = store.get(commandMenuNavigationStackState.atom);
 
       const currentNavigationStackItem = navigationStack.at(-1);
 
       if (isDefined(currentNavigationStackItem)) {
-        const currentRecordId = jotaiStore.get(
+        const currentRecordId = store.get(
           viewableRecordIdComponentState.atomFamily({
             instanceId: currentNavigationStackItem.pageId,
           }),
@@ -66,21 +65,21 @@ export const useOpenRecordInCommandMenu = () => {
 
       const pageComponentInstanceId = v4();
 
-      jotaiStore.set(
+      store.set(
         viewableRecordNameSingularComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
         objectNameSingular,
       );
-      jotaiStore.set(
+      store.set(
         viewableRecordIdComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
         recordId,
       );
-      jotaiStore.set(viewableRecordIdState.atom, recordId);
+      store.set(viewableRecordIdState.atom, recordId);
 
-      const objectMetadataItem = jotaiStore.get(
+      const objectMetadataItem = store.get(
         objectMetadataItemFamilySelector.selectorFamily({
           objectName: objectNameSingular,
           objectNameType: 'singular',
@@ -93,14 +92,14 @@ export const useOpenRecordInCommandMenu = () => {
         );
       }
 
-      jotaiStore.set(
+      store.set(
         contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
         objectMetadataItem.id,
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreTargetedRecordsRuleComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
@@ -110,43 +109,43 @@ export const useOpenRecordInCommandMenu = () => {
         },
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
         1,
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreCurrentViewTypeComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
         ContextStoreViewType.ShowPage,
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreCurrentViewIdComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
-        jotaiStore.get(
+        store.get(
           contextStoreCurrentViewIdComponentState.atomFamily({
             instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         ),
       );
 
-      jotaiStore.set(
+      store.set(
         contextStoreIsPageInEditModeComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
-        jotaiStore.get(
+        store.get(
           contextStoreIsPageInEditModeComponentState.atomFamily({
             instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         ),
       );
 
-      const currentMorphItems = jotaiStore.get(
+      const currentMorphItems = store.get(
         commandMenuNavigationMorphItemsByPageState.atom,
       );
 
@@ -158,7 +157,7 @@ export const useOpenRecordInCommandMenu = () => {
       const newMorphItemsMap = new Map(currentMorphItems);
       newMorphItemsMap.set(pageComponentInstanceId, [morphItemToAdd]);
 
-      jotaiStore.set(
+      store.set(
         commandMenuNavigationMorphItemsByPageState.atom,
         newMorphItemsMap,
       );
@@ -197,6 +196,7 @@ export const useOpenRecordInCommandMenu = () => {
       navigateCommandMenu,
       runWorkflowRunOpeningInCommandMenuSideEffects,
       theme,
+      store,
     ],
   );
 

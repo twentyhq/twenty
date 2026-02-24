@@ -15,7 +15,7 @@ import { useContext } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { findById, isDefined } from 'twenty-shared/utils';
 import { type AggregateChartConfiguration } from '~/generated-metadata/graphql';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 export const useGraphWidgetAggregateQuery = ({
   objectMetadataItemId,
@@ -88,7 +88,7 @@ export const useGraphWidgetAggregateQuery = ({
   });
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
+  const dateLocale = useRecoilValueV2(dateLocaleState);
 
   if (isRatioQuery) {
     const isRatioLoading = ratioNumeratorLoading || ratioDenominatorLoading;

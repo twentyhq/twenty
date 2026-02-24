@@ -40,7 +40,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     componentInstanceId,
   );
 
-  const activeTabIdAtom = activeTabIdComponentState.atomFamily({
+  const activeTabId = activeTabIdComponentState.atomFamily({
     instanceId: tabListComponentInstanceId,
   });
 
@@ -59,14 +59,14 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     const pageLayoutPersisted = store.get(pageLayoutPersistedState);
 
     if (isDefined(pageLayoutPersisted)) {
-      const currentActiveTabId = store.get(activeTabIdAtom);
+      const currentActiveTabId = store.get(activeTabId);
 
       const persistedTabIds = pageLayoutPersisted.tabs.map((tab) => tab.id);
       const isActiveTabInPersistedTabs =
         currentActiveTabId && persistedTabIds.includes(currentActiveTabId);
 
       if (!isActiveTabInPersistedTabs && pageLayoutPersisted.tabs.length > 0) {
-        store.set(activeTabIdAtom, pageLayoutPersisted.tabs[0].id);
+        store.set(activeTabId, pageLayoutPersisted.tabs[0].id);
       }
 
       store.set(pageLayoutDraftState, {
@@ -91,7 +91,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     pageLayoutCurrentLayoutsState,
     fieldsWidgetGroupsDraftState,
     fieldsWidgetGroupsPersistedState,
-    activeTabIdAtom,
+    activeTabId,
     store,
   ]);
 

@@ -9,11 +9,11 @@ import { isDefined } from 'twenty-shared/utils';
 export const useRemoveStepFilterGroup = () => {
   const { onFilterSettingsUpdate } = useContext(WorkflowStepFilterContext);
 
-  const currentStepFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+  const currentStepFilterGroups = useRecoilComponentStateCallbackStateV2(
     currentStepFilterGroupsComponentState,
   );
 
-  const currentStepFiltersAtom = useRecoilComponentStateCallbackStateV2(
+  const currentStepFilters = useRecoilComponentStateCallbackStateV2(
     currentStepFiltersComponentState,
   );
 
@@ -21,8 +21,8 @@ export const useRemoveStepFilterGroup = () => {
 
   const removeStepFilterGroup = useCallback(
     (stepFilterGroupId: string) => {
-      const stepFilterGroups = store.get(currentStepFilterGroupsAtom);
-      const stepFilters = store.get(currentStepFiltersAtom);
+      const stepFilterGroups = store.get(currentStepFilterGroups);
+      const stepFilters = store.get(currentStepFilters);
 
       const rootStepFilterGroup = stepFilterGroups.find(
         (filterGroup) => !isDefined(filterGroup.parentStepFilterGroupId),
@@ -42,16 +42,16 @@ export const useRemoveStepFilterGroup = () => {
         updatedStepFilters.length === 0;
 
       if (shouldResetStepFilterSettings) {
-        store.set(currentStepFilterGroupsAtom, []);
-        store.set(currentStepFiltersAtom, []);
+        store.set(currentStepFilterGroups, []);
+        store.set(currentStepFilters, []);
 
         onFilterSettingsUpdate({
           stepFilterGroups: [],
           stepFilters: [],
         });
       } else {
-        store.set(currentStepFilterGroupsAtom, updatedStepFilterGroups);
-        store.set(currentStepFiltersAtom, updatedStepFilters);
+        store.set(currentStepFilterGroups, updatedStepFilterGroups);
+        store.set(currentStepFilters, updatedStepFilters);
 
         onFilterSettingsUpdate({
           stepFilterGroups: updatedStepFilterGroups,
@@ -61,8 +61,8 @@ export const useRemoveStepFilterGroup = () => {
     },
     [
       onFilterSettingsUpdate,
-      currentStepFilterGroupsAtom,
-      currentStepFiltersAtom,
+      currentStepFilterGroups,
+      currentStepFilters,
       store,
     ],
   );

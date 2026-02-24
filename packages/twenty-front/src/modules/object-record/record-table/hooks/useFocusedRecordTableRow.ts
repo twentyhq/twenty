@@ -29,26 +29,25 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
   );
 
   const store = useStore();
-  const focusedRowIndexAtom = useRecoilComponentStateCallbackStateV2(
+  const focusedRowIndex = useRecoilComponentStateCallbackStateV2(
     focusedRecordTableRowIndexComponentState,
     recordTableIdFromContext,
   );
 
-  const isRowFocusActiveAtom = useRecoilComponentStateCallbackStateV2(
+  const isRowFocusActive = useRecoilComponentStateCallbackStateV2(
     isRecordTableRowFocusActiveComponentState,
     recordTableIdFromContext,
   );
 
-  const focusedCellPositionAtom = useRecoilComponentStateCallbackStateV2(
+  const focusedCellPosition = useRecoilComponentStateCallbackStateV2(
     recordTableFocusPositionComponentState,
     recordTableIdFromContext,
   );
 
-  const isRecordTableCellFocusActiveAtom =
-    useRecoilComponentStateCallbackStateV2(
-      isRecordTableCellFocusActiveComponentState,
-      recordTableIdFromContext,
-    );
+  const isRecordTableCellFocusActive = useRecoilComponentStateCallbackStateV2(
+    isRecordTableCellFocusActiveComponentState,
+    recordTableIdFromContext,
+  );
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
@@ -60,49 +59,46 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
   );
 
   const unfocusRecordTableRow = useCallback(() => {
-    const focusedRowIndex = store.get(focusedRowIndexAtom) as
-      | number
-      | null
-      | undefined;
+    const currentFocusedRowIndex = store.get(focusedRowIndex);
 
-    if (!isDefined(focusedRowIndex)) {
+    if (!isDefined(currentFocusedRowIndex)) {
       return;
     }
 
     const focusId = getRecordTableRowFocusId({
       recordTableId: recordTableIdFromContext,
-      rowIndex: focusedRowIndex,
+      rowIndex: currentFocusedRowIndex,
     });
 
     removeFocusItemFromFocusStackById({
       focusId,
     });
 
-    store.set(focusedRowIndexAtom, null);
-    store.set(isRowFocusedState(focusedRowIndex), false);
-    store.set(isRowFocusActiveAtom, false);
+    store.set(focusedRowIndex, null);
+    store.set(isRowFocusedState(currentFocusedRowIndex), false);
+    store.set(isRowFocusActive, false);
   }, [
     store,
-    focusedRowIndexAtom,
+    focusedRowIndex,
     isRowFocusedState,
-    isRowFocusActiveAtom,
+    isRowFocusActive,
     recordTableIdFromContext,
     removeFocusItemFromFocusStackById,
   ]);
 
   const focusRecordTableRow = useCallback(
     (rowIndex: number) => {
-      const focusedRowIndex = store.get(focusedRowIndexAtom) as
-        | number
-        | null
-        | undefined;
+      const currentFocusedRowIndex = store.get(focusedRowIndex);
 
-      if (isDefined(focusedRowIndex) && focusedRowIndex !== rowIndex) {
-        store.set(isRowFocusedState(focusedRowIndex), false);
+      if (
+        isDefined(currentFocusedRowIndex) &&
+        currentFocusedRowIndex !== rowIndex
+      ) {
+        store.set(isRowFocusedState(currentFocusedRowIndex), false);
 
         const focusId = getRecordTableRowFocusId({
           recordTableId: recordTableIdFromContext,
-          rowIndex: focusedRowIndex,
+          rowIndex: currentFocusedRowIndex,
         });
 
         removeFocusItemFromFocusStackById({
@@ -123,50 +119,47 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
         },
       });
 
-      store.set(focusedRowIndexAtom, rowIndex);
+      store.set(focusedRowIndex, rowIndex);
       store.set(isRowFocusedState(rowIndex), true);
-      store.set(isRowFocusActiveAtom, true);
+      store.set(isRowFocusActive, true);
     },
     [
       store,
-      focusedRowIndexAtom,
+      focusedRowIndex,
       recordTableIdFromContext,
       pushFocusItemToFocusStack,
       isRowFocusedState,
-      isRowFocusActiveAtom,
+      isRowFocusActive,
       removeFocusItemFromFocusStackById,
     ],
   );
 
   const restoreRecordTableRowFocusFromCellPosition = useCallback(() => {
-    const focusedRowIndex = store.get(focusedRowIndexAtom) as
-      | number
-      | null
-      | undefined;
+    const currentFocusedRowIndex = store.get(focusedRowIndex);
 
-    const focusedCellPosition = store.get(focusedCellPositionAtom) as
-      | { row: number; column: number }
-      | null
-      | undefined;
+    const currentFocusedCellPosition = store.get(focusedCellPosition);
 
-    const isRecordTableCellFocusActive = store.get(
-      isRecordTableCellFocusActiveAtom,
+    const currentIsRecordTableCellFocusActive = store.get(
+      isRecordTableCellFocusActive,
     );
 
-    if (!isDefined(focusedCellPosition) || !isRecordTableCellFocusActive) {
+    if (
+      !isDefined(currentFocusedCellPosition) ||
+      !currentIsRecordTableCellFocusActive
+    ) {
       return;
     }
 
     unfocusRecordTableCell();
 
-    if (isDefined(focusedRowIndex)) {
-      focusRecordTableRow(focusedCellPosition.row);
+    if (isDefined(currentFocusedRowIndex)) {
+      focusRecordTableRow(currentFocusedCellPosition.row);
     }
   }, [
     store,
-    focusedRowIndexAtom,
-    focusedCellPositionAtom,
-    isRecordTableCellFocusActiveAtom,
+    focusedRowIndex,
+    focusedCellPosition,
+    isRecordTableCellFocusActive,
     unfocusRecordTableCell,
     focusRecordTableRow,
   ]);

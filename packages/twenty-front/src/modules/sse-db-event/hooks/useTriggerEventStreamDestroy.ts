@@ -4,22 +4,23 @@ import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroying
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useTriggerEventStreamDestroy = () => {
+  const store = useStore();
   const setIsDestroyingEventStream = useSetRecoilStateV2(
     isDestroyingEventStreamState,
   );
 
   const triggerEventStreamDestroy = useCallback(() => {
-    const isDestroyingEventStream = jotaiStore.get(
+    const isDestroyingEventStream = store.get(
       isDestroyingEventStreamState.atom,
     );
 
-    const isCreatingSseEventStream = jotaiStore.get(
+    const isCreatingSseEventStream = store.get(
       isCreatingSseEventStreamState.atom,
     );
 
@@ -29,23 +30,23 @@ export const useTriggerEventStreamDestroy = () => {
 
     setIsDestroyingEventStream(true);
 
-    const eventStreamId = jotaiStore.get(sseEventStreamIdState.atom);
+    const eventStreamId = store.get(sseEventStreamIdState.atom);
 
-    const disposeFunctionForEventStream = jotaiStore.get(
+    const disposeFunctionForEventStream = store.get(
       disposeFunctionForEventStreamState.atom,
     );
 
     if (isNonEmptyString(eventStreamId)) {
       disposeFunctionForEventStream?.dispose();
 
-      jotaiStore.set(sseEventStreamIdState.atom, null);
-      jotaiStore.set(sseEventStreamReadyState.atom, false);
-      jotaiStore.set(disposeFunctionForEventStreamState.atom, null);
-      jotaiStore.set(shouldDestroyEventStreamState.atom, false);
+      store.set(sseEventStreamIdState.atom, null);
+      store.set(sseEventStreamReadyState.atom, false);
+      store.set(disposeFunctionForEventStreamState.atom, null);
+      store.set(shouldDestroyEventStreamState.atom, false);
     }
 
     setIsDestroyingEventStream(false);
-  }, [setIsDestroyingEventStream]);
+  }, [setIsDestroyingEventStream, store]);
 
   return {
     triggerEventStreamDestroy,

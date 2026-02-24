@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
@@ -15,9 +16,11 @@ import { CommandMenuPages } from 'twenty-shared/types';
 import { IconList, IconSearch } from 'twenty-ui/display';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>
-    <MemoryRouter>{children}</MemoryRouter>
-  </RecoilRoot>
+  <JotaiProvider store={jotaiStore}>
+    <RecoilRoot>
+      <MemoryRouter>{children}</MemoryRouter>
+    </RecoilRoot>
+  </JotaiProvider>
 );
 
 const renderHooks = () => {

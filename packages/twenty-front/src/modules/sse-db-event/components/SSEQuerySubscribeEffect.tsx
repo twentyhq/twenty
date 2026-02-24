@@ -5,7 +5,6 @@ import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQuery
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { ApolloError, useMutation } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -19,8 +18,10 @@ import {
   type AddQuerySubscriptionInput,
   type RemoveQueryFromEventStreamInput,
 } from '~/generated-metadata/graphql';
+import { useStore } from 'jotai';
 
 export const SSEQuerySubscribeEffect = () => {
+  const store = useStore();
   const sseEventStreamId = useRecoilValueV2(sseEventStreamIdState);
   const sseEventStreamReady = useRecoilValueV2(sseEventStreamReadyState);
 
@@ -42,11 +43,9 @@ export const SSEQuerySubscribeEffect = () => {
       return;
     }
 
-    const requiredQueryListeners = jotaiStore.get(
-      requiredQueryListenersState.atom,
-    );
+    const requiredQueryListeners = store.get(requiredQueryListenersState.atom);
 
-    const activeQueryListeners = jotaiStore.get(activeQueryListenersState.atom);
+    const activeQueryListeners = store.get(activeQueryListenersState.atom);
 
     const queryListenersToAdd = requiredQueryListeners.filter(
       (listener) =>
@@ -92,8 +91,8 @@ export const SSEQuerySubscribeEffect = () => {
         switch (subCode) {
           case 'EVENT_STREAM_DOES_NOT_EXIST':
           case 'EVENT_STREAM_ALREADY_EXISTS': {
-            jotaiStore.set(activeQueryListenersState.atom, []);
-            jotaiStore.set(shouldDestroyEventStreamState.atom, true);
+            store.set(activeQueryListenersState.atom, []);
+            store.set(shouldDestroyEventStreamState.atom, true);
             return;
           }
           default: {
@@ -105,8 +104,13 @@ export const SSEQuerySubscribeEffect = () => {
       }
     }
 
-    jotaiStore.set(activeQueryListenersState.atom, requiredQueryListeners);
-  }, [addQueryToEventStream, removeQueryFromEventStream, sseEventStreamId]);
+    store.set(activeQueryListenersState.atom, requiredQueryListeners);
+  }, [
+    addQueryToEventStream,
+    removeQueryFromEventStream,
+    sseEventStreamId,
+    store,
+  ]);
 
   const debouncedUpdateQueryListeners = useDebouncedCallback(
     updateQueryListeners,

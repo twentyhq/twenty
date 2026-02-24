@@ -5,7 +5,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const useUpsertRecordSort = () => {
-  const currentRecordSortsAtom = useRecoilComponentStateCallbackStateV2(
+  const currentRecordSorts = useRecoilComponentStateCallbackStateV2(
     currentRecordSortsComponentState,
   );
 
@@ -13,46 +13,40 @@ export const useUpsertRecordSort = () => {
 
   const upsertRecordSort = useCallback(
     (recordSortToSet: RecordSort) => {
-      const currentRecordSorts = store.get(
-        currentRecordSortsAtom,
-      ) as RecordSort[];
+      const existingRecordSorts = store.get(currentRecordSorts) as RecordSort[];
 
-      const hasFoundRecordSortInCurrentRecordSorts = currentRecordSorts.some(
+      const hasFoundRecordSortInCurrentRecordSorts = existingRecordSorts.some(
         (existingSort) =>
           existingSort.fieldMetadataId === recordSortToSet.fieldMetadataId,
       );
 
       if (!hasFoundRecordSortInCurrentRecordSorts) {
-        store.set(currentRecordSortsAtom, [
-          ...currentRecordSorts,
+        store.set(currentRecordSorts, [
+          ...existingRecordSorts,
           recordSortToSet,
         ]);
       } else {
-        store.set(
-          currentRecordSortsAtom,
-          (currentRecordSorts: RecordSort[]) => {
-            const newCurrentRecordSorts = [...currentRecordSorts];
+        store.set(currentRecordSorts, (previousRecordSorts: RecordSort[]) => {
+          const newCurrentRecordSorts = [...previousRecordSorts];
 
-            const indexOfSortToUpdate = newCurrentRecordSorts.findIndex(
-              (existingSort) =>
-                existingSort.fieldMetadataId ===
-                recordSortToSet.fieldMetadataId,
-            );
+          const indexOfSortToUpdate = newCurrentRecordSorts.findIndex(
+            (existingSort) =>
+              existingSort.fieldMetadataId === recordSortToSet.fieldMetadataId,
+          );
 
-            if (indexOfSortToUpdate < 0) {
-              return newCurrentRecordSorts;
-            }
-
-            newCurrentRecordSorts[indexOfSortToUpdate] = {
-              ...recordSortToSet,
-            };
-
+          if (indexOfSortToUpdate < 0) {
             return newCurrentRecordSorts;
-          },
-        );
+          }
+
+          newCurrentRecordSorts[indexOfSortToUpdate] = {
+            ...recordSortToSet,
+          };
+
+          return newCurrentRecordSorts;
+        });
       }
     },
-    [currentRecordSortsAtom, store],
+    [currentRecordSorts, store],
   );
 
   return {

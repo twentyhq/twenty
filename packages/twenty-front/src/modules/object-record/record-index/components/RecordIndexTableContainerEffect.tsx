@@ -5,12 +5,13 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { type ViewField } from '@/views/types/ViewField';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const RecordIndexTableContainerEffect = () => {
+  const store = useStore();
   const { objectNameSingular } = useRecordIndexContextOrThrow();
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -24,7 +25,7 @@ export const RecordIndexTableContainerEffect = () => {
 
   const setViewFieldAggregateOperation = useCallback(
     (viewField: ViewField) => {
-      const aggregateOperationForViewField = jotaiStore.get(
+      const aggregateOperationForViewField = store.get(
         viewFieldAggregateOperationState.atomFamily({
           viewFieldId: viewField.id,
         }),
@@ -47,7 +48,7 @@ export const RecordIndexTableContainerEffect = () => {
       if (
         aggregateOperationForViewField !== convertedViewFieldAggregateOperation
       ) {
-        jotaiStore.set(
+        store.set(
           viewFieldAggregateOperationState.atomFamily({
             viewFieldId: viewField.id,
           }),
@@ -55,7 +56,7 @@ export const RecordIndexTableContainerEffect = () => {
         );
       }
     },
-    [columnDefinitions],
+    [columnDefinitions, store],
   );
 
   useEffect(() => {

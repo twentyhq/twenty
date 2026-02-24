@@ -31,16 +31,15 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
 
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const allRecordIdsWithoutGroupAtom =
-    useRecoilComponentSelectorCallbackStateV2(
-      allRecordIdsWithoutGroupsComponentSelector,
-    );
+  const allRecordIdsWithoutGroup = useRecoilComponentSelectorCallbackStateV2(
+    allRecordIdsWithoutGroupsComponentSelector,
+  );
 
-  const selectedRowIdsAtom = useRecoilComponentSelectorCallbackStateV2(
+  const selectedRowIds = useRecoilComponentSelectorCallbackStateV2(
     selectedRowIdsComponentSelector,
   );
 
-  const originalDragSelectionAtom = useRecoilComponentStateCallbackStateV2(
+  const originalDragSelection = useRecoilComponentStateCallbackStateV2(
     originalDragSelectionComponentState,
     recordIndexId,
   );
@@ -63,12 +62,10 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
         return;
       }
 
-      const allSparseRecordIds = store.get(
-        allRecordIdsWithoutGroupAtom,
-      ) as string[];
+      const allSparseRecordIds = store.get(allRecordIdsWithoutGroup);
 
       const draggedRecordId = tableRecordDropResult.draggableId;
-      const selectedRecordIds = store.get(selectedRowIdsAtom) as string[];
+      const selectedRecordIds = store.get(selectedRowIds);
 
       const isDroppedAfterList =
         tableRecordDropResult.destination.index + 1 >=
@@ -77,9 +74,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
       const recordsWithPosition: RecordWithPosition[] = allSparseRecordIds
         .filter((recordId): recordId is string => isDefined(recordId))
         .map((recordId: string) => {
-          const record = store.get(
-            recordStoreFamilyState.atomFamily(recordId),
-          ) as { position?: number } | null | undefined;
+          const record = store.get(recordStoreFamilyState.atomFamily(recordId));
           return {
             id: recordId,
             position: record?.position ?? 0,
@@ -136,14 +131,12 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
           );
         }
 
-        const originalDragSelection = store.get(
-          originalDragSelectionAtom,
-        ) as string[];
+        const existingOriginalDragSelection = store.get(originalDragSelection);
 
         const multiDragResult = processMultiDrag({
           draggedRecordId,
           targetRecordId: targetRecordId ?? '',
-          selectedRecordIds: originalDragSelection,
+          selectedRecordIds: existingOriginalDragSelection,
           recordsWithPosition: contiguousRecordsWithPosition,
           isDroppedAfterList,
         });
@@ -165,13 +158,13 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
     },
     [
       objectNameSingular,
-      selectedRowIdsAtom,
+      selectedRowIds,
       store,
       updateOneRecord,
       openModal,
       currentRecordSorts,
-      originalDragSelectionAtom,
-      allRecordIdsWithoutGroupAtom,
+      originalDragSelection,
+      allRecordIdsWithoutGroup,
       triggerTableWithoutGroupDragAndDropOptimisticUpdate,
     ],
   );

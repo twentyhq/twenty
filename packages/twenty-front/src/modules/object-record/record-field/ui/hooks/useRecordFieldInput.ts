@@ -5,7 +5,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const useRecordFieldInput = <FieldValue>() => {
-  const recordFieldInputDraftValueAtom = useRecoilComponentStateCallbackStateV2(
+  const recordFieldInputDraftValue = useRecoilComponentStateCallbackStateV2(
     recordFieldInputDraftValueComponentState,
   );
 
@@ -13,9 +13,9 @@ export const useRecordFieldInput = <FieldValue>() => {
 
   const setDraftValue = useCallback(
     (newValue: unknown) => {
-      store.set(recordFieldInputDraftValueAtom, newValue);
+      store.set(recordFieldInputDraftValue, newValue);
     },
-    [store, recordFieldInputDraftValueAtom],
+    [store, recordFieldInputDraftValue],
   );
 
   const isDraftValueEmpty = (

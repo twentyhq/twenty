@@ -21,7 +21,6 @@ import { viewFieldAggregateOperationState } from '@/object-record/record-table/r
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { type View } from '@/views/types/View';
 import { type ViewField } from '@/views/types/ViewField';
@@ -77,13 +76,13 @@ export const useLoadRecordIndexStates = () => {
         (field) => field.isActive && !isHiddenSystemField(field),
       );
 
-      const filterableFieldMetadataItems = jotaiStore.get(
+      const filterableFieldMetadataItems = store.get(
         availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
           objectMetadataItemId: objectMetadataItem.id,
         }),
       );
 
-      const sortableFieldMetadataItems = jotaiStore.get(
+      const sortableFieldMetadataItems = store.get(
         availableFieldMetadataItemsForSortFamilySelector.selectorFamily({
           objectMetadataItemId: objectMetadataItem.id,
         }),
@@ -122,17 +121,14 @@ export const useLoadRecordIndexStates = () => {
         columnDefinitions,
       });
 
-      const existingRecordIndexFieldDefinitions = jotaiStore.get(
+      const existingRecordIndexFieldDefinitions = store.get(
         recordIndexFieldDefinitionsState.atom,
       );
 
       if (
         !isDeeplyEqual(existingRecordIndexFieldDefinitions, newFieldDefinitions)
       ) {
-        jotaiStore.set(
-          recordIndexFieldDefinitionsState.atom,
-          newFieldDefinitions,
-        );
+        store.set(recordIndexFieldDefinitionsState.atom, newFieldDefinitions);
       }
 
       for (const viewField of viewFields) {
@@ -140,7 +136,7 @@ export const useLoadRecordIndexStates = () => {
           (field) => field.id === viewField.fieldMetadataId,
         )?.type;
 
-        const aggregateOperationForViewField = jotaiStore.get(
+        const aggregateOperationForViewField = store.get(
           viewFieldAggregateOperationState.atomFamily({
             viewFieldId: viewField.id,
           }),
@@ -158,7 +154,7 @@ export const useLoadRecordIndexStates = () => {
           aggregateOperationForViewField !==
           convertedViewFieldAggregateOperation
         ) {
-          jotaiStore.set(
+          store.set(
             viewFieldAggregateOperationState.atomFamily({
               viewFieldId: viewField.id,
             }),
@@ -167,12 +163,12 @@ export const useLoadRecordIndexStates = () => {
         }
       }
     },
-    [],
+    [store],
   );
 
   const loadRecordIndexStates = useCallback(
     async (view: View, objectMetadataItem: ObjectMetadataItem) => {
-      const filterableFieldMetadataItems = jotaiStore.get(
+      const filterableFieldMetadataItems = store.get(
         availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
           objectMetadataItemId: objectMetadataItem.id,
         }),

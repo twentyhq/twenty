@@ -8,7 +8,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const useSelectAllCards = (recordBoardId?: string) => {
-  const allCardsSelectedStatusAtom = useRecoilComponentSelectorCallbackStateV2(
+  const allCardsSelectedStatus = useRecoilComponentSelectorCallbackStateV2(
     allCardsSelectedStatusComponentSelector,
     recordBoardId,
   );
@@ -17,7 +17,7 @@ export const useSelectAllCards = (recordBoardId?: string) => {
       isRecordBoardCardSelectedComponentFamilyState,
       recordBoardId,
     );
-  const allRecordIdsOfAllRecordGroupsAtom =
+  const allRecordIdsOfAllRecordGroups =
     useRecoilComponentSelectorCallbackStateV2(
       allRecordIdsOfAllRecordGroupsComponentSelector,
       recordBoardId,
@@ -29,22 +29,23 @@ export const useSelectAllCards = (recordBoardId?: string) => {
   const store = useStore();
 
   const selectAllCards = useCallback(() => {
-    const allCardsSelectedStatus = store.get(allCardsSelectedStatusAtom);
-    const allRecordIds = store.get(allRecordIdsOfAllRecordGroupsAtom);
+    const currentAllCardsSelectedStatus = store.get(allCardsSelectedStatus);
+    const allRecordIds = store.get(allRecordIdsOfAllRecordGroups);
 
-    if (allCardsSelectedStatus === 'all') {
+    if (currentAllCardsSelectedStatus === 'all') {
       resetRecordBoardSelection();
     }
 
     for (const recordId of allRecordIds) {
       const isSelected =
-        allCardsSelectedStatus === 'none' || allCardsSelectedStatus === 'some';
+        currentAllCardsSelectedStatus === 'none' ||
+        currentAllCardsSelectedStatus === 'some';
 
       store.set(isRecordBoardCardSelectedFamilyState(recordId), isSelected);
     }
   }, [
-    allCardsSelectedStatusAtom,
-    allRecordIdsOfAllRecordGroupsAtom,
+    allCardsSelectedStatus,
+    allRecordIdsOfAllRecordGroups,
     resetRecordBoardSelection,
     isRecordBoardCardSelectedFamilyState,
     store,

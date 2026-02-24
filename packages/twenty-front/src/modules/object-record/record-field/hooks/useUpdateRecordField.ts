@@ -1,14 +1,15 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useUpdateRecordField = (
   recordFieldComponentInstanceId?: string,
 ) => {
-  const currentRecordFieldsAtom = useRecoilComponentStateCallbackStateV2(
+  const store = useStore();
+  const currentRecordFields = useRecoilComponentStateCallbackStateV2(
     currentRecordFieldsComponentState,
     recordFieldComponentInstanceId,
   );
@@ -20,9 +21,9 @@ export const useUpdateRecordField = (
         Pick<RecordField, 'isVisible' | 'size' | 'position'>
       >,
     ) => {
-      const currentRecordFields = jotaiStore.get(currentRecordFieldsAtom);
+      const existingRecordFields = store.get(currentRecordFields);
 
-      const foundRecordFieldInCurrentRecordFields = currentRecordFields.find(
+      const foundRecordFieldInCurrentRecordFields = existingRecordFields.find(
         (existingRecordField) =>
           existingRecordField.fieldMetadataItemId === fieldMetadataItemId,
       );
@@ -33,8 +34,8 @@ export const useUpdateRecordField = (
         );
       }
 
-      jotaiStore.set(currentRecordFieldsAtom, (currentRecordFields) => {
-        const newCurrentRecordFields = [...currentRecordFields];
+      store.set(currentRecordFields, (previousRecordFields) => {
+        const newCurrentRecordFields = [...previousRecordFields];
 
         const indexOfRecordFieldToUpdate = newCurrentRecordFields.findIndex(
           (existingRecordField) =>
@@ -54,7 +55,7 @@ export const useUpdateRecordField = (
         ...partialRecordField,
       } satisfies RecordField as RecordField;
     },
-    [currentRecordFieldsAtom],
+    [currentRecordFields, store],
   );
 
   return {

@@ -3,11 +3,12 @@ import { useCallback } from 'react';
 import { FIND_MANY_NAVIGATION_MENU_ITEMS } from '@/navigation-menu-item/graphql/queries/findManyNavigationMenuItems';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useRemoveNavigationMenuItemByTargetRecordId = () => {
+  const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const cache = apolloCoreClient.cache;
 
@@ -18,7 +19,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
   const removeNavigationMenuItemsByTargetRecordIds = useCallback(
     (targetRecordIds: string[]) => {
       const targetRecordIdsSet = new Set(targetRecordIds);
-      const currentNavigationMenuItems = jotaiStore.get(
+      const currentNavigationMenuItems = store.get(
         prefetchNavigationMenuItemsState.atom,
       );
 
@@ -41,7 +42,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
         };
       });
     },
-    [cache, setNavigationMenuItemsState],
+    [cache, setNavigationMenuItemsState, store],
   );
 
   return {

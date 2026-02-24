@@ -3,7 +3,6 @@ import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workfl
 import { commandMenuWorkflowRunIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowRunIdComponentState';
 import { commandMenuWorkflowStepIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowStepIdComponentState';
 import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { useSetInitialWorkflowRunRightDrawerTab } from '@/workflow/workflow-diagram/hooks/useSetInitialWorkflowRunRightDrawerTab';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
@@ -17,8 +16,10 @@ import {
   IconSettingsAutomation,
 } from 'twenty-ui/display';
 import { v4 } from 'uuid';
+import { useStore } from 'jotai';
 
 export const useWorkflowCommandMenu = () => {
+  const store = useStore();
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const { setInitialWorkflowRunRightDrawerTab } =
     useSetInitialWorkflowRunRightDrawerTab();
@@ -27,7 +28,7 @@ export const useWorkflowCommandMenu = () => {
     (workflowId: string) => {
       const pageId = v4();
 
-      jotaiStore.set(
+      store.set(
         commandMenuWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
         }),
@@ -41,14 +42,14 @@ export const useWorkflowCommandMenu = () => {
         pageId,
       });
     },
-    [navigateCommandMenu],
+    [navigateCommandMenu, store],
   );
 
   const openWorkflowCreateStepInCommandMenu = useCallback(
     (workflowId: string) => {
       const pageId = v4();
 
-      jotaiStore.set(
+      store.set(
         commandMenuWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
         }),
@@ -62,7 +63,7 @@ export const useWorkflowCommandMenu = () => {
         pageId,
       });
     },
-    [navigateCommandMenu],
+    [navigateCommandMenu, store],
   );
 
   const openWorkflowEditStepInCommandMenu = useCallback(
@@ -74,7 +75,7 @@ export const useWorkflowCommandMenu = () => {
     ) => {
       const pageId = v4();
 
-      jotaiStore.set(
+      store.set(
         commandMenuWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
         }),
@@ -82,14 +83,14 @@ export const useWorkflowCommandMenu = () => {
       );
 
       if (isDefined(stepId)) {
-        jotaiStore.set(
+        store.set(
           commandMenuWorkflowStepIdComponentState.atomFamily({
             instanceId: pageId,
           }),
           stepId,
         );
 
-        jotaiStore.set(
+        store.set(
           workflowSelectedNodeComponentState.atomFamily({
             instanceId: workflowId,
           }),
@@ -104,14 +105,14 @@ export const useWorkflowCommandMenu = () => {
         pageId,
       });
     },
-    [navigateCommandMenu],
+    [navigateCommandMenu, store],
   );
 
   const openWorkflowEditStepTypeInCommandMenu = useCallback(
     (workflowId: string) => {
       const pageId = v4();
 
-      jotaiStore.set(
+      store.set(
         commandMenuWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
         }),
@@ -125,7 +126,7 @@ export const useWorkflowCommandMenu = () => {
         pageId,
       });
     },
-    [navigateCommandMenu],
+    [navigateCommandMenu, store],
   );
 
   const openWorkflowViewStepInCommandMenu = useCallback(
@@ -144,13 +145,13 @@ export const useWorkflowCommandMenu = () => {
     }) => {
       const pageId = v4();
 
-      jotaiStore.set(
+      store.set(
         commandMenuWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowId,
       );
-      jotaiStore.set(
+      store.set(
         commandMenuWorkflowVersionIdComponentState.atomFamily({
           instanceId: pageId,
         }),
@@ -158,14 +159,14 @@ export const useWorkflowCommandMenu = () => {
       );
 
       if (isDefined(stepId)) {
-        jotaiStore.set(
+        store.set(
           commandMenuWorkflowStepIdComponentState.atomFamily({
             instanceId: pageId,
           }),
           stepId,
         );
 
-        jotaiStore.set(
+        store.set(
           workflowSelectedNodeComponentState.atomFamily({
             instanceId: workflowVersionId,
           }),
@@ -180,7 +181,7 @@ export const useWorkflowCommandMenu = () => {
         pageId,
       });
     },
-    [navigateCommandMenu],
+    [navigateCommandMenu, store],
   );
 
   const openWorkflowRunViewStepInCommandMenu = useCallback(
@@ -201,26 +202,26 @@ export const useWorkflowCommandMenu = () => {
     }) => {
       const pageId = v4();
 
-      jotaiStore.set(
+      store.set(
         commandMenuWorkflowIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowId,
       );
-      jotaiStore.set(
+      store.set(
         commandMenuWorkflowRunIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowRunId,
       );
-      jotaiStore.set(
+      store.set(
         commandMenuWorkflowStepIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         workflowSelectedNode,
       );
 
-      jotaiStore.set(
+      store.set(
         workflowSelectedNodeComponentState.atomFamily({
           instanceId: workflowRunId,
         }),
@@ -239,7 +240,7 @@ export const useWorkflowCommandMenu = () => {
         stepExecutionStatus,
       });
     },
-    [navigateCommandMenu, setInitialWorkflowRunRightDrawerTab],
+    [navigateCommandMenu, setInitialWorkflowRunRightDrawerTab, store],
   );
 
   return {

@@ -27,7 +27,7 @@ import {
   isFieldMetadataDateKind,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 export const useAggregateRecordsForRecordTableColumnFooter = (
   aggregateFieldMetadataId: string,
@@ -43,7 +43,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     currentRecordFiltersComponentState,
   );
 
-  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
+  const dateLocale = useRecoilValueV2(dateLocaleState);
 
   const { filterValueDependencies } = useFilterValueDependencies();
 

@@ -44,7 +44,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
       recordBoardShouldFetchMoreInColumnComponentFamilyState,
     );
 
-  const recordIndexRecordGroupsAreInInitialLoadingAtom =
+  const recordIndexRecordGroupsAreInInitialLoading =
     useRecoilComponentStateCallbackStateV2(
       recordIndexRecordGroupsAreInInitialLoadingComponentState,
     );
@@ -76,10 +76,10 @@ export const useTriggerRecordBoardInitialQuery = () => {
     });
 
   const triggerRecordBoardInitialQuery = useCallback(async () => {
-    store.set(recordIndexRecordGroupsAreInInitialLoadingAtom, true);
+    store.set(recordIndexRecordGroupsAreInInitialLoading, true);
 
     const cleanStateBeforeExit = () => {
-      store.set(recordIndexRecordGroupsAreInInitialLoadingAtom, false);
+      store.set(recordIndexRecordGroupsAreInInitialLoading, false);
 
       setLastRecordBoardQueryIdentifier(queryIdentifier);
 
@@ -165,7 +165,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
 
     cleanStateBeforeExit();
   }, [
-    recordIndexRecordGroupsAreInInitialLoadingAtom,
+    recordIndexRecordGroupsAreInInitialLoading,
     store,
     executeRecordIndexGroupsRecordsLazyGroupBy,
     objectMetadataItem,

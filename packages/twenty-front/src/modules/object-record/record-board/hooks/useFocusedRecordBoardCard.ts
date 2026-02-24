@@ -14,17 +14,17 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useFocusedRecordBoardCard = (recordBoardId?: string) => {
   const store = useStore();
-  const isCardFocusedAtom = useRecoilComponentFamilyStateCallbackStateV2(
+  const isCardFocused = useRecoilComponentFamilyStateCallbackStateV2(
     isRecordBoardCardFocusedComponentFamilyState,
     recordBoardId,
   );
 
-  const focusedBoardCardIndexesAtom = useRecoilComponentStateCallbackStateV2(
+  const focusedBoardCardIndexes = useRecoilComponentStateCallbackStateV2(
     focusedRecordBoardCardIndexesComponentState,
     recordBoardId,
   );
 
-  const isCardFocusActiveAtom = useRecoilComponentStateCallbackStateV2(
+  const isCardFocusActive = useRecoilComponentStateCallbackStateV2(
     isRecordBoardCardFocusActiveComponentState,
     recordBoardId,
   );
@@ -34,53 +34,49 @@ export const useFocusedRecordBoardCard = (recordBoardId?: string) => {
     useRemoveFocusItemFromFocusStackById();
 
   const unfocusBoardCard = useCallback(() => {
-    const focusedBoardCardIndexes = store.get(focusedBoardCardIndexesAtom) as
-      | BoardCardIndexes
-      | null
-      | undefined;
+    const currentFocusedBoardCardIndexes = store.get(focusedBoardCardIndexes);
 
-    if (!isDefined(focusedBoardCardIndexes)) {
+    if (!isDefined(currentFocusedBoardCardIndexes)) {
       return;
     }
 
     const focusId = getRecordBoardCardFocusId({
       recordBoardId: recordBoardId || '',
-      cardIndexes: focusedBoardCardIndexes,
+      cardIndexes: currentFocusedBoardCardIndexes,
     });
 
     removeFocusItemFromFocusStackById({
       focusId,
     });
 
-    store.set(focusedBoardCardIndexesAtom, null);
-    store.set(isCardFocusedAtom(focusedBoardCardIndexes), false);
-    store.set(isCardFocusActiveAtom, false);
+    store.set(focusedBoardCardIndexes, null);
+    store.set(isCardFocused(currentFocusedBoardCardIndexes), false);
+    store.set(isCardFocusActive, false);
   }, [
     store,
-    focusedBoardCardIndexesAtom,
-    isCardFocusedAtom,
-    isCardFocusActiveAtom,
+    focusedBoardCardIndexes,
+    isCardFocused,
+    isCardFocusActive,
     recordBoardId,
     removeFocusItemFromFocusStackById,
   ]);
 
   const focusBoardCard = useCallback(
     (boardCardIndexes: BoardCardIndexes) => {
-      const focusedBoardCardIndexes = store.get(focusedBoardCardIndexesAtom) as
-        | BoardCardIndexes
-        | null
-        | undefined;
+      const currentFocusedBoardCardIndexes = store.get(focusedBoardCardIndexes);
 
       if (
-        isDefined(focusedBoardCardIndexes) &&
-        (focusedBoardCardIndexes.rowIndex !== boardCardIndexes.rowIndex ||
-          focusedBoardCardIndexes.columnIndex !== boardCardIndexes.columnIndex)
+        isDefined(currentFocusedBoardCardIndexes) &&
+        (currentFocusedBoardCardIndexes.rowIndex !==
+          boardCardIndexes.rowIndex ||
+          currentFocusedBoardCardIndexes.columnIndex !==
+            boardCardIndexes.columnIndex)
       ) {
-        store.set(isCardFocusedAtom(focusedBoardCardIndexes), false);
+        store.set(isCardFocused(currentFocusedBoardCardIndexes), false);
 
         const currentFocusId = getRecordBoardCardFocusId({
           recordBoardId: recordBoardId || '',
-          cardIndexes: focusedBoardCardIndexes,
+          cardIndexes: currentFocusedBoardCardIndexes,
         });
 
         removeFocusItemFromFocusStackById({
@@ -101,15 +97,15 @@ export const useFocusedRecordBoardCard = (recordBoardId?: string) => {
         },
       });
 
-      store.set(focusedBoardCardIndexesAtom, boardCardIndexes);
-      store.set(isCardFocusedAtom(boardCardIndexes), true);
-      store.set(isCardFocusActiveAtom, true);
+      store.set(focusedBoardCardIndexes, boardCardIndexes);
+      store.set(isCardFocused(boardCardIndexes), true);
+      store.set(isCardFocusActive, true);
     },
     [
       store,
-      focusedBoardCardIndexesAtom,
-      isCardFocusedAtom,
-      isCardFocusActiveAtom,
+      focusedBoardCardIndexes,
+      isCardFocused,
+      isCardFocusActive,
       recordBoardId,
       pushFocusItemToFocusStack,
       removeFocusItemFromFocusStackById,

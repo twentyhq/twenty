@@ -13,7 +13,7 @@ import {
 } from 'twenty-ui/display';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { v4 as uuidV4 } from 'uuid';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
@@ -123,7 +123,7 @@ export const ShowPageSummaryCard = ({
   loading,
   isMobile = false,
 }: ShowPageSummaryCardProps) => {
-  const { localeCatalog } = useRecoilValueV2(dateLocaleStateV2);
+  const { localeCatalog } = useRecoilValueV2(dateLocaleState);
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date, localeCatalog) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';

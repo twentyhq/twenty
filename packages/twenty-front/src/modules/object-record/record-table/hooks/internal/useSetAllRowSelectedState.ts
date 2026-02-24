@@ -3,7 +3,7 @@ import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jot
 import { useStore } from 'jotai';
 
 export const useSetHasUserSelectedAllRows = (recordTableId?: string) => {
-  const hasUserSelectedAllRowsAtom = useRecoilComponentStateCallbackStateV2(
+  const hasUserSelectedAllRows = useRecoilComponentStateCallbackStateV2(
     hasUserSelectedAllRowsComponentState,
     recordTableId,
   );
@@ -11,6 +11,6 @@ export const useSetHasUserSelectedAllRows = (recordTableId?: string) => {
   const store = useStore();
 
   return (selected: boolean) => {
-    store.set(hasUserSelectedAllRowsAtom, selected);
+    store.set(hasUserSelectedAllRows, selected);
   };
 };

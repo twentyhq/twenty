@@ -6,7 +6,7 @@ import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jot
 import { useStore } from 'jotai';
 
 export const useSetRecordIndexAggregateDisplayLabel = () => {
-  const recordIndexAggregateDisplayLabelAtom =
+  const recordIndexAggregateDisplayLabel =
     useRecoilComponentStateCallbackStateV2(
       recordIndexAggregateDisplayLabelComponentState,
     );
@@ -22,7 +22,7 @@ export const useSetRecordIndexAggregateDisplayLabel = () => {
       aggregateFieldMetadataItem: recordIndexGroupAggregateFieldMetadataItem,
     });
 
-    store.set(recordIndexAggregateDisplayLabelAtom, aggregateLabel);
+    store.set(recordIndexAggregateDisplayLabel, aggregateLabel);
   };
 
   return {

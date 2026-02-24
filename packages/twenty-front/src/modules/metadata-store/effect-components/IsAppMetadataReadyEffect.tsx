@@ -25,6 +25,9 @@ export const IsAppMetadataReadyEffect = () => {
     const areViewsLoaded = viewsEntry.status === 'loaded';
 
     if (!areObjectsLoaded) {
+      console.log('[IsAppMetadataReady] not ready: objects not loaded', {
+        objectsStatus: objectsEntry.status,
+      });
       setIsAppMetadataReady(false);
       return;
     }
@@ -32,6 +35,15 @@ export const IsAppMetadataReadyEffect = () => {
     const isReady =
       !isLoggedIn ||
       (isDefined(currentUser) && (!hasActiveWorkspace || areViewsLoaded));
+
+    console.log('[IsAppMetadataReady] evaluating:', {
+      isLoggedIn,
+      hasCurrentUser: isDefined(currentUser),
+      hasActiveWorkspace,
+      areObjectsLoaded,
+      areViewsLoaded,
+      isReady,
+    });
 
     setIsAppMetadataReady(isReady);
   }, [

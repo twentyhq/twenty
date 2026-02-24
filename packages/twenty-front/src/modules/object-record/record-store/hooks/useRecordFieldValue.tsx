@@ -9,7 +9,7 @@ export const useRecordFieldValue = <T extends unknown>(
   fieldName: string,
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>,
 ) => {
-  const fieldValueAtom = recordStoreFieldValueSelectorV2({
+  const fieldValue = recordStoreFieldValueSelectorV2({
     recordId,
     fieldName,
     fieldDefinition: {
@@ -18,5 +18,5 @@ export const useRecordFieldValue = <T extends unknown>(
     },
   });
 
-  return useAtomValue(fieldValueAtom) as T | undefined;
+  return useAtomValue(fieldValue) as T | undefined;
 };

@@ -14,7 +14,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
   const store = useStore();
 
-  const recordGroupFieldMetadataAtom = useRecoilComponentStateCallbackStateV2(
+  const recordGroupFieldMetadata = useRecoilComponentStateCallbackStateV2(
     recordIndexGroupFieldMetadataItemComponentState,
     recordBoardId,
   );
@@ -40,16 +40,18 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
         recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
       );
 
-      const recordGroupFieldMetadata = store.get(recordGroupFieldMetadataAtom);
+      const currentRecordGroupFieldMetadata = store.get(
+        recordGroupFieldMetadata,
+      );
 
-      if (!isDefined(recordGroupFieldMetadata)) {
+      if (!isDefined(currentRecordGroupFieldMetadata)) {
         return;
       }
 
       const recordGroupRowIds = records
         .filter(
           (record) =>
-            record[recordGroupFieldMetadata.name] === recordGroup?.value,
+            record[currentRecordGroupFieldMetadata.name] === recordGroup?.value,
         )
         .map((record) => record.id);
 
@@ -75,7 +77,7 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
     },
     [
       recordIndexRecordIdsByGroupFamilyState,
-      recordGroupFieldMetadataAtom,
+      recordGroupFieldMetadata,
       emptyRecordGroupByIdCallbackState,
       store,
     ],

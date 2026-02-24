@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
@@ -51,9 +52,11 @@ jest.mock('@/ui/layout/right-drawer/utils/emitSidePanelCloseEvent', () => ({
 }));
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>
-    <MemoryRouter>{children}</MemoryRouter>
-  </RecoilRoot>
+  <JotaiProvider store={jotaiStore}>
+    <RecoilRoot>
+      <MemoryRouter>{children}</MemoryRouter>
+    </RecoilRoot>
+  </JotaiProvider>
 );
 
 describe('useCommandMenuCloseAnimationCompleteCleanup', () => {

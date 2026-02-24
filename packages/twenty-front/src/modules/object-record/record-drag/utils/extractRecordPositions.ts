@@ -8,10 +8,7 @@ export const extractRecordPositions = (
   store: Store,
 ): RecordWithPosition[] => {
   return recordIds.map((recordId) => {
-    const record = store.get(recordStoreFamilyState.atomFamily(recordId)) as
-      | { position?: number }
-      | null
-      | undefined;
+    const record = store.get(recordStoreFamilyState.atomFamily(recordId));
 
     return {
       id: recordId,

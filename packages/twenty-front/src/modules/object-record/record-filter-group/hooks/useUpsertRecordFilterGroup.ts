@@ -6,7 +6,7 @@ import { useStore } from 'jotai';
 import { useContext } from 'react';
 
 export const useUpsertRecordFilterGroup = () => {
-  const currentRecordFilterGroupsAtom = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilterGroups = useRecoilComponentStateCallbackStateV2(
     currentRecordFilterGroupsComponentState,
   );
   const store = useStore();
@@ -15,22 +15,22 @@ export const useUpsertRecordFilterGroup = () => {
   const upsertRecordFilterGroupCallback = (
     recordFilterGroupToSet: RecordFilterGroup,
   ) => {
-    const currentRecordFilterGroups = store.get(currentRecordFilterGroupsAtom);
+    const existingRecordFilterGroups = store.get(currentRecordFilterGroups);
 
     const hasFoundRecordFilterGroupInCurrentRecordFilterGroups =
-      currentRecordFilterGroups.some(
+      existingRecordFilterGroups.some(
         (existingRecordFilterGroup) =>
           existingRecordFilterGroup.id === recordFilterGroupToSet.id,
       );
 
     if (!hasFoundRecordFilterGroupInCurrentRecordFilterGroups) {
-      store.set(currentRecordFilterGroupsAtom, [
-        ...currentRecordFilterGroups,
+      store.set(currentRecordFilterGroups, [
+        ...existingRecordFilterGroups,
         recordFilterGroupToSet,
       ]);
     } else {
-      store.set(currentRecordFilterGroupsAtom, (currentRecordFilterGroups) => {
-        const newCurrentRecordFilterGroups = [...currentRecordFilterGroups];
+      store.set(currentRecordFilterGroups, (previousRecordFilterGroups) => {
+        const newCurrentRecordFilterGroups = [...previousRecordFilterGroups];
 
         const indexOfRecordFilterGroupToUpdate =
           newCurrentRecordFilterGroups.findIndex(

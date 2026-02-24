@@ -40,7 +40,7 @@ export const RecordIndexGroupAggregateQueryEffect = ({
       recordIndexGroupAggregateOperation,
     });
 
-  const recordIndexAggregateDisplayLabelAtom =
+  const recordIndexAggregateDisplayLabel =
     useRecoilComponentStateCallbackStateV2(
       recordIndexAggregateDisplayLabelComponentState,
     );
@@ -112,7 +112,7 @@ export const RecordIndexGroupAggregateQueryEffect = ({
     recordIndexGroupAggregateFieldMetadataItem,
     recordIndexGroupAggregateOperation,
     recordAggregateGqlField,
-    recordIndexAggregateDisplayLabelAtom,
+    recordIndexAggregateDisplayLabel,
     objectMetadataItem,
     recordGroupDefinitions,
   ]);

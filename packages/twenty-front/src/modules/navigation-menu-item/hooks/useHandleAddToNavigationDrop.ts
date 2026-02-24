@@ -20,14 +20,15 @@ import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/s
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { useStore } from 'jotai';
 
 export const useHandleAddToNavigationDrop = () => {
+  const store = useStore();
   const { addObjectToDraft } = useAddObjectToNavigationMenuDraft();
   const { addViewToDraft } = useAddViewToNavigationMenuDraft();
   const { addRecordToDraft } = useAddRecordToNavigationMenuDraft();
@@ -64,8 +65,7 @@ export const useHandleAddToNavigationDrop = () => {
       }
 
       const payload =
-        jotaiStore.get(addToNavPayloadRegistryStateV2.atom).get(draggableId) ??
-        null;
+        store.get(addToNavPayloadRegistryStateV2.atom).get(draggableId) ?? null;
       if (!payload) {
         return;
       }
@@ -203,6 +203,7 @@ export const useHandleAddToNavigationDrop = () => {
       setIsNavigationMenuInEditMode,
       setSelectedNavigationMenuItemInEditMode,
       workspaceNavigationMenuItems,
+      store,
     ],
   );
 

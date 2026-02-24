@@ -8,11 +8,11 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { useStore } from 'jotai';
 import { useCallback, useContext } from 'react';
 import { type Nullable } from 'twenty-shared/types';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 export const useSetRecordIndexAggregateDisplayValueForRecordGroupValue = () => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useRecoilValueV2(dateLocaleStateV2);
+  const dateLocale = useRecoilValueV2(dateLocaleState);
 
   const recordIndexAggregateValueByGroupValueCallbackState =
     useRecoilComponentFamilyStateCallbackStateV2(

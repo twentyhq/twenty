@@ -7,13 +7,14 @@ import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/ad
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/display';
+import { useStore } from 'jotai';
 
 export const useCommandMenu = () => {
+  const store = useStore();
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
@@ -21,18 +22,18 @@ export const useCommandMenu = () => {
     useRemoveFocusItemFromFocusStackById();
 
   const closeCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = jotaiStore.get(isCommandMenuOpenedStateV2.atom);
+    const isCommandMenuOpened = store.get(isCommandMenuOpenedStateV2.atom);
 
     if (isCommandMenuOpened) {
-      jotaiStore.set(addToNavPayloadRegistryStateV2.atom, new Map());
-      jotaiStore.set(isCommandMenuOpenedStateV2.atom, false);
-      jotaiStore.set(isCommandMenuClosingState.atom, true);
+      store.set(addToNavPayloadRegistryStateV2.atom, new Map());
+      store.set(isCommandMenuOpenedStateV2.atom, false);
+      store.set(isCommandMenuClosingState.atom, true);
       closeAnyOpenDropdown();
       removeFocusItemFromFocusStackById({
         focusId: SIDE_PANEL_FOCUS_ID,
       });
     }
-  }, [closeAnyOpenDropdown, removeFocusItemFromFocusStackById]);
+  }, [closeAnyOpenDropdown, removeFocusItemFromFocusStackById, store]);
 
   const openCommandMenu = useCallback(() => {
     emitSidePanelOpenEvent();
@@ -46,16 +47,16 @@ export const useCommandMenu = () => {
   }, [closeAnyOpenDropdown, navigateCommandMenu]);
 
   const toggleCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = jotaiStore.get(isCommandMenuOpenedStateV2.atom);
+    const isCommandMenuOpened = store.get(isCommandMenuOpenedStateV2.atom);
 
-    jotaiStore.set(commandMenuSearchState.atom, '');
+    store.set(commandMenuSearchState.atom, '');
 
     if (isCommandMenuOpened) {
       closeCommandMenu();
     } else {
       openCommandMenu();
     }
-  }, [closeCommandMenu, openCommandMenu]);
+  }, [closeCommandMenu, openCommandMenu, store]);
 
   return {
     openCommandMenu,

@@ -11,7 +11,6 @@ import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
@@ -23,8 +22,10 @@ import { type Favorite } from '@/favorites/types/Favorite';
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useStore } from 'jotai';
 
 export const PrefetchRunFavoriteQueriesEffect = () => {
+  const store = useStore();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
@@ -89,24 +90,24 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
 
   const setPrefetchFavoritesStateIfChanged = useCallback(
     (newFavorites: Favorite[]) => {
-      const existingFavorites = jotaiStore.get(prefetchFavoritesState.atom);
+      const existingFavorites = store.get(prefetchFavoritesState.atom);
       if (!isDeeplyEqual(existingFavorites, newFavorites)) {
         setFavoritesState(newFavorites);
       }
     },
-    [setFavoritesState],
+    [setFavoritesState, store],
   );
 
   const setPrefetchFavoriteFoldersStateIfChanged = useCallback(
     (newFavoriteFolders: FavoriteFolder[]) => {
-      const existingFavoriteFolders = jotaiStore.get(
+      const existingFavoriteFolders = store.get(
         prefetchFavoriteFoldersState.atom,
       );
       if (!isDeeplyEqual(existingFavoriteFolders, newFavoriteFolders)) {
         setFavoriteFoldersState(newFavoriteFolders);
       }
     },
-    [setFavoriteFoldersState],
+    [setFavoriteFoldersState, store],
   );
 
   useEffect(() => {

@@ -33,7 +33,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
 
-  const currentViewIdAtom = useRecoilComponentStateCallbackStateV2(
+  const currentViewId = useRecoilComponentStateCallbackStateV2(
     contextStoreCurrentViewIdComponentState,
     viewBarComponentId,
   );
@@ -96,15 +96,15 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       >,
       shouldCopyFiltersAndSortsAndAggregate?: boolean,
     ): Promise<string | undefined> => {
-      const currentViewId = store.get(currentViewIdAtom);
+      const existingCurrentViewId = store.get(currentViewId);
 
-      if (!isDefined(currentViewId)) {
+      if (!isDefined(existingCurrentViewId)) {
         return undefined;
       }
 
       const sourceView = store.get(
         coreViewFromViewIdFamilySelector.selectorFamily({
-          viewId: currentViewId,
+          viewId: existingCurrentViewId,
         }),
       );
 
@@ -238,7 +238,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       return newViewId;
     },
     [
-      currentViewIdAtom,
+      currentViewId,
       performViewAPICreate,
       anyFieldFilterValue,
       objectMetadataItem,

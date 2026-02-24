@@ -1,14 +1,15 @@
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { useCallback } from 'react';
 import { sortByProperty } from '~/utils/array/sortByProperty';
+import { useStore } from 'jotai';
 
 export const useMoveRecordField = (recordTableId?: string) => {
-  const currentRecordFieldsAtom = useRecoilComponentStateCallbackStateV2(
+  const store = useStore();
+  const currentRecordFields = useRecoilComponentStateCallbackStateV2(
     currentRecordFieldsComponentState,
     recordTableId,
   );
@@ -25,11 +26,9 @@ export const useMoveRecordField = (recordTableId?: string) => {
       direction: 'before' | 'after';
       fieldMetadataItemIdToMove: string;
     }) => {
-      const currentRecordFields = jotaiStore.get(currentRecordFieldsAtom);
-
-      const sortedRecordFields = currentRecordFields.toSorted(
-        sortByProperty('position'),
-      );
+      const sortedRecordFields = store
+        .get(currentRecordFields)
+        .toSorted(sortByProperty('position'));
 
       const indexOfRecordFieldToMove = sortedRecordFields.findIndex(
         (recordField) =>
@@ -81,7 +80,7 @@ export const useMoveRecordField = (recordTableId?: string) => {
         ]);
       }
     },
-    [currentRecordFieldsAtom, saveViewFields, updateRecordField],
+    [currentRecordFields, saveViewFields, updateRecordField, store],
   );
 
   return { moveRecordField };

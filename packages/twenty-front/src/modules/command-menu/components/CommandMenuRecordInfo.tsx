@@ -22,7 +22,7 @@ import {
   FeatureFlagKey,
   FieldMetadataType,
 } from '~/generated-metadata/graphql';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
 
@@ -67,7 +67,7 @@ export const CommandMenuRecordInfo = ({
     },
   );
 
-  const { localeCatalog } = useRecoilValueV2(dateLocaleStateV2);
+  const { localeCatalog } = useRecoilValueV2(dateLocaleState);
   const beautifiedCreatedAt = isNonEmptyString(recordCreatedAt)
     ? beautifyPastDateRelativeToNow(recordCreatedAt, localeCatalog)
     : '';

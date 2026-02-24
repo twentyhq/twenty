@@ -2,7 +2,7 @@ import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValu
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type EmailThreadHeaderProps = {
@@ -43,7 +43,7 @@ export const EmailThreadHeader = ({
   subject,
   lastMessageSentAt,
 }: EmailThreadHeaderProps) => {
-  const { localeCatalog } = useRecoilValueV2(dateLocaleStateV2);
+  const { localeCatalog } = useRecoilValueV2(dateLocaleState);
   const lastMessageSentAtFormatted = beautifyPastDateRelativeToNow(
     lastMessageSentAt,
     localeCatalog,

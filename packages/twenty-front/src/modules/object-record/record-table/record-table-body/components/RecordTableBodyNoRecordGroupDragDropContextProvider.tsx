@@ -23,7 +23,7 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
   const { recordIndexId } = useRecordIndexContextOrThrow();
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const selectedRowIdsAtom = useRecoilComponentSelectorCallbackStateV2(
+  const selectedRowIds = useRecoilComponentSelectorCallbackStateV2(
     selectedRowIdsComponentSelector,
     recordTableId,
   );
@@ -37,13 +37,11 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
 
   const handleDragStart = useCallback(
     (start: DragStart) => {
-      const currentSelectedRecordIds = store.get(
-        selectedRowIdsAtom,
-      ) as string[];
+      const currentSelectedRecordIds = store.get(selectedRowIds) as string[];
 
       startRecordDrag(start, currentSelectedRecordIds);
     },
-    [selectedRowIdsAtom, startRecordDrag, store],
+    [selectedRowIds, startRecordDrag, store],
   );
 
   const handleDragEnd = useCallback(

@@ -14,7 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 import { enUS } from 'date-fns/locale';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { logError } from '~/utils/logError';
 
@@ -67,7 +67,7 @@ export const LocalePicker = () => {
       locale: value,
       localeCatalog: dateFnsLocale || enUS,
     };
-    store.set(dateLocaleStateV2.atom, newDateLocale);
+    store.set(dateLocaleState.atom, newDateLocale);
 
     await dynamicActivate(value);
     try {

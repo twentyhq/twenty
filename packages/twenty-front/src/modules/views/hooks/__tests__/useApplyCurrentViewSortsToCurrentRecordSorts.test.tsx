@@ -6,7 +6,10 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useR
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -35,7 +38,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
   }
 
   afterEach(() => {
-    jotaiStore.set(coreViewsState.atom, []);
+    resetJotaiStore();
   });
 
   const mockFieldMetadataItem = mockObjectMetadataItem.fields.find(

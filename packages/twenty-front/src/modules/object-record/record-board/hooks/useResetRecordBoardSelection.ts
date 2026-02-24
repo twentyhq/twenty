@@ -22,7 +22,7 @@ export const useResetRecordBoardSelection = (recordBoardId?: string) => {
       recordBoardId,
     );
 
-  const recordBoardSelectedRecordIdsAtom =
+  const recordBoardSelectedRecordIds =
     useRecoilComponentSelectorCallbackStateV2(
       recordBoardSelectedRecordIdsComponentSelector,
       recordBoardId,
@@ -38,7 +38,7 @@ export const useResetRecordBoardSelection = (recordBoardId?: string) => {
   const resetRecordBoardSelection = useCallback(() => {
     closeDropdown(dropdownId);
 
-    const recordIds = store.get(recordBoardSelectedRecordIdsAtom);
+    const recordIds = store.get(recordBoardSelectedRecordIds);
 
     for (const recordId of recordIds) {
       store.set(isRecordBoardCardSelectedFamilyState(recordId), false);
@@ -46,7 +46,7 @@ export const useResetRecordBoardSelection = (recordBoardId?: string) => {
   }, [
     closeDropdown,
     dropdownId,
-    recordBoardSelectedRecordIdsAtom,
+    recordBoardSelectedRecordIds,
     isRecordBoardCardSelectedFamilyState,
     store,
   ]);

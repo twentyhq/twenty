@@ -4,16 +4,17 @@ import { SSE_CONNECTION_RETRY_WAIT_TIME_IN_MS_FOR_DEV_MODE } from '@/sse-db-even
 import { SSE_CONNECTION_RETRY_WAIT_TIME_IN_MS_TO_AVOID_RACE_CONDITIONS } from '@/sse-db-event/constants/SseConnectionRetryWaitTimeInMsToAvoidRaceConditions';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { getIsDevelopmentEnvironment } from '~/utils/getIsDevelopmentEnvironment';
 import { sleep } from '~/utils/sleep';
+import { useStore } from 'jotai';
 
 export const useHandleSseClientConnectionRetry = () => {
+  const store = useStore();
   const handleSseClientConnectionRetry = useCallback(
     async (retryCount: number, initialTokenForSseClient: string) => {
-      const sseClient = jotaiStore.get(sseClientState.atom);
+      const sseClient = store.get(sseClientState.atom);
 
       if (!isDefined(sseClient)) {
         await sleep(
@@ -23,7 +24,7 @@ export const useHandleSseClientConnectionRetry = () => {
         return;
       }
 
-      const tokenPair = jotaiStore.get(tokenPairState.atom);
+      const tokenPair = store.get(tokenPairState.atom);
       const currentAppToken = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
 
       const shouldResetSseClient =
@@ -37,8 +38,8 @@ export const useHandleSseClientConnectionRetry = () => {
         );
 
         sseClient.dispose();
-        jotaiStore.set(shouldDestroyEventStreamState.atom, true);
-        jotaiStore.set(sseClientState.atom, null);
+        store.set(shouldDestroyEventStreamState.atom, true);
+        store.set(sseClientState.atom, null);
         return;
       }
 
@@ -54,7 +55,7 @@ export const useHandleSseClientConnectionRetry = () => {
 
       await sleep(waitTimeInMs);
     },
-    [],
+    [store],
   );
 
   return { handleSseClientConnectionRetry };

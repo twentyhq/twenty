@@ -10,10 +10,11 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useSetGlobalCommandMenuContext = () => {
+  const store = useStore();
   const { copyContextStoreStates } = useCopyContextStoreStates();
 
   const setGlobalCommandMenuContext = useCallback(() => {
@@ -22,7 +23,7 @@ export const useSetGlobalCommandMenuContext = () => {
       instanceIdToCopyTo: COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID,
     });
 
-    jotaiStore.set(
+    store.set(
       contextStoreTargetedRecordsRuleComponentState.atomFamily({
         instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
       }),
@@ -32,49 +33,49 @@ export const useSetGlobalCommandMenuContext = () => {
       },
     );
 
-    jotaiStore.set(
+    store.set(
       contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
         instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
       }),
       0,
     );
 
-    jotaiStore.set(
+    store.set(
       contextStoreFiltersComponentState.atomFamily({
         instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
       }),
       [],
     );
 
-    jotaiStore.set(
+    store.set(
       contextStoreFilterGroupsComponentState.atomFamily({
         instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
       }),
       [],
     );
 
-    jotaiStore.set(
+    store.set(
       contextStoreAnyFieldFilterValueComponentState.atomFamily({
         instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
       }),
       '',
     );
 
-    jotaiStore.set(
+    store.set(
       contextStoreCurrentViewTypeComponentState.atomFamily({
         instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
       }),
       ContextStoreViewType.Table,
     );
 
-    jotaiStore.set(commandMenuPageInfoState.atom, {
+    store.set(commandMenuPageInfoState.atom, {
       title: undefined,
       Icon: undefined,
       instanceId: '',
     });
 
-    jotaiStore.set(hasUserSelectedCommandState.atom, false);
-  }, [copyContextStoreStates]);
+    store.set(hasUserSelectedCommandState.atom, false);
+  }, [copyContextStoreStates, store]);
 
   return {
     setGlobalCommandMenuContext,

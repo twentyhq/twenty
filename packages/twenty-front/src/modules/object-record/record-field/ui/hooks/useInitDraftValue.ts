@@ -32,17 +32,16 @@ export const useInitDraftValue = <FieldValue>() => {
         }),
       ) as FieldValue;
 
-      const draftValueAtom =
-        recordFieldInputDraftValueComponentState.atomFamily({
-          instanceId: fieldComponentInstanceId,
-        });
+      const draftValue = recordFieldInputDraftValueComponentState.atomFamily({
+        instanceId: fieldComponentInstanceId,
+      });
 
       if (
         isUndefined(value) ||
         FIELD_NOT_OVERWRITTEN_AT_DRAFT.includes(fieldDefinition.type)
       ) {
         store.set(
-          draftValueAtom,
+          draftValue,
           computeDraftValueFromFieldValue<FieldValue>({
             fieldValue: recordFieldValue,
             fieldDefinition,
@@ -50,7 +49,7 @@ export const useInitDraftValue = <FieldValue>() => {
         );
       } else {
         store.set(
-          draftValueAtom,
+          draftValue,
           computeDraftValueFromString<FieldValue>({
             value,
             fieldDefinition,

@@ -4,7 +4,6 @@ import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/use
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -15,8 +14,10 @@ import {
   upsertIntoArrayOfObjectsComparingId,
 } from 'twenty-shared/utils';
 import { type CoreView } from '~/generated-metadata/graphql';
+import { useStore } from 'jotai';
 
 export const useUpdateViewAggregate = () => {
+  const store = useStore();
   const { canPersistChanges } = useCanPersistViewChanges();
   const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
@@ -66,7 +67,7 @@ export const useUpdateViewAggregate = () => {
           return;
         }
 
-        jotaiStore.set(coreViewsState.atom, (currentCoreViews) =>
+        store.set(coreViewsState.atom, (currentCoreViews) =>
           upsertIntoArrayOfObjectsComparingId(
             currentCoreViews,
             updatedCoreView,
@@ -83,6 +84,7 @@ export const useUpdateViewAggregate = () => {
       currentViewId,
       performViewAPIUpdate,
       loadRecordIndexStates,
+      store,
     ],
   );
 

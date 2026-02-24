@@ -3,10 +3,11 @@ import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useSetRecordFilterUsedInAdvancedFilterDropdownRow = () => {
+  const store = useStore();
   const setRecordFilterUsedInAdvancedFilterDropdownRow = useCallback(
     (recordFilter: RecordFilter) => {
       const advancedFilterRowObjectFilterDropdownComponentInstanceId =
@@ -14,28 +15,28 @@ export const useSetRecordFilterUsedInAdvancedFilterDropdownRow = () => {
           recordFilter.id,
         );
 
-      jotaiStore.set(
+      store.set(
         fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
           instanceId: advancedFilterRowObjectFilterDropdownComponentInstanceId,
         }),
         recordFilter.fieldMetadataId,
       );
 
-      jotaiStore.set(
+      store.set(
         selectedOperandInDropdownComponentState.atomFamily({
           instanceId: advancedFilterRowObjectFilterDropdownComponentInstanceId,
         }),
         recordFilter.operand,
       );
 
-      jotaiStore.set(
+      store.set(
         objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
           instanceId: advancedFilterRowObjectFilterDropdownComponentInstanceId,
         }),
         recordFilter,
       );
     },
-    [],
+    [store],
   );
 
   return {

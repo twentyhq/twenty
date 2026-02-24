@@ -29,8 +29,8 @@ import {
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
@@ -77,6 +77,7 @@ export const useLazyFetchMoreRecordsWithPagination = <
   fetchMore,
   objectMetadataItem,
 }: UseFindManyRecordsStateParams<T>) => {
+  const store = useStore();
   const queryIdentifier = getQueryIdentifier({
     objectNameSingular,
     filter,
@@ -92,11 +93,11 @@ export const useLazyFetchMoreRecordsWithPagination = <
   // This function is equivalent to merge function + read function in field policy
   const fetchMoreRecordsLazy = useCallback(
     async (limit = DEFAULT_SEARCH_REQUEST_LIMIT) => {
-      const hasNextPageLocal = jotaiStore.get(
+      const hasNextPageLocal = store.get(
         hasNextPageFamilyState.atomFamily(queryIdentifier),
       );
 
-      const lastCursorLocal = jotaiStore.get(
+      const lastCursorLocal = store.get(
         cursorFamilyState.atomFamily(queryIdentifier),
       );
 
@@ -135,11 +136,11 @@ export const useLazyFetchMoreRecordsWithPagination = <
                 fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo;
 
               if (isDefined(pageInfo)) {
-                jotaiStore.set(
+                store.set(
                   cursorFamilyState.atomFamily(queryIdentifier),
                   pageInfo.endCursor ?? '',
                 );
-                jotaiStore.set(
+                store.set(
                   hasNextPageFamilyState.atomFamily(queryIdentifier),
                   pageInfo.hasNextPage ?? false,
                 );
@@ -188,6 +189,7 @@ export const useLazyFetchMoreRecordsWithPagination = <
       filter,
       orderBy,
       handleFindManyRecordsError,
+      store,
     ],
   );
 

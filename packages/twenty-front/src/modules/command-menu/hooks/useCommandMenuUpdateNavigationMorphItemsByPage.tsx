@@ -1,6 +1,6 @@
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 type UpdateNavigationMorphItemsByPageParams = {
   pageId: string;
@@ -9,13 +9,14 @@ type UpdateNavigationMorphItemsByPageParams = {
 };
 
 export const useCommandMenuUpdateNavigationMorphItemsByPage = () => {
+  const store = useStore();
   const updateCommandMenuNavigationMorphItemsByPage = useCallback(
     async ({
       pageId,
       objectMetadataId,
       objectRecordIds,
     }: UpdateNavigationMorphItemsByPageParams) => {
-      const currentMorphItems = jotaiStore.get(
+      const currentMorphItems = store.get(
         commandMenuNavigationMorphItemsByPageState.atom,
       );
 
@@ -26,12 +27,12 @@ export const useCommandMenuUpdateNavigationMorphItemsByPage = () => {
 
       const newMorphItemsMap = new Map(currentMorphItems);
       newMorphItemsMap.set(pageId, newMorphItems);
-      jotaiStore.set(
+      store.set(
         commandMenuNavigationMorphItemsByPageState.atom,
         newMorphItemsMap,
       );
     },
-    [],
+    [store],
   );
 
   return {

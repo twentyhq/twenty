@@ -6,12 +6,9 @@ import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineCha
 import { type LineChartSeries } from '~/generated-metadata/graphql';
 
 const mockUseRecoilComponentValue = jest.fn();
-jest.mock(
-  '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
-  () => ({
-    useRecoilComponentValue: () => mockUseRecoilComponentValue(),
-  }),
-);
+jest.mock('@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2', () => ({
+  useRecoilComponentValueV2: () => mockUseRecoilComponentValue(),
+}));
 
 describe('useLineChartData', () => {
   beforeEach(() => {

@@ -22,7 +22,7 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
       recordBoardId,
     );
 
-  const recordBoardSelectedRecordIdsAtom =
+  const recordBoardSelectedRecordIds =
     useRecoilComponentSelectorCallbackStateV2(
       recordBoardSelectedRecordIdsComponentSelector,
       recordBoardId,
@@ -50,12 +50,12 @@ export const useRecordBoardSelection = (recordBoardId?: string) => {
   );
 
   const checkIfLastUnselectAndCloseDropdown = useCallback(() => {
-    const recordIds = store.get(recordBoardSelectedRecordIdsAtom);
+    const recordIds = store.get(recordBoardSelectedRecordIds);
 
     if (recordIds.length === 0) {
       closeDropdown(dropdownId);
     }
-  }, [recordBoardSelectedRecordIdsAtom, store, closeDropdown, dropdownId]);
+  }, [recordBoardSelectedRecordIds, store, closeDropdown, dropdownId]);
 
   return {
     setRecordAsSelected,

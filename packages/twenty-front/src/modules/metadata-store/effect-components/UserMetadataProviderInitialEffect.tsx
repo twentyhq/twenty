@@ -23,7 +23,7 @@ import {
   useGetCurrentUserQuery,
   type WorkspaceMember,
 } from '~/generated-metadata/graphql';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
@@ -59,22 +59,29 @@ export const UserMetadataProviderInitialEffect = () => {
 
   const updateLocaleCatalog = useCallback(
     async (newLocale: keyof typeof APP_LOCALES) => {
-      const localeValue = store.get(dateLocaleStateV2.atom);
+      const localeValue = store.get(dateLocaleState.atom);
       if (localeValue.locale !== newLocale) {
         getDateFnsLocale(newLocale).then((localeCatalog) => {
           const newValue = {
             locale: newLocale,
             localeCatalog: localeCatalog || enUS,
           };
-          store.set(dateLocaleStateV2.atom, newValue);
+          store.set(dateLocaleState.atom, newValue);
         });
       }
     },
     [store],
   );
 
-  const shouldSkipUserQuery =
-    !isLoggedIn || isDefined(currentUser) || isOnAuthPath;
+  const shouldSkipUserQuery = !isLoggedIn || isDefined(currentUser);
+
+  console.log('[UserMetadata] state:', {
+    isLoggedIn,
+    isOnAuthPath,
+    isInitialized,
+    shouldSkipUserQuery,
+    hasCurrentUser: isDefined(currentUser),
+  });
 
   const { data: userQueryData, loading: userQueryLoading } =
     useGetCurrentUserQuery({
@@ -82,15 +89,25 @@ export const UserMetadataProviderInitialEffect = () => {
     });
 
   useEffect(() => {
-    if (isInitialized) return;
+    if (isInitialized) {
+      console.log('[UserMetadata] effect: already initialized, skipping');
+      return;
+    }
 
     if (!isLoggedIn) {
+      console.log(
+        '[UserMetadata] effect: not logged in, marking user as loaded',
+      );
       setIsCurrentUserLoaded(true);
       setIsInitialized(true);
       return;
     }
 
     if (userQueryLoading || !isDefined(userQueryData?.currentUser)) {
+      console.log('[UserMetadata] effect: waiting for user query', {
+        userQueryLoading,
+        hasUserData: isDefined(userQueryData?.currentUser),
+      });
       return;
     }
 
@@ -166,6 +183,7 @@ export const UserMetadataProviderInitialEffect = () => {
       setAvailableWorkspaces(availableWorkspaces);
     }
 
+    console.log('[UserMetadata] effect: user loaded successfully');
     setIsCurrentUserLoaded(true);
     setIsInitialized(true);
   }, [

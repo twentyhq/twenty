@@ -66,7 +66,7 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
 
         const correspondingRecordInStore = store.get(
           recordStoreFamilyState.atomFamily(recordIdAtRealIndex),
-        ) as { id: string; position?: number } | null | undefined;
+        );
 
         if (
           isDefined(correspondingRecordInStore) &&

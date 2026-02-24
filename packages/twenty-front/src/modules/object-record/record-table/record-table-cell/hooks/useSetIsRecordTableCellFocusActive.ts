@@ -8,13 +8,12 @@ import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jot
 
 export const useSetIsRecordTableCellFocusActive = (recordTableId?: string) => {
   const store = useStore();
-  const isRecordTableCellFocusActiveAtom =
-    useRecoilComponentStateCallbackStateV2(
-      isRecordTableCellFocusActiveComponentState,
-      recordTableId,
-    );
+  const isRecordTableCellFocusActive = useRecoilComponentStateCallbackStateV2(
+    isRecordTableCellFocusActiveComponentState,
+    recordTableId,
+  );
 
-  const recordTableFocusPositionAtom = useRecoilComponentStateCallbackStateV2(
+  const recordTableFocusPosition = useRecoilComponentStateCallbackStateV2(
     recordTableFocusPositionComponentState,
     recordTableId,
   );
@@ -28,14 +27,14 @@ export const useSetIsRecordTableCellFocusActive = (recordTableId?: string) => {
       cellPosition: TableCellPosition;
     }) => {
       if (isRecordTableFocusActive) {
-        store.set(isRecordTableCellFocusActiveAtom, true);
-        store.set(recordTableFocusPositionAtom, cellPosition);
+        store.set(isRecordTableCellFocusActive, true);
+        store.set(recordTableFocusPosition, cellPosition);
       } else {
-        store.set(isRecordTableCellFocusActiveAtom, false);
-        store.set(recordTableFocusPositionAtom, null);
+        store.set(isRecordTableCellFocusActive, false);
+        store.set(recordTableFocusPosition, null);
       }
     },
-    [store, isRecordTableCellFocusActiveAtom, recordTableFocusPositionAtom],
+    [store, isRecordTableCellFocusActive, recordTableFocusPosition],
   );
 
   return {

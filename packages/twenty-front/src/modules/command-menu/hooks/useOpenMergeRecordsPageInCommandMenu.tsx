@@ -6,11 +6,11 @@ import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRec
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { CommandMenuPages } from 'twenty-shared/types';
 
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { msg, t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { IconArrowMerge } from 'twenty-ui/display';
 import { v4 } from 'uuid';
+import { useStore } from 'jotai';
 
 type UseOpenMergeRecordsPageInCommandMenuProps = {
   objectNameSingular: string;
@@ -21,6 +21,7 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
   objectNameSingular,
   objectRecordIds,
 }: UseOpenMergeRecordsPageInCommandMenuProps) => {
+  const store = useStore();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -43,7 +44,7 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
   const openMergeRecordsPageInCommandMenu = useCallback(async () => {
     const pageId = v4();
 
-    jotaiStore.set(
+    store.set(
       contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
         instanceId: pageId,
       }),
@@ -71,6 +72,7 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
     upsertRecordsInStore,
     navigateCommandMenu,
     updateCommandMenuNavigationMorphItemsByPage,
+    store,
   ]);
 
   return {

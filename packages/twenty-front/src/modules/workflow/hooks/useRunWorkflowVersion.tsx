@@ -13,7 +13,6 @@ import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graph
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
@@ -27,8 +26,10 @@ import {
   type RunWorkflowVersionMutation,
   type RunWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
+import { useStore } from 'jotai';
 
 export const useRunWorkflowVersion = () => {
+  const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
@@ -63,12 +64,12 @@ export const useRunWorkflowVersion = () => {
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const setRecordInStore = useCallback((workflowRun: WorkflowRun) => {
-    jotaiStore.set(
-      recordStoreFamilyState.atomFamily(workflowRun.id),
-      workflowRun,
-    );
-  }, []);
+  const setRecordInStore = useCallback(
+    (workflowRun: WorkflowRun) => {
+      store.set(recordStoreFamilyState.atomFamily(workflowRun.id), workflowRun);
+    },
+    [store],
+  );
 
   const runWorkflowVersion = async ({
     workflowId,

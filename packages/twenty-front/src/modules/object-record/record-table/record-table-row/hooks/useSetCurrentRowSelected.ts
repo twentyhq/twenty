@@ -17,7 +17,7 @@ export const useSetCurrentRowSelected = () => {
     isRowSelectedComponentFamilyState,
   );
 
-  const recordIndexAllRecordIdsAtom = useRecoilComponentSelectorCallbackStateV2(
+  const recordIndexAllRecordIds = useRecoilComponentSelectorCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
   );
 
@@ -34,7 +34,7 @@ export const useSetCurrentRowSelected = () => {
       newSelectedState: boolean;
       shouldSelectRange?: boolean;
     }) => {
-      const allRecordIds = store.get(recordIndexAllRecordIdsAtom);
+      const allRecordIds = store.get(recordIndexAllRecordIds);
 
       const isCurrentRowSelected = store.get(
         isRowSelectedFamilyState(recordId),
@@ -68,7 +68,7 @@ export const useSetCurrentRowSelected = () => {
       }
     },
     [
-      recordIndexAllRecordIdsAtom,
+      recordIndexAllRecordIds,
       isRowSelectedFamilyState,
       recordId,
       lastSelectedRowIndexComponentCallbackState,

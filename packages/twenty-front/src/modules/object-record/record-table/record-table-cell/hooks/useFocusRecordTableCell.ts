@@ -19,7 +19,7 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
   );
 
   const store = useStore();
-  const focusPositionAtom = useRecoilComponentStateCallbackStateV2(
+  const focusPosition = useRecoilComponentStateCallbackStateV2(
     recordTableFocusPositionComponentState,
     recordTableIdFromProps,
   );
@@ -33,10 +33,7 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
 
   const focusRecordTableCell = useCallback(
     (newPosition: TableCellPosition) => {
-      const currentPosition = store.get(focusPositionAtom) as
-        | TableCellPosition
-        | null
-        | undefined;
+      const currentPosition = store.get(focusPosition);
 
       if (isDefined(currentPosition)) {
         const currentCellFocusId = getRecordTableCellFocusId({
@@ -69,7 +66,7 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
     },
     [
       store,
-      focusPositionAtom,
+      focusPosition,
       recordTableIdFromProps,
       removeFocusItemFromFocusStackById,
       setIsRecordTableCellFocusActive,

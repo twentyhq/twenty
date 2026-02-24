@@ -1,10 +1,10 @@
 import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQueryListenersState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback, useEffect } from 'react';
 import {
   type MetadataGqlOperationSignature,
   type RecordGqlOperationSignature,
 } from 'twenty-shared/types';
+import { useStore } from 'jotai';
 
 export const useListenToEventsForQuery = ({
   queryId,
@@ -15,6 +15,7 @@ export const useListenToEventsForQuery = ({
     | RecordGqlOperationSignature
     | MetadataGqlOperationSignature;
 }) => {
+  const store = useStore();
   const changeQueryIdListenState = useCallback(
     (
       shouldListen: boolean,
@@ -23,7 +24,7 @@ export const useListenToEventsForQuery = ({
         | RecordGqlOperationSignature
         | MetadataGqlOperationSignature,
     ) => {
-      const currentRequiredQueryListeners = jotaiStore.get(
+      const currentRequiredQueryListeners = store.get(
         requiredQueryListenersState.atom,
       );
 
@@ -36,7 +37,7 @@ export const useListenToEventsForQuery = ({
       }
 
       if (shouldListen) {
-        jotaiStore.set(requiredQueryListenersState.atom, [
+        store.set(requiredQueryListenersState.atom, [
           ...currentRequiredQueryListeners,
           {
             queryId: targetQueryId,
@@ -44,7 +45,7 @@ export const useListenToEventsForQuery = ({
           },
         ]);
       } else {
-        jotaiStore.set(
+        store.set(
           requiredQueryListenersState.atom,
           currentRequiredQueryListeners.filter(
             (listener) => listener.queryId !== targetQueryId,
@@ -52,7 +53,7 @@ export const useListenToEventsForQuery = ({
         );
       }
     },
-    [],
+    [store],
   );
 
   useEffect(() => {

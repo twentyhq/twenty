@@ -4,7 +4,6 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
@@ -17,8 +16,10 @@ import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWor
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { useStore } from 'jotai';
 
 export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
+  const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
   const { getIcon } = useIcons();
@@ -33,7 +34,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
       objectMetadataItem: ObjectMetadataItem;
       recordId: string;
     }) => {
-      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
       const workflowRunRecord = getRecordFromCache<WorkflowRun>({
         objectMetadataItem,
@@ -62,19 +63,19 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
         recordId,
       });
 
-      jotaiStore.set(
+      store.set(
         workflowVisualizerWorkflowRunIdComponentState.atomFamily({
           instanceId,
         }),
         workflowRunRecord.id,
       );
-      jotaiStore.set(
+      store.set(
         workflowVisualizerWorkflowIdComponentState.atomFamily({
           instanceId,
         }),
         workflowRunRecord.workflowId,
       );
-      jotaiStore.set(
+      store.set(
         flowComponentState.atomFamily({
           instanceId,
         }),
@@ -84,14 +85,14 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           steps: workflowRunRecord.state.flow.steps,
         },
       );
-      jotaiStore.set(
+      store.set(
         workflowSelectedNodeComponentState.atomFamily({
           instanceId,
         }),
         stepToOpenByDefault.id,
       );
 
-      jotaiStore.set(
+      store.set(
         workflowRunDiagramAutomaticallyOpenedStepsComponentState.atomFamily({
           instanceId,
         }),
@@ -117,6 +118,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
       objectPermissionsByObjectMetadataId,
       openWorkflowRunViewStepInCommandMenu,
       getIcon,
+      store,
     ],
   );
 
