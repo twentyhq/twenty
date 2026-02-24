@@ -5,10 +5,36 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditableContent';
 import '@xyflow/react/dist/style.css';
+import { useStore } from 'jotai';
+import { useEffect } from 'react';
 import { RecoilRoot } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+
+const JotaiInitializer = ({
+  children,
+  selectedNodeId,
+}: {
+  children: React.ReactNode;
+  selectedNodeId?: string;
+}) => {
+  const store = useStore();
+
+  useEffect(() => {
+    if (isDefined(selectedNodeId)) {
+      store.set(
+        workflowSelectedNodeComponentState.atomFamily({
+          instanceId: 'workflow-visualizer-instance-id',
+        }),
+        selectedNodeId,
+      );
+    }
+  }, [store, selectedNodeId]);
+
+  return <>{children}</>;
+};
 
 const meta: Meta<typeof WorkflowDiagramStepNodeEditableContent> = {
   title: 'Modules/Workflow/WorkflowDiagramStepNodeEditableContent',
@@ -150,22 +176,15 @@ export const Catalog: CatalogStory<
     (Story, { args }) => {
       return (
         <div>
-          <RecoilRoot
-            initializeState={({ set }) => {
-              if (args.selected === true) {
-                set(
-                  workflowSelectedNodeComponentState.atomFamily({
-                    instanceId: 'workflow-visualizer-instance-id',
-                  }),
-                  args.id,
-                );
-              }
-            }}
-          >
+          <RecoilRoot>
             <WorkflowVisualizerComponentInstanceContext.Provider
               value={{ instanceId: 'workflow-visualizer-instance-id' }}
             >
-              <Story />
+              <JotaiInitializer
+                selectedNodeId={args.selected ? args.id : undefined}
+              >
+                <Story />
+              </JotaiInitializer>
             </WorkflowVisualizerComponentInstanceContext.Provider>
           </RecoilRoot>
         </div>

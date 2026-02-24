@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
-export const lastShowPageRecordIdState = createState<string | null>({
+export const lastShowPageRecordIdState = createStateV2<string | null>({
   key: 'lastShowPageRecordIdState',
   defaultValue: null,
 });

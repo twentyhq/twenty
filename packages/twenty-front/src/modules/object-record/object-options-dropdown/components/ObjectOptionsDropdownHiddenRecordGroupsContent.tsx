@@ -14,9 +14,10 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation } from 'react-router-dom';
 import { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from 'twenty-shared/constants';
@@ -35,15 +36,15 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
     viewType,
   } = useObjectOptionsDropdown();
 
-  const recordGroupFieldMetadata = useRecoilComponentValue(
+  const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const hiddenRecordGroupIds = useRecoilComponentValue(
+  const hiddenRecordGroupIds = useRecoilComponentSelectorValueV2(
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
+  const visibleRecordGroupIds = useRecoilComponentFamilySelectorValueV2(
     visibleRecordGroupIdsComponentFamilySelector,
     viewType,
   );

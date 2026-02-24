@@ -2,19 +2,20 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 export const useFilterDropdownSelectableFieldMetadataItems = () => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const objectFilterDropdownSearchInput = useRecoilComponentValue(
+  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
     objectFilterDropdownSearchInputComponentState,
   );
 
   const { filterableFieldMetadataItems } =
     useFilterableFieldMetadataItemsInRecordIndexContext();
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useRecoilComponentSelectorValueV2(
     visibleRecordFieldsComponentSelector,
     recordIndexId,
   );

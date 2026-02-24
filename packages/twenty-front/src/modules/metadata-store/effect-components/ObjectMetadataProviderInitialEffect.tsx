@@ -20,8 +20,12 @@ export const ObjectMetadataProviderInitialEffect = () => {
   const { updateDraft, applyChanges } = useMetadataStore();
 
   useEffect(() => {
-    if (isInitialized) return;
-    if (!isCurrentUserLoaded) return;
+    if (isInitialized) {
+      return;
+    }
+    if (!isCurrentUserLoaded) {
+      return;
+    }
 
     const shouldLoadReal = isWorkspaceActiveOrSuspended(currentWorkspace);
 

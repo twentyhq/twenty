@@ -19,8 +19,9 @@ import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValu
 import styled from '@emotion/styled';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { useEffect, useMemo, useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   IconArchive,
@@ -98,10 +99,13 @@ export const SettingsObjectFieldTable = ({
   const { mapFieldMetadataItemToSettingsObjectDetailTableItem } =
     useMapFieldMetadataItemToSettingsObjectDetailTableItem(objectMetadataItem);
 
-  const [settingsObjectFields, setSettingsObjectFields] = useRecoilState(
-    settingsObjectFieldsFamilyState({
-      objectMetadataItemId: objectMetadataItem.id,
-    }),
+  const settingsObjectFields = useFamilyRecoilValueV2(
+    settingsObjectFieldsFamilyState,
+    { objectMetadataItemId: objectMetadataItem.id },
+  );
+  const setSettingsObjectFields = useSetFamilyRecoilStateV2(
+    settingsObjectFieldsFamilyState,
+    { objectMetadataItemId: objectMetadataItem.id },
   );
 
   useEffect(() => {

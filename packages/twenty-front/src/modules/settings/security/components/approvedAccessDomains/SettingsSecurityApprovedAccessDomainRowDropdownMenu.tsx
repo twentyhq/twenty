@@ -4,16 +4,19 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { t } from '@lingui/core/macro';
-import { type UnwrapRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { useDeleteApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
+import {
+  type ApprovedAccessDomain,
+  useDeleteApprovedAccessDomainMutation,
+} from '~/generated-metadata/graphql';
 
 type SettingsSecurityApprovedAccessDomainRowDropdownMenuProps = {
-  approvedAccessDomain: UnwrapRecoilValue<typeof approvedAccessDomainsState>[0];
+  approvedAccessDomain: Omit<ApprovedAccessDomain, '__typename'>;
 };
 
 export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
@@ -21,7 +24,7 @@ export const SettingsSecurityApprovedAccessDomainRowDropdownMenu = ({
 }: SettingsSecurityApprovedAccessDomainRowDropdownMenuProps) => {
   const dropdownId = `settings-approved-access-domain-row-${approvedAccessDomain.id}`;
 
-  const setApprovedAccessDomains = useSetRecoilState(
+  const setApprovedAccessDomains = useSetRecoilStateV2(
     approvedAccessDomainsState,
   );
 

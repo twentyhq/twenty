@@ -4,7 +4,7 @@ import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dro
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
 import { IconEye, useIcons } from 'twenty-ui/display';
@@ -29,7 +29,7 @@ export const ViewFieldsHiddenDropdownSection = () => {
       ? handleBoardFieldVisibilityChange
       : changeRecordFieldVisibility;
 
-  const currentRecordFields = useRecoilComponentValue(
+  const currentRecordFields = useRecoilComponentValueV2(
     currentRecordFieldsComponentState,
   );
 

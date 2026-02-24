@@ -1,70 +1,65 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useStore } from 'jotai';
 
 export const useSelectAllRows = (recordTableId?: string) => {
-  const hasUserSelectedAllRowsCallbackState = useRecoilComponentCallbackState(
+  const hasUserSelectedAllRows = useRecoilComponentStateCallbackStateV2(
     hasUserSelectedAllRowsComponentState,
     recordTableId,
   );
 
-  const allRowsSelectedStatusSelector = useRecoilComponentCallbackState(
+  const allRowsSelectedStatus = useRecoilComponentSelectorCallbackStateV2(
     allRowsSelectedStatusComponentSelector,
     recordTableId,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentCallbackState(
+  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
+
+  const recordIndexAllRecordIds = useRecoilComponentSelectorCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordTableId);
 
-  const selectAllRows = useRecoilCallback(
-    ({ set, snapshot }) =>
-      () => {
-        const allRowsSelectedStatus = getSnapshotValue(
-          snapshot,
-          allRowsSelectedStatusSelector,
-        );
+  const store = useStore();
 
-        const allRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRecordIdsSelector,
-        );
+  const selectAllRows = useCallback(() => {
+    const currentAllRowsSelectedStatus = store.get(allRowsSelectedStatus);
+    const allRecordIds = store.get(recordIndexAllRecordIds);
 
-        if (allRowsSelectedStatus === 'all') {
-          resetTableRowSelection();
-        }
+    if (currentAllRowsSelectedStatus === 'all') {
+      resetTableRowSelection();
+    }
 
-        for (const recordId of allRecordIds) {
-          const isSelected =
-            allRowsSelectedStatus === 'none' ||
-            allRowsSelectedStatus === 'some';
+    for (const recordId of allRecordIds) {
+      const isSelected =
+        currentAllRowsSelectedStatus === 'none' ||
+        currentAllRowsSelectedStatus === 'some';
 
-          set(isRowSelectedFamilyState(recordId), isSelected);
-        }
+      store.set(isRowSelectedFamilyState(recordId), isSelected);
+    }
 
-        set(hasUserSelectedAllRowsCallbackState, true);
-      },
-    [
-      allRowsSelectedStatusSelector,
-      recordIndexAllRecordIdsSelector,
-      resetTableRowSelection,
-      isRowSelectedFamilyState,
-      hasUserSelectedAllRowsCallbackState,
-    ],
-  );
+    store.set(hasUserSelectedAllRows, true);
+  }, [
+    allRowsSelectedStatus,
+    recordIndexAllRecordIds,
+    resetTableRowSelection,
+    isRowSelectedFamilyState,
+    hasUserSelectedAllRows,
+    store,
+  ]);
 
   return {
     selectAllRows,

@@ -1,9 +1,9 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const recordTableFocusPositionComponentState =
-  createComponentState<TableCellPosition | null>({
+  createComponentStateV2<TableCellPosition | null>({
     key: 'recordTableFocusPositionComponentState',
     defaultValue: null,
     componentInstanceContext: RecordTableComponentInstanceContext,

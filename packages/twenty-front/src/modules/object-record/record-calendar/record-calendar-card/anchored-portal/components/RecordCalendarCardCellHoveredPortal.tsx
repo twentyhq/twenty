@@ -1,4 +1,4 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCalendarCardCellHoveredPortalContent } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellHoveredPortalContent';
@@ -18,7 +18,7 @@ export const RecordCalendarCardCellHoveredPortal = ({
 }: RecordCalendarCardCellHoveredPortalProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
-  const hoverPosition = useRecoilComponentValue(
+  const hoverPosition = useRecoilComponentValueV2(
     recordCalendarCardHoverPositionComponentState,
   );
 

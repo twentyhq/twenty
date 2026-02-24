@@ -1,5 +1,6 @@
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import styled from '@emotion/styled';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import '@graphiql/plugin-explorer/dist/style.css';
@@ -7,7 +8,6 @@ import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { GraphiQL } from 'graphiql';
 import 'graphiql/graphiql.css';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -35,7 +35,7 @@ export const GraphQLPlayground = ({
   onError,
   schema,
 }: GraphQLPlaygroundProps) => {
-  const playgroundApiKey = useRecoilValue(playgroundApiKeyState);
+  const playgroundApiKey = useRecoilValueV2(playgroundApiKeyState);
   const baseUrl = REACT_APP_SERVER_BASE_URL + '/' + schemaToPath[schema];
 
   const { theme } = useContext(ThemeContext);

@@ -7,8 +7,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
 import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
@@ -45,7 +45,7 @@ export const UpdateViewButtonGroup = () => {
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const currentViewId = useRecoilComponentValue(
+  const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -53,7 +53,7 @@ export const UpdateViewButtonGroup = () => {
   const { openDropdown: openViewPickerDropdown } = useOpenDropdown();
   const { currentView } = useGetCurrentViewOnly();
 
-  const setViewPickerReferenceViewId = useSetRecoilComponentState(
+  const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
     viewPickerReferenceViewIdComponentState,
   );
 

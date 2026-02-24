@@ -1,12 +1,14 @@
 import { act, renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 describe('useUpsertRecordsInStore', () => {
@@ -15,7 +17,7 @@ describe('useUpsertRecordsInStore', () => {
 
     const { result } = renderHook(
       () => {
-        const record = useRecoilValue(recordStoreFamilyState(recordId));
+        const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
         const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
         return { record, upsertRecordsInStore };
@@ -51,7 +53,7 @@ describe('useUpsertRecordsInStore', () => {
 
     const { result } = renderHook(
       () => {
-        const record = useRecoilValue(recordStoreFamilyState(recordId));
+        const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
         const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
         return { record, upsertRecordsInStore };
@@ -109,7 +111,7 @@ describe('useUpsertRecordsInStore', () => {
 
     const { result } = renderHook(
       () => {
-        const record = useRecoilValue(recordStoreFamilyState(recordId));
+        const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
         const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
         return { record, upsertRecordsInStore };

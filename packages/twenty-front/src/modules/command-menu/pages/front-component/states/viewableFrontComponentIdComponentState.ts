@@ -1,7 +1,7 @@
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
-export const viewableFrontComponentIdComponentState = createComponentState<
+export const viewableFrontComponentIdComponentState = createComponentStateV2<
   string | null
 >({
   key: 'command-menu/viewable-front-component-id',

@@ -7,7 +7,7 @@ import { FieldWidgetInputContextProvider } from '@/page-layout/widgets/field/com
 import { useIsFieldWidgetEditing } from '@/page-layout/widgets/field/hooks/useIsFieldWidgetEditing';
 import { useOpenFieldWidgetFieldInputEditMode } from '@/page-layout/widgets/field/hooks/useOpenFieldWidgetFieldInputEditMode';
 import { fieldWidgetHoverComponentState } from '@/page-layout/widgets/field/states/fieldWidgetHoverComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 
 type FieldWidgetCellEditModePortalProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -24,7 +24,7 @@ export const FieldWidgetCellEditModePortal = ({
 }: FieldWidgetCellEditModePortalProps) => {
   const { isEditing } = useIsFieldWidgetEditing();
 
-  const setIsHovered = useSetRecoilComponentState(
+  const setIsHovered = useSetRecoilComponentStateV2(
     fieldWidgetHoverComponentState,
   );
 

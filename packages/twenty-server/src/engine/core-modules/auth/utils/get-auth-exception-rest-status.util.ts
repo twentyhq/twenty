@@ -28,6 +28,7 @@ export const getAuthExceptionRestStatus = (exception: AuthException) => {
     case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED:
     case AuthExceptionCode.INVALID_DATA:
     case AuthExceptionCode.UNAUTHENTICATED:
+    case AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED:
     case AuthExceptionCode.USER_NOT_FOUND:
     case AuthExceptionCode.WORKSPACE_NOT_FOUND:
     case AuthExceptionCode.APPLICATION_NOT_FOUND:

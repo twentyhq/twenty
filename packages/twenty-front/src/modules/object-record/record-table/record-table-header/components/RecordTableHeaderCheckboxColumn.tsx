@@ -15,8 +15,9 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { cx } from '@linaria/core';
 import { Checkbox } from 'twenty-ui/input';
 
@@ -48,7 +49,7 @@ const StyledColumnHeaderCell = styled.div`
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
-  const allRowsSelectedStatus = useRecoilComponentValue(
+  const allRowsSelectedStatus = useRecoilComponentSelectorValueV2(
     allRowsSelectedStatusComponentSelector,
   );
 
@@ -62,12 +63,12 @@ export const RecordTableHeaderCheckboxColumn = () => {
 
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isRecordTableInitialLoading = useRecoilComponentValue(
+  const isRecordTableInitialLoading = useRecoilComponentValueV2(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );
 
-  const allRecordIds = useRecoilComponentValue(
+  const allRecordIds = useRecoilComponentSelectorValueV2(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
@@ -83,28 +84,28 @@ export const RecordTableHeaderCheckboxColumn = () => {
     }
   };
 
-  const isFirstRowActive = useRecoilComponentFamilyValue(
+  const isFirstRowActive = useRecoilComponentFamilyValueV2(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useRecoilComponentFamilyValue(
+  const isFirstRowFocused = useRecoilComponentFamilyValueV2(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );
 
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRowFocusActive = useRecoilComponentValueV2(
     isRecordTableRowFocusActiveComponentState,
   );
 
   const isFirstRowActiveOrFocused =
     isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
 
-  const isScrolledVertically = useRecoilComponentValue(
+  const isScrolledVertically = useRecoilComponentValueV2(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const hasRecordGroups = useRecoilComponentValue(
+  const hasRecordGroups = useRecoilComponentSelectorValueV2(
     hasRecordGroupsComponentSelector,
   );
 

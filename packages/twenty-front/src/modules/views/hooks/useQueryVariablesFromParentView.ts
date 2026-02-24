@@ -3,7 +3,7 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
 
 export const useQueryVariablesFromParentView = ({
@@ -13,7 +13,7 @@ export const useQueryVariablesFromParentView = ({
 }) => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const recordShowParentView = useRecoilComponentValue(
+  const recordShowParentView = useRecoilComponentValueV2(
     contextStoreRecordShowParentViewComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

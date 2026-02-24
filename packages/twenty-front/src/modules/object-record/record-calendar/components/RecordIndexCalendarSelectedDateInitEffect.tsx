@@ -1,19 +1,19 @@
 import { hasInitializedRecordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/hasInitializedRecordCalendarSelectedDateComponentState';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useEffect } from 'react';
 import { Temporal } from 'temporal-polyfill';
 
 export const RecordIndexCalendarSelectedDateInitEffect = () => {
-  const [, setRecordCalendarSelectedDate] = useRecoilComponentState(
+  const [, setRecordCalendarSelectedDate] = useRecoilComponentStateV2(
     recordCalendarSelectedDateComponentState,
   );
 
   const [
     hasInitializedRecordCalendarSelectedDate,
     setHasInitializedRecordCalendarSelectedDate,
-  ] = useRecoilComponentState(
+  ] = useRecoilComponentStateV2(
     hasInitializedRecordCalendarSelectedDateComponentState,
   );
 

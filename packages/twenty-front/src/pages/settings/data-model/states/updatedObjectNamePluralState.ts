@@ -1,5 +1,5 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
-export const updatedObjectNamePluralState = createState<string>({
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+export const updatedObjectNamePluralState = createStateV2<string>({
   key: 'updatedObjectNamePluralState',
   defaultValue: '',
 });

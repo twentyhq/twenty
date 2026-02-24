@@ -3,7 +3,7 @@ import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-type
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
 import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
@@ -54,7 +54,7 @@ export const WorkflowEditTriggerWebhookForm = ({
   const { copyToClipboard } = useCopyToClipboard();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
     workflowVisualizerWorkflowIdComponentState,
   );
   const currentWorkspace = useRecoilValueV2(currentWorkspaceState);

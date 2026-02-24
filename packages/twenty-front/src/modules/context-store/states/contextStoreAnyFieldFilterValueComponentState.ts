@@ -1,8 +1,8 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const contextStoreAnyFieldFilterValueComponentState =
-  createComponentState<string>({
+  createComponentStateV2<string>({
     key: 'contextStoreAnyFieldFilterValueComponentState',
     defaultValue: '',
     componentInstanceContext: ContextStoreComponentInstanceContext,

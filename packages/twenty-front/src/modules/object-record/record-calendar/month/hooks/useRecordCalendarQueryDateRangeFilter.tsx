@@ -7,7 +7,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
@@ -25,7 +25,8 @@ const DATE_RANGE_FILTER_BEFORE_ID = 'DATE_RANGE_FILTER_BEFORE_ID';
 export const useRecordCalendarQueryDateRangeFilter = (
   selectedDate: Temporal.PlainDate,
 ) => {
-  const { objectMetadataItem } = useRecordCalendarContextOrThrow();
+  const { objectMetadataItem, viewBarInstanceId } =
+    useRecordCalendarContextOrThrow();
   const { firstDayOfFirstWeek, lastDayOfLastWeek } =
     useRecordCalendarMonthDaysRange(selectedDate);
 
@@ -33,18 +34,21 @@ export const useRecordCalendarQueryDateRangeFilter = (
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const currentRecordFilterGroups = useRecoilComponentValue(
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
     currentRecordFilterGroupsComponentState,
+    viewBarInstanceId,
   );
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
+    viewBarInstanceId,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const anyFieldFilterValue = useRecoilComponentValue(
+  const anyFieldFilterValue = useRecoilComponentValueV2(
     anyFieldFilterValueComponentState,
+    viewBarInstanceId,
   );
 
   if (

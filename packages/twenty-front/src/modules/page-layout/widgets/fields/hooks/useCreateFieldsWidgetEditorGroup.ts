@@ -1,7 +1,7 @@
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
 type UseCreateFieldsWidgetEditorGroupParams = {
@@ -13,48 +13,39 @@ export const useCreateFieldsWidgetEditorGroup = ({
   pageLayoutId,
   widgetId,
 }: UseCreateFieldsWidgetEditorGroupParams) => {
-  const fieldsWidgetGroupsDraftState = useRecoilComponentCallbackState(
+  const fieldsWidgetGroupsDraftState = useRecoilComponentStateCallbackStateV2(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
-  const createGroup = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (name: string) => {
-        const allDraftGroups = snapshot
-          .getLoadable(fieldsWidgetGroupsDraftState)
-          .getValue();
+  const store = useStore();
 
-        const currentGroups = allDraftGroups[widgetId] ?? [];
-        const maxPosition = Math.max(
-          ...currentGroups.map((g) => g.position),
-          -1,
-        );
-        const newId = v4();
+  const createGroup = useCallback(
+    (name: string) => {
+      const allDraftGroups = store.get(fieldsWidgetGroupsDraftState);
 
-        set(fieldsWidgetGroupsDraftState, (prev) => ({
-          ...prev,
-          [widgetId]: [
-            ...(prev[widgetId] ?? []),
-            {
-              id: newId,
-              name,
-              position: maxPosition + 1,
-              isVisible: true,
-              fields: [],
-            },
-          ],
-        }));
+      const currentGroups = allDraftGroups[widgetId] ?? [];
+      const maxPosition = Math.max(...currentGroups.map((g) => g.position), -1);
+      const newId = v4();
 
-        return newId;
-      },
-    [fieldsWidgetGroupsDraftState, widgetId],
+      store.set(fieldsWidgetGroupsDraftState, (prev) => ({
+        ...prev,
+        [widgetId]: [
+          ...(prev[widgetId] ?? []),
+          {
+            id: newId,
+            name,
+            position: maxPosition + 1,
+            isVisible: true,
+            fields: [],
+          },
+        ],
+      }));
+
+      return newId;
+    },
+    [fieldsWidgetGroupsDraftState, widgetId, store],
   );
 
-  const createGroupCallback = useCallback(
-    (name: string) => createGroup(name),
-    [createGroup],
-  );
-
-  return { createGroup: createGroupCallback };
+  return { createGroup };
 };

@@ -9,7 +9,7 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -42,7 +42,7 @@ export const MobileNavigationBar = () => {
     useFilteredObjectMetadataItems();
 
   const [, setContextStoreCurrentObjectMetadataItemId] =
-    useRecoilComponentState(
+    useRecoilComponentStateV2(
       contextStoreCurrentObjectMetadataItemIdComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     );

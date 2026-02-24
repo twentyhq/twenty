@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
@@ -7,6 +6,7 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -141,7 +141,7 @@ export const AIChatMessage = ({
   isLastMessageStreaming: boolean;
   error?: Error | null;
 }) => {
-  const { localeCatalog } = useRecoilValue(dateLocaleState);
+  const { localeCatalog } = useRecoilValueV2(dateLocaleState);
 
   const isUser = message.role === AgentMessageRole.USER;
   const showError =

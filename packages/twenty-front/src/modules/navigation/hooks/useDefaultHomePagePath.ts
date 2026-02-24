@@ -1,6 +1,5 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -12,8 +11,10 @@ import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useDefaultHomePagePath = () => {
+  const store = useStore();
   const currentUser = useRecoilValueV2(currentUserState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
@@ -69,7 +70,7 @@ export const useDefaultHomePagePath = () => {
   }, [getFirstView, readableAlphaSortedActiveNonSystemObjectMetadataItems]);
 
   const getDefaultObjectPathInfo = useCallback(() => {
-    const lastVisitedObjectMetadataItemId = jotaiStore.get(
+    const lastVisitedObjectMetadataItemId = store.get(
       lastVisitedObjectMetadataItemIdState.atom,
     );
 
@@ -91,6 +92,7 @@ export const useDefaultHomePagePath = () => {
     firstObjectPathInfo,
     getActiveObjectMetadataItemMatchingId,
     getFirstView,
+    store,
   ]);
 
   const defaultHomePagePath = useMemo(() => {

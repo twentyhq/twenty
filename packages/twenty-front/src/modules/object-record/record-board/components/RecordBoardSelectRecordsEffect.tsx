@@ -2,16 +2,20 @@ import { useEffect } from 'react';
 
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 
 export const RecordBoardSelectRecordsEffect = () => {
-  const selectedRecordIds = useRecoilComponentValue(
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
+  const selectedRecordIds = useRecoilComponentSelectorValueV2(
     recordBoardSelectedRecordIdsComponentSelector,
   );
 
-  const setContextStoreTargetedRecords = useSetRecoilComponentState(
+  const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
     contextStoreTargetedRecordsRuleComponentState,
+    recordIndexId,
   );
 
   useEffect(() => {

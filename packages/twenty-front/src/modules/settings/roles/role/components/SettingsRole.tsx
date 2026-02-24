@@ -16,10 +16,11 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { t } from '@lingui/core/macro';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
@@ -48,12 +49,18 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     settingsRolesIsLoadingStateV2,
   );
 
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useFamilyRecoilValueV2(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+  const setSettingsDraftRole = useSetFamilyRecoilStateV2(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
-  const settingsPersistedRole = useRecoilValue(
-    settingsPersistedRoleFamilyState(roleId),
+  const settingsPersistedRole = useFamilyRecoilValueV2(
+    settingsPersistedRoleFamilyState,
+    roleId,
   );
 
   const { loadCurrentUser } = useLoadCurrentUser();

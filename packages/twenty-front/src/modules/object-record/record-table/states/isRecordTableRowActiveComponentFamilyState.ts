@@ -1,8 +1,8 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
+import { createComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilyStateV2';
 
 export const isRecordTableRowActiveComponentFamilyState =
-  createComponentFamilyState<boolean, number>({
+  createComponentFamilyStateV2<boolean, number>({
     key: 'isRecordTableRowActiveComponentFamilyState',
     defaultValue: false,
     componentInstanceContext: RecordTableComponentInstanceContext,

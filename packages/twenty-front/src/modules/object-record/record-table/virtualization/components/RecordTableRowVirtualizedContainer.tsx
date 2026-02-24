@@ -6,8 +6,8 @@ import { TABLE_VIRTUALIZATION_DEBUG_ACTIVATED } from '@/object-record/record-tab
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,13 +26,13 @@ type RecordTableRowVirtualizedContainerProps = {
 export const RecordTableRowVirtualizedContainer = ({
   virtualIndex,
 }: RecordTableRowVirtualizedContainerProps) => {
-  const realIndex = useRecoilComponentFamilyValue(
+  const realIndex = useRecoilComponentFamilyValueV2(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
   );
 
   const totalNumberOfRecordsToVirtualize =
-    useRecoilComponentValue(totalNumberOfRecordsToVirtualizeComponentState) ??
+    useRecoilComponentValueV2(totalNumberOfRecordsToVirtualizeComponentState) ??
     0;
 
   if (!isDefined(realIndex) || realIndex >= totalNumberOfRecordsToVirtualize) {

@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { IconLink, IconPlus, IconTool, useIcons } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -43,7 +42,7 @@ export const WorkspaceNavigationMenuItems = () => {
   const items = useWorkspaceSectionItems();
   const store = useStore();
   const enterEditMode = () => {
-    const prefetchNavigationMenuItems = jotaiStore.get(
+    const prefetchNavigationMenuItems = store.get(
       prefetchNavigationMenuItemsState.atom,
     );
     const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(

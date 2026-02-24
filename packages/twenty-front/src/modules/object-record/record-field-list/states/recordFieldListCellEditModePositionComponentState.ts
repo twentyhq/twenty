@@ -1,8 +1,8 @@
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const recordFieldListCellEditModePositionComponentState =
-  createComponentState<number | null>({
+  createComponentStateV2<number | null>({
     key: 'recordFieldListCellEditModePositionComponentState',
     defaultValue: null,
     componentInstanceContext: RecordFieldListComponentInstanceContext,

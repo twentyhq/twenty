@@ -8,7 +8,7 @@ import {
 } from '~/generated/graphql';
 import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateWorkflowVersionStep = () => {
@@ -16,7 +16,7 @@ export const useCreateWorkflowVersionStep = () => {
 
   const { updateWorkflowVersionCache } = useUpdateWorkflowVersionCache();
 
-  const setFlow = useSetRecoilComponentState(flowComponentState);
+  const setFlow = useSetRecoilComponentStateV2(flowComponentState);
 
   const [mutate] = useMutation<
     CreateWorkflowVersionStepMutation,

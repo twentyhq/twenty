@@ -11,7 +11,7 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { dropdownYPositionComponentState } from '@/ui/layout/dropdown/states/internal/dropdownYPositionComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
@@ -60,7 +60,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
   const fieldMetadataItemLabelIdentifier =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useRecoilComponentSelectorValueV2(
     visibleRecordFieldsComponentSelector,
   );
 

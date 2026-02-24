@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { type ReactNode, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
@@ -8,6 +7,7 @@ import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/Resiz
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { NavigationDrawerWidthEffect } from '@/ui/navigation/components/NavigationDrawerWidthEffect';
+import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
@@ -19,7 +19,6 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -90,7 +89,7 @@ export const NavigationDrawer = ({
   const setNavigationDrawerActiveTab = useSetRecoilStateV2(
     navigationDrawerActiveTabState,
   );
-  const setTableWidthResizeIsActive = useSetRecoilState(
+  const setTableWidthResizeIsActive = useSetRecoilStateV2(
     tableWidthResizeIsActiveState,
   );
 

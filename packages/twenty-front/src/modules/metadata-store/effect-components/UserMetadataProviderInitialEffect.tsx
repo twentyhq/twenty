@@ -14,23 +14,18 @@ import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetReco
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useStore } from 'jotai';
-import { useEffect, useState } from 'react';
-import { useRecoilCallback } from 'recoil';
-import { useLocation } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { AppPath, type ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   useGetCurrentUserQuery,
   type WorkspaceMember,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { dateLocaleStateV2 } from '~/localization/states/dateLocaleStateV2';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const UserMetadataProviderInitialEffect = () => {
-  const location = useLocation();
   const isLoggedIn = useIsLogged();
   const currentUser = useRecoilValueV2(currentUserState);
   const store = useStore();
@@ -55,30 +50,23 @@ export const UserMetadataProviderInitialEffect = () => {
 
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
 
-  const isOnAuthPath =
-    isMatchingLocation(location, AppPath.Verify) ||
-    isMatchingLocation(location, AppPath.VerifyEmail);
-
-  const updateLocaleCatalog = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async (newLocale: keyof typeof APP_LOCALES) => {
-        const localeValue = snapshot.getLoadable(dateLocaleState).getValue();
-        if (localeValue.locale !== newLocale) {
-          getDateFnsLocale(newLocale).then((localeCatalog) => {
-            const newValue = {
-              locale: newLocale,
-              localeCatalog: localeCatalog || enUS,
-            };
-            set(dateLocaleState, newValue);
-            store.set(dateLocaleStateV2.atom, newValue);
-          });
-        }
-      },
+  const updateLocaleCatalog = useCallback(
+    async (newLocale: keyof typeof APP_LOCALES) => {
+      const localeValue = store.get(dateLocaleState.atom);
+      if (localeValue.locale !== newLocale) {
+        getDateFnsLocale(newLocale).then((localeCatalog) => {
+          const newValue = {
+            locale: newLocale,
+            localeCatalog: localeCatalog || enUS,
+          };
+          store.set(dateLocaleState.atom, newValue);
+        });
+      }
+    },
     [store],
   );
 
-  const shouldSkipUserQuery =
-    !isLoggedIn || isDefined(currentUser) || isOnAuthPath;
+  const shouldSkipUserQuery = !isLoggedIn || isDefined(currentUser);
 
   const { data: userQueryData, loading: userQueryLoading } =
     useGetCurrentUserQuery({
@@ -86,7 +74,9 @@ export const UserMetadataProviderInitialEffect = () => {
     });
 
   useEffect(() => {
-    if (isInitialized) return;
+    if (isInitialized) {
+      return;
+    }
 
     if (!isLoggedIn) {
       setIsCurrentUserLoaded(true);

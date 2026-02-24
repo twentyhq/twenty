@@ -1,9 +1,8 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetButtonIcon';
 import { type FieldRelationValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -11,7 +10,8 @@ import { recordFieldInputDraftValueComponentState } from '@/object-record/record
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 
 export const useMorphRelationField = <
   T extends ObjectRecord | ObjectRecord[],
@@ -27,11 +27,12 @@ export const useMorphRelationField = <
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldRelationValue<T>>(
-    recordStoreFamilySelector({ recordId, fieldName }),
-  );
+  const [fieldValue, setFieldValue] = useFamilySelectorStateV2(
+    recordStoreFamilySelectorV2,
+    { recordId, fieldName },
+  ) as [FieldRelationValue<T>, (value: FieldRelationValue<T>) => void];
 
-  const draftValue = useRecoilComponentValue(
+  const draftValue = useRecoilComponentValueV2(
     recordFieldInputDraftValueComponentState,
   );
 

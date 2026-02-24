@@ -1,9 +1,9 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 export const lastContextStoreVirtualizedVisibleRecordFieldsComponentState =
-  createComponentState<RecordField[] | null>({
+  createComponentStateV2<RecordField[] | null>({
     key: 'lastContextStoreVirtualizedVisibleRecordFieldsComponentState',
     componentInstanceContext: ContextStoreComponentInstanceContext,
     defaultValue: null,

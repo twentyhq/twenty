@@ -1,7 +1,7 @@
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 import { type DomainValidRecords } from '~/generated-metadata/graphql';
-import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const customDomainRecordsState = createState<{
+export const customDomainRecordsState = createStateV2<{
   customDomainRecords: DomainValidRecords | null;
   isLoading: boolean;
 }>({

@@ -15,7 +15,6 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -50,7 +49,7 @@ export const RecordIndexActionMenuDropdown = () => {
   const dropdownId = getActionMenuDropdownIdFromActionMenuId(actionMenuId);
   const { closeDropdown } = useCloseDropdown();
 
-  const actionMenuDropdownPosition = useRecoilComponentValue(
+  const actionMenuDropdownPosition = useRecoilComponentValueV2(
     recordIndexActionMenuDropdownPositionComponentState,
     dropdownId,
   );

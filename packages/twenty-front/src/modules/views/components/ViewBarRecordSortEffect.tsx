@@ -1,9 +1,9 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { hasInitializedCurrentRecordSortsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordSortsComponentFamilyState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
@@ -11,11 +11,11 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordSortEffect = () => {
-  const currentViewId = useRecoilComponentValue(
+  const currentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
   );
 
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
 
   const currentView = useFamilySelectorValueV2(
     coreViewFromViewIdFamilySelector,
@@ -25,15 +25,16 @@ export const ViewBarRecordSortEffect = () => {
   const [
     hasInitializedCurrentRecordSorts,
     setHasInitializedCurrentRecordSorts,
-  ] = useRecoilComponentFamilyState(
+  ] = useRecoilComponentFamilyStateV2(
     hasInitializedCurrentRecordSortsComponentFamilyState,
     {
       viewId: currentViewId ?? undefined,
     },
   );
 
-  const setCurrentRecordSorts = useSetRecoilComponentState(
+  const setCurrentRecordSorts = useSetRecoilComponentStateV2(
     currentRecordSortsComponentState,
+    recordIndexId,
   );
 
   useEffect(() => {

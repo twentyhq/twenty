@@ -1,29 +1,23 @@
-import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
+import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
 import { type AllRowsSelectedStatus } from '@/object-record/record-table/types/AllRowSelectedStatus';
 
 export const allRowsSelectedStatusComponentSelector =
-  createComponentSelector<AllRowsSelectedStatus>({
+  createComponentSelectorV2<AllRowsSelectedStatus>({
     key: 'allRowsSelectedStatusComponentSelector',
     componentInstanceContext: RecordTableComponentInstanceContext,
     get:
       ({ instanceId }) =>
       ({ get }) => {
-        const allRecordIds = get(
-          // TODO: Working because instanceId is the same, but we're not in the same context, should be changed !
-          recordIndexAllRecordIdsComponentSelector.selectorFamily({
-            instanceId,
-          }),
-        );
+        const allRecordIds = get(recordIndexAllRecordIdsComponentSelector, {
+          instanceId,
+        });
 
-        const selectedRowIds = get(
-          selectedRowIdsComponentSelector.selectorFamily({
-            instanceId,
-          }),
-        );
+        const selectedRowIds = get(selectedRowIdsComponentSelector, {
+          instanceId,
+        });
 
         const numberOfSelectedRows = selectedRowIds.length;
 

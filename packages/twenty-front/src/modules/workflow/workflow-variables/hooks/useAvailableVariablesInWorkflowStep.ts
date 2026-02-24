@@ -1,4 +1,5 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import {
@@ -9,7 +10,6 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
-import { useRecoilValue } from 'recoil';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 export const useAvailableVariablesInWorkflowStep = ({
@@ -21,7 +21,7 @@ export const useAvailableVariablesInWorkflowStep = ({
   shouldDisplayRecordObjects: boolean;
   fieldTypesToExclude?: InputSchemaPropertyType[];
 }): StepOutputSchemaV2[] => {
-  const workflowSelectedNode = useRecoilComponentValue(
+  const workflowSelectedNode = useRecoilComponentValueV2(
     workflowSelectedNodeComponentState,
   );
   const flow = useFlowOrThrow();
@@ -32,12 +32,11 @@ export const useAvailableVariablesInWorkflowStep = ({
     ? getPreviousSteps({ steps, currentStep }).map((step) => step.id)
     : [];
 
-  const availableStepsOutputSchema: StepOutputSchemaV2[] = useRecoilValue(
-    stepsOutputSchemaFamilySelector({
+  const availableStepsOutputSchema: StepOutputSchemaV2[] =
+    useFamilySelectorValueV2(stepsOutputSchemaFamilySelector, {
       workflowVersionId: flow.workflowVersionId,
       stepIds: [TRIGGER_STEP_ID, ...previousStepIds],
-    }),
-  );
+    });
 
   const availableVariablesInWorkflowStep = availableStepsOutputSchema
     .map((stepOutputSchema) => {

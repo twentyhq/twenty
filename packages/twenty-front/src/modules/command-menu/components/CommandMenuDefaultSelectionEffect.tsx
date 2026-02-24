@@ -3,8 +3,8 @@ import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelect
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuDefaultSelectionEffect = ({
@@ -21,7 +21,7 @@ export const CommandMenuDefaultSelectionEffect = ({
     COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
   );
 
-  const hasUserSelectedCommand = useRecoilValue(hasUserSelectedCommandState);
+  const hasUserSelectedCommand = useRecoilValueV2(hasUserSelectedCommandState);
 
   useEffect(() => {
     if (

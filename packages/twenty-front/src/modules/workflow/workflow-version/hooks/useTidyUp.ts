@@ -1,11 +1,11 @@
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useTidyUp = () => {
-  const [workflowDiagram, setWorkflowDiagram] = useRecoilComponentState(
+  const [workflowDiagram, setWorkflowDiagram] = useRecoilComponentStateV2(
     workflowDiagramComponentState,
   );
 

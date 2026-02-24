@@ -11,7 +11,7 @@ import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOp
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
@@ -26,7 +26,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     objectNameSingular,
   });
 
-  const setCreatedRecordsProgress = useSetRecoilState(
+  const setCreatedRecordsProgress = useSetRecoilStateV2(
     spreadsheetImportCreatedRecordsProgressState,
   );
 

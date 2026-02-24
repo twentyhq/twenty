@@ -1,30 +1,34 @@
-import { selectorFamily } from 'recoil';
-
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
 import { uncapitalize } from 'twenty-shared/utils';
 
-export const recordStoreIdentifierFamilySelector = selectorFamily({
-  key: 'recordStoreIdentifierFamilySelector',
+type RecordStoreIdentifierFamilyKey = {
+  recordId: string;
+  allowRequestsToTwentyIcons: boolean;
+  isFilesFieldMigrated?: boolean;
+};
+
+export const recordStoreIdentifierFamilySelectorV2 = createFamilySelectorV2<
+  ObjectRecordIdentifier | null,
+  RecordStoreIdentifierFamilyKey
+>({
+  key: 'recordStoreIdentifierFamilySelectorV2',
   get:
     ({
       recordId,
       allowRequestsToTwentyIcons,
       isFilesFieldMigrated,
-    }: {
-      recordId: string;
-      allowRequestsToTwentyIcons: boolean;
-      isFilesFieldMigrated?: boolean;
-    }) =>
+    }: RecordStoreIdentifierFamilyKey) =>
     ({ get }) => {
-      const recordFromStore = get(recordStoreFamilyState(recordId));
+      const recordFromStore = get(recordStoreFamilyState, recordId);
       const objectNameSingular = uncapitalize(
         recordFromStore?.__typename ?? '',
       );
 
-      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = get(objectMetadataItemsState);
 
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.nameSingular === objectNameSingular,

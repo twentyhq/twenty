@@ -1,8 +1,8 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
-export const pageLayoutResizingWidgetIdComponentState = createComponentState<
+export const pageLayoutResizingWidgetIdComponentState = createComponentStateV2<
   string | null
 >({
   key: 'pageLayoutResizingWidgetIdComponentState',

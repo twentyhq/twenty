@@ -1,41 +1,40 @@
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
+
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
 
 export const useSetIsRecordTableCellFocusActive = (recordTableId?: string) => {
-  const isRecordTableFocusActiveCallbackState = useRecoilComponentCallbackState(
+  const store = useStore();
+  const isRecordTableCellFocusActive = useRecoilComponentStateCallbackStateV2(
     isRecordTableCellFocusActiveComponentState,
     recordTableId,
   );
 
-  const recordTableFocusPositionCallbackState = useRecoilComponentCallbackState(
+  const recordTableFocusPosition = useRecoilComponentStateCallbackStateV2(
     recordTableFocusPositionComponentState,
     recordTableId,
   );
 
-  const setIsRecordTableCellFocusActive = useRecoilCallback(
-    ({ set }) =>
-      ({
-        isRecordTableFocusActive,
-        cellPosition,
-      }: {
-        isRecordTableFocusActive: boolean;
-        cellPosition: TableCellPosition;
-      }) => {
-        if (isRecordTableFocusActive) {
-          set(isRecordTableFocusActiveCallbackState, true);
-          set(recordTableFocusPositionCallbackState, cellPosition);
-        } else {
-          set(isRecordTableFocusActiveCallbackState, false);
-          set(recordTableFocusPositionCallbackState, null);
-        }
-      },
-    [
-      isRecordTableFocusActiveCallbackState,
-      recordTableFocusPositionCallbackState,
-    ],
+  const setIsRecordTableCellFocusActive = useCallback(
+    ({
+      isRecordTableFocusActive,
+      cellPosition,
+    }: {
+      isRecordTableFocusActive: boolean;
+      cellPosition: TableCellPosition;
+    }) => {
+      if (isRecordTableFocusActive) {
+        store.set(isRecordTableCellFocusActive, true);
+        store.set(recordTableFocusPosition, cellPosition);
+      } else {
+        store.set(isRecordTableCellFocusActive, false);
+        store.set(recordTableFocusPosition, null);
+      }
+    },
+    [store, isRecordTableCellFocusActive, recordTableFocusPosition],
   );
 
   return {

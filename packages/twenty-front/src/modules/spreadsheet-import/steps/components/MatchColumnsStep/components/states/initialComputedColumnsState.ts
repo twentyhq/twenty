@@ -1,14 +1,15 @@
 import { type ImportedRow } from '@/spreadsheet-import/types';
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
-import { atom, selectorFamily } from 'recoil';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createWritableFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createWritableFamilySelectorV2';
 
-export const matchColumnsState = atom({
+export const matchColumnsState = createStateV2<SpreadsheetColumns>({
   key: 'MatchColumnsState',
-  default: [] as SpreadsheetColumns,
+  defaultValue: [] as SpreadsheetColumns,
 });
 
-export const initialComputedColumnsSelector = selectorFamily<
+export const initialComputedColumnsSelector = createWritableFamilySelectorV2<
   SpreadsheetColumns,
   ImportedRow
 >({

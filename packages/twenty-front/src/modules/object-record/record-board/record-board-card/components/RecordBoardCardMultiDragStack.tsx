@@ -1,5 +1,5 @@
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 
 const StyledRecordBoardCardStackCard = styled.div<{ offset: number }>`
@@ -15,7 +15,7 @@ const StyledRecordBoardCardStackCard = styled.div<{ offset: number }>`
 `;
 
 export const RecordBoardCardMultiDragStack = () => {
-  const originalDragSelection = useRecoilComponentValue(
+  const originalDragSelection = useRecoilComponentValueV2(
     originalDragSelectionComponentState,
   );
 

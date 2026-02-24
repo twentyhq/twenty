@@ -1,7 +1,7 @@
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 import { type ApprovedAccessDomain } from '~/generated-metadata/graphql';
-import { createState } from '@/ui/utilities/state/utils/createState';
 
-export const approvedAccessDomainsState = createState<
+export const approvedAccessDomainsState = createStateV2<
   Omit<ApprovedAccessDomain, '__typename'>[]
 >({
   key: 'ApprovedAccessDomainsState',

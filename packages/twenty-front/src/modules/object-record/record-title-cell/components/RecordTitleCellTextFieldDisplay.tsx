@@ -1,5 +1,6 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -7,7 +8,6 @@ import { withTheme, type Theme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledDiv = styled.div`
@@ -39,7 +39,7 @@ export const RecordTitleCellSingleTextDisplayMode = ({
 }) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const recordValue = useRecoilValue(recordStoreFamilyState(recordId));
+  const recordValue = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
 
   const isEmpty =
     recordValue?.[fieldDefinition.metadata.fieldName]?.trim() === '';

@@ -2,7 +2,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useChildRecordFiltersAndRecordFilterGroups = ({
@@ -10,11 +10,11 @@ export const useChildRecordFiltersAndRecordFilterGroups = ({
 }: {
   recordFilterGroupId?: string;
 }) => {
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
 
-  const currentRecordFilterGroups = useRecoilComponentValue(
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
     currentRecordFilterGroupsComponentState,
   );
 

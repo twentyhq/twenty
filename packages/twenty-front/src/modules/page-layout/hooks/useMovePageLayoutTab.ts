@@ -3,8 +3,9 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -12,67 +13,67 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutDraftState = useRecoilComponentCallbackState(
+  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const moveLeft = useRecoilCallback(
-    ({ set }) =>
-      (tabId: string) => {
-        set(pageLayoutDraftState, (prev) => {
-          const sorted = sortTabsByPosition(prev.tabs);
-          const index = sorted.findIndex((t) => t.id === tabId);
-          if (index <= 0) return prev;
+  const store = useStore();
 
-          const items = sorted.filter((t) => t.id !== tabId);
-          const destinationIndex = index - 1;
-          const sourceIndex = index;
+  const moveLeft = useCallback(
+    (tabId: string) => {
+      store.set(pageLayoutDraftState, (prev) => {
+        const sorted = sortTabsByPosition(prev.tabs);
+        const index = sorted.findIndex((t) => t.id === tabId);
+        if (index <= 0) return prev;
 
-          const newPosition = calculateNewPosition({
-            destinationIndex,
-            sourceIndex,
-            items,
-          });
+        const items = sorted.filter((t) => t.id !== tabId);
+        const destinationIndex = index - 1;
+        const sourceIndex = index;
 
-          return {
-            ...prev,
-            tabs: prev.tabs.map((t) =>
-              t.id === tabId ? { ...t, position: newPosition } : t,
-            ),
-          };
+        const newPosition = calculateNewPosition({
+          destinationIndex,
+          sourceIndex,
+          items,
         });
-      },
-    [pageLayoutDraftState],
+
+        return {
+          ...prev,
+          tabs: prev.tabs.map((t) =>
+            t.id === tabId ? { ...t, position: newPosition } : t,
+          ),
+        };
+      });
+    },
+    [pageLayoutDraftState, store],
   );
 
-  const moveRight = useRecoilCallback(
-    ({ set }) =>
-      (tabId: string) => {
-        set(pageLayoutDraftState, (prev) => {
-          const sorted = sortTabsByPosition(prev.tabs);
-          const index = sorted.findIndex((t) => t.id === tabId);
-          if (index < 0 || index >= sorted.length - 1) return prev;
+  const moveRight = useCallback(
+    (tabId: string) => {
+      store.set(pageLayoutDraftState, (prev) => {
+        const sorted = sortTabsByPosition(prev.tabs);
+        const index = sorted.findIndex((t) => t.id === tabId);
+        if (index < 0 || index >= sorted.length - 1) return prev;
 
-          const items = sorted.filter((t) => t.id !== tabId);
-          const destinationIndex = index + 1;
-          const sourceIndex = index;
+        const items = sorted.filter((t) => t.id !== tabId);
+        const destinationIndex = index + 1;
+        const sourceIndex = index;
 
-          const newPosition = calculateNewPosition({
-            destinationIndex,
-            sourceIndex,
-            items,
-          });
-
-          return {
-            ...prev,
-            tabs: prev.tabs.map((t) =>
-              t.id === tabId ? { ...t, position: newPosition } : t,
-            ),
-          };
+        const newPosition = calculateNewPosition({
+          destinationIndex,
+          sourceIndex,
+          items,
         });
-      },
-    [pageLayoutDraftState],
+
+        return {
+          ...prev,
+          tabs: prev.tabs.map((t) =>
+            t.id === tabId ? { ...t, position: newPosition } : t,
+          ),
+        };
+      });
+    },
+    [pageLayoutDraftState, store],
   );
 
   return { moveLeft, moveRight };

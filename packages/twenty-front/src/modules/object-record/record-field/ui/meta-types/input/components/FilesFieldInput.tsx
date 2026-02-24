@@ -14,7 +14,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { filePreviewStateV2 } from '@/ui/field/display/states/filePreviewStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
@@ -122,7 +122,7 @@ export const FilesFieldInput = () => {
     fieldDefinition,
   ]);
 
-  const setIsFieldInError = useSetRecoilComponentState(
+  const setIsFieldInError = useSetRecoilComponentStateV2(
     recordFieldInputIsFieldInErrorComponentState,
   );
 

@@ -1,6 +1,6 @@
 import type { DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolder, IconLink, useIcons } from 'twenty-ui/display';
 
@@ -20,14 +20,15 @@ import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/s
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useStore } from 'jotai';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { useStore } from 'jotai';
 
 export const useHandleAddToNavigationDrop = () => {
+  const store = useStore();
   const { addObjectToDraft } = useAddObjectToNavigationMenuDraft();
   const { addViewToDraft } = useAddViewToNavigationMenuDraft();
   const { addRecordToDraft } = useAddRecordToNavigationMenuDraft();
@@ -52,10 +53,8 @@ export const useHandleAddToNavigationDrop = () => {
     openNavigationMenuItemFolderIdsStateV2,
   );
 
-  const store = useStore();
-
-  const handleAddToNavigationDrop = useRecoilCallback(
-    () => (result: DropResult, _provided: ResponderProvided) => {
+  const handleAddToNavigationDrop = useCallback(
+    (result: DropResult, _provided: ResponderProvided) => {
       const { source, destination, draggableId } = result;
       if (
         source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID ||
@@ -203,8 +202,8 @@ export const useHandleAddToNavigationDrop = () => {
       setOpenNavigationMenuItemFolderIds,
       setIsNavigationMenuInEditMode,
       setSelectedNavigationMenuItemInEditMode,
-      store,
       workspaceNavigationMenuItems,
+      store,
     ],
   );
 

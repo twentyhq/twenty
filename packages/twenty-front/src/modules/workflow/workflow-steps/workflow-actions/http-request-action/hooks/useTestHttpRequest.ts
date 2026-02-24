@@ -4,12 +4,13 @@ import {
   type HttpRequestFormData,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { TEST_HTTP_REQUEST } from '@/workflow/workflow-steps/workflow-actions/http-request-action/graphql/mutations/testHttpRequest';
+import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
 import { useMutation } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isObject, isString } from '@sniptt/guards';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { isDefined, parseJson, resolveInput } from 'twenty-shared/utils';
 import {
   type TestHttpRequestInput,
@@ -43,8 +44,13 @@ const convertFlatVariablesToNestedContext = (flatVariables: {
 export const useTestHttpRequest = (actionId: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const [isTesting, setIsTesting] = useState(false);
-  const [httpRequestTestData, setHttpRequestTestData] = useRecoilState(
-    httpRequestTestDataFamilyState(actionId),
+  const httpRequestTestData = useFamilyRecoilValueV2(
+    httpRequestTestDataFamilyState,
+    actionId,
+  );
+  const setHttpRequestTestData = useSetFamilyRecoilStateV2(
+    httpRequestTestDataFamilyState,
+    actionId,
   );
 
   const [mutate] = useMutation<

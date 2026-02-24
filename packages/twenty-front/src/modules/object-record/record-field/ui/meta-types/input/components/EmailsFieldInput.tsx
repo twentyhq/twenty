@@ -6,7 +6,7 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { emailsSchema } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
 import { emailSchema } from '@/object-record/record-field/ui/validation-schemas/emailSchema';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
@@ -68,7 +68,7 @@ export const EmailsFieldInput = () => {
     index === 0 && emails.length > 1;
   const getShowSetAsPrimaryButton = (index: number) => index > 0;
 
-  const setIsFieldInError = useSetRecoilComponentState(
+  const setIsFieldInError = useSetRecoilComponentStateV2(
     recordFieldInputIsFieldInErrorComponentState,
   );
 

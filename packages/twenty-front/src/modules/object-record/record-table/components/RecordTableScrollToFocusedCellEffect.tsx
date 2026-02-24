@@ -2,19 +2,19 @@ import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableScrollToFocusedCellEffect = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isRecordTableCellFocusActive = useRecoilComponentValue(
+  const isRecordTableCellFocusActive = useRecoilComponentValueV2(
     isRecordTableCellFocusActiveComponentState,
     recordTableId,
   );
 
-  const focusPosition = useRecoilComponentValue(
+  const focusPosition = useRecoilComponentValueV2(
     recordTableFocusPositionComponentState,
     recordTableId,
   );

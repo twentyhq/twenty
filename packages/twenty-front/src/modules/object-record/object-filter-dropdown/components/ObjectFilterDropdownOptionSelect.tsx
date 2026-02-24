@@ -17,7 +17,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -36,11 +36,11 @@ export const ObjectFilterDropdownOptionSelect = ({
 }: {
   focusId: string;
 }) => {
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const objectFilterDropdownSearchInput = useRecoilComponentValue(
+  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
     objectFilterDropdownSearchInputComponentState,
   );
 
@@ -48,7 +48,7 @@ export const ObjectFilterDropdownOptionSelect = ({
     ObjectFilterDropdownComponentInstanceContext,
   );
 
-  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
+  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 

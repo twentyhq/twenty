@@ -1,24 +1,40 @@
 import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useSearchRecordGroupField';
+import { objectOptionsDropdownSearchInputComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownSearchInputComponentState';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { RecoilRoot } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+const INSTANCE_ID = 'myViewInstanceId';
+
 describe('useSearchRecordGroupField', () => {
+  beforeEach(() => {
+    jotaiStore.set(
+      objectOptionsDropdownSearchInputComponentState.atomFamily({
+        instanceId: INSTANCE_ID,
+      }),
+      '',
+    );
+  });
+
   const renderWithContext = (contextValue: any) =>
     renderHook(() => useSearchRecordGroupField(), {
       wrapper: ({ children }) => (
-        <RecoilRoot>
-          <RecordIndexContextProvider value={contextValue}>
-            <ViewComponentInstanceContext.Provider
-              value={{ instanceId: 'myViewInstanceId' }}
-            >
-              {children}
-            </ViewComponentInstanceContext.Provider>
-          </RecordIndexContextProvider>
-        </RecoilRoot>
+        <JotaiProvider store={jotaiStore}>
+          <RecoilRoot>
+            <RecordIndexContextProvider value={contextValue}>
+              <ViewComponentInstanceContext.Provider
+                value={{ instanceId: INSTANCE_ID }}
+              >
+                {children}
+              </ViewComponentInstanceContext.Provider>
+            </RecordIndexContextProvider>
+          </RecoilRoot>
+        </JotaiProvider>
       ),
     });
 

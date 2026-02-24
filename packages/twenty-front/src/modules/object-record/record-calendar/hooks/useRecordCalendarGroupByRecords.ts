@@ -10,8 +10,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useQuery } from '@apollo/client';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { type Temporal } from 'temporal-polyfill';
 import {
   ObjectRecordGroupByDateGranularity,
@@ -26,7 +26,7 @@ export const useRecordCalendarGroupByRecords = (
 
   const { userTimezone } = useUserTimezone();
 
-  const recordIndexCalendarFieldMetadataId = useRecoilValue(
+  const recordIndexCalendarFieldMetadataId = useRecoilValueV2(
     recordIndexCalendarFieldMetadataIdState,
   );
 
