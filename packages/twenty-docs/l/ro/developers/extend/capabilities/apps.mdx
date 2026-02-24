@@ -807,6 +807,53 @@ Notițe:
 * Permisiunile cheii API sunt determinate de rolul referențiat în `application-config.ts` prin `defaultRoleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
 * Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `defaultRoleUniversalIdentifier` la identificatorul universal al acelui rol.
 
+#### Încărcarea fișierelor
+
+Clientul `Twenty` generat include o metodă `uploadFile` pentru atașarea fișierelor la câmpuri de tip fișier ale obiectelor din spațiul de lucru. Deoarece clienții GraphQL standard nu acceptă în mod nativ încărcarea fișierelor multipart, clientul oferă această metodă dedicată care implementează, sub capotă, [specificația cererilor GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec).
+
+```typescript
+import Twenty from '~/generated';
+import * as fs from 'fs';
+
+const client = new Twenty();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await client.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+Semnătura metodei:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| Parametru                          | Tip      | Descriere                                                                                   |
+| ---------------------------------- | -------- | ------------------------------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Conținutul brut al fișierului                                                               |
+| `filename`                         | `string` | Numele fișierului (folosit pentru stocare și afișare)                                       |
+| `contentType`                      | `string` | Tipul MIME al fișierului (are valoarea implicită `application/octet-stream` dacă este omis) |
+| `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` al câmpului de tip fișier de pe obiectul tău                          |
+
+Puncte cheie:
+
+* Metoda trimite fișierul către **metadata endpoint** (nu către endpoint-ul principal GraphQL), unde mutația de încărcare este rezolvată.
+* Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul tău de încărcare funcționează în orice spațiu de lucru în care aplicația ta este instalată — în concordanță cu modul în care aplicațiile fac referire la câmpuri în rest.
+* `url` returnat este un URL semnat pe care îl poți folosi pentru a accesa fișierul încărcat.
+
 ### Exemplu Hello World
 
 Explorați un exemplu minim, cap la cap, care demonstrează obiecte, funcții de logică, componente Front și declanșatoare multiple [aici](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):

@@ -7,7 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -27,6 +26,7 @@ import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/u
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
@@ -98,8 +98,8 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   );
   const iconColors = getNavigationMenuItemIconColors(theme);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const coreViews = useRecoilValue(coreViewsState);
+  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const coreViews = useRecoilValueV2(coreViewsState);
   const views = coreViews.map(convertCoreViewToView);
   const location = useLocation();
   const navigate = useNavigate();

@@ -1,16 +1,17 @@
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { useRecoilValue } from 'recoil';
+import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 
 export const useOpportunityDefaultChartConfig = () => {
-  const opportunityObjectMetadata = useRecoilValue(
-    objectMetadataItemFamilySelector({
+  const opportunityObjectMetadata = useFamilySelectorValueV2(
+    objectMetadataItemFamilySelector,
+    {
       objectName: CoreObjectNameSingular.Opportunity,
       objectNameType: 'singular',
-    }),
+    },
   );
 
   const buildBarChartFieldSelection = ():

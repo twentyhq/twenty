@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
+import { Provider as JotaiProvider } from 'jotai';
 import { RecoilRoot } from 'recoil';
 
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
@@ -7,6 +8,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown } from '@/views/hooks/useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -40,23 +42,27 @@ const personCreatedAtFieldMetadataItemMock =
     (field) => field.name === 'createdAt',
   );
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot
-    initializeState={(snapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-    }}
-  >
-    <ObjectFilterDropdownComponentInstanceContext.Provider
-      value={{ instanceId: 'test' }}
-    >
-      <RecordFiltersComponentInstanceContext.Provider
-        value={{ instanceId: 'test' }}
-      >
-        {children}
-      </RecordFiltersComponentInstanceContext.Provider>
-    </ObjectFilterDropdownComponentInstanceContext.Provider>
-  </RecoilRoot>
-);
+const wrapper = ({ children }: { children: React.ReactNode }) => {
+  jotaiStore.set(
+    objectMetadataItemsState.atom,
+    generatedMockObjectMetadataItems,
+  );
+  return (
+    <JotaiProvider store={jotaiStore}>
+      <RecoilRoot>
+        <ObjectFilterDropdownComponentInstanceContext.Provider
+          value={{ instanceId: 'test' }}
+        >
+          <RecordFiltersComponentInstanceContext.Provider
+            value={{ instanceId: 'test' }}
+          >
+            {children}
+          </RecordFiltersComponentInstanceContext.Provider>
+        </ObjectFilterDropdownComponentInstanceContext.Provider>
+      </RecoilRoot>
+    </JotaiProvider>
+  );
+};
 
 describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () => {
   beforeEach(() => {

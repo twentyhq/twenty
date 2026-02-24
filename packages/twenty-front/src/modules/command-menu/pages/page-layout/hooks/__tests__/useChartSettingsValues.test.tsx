@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { RecoilRoot } from 'recoil';
 
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
@@ -16,6 +17,7 @@ import {
   WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const mockObjectMetadataItem: ObjectMetadataItem = {
   id: 'obj-1',
@@ -79,6 +81,8 @@ const buildBarChartConfiguration = (
   }) as TypedBarChartConfiguration;
 
 const renderUseChartSettingsValues = (configuration: ChartConfiguration) => {
+  jotaiStore.set(objectMetadataItemsState.atom, [mockObjectMetadataItem]);
+
   return renderHook(
     () =>
       useChartSettingsValues({
@@ -87,13 +91,9 @@ const renderUseChartSettingsValues = (configuration: ChartConfiguration) => {
       }),
     {
       wrapper: ({ children }) => (
-        <RecoilRoot
-          initializeState={({ set }) => {
-            set(objectMetadataItemsState, [mockObjectMetadataItem]);
-          }}
-        >
-          {children}
-        </RecoilRoot>
+        <JotaiProvider store={jotaiStore}>
+          <RecoilRoot>{children}</RecoilRoot>
+        </JotaiProvider>
       ),
     },
   );
@@ -414,6 +414,8 @@ describe('useChartSettingsValues', () => {
     it('should handle missing objectMetadataItem gracefully', () => {
       const config = buildBarChartConfiguration({});
 
+      jotaiStore.set(objectMetadataItemsState.atom, [mockObjectMetadataItem]);
+
       const { result } = renderHook(
         () =>
           useChartSettingsValues({
@@ -422,13 +424,9 @@ describe('useChartSettingsValues', () => {
           }),
         {
           wrapper: ({ children }) => (
-            <RecoilRoot
-              initializeState={({ set }) => {
-                set(objectMetadataItemsState, [mockObjectMetadataItem]);
-              }}
-            >
-              {children}
-            </RecoilRoot>
+            <JotaiProvider store={jotaiStore}>
+              <RecoilRoot>{children}</RecoilRoot>
+            </JotaiProvider>
           ),
         },
       );

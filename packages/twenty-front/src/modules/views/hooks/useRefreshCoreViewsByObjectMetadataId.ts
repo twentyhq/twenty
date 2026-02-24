@@ -4,6 +4,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { getFilterableFields } from '@/views/utils/getFilterableFields';
@@ -19,7 +20,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
   const [findManyCoreViewsLazy] = useFindManyCoreViewsLazyQuery();
 
   const refreshCoreViewsByObjectMetadataId = useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set }) =>
       async (objectMetadataId: string) => {
         const result = await findManyCoreViewsLazy({
           variables: {
@@ -32,9 +33,9 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           return;
         }
 
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
+        const objectMetadataItems = jotaiStore.get(
+          objectMetadataItemsState.atom,
+        );
 
         const objectMetadataItem = objectMetadataItems.find(
           (objectMetadataItem) => objectMetadataItem.id === objectMetadataId,
@@ -44,11 +45,11 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           return;
         }
 
-        const coreViewsForObjectMetadataId = snapshot
-          .getLoadable(
-            coreViewsByObjectMetadataIdFamilySelector(objectMetadataId),
-          )
-          .getValue();
+        const coreViewsForObjectMetadataId = jotaiStore.get(
+          coreViewsByObjectMetadataIdFamilySelector.selectorFamily(
+            objectMetadataId,
+          ),
+        );
 
         const coreViewsFromResult = result.data.getCoreViews;
 
@@ -56,8 +57,10 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           return;
         }
 
-        set(
-          coreViewsByObjectMetadataIdFamilySelector(objectMetadataId),
+        jotaiStore.set(
+          coreViewsByObjectMetadataIdFamilySelector.selectorFamily(
+            objectMetadataId,
+          ),
           coreViewsFromResult,
         );
 

@@ -1,11 +1,14 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
+import { type ReactNode, createElement } from 'react';
+import { Provider as JotaiProvider } from 'jotai';
 import { RecoilRoot } from 'recoil';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   type PublicWorkspaceDataOutput,
@@ -20,16 +23,21 @@ jest.mock('~/generated-metadata/graphql');
 dynamicActivate(SOURCE_LOCALE);
 
 const renderHooks = () => {
+  jotaiStore.set(workspacePublicDataState.atom, {
+    id: 'workspace-id',
+  } as PublicWorkspaceDataOutput);
+
   const { result } = renderHook(() => useHandleResetPassword(), {
-    wrapper: ({ children }) =>
-      RecoilRoot({
-        initializeState: ({ set }) => {
-          set(workspacePublicDataState, {
-            id: 'workspace-id',
-          } as PublicWorkspaceDataOutput);
-        },
-        children: I18nProvider({ i18n, children }),
-      }),
+    wrapper: ({ children }: { children: ReactNode }) =>
+      createElement(
+        JotaiProvider,
+        { store: jotaiStore },
+        createElement(
+          RecoilRoot,
+          null as any,
+          createElement(I18nProvider, { i18n }, children),
+        ),
+      ),
   });
   return { result };
 };

@@ -2,12 +2,12 @@ import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { assertIsDefinedOrThrow, findOrThrow } from 'twenty-shared/utils';
 import { usePlans } from './usePlans';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 
 export const useCurrentPlan = () => {
   const { listPlans } = usePlans();
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
 
   assertIsDefinedOrThrow(currentWorkspace);
 

@@ -3,6 +3,7 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
 import { useAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useAddSelectOption';
 import { useCanAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useCanAddSelectOption';
+import { useFilteredSelectOptionsFromRLSPredicates } from '@/object-record/record-field/ui/meta-types/hooks/useFilteredSelectOptionsFromRLSPredicates';
 import { useSelectField } from '@/object-record/record-field/ui/meta-types/hooks/useSelectField';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/ui/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -26,6 +27,14 @@ export const SelectFieldInput = () => {
 
   const { onCancel, onSubmit } = useContext(FieldInputEventContext);
 
+  const { filteredOptions: selectOptions, canSelectEmpty } =
+    useFilteredSelectOptionsFromRLSPredicates({
+      fieldMetadataId: fieldDefinition.fieldMetadataId,
+      objectMetadataNameSingular:
+        fieldDefinition.metadata.objectMetadataNameSingular,
+      options: fieldDefinition.metadata.options,
+    });
+
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
@@ -37,7 +46,7 @@ export const SelectFieldInput = () => {
   );
   const clearField = useClearField();
 
-  const selectedOption = fieldDefinition.metadata.options.find(
+  const selectedOption = selectOptions.find(
     (option) => option.value === fieldValue,
   );
   // handlers
@@ -91,12 +100,14 @@ export const SelectFieldInput = () => {
         }
       }}
       onOptionSelected={handleSubmit}
-      options={fieldDefinition.metadata.options}
+      options={selectOptions}
       onCancel={onCancel}
       defaultOption={selectedOption}
       onFilterChange={setFilteredOptions}
       onClear={
-        fieldDefinition.metadata.isNullable ? handleClearField : undefined
+        fieldDefinition.metadata.isNullable && canSelectEmpty
+          ? handleClearField
+          : undefined
       }
       clearLabel={fieldDefinition.label}
       onAddSelectOption={handleAddSelectOption}

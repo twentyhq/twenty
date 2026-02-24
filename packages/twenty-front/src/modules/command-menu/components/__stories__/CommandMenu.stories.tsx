@@ -8,6 +8,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -72,11 +73,11 @@ const meta: Meta<typeof CommandMenu> = {
   component: CommandMenuRouter,
   decorators: [
     (Story) => {
-      const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-      const setCurrentUserWorkspace = useSetRecoilState(
+      const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
+      const setCurrentUserWorkspace = useSetRecoilStateV2(
         currentUserWorkspaceState,
       );
-      const setCurrentWorkspaceMember = useSetRecoilState(
+      const setCurrentWorkspaceMember = useSetRecoilStateV2(
         currentWorkspaceMemberState,
       );
       const setIsCommandMenuOpened = useSetRecoilState(
@@ -138,7 +139,7 @@ export const LimitedPermissions: Story = {
   },
   decorators: [
     (Story) => {
-      const setCurrentUserWorkspace = useSetRecoilState(
+      const setCurrentUserWorkspace = useSetRecoilStateV2(
         currentUserWorkspaceState,
       );
       setCurrentUserWorkspace(

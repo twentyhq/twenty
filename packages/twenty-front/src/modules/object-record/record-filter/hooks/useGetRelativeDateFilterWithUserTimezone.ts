@@ -1,14 +1,14 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { type FirstDayOfTheWeek } from 'twenty-shared/types';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
 
 export const useGetRelativeDateFilterWithUserTimezone = () => {
   const { userTimezone } = useUserTimezone();
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
 
   const getRelativeDateFilterWithUserTimezone = (
     relativeDateFilter: RelativeDateFilter,

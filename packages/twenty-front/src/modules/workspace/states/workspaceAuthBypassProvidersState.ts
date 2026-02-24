@@ -1,8 +1,8 @@
 import { type AuthBypassProviders } from '~/generated-metadata/graphql';
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
 
 export const workspaceAuthBypassProvidersState =
-  createState<AuthBypassProviders | null>({
+  createStateV2<AuthBypassProviders | null>({
     key: 'workspaceAuthBypassProvidersState',
     defaultValue: null,
   });

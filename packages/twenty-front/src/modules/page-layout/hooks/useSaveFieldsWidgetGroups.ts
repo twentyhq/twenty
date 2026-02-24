@@ -1,18 +1,36 @@
+import { UPSERT_FIELDS_WIDGET } from '@/page-layout/graphql/mutations/upsertFieldsWidget';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { computeFieldsWidgetFieldDiff } from '@/page-layout/utils/computeFieldsWidgetFieldDiff';
-import { computeFieldsWidgetGroupDiff } from '@/page-layout/utils/computeFieldsWidgetGroupDiff';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
-import { usePerformViewFieldGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFieldGroupAPIPersist';
 import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
+import { useMutation } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type FieldsConfiguration,
-  WidgetConfigurationType,
-} from '~/generated-metadata/graphql';
+import { type ViewFragmentFragment } from '~/generated-metadata/graphql';
+
+type UpsertFieldsWidgetInput = {
+  widgetId: string;
+  groups?: {
+    id: string;
+    name: string;
+    position: number;
+    isVisible: boolean;
+    fields: {
+      viewFieldId: string;
+      isVisible: boolean;
+      position: number;
+    }[];
+  }[];
+  fields?: {
+    viewFieldId: string;
+    isVisible: boolean;
+    position: number;
+  }[];
+};
+
+type UpsertFieldsWidgetResult = {
+  upsertFieldsWidget: ViewFragmentFragment;
+};
 
 type UseSaveFieldsWidgetGroupsParams = {
   pageLayoutId: string;
@@ -31,51 +49,12 @@ export const useSaveFieldsWidgetGroups = ({
     pageLayoutId,
   );
 
-  const pageLayoutPersistedState = useRecoilComponentCallbackState(
-    pageLayoutPersistedComponentState,
-    pageLayoutId,
-  );
-
-  const {
-    performViewFieldGroupAPICreate,
-    performViewFieldGroupAPIUpdate,
-    performViewFieldGroupAPIDelete,
-  } = usePerformViewFieldGroupAPIPersist();
-
-  const { performViewFieldAPIUpdate } = usePerformViewFieldAPIPersist();
+  const [upsertFieldsWidgetMutation] = useMutation<
+    UpsertFieldsWidgetResult,
+    { input: UpsertFieldsWidgetInput }
+  >(UPSERT_FIELDS_WIDGET);
 
   const { refreshAllCoreViews } = useRefreshAllCoreViews();
-
-  const getViewIdForWidget = useRecoilCallback(
-    ({ snapshot }) =>
-      (widgetId: string): string | null => {
-        const pageLayoutPersisted = snapshot
-          .getLoadable(pageLayoutPersistedState)
-          .getValue();
-
-        if (!isDefined(pageLayoutPersisted)) {
-          return null;
-        }
-
-        for (const tab of pageLayoutPersisted.tabs) {
-          for (const widget of tab.widgets) {
-            if (
-              widget.id === widgetId &&
-              isDefined(widget.configuration) &&
-              widget.configuration.configurationType ===
-                WidgetConfigurationType.FIELDS
-            ) {
-              return (
-                (widget.configuration as FieldsConfiguration).viewId ?? null
-              );
-            }
-          }
-        }
-
-        return null;
-      },
-    [pageLayoutPersistedState],
-  );
 
   const saveFieldsWidgetGroups = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -94,73 +73,33 @@ export const useSaveFieldsWidgetGroups = ({
 
         for (const widgetId of widgetIds) {
           const draftGroups = allDraftGroups[widgetId] ?? [];
-          const persistedGroups = allPersistedGroups[widgetId] ?? [];
 
-          if (draftGroups.length === 0 && persistedGroups.length === 0) {
-            continue;
-          }
-
-          const viewId = getViewIdForWidget(widgetId);
-
-          if (!isDefined(viewId)) {
-            continue;
-          }
-
-          const { createdGroups, deletedGroups, updatedGroups } =
-            computeFieldsWidgetGroupDiff(persistedGroups, draftGroups);
-
-          if (createdGroups.length > 0) {
-            await performViewFieldGroupAPICreate({
-              inputs: createdGroups.map((group) => ({
-                id: group.id,
-                name: group.name,
-                position: group.position,
-                isVisible: group.isVisible,
-                viewId,
-              })),
-            });
-          }
-
-          if (deletedGroups.length > 0) {
-            for (const group of deletedGroups) {
-              await performViewFieldGroupAPIDelete([
-                { input: { id: group.id } },
-              ]);
-            }
-          }
-
-          if (updatedGroups.length > 0) {
-            const updates = updatedGroups.map((group) => ({
+          await upsertFieldsWidgetMutation({
+            variables: {
               input: {
-                id: group.id,
-                update: {
+                widgetId,
+                groups: draftGroups.map((group) => ({
+                  id: group.id,
                   name: group.name,
                   position: group.position,
                   isVisible: group.isVisible,
-                },
+                  fields: group.fields.flatMap((field) => {
+                    if (!isDefined(field.viewFieldId)) {
+                      return [];
+                    }
+
+                    return [
+                      {
+                        viewFieldId: field.viewFieldId,
+                        isVisible: field.isVisible,
+                        position: field.position,
+                      },
+                    ];
+                  }),
+                })),
               },
-            }));
-
-            await performViewFieldGroupAPIUpdate(updates);
-          }
-
-          const fieldUpdates = computeFieldsWidgetFieldDiff(
-            persistedGroups,
-            draftGroups,
-          );
-
-          if (fieldUpdates.length > 0) {
-            const viewFieldUpdateInputs = fieldUpdates.map(
-              ({ viewFieldId, ...updates }) => ({
-                input: {
-                  id: viewFieldId,
-                  update: updates,
-                },
-              }),
-            );
-
-            await performViewFieldAPIUpdate(viewFieldUpdateInputs);
-          }
+            },
+          });
         }
 
         set(fieldsWidgetGroupsPersistedState, allDraftGroups);
@@ -172,11 +111,7 @@ export const useSaveFieldsWidgetGroups = ({
     [
       fieldsWidgetGroupsDraftState,
       fieldsWidgetGroupsPersistedState,
-      getViewIdForWidget,
-      performViewFieldGroupAPICreate,
-      performViewFieldGroupAPIDelete,
-      performViewFieldGroupAPIUpdate,
-      performViewFieldAPIUpdate,
+      upsertFieldsWidgetMutation,
       refreshAllCoreViews,
     ],
   );

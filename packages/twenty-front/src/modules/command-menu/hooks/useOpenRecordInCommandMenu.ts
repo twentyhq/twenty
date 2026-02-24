@@ -16,6 +16,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CommandMenuPages } from 'twenty-shared/types';
 
 import { useRunWorkflowRunOpeningInCommandMenuSideEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInCommandMenuSideEffects';
@@ -83,14 +84,12 @@ export const useOpenRecordInCommandMenu = () => {
         );
         set(viewableRecordIdState, recordId);
 
-        const objectMetadataItem = snapshot
-          .getLoadable(
-            objectMetadataItemFamilySelector({
-              objectName: objectNameSingular,
-              objectNameType: 'singular',
-            }),
-          )
-          .getValue();
+        const objectMetadataItem = jotaiStore.get(
+          objectMetadataItemFamilySelector.selectorFamily({
+            objectName: objectNameSingular,
+            objectNameType: 'singular',
+          }),
+        );
 
         if (!objectMetadataItem) {
           throw new Error(

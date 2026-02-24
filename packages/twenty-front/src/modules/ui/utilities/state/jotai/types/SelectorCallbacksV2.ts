@@ -1,11 +1,15 @@
+import { type FamilySelectorV2 } from '@/ui/utilities/state/jotai/types/FamilySelectorV2';
 import { type FamilyStateV2 } from '@/ui/utilities/state/jotai/types/FamilyStateV2';
+import { type SelectorV2 } from '@/ui/utilities/state/jotai/types/SelectorV2';
 import { type StateV2 } from '@/ui/utilities/state/jotai/types/StateV2';
 
 export type SelectorGetterV2 = {
   get: {
-    <ValueType>(state: StateV2<ValueType>): ValueType;
+    <ValueType>(state: StateV2<ValueType> | SelectorV2<ValueType>): ValueType;
     <ValueType, FamilyKey>(
-      familyState: FamilyStateV2<ValueType, FamilyKey>,
+      familyState:
+        | FamilyStateV2<ValueType, FamilyKey>
+        | FamilySelectorV2<ValueType, FamilyKey>,
       familyKey: FamilyKey,
     ): ValueType;
   };

@@ -2,6 +2,7 @@ import { formatPath } from '@/cli/utilities/file/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { AppDevCommand } from './app/app-dev';
+import { AppTypecheckCommand } from './app/app-typecheck';
 import { AppUninstallCommand } from './app/app-uninstall';
 import { AuthListCommand } from './auth/auth-list';
 import { AuthLoginCommand } from './auth/auth-login';
@@ -60,6 +61,7 @@ export const registerCommands = (program: Command): void => {
 
   // App commands
   const devCommand = new AppDevCommand();
+  const typecheckCommand = new AppTypecheckCommand();
   const uninstallCommand = new AppUninstallCommand();
   const addCommand = new EntityAddCommand();
   const logsCommand = new LogicFunctionLogsCommand();
@@ -70,6 +72,15 @@ export const registerCommands = (program: Command): void => {
     .description('Watch and sync local application changes')
     .action(async (appPath) => {
       await devCommand.execute({
+        appPath: formatPath(appPath),
+      });
+    });
+
+  program
+    .command('app:typecheck [appPath]')
+    .description('Run TypeScript type checking on the application')
+    .action(async (appPath) => {
+      await typecheckCommand.execute({
         appPath: formatPath(appPath),
       });
     });

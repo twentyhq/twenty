@@ -1,11 +1,10 @@
 import { coreViewsState } from '@/views/states/coreViewState';
-import { selector } from 'recoil';
+import { createSelectorV2 } from '@/ui/utilities/state/jotai/utils/createSelectorV2';
 
-export const coreViewLengthFamilySelector = selector<number>({
+export const coreViewLengthFamilySelector = createSelectorV2<number>({
   key: 'coreViewLengthFamilySelector',
   get: ({ get }) => {
     const coreViews = get(coreViewsState);
-
     return coreViews?.length ?? 0;
   },
 });

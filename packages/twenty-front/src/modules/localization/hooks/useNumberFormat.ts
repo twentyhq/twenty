@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import {
   formatNumber as utilFormatNumber,
   type FormatNumberOptions,
 } from '~/utils/format/formatNumber';
 
 export const useNumberFormat = () => {
-  const workspaceMemberFormatPreferences = useRecoilValue(
+  const workspaceMemberFormatPreferences = useRecoilValueV2(
     workspaceMemberFormatPreferencesState,
   );
 
