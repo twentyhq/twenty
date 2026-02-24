@@ -9,12 +9,15 @@ import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/c
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { NavigationDrawerWidthEffect } from '@/ui/navigation/components/NavigationDrawerWidthEffect';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
 } from '@/ui/navigation/states/navigationDrawerWidthState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
@@ -84,12 +87,16 @@ export const NavigationDrawer = ({
   const [navigationDrawerWidth, setNavigationDrawerWidth] = useRecoilStateV2(
     navigationDrawerWidthState,
   );
+  const setNavigationDrawerActiveTab = useSetRecoilStateV2(
+    navigationDrawerActiveTabState,
+  );
   const setTableWidthResizeIsActive = useSetRecoilState(
     tableWidthResizeIsActiveState,
   );
 
   const handleCollapse = () => {
     setIsNavigationDrawerExpanded(false);
+    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setIsResizing(false);
     setTableWidthResizeIsActive(true);
   };

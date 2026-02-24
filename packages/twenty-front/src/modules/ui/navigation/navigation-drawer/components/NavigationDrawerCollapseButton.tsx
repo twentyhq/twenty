@@ -1,4 +1,7 @@
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
 import styled from '@emotion/styled';
 import {
@@ -26,19 +29,21 @@ export const NavigationDrawerCollapseButton = ({
   className,
   direction = 'left',
 }: NavigationDrawerCollapseButtonProps) => {
-  const setIsNavigationDrawerExpanded = useSetRecoilStateV2(
-    isNavigationDrawerExpandedState,
+  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
+    useRecoilStateV2(isNavigationDrawerExpandedState);
+  const setNavigationDrawerActiveTab = useSetRecoilStateV2(
+    navigationDrawerActiveTabState,
   );
 
+  const handleClick = () => {
+    if (isNavigationDrawerExpanded) {
+      setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+    }
+    setIsNavigationDrawerExpanded((previousIsExpanded) => !previousIsExpanded);
+  };
+
   return (
-    <StyledCollapseButton
-      className={className}
-      onClick={() =>
-        setIsNavigationDrawerExpanded(
-          (previousIsExpanded) => !previousIsExpanded,
-        )
-      }
-    >
+    <StyledCollapseButton className={className} onClick={handleClick}>
       <LightIconButton
         Icon={
           direction === 'left'
