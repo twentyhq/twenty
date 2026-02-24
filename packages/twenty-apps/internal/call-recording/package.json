@@ -1,0 +1,27 @@
+{
+  "name": "call-recording",
+  "version": "0.1.0",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "scripts": {
+    "twenty": "twenty",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  },
+  "dependencies": {
+    "twenty-sdk": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "@types/react": "^18.2.0",
+    "eslint": "^9.32.0",
+    "react": "^18.2.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.50.0"
+  }
+}
