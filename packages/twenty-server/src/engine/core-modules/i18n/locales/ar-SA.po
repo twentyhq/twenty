@@ -4303,6 +4303,7 @@ msgstr "لم يتم العثور على المستخدم. يُرجى التحق�
 
 #. js-lingui-id: VkcC68
 #: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
 msgstr "لم يتم إنشاء المستخدم بالبريد الإلكتروني/كلمة المرور"
 

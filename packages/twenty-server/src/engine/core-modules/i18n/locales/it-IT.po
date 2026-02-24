@@ -4303,6 +4303,7 @@ msgstr "Utente non trovato. Si prega di controllare l'email o ID."
 
 #. js-lingui-id: VkcC68
 #: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
 msgstr "L'utente non è stato creato con email/password"
 

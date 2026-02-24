@@ -4303,6 +4303,7 @@ msgstr "Gebruiker nie gevind nie. Gaan asseblief die e-pos of ID na."
 
 #. js-lingui-id: VkcC68
 #: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
 msgstr "Gebruiker is nie met e-pos/wagwoord geskep nie"
 

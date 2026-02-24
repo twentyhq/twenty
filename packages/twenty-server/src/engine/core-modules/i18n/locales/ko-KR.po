@@ -4303,6 +4303,7 @@ msgstr "사용자를 찾을 수 없습니다. 이메일 또는 ID를 확인하�
 
 #. js-lingui-id: VkcC68
 #: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
 msgstr "사용자는 이메일/비밀번호로 생성되지 않았습니다"
 
