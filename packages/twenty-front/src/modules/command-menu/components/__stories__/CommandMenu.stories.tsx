@@ -30,6 +30,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -105,6 +106,12 @@ const meta: Meta<typeof CommandMenu> = {
             instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
           companyMetadataItem.id,
+        );
+        jotaiStore.set(
+          contextStoreCurrentViewTypeComponentState.atomFamily({
+            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          }),
+          ContextStoreViewType.Table,
         );
       }
 
