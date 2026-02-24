@@ -36,7 +36,6 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import {
   Avatar,
   IconDotsVertical,
-  IconHelpCircle,
   IconLogout,
   IconMessage,
   IconPlus,
@@ -264,11 +263,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             onClick={handleSupport}
           />
         )}
-        <MenuItem
-          LeftIcon={IconHelpCircle}
-          text={t`Documentation`}
-          onClick={handleDocumentation}
-        />
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );
