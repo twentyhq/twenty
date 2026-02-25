@@ -12,5 +12,5 @@ export default defineRole({
   canUpdateAllObjectRecords: true,
   canSoftDeleteAllObjectRecords: true,
   canDestroyAllObjectRecords: false,
-  permissionFlags: [PermissionFlagType.UPLOAD_FILE],
+  permissionFlags: [PermissionFlagType.UPLOAD_FILE, PermissionFlagType.AI],
 });

@@ -162,29 +162,55 @@ const handler = async (event: any) => {
     },
   });
 
+  // TODO: remove `as any` after running `yarn twenty app:dev` to regenerate the typed client
+  const updateSummary = async (markdown: string) => {
+    await client.mutation({
+      updateCallRecording: {
+        __args: {
+          id: callRecording.id,
+          data: {
+            summary: { blocknote: null, markdown },
+          } as any,
+        },
+        id: true,
+      },
+    });
+  };
+
   if (transcriptData?.transcript?.markdown) {
+    console.log(
+      '[end-recording] Transcript available, attempting summarization...',
+    );
+
+    await updateSummary('*Generating summary...*');
+
     try {
       const summaryMarkdown = await summarizeTranscript(
         transcriptData.transcript.markdown,
       );
 
+      console.log(
+        '[end-recording] Summarization result:',
+        summaryMarkdown ? `${summaryMarkdown.length} chars` : 'undefined',
+      );
+
       if (summaryMarkdown) {
-        // TODO: remove `as any` after running `yarn twenty app:dev` to regenerate the typed client
-        await client.mutation({
-          updateCallRecording: {
-            __args: {
-              id: callRecording.id,
-              data: {
-                summary: { blocknote: null, markdown: summaryMarkdown },
-              } as any,
-            },
-            id: true,
-          },
-        });
+        await updateSummary(summaryMarkdown);
+        console.log('[end-recording] Summary saved to record');
+      } else {
+        await updateSummary('*Failed to generate summary: NO_RESPONSE*');
       }
-    } catch {
-      // AI summarization is best-effort; don't fail the end-recording flow
+    } catch (error) {
+      const errorCode =
+        error instanceof Error ? error.message : 'UNKNOWN_ERROR';
+
+      console.error('[end-recording] AI summarization failed:', error);
+      await updateSummary(`*Failed to generate summary: ${errorCode}*`);
     }
+  } else {
+    console.log(
+      '[end-recording] No transcript markdown, skipping summarization',
+    );
   }
 
   if (body.participants?.length) {

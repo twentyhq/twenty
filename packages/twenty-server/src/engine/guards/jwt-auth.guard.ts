@@ -8,8 +8,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { bindDataToRequestObject } from 'src/engine/utils/bind-data-to-request-object.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -32,9 +32,13 @@ export class JwtAuthGuard implements CanActivate {
           )
         : undefined;
 
-      if (!isDefined(data.apiKey) && !isDefined(data.userWorkspaceId)) {
+      if (
+        !isDefined(data.apiKey) &&
+        !isDefined(data.userWorkspaceId) &&
+        !isDefined(data.application)
+      ) {
         this.logger.warn(
-          `Auth failed: no apiKey or userWorkspaceId in context`,
+          `Auth failed: no apiKey, userWorkspaceId, or application in context`,
         );
 
         return false;
