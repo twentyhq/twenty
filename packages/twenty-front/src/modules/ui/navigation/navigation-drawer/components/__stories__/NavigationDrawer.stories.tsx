@@ -5,7 +5,7 @@ import { expect, within } from 'storybook/test';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { SettingsPath } from 'twenty-shared/types';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -53,7 +53,7 @@ const meta: Meta<typeof NavigationDrawer> = {
     ObjectMetadataItemsDecorator,
     PrefetchLoadedDecorator,
     (Story) => {
-      const setCurrentWorkspaceMember = useSetRecoilStateV2(
+      const setCurrentWorkspaceMember = useSetAtomState(
         currentWorkspaceMemberState,
       );
       useEffect(() => {

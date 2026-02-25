@@ -3,7 +3,6 @@ import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode, createElement } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
@@ -32,11 +31,7 @@ const renderHooks = () => {
       createElement(
         JotaiProvider,
         { store: jotaiStore },
-        createElement(
-          RecoilRoot,
-          null as any,
-          createElement(I18nProvider, { i18n }, children),
-        ),
+        createElement(I18nProvider, { i18n }, children),
       ),
   });
   return { result };

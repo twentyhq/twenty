@@ -44,12 +44,12 @@ Zde je Projekt na straně „jedna“. Více záznamů z různých objektů se m
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Omezení importu/exportu**: Relace, které směřují k více typům objektů (např. Poznámky → Lidé/Společnosti/Příležitosti), zatím **nejsou podporovány** při importu nebo exportu CSV.
+**Omezení importu/exportu**: Relace, které směřují k více typům objektů (např. Poznámky → Lidé/Společnosti/Příležitosti), zatím **nejsou podporovány** při importu nebo exportu CSV.
 
-  * **Import**: Lze importovat pouze relace jedna ku mnoha směřující na jeden typ objektu na každé straně
-  * **Export**: Sloupce pro relace směřující k více typům objektů jsou aktuálně ponechány prázdné
+* **Import**: Lze importovat pouze relace jedna ku mnoha směřující na jeden typ objektu na každé straně
+* **Export**: Sloupce pro relace směřující k více typům objektů jsou aktuálně ponechány prázdné
 
-  Je to v našem plánu.
+Je to v našem plánu.
 </Warning>
 
 ### Co dnes není podporováno
@@ -137,12 +137,12 @@ Pokud neexistuje:
 ## Pořadí importu
 
 <Warning>
-  **Vždy nejprve importujte stranu „jedna“!**
+**Vždy nejprve importujte stranu „jedna“!**
 
-  1. **Společnosti** jako první (bez závislostí)
-  2. **Lidé** jako druzí (propojeni se Společnostmi)
-  3. **Příležitosti** jako třetí (propojené se Společnostmi/Lidmi)
-  4. **Vlastní objekty** podle jejich závislostí
+1. **Společnosti** jako první (bez závislostí)
+2. **Lidé** jako druzí (propojeni se Společnostmi)
+3. **Příležitosti** jako třetí (propojené se Společnostmi/Lidmi)
+4. **Vlastní objekty** podle jejich závislostí
 
-  Nadřazený záznam musí existovat dříve, než na něj můžete odkazovat.
+Nadřazený záznam musí existovat dříve, než na něj můžete odkazovat.
 </Warning>

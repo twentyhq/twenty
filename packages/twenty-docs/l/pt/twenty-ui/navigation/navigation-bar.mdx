@@ -10,40 +10,47 @@ image: /images/user-guide/table-views/table.png
 Renderiza uma barra de navegação que contém múltiplos componentes `NavigationBarItem`.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
-    import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+<Tab title="Uso">
 
-    export const MyComponent = () => {
+```jsx
+import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
 
-       const navigationItems = [
-         {
-           name: "Home",
-           Icon: IconHome,
-           onClick: () => console.log("Home clicked"),
-         },
-         {
-           name: "Profile",
-           Icon: IconUser,
-           onClick: () => console.log("Profile clicked"),
-         },
-         {
-           name: "Settings",
-           Icon: IconSettings,
-           onClick: () => console.log("Settings clicked"),
-         },
-       ];
+export const MyComponent = () => {
 
-      return <NavigationBar activeItemName="Home" items={navigationItems}/>;
-    };
-    ```
-  </Tab>
+   const navigationItems = [
+     {
+       name: "Home",
+       Icon: IconHome,
+       onClick: () => console.log("Home clicked"),
+     },
+     {
+       name: "Profile",
+       Icon: IconUser,
+       onClick: () => console.log("Profile clicked"),
+     },
+     {
+       name: "Settings",
+       Icon: IconSettings,
+       onClick: () => console.log("Settings clicked"),
+     },
+   ];
 
-  <Tab title="Propriedades">
-    | Propriedades       | Tipo   | Descrição                                                                                                                                                                                    |
-    | ------------------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | Nome do item ativo | string | O nome do item de navegação atualmente ativo                                                                                                                                                 |
-    | itens              | array  | Um array de objetos representando cada item de navegação. Cada objeto contém o `nome` do item, o componente `Icon` para exibir, e uma função `onClick` que é chamada quando o item é clicado |
-  </Tab>
+  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+};
+```
+
+</Tab>
+<Tab title="Propriedades">
+
+
+| Propriedades       | Tipo   | Descrição                                                                                                                                                                                    |
+| ------------------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Nome do item ativo | string | O nome do item de navegação atualmente ativo                                                                                                                                                 |
+| itens              | array  | Um array de objetos representando cada item de navegação. Cada objeto contém o `nome` do item, o componente `Icon` para exibir, e uma função `onClick` que é chamada quando o item é clicado |
+
+
+
+
+</Tab>
 </Tabs>

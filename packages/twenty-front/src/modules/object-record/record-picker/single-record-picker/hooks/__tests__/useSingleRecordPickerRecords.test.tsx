@@ -1,16 +1,15 @@
 import { act, renderHook } from '@testing-library/react';
 import { type ChangeEvent } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useSingleRecordPickerSearch } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerSearch';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const instanceId = 'instanceId';
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <SingleRecordPickerComponentInstanceContext.Provider value={{ instanceId }}>
-    <RecoilRoot>{children}</RecoilRoot>
+    {children}
   </SingleRecordPickerComponentInstanceContext.Provider>
 );
 
@@ -19,7 +18,7 @@ describe('useSingleRecordPickerRecords', () => {
     const { result } = renderHook(
       () => {
         const recordSelectSearchHook = useSingleRecordPickerSearch(instanceId);
-        const internallyStoredFilter = useRecoilComponentValue(
+        const internallyStoredFilter = useAtomComponentStateValue(
           singleRecordPickerSearchFilterComponentState,
           instanceId,
         );

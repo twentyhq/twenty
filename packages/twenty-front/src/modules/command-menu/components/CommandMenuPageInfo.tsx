@@ -16,8 +16,8 @@ import { CommandMenuRecordInfo } from '@/command-menu/components/CommandMenuReco
 import { CommandMenuWorkflowStepInfo } from '@/command-menu/components/CommandMenuWorkflowStepInfo';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CommandMenuPages } from 'twenty-shared/types';
 
 import { useTheme } from '@emotion/react';
@@ -35,8 +35,8 @@ type CommandMenuPageInfoProps = {
 
 export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
   const theme = useTheme();
-  const selectedNavigationMenuItemInEditMode = useRecoilValueV2(
-    selectedNavigationMenuItemInEditModeStateV2,
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemInEditModeState,
   );
   const items = useWorkspaceSectionItems();
 

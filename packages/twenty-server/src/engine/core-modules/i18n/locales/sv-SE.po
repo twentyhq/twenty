@@ -3680,12 +3680,12 @@ msgstr ""
 "nd"
 
 #. js-lingui-id: Bhmfez
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
 msgid "System field {expectedFieldName} has invalid {property}"
 msgstr ""
 
 #. js-lingui-id: 1gOTOh
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
 msgid "System field {expectedFieldName} is missing"
 msgstr ""
 
@@ -4308,6 +4308,7 @@ msgid "User not found. Please check the email or ID."
 msgstr "Användaren hittades inte. Vänligen kontrollera e-post eller ID."
 
 #. js-lingui-id: VkcC68
+#: src/engine/core-modules/auth/services/auth.service.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
 msgstr "Användare skapades inte med e-post/lösenord"

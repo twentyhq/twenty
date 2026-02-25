@@ -11,7 +11,7 @@ on:
 jobs:
   preview-environment:
     timeout-minutes: 310
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout PR
         uses: actions/checkout@v4

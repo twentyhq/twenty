@@ -1,8 +1,8 @@
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const hasInitializedRecordCalendarSelectedDateComponentState =
-  createComponentState<boolean>({
+  createAtomComponentState<boolean>({
     key: 'hasInitializedRecordCalendarSelectedDateComponentState',
     defaultValue: false,
     componentInstanceContext: RecordCalendarComponentInstanceContext,

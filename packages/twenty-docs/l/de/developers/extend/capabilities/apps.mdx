@@ -4,7 +4,7 @@ description: Twenty-Anpassungen als Code erstellen und verwalten.
 ---
 
 <Warning>
-  Apps befinden sich derzeit in der Alpha-Testphase. Die Funktion ist funktionsfähig, entwickelt sich jedoch noch weiter.
+Apps befinden sich derzeit in der Alpha-Testphase. Die Funktion ist funktionsfähig, entwickelt sich jedoch noch weiter.
 </Warning>
 
 ## Was sind Apps?
@@ -31,13 +31,6 @@ Erstellen Sie mit dem offiziellen Scaffolder eine neue App, authentifizieren Sie
 # Eine neue App erstellen (enthält standardmäßig alle Beispiele)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
-
-# Falls du yarn@4 nicht verwendest
-corepack enable
-yarn install
-
-# Mit deinem API-Schlüssel authentifizieren (du wirst dazu aufgefordert)
-yarn twenty auth:login
 
 # Dev-Modus starten: synchronisiert lokale Änderungen automatisch mit deinem Arbeitsbereich
 yarn twenty app:dev
@@ -154,7 +147,7 @@ Das SDK erkennt Entitäten, indem es Ihre TypeScript-Dateien nach Aufrufen von *
 | `defineSkill()`              | Skill-Definitionen für KI-Agenten         |
 
 <Note>
-  **Dateibenennung ist flexibel.** Die Entitätserkennung ist AST-basiert — das SDK durchsucht Ihre Quelldateien nach dem Muster `export default define<Entity>({...})`. Sie können Ihre Dateien und Ordner nach Belieben organisieren. Die Gruppierung nach Entitätstyp (z. B. `logic-functions/`, `roles/`) ist lediglich eine Konvention zur Codeorganisation, keine Voraussetzung.
+**Dateibenennung ist flexibel.** Die Entitätserkennung ist AST-basiert — das SDK durchsucht Ihre Quelldateien nach dem Muster `export default define<Entity>({...})`. Sie können Ihre Dateien und Ordner nach Belieben organisieren. Die Gruppierung nach Entitätstyp (z. B. `logic-functions/`, `roles/`) ist lediglich eine Konvention zur Codeorganisation, keine Voraussetzung.
 </Note>
 
 Beispiel für eine erkannte Entität:
@@ -312,11 +305,11 @@ Hauptpunkte:
 * Sie können mit `yarn twenty entity:add` neue Objekte erzeugen; der Assistent führt Sie durch Benennung, Felder und Beziehungen.
 
 <Note>
-  **Basisfelder werden automatisch erstellt.** Wenn Sie ein benutzerdefiniertes Objekt definieren, fügt Twenty automatisch Standardfelder hinzu
-  wie `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` und `deletedAt`.
-  Sie müssen diese nicht in Ihrem `fields`-Array definieren — fügen Sie nur Ihre benutzerdefinierten Felder hinzu.
-  Sie können Standardfelder überschreiben, indem Sie in Ihrem `fields`-Array ein Feld mit demselben Namen definieren,
-  dies wird jedoch nicht empfohlen.
+**Basisfelder werden automatisch erstellt.** Wenn Sie ein benutzerdefiniertes Objekt definieren, fügt Twenty automatisch Standardfelder hinzu
+wie `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` und `deletedAt`.
+Sie müssen diese nicht in Ihrem `fields`-Array definieren — fügen Sie nur Ihre benutzerdefinierten Felder hinzu.
+Sie können Standardfelder überschreiben, indem Sie in Ihrem `fields`-Array ein Feld mit demselben Namen definieren,
+dies wird jedoch nicht empfohlen.
 </Note>
 
 ### Anwendungskonfiguration (application-config.ts)
@@ -550,27 +543,25 @@ Hauptpunkte:
 ### Routen-Trigger-Payload
 
 <Warning>
-  **Breaking Change (v1.16, Januar 2026):** Das Format der Routen-Trigger-Payload hat sich geändert. Vor v1.16 wurden Query-Parameter, Pfadparameter und der Body direkt als Payload gesendet. Ab v1.16 sind sie innerhalb eines strukturierten `RoutePayload`-Objekts verschachtelt.
+**Breaking Change (v1.16, Januar 2026):** Das Format der Routen-Trigger-Payload hat sich geändert. Vor v1.16 wurden Query-Parameter, Pfadparameter und der Body direkt als Payload gesendet. Ab v1.16 sind sie innerhalb eines strukturierten `RoutePayload`-Objekts verschachtelt.
 
-  **Vor v1.16:**
+**Vor v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
 
-  ```typescript
-  const handler = async (params) => {
-    const { param1, param2 } = params; // Direct access
-  };
-  ```
+**Nach v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
 
-  **Nach v1.16:**
-
-  ```typescript
-  const handler = async (event: RoutePayload) => {
-    const { param1, param2 } = event.body; // Access via .body
-    const { queryParam } = event.queryStringParameters;
-    const { id } = event.pathParameters;
-  };
-  ```
-
-  **So migrieren Sie bestehende Funktionen:** Aktualisieren Sie Ihren Handler, sodass er nicht mehr direkt aus dem params-Objekt destrukturiert, sondern aus `event.body`, `event.queryStringParameters` oder `event.pathParameters`.
+**So migrieren Sie bestehende Funktionen:** Aktualisieren Sie Ihren Handler, sodass er nicht mehr direkt aus dem params-Objekt destrukturiert, sondern aus `event.body`, `event.queryStringParameters` oder `event.pathParameters`.
 </Warning>
 
 Wenn ein Routen-Trigger Ihre Logikfunktion aufruft, erhält sie ein `RoutePayload`-Objekt, das dem AWS HTTP API v2-Format entspricht. Importieren Sie den Typ aus `twenty-sdk`:
@@ -706,7 +697,7 @@ Hauptpunkte:
 * Sie können `isTool` mit Triggern kombinieren — eine Funktion kann gleichzeitig sowohl ein Tool (von KI-Agenten aufrufbar) als auch durch Ereignisse (Cron, Datenbankereignisse, Routen) ausgelöst werden.
 
 <Note>
-  **Schreiben Sie eine gute `description`.** KI-Agenten verlassen sich auf das `description`-Feld der Funktion, um zu entscheiden, wann das Tool verwendet werden soll. Seien Sie konkret darin, was das Tool tut und wann es aufgerufen werden soll.
+**Schreiben Sie eine gute `description`.** KI-Agenten verlassen sich auf das `description`-Feld der Funktion, um zu entscheiden, wann das Tool verwendet werden soll. Seien Sie konkret darin, was das Tool tut und wann es aufgerufen werden soll.
 </Note>
 
 ### Frontend-Komponenten

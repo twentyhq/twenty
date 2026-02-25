@@ -11,7 +11,7 @@ import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 
 type CommandMenuObjectMenuItemProps = {
@@ -38,7 +38,7 @@ export const CommandMenuObjectMenuItem = ({
   const isAlreadyInNavbar = objectMetadataIdsInWorkspace.has(
     objectMetadataItem.id,
   );
-  const defaultViewId = useFamilySelectorValueV2(
+  const defaultViewId = useAtomFamilySelectorValue(
     coreIndexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );
@@ -71,7 +71,6 @@ export const CommandMenuObjectMenuItem = ({
             objectMetadataId: objectMetadataItem.id,
             defaultViewId: defaultViewId ?? '',
             label: objectMetadataItem.labelPlural,
-            iconColor,
           }}
         />
       ) : (

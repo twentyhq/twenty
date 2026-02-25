@@ -7,7 +7,7 @@ import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/ho
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
@@ -19,18 +19,18 @@ import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
 import {
-  AppTooltip,
-  type IconComponent,
-  Label,
-  OverflowingTextWithTooltip,
-  type TablerIconsProps,
-  TooltipDelay,
-  TooltipPosition,
+    AppTooltip,
+    type IconComponent,
+    Label,
+    OverflowingTextWithTooltip,
+    type TablerIconsProps,
+    TooltipDelay,
+    TooltipPosition,
 } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import {
-  type TriggerEventType,
-  useMouseDownNavigation,
+    type TriggerEventType,
+    useMouseDownNavigation,
 } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -317,7 +317,7 @@ export const NavigationDrawerItem = ({
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useRecoilStateV2(isNavigationDrawerExpandedState);
+    useAtomState(isNavigationDrawerExpandedState);
 
   const { navigationItemId } = useNavigationDrawerTooltip(label, to);
 

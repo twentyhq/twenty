@@ -10,7 +10,7 @@ import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/Naviga
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { ViewKey } from '@/views/types/ViewKey';
@@ -33,7 +33,7 @@ export const WorkspaceNavigationMenuItemFolderDragClone = ({
   selectedNavigationMenuItemIndex,
 }: WorkspaceNavigationMenuItemFolderDragCloneProps) => {
   const theme = useTheme();
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const navigationMenuItem = navigationMenuItems[rubric.source.index];
 
   if (!isDefined(navigationMenuItem)) {

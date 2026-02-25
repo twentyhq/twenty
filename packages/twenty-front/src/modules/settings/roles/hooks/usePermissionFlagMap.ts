@@ -1,10 +1,10 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const usePermissionFlagMap = (): Record<PermissionFlagType, boolean> => {
-  const currentUserWorkspace = useRecoilValueV2(currentUserWorkspaceState);
+  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
 
   const currentUserWorkspaceSettingsPermissions =
     currentUserWorkspace?.permissionFlags;

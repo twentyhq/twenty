@@ -5,11 +5,11 @@ import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-f
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const TwoFactorAuthenticationSetupEffect = () => {
   const { initiateCurrentUserWorkspaceOtpProvisioning } =
@@ -18,9 +18,9 @@ export const TwoFactorAuthenticationSetupEffect = () => {
 
   const navigate = useNavigateApp();
   const { origin } = useOrigin();
-  const loginToken = useRecoilValueV2(loginTokenState);
-  const qrCode = useRecoilValueV2(qrCodeState);
-  const setQrCodeState = useSetRecoilStateV2(qrCodeState);
+  const loginToken = useAtomStateValue(loginTokenState);
+  const qrCode = useAtomStateValue(qrCodeState);
+  const setQrCodeState = useSetAtomState(qrCodeState);
 
   const { t } = useLingui();
 

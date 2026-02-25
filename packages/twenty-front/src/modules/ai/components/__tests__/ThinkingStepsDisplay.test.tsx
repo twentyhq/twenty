@@ -16,9 +16,9 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
 }));
 
 jest.mock(
-  '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
+  '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue',
   () => ({
-    useRecoilComponentValue: () => 'output',
+    useAtomComponentSelectorValue: () => 'output',
   }),
 );
 

@@ -2,7 +2,7 @@ import { Draggable } from '@hello-pangea/dnd';
 
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 
@@ -27,7 +27,7 @@ export const PageLayoutTabListReorderableTab = ({
   disabled,
   onSelect,
 }: PageLayoutTabListReorderableTabProps) => {
-  const tabSettingsOpenTabId = useRecoilComponentValue(
+  const tabSettingsOpenTabId = useAtomComponentStateValue(
     pageLayoutTabSettingsOpenTabIdComponentState,
   );
 

@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -55,8 +55,8 @@ const RelationOneToManyFieldInputWithContext = () => {
     [],
   );
 
-  const setRecordStoreFieldValue = useSetRecoilState(
-    recordStoreFamilySelector({
+  const setRecordStoreFieldValue = useSetAtom(
+    recordStoreFamilySelector.selectorFamily({
       fieldName: 'people',
       recordId: 'recordId',
     }),

@@ -1,12 +1,9 @@
-import { useRecoilCallback } from 'recoil';
-
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
-import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
+import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
 import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
@@ -20,34 +17,26 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconColumnInsertRight, IconDotsVertical } from 'twenty-ui/display';
 
 export const useCommandMenu = () => {
+  const store = useStore();
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const store = useStore();
+  const closeCommandMenu = useCallback(() => {
+    const isCommandMenuOpened = store.get(isCommandMenuOpenedState.atom);
 
-  const closeCommandMenu = useRecoilCallback(
-    ({ set, snapshot }) =>
-      () => {
-        const isCommandMenuOpened = snapshot
-          .getLoadable(isCommandMenuOpenedState)
-          .getValue();
-
-        if (isCommandMenuOpened) {
-          store.set(addToNavPayloadRegistryStateV2.atom, new Map());
-          set(isCommandMenuOpenedState, false);
-          store.set(isCommandMenuOpenedStateV2.atom, false);
-          set(isCommandMenuClosingState, true);
-          closeAnyOpenDropdown();
-          removeFocusItemFromFocusStackById({
-            focusId: SIDE_PANEL_FOCUS_ID,
-          });
-        }
-      },
-    [closeAnyOpenDropdown, removeFocusItemFromFocusStackById, store],
-  );
+    if (isCommandMenuOpened) {
+      store.set(addToNavPayloadRegistryState.atom, new Map());
+      store.set(isCommandMenuOpenedState.atom, false);
+      store.set(isCommandMenuClosingState.atom, true);
+      closeAnyOpenDropdown();
+      removeFocusItemFromFocusStackById({
+        focusId: SIDE_PANEL_FOCUS_ID,
+      });
+    }
+  }, [closeAnyOpenDropdown, removeFocusItemFromFocusStackById, store]);
 
   const openCommandMenu = useCallback(() => {
     emitSidePanelOpenEvent();
@@ -82,23 +71,17 @@ export const useCommandMenu = () => {
     }
   }, [closeAnyOpenDropdown, navigateCommandMenu, store]);
 
-  const toggleCommandMenu = useRecoilCallback(
-    ({ snapshot, set }) =>
-      async () => {
-        const isCommandMenuOpened = snapshot
-          .getLoadable(isCommandMenuOpenedState)
-          .getValue();
+  const toggleCommandMenu = useCallback(() => {
+    const isCommandMenuOpened = store.get(isCommandMenuOpenedState.atom);
 
-        set(commandMenuSearchState, '');
+    store.set(commandMenuSearchState.atom, '');
 
-        if (isCommandMenuOpened) {
-          closeCommandMenu();
-        } else {
-          openCommandMenu();
-        }
-      },
-    [closeCommandMenu, openCommandMenu],
-  );
+    if (isCommandMenuOpened) {
+      closeCommandMenu();
+    } else {
+      openCommandMenu();
+    }
+  }, [closeCommandMenu, openCommandMenu, store]);
 
   return {
     openCommandMenu,

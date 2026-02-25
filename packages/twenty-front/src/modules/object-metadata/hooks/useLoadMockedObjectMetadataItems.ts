@@ -1,28 +1,29 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useStore } from 'jotai';
 
 export const useLoadMockedObjectMetadataItems = () => {
+  const store = useStore();
   const loadMockedObjectMetadataItems = useCallback(async () => {
     if (
       !isDeeplyEqual(
-        jotaiStore.get(objectMetadataItemsState.atom),
+        store.get(objectMetadataItemsState.atom),
         generatedMockObjectMetadataItems,
       )
     ) {
-      jotaiStore.set(
+      store.set(
         objectMetadataItemsState.atom,
         generatedMockObjectMetadataItems,
       );
     }
 
-    if (jotaiStore.get(isAppEffectRedirectEnabledState.atom) === false) {
-      jotaiStore.set(isAppEffectRedirectEnabledState.atom, true);
+    if (store.get(isAppEffectRedirectEnabledState.atom) === false) {
+      store.set(isAppEffectRedirectEnabledState.atom, true);
     }
-  }, []);
+  }, [store]);
 
   return {
     loadMockedObjectMetadataItems,

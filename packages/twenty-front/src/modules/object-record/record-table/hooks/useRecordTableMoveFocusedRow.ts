@@ -1,81 +1,62 @@
-import { useRecoilCallback } from 'recoil';
-
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { focusedRecordTableRowIndexComponentState } from '@/object-record/record-table/states/focusedRecordTableRowIndexComponentState';
 import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordTableMoveFocusedRow = (recordTableId?: string) => {
   const { focusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
-  const focusedRowIndexState = useRecoilComponentCallbackState(
+  const focusedRowIndex = useAtomComponentStateCallbackState(
     focusedRecordTableRowIndexComponentState,
     recordTableId,
   );
 
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
+  const recordIndexAllRecordIds = useAtomComponentSelectorCallbackState(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
 
-  const moveFocusedRowUp = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const focusedRowIndex = getSnapshotValue(
-          snapshot,
-          focusedRowIndexState,
-        );
+  const store = useStore();
 
-        if (!isDefined(focusedRowIndex)) {
-          focusRecordTableRow(0);
-          return;
-        }
+  const moveFocusedRowUp = useCallback(() => {
+    const currentFocusedRowIndex = store.get(focusedRowIndex);
 
-        let newRowIndex = focusedRowIndex - 1;
+    if (!isDefined(currentFocusedRowIndex)) {
+      focusRecordTableRow(0);
+      return;
+    }
 
-        if (newRowIndex < 0) {
-          newRowIndex = 0;
-        }
+    let newRowIndex = currentFocusedRowIndex - 1;
 
-        focusRecordTableRow(newRowIndex);
-      },
-    [focusedRowIndexState, focusRecordTableRow],
-  );
+    if (newRowIndex < 0) {
+      newRowIndex = 0;
+    }
 
-  const moveFocusedRowDown = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const allRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRecordIdsSelector,
-        );
-        const focusedRowIndex = getSnapshotValue(
-          snapshot,
-          focusedRowIndexState,
-        );
+    focusRecordTableRow(newRowIndex);
+  }, [store, focusedRowIndex, focusRecordTableRow]);
 
-        if (!isDefined(focusedRowIndex)) {
-          focusRecordTableRow(0);
-          return;
-        }
+  const moveFocusedRowDown = useCallback(() => {
+    const allRecordIds = store.get(recordIndexAllRecordIds);
+    const currentFocusedRowIndex = store.get(focusedRowIndex);
 
-        let newRowIndex = focusedRowIndex + 1;
+    if (!isDefined(currentFocusedRowIndex)) {
+      focusRecordTableRow(0);
+      return;
+    }
 
-        if (newRowIndex >= allRecordIds.length) {
-          newRowIndex = allRecordIds.length - 1;
-        }
+    let newRowIndex = currentFocusedRowIndex + 1;
 
-        focusRecordTableRow(newRowIndex);
-      },
-    [
-      recordIndexAllRecordIdsSelector,
-      focusedRowIndexState,
-      focusRecordTableRow,
-    ],
-  );
+    if (newRowIndex >= allRecordIds.length) {
+      newRowIndex = allRecordIds.length - 1;
+    }
+
+    focusRecordTableRow(newRowIndex);
+  }, [recordIndexAllRecordIds, focusedRowIndex, focusRecordTableRow, store]);
 
   const moveFocusedRow = (direction: MoveFocusDirection) => {
     if (direction === 'up') {

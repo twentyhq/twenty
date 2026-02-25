@@ -13,7 +13,7 @@ import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/util
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
@@ -27,7 +27,7 @@ export const NavigationMenuItemIcon = ({
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
     navigationMenuItem.objectNameSingular ?? '',
   );

@@ -5,7 +5,7 @@ title: إعداد
 # إدارة الإعدادات
 
 <Warning>
-  **هل هي المرة الأولى التي تقوم فيها بالتثبيت؟** اتبع [دليل تثبيت Docker Compose](/l/ar/developers/self-host/capabilities/docker-compose) لتشغيل Twenty، ثم عد هنا للإعداد.
+**هل هي المرة الأولى التي تقوم فيها بالتثبيت؟** اتبع [دليل تثبيت Docker Compose](/l/ar/developers/self-host/capabilities/docker-compose) لتشغيل Twenty، ثم عد هنا للإعداد.
 </Warning>
 
 يوفر Twenty **وضعين للإعداد** ليلائم احتياجات النشر المختلفة:
@@ -26,7 +26,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # افتراضي
 4. تسري التغييرات على الفور (خلال 15 ثانية لعمليات النشر متعددة الحاويات)
 
 <Warning>
-  **نشرات متعددة الحاويات:** عند استخدام إعدادات قاعدة البيانات (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`)، يقوم كل من حاويات الخادم والعامل بالقراءة من نفس قاعدة البيانات. التغييرات في لوحة الإدارة تؤثر عليهما تلقائيًا، مما يلغي الحاجة إلى تكرار متغيرات البيئة بين الحاويات (باستثناء متغيرات البنية التحتية).
+**نشرات متعددة الحاويات:** عند استخدام إعدادات قاعدة البيانات (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`)، يقوم كل من حاويات الخادم والعامل بالقراءة من نفس قاعدة البيانات. التغييرات في لوحة الإدارة تؤثر عليهما تلقائيًا، مما يلغي الحاجة إلى تكرار متغيرات البيئة بين الحاويات (باستثناء متغيرات البنية التحتية).
 </Warning>
 
 **ما يمكنك تكوينه عبر لوحة الإدارة:**
@@ -41,10 +41,10 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # افتراضي
 ![متغيرات تكوين لوحة الإدارة](/images/user-guide/setup/admin-panel-config-variables.png)
 
 <Warning>
-  كل متغير موثق بوصف في لوحة الإدارة الخاصة بك في **الإعدادات → لوحة الإدارة → متغيرات التكوين**.
-  بعض إعدادات البنية التحتية مثل اتصالات قاعدة البيانات (`PG_DATABASE_URL`)، عناوين الخوادم (`SERVER_URL`)، وأسرار التطبيقات (`APP_SECRET`) يمكن ضبطها فقط عبر ملف `.env`.
+كل متغير موثق بوصف في لوحة الإدارة الخاصة بك في **الإعدادات → لوحة الإدارة → متغيرات التكوين**.
+بعض إعدادات البنية التحتية مثل اتصالات قاعدة البيانات (`PG_DATABASE_URL`)، عناوين الخوادم (`SERVER_URL`)، وأسرار التطبيقات (`APP_SECRET`) يمكن ضبطها فقط عبر ملف `.env`.
 
-  [مرجع تقني كامل →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+[مرجع تقني كامل →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
 
 ## 2. إعداد بيئي فقط
@@ -93,7 +93,7 @@ DEFAULT_SUBDOMAIN=app  # default value
 * إعدادات خاصة بمساحة العمل مثل النطاق الفرعي والنطاق المخصص تصبح متاحة ضمن إعدادات مساحة العمل
 
 <Warning>
-  **إعداد خاص بالبيئة فقط:** لا يمكن تكوين `IS_MULTIWORKSPACE_ENABLED` إلا عبر ملف `.env` ويتطلب إعادة تشغيل. لا يمكن تغييره عبر لوحة الإدارة.
+**إعداد خاص بالبيئة فقط:** لا يمكن تكوين `IS_MULTIWORKSPACE_ENABLED` إلا عبر ملف `.env` ويتطلب إعادة تشغيل. لا يمكن تغييره عبر لوحة الإدارة.
 </Warning>
 
 ### تكوين DNS لوضع تعدد مساحات العمل
@@ -149,7 +149,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
    * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-  **وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
+**وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
 </Warning>
 
 **النطاقات المطلوبة** (يتم تكوينها تلقائيًا):
@@ -168,7 +168,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 ## تكامل Microsoft 365
 
 <Warning>
-  يجب على المستخدمين الحصول على [ترخيص Microsoft 365](https://admin.microsoft.com/Adminportal/Home) ليتمكنوا من استخدام تقويم API ورسائل. لن يتمكنوا من مزامنة حسابهم في Twenty دون واحد منها.
+يجب على المستخدمين الحصول على [ترخيص Microsoft 365](https://admin.microsoft.com/Adminportal/Home) ليتمكنوا من استخدام تقويم API ورسائل. لن يتمكنوا من مزامنة حسابهم في Twenty دون واحد منها.
 </Warning>
 
 ### إنشاء مشروع في Microsoft Azure
@@ -211,7 +211,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
    * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-  **وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
+**وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
 </Warning>
 
 ### تكوين النطاقات
@@ -256,40 +256,45 @@ yarn command:prod cron:workflow:automated-cron-trigger
 3. قم بضبط إعدادات SMTP الخاصة بك:
 
 <ArticleTabs label1="جيميل" label2="أوفيس 365" label3="Smtp4dev">
-  <ArticleTab>
-    ستحتاج إلى توفير [كلمة مرور التطبيق](https://support.google.com/accounts/answer/185833).
 
+  <ArticleTab>
+
+  ستحتاج إلى توفير [كلمة مرور التطبيق](https://support.google.com/accounts/answer/185833).
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.gmail.com
+  * EMAIL_SMTP_PORT=465
+  * EMAIL_SMTP_USER=gmail_email_address
+  * EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  تذكر أنه إذا كنت تشغل التحقق بعاملين، ستحتاج إلى توفير [كلمة مرور التطبيق](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
+  * EMAIL_DRIVER=smtp
+  * EMAIL_SMTP_HOST=smtp.office365.com
+  * EMAIL_SMTP_PORT=587
+  * EMAIL_SMTP_USER=office365_email_address
+  * EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+  **smtp4dev** هو خادم بريد إلكتروني مزيف للتطوير والاختبار.
+  * قم بتشغيل صورة smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+  * الوصول إلى واجهة المستخدم smtp4dev هنا: [http://localhost:8090](http://localhost:8090)
+  * حدد المتغيرات التالية:
     * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.gmail.com
-    * EMAIL_SMTP_PORT=465
-    * EMAIL_SMTP_USER=gmail_email_address
-    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+    * EMAIL_SMTP_HOST=localhost
+    * EMAIL_SMTP_PORT=2525
+
   </ArticleTab>
 
-  <ArticleTab>
-    تذكر أنه إذا كنت تشغل التحقق بعاملين، ستحتاج إلى توفير [كلمة مرور التطبيق](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
-
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=smtp.office365.com
-    * EMAIL_SMTP_PORT=587
-    * EMAIL_SMTP_USER=office365_email_address
-    * EMAIL_SMTP_PASSWORD='office365_password'
-  </ArticleTab>
-
-  <ArticleTab>
-    **smtp4dev** هو خادم بريد إلكتروني مزيف للتطوير والاختبار.
-
-    * قم بتشغيل صورة smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-    * الوصول إلى واجهة المستخدم smtp4dev هنا: [http://localhost:8090](http://localhost:8090)
-    * حدد المتغيرات التالية:
-      * EMAIL_DRIVER=smtp
-      * EMAIL_SMTP_HOST=localhost
-      * EMAIL_SMTP_PORT=2525
-  </ArticleTab>
 </ArticleTabs>
 
 <Warning>
-  **وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
+**وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
 </Warning>
 
 ## الوظائف المنطقية
@@ -297,7 +302,7 @@ yarn command:prod cron:workflow:automated-cron-trigger
 تدعم Twenty الوظائف المنطقية لعمليات سير العمل والمنطق المخصص. يتم تكوين بيئة التنفيذ عبر متغير البيئة `SERVERLESS_TYPE`.
 
 <Warning>
-  **ملاحظة أمنية:** يقوم برنامج التشغيل المحلي (`SERVERLESS_TYPE=LOCAL`) بتشغيل الشيفرة مباشرةً على المضيف ضمن عملية Node.js من دون عزل. يجب استخدامه فقط للشيفرة الموثوقة أثناء التطوير. بالنسبة لعمليات النشر الإنتاجية التي تتعامل مع شيفرة غير موثوق بها، نوصي بشدة باستخدام `SERVERLESS_TYPE=LAMBDA` أو `SERVERLESS_TYPE=DISABLED`.
+**ملاحظة أمنية:** يقوم برنامج التشغيل المحلي (`SERVERLESS_TYPE=LOCAL`) بتشغيل الشيفرة مباشرةً على المضيف ضمن عملية Node.js من دون عزل. يجب استخدامه فقط للشيفرة الموثوقة أثناء التطوير. بالنسبة لعمليات النشر الإنتاجية التي تتعامل مع شيفرة غير موثوق بها، نوصي بشدة باستخدام `SERVERLESS_TYPE=LAMBDA` أو `SERVERLESS_TYPE=DISABLED`.
 </Warning>
 
 ### برامج التشغيل المتاحة
@@ -333,5 +338,5 @@ SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  عند استخدام `SERVERLESS_TYPE=DISABLED`، ستؤدي أي محاولة لتنفيذ وظيفة منطقية إلى إرجاع خطأ. يكون هذا مفيدًا إذا كنت ترغب في تشغيل Twenty من دون إمكانات الوظائف المنطقية.
+عند استخدام `SERVERLESS_TYPE=DISABLED`، ستؤدي أي محاولة لتنفيذ وظيفة منطقية إلى إرجاع خطأ. يكون هذا مفيدًا إذا كنت ترغب في تشغيل Twenty من دون إمكانات الوظائف المنطقية.
 </Note>

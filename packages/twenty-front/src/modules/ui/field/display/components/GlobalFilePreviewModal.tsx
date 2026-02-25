@@ -1,8 +1,8 @@
 import { downloadFile } from '@/activities/files/utils/downloadFile';
-import { filePreviewStateV2 } from '@/ui/field/display/states/filePreviewStateV2';
+import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -72,7 +72,7 @@ const StyledLoadingText = styled.div`
 
 export const GlobalFilePreviewModal = (): JSX.Element | null => {
   const { t } = useLingui();
-  const [filePreview, setFilePreview] = useRecoilStateV2(filePreviewStateV2);
+  const [filePreview, setFilePreview] = useAtomState(filePreviewState);
   const { openModal, closeModal } = useModal();
 
   useEffect(() => {

@@ -59,17 +59,17 @@ Antes de importar dados, prepare o seu espaço de trabalho no Twenty:
 4. Configure as definições dos campos (único, obrigatório, opções de seleção, etc.)
 
 <Warning>
-  **Os campos devem existir antes da importação.**
+**Os campos devem existir antes da importação.**
 
-  A importação de CSV cria registos, não campos. Crie todos os campos personalizados em Definições → Modelo de Dados antes de importar.
+A importação de CSV cria registos, não campos. Crie todos os campos personalizados em Definições → Modelo de Dados antes de importar.
 </Warning>
 
 ### Convide a sua equipa
 
 <Warning>
-  **Convide os utilizadores ANTES de importar dados.**
+**Convide os utilizadores ANTES de importar dados.**
 
-  Se os seus dados incluírem referências a utilizadores (Proprietário da conta, Responsável, etc.), esses utilizadores devem existir no Twenty antes da importação. Caso contrário, essas relações não podem ser mapeadas.
+Se os seus dados incluírem referências a utilizadores (Proprietário da conta, Responsável, etc.), esses utilizadores devem existir no Twenty antes da importação. Caso contrário, essas relações não podem ser mapeadas.
 </Warning>
 
 1. Vá para **Configurações → Membros**
@@ -116,9 +116,9 @@ Abra cada CSV exportado numa aplicação de folha de cálculo e prepare-o para o
 | **Campos de seleção** | Use nomes de API, não os rótulos de apresentação        |
 
 <Warning>
-  **O formato do domínio é crítico.**
+**O formato do domínio é crítico.**
 
-  Use `https://domain.com` (não `domain.com` nem `www.domain.com`). Isto corresponde ao formato do Twenty e evita duplicados quando ligar a sincronização de e-mail/calendário.
+Use `https://domain.com` (não `domain.com` nem `www.domain.com`). Isto corresponde ao formato do Twenty e evita duplicados quando ligar a sincronização de e-mail/calendário.
 </Warning>
 
 Veja [Como preparar os seus ficheiros CSV](/l/pt/user-guide/data-migration/how-tos/prepare-your-csv-files) para requisitos completos de formatação para todos os tipos de campo.
@@ -149,17 +149,16 @@ Veja [Como preparar os seus ficheiros CSV](/l/pt/user-guide/data-migration/how-t
 ## Passo 6: Importe para o Twenty
 
 <Warning>
-  **A ordem de importação é importante!**
+**A ordem de importação é importante!**
 
-  Importe sempre por esta ordem:
+Importe sempre por esta ordem:
+1. **Empresas** primeiro (sem dependências)
+2. **Pessoas** em segundo (ligadas a Empresas)
+3. **Oportunidades** em terceiro (ligadas a Empresas/Pessoas)
+4. **Notas e Tarefas** (ligadas a registos)
+5. **Objetos personalizados** seguindo as suas dependências
 
-  1. **Empresas** primeiro (sem dependências)
-  2. **Pessoas** em segundo (ligadas a Empresas)
-  3. **Oportunidades** em terceiro (ligadas a Empresas/Pessoas)
-  4. **Notas e Tarefas** (ligadas a registos)
-  5. **Objetos personalizados** seguindo as suas dependências
-
-  O registo pai deve existir antes de o poder referenciar.
+O registo pai deve existir antes de o poder referenciar.
 </Warning>
 
 ### Importe cada objeto

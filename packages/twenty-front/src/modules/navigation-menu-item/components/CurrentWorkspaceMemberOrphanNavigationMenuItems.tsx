@@ -16,7 +16,7 @@ import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/util
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
@@ -29,7 +29,7 @@ const StyledOrphanNavigationMenuItemsContainer = styled.div`
 `;
 
 export const CurrentWorkspaceMemberOrphanNavigationMenuItems = () => {
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
   const currentPath = useLocation().pathname;

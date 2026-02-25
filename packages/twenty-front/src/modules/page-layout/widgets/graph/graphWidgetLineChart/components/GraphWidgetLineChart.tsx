@@ -25,7 +25,7 @@ import {
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -131,11 +131,11 @@ export const GraphWidgetLineChart = ({
 
   const hasClickableItems = isDefined(onSliceClick);
 
-  const setActiveLineTooltip = useSetRecoilComponentState(
+  const setActiveLineTooltip = useSetAtomComponentState(
     graphWidgetLineTooltipComponentState,
   );
 
-  const setCrosshairX = useSetRecoilComponentState(
+  const setCrosshairX = useSetAtomComponentState(
     graphWidgetLineCrosshairXComponentState,
   );
 

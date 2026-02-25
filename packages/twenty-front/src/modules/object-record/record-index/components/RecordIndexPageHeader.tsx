@@ -7,7 +7,7 @@ import { RecordIndexPageHeaderIcon } from '@/object-record/record-index/componen
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,7 +32,7 @@ export const RecordIndexPageHeader = () => {
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
-  const contextStoreNumberOfSelectedRecords = useRecoilComponentValue(
+  const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
@@ -56,7 +56,7 @@ export const RecordIndexPageHeader = () => {
       label
     );
 
-  const contextStoreCurrentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

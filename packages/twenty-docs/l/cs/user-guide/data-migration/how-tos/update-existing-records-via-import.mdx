@@ -25,11 +25,11 @@ Když naimportujete soubor obsahující **jedinečný identifikátor**, který o
 | V souboru chybí                  | **Vytvořit** nový záznam (s automaticky generovaným ID) |
 
 <Warning>
-  **Pole s vícenásobným výběrem se přepisují, neslučují.**
+**Pole s vícenásobným výběrem se přepisují, neslučují.**
 
-  Pokud má záznam vybrané `Option A` a `Option B` a vy importujete `["Option C"]`, záznam bude po importu obsahovat pouze `Option C`. Import nahradí všechny předchozí volby — nepřidává k nim.
+Pokud má záznam vybrané `Option A` a `Option B` a vy importujete `["Option C"]`, záznam bude po importu obsahovat pouze `Option C`. Import nahradí všechny předchozí volby — nepřidává k nim.
 
-  Chcete-li zachovat stávající hodnoty, zahrňte je všechny do importu: `["Option A","Option B","Option C"]`
+Chcete-li zachovat stávající hodnoty, zahrňte je všechny do importu: `["Option A","Option B","Option C"]`
 </Warning>
 
 ## Krok 1: Exportujte svá aktuální data
@@ -80,9 +80,9 @@ id,email,firstName,lastName,jobTitle
 ```
 
 <Warning>
-  **Neměňte hodnoty jedinečných identifikátorů.**
+**Neměňte hodnoty jedinečných identifikátorů.**
 
-  Pokud změníte `john@acme.com` na `john.smith@acme.com`, Twenty vytvoří nový záznam místo aktualizace stávajícího.
+Pokud změníte `john@acme.com` na `john.smith@acme.com`, Twenty vytvoří nový záznam místo aktualizace stávajícího.
 </Warning>
 
 ## Krok 3: Importujte aktualizovaný soubor

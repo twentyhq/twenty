@@ -10,40 +10,48 @@ image: /images/user-guide/github/github-header.png
 Um elemento visual que você pode usar como um contêiner clicável ou não clicável com um rótulo, componentes opcionais à esquerda e à direita e várias opções de estilo para exibir rótulos e tags.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { Chip } from 'twenty-ui/components';
 
-    export const MyComponent = () => {
-      return (
-        <Chip
-          size="large"
-          label="Chip clicável"
-          clickable={true}
-          variant="highlighted"
-          accent="text-primary"
-          leftComponent
-          rightComponent
-          maxWidth="200px"
-          className
-        />
-      );
-    };
+<Tab title="Uso">
 
-    ```
-  </Tab>
+```jsx
+import { Chip } from 'twenty-ui/components';
 
-  <Tab title="Propriedades">
-    | Propriedades | Tipo                     | Descrição                                                                                        |
-    | ------------ | ------------------------ | ------------------------------------------------------------------------------------------------ |
-    | linkToEntity | string                   | O link para a entidade                                                                           |
-    | entityId     | string                   | O identificador único para a entidade                                                            |
-    | nome         | string                   | O nome da entidade                                                                               |
-    | pictureUrl   | string                   | s imagem",                                                                                       |
-    | avatarType   | Tipo de Avatar           | O tipo de avatar que você deseja exibir. Tem duas opções: `arredondado` e `quadrado`             |
-    | variant      | Enum `EntityChipVariant` | Variante do chip de entidade que você deseja exibir. Tem duas opções: `regular` e `transparente` |
-    | LeftIcon     | IconComponent            | Um componente React representando um ícone. Exibido no lado esquerdo do chip                     |
-  </Tab>
+export const MyComponent = () => {
+  return (
+    <Chip
+      size="large"
+      label="Chip clicável"
+      clickable={true}
+      variant="highlighted"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Propriedades">
+
+
+| Propriedades | Tipo                     | Descrição                                                                                        |
+| ------------ | ------------------------ | ------------------------------------------------------------------------------------------------ |
+| linkToEntity | string                   | O link para a entidade                                                                           |
+| entityId     | string                   | O identificador único para a entidade                                                            |
+| nome         | string                   | O nome da entidade                                                                               |
+| pictureUrl   | string                   | s imagem",                                                                                       |
+| avatarType   | Tipo de Avatar           | O tipo de avatar que você deseja exibir. Tem duas opções: `arredondado` e `quadrado`             |
+| variant      | Enum `EntityChipVariant` | Variante do chip de entidade que você deseja exibir. Tem duas opções: `regular` e `transparente` |
+| LeftIcon     | IconComponent            | Um componente React representando um ícone. Exibido no lado esquerdo do chip                     |
+
+
+
+</Tab>
 </Tabs>
 
 ## Exemplos
@@ -100,39 +108,47 @@ export const MyComponent = () => {
 Um elemento semelhante a um chip para exibir informações sobre uma entidade.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { BrowserRouter as Router } from 'react-router-dom';
-    import { IconTwentyStar } from 'twenty-ui/display';
-    import { Chip } from 'twenty-ui/components';
 
-    export const MyComponent = () => {
-      return (
-        <Router>
-          <Chip
-            linkToEntity="/entity-link"
-            entityId="entityTest"
-            name="Nome da entidade"
-            pictureUrl=""
-            avatarType="rounded"
-            variant="regular"
-            LeftIcon={IconTwentyStar}
-          />
-        </Router>
-      );
-    };
-    ```
-  </Tab>
+<Tab title="Uso">
 
-  <Tab title="Propriedades">
-    | Propriedades | Tipo                     | Descrição                                                                                        |
-    | ------------ | ------------------------ | ------------------------------------------------------------------------------------------------ |
-    | linkToEntity | string                   | O link para a entidade                                                                           |
-    | entityId     | string                   | O identificador único para a entidade                                                            |
-    | nome         | string                   | O nome da entidade                                                                               |
-    | pictureUrl   | string                   | s imagem",                                                                                       |
-    | avatarType   | Tipo de Avatar           | O tipo de avatar que você deseja exibir. Tem duas opções: `arredondado` e `quadrado`             |
-    | variant      | Enum `EntityChipVariant` | Variante do chip de entidade que você deseja exibir. Tem duas opções: `regular` e `transparente` |
-    | LeftIcon     | IconComponent            | Um componente React representando um ícone. Exibido no lado esquerdo do chip                     |
-  </Tab>
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+import { IconTwentyStar } from 'twenty-ui/display';
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <Chip
+        linkToEntity="/entity-link"
+        entityId="entityTest"
+        name="Nome da entidade"
+        pictureUrl=""
+        avatarType="rounded"
+        variant="regular"
+        LeftIcon={IconTwentyStar}
+      />
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Propriedades">
+
+
+| Propriedades | Tipo                     | Descrição                                                                                        |
+| ------------ | ------------------------ | ------------------------------------------------------------------------------------------------ |
+| linkToEntity | string                   | O link para a entidade                                                                           |
+| entityId     | string                   | O identificador único para a entidade                                                            |
+| nome         | string                   | O nome da entidade                                                                               |
+| pictureUrl   | string                   | s imagem",                                                                                       |
+| avatarType   | Tipo de Avatar           | O tipo de avatar que você deseja exibir. Tem duas opções: `arredondado` e `quadrado`             |
+| variant      | Enum `EntityChipVariant` | Variante do chip de entidade que você deseja exibir. Tem duas opções: `regular` e `transparente` |
+| LeftIcon     | IconComponent            | Um componente React representando um ícone. Exibido no lado esquerdo do chip                     |
+
+
+
+</Tab>
 </Tabs>

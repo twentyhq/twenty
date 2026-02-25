@@ -1,10 +1,9 @@
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const graphWidgetHiddenLegendIdsComponentState = createComponentState<
-  string[]
->({
-  key: 'graphWidgetHiddenLegendIdsComponentState',
-  defaultValue: [],
-  componentInstanceContext: WidgetComponentInstanceContext,
-});
+export const graphWidgetHiddenLegendIdsComponentState =
+  createAtomComponentState<string[]>({
+    key: 'graphWidgetHiddenLegendIdsComponentState',
+    defaultValue: [],
+    componentInstanceContext: WidgetComponentInstanceContext,
+  });

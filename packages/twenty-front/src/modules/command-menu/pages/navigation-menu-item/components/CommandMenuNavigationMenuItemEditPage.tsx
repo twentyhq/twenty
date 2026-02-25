@@ -16,10 +16,10 @@ import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/ho
 import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemLabel';
 import { useSelectedNavigationMenuItemEditItemObjectMetadata } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemObjectMetadata';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewKey } from '@/views/types/ViewKey';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -41,8 +41,8 @@ const StyledCommandMenuPageContainer = styled.div`
 export const CommandMenuNavigationMenuItemEditPage = () => {
   const { t } = useLingui();
 
-  const selectedNavigationMenuItemInEditMode = useRecoilValueV2(
-    selectedNavigationMenuItemInEditModeStateV2,
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemInEditModeState,
   );
   const { selectedItemLabel } = useSelectedNavigationMenuItemEditItemLabel();
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();

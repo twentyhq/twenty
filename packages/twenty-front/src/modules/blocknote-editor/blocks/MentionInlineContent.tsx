@@ -8,7 +8,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, ChipVariant } from 'twenty-ui/components';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledRecordChip = styled(RecordChip)`
   height: auto;
@@ -30,7 +30,7 @@ const LegacyMentionRenderer = ({
   recordId: string;
   objectMetadataId: string;
 }) => {
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.id === objectMetadataId,

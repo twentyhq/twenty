@@ -1,8 +1,10 @@
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const fieldWidgetHoverComponentState = createComponentState<boolean>({
-  key: 'fieldWidgetHoverComponentState',
-  defaultValue: false,
-  componentInstanceContext: WidgetComponentInstanceContext,
-});
+export const fieldWidgetHoverComponentState = createAtomComponentState<boolean>(
+  {
+    key: 'fieldWidgetHoverComponentState',
+    defaultValue: false,
+    componentInstanceContext: WidgetComponentInstanceContext,
+  },
+);

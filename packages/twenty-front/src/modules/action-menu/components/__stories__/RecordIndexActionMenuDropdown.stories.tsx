@@ -1,6 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 import * as test from 'storybook/test';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
@@ -30,38 +29,33 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
         }),
         true,
       );
+      jotaiStore.set(
+        recordIndexActionMenuDropdownPositionComponentState.atomFamily({
+          instanceId: 'action-menu-dropdown-story',
+        }),
+        { x: 10, y: 10 },
+      );
 
       return (
         <JotaiProvider store={jotaiStore}>
-          <RecoilRoot
-            initializeState={({ set }) => {
-              set(
-                recordIndexActionMenuDropdownPositionComponentState.atomFamily({
-                  instanceId: 'action-menu-dropdown-story',
-                }),
-                { x: 10, y: 10 },
-              );
-            }}
+          <ActionMenuComponentInstanceContext.Provider
+            value={{ instanceId: 'story-action-menu' }}
           >
-            <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: 'story-action-menu' }}
+            <ActionMenuContext.Provider
+              value={{
+                isInRightDrawer: true,
+                displayType: 'dropdownItem',
+                actionMenuType: 'index-page-action-menu-dropdown',
+                actions: createMockActionMenuActions({
+                  deleteMock,
+                  addToFavoritesMock,
+                  exportMock,
+                }),
+              }}
             >
-              <ActionMenuContext.Provider
-                value={{
-                  isInRightDrawer: true,
-                  displayType: 'dropdownItem',
-                  actionMenuType: 'index-page-action-menu-dropdown',
-                  actions: createMockActionMenuActions({
-                    deleteMock,
-                    addToFavoritesMock,
-                    exportMock,
-                  }),
-                }}
-              >
-                <Story />
-              </ActionMenuContext.Provider>
-            </ActionMenuComponentInstanceContext.Provider>
-          </RecoilRoot>
+              <Story />
+            </ActionMenuContext.Provider>
+          </ActionMenuComponentInstanceContext.Provider>
         </JotaiProvider>
       );
     },

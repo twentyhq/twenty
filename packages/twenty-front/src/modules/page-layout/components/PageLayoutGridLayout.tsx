@@ -24,8 +24,8 @@ import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterP
 import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useRef } from 'react';
@@ -100,15 +100,15 @@ type PageLayoutGridLayoutProps = {
 };
 
 export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
-  const setPageLayoutCurrentBreakpoint = useSetRecoilComponentState(
+  const setPageLayoutCurrentBreakpoint = useSetAtomComponentState(
     pageLayoutCurrentBreakpointComponentState,
   );
 
-  const setDraggingWidgetId = useSetRecoilComponentState(
+  const setDraggingWidgetId = useSetAtomComponentState(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const setResizingWidgetId = useSetRecoilComponentState(
+  const setResizingWidgetId = useSetAtomComponentState(
     pageLayoutResizingWidgetIdComponentState,
   );
 
@@ -126,18 +126,18 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
-  const pageLayoutCurrentLayouts = useRecoilComponentValue(
+  const pageLayoutCurrentLayouts = useAtomComponentStateValue(
     pageLayoutCurrentLayoutsComponentState,
   );
 
-  const pageLayoutDraggedArea = useRecoilComponentValue(
+  const pageLayoutDraggedArea = useAtomComponentStateValue(
     pageLayoutDraggedAreaComponentState,
   );
-  const draggingWidgetId = useRecoilComponentValue(
+  const draggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 

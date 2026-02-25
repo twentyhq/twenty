@@ -1,6 +1,6 @@
-import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const isRecordIndexBoardColumnLoadingFamilyState = createFamilyState<
+export const isRecordIndexBoardColumnLoadingFamilyState = createAtomFamilyState<
   boolean,
   string | undefined
 >({

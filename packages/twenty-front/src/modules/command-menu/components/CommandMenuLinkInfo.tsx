@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { IconLink } from 'twenty-ui/display';
 
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
@@ -9,21 +8,21 @@ import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/N
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const CommandMenuLinkInfo = () => {
   const { t } = useLingui();
-  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
   const [shouldFocusTitleInput, setShouldFocusTitleInput] =
-    useRecoilComponentState(
+    useAtomComponentState(
       commandMenuShouldFocusTitleInputComponentState,
       commandMenuPageInfo.instanceId,
     );
-  const selectedNavigationMenuItemInEditMode = useRecoilValueV2(
-    selectedNavigationMenuItemInEditModeStateV2,
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemInEditModeState,
   );
   const items = useWorkspaceSectionItems();
   const { updateLinkInDraft } = useUpdateLinkInDraft();

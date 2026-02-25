@@ -10,12 +10,12 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
-import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
+import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useLingui } from '@lingui/react/macro';
@@ -38,11 +38,11 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
   const { closeCommandMenu } = useCommandMenu();
   const { addViewToDraft } = useAddViewToNavigationMenuDraft();
   const { currentDraft } = useDraftNavigationMenuItems();
-  const addMenuItemInsertionContext = useRecoilValueV2(
-    addMenuItemInsertionContextStateV2,
+  const addMenuItemInsertionContext = useAtomStateValue(
+    addMenuItemInsertionContextState,
   );
-  const setAddMenuItemInsertionContext = useSetRecoilStateV2(
-    addMenuItemInsertionContextStateV2,
+  const setAddMenuItemInsertionContext = useSetAtomState(
+    addMenuItemInsertionContextState,
   );
   const { objectMetadataItems } = useObjectMetadataItems();
   const { views } = useNavigationMenuObjectMetadataFromDraft(currentDraft);

@@ -3,14 +3,14 @@ import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorLink';
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
 import { normalizeUrl } from '@/navigation-menu-item/utils/normalizeUrl';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useAddLinkToNavigationMenuDraft = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilStateV2(
-    navigationMenuItemsDraftStateV2,
+  const setNavigationMenuItemsDraft = useSetAtomState(
+    navigationMenuItemsDraftState,
   );
 
   const addLinkToDraft = (

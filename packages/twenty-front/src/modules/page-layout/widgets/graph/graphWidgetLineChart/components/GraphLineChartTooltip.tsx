@@ -5,7 +5,7 @@ import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graphW
 import { getLineChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartTooltipData';
 import { createVirtualElementFromContainerOffset } from '@/page-layout/widgets/graph/utils/createVirtualElementFromContainerOffset';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type LineSeries, type Point } from '@nivo/line';
 import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,7 +29,7 @@ export const GraphLineChartTooltip = ({
   onMouseEnter,
   onMouseLeave,
 }: GraphLineChartTooltipProps) => {
-  const tooltipState = useRecoilComponentValue(
+  const tooltipState = useAtomComponentStateValue(
     graphWidgetLineTooltipComponentState,
   );
 

@@ -59,17 +59,17 @@ Before importing data, prepare your Twenty workspace:
 4. Configure field settings (unique, required, select options, etc.)
 
 <Warning>
-  **Fields must exist before import.**
+**Fields must exist before import.**
 
-  The CSV import creates records, not fields. Create all custom fields in Settings → Data Model before importing.
+The CSV import creates records, not fields. Create all custom fields in Settings → Data Model before importing.
 </Warning>
 
 ### Invite Your Team
 
 <Warning>
-  **Invite users BEFORE importing data.**
+**Invite users BEFORE importing data.**
 
-  If your data includes user references (Account Owner, Assignee, etc.), those users must exist in Twenty before import. Otherwise, those relations cannot be mapped.
+If your data includes user references (Account Owner, Assignee, etc.), those users must exist in Twenty before import. Otherwise, those relations cannot be mapped.
 </Warning>
 
 1. 转到 **设置 → 成员**
@@ -116,9 +116,9 @@ Open each exported CSV in a spreadsheet application and prepare it for Twenty.
 | **Select fields** | Use API names, not display labels                 |
 
 <Warning>
-  **Domain format is critical.**
+**Domain format is critical.**
 
-  Use `https://domain.com` (not `domain.com` or `www.domain.com`). This matches Twenty's format and prevents duplicates when you connect email/calendar sync.
+Use `https://domain.com` (not `domain.com` or `www.domain.com`). This matches Twenty's format and prevents duplicates when you connect email/calendar sync.
 </Warning>
 
 See [How to Prepare Your CSV Files](/l/zh/user-guide/data-migration/how-tos/prepare-your-csv-files) for complete formatting requirements for all field types.
@@ -149,17 +149,16 @@ See [How to Prepare Your CSV Files](/l/zh/user-guide/data-migration/how-tos/prep
 ## Step 6: Import to Twenty
 
 <Warning>
-  **Import Order Matters!**
+**Import Order Matters!**
 
-  Always import in this order:
+Always import in this order:
+1. **Companies** first (no dependencies)
+2. **People** second (link to Companies)
+3. **Opportunities** third (link to Companies/People)
+4. **Notes and Tasks** (link to records)
+5. **Custom objects** following their dependencies
 
-  1. **Companies** first (no dependencies)
-  2. **People** second (link to Companies)
-  3. **Opportunities** third (link to Companies/People)
-  4. **Notes and Tasks** (link to records)
-  5. **Custom objects** following their dependencies
-
-  The parent record must exist before you can reference it.
+The parent record must exist before you can reference it.
 </Warning>
 
 ### Import Each Object

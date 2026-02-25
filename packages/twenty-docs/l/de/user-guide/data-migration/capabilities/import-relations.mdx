@@ -44,12 +44,12 @@ Hier befindet sich das Projekt auf der "Eins"-Seite. Mehrere Datensätze aus ver
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Einschränkung beim Import/Export**: Beziehungen, die auf mehrere Objekttypen verweisen (z. B. Notizen → Personen/Unternehmen/Opportunities), werden beim CSV-Import oder -Export **noch nicht unterstützt**.
+**Einschränkung beim Import/Export**: Beziehungen, die auf mehrere Objekttypen verweisen (z. B. Notizen → Personen/Unternehmen/Opportunities), werden beim CSV-Import oder -Export **noch nicht unterstützt**.
 
-  * **Import**: Es können nur Eins-zu-viele-Beziehungen importiert werden, die auf jeder Seite auf einen einzelnen Objekttyp verweisen
-  * **Export**: Spalten für Beziehungen, die auf mehrere Objekttypen verweisen, bleiben derzeit leer
+* **Import**: Es können nur Eins-zu-viele-Beziehungen importiert werden, die auf jeder Seite auf einen einzelnen Objekttyp verweisen
+* **Export**: Spalten für Beziehungen, die auf mehrere Objekttypen verweisen, bleiben derzeit leer
 
-  Dies steht auf unserer Roadmap.
+Dies steht auf unserer Roadmap.
 </Warning>
 
 ### Was heute nicht unterstützt wird
@@ -137,12 +137,12 @@ Falls es nicht existiert:
 ## Regel für die Importreihenfolge
 
 <Warning>
-  **Importieren Sie immer zuerst die "Eins"-Seite!**
+**Importieren Sie immer zuerst die "Eins"-Seite!**
 
-  1. Zuerst **Unternehmen** (keine Abhängigkeiten)
-  2. **Personen** an zweiter Stelle (mit Unternehmen verknüpft)
-  3. **Opportunities** an dritter Stelle (mit Unternehmen/Personen verknüpft)
-  4. **Benutzerdefinierte Objekte** entsprechend ihren Abhängigkeiten
+1. Zuerst **Unternehmen** (keine Abhängigkeiten)
+2. **Personen** an zweiter Stelle (mit Unternehmen verknüpft)
+3. **Opportunities** an dritter Stelle (mit Unternehmen/Personen verknüpft)
+4. **Benutzerdefinierte Objekte** entsprechend ihren Abhängigkeiten
 
-  Der übergeordnete Datensatz muss existieren, bevor Sie darauf verweisen können.
+Der übergeordnete Datensatz muss existieren, bevor Sie darauf verweisen können.
 </Warning>

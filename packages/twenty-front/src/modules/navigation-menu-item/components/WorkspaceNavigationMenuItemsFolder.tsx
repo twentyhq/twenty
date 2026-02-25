@@ -27,7 +27,7 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
+import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
@@ -37,11 +37,11 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { currentNavigationMenuItemFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdStateV2';
+import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { ViewKey } from '@/views/types/ViewKey';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
@@ -100,8 +100,8 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
-  const coreViews = useRecoilValueV2(coreViewsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const coreViews = useAtomStateValue(coreViewsState);
   const views = coreViews.map(convertCoreViewToView);
   const location = useLocation();
   const navigate = useNavigate();
@@ -111,10 +111,10 @@ export const WorkspaceNavigationMenuItemsFolder = ({
 
   const { t } = useLingui();
   const [openNavigationMenuItemFolderIds, setOpenNavigationMenuItemFolderIds] =
-    useRecoilStateV2(openNavigationMenuItemFolderIdsStateV2);
+    useAtomState(openNavigationMenuItemFolderIdsState);
 
-  const setCurrentFolderId = useSetRecoilStateV2(
-    currentNavigationMenuItemFolderIdStateV2,
+  const setCurrentFolderId = useSetAtomState(
+    currentNavigationMenuItemFolderIdState,
   );
   const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
 

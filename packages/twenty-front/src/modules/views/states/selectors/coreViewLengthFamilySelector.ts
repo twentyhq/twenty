@@ -1,7 +1,7 @@
 import { coreViewsState } from '@/views/states/coreViewState';
-import { createSelectorV2 } from '@/ui/utilities/state/jotai/utils/createSelectorV2';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const coreViewLengthFamilySelector = createSelectorV2<number>({
+export const coreViewLengthFamilySelector = createAtomSelector<number>({
   key: 'coreViewLengthFamilySelector',
   get: ({ get }) => {
     const coreViews = get(coreViewsState);

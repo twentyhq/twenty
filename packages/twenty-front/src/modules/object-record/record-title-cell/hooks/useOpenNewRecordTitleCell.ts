@@ -3,40 +3,41 @@ import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const useOpenNewRecordTitleCell = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const store = useStore();
 
-  const openNewRecordTitleCell = useRecoilCallback(
-    ({ set }) =>
-      ({ recordId, fieldName }: { recordId: string; fieldName: string }) => {
-        const instanceId = getRecordFieldInputInstanceId({
-          recordId,
-          fieldName,
-          prefix: RecordTitleCellContainerType.PageHeader,
-        });
+  const openNewRecordTitleCell = useCallback(
+    ({ recordId, fieldName }: { recordId: string; fieldName: string }) => {
+      const instanceId = getRecordFieldInputInstanceId({
+        recordId,
+        fieldName,
+        prefix: RecordTitleCellContainerType.PageHeader,
+      });
 
-        pushFocusItemToFocusStack({
-          focusId: instanceId,
-          component: {
-            type: FocusComponentType.OPENED_FIELD_INPUT,
-            instanceId,
-          },
-          globalHotkeysConfig: {
-            enableGlobalHotkeysConflictingWithKeyboard: false,
-            enableGlobalHotkeysWithModifiers: false,
-          },
-        });
+      pushFocusItemToFocusStack({
+        focusId: instanceId,
+        component: {
+          type: FocusComponentType.OPENED_FIELD_INPUT,
+          instanceId,
+        },
+        globalHotkeysConfig: {
+          enableGlobalHotkeysConflictingWithKeyboard: false,
+          enableGlobalHotkeysWithModifiers: false,
+        },
+      });
 
-        set(
-          isTitleCellInEditModeComponentState.atomFamily({
-            instanceId,
-          }),
-          true,
-        );
-      },
-    [pushFocusItemToFocusStack],
+      store.set(
+        isTitleCellInEditModeComponentState.atomFamily({
+          instanceId,
+        }),
+        true,
+      );
+    },
+    [pushFocusItemToFocusStack, store],
   );
 
   return { openNewRecordTitleCell };

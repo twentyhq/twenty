@@ -8,7 +8,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconMail,
@@ -37,7 +37,7 @@ export const SettingsSecurityEditableProfileFields = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();

@@ -1,5 +1,5 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
-export const currentPageLocationState = createStateV2<string>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const currentPageLocationState = createAtomState<string>({
   key: 'currentPageLocationState',
   defaultValue: '',
 });

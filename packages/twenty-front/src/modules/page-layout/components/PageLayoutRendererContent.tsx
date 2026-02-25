@@ -18,9 +18,8 @@ import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { CommandMenuPages } from 'twenty-shared/types';
@@ -56,15 +55,15 @@ export const PageLayoutRendererContent = () => {
   const { isInRightDrawer, layoutType, targetRecordIdentifier } =
     useLayoutRenderingContext();
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
-  const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
+  const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
 
   const { createPageLayoutTab } = useCreatePageLayoutTab(currentPageLayout?.id);
   const { reorderTabs } = useReorderPageLayoutTabs(currentPageLayout?.id ?? '');
-  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+  const setTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
   );
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();

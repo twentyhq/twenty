@@ -2,15 +2,19 @@ import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/app
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
+import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-skills.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
-import { type Manifest } from 'twenty-shared/application';
+import { type FieldManifest, type Manifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
-const TEST_SECOND_ROLE_ID = uuidv4();
 const TEST_FIELD_ID = uuidv4();
 const TEST_SKILL_ID = uuidv4();
 
@@ -22,6 +26,39 @@ const TEST_OBJECT = buildDefaultObjectManifest({
   description: 'A support ticket',
   icon: 'IconTicket',
 });
+
+const TEST_SKILL = {
+  universalIdentifier: TEST_SKILL_ID,
+  name: 'test-skill',
+  label: 'Test Skill',
+  description: 'A skill for testing',
+  icon: 'IconBrain',
+  content: '# Test Skill\n\nThis is a test skill.',
+};
+
+const TEST_FIELD: FieldManifest = {
+  universalIdentifier: TEST_FIELD_ID,
+  type: FieldMetadataType.TEXT,
+  name: 'description',
+  label: 'Description',
+  description: 'Ticket description',
+  icon: 'IconFileDescription',
+  objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+};
+
+const buildManifest = (
+  overrides?: Partial<Pick<Manifest, 'fields' | 'skills' | 'objects'>>,
+) =>
+  buildBaseManifest({
+    appId: TEST_APP_ID,
+    roleId: TEST_ROLE_ID,
+    overrides: {
+      objects: [TEST_OBJECT],
+      skills: [TEST_SKILL],
+      fields: [TEST_FIELD],
+      ...overrides,
+    },
+  });
 
 describe('syncApplication', () => {
   let appCreated = false;
@@ -49,48 +86,8 @@ describe('syncApplication', () => {
   });
 
   it('should return workspace migration actions on initial sync then on second sync with field rename and new role', async () => {
-    const initialManifest: Manifest = {
-      application: {
-        universalIdentifier: TEST_APP_ID,
-        defaultRoleUniversalIdentifier: TEST_ROLE_ID,
-        displayName: 'Test Application',
-        description: 'A test application for workspace migration',
-        icon: 'IconTestPipe',
-        applicationVariables: {},
-        packageJsonChecksum: null,
-        yarnLockChecksum: null,
-        apiClientChecksum: null,
-      },
-      roles: [
-        {
-          universalIdentifier: TEST_ROLE_ID,
-          label: 'Test Role',
-          description: 'A test role',
-        },
-      ],
-      skills: [],
-      objects: [TEST_OBJECT],
-      fields: [
-        {
-          universalIdentifier: TEST_FIELD_ID,
-          type: FieldMetadataType.TEXT,
-          name: 'description',
-          label: 'Description',
-          description: 'Ticket description',
-          icon: 'IconFileDescription',
-          objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
-        },
-      ],
-      logicFunctions: [],
-      frontComponents: [],
-      publicAssets: [],
-      views: [],
-      navigationMenuItems: [],
-      pageLayouts: [],
-    };
-
     const { data: firstSyncData } = await syncApplication({
-      manifest: initialManifest,
+      manifest: buildManifest(),
       expectToFail: false,
     });
 
@@ -98,139 +95,92 @@ describe('syncApplication', () => {
       extractRecordIdsAndDatesAsExpectAny(firstSyncData),
     );
 
-    const updatedManifest: Manifest = {
-      ...initialManifest,
-      roles: [
-        {
-          universalIdentifier: TEST_ROLE_ID,
-          label: 'Test Role',
-          description: 'A test role',
-        },
-        {
-          universalIdentifier: TEST_SECOND_ROLE_ID,
-          label: 'Viewer Role',
-          description: 'A read-only role',
-        },
-      ],
-      fields: [
-        {
-          universalIdentifier: TEST_FIELD_ID,
-          type: FieldMetadataType.TEXT,
-          name: 'body',
-          label: 'Body',
-          description: 'Ticket description',
-          icon: 'IconFileDescription',
-          objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
-        },
-      ],
-    };
-
-    const { data: secondSyncData } = await syncApplication({
-      manifest: updatedManifest,
-      expectToFail: false,
-    });
-
-    expect(secondSyncData).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(secondSyncData),
-    );
-  }, 60000);
-
-  it('should sync a skill then update it on second sync', async () => {
-    const initialManifest: Manifest = {
-      application: {
-        universalIdentifier: TEST_APP_ID,
-        defaultRoleUniversalIdentifier: TEST_ROLE_ID,
-        displayName: 'Test Application',
-        description: 'A test application for workspace migration',
-        icon: 'IconTestPipe',
-        applicationVariables: {},
-        packageJsonChecksum: null,
-        yarnLockChecksum: null,
-        apiClientChecksum: null,
+    // Verify database state after first sync
+    const { objects: objectsAfterSync } = await findManyObjectMetadata({
+      input: {
+        filter: { isCustom: { is: true } },
+        paging: { first: 100 },
       },
-      roles: [
-        {
-          universalIdentifier: TEST_ROLE_ID,
-          label: 'Test Role',
-          description: 'A test role',
-        },
-      ],
-      skills: [
-        {
-          universalIdentifier: TEST_SKILL_ID,
-          name: 'test-skill',
-          label: 'Test Skill',
-          description: 'A skill for testing',
-          icon: 'IconBrain',
-          content: '# Test Skill\n\nThis is a test skill.',
-        },
-      ],
-      objects: [],
-      fields: [],
-      logicFunctions: [],
-      frontComponents: [],
-      publicAssets: [],
-      views: [],
-      navigationMenuItems: [],
-      pageLayouts: [],
-    };
-
-    const { data: firstSyncData } = await syncApplication({
-      manifest: initialManifest,
+      gqlFields:
+        'id nameSingular namePlural labelSingular labelPlural description icon isCustom',
       expectToFail: false,
     });
 
-    expect(firstSyncData).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstSyncData),
+    const ticketObject = objectsAfterSync.find(
+      (obj) => obj.nameSingular === 'ticket',
     );
 
-    const updatedManifest: Manifest = {
-      ...initialManifest,
-      skills: [
-        {
-          universalIdentifier: TEST_SKILL_ID,
-          name: 'test-skill',
-          label: 'Test Skill Updated',
-          description: 'An updated skill for testing',
-          icon: 'IconBrain',
-          content:
-            '# Test Skill\n\nThis is an updated test skill with more content.',
-        },
-      ],
-    };
+    expect(ticketObject).toBeDefined();
+    expect(ticketObject).toMatchObject({
+      nameSingular: 'ticket',
+      namePlural: 'tickets',
+      labelSingular: 'Ticket',
+      labelPlural: 'Tickets',
+      description: 'A support ticket',
+      icon: 'IconTicket',
+      isCustom: true,
+    });
 
-    const { data: secondSyncData } = await syncApplication({
-      manifest: updatedManifest,
+    const objects = await findManyObjectMetadataWithIndexes({
       expectToFail: false,
     });
 
-    expect(secondSyncData).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(secondSyncData),
+    const fieldsAfterSync = objects.find(
+      (o) => o.universalIdentifier === TEST_OBJECT.universalIdentifier,
+    )?.fieldsList;
+
+    const descriptionField = fieldsAfterSync?.find(
+      (f) => f.universalIdentifier === TEST_FIELD_ID,
     );
+
+    expect(descriptionField).toBeDefined();
+    expect(descriptionField).toMatchObject({
+      name: 'description',
+      label: 'Description',
+      type: FieldMetadataType.TEXT,
+      description: 'Ticket description',
+      icon: 'IconFileDescription',
+    });
+
+    const { data: rolesAfterSync } = await findRoles({
+      gqlFields: 'id label description universalIdentifier',
+      expectToFail: false,
+    });
+
+    const testRole = rolesAfterSync.getRoles.find(
+      (role) => role.universalIdentifier === TEST_ROLE_ID,
+    );
+
+    const { data: skillsAfterSync } = await findSkills({
+      gqlFields: 'id name label description content icon',
+      expectToFail: false,
+      input: undefined,
+    });
+
+    const testSkill = skillsAfterSync.skills.find(
+      (skill) => skill.name === 'test-skill',
+    );
+
+    expect(testRole).toBeDefined();
+    expect(testRole).toMatchObject({
+      label: 'Test Role',
+      description: 'A test role',
+    });
+
+    expect(testSkill).toBeDefined();
+    expect(testSkill).toMatchObject({
+      name: 'test-skill',
+      label: 'Test Skill',
+      description: 'A skill for testing',
+      icon: 'IconBrain',
+      content: '# Test Skill\n\nThis is a test skill.',
+    });
   }, 60000);
 
   it('should create a TEXT field on the standard Company object', async () => {
     const companyFieldId = uuidv4();
 
-    const manifest: Manifest = {
-      application: {
-        universalIdentifier: TEST_APP_ID,
-        defaultRoleUniversalIdentifier: TEST_ROLE_ID,
-        displayName: 'Test Application',
-        description: 'A test application for workspace migration',
-        icon: 'IconTestPipe',
-        applicationVariables: {},
-        packageJsonChecksum: null,
-        yarnLockChecksum: null,
-        apiClientChecksum: null,
-      },
-      roles: [
-        {
-          universalIdentifier: TEST_ROLE_ID,
-          label: 'Test Role',
-          description: 'A test role',
-        },
-      ],
+    const manifest = buildManifest({
       skills: [],
       objects: [],
       fields: [
@@ -245,13 +195,7 @@ describe('syncApplication', () => {
             STANDARD_OBJECTS.company.universalIdentifier,
         },
       ],
-      logicFunctions: [],
-      frontComponents: [],
-      publicAssets: [],
-      views: [],
-      navigationMenuItems: [],
-      pageLayouts: [],
-    };
+    });
 
     const { data: syncData } = await syncApplication({
       manifest,

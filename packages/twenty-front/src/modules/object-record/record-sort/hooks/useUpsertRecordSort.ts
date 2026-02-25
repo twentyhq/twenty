@@ -1,55 +1,52 @@
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 export const useUpsertRecordSort = () => {
-  const currentRecordSortsCallbackState = useRecoilComponentCallbackState(
+  const currentRecordSorts = useAtomComponentStateCallbackState(
     currentRecordSortsComponentState,
   );
 
-  const upsertRecordSort = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (recordSortToSet: RecordSort) => {
-        const currentRecordSorts = getSnapshotValue(
-          snapshot,
-          currentRecordSortsCallbackState,
-        );
+  const store = useStore();
 
-        const hasFoundRecordSortInCurrentRecordSorts = currentRecordSorts.some(
-          (existingSort) =>
-            existingSort.fieldMetadataId === recordSortToSet.fieldMetadataId,
-        );
+  const upsertRecordSort = useCallback(
+    (recordSortToSet: RecordSort) => {
+      const existingRecordSorts = store.get(currentRecordSorts) as RecordSort[];
 
-        if (!hasFoundRecordSortInCurrentRecordSorts) {
-          set(currentRecordSortsCallbackState, [
-            ...currentRecordSorts,
-            recordSortToSet,
-          ]);
-        } else {
-          set(currentRecordSortsCallbackState, (currentRecordSorts) => {
-            const newCurrentRecordSorts = [...currentRecordSorts];
+      const hasFoundRecordSortInCurrentRecordSorts = existingRecordSorts.some(
+        (existingSort) =>
+          existingSort.fieldMetadataId === recordSortToSet.fieldMetadataId,
+      );
 
-            const indexOfSortToUpdate = newCurrentRecordSorts.findIndex(
-              (existingSort) =>
-                existingSort.fieldMetadataId ===
-                recordSortToSet.fieldMetadataId,
-            );
+      if (!hasFoundRecordSortInCurrentRecordSorts) {
+        store.set(currentRecordSorts, [
+          ...existingRecordSorts,
+          recordSortToSet,
+        ]);
+      } else {
+        store.set(currentRecordSorts, (previousRecordSorts: RecordSort[]) => {
+          const newCurrentRecordSorts = [...previousRecordSorts];
 
-            if (indexOfSortToUpdate < 0) {
-              return newCurrentRecordSorts;
-            }
+          const indexOfSortToUpdate = newCurrentRecordSorts.findIndex(
+            (existingSort) =>
+              existingSort.fieldMetadataId === recordSortToSet.fieldMetadataId,
+          );
 
-            newCurrentRecordSorts[indexOfSortToUpdate] = {
-              ...recordSortToSet,
-            };
-
+          if (indexOfSortToUpdate < 0) {
             return newCurrentRecordSorts;
-          });
-        }
-      },
-    [currentRecordSortsCallbackState],
+          }
+
+          newCurrentRecordSorts[indexOfSortToUpdate] = {
+            ...recordSortToSet,
+          };
+
+          return newCurrentRecordSorts;
+        });
+      }
+    },
+    [currentRecordSorts, store],
   );
 
   return {

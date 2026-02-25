@@ -1,17 +1,17 @@
-import {
-  ALL_METADATA_KEYS,
-  metadataStoreState,
-  type MetadataKey,
-  type MetadataLoadEntry,
-} from '@/metadata-store/states/metadataStoreState';
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
-import { type createStore, useStore } from 'jotai';
+import {
+  ALL_METADATA_ENTITY_KEYS,
+  metadataStoreState,
+  type MetadataEntityKey,
+  type MetadataStoreItem,
+} from '@/metadata-store/states/metadataStoreState';
+import { useStore, type createStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type JotaiStore = ReturnType<typeof createStore>;
 
-const EMPTY_ENTRY: MetadataLoadEntry = {
+const EMPTY_ENTRY: MetadataStoreItem = {
   current: [],
   draft: [],
   status: 'empty',
@@ -31,20 +31,23 @@ const areViewsConsistentWithObjects = (
 };
 
 export const resetMetadataStore = (store: JotaiStore) => {
-  for (const key of ALL_METADATA_KEYS) {
+  for (const key of ALL_METADATA_ENTITY_KEYS) {
     store.set(metadataStoreState.atomFamily(key), EMPTY_ENTRY);
   }
 
   store.set(isAppMetadataReadyState.atom, false);
 };
 
-const promoteEntry = (store: JotaiStore, key: MetadataKey) => {
-  const entry = store.get(metadataStoreState.atomFamily(key));
+const changeMetadataEntityAsUpToDate = (
+  store: JotaiStore,
+  metadataEntityKey: MetadataEntityKey,
+) => {
+  const entry = store.get(metadataStoreState.atomFamily(metadataEntityKey));
 
-  store.set(metadataStoreState.atomFamily(key), {
+  store.set(metadataStoreState.atomFamily(metadataEntityKey), {
     current: entry.draft,
     draft: [],
-    status: 'loaded',
+    status: 'up-to-date',
   });
 };
 
@@ -52,11 +55,11 @@ export const useMetadataStore = () => {
   const store = useStore();
 
   const updateDraft = useCallback(
-    (key: MetadataKey, data: object[]) => {
+    (key: MetadataEntityKey, data: object[]) => {
       const currentEntry = store.get(metadataStoreState.atomFamily(key));
 
       if (
-        currentEntry.status === 'loaded' &&
+        currentEntry.status === 'up-to-date' &&
         isDeeplyEqual(currentEntry.current, data)
       ) {
         return;
@@ -65,42 +68,48 @@ export const useMetadataStore = () => {
       store.set(metadataStoreState.atomFamily(key), (prev) => ({
         ...prev,
         draft: data,
-        status: 'draft_pending' as const,
+        status: 'draft-pending' as const,
       }));
     },
     [store],
   );
 
-  const applyChanges = useCallback((): boolean => {
-    let promoted = false;
+  const applyChanges = useCallback((): {
+    hasPersistedAnyMetadataEntity: boolean;
+  } => {
+    let hasPersistedAnyMetadataEntity = false;
 
-    for (const key of ALL_METADATA_KEYS) {
-      if (key === 'views') {
+    for (const metadataEntityKey of ALL_METADATA_ENTITY_KEYS) {
+      if (metadataEntityKey === 'views') {
         continue;
       }
 
-      const entry = store.get(metadataStoreState.atomFamily(key));
+      const metadataStoreEntityEntry = store.get(
+        metadataStoreState.atomFamily(metadataEntityKey),
+      );
 
-      if (entry.status === 'draft_pending') {
-        promoteEntry(store, key);
-        promoted = true;
+      if (metadataStoreEntityEntry.status === 'draft-pending') {
+        changeMetadataEntityAsUpToDate(store, metadataEntityKey);
+        hasPersistedAnyMetadataEntity = true;
       }
     }
 
     const viewsEntry = store.get(metadataStoreState.atomFamily('views'));
 
-    if (viewsEntry.status === 'draft_pending') {
-      const objectsEntry = store.get(metadataStoreState.atomFamily('objects'));
+    if (viewsEntry.status === 'draft-pending') {
+      const objectsEntry = store.get(
+        metadataStoreState.atomFamily('objectMetadataItems'),
+      );
 
       if (
         areViewsConsistentWithObjects(viewsEntry.draft, objectsEntry.current)
       ) {
-        promoteEntry(store, 'views');
-        promoted = true;
+        changeMetadataEntityAsUpToDate(store, 'views');
+        hasPersistedAnyMetadataEntity = true;
       }
     }
 
-    return promoted;
+    return { hasPersistedAnyMetadataEntity };
   }, [store]);
 
   const reset = useCallback(() => {

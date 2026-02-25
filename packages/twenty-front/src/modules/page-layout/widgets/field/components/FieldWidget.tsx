@@ -19,7 +19,7 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AnimatedPlaceholder,
@@ -62,12 +62,10 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     resolvedFieldMetadataId ?? '',
   );
 
-  const record = useRecoilValue(
-    recordStoreFamilySelector({
-      recordId: targetRecord.id,
-      fieldName: fieldMetadataItem?.name ?? '',
-    }),
-  );
+  const record = useAtomFamilySelectorValue(recordStoreFamilySelector, {
+    recordId: targetRecord.id,
+    fieldName: fieldMetadataItem?.name ?? '',
+  });
 
   if (isPrefetchLoading) {
     return (

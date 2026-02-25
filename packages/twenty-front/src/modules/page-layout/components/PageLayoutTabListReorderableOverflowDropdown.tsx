@@ -25,8 +25,8 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
@@ -73,7 +73,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
     PageLayoutComponentInstanceContext,
   );
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
     pageLayoutId,
   );
@@ -81,17 +81,17 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   const shouldShowEditButton =
     isPageLayoutInEditMode && shouldEnableTabEditingFeatures(pageLayoutType);
 
-  const isTabDragging = useRecoilComponentValue(
+  const isTabDragging = useAtomComponentStateValue(
     isPageLayoutTabDraggingComponentState,
     instanceId,
   );
 
-  const setIsTabDragging = useSetRecoilComponentState(
+  const setIsTabDragging = useSetAtomComponentState(
     isPageLayoutTabDraggingComponentState,
     instanceId,
   );
 
-  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+  const setTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );

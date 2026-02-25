@@ -2,7 +2,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
@@ -21,8 +21,8 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-      const focusStack = useRecoilValueV2(focusStackState);
-      const currentFocusId = useRecoilValueV2(currentFocusIdSelector);
+      const focusStack = useAtomStateValue(focusStackState);
+      const currentFocusId = useAtomStateValue(currentFocusIdSelector);
 
       return {
         pushFocusItemToFocusStack,

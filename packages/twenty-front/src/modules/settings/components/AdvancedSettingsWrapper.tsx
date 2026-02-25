@@ -1,7 +1,7 @@
 import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/AdvancedSettingsContentWrapperWithDot';
 import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import styled from '@emotion/styled';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
@@ -24,7 +24,7 @@ export const AdvancedSettingsWrapper = ({
   dotPosition = 'centered',
   animationDimension = 'height',
 }: AdvancedSettingsWrapperProps) => {
-  const isAdvancedModeEnabled = useRecoilValueV2(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   return (
     <AnimatedExpandableContainer

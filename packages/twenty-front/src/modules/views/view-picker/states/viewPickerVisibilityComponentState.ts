@@ -1,9 +1,9 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewVisibility } from '~/generated-metadata/graphql';
 
 export const viewPickerVisibilityComponentState =
-  createComponentState<ViewVisibility>({
+  createAtomComponentState<ViewVisibility>({
     key: 'viewPickerVisibilityComponentState',
     defaultValue: ViewVisibility.UNLISTED,
     componentInstanceContext: ViewComponentInstanceContext,

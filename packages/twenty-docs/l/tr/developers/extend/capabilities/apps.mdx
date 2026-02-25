@@ -4,7 +4,7 @@ description: Twenty özelleştirmelerini kod olarak oluşturun ve yönetin.
 ---
 
 <Warning>
-  Uygulamalar şu anda alfa testinde. Özellik işlevsel ancak hâlâ gelişmekte.
+Uygulamalar şu anda alfa testinde. Özellik işlevsel ancak hâlâ gelişmekte.
 </Warning>
 
 ## Uygulamalar Nedir?
@@ -28,18 +28,11 @@ Uygulamalar, Twenty özelleştirmelerini **kod olarak** oluşturup yönetmenizi 
 Resmi scaffolder aracını kullanarak yeni bir uygulama oluşturun, ardından kimlik doğrulaması yapıp geliştirmeye başlayın:
 
 ```bash filename="Terminal"
-# Scaffold a new app (includes all examples by default)
+# Yeni bir uygulamanın iskeletini oluşturun (varsayılan olarak tüm örnekleri içerir)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# If you don't use yarn@4
-corepack enable
-yarn install
-
-# Authenticate using your API key (you'll be prompted)
-yarn twenty auth:login
-
-# Start dev mode: automatically syncs local changes to your workspace
+# Geliştirme modunu başlatın: yerel değişiklikleri otomatik olarak çalışma alanınızla senkronize eder
 yarn twenty app:dev
 ```
 
@@ -154,7 +147,7 @@ SDK, TypeScript dosyalarınızı **`export default define<Entity>({...})`** ça�
 | `defineSkill()`              | Yapay zekâ ajanı yetenek tanımları       |
 
 <Note>
-  **Dosya adlandırma esnektir.** Varlık algılama AST tabanlıdır — SDK, kaynak dosyalarınızı `export default define<Entity>({...})` desenini bulmak için tarar. Dosyalarınızı ve klasörlerinizi dilediğiniz gibi düzenleyebilirsiniz. Varlık türüne göre gruplama (örn. `logic-functions/`, `roles/`) bir gereklilik değil, yalnızca kod organizasyonu için bir gelenektir.
+**Dosya adlandırma esnektir.** Varlık algılama AST tabanlıdır — SDK, kaynak dosyalarınızı `export default define<Entity>({...})` desenini bulmak için tarar. Dosyalarınızı ve klasörlerinizi dilediğiniz gibi düzenleyebilirsiniz. Varlık türüne göre gruplama (örn. `logic-functions/`, `roles/`) bir gereklilik değil, yalnızca kod organizasyonu için bir gelenektir.
 </Note>
 
 Algılanan bir varlığa örnek:
@@ -312,11 +305,11 @@ export default defineObject({
 * `yarn twenty entity:add` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz.
 
 <Note>
-  **Temel alanlar otomatik olarak oluşturulur.** Özel bir nesne tanımladığınızda Twenty, standart alanları otomatik olarak ekler
-  örneğin `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt`.
-  Bunları `fields` dizinizde tanımlamanız gerekmez — yalnızca özel alanlarınızı ekleyin.
-  `fields` dizinizde aynı ada sahip bir alan tanımlayarak varsayılan alanları geçersiz kılabilirsiniz,
-  ancak bu önerilmez.
+**Temel alanlar otomatik olarak oluşturulur.** Özel bir nesne tanımladığınızda Twenty, standart alanları otomatik olarak ekler
+örneğin `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt`.
+Bunları `fields` dizinizde tanımlamanız gerekmez — yalnızca özel alanlarınızı ekleyin.
+`fields` dizinizde aynı ada sahip bir alan tanımlayarak varsayılan alanları geçersiz kılabilirsiniz,
+ancak bu önerilmez.
 </Note>
 
 ### Uygulama yapılandırması (application-config.ts)
@@ -550,27 +543,25 @@ yarn twenty function:execute --postInstall
 ### Rota tetikleyicisi yükü
 
 <Warning>
-  **Kırıcı değişiklik (v1.16, Ocak 2026):** Rota tetikleyicisi yük formatı değişti. v1.16'dan önce, sorgu parametreleri, yol parametreleri ve gövde doğrudan payload olarak gönderiliyordu. v1.16 itibarıyla, yapılandırılmış bir `RoutePayload` nesnesinin içine yerleştiriliyorlar.
+**Kırıcı değişiklik (v1.16, Ocak 2026):** Rota tetikleyicisi yük formatı değişti. v1.16'dan önce, sorgu parametreleri, yol parametreleri ve gövde doğrudan payload olarak gönderiliyordu. v1.16 itibarıyla, yapılandırılmış bir `RoutePayload` nesnesinin içine yerleştiriliyorlar.
 
-  **v1.16'dan önce:**
+**v1.16'dan önce:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
 
-  ```typescript
-  const handler = async (params) => {
-    const { param1, param2 } = params; // Direct access
-  };
-  ```
+**v1.16'dan sonra:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
 
-  **v1.16'dan sonra:**
-
-  ```typescript
-  const handler = async (event: RoutePayload) => {
-    const { param1, param2 } = event.body; // Access via .body
-    const { queryParam } = event.queryStringParameters;
-    const { id } = event.pathParameters;
-  };
-  ```
-
-  **Mevcut fonksiyonları taşımak için:** İşleyicinizi, parametreler nesnesinden doğrudan ayırmak yerine `event.body`, `event.queryStringParameters` veya `event.pathParameters` üzerinden ayrıştıracak şekilde güncelleyin.
+**Mevcut fonksiyonları taşımak için:** İşleyicinizi, parametreler nesnesinden doğrudan ayırmak yerine `event.body`, `event.queryStringParameters` veya `event.pathParameters` üzerinden ayrıştıracak şekilde güncelleyin.
 </Warning>
 
 Bir rota tetikleyicisi mantık fonksiyonunuzu çağırdığında, AWS HTTP API v2 formatını izleyen bir `RoutePayload` nesnesi alır. Türü `twenty-sdk` içinden içe aktarın:
@@ -706,7 +697,7 @@ export default defineLogicFunction({
 * `isTool` özelliğini tetikleyicilerle birleştirebilirsiniz — bir işlev aynı anda hem bir araç (AI ajanları tarafından çağrılabilir) olabilir hem de olaylar tarafından tetiklenebilir (cron, veritabanı olayları, routes).
 
 <Note>
-  **İyi bir `description` yazın.** AI ajanları, aracı ne zaman kullanacaklarına karar vermek için işlevin `description` alanına güvenir. Aracın ne yaptığını ve ne zaman çağrılması gerektiğini açıkça belirtin.
+**İyi bir `description` yazın.** AI ajanları, aracı ne zaman kullanacaklarına karar vermek için işlevin `description` alanına güvenir. Aracın ne yaptığını ve ne zaman çağrılması gerektiğini açıkça belirtin.
 </Note>
 
 ### Ön uç bileşenleri

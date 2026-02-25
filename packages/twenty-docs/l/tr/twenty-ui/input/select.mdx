@@ -10,42 +10,49 @@ image: /images/user-guide/what-is-twenty/20.png
 Kullanıcılara önceden tanımlanmış seçeneklerden bir değer seçme olanağı tanır.
 
 <Tabs>
-  <Tab title="Kullanım">
-    ```jsx
-    import { RecoilRoot } from 'recoil';
-    import { IconTwentyStar } from 'twenty-ui/display';
+<Tab title="Kullanım">
 
-    import { Select } from '@/ui/input/components/Select';
+```jsx
+import { RecoilRoot } from 'recoil';
+import { IconTwentyStar } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
+import { Select } from '@/ui/input/components/Select';
 
-      return (
-        <RecoilRoot>
-          <Select
-            className
-            disabled={false}
-            label="Bir seçenek seçin"
-            options={[
-              { value: 'option1', label: 'Seçenek A', Icon: IconTwentyStar },
-              { value: 'option2', label: 'Seçenek B', Icon: IconTwentyStar },
-            ]}
-            value="option1"
-          />
-        </RecoilRoot>
-      );
-    };
+export const MyComponent = () => {
 
-    ```
-  </Tab>
+  return (
+    <RecoilRoot>
+      <Select
+        className
+        disabled={false}
+        label="Bir seçenek seçin"
+        options={[
+          { value: 'option1', label: 'Seçenek A', Icon: IconTwentyStar },
+          { value: 'option2', label: 'Seçenek B', Icon: IconTwentyStar },
+        ]}
+        value="option1"
+      />
+    </RecoilRoot>
+  );
+};
 
-  <Tab title="Özellikler">
-    | Özellikler | Tür      | Açıklama                                                                                                                                                                                         |
-    | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-    | className  | dize     | Ek stil tanımlamaları için isteğe bağlı CSS sınıfı                                                                                                                                               |
-    | devre dışı | boolean  | `true` olarak ayarlandığında, kullanıcının bileşenle etkileşimini devre dışı bırakır                                                                                                             |
-    | etiket     | dize     | `Seç` bileşeninin amacını açıklamak için etiket                                                                                                                                                  |
-    | onChange   | function | Seçilen değerler değiştiğinde çağrılan fonksiyon                                                                                                                                                 |
-    | seçenekler | array    | `Seç` bileşeni için mevcut seçenekleri temsil eder. Her bir nesnenin bir `değer` (benzersiz tanımlayıcı), `etiket` (benzersiz tanımlayıcı) ve isteğe bağlı bir `Simge` içeren nesneler dizisidir |
-    | değer      | string   | Şu anda seçili olan değeri temsil eder. `options` dizisindeki `değer` özelliklerinden birine eşit olmalıdır.                                                                                     |
-  </Tab>
+```
+
+</Tab>
+<Tab title="Özellikler">
+
+
+| Özellikler | Tür      | Açıklama                                                                                                                                                                                         |
+| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| className  | dize     | Ek stil tanımlamaları için isteğe bağlı CSS sınıfı                                                                                                                                               |
+| devre dışı | boolean  | `true` olarak ayarlandığında, kullanıcının bileşenle etkileşimini devre dışı bırakır                                                                                                             |
+| etiket     | dize     | `Seç` bileşeninin amacını açıklamak için etiket                                                                                                                                                  |
+| onChange   | function | Seçilen değerler değiştiğinde çağrılan fonksiyon                                                                                                                                                 |
+| seçenekler | array    | `Seç` bileşeni için mevcut seçenekleri temsil eder. Her bir nesnenin bir `değer` (benzersiz tanımlayıcı), `etiket` (benzersiz tanımlayıcı) ve isteğe bağlı bir `Simge` içeren nesneler dizisidir |
+| değer      | string   | Şu anda seçili olan değeri temsil eder. `options` dizisindeki `değer` özelliklerinden birine eşit olmalıdır.                                                                                     |
+
+
+
+
+</Tab>
 </Tabs>
