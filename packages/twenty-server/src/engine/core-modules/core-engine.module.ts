@@ -38,6 +38,7 @@ import { loggerModuleFactory } from 'src/engine/core-modules/logger/logger.modul
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { messageQueueModuleFactory } from 'src/engine/core-modules/message-queue/message-queue.module-factory';
 import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timeline-messaging.module';
+import { MessageHtmlPreviewModule } from 'src/modules/messaging/message-html-preview/message-html-preview.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
@@ -92,6 +93,7 @@ import { FileModule } from './file/file.module';
     ApplicationSyncModule,
     AppTokenModule,
     TimelineMessagingModule,
+    MessageHtmlPreviewModule,
     TimelineCalendarEventModule,
     UserModule,
     WorkspaceModule,

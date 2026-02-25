@@ -37,6 +37,8 @@ type EmailThreadMessageProps = {
   sender: EmailThreadMessageParticipant;
   participants: EmailThreadMessageParticipant[];
   isExpanded?: boolean;
+  messageId?: string;
+  canShowHtmlPreview?: boolean;
 };
 
 export const EmailThreadMessage = ({
@@ -45,6 +47,8 @@ export const EmailThreadMessage = ({
   sender,
   participants,
   isExpanded = false,
+  messageId,
+  canShowHtmlPreview = false,
 }: EmailThreadMessageProps) => {
   const [isOpen, setIsOpen] = useState(isExpanded);
 
@@ -74,7 +78,12 @@ export const EmailThreadMessage = ({
             visibility={MessageChannelVisibility.METADATA}
           />
         ) : isOpen ? (
-          <EmailThreadMessageBody body={body} isDisplayed />
+          <EmailThreadMessageBody
+            body={body}
+            isDisplayed
+            messageId={messageId}
+            canShowHtmlPreview={canShowHtmlPreview}
+          />
         ) : (
           <EmailThreadMessageBodyPreview body={body} />
         )}

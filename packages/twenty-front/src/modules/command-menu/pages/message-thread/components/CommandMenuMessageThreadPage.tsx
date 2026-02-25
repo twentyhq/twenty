@@ -145,10 +145,13 @@ export const CommandMenuMessageThreadPage = () => {
                 participants={message.messageParticipants}
                 body={message.text}
                 sentAt={message.receivedAt}
+                messageId={message.id}
+                canShowHtmlPreview={connectedAccountProvider !== null}
               />
             ))}
             <CommandMenuMessageThreadIntermediaryMessages
               messages={intermediaryMessages}
+              canShowHtmlPreview={connectedAccountProvider !== null}
             />
             <EmailThreadMessage
               key={lastMessage.id}
@@ -157,6 +160,8 @@ export const CommandMenuMessageThreadPage = () => {
               body={lastMessage.text}
               sentAt={lastMessage.receivedAt}
               isExpanded
+              messageId={lastMessage.id}
+              canShowHtmlPreview={connectedAccountProvider !== null}
             />
             <CustomResolverFetchMoreLoader
               loading={threadLoading}

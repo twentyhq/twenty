@@ -13,8 +13,10 @@ const StyledButtonContainer = styled.div`
 
 export const CommandMenuMessageThreadIntermediaryMessages = ({
   messages,
+  canShowHtmlPreview = false,
 }: {
   messages: EmailThreadMessageWithSender[];
+  canShowHtmlPreview?: boolean;
 }) => {
   const [areMessagesOpen, setAreMessagesOpen] = useState(false);
 
@@ -30,6 +32,8 @@ export const CommandMenuMessageThreadIntermediaryMessages = ({
         participants={message.messageParticipants}
         body={message.text}
         sentAt={message.receivedAt}
+        messageId={message.id}
+        canShowHtmlPreview={canShowHtmlPreview}
       />
     ))
   ) : (

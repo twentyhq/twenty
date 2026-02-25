@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useEffect } from 'react';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
@@ -8,10 +9,12 @@ import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constant
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromCompanyId';
 import { getTimelineThreadsFromOpportunityId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromOpportunityId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromPersonId';
+import { usePrefetchEmailHtml } from '@/activities/emails/hooks/usePrefetchEmailHtml';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import {
   AnimatedPlaceholder,
@@ -67,7 +70,20 @@ export const EmailsCard = () => {
       TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
     );
 
+  const { prefetchThreadsHtml } = usePrefetchEmailHtml();
+
   const { totalNumberOfThreads, timelineThreads } = data?.[queryName] ?? {};
+
+  useEffect(() => {
+    if (isDefined(timelineThreads) && timelineThreads.length > 0) {
+      const threadIds = timelineThreads.map(
+        (thread: TimelineThread) => thread.id,
+      );
+
+      prefetchThreadsHtml(threadIds);
+    }
+  }, [timelineThreads, prefetchThreadsHtml]);
+
   const hasMoreTimelineThreads =
     timelineThreads && totalNumberOfThreads
       ? timelineThreads?.length < totalNumberOfThreads
