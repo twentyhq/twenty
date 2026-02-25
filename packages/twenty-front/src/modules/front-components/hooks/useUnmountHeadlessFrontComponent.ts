@@ -7,8 +7,8 @@ export const useUnmountHeadlessFrontComponent = () => {
   const store = useStore();
   const unmountHeadlessFrontComponent = useCallback(
     (frontComponentId: string) => {
-      store.set(mountedHeadlessFrontComponentIdsState.atom, (previousIds) => {
-        const next = new Set(previousIds);
+      store.set(mountedHeadlessFrontComponentIdsState.atom, (previousMap) => {
+        const next = new Map(previousMap);
         next.delete(frontComponentId);
         return next;
       });

@@ -7,8 +7,8 @@ export const isHeadlessFrontComponentMountedFamilySelector =
     get:
       (frontComponentId: string) =>
       ({ get }) => {
-        const mountedIds = get(mountedHeadlessFrontComponentIdsState);
+        const mountedMap = get(mountedHeadlessFrontComponentIdsState);
 
-        return mountedIds.has(frontComponentId);
+        return mountedMap.has(frontComponentId);
       },
   });

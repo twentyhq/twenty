@@ -3,8 +3,13 @@ import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
 } from 'twenty-sdk/front-component-renderer';
-import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
+import {
+  type AppPath,
+  CommandMenuPages,
+  type EnqueueSnackbarParams,
+} from 'twenty-shared/types';
 
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
@@ -12,10 +17,11 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { t } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { IconSparkles, useIcons } from 'twenty-ui/display';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useFrontComponentExecutionContext = ({
@@ -42,6 +48,7 @@ export const useFrontComponentExecutionContext = ({
     enqueueWarningSnackBar,
   } = useSnackBar();
   const { closeCommandMenu } = useCommandMenu();
+  const setAgentChatInput = useSetAtomState(agentChatInputState);
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
     to,
@@ -120,6 +127,17 @@ export const useFrontComponentExecutionContext = ({
       closeCommandMenu();
     };
 
+  const openAskAIWithPrompt: FrontComponentHostCommunicationApi['openAskAIWithPrompt'] =
+    async ({ prompt }) => {
+      setAgentChatInput(prompt);
+
+      navigateCommandMenu({
+        page: CommandMenuPages.AskAI,
+        pageTitle: t`Ask AI`,
+        pageIcon: IconSparkles,
+      });
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
@@ -128,6 +146,7 @@ export const useFrontComponentExecutionContext = ({
       enqueueSnackbar,
       unmountFrontComponent,
       closeSidePanel,
+      openAskAIWithPrompt,
     };
 
   return {
