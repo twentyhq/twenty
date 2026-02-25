@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import {
-    IconColumnInsertRight,
-    IconLink,
-    IconPlus,
-    IconTool,
-    useIcons,
+  IconColumnInsertRight,
+  IconLink,
+  IconPlus,
+  IconTool,
+  useIcons,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -15,8 +15,8 @@ import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIcon
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
 import {
-    type NavigationMenuItemClickParams,
-    useWorkspaceSectionItems,
+  type NavigationMenuItemClickParams,
+  useWorkspaceSectionItems,
 } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
