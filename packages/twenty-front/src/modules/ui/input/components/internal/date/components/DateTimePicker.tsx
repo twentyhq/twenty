@@ -12,7 +12,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { lazy, Suspense, type ComponentType } from 'react';
+import { lazy, Suspense, useCallback, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -345,6 +345,7 @@ export const DateTimePicker = ({
   onRelativeDateChange,
   hideHeaderInput,
   timeZone,
+  onEscape,
 }: DateTimePickerProps) => {
   const theme = useTheme();
 
@@ -465,8 +466,21 @@ export const DateTimePicker = ({
   const calendarStartDayNumber =
     convertFirstDayOfTheWeekToCalendarStartDayNumber(userFirstDayOfTheWeek);
 
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      event.stopPropagation();
+      onEscape?.(date ?? null);
+    },
+    [date, onEscape],
+  );
+
   return (
-    <StyledContainer calendarDisabled={isRelative}>
+    <StyledContainer
+      calendarDisabled={isRelative}
+      onKeyDown={handleKeyDown}
+    >
       <Suspense
         fallback={
           <StyledDatePickerFallback>

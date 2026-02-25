@@ -295,7 +295,8 @@ export const ValidationStep = ({
               onRowsChange={updateRow}
               columns={columns}
               selectedRows={selectedRows}
-              onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
+              onSelectedRowsChange={(rows: ReadonlySet<number | string>) =>
+                setSelectedRows(new Set(rows))}
               components={{
                 noRowsFallback: (
                   <StyledNoRowsContainer>

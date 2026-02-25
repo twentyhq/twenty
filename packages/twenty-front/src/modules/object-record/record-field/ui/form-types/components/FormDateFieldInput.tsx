@@ -188,8 +188,12 @@ export const FormDateFieldInput = ({
   const handlePickerEnter = () => {};
 
   const handlePickerEscape = () => {
-    // FIXME: Escape key is not handled properly by the underlying DateInput component. We need to solve that.
-
+    setInputDate(
+      isDefined(draftValue.value)
+        ? parsePlainDateToDateInputString(draftValue.value)
+        : '',
+    );
+    setPickerDate(draftValue.value ?? null);
     setDraftValue({
       type: 'static',
       value: draftValue.value,
@@ -248,6 +252,10 @@ export const FormDateFieldInput = ({
   };
 
   const handleInputKeydown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Escape') {
+      handlePickerEscape();
+      return;
+    }
     if (event.key !== 'Enter') {
       return;
     }

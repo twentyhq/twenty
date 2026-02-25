@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { lazy, Suspense, type ComponentType } from 'react';
+import { lazy, Suspense, useCallback, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -345,6 +345,7 @@ export const DatePicker = ({
   relativeDate,
   onRelativeDateChange,
   hideHeaderInput,
+  onEscape,
 }: DatePickerProps) => {
   const plainDate = isDefined(plainDateString)
     ? Temporal.PlainDate.from(plainDateString)
@@ -441,8 +442,21 @@ export const DatePicker = ({
     ? new Date(dateShiftedToISOString)
     : null;
 
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      event.stopPropagation();
+      onEscape?.(plainDateString ?? null);
+    },
+    [plainDateString, onEscape],
+  );
+
   return (
-    <StyledContainer calendarDisabled={isRelative}>
+    <StyledContainer
+      calendarDisabled={isRelative}
+      onKeyDown={handleKeyDown}
+    >
       <div className={clearable ? 'clearable ' : ''}>
         <Suspense
           fallback={
