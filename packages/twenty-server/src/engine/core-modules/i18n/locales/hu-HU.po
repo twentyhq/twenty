@@ -4303,6 +4303,7 @@ msgstr "A felhasználó nem található. Kérjük, ellenőrizze az e-mail címet
 
 #. js-lingui-id: VkcC68
 #: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
 msgstr "A felhasználó nem lett létrehozva e-mail/jelszó használatával"
 

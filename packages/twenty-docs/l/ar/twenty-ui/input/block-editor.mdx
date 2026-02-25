@@ -10,22 +10,28 @@ image: /images/user-guide/api/api.png
 يستخدم محرر نصوص غني يعتمد على الكتل من [BlockNote](https://www.blocknotejs.org/) للسماح للمستخدمين بتحرير وعرض كتل المحتوى.
 
 <Tabs>
-  <Tab title="استخدام">
-    ```jsx
-    import { useBlockNote } from "@blocknote/react";
-    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+<Tab title="استخدام">
 
-    export const MyComponent = () => {
-      const BlockNoteEditor = useBlockNote();
+```jsx
+import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
 
-      return <BlockEditor editor={BlockNoteEditor} />;
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
 
-  <Tab title="المحددات">
-    | المحددات | النوع             | الوصف                    |
-    | -------- | ----------------- | ------------------------ |
-    | محرر     | `BlockNoteEditor` | مثيل أو تكوين محرر الكتل |
-  </Tab>
+  return <BlockEditor editor={BlockNoteEditor} />;
+};
+```
+
+</Tab>
+<Tab title="المحددات">
+
+
+| المحددات | النوع             | الوصف                    |
+| -------- | ----------------- | ------------------------ |
+| محرر     | `BlockNoteEditor` | مثيل أو تكوين محرر الكتل |
+
+
+
+</Tab>
 </Tabs>

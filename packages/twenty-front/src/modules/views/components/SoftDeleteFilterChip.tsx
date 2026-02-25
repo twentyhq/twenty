@@ -1,7 +1,7 @@
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useIcons } from 'twenty-ui/display';
 
@@ -14,7 +14,7 @@ export const SoftDeleteFilterChip = ({
   recordFilter,
   viewBarId,
 }: SoftDeleteFilterChipProps) => {
-  const setIsSoftDeleteFilterActive = useSetRecoilComponentState(
+  const setIsSoftDeleteFilterActive = useSetAtomComponentState(
     isSoftDeleteFilterActiveComponentState,
     viewBarId,
   );

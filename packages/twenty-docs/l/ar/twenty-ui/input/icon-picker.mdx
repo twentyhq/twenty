@@ -10,43 +10,52 @@ image: /images/user-guide/github/github-header.png
 منتقى الأيقونات المعتمد على القائمة المنسدلة الذي يتيح للمستخدمين اختيار أيقونة من قائمة.
 
 <Tabs>
-  <Tab title="استخدام">
-    ```jsx
-    import { RecoilRoot } from "recoil";
-    import React, { useState } from "react";
-    import { IconPicker } from "@/ui/input/components/IconPicker";
 
-    export const MyComponent = () => {
+<Tab title="استخدام">
 
-       const [selectedIcon, setSelectedIcon] = useState("");
-       const handleIconChange = ({ iconKey, Icon }) => {
-         console.log("Selected Icon:", iconKey);
-         setSelectedIcon(iconKey);
-       };
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
 
-      return (
-        <RecoilRoot>
-          <IconPicker
-            disabled={false}
-            onChange={handleIconChange}
-            selectedIconKey={selectedIcon}
-            variant="primary"
-          />
-        </RecoilRoot>
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
 
-  <Tab title="المحددات">
-    | المحددات                | النوع       | الوصف                                                                                                        |
-    | ----------------------- | ----------- | ------------------------------------------------------------------------------------------------------------ |
-    | معطل                    | قيمة منطقية | يقوم بتعطيل منتقى الأيقونات إذا تم تعيينه إلى `true`                                                         |
-    | عند التغيير             | دالة        | الدالة الارتجاعية التي تُفعل عندما يختار المستخدم أيقونة. يستقبل كائنًا يحتوي على الخصائص `iconKey` و `Icon` |
-    | مفتاح الأيقونة المختارة | نص          | مفتاح الأيقونة المختارة في البداية                                                                           |
-    | النقر بالخارج           | دالة        | الدالة الارتجاعية التي تُفعل عندما ينقر المستخدم خارج القائمة المنسدلة                                       |
-    | عند الإغلاق             | دالة        | الدالة الارتجاعية التي تُفعل عند إغلاق القائمة المنسدلة                                                      |
-    | عند الفتح               | دالة        | الدالة الارتجاعية التي تُفعل عند فتح القائمة المنسدلة                                                        |
-    | التنوع                  | نص          | متغير النمط البصري للأيقونة القابلة للنقر. تشمل الخيارات: `رئيسي`, `ثانوي`, و `ثالثي`                        |
-  </Tab>
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+
+</Tab>
+<Tab title="المحددات">
+
+
+| المحددات                | النوع       | الوصف                                                                                                        |
+| ----------------------- | ----------- | ------------------------------------------------------------------------------------------------------------ |
+| معطل                    | قيمة منطقية | يقوم بتعطيل منتقى الأيقونات إذا تم تعيينه إلى `true`                                                         |
+| عند التغيير             | دالة        | الدالة الارتجاعية التي تُفعل عندما يختار المستخدم أيقونة. يستقبل كائنًا يحتوي على الخصائص `iconKey` و `Icon` |
+| مفتاح الأيقونة المختارة | نص          | مفتاح الأيقونة المختارة في البداية                                                                           |
+| النقر بالخارج           | دالة        | الدالة الارتجاعية التي تُفعل عندما ينقر المستخدم خارج القائمة المنسدلة                                       |
+| عند الإغلاق             | دالة        | الدالة الارتجاعية التي تُفعل عند إغلاق القائمة المنسدلة                                                      |
+| عند الفتح               | دالة        | الدالة الارتجاعية التي تُفعل عند فتح القائمة المنسدلة                                                        |
+| التنوع                  | نص          | متغير النمط البصري للأيقونة القابلة للنقر. تشمل الخيارات: `رئيسي`, `ثانوي`, و `ثالثي`                        |
+
+
+
+
+</Tab>
 </Tabs>

@@ -12,13 +12,14 @@ import { RecordCardHeaderContainer } from '@/object-record/record-card/component
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/components';
 import { IconEye, IconEyeOff } from 'twenty-ui/display';
@@ -53,7 +54,7 @@ export const RecordBoardCardHeader = () => {
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const [isCardExpanded, setIsCardExpanded] = useRecoilComponentState(
+  const [isCardExpanded, setIsCardExpanded] = useAtomComponentState(
     recordBoardCardIsExpandedComponentState,
   );
 
@@ -61,16 +62,18 @@ export const RecordBoardCardHeader = () => {
     useRecordBoardSelection(recordBoardId);
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] =
-    useRecoilComponentFamilyState(
+    useAtomComponentFamilyState(
       isRecordBoardCardSelectedComponentFamilyState,
       recordId,
     );
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useAtomStateValue(
+    recordIndexOpenRecordInState,
+  );
 
-  const record = useRecoilValue(recordStoreFamilyState(recordId));
+  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const triggerEvent =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL

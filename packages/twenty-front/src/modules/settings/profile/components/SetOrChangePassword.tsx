@@ -3,11 +3,11 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { useLingui } from '@lingui/react/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SetOrChangePassword = () => {
   const { t } = useLingui();
-  const currentUser = useRecoilValueV2(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
 
   const { handleResetPassword } = useHandleResetPassword();
 

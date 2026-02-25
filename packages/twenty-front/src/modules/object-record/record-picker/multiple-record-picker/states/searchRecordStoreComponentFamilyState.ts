@@ -1,8 +1,8 @@
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 import { type SearchRecord } from '~/generated/graphql';
 
-export const searchRecordStoreFamilyState = createFamilyState<
+export const searchRecordStoreFamilyState = createAtomFamilyState<
   (SearchRecord & { record?: ObjectRecord }) | undefined,
   string
 >({

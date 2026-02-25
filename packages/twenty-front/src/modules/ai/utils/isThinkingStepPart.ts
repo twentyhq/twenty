@@ -1,4 +1,4 @@
-import { isToolUIPart } from 'ai';
+import { isStaticToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
@@ -10,5 +10,5 @@ export const isThinkingStepPart = (
     return true;
   }
 
-  return isToolUIPart(part) && part.type !== 'tool-code_interpreter';
+  return isStaticToolUIPart(part) && part.type !== 'tool-code_interpreter';
 };

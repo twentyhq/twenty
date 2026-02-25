@@ -18,6 +18,7 @@ type Story = StoryObj<typeof WorkflowFieldsMultiSelect>;
 const fields = [
   {
     id: '1',
+    universalIdentifier: '1',
     name: 'name',
     label: 'Name',
     type: FieldMetadataType.TEXT,
@@ -32,6 +33,7 @@ const fields = [
   },
   {
     id: '2',
+    universalIdentifier: '2',
     name: 'domainName',
     label: 'Domain Name',
     type: FieldMetadataType.TEXT,
@@ -46,6 +48,7 @@ const fields = [
   },
   {
     id: '3',
+    universalIdentifier: '3',
     name: 'employees',
     label: 'Employees',
     type: FieldMetadataType.NUMBER,
@@ -62,6 +65,7 @@ const fields = [
 
 const mockObjectMetadataItem: ObjectMetadataItem = {
   id: '1',
+  universalIdentifier: '1',
   nameSingular: 'company',
   namePlural: 'companies',
   labelSingular: 'Company',

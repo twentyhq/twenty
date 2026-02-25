@@ -25,10 +25,10 @@ import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-l
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
@@ -59,12 +59,12 @@ export const RecordBoardCard = () => {
     RecordBoardComponentInstanceContext,
   );
 
-  const isRecordIdPrimaryDragMultiple = useRecoilComponentFamilyValue(
+  const isRecordIdPrimaryDragMultiple = useAtomComponentFamilyStateValue(
     isRecordIdPrimaryDragMultipleComponentFamilyState,
     { recordId },
   );
 
-  const isRecordIdSecondaryDragMultiple = useRecoilComponentFamilyValue(
+  const isRecordIdSecondaryDragMultiple = useAtomComponentFamilyStateValue(
     isRecordIdSecondaryDragMultipleComponentFamilyState,
     { recordId },
   );
@@ -73,18 +73,18 @@ export const RecordBoardCard = () => {
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const [isCardExpanded, setIsCardExpanded] = useRecoilComponentState(
+  const [isCardExpanded, setIsCardExpanded] = useAtomComponentState(
     recordBoardCardIsExpandedComponentState,
     `record-board-card-${recordId}`,
   );
 
   const [isCurrentCardSelected, setIsCurrentCardSelected] =
-    useRecoilComponentFamilyState(
+    useAtomComponentFamilyState(
       isRecordBoardCardSelectedComponentFamilyState,
       recordId,
     );
 
-  const isCurrentCardFocused = useRecoilComponentFamilyValue(
+  const isCurrentCardFocused = useAtomComponentFamilyStateValue(
     isRecordBoardCardFocusedComponentFamilyState,
     {
       rowIndex,
@@ -92,7 +92,7 @@ export const RecordBoardCard = () => {
     },
   );
 
-  const isCurrentCardActive = useRecoilComponentFamilyValue(
+  const isCurrentCardActive = useAtomComponentFamilyStateValue(
     isRecordBoardCardActiveComponentFamilyState,
     {
       rowIndex,
@@ -105,7 +105,7 @@ export const RecordBoardCard = () => {
   const actionMenuDropdownId =
     getActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
-  const setActionMenuDropdownPosition = useSetRecoilComponentState(
+  const setActionMenuDropdownPosition = useSetAtomComponentState(
     recordIndexActionMenuDropdownPositionComponentState,
     actionMenuDropdownId,
   );

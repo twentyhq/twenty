@@ -3,12 +3,12 @@ import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
@@ -114,17 +114,15 @@ const task = {
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <RecoilRoot>
-      <MockedProvider cache={cache}>
-        <JestObjectMetadataItemSetter>
-          <SnackBarComponentInstanceContext.Provider
-            value={{ instanceId: 'snack-bar-manager' }}
-          >
-            {children}
-          </SnackBarComponentInstanceContext.Provider>
-        </JestObjectMetadataItemSetter>
-      </MockedProvider>
-    </RecoilRoot>
+    <MockedProvider cache={cache}>
+      <JestObjectMetadataItemSetter>
+        <SnackBarComponentInstanceContext.Provider
+          value={{ instanceId: 'snack-bar-manager' }}
+        >
+          {children}
+        </SnackBarComponentInstanceContext.Provider>
+      </JestObjectMetadataItemSetter>
+    </MockedProvider>
   </JotaiProvider>
 );
 
@@ -139,8 +137,9 @@ describe('useActivityTargetObjectRecords', () => {
 
     const { result } = renderHook(
       () => {
-        const setRecordFromStore = useSetRecoilState(
-          recordStoreFamilyState(task.id),
+        const setRecordFromStore = useSetAtomFamilyState(
+          recordStoreFamilyState,
+          task.id,
         );
 
         const { activityTargetObjectRecords } = useActivityTargetObjectRecords(

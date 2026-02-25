@@ -10,19 +10,25 @@ image: /images/user-guide/tasks/tasks_header.png
 يمثل إجراءً ناجحًا أو مكتملًا.
 
 <Tabs>
-  <Tab title="استخدام">
-    ```jsx
-    import { Checkmark } from 'twenty-ui/display';
+<Tab title="استخدام">
 
-    export const MyComponent = () => {
-      return <Checkmark />;
-    };
-    ```
-  </Tab>
+```jsx
+import { Checkmark } from 'twenty-ui/display';
 
-  <Tab title="المحددات">
-    يمتد `React.ComponentPropsWithoutRef<'div'>` و يقبل جميع خصائص عنصر `div` العادي.
-  </Tab>
+export const MyComponent = () => {
+  return <Checkmark />;
+};
+```
+
+
+</Tab>
+
+<Tab title="المحددات">
+
+يمتد `React.ComponentPropsWithoutRef<'div'>` و يقبل جميع خصائص عنصر `div` العادي.
+
+</Tab>
+
 </Tabs>
 
 ## علامة صحيح متحركة
@@ -30,29 +36,38 @@ image: /images/user-guide/tasks/tasks_header.png
 يمثل رمز علامة صحيح مع ميزة الإضافة للحركة.
 
 <Tabs>
-  <Tab title="استخدام">
-    ```jsx
-    import { AnimatedCheckmark } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
-      return (
-        <AnimatedCheckmark
-          isAnimating={true}
-          color="green"
-          duration={0.5}
-          size={30}
-        />
-      );
-    };
-    ```
-  </Tab>
+<Tab title="استخدام">
 
-  <Tab title="الخصائص">
-    | الخصائص     | النوع       | الوصف                                 | الإعداد الافتراضي |
-    | ----------- | ----------- | ------------------------------------- | ----------------- |
-    | isAnimating | قيمة منطقية | يتحكم فيما إذا كانت علامة صحيح متحركة | خاطئ              |
-    | اللون       | string      | لون علامة الاختيار                    |                   |
-    | المدة       | رقم         | مدة الحركة بالثواني                   | 0.5 ثانية         |
-    | الحجم       | رقم         | حجم علامة الاختيار                    | 28 بكسل           |
-  </Tab>
+```jsx
+import { AnimatedCheckmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return (
+    <AnimatedCheckmark
+      isAnimating={true}
+      color="green"
+      duration={0.5}
+      size={30}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="الخصائص">
+
+
+| الخصائص     | النوع       | الوصف                                 | الإعداد الافتراضي |
+| ----------- | ----------- | ------------------------------------- | ----------------- |
+| isAnimating | قيمة منطقية | يتحكم فيما إذا كانت علامة صحيح متحركة | خاطئ              |
+| اللون       | string      | لون علامة الاختيار                    |                   |
+| المدة       | رقم         | مدة الحركة بالثواني                   | 0.5 ثانية         |
+| الحجم       | رقم         | حجم علامة الاختيار                    | 28 بكسل           |
+
+
+
+</Tab>
+
 </Tabs>

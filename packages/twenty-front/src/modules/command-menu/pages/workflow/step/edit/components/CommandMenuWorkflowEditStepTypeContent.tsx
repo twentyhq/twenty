@@ -4,7 +4,7 @@ import {
   type WorkflowActionSelection,
 } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
@@ -15,16 +15,16 @@ import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useClo
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 export const CommandMenuWorkflowEditStepTypeContent = () => {
   const { getIcon } = useIcons();
-  const workflowSelectedNode = useRecoilComponentValue(
+  const workflowSelectedNode = useAtomComponentStateValue(
     workflowSelectedNodeComponentState,
   );
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
   const flow = useFlowOrThrow();
@@ -33,7 +33,7 @@ export const CommandMenuWorkflowEditStepTypeContent = () => {
 
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
   const { closeRightClickMenu } = useCloseRightClickMenu();
-  const setCommandMenuNavigationStack = useSetRecoilState(
+  const setCommandMenuNavigationStack = useSetAtomState(
     commandMenuNavigationStackState,
   );
 

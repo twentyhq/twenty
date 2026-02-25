@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { IconLink, IconPlus, IconTool, useIcons } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -14,19 +13,19 @@ import {
   type NavigationMenuItemClickParams,
   useWorkspaceSectionItems,
 } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { NavigationDrawerSectionForWorkspaceItems } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -43,30 +42,27 @@ export const WorkspaceNavigationMenuItems = () => {
   const items = useWorkspaceSectionItems();
   const store = useStore();
   const enterEditMode = () => {
-    const prefetchNavigationMenuItems = jotaiStore.get(
+    const prefetchNavigationMenuItems = store.get(
       prefetchNavigationMenuItemsState.atom,
     );
     const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
       prefetchNavigationMenuItems,
     );
-    store.set(
-      navigationMenuItemsDraftStateV2.atom,
-      workspaceNavigationMenuItems,
-    );
-    store.set(isNavigationMenuInEditModeStateV2.atom, true);
+    store.set(navigationMenuItemsDraftState.atom, workspaceNavigationMenuItems);
+    store.set(isNavigationMenuInEditModeState.atom, true);
   };
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
-  const isNavigationMenuInEditMode = useRecoilValueV2(
-    isNavigationMenuInEditModeStateV2,
+  const isNavigationMenuInEditMode = useAtomStateValue(
+    isNavigationMenuInEditModeState,
   );
   const [
     selectedNavigationMenuItemInEditMode,
     setSelectedNavigationMenuItemInEditMode,
-  ] = useRecoilStateV2(selectedNavigationMenuItemInEditModeStateV2);
-  const setOpenNavigationMenuItemFolderIds = useSetRecoilStateV2(
-    openNavigationMenuItemFolderIdsStateV2,
+  ] = useAtomState(selectedNavigationMenuItemInEditModeState);
+  const setOpenNavigationMenuItemFolderIds = useSetAtomState(
+    openNavigationMenuItemFolderIdsState,
   );
   const navigate = useNavigate();
   const { navigateCommandMenu } = useNavigateCommandMenu();

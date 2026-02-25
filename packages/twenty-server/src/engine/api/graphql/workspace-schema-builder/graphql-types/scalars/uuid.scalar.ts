@@ -9,7 +9,7 @@ const checkUUID = (value: any): string => {
     throw new ValidationError('UUID must be a string');
   }
   if (!uuidValidate(value)) {
-    throw new ValidationError(`Invalid UUID`, {
+    throw new ValidationError(`Invalid UUID: '${value}'`, {
       value,
     });
   }

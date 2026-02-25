@@ -1,12 +1,11 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const dropdownId = 'test-dropdown-id';
@@ -15,16 +14,14 @@ const outsideDropdownId = 'test-dropdown-id-outside';
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot>
-        <DropdownComponentInstanceContext.Provider
-          value={{ instanceId: dropdownId }}
-        >
-          {children}
-        </DropdownComponentInstanceContext.Provider>
-        <DropdownComponentInstanceContext.Provider
-          value={{ instanceId: outsideDropdownId }}
-        ></DropdownComponentInstanceContext.Provider>
-      </RecoilRoot>
+      <DropdownComponentInstanceContext.Provider
+        value={{ instanceId: dropdownId }}
+      >
+        {children}
+      </DropdownComponentInstanceContext.Provider>
+      <DropdownComponentInstanceContext.Provider
+        value={{ instanceId: outsideDropdownId }}
+      ></DropdownComponentInstanceContext.Provider>
     </JotaiProvider>
   );
 };
@@ -46,12 +43,12 @@ describe('useToggleDropdown', () => {
   it('should toggle dropdown from inside component instance context', async () => {
     const { result } = renderHook(
       () => {
-        const isOutsideDropdownOpen = useRecoilComponentValueV2(
+        const isOutsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
         );
 
-        const isInsideDropdownOpen = useRecoilComponentValueV2(
+        const isInsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
         );
         const { toggleDropdown } = useToggleDropdown();
@@ -91,12 +88,12 @@ describe('useToggleDropdown', () => {
   it('should toggle dropdown from outside component instance context', async () => {
     const { result } = renderHook(
       () => {
-        const isOutsideDropdownOpen = useRecoilComponentValueV2(
+        const isOutsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
         );
 
-        const isInsideDropdownOpen = useRecoilComponentValueV2(
+        const isInsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
         );
         const { toggleDropdown } = useToggleDropdown();

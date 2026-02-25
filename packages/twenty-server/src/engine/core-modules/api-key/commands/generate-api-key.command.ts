@@ -144,6 +144,6 @@ export class GenerateApiKeyCommand extends CommandRunner {
       return;
     }
 
-    console.log(`TOKEN:${tokenResult.token}\n`);
+    this.logger.log(`TOKEN:${tokenResult.token}\n`);
   }
 }

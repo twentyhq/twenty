@@ -12,9 +12,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import {
   IconChevronLeft,
@@ -27,11 +27,11 @@ import { MenuItemSelect } from 'twenty-ui/navigation';
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
   const { currentContentId, onContentChange } = useObjectOptionsDropdown();
 
-  const hiddenRecordGroupIds = useRecoilComponentValue(
+  const hiddenRecordGroupIds = useAtomComponentSelectorValue(
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const [recordGroupSort, setRecordGroupSort] = useRecoilComponentState(
+  const [recordGroupSort, setRecordGroupSort] = useAtomComponentState(
     recordIndexRecordGroupSortComponentState,
   );
 
@@ -39,7 +39,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
     setRecordGroupSort(sort);
   };
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );

@@ -22,7 +22,7 @@ This directory contains Twenty's development guidelines and best practices in th
 
 ### React Development
 - **react-general-guidelines.mdc** - Core React development principles (Auto-attached to React files)
-- **react-state-management.mdc** - State management approaches with Recoil (Auto-attached to state files)
+- **react-state-management.mdc** - State management approaches with Jotai (Auto-attached to state files)
 
 ### Testing & Quality
 - **testing-guidelines.mdc** - Testing strategies and best practices (Auto-attached to test files)

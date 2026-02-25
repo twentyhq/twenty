@@ -10,14 +10,14 @@ import {
 } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useCallback } from 'react';
 import {
   OnboardingStatus,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { useStore } from 'jotai';
 
 type GetNextOnboardingStatusArgs = {
   currentUser: CurrentUser | null;
@@ -63,9 +63,10 @@ const getNextOnboardingStatus = ({
 };
 
 export const useSetNextOnboardingStatus = () => {
-  const currentUser = useRecoilValueV2(currentUserState);
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
-  const calendarBookingPageId = useRecoilValueV2(calendarBookingPageIdState);
+  const store = useStore();
+  const currentUser = useAtomStateValue(currentUserState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
   const permissionMap = usePermissionFlagMap();
   const isAccountSyncEnabled =
     permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS];
@@ -77,7 +78,7 @@ export const useSetNextOnboardingStatus = () => {
       calendarBookingPageId,
       isAccountSyncEnabled,
     });
-    jotaiStore.set(currentUserState.atom, (current) => {
+    store.set(currentUserState.atom, (current) => {
       if (isDefined(current)) {
         return {
           ...current,
@@ -91,5 +92,6 @@ export const useSetNextOnboardingStatus = () => {
     currentWorkspace,
     calendarBookingPageId,
     isAccountSyncEnabled,
+    store,
   ]);
 };

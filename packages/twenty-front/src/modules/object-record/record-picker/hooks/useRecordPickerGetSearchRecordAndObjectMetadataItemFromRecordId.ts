@@ -1,8 +1,8 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { multipleRecordPickerSinglePickableMorphItemComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerSinglePickableMorphItemComponentFamilySelector';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordPickerGetRecordAndObjectMetadataItemFromRecordIdProps = {
@@ -15,12 +15,15 @@ export const useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId =
   }: UseRecordPickerGetRecordAndObjectMetadataItemFromRecordIdProps) => {
     const { objectMetadataItems } = useObjectMetadataItems();
 
-    const pickableMorphItem = useRecoilComponentFamilyValue(
+    const pickableMorphItem = useAtomComponentFamilySelectorValue(
       multipleRecordPickerSinglePickableMorphItemComponentFamilySelector,
       recordId,
     );
 
-    const searchRecord = useRecoilValue(searchRecordStoreFamilyState(recordId));
+    const searchRecord = useAtomFamilyStateValue(
+      searchRecordStoreFamilyState,
+      recordId,
+    );
 
     if (!isDefined(pickableMorphItem) || !isDefined(searchRecord)) {
       return { searchRecord: null, objectMetadataItem: null };

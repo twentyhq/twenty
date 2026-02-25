@@ -1,8 +1,8 @@
 import { iconPickerState } from '@/ui/input/states/iconPickerState';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export const useIconPicker = () => {
-  const [iconPicker, setIconPicker] = useRecoilStateV2(iconPickerState);
+  const [iconPicker, setIconPicker] = useAtomState(iconPickerState);
 
   return {
     Icon: iconPicker.Icon,

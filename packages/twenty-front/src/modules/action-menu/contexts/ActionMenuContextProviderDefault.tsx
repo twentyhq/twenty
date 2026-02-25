@@ -9,7 +9,7 @@ import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShould
 import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const ActionMenuContextProviderDefault = ({
   objectMetadataItem,
@@ -34,7 +34,7 @@ export const ActionMenuContextProviderDefault = ({
 
   const actions = useRegisteredActions(shouldBeRegisteredParams);
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 

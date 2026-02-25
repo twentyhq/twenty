@@ -3,21 +3,22 @@ import { recordCalendarCardEditModePositionComponentState } from '@/object-recor
 import { recordCalendarCardHoverPositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardHoverPositionComponentState';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordCalendarCardMetadataFromPosition = () => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
-  const hoverPosition = useRecoilComponentValue(
+  const hoverPosition = useAtomComponentStateValue(
     recordCalendarCardHoverPositionComponentState,
   );
 
-  const editModePosition = useRecoilComponentValue(
+  const editModePosition = useAtomComponentStateValue(
     recordCalendarCardEditModePositionComponentState,
   );
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 

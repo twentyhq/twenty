@@ -1,14 +1,13 @@
 import { act, renderHook } from '@testing-library/react';
 import { createElement } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 import { v4 } from 'uuid';
 
 import {
   type CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
@@ -24,17 +23,13 @@ const currentWorkspace = {
 } as CurrentWorkspace;
 
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
-  createElement(
-    JotaiProvider,
-    { store: jotaiStore },
-    createElement(RecoilRoot, null, children),
-  );
+  createElement(JotaiProvider, { store: jotaiStore }, children);
 
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const subscriptionStatus = useSubscriptionStatus();
-      const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
+      const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
       return {
         subscriptionStatus,

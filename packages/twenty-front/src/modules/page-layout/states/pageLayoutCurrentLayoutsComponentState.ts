@@ -1,10 +1,10 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 import { type TabLayouts } from '@/page-layout/types/TabLayouts';
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
 export const pageLayoutCurrentLayoutsComponentState =
-  createComponentState<TabLayouts>({
+  createAtomComponentState<TabLayouts>({
     key: 'pageLayoutCurrentLayoutsComponentState',
     defaultValue: {},
     componentInstanceContext: PageLayoutComponentInstanceContext,

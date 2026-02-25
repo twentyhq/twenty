@@ -336,6 +336,16 @@ msgstr ""
 msgid "{positionLabel} record holds priority"
 msgstr "L'enregistrement {positionLabel} a la priorité"
 
+#. js-lingui-id: YG/wl5
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "{providerLabel} — API key not configured"
+msgstr ""
+
+#. js-lingui-id: s80lrU
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "{providerLabel} — Deprecated"
+msgstr ""
+
 #. js-lingui-id: Sxx5Hr
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "{recordCount} of {totalCount} records"
@@ -1122,6 +1132,11 @@ msgstr "Ajuster les paramètres liés au rôle"
 msgid "Admin"
 msgstr ""
 
+#. js-lingui-id: K2OX5h
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Admin Model Controls"
+msgstr ""
+
 #. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
@@ -1252,6 +1267,7 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "AI"
 msgstr "IA"
@@ -1344,6 +1360,11 @@ msgstr ""
 #. js-lingui-id: ypSiuQ
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "All Metadata"
+msgstr ""
+
+#. js-lingui-id: AJgjR+
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "All Models"
 msgstr ""
 
 #. js-lingui-id: aFE/OW
@@ -1605,6 +1626,11 @@ msgstr "Clé API"
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "API Key copied to clipboard"
 msgstr "Clé API copiée dans le presse-papiers"
+
+#. js-lingui-id: jjaYji
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "API key not configured"
+msgstr ""
 
 #. js-lingui-id: Widx6n
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -2061,6 +2087,16 @@ msgstr "Créer automatiquement des contacts pour les personnes."
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Créer automatiquement des enregistrements de personnes lors de la réception ou de l'envoi d'emails"
 
+#. js-lingui-id: erwsgX
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Automatically enable new models"
+msgstr ""
+
+#. js-lingui-id: fx8TeY
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Automatically mark new models as available"
+msgstr ""
+
 #. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Availability"
@@ -2068,6 +2104,7 @@ msgstr "Disponibilité"
 
 #. js-lingui-id: csDS2L
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Available"
 msgstr "Disponible"
@@ -2863,10 +2900,14 @@ msgstr "Tâches terminées conservées pour {completedDuration}, tâches échou�
 msgid "Conditions"
 msgstr "Conditions"
 
+#. js-lingui-id: 14PdY0
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+msgid "Config"
+msgstr ""
+
 #. js-lingui-id: Vj43Y/
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Config Variables"
 msgstr "Variables de configuration"
 
@@ -2906,6 +2947,11 @@ msgstr "Configurez les paramètres de CalDAV pour synchroniser vos événements 
 msgid "Configure date, time, number, timezone, and calendar start day"
 msgstr "Configurer la date, l'heure, le nombre, le fuseau horaire et le jour de début du calendrier"
 
+#. js-lingui-id: +SQwHr
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Configure default AI models and availability"
+msgstr ""
+
 #. js-lingui-id: utsXG8
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure fallback login methods for users with SSO bypass permissions"
@@ -2944,11 +2990,6 @@ msgstr "Configurez ce widget pour afficher des champs"
 #. js-lingui-id: NF6Bfa
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Configure when this function should be executed"
-msgstr ""
-
-#. js-lingui-id: hzDiM0
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
-msgid "Configure your default AI model"
 msgstr ""
 
 #. js-lingui-id: Bh4GBD
@@ -3939,7 +3980,6 @@ msgid "Decide which Sub-address fields you want to display"
 msgstr "Décidez quels champs de sous-adresse vous souhaitez afficher"
 
 #. js-lingui-id: ovBPCi
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 msgid "Default"
@@ -3954,21 +3994,6 @@ msgstr "Pays par défaut"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
 msgstr "Code du pays par défaut"
-
-#. js-lingui-id: J6v1s/
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
-msgid "Default Model"
-msgstr ""
-
-#. js-lingui-id: n4U+0E
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
-msgid "Default model for new chats and agents"
-msgstr ""
-
-#. js-lingui-id: K/FKkg
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
-msgid "Default model updated successfully"
-msgstr ""
 
 #. js-lingui-id: 4HDpKr
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
@@ -4274,6 +4299,16 @@ msgstr "Enregistrements supprimés"
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "Deleting this method will remove it permanently from your account."
 msgstr "La suppression de cette méthode l'éliminera définitivement de votre compte."
+
+#. js-lingui-id: Ssdrw4
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Deprecated"
+msgstr ""
+
+#. js-lingui-id: 8OJZ/p
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Deprecated models"
+msgstr ""
 
 #. js-lingui-id: O3LJh6
 #: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -5818,15 +5853,36 @@ msgstr ""
 msgid "Failed to save workspace instructions"
 msgstr ""
 
-#. js-lingui-id: 2D6TRg
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
-msgid "Failed to update default model"
+#. js-lingui-id: YzURPo
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Failed to update auto-enable setting"
 msgstr ""
 
 #. js-lingui-id: P1NmNz
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Failed to update feature flag. {errorMessage}"
 msgstr "Échec de la mise à jour du feature flag. {errorMessage}"
+
+#. js-lingui-id: 1R13Ov
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Failed to update model"
+msgstr ""
+
+#. js-lingui-id: W7Ff/4
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Failed to update model availability"
+msgstr ""
+
+#. js-lingui-id: LgZlJ7
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Failed to update model availability settings"
+msgstr ""
+
+#. js-lingui-id: rCUG3c
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Failed to update model selection mode"
+msgstr ""
 
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -5889,6 +5945,11 @@ msgstr "Taux d'échec"
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "False"
 msgstr "Faux"
+
+#. js-lingui-id: XVIZ7v
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Fast Model"
+msgstr ""
 
 #. js-lingui-id: X9kySA
 #: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFolders.tsx
@@ -6048,6 +6109,7 @@ msgstr ""
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/components/ChartFiltersSettings.tsx
@@ -6521,11 +6583,15 @@ msgstr ""
 msgid "Heading 3"
 msgstr ""
 
+#. js-lingui-id: UPqS9C
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+msgid "Health"
+msgstr ""
+
 #. js-lingui-id: I1IOmb
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Health Status"
 msgstr "Statut de santé"
 
@@ -8176,7 +8242,13 @@ msgstr "Mission accomplie !"
 
 #. js-lingui-id: //nm2/
 #: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 msgid "Models"
+msgstr ""
+
+#. js-lingui-id: oHM560
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Models available in the chat model picker"
 msgstr ""
 
 #. js-lingui-id: hty0d5
@@ -10728,6 +10800,11 @@ msgstr "Restaurer les enregistrements"
 msgid "Restore Records"
 msgstr "Restaurer les enregistrements"
 
+#. js-lingui-id: hO3AfV
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Restrict available models to a curated list"
+msgstr ""
+
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Result"
@@ -11007,6 +11084,12 @@ msgstr "Rechercher un champ..."
 #. js-lingui-id: ITQFzL
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditFolderPickerSubView.tsx
 msgid "Search a folder..."
+msgstr ""
+
+#. js-lingui-id: 8J0e5B
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Search a model..."
 msgstr ""
 
 #. js-lingui-id: WXvlVa
@@ -11562,6 +11645,11 @@ msgstr "Envoyé et reçu"
 msgid "Serbian (Cyrillic)"
 msgstr "Serbe (Cyrillique)"
 
+#. js-lingui-id: 8ZSrlB
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Server-wide AI model availability settings"
+msgstr ""
+
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
@@ -11859,6 +11947,11 @@ msgstr "Ciel"
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Small section heading"
+msgstr ""
+
+#. js-lingui-id: 5J8ZFl
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Smart Model"
 msgstr ""
 
 #. js-lingui-id: w+rJId
@@ -12941,6 +13034,11 @@ msgstr "Basculer toutes les permissions des objets"
 msgid "Toggle all settings permissions"
 msgstr "Basculer toutes les permissions des paramètres"
 
+#. js-lingui-id: 93pMSK
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Toggle model availability across all workspaces"
+msgstr ""
+
 #. js-lingui-id: WOr+hW
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "tokens"
@@ -13237,6 +13335,11 @@ msgstr ""
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "Impossible d'atteindre le serveur arrière"
+
+#. js-lingui-id: EbnX+O
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Unconfigured models"
+msgstr ""
 
 #. js-lingui-id: EUHN7i
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -13548,10 +13651,25 @@ msgstr "Utiliser comme brouillon"
 msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
 msgstr "Utilisez des applications d'authentification et des extensions de navigateur comme 1Password, Authy, Microsoft Authenticator pour générer des mots de passe à usage unique"
 
+#. js-lingui-id: hCZsJ0
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Use best models only"
+msgstr ""
+
 #. js-lingui-id: c6uZUV
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Utilisez notre API ou ajoutez manuellement votre premier {objectLabel}"
+
+#. js-lingui-id: 664z2C
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Used for chats, agents, and complex reasoning"
+msgstr ""
+
+#. js-lingui-id: C41qgx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Used for lightweight tasks like title generation"
+msgstr ""
 
 #. js-lingui-id: AQVj2A
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -14059,6 +14177,16 @@ msgstr ""
 #. js-lingui-id: 8jc/Xn
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 msgid "When enabled, AI agents and workflow automations can discover and call this function"
+msgstr ""
+
+#. js-lingui-id: i2V4DO
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "When enabled, new AI models will be available to users by default"
+msgstr ""
+
+#. js-lingui-id: 01e9rV
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "When enabled, newly added models are available to all workspaces by default"
 msgstr ""
 
 #. js-lingui-id: C51ilI

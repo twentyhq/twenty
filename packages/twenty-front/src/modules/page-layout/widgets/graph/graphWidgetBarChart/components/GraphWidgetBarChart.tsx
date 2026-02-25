@@ -1,4 +1,4 @@
-import { isSidePanelAnimatingStateV2 } from '@/command-menu/states/isSidePanelAnimatingStateV2';
+import { isSidePanelAnimatingState } from '@/command-menu/states/isSidePanelAnimatingState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
@@ -19,9 +19,9 @@ import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/co
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useRef, useState } from 'react';
@@ -91,27 +91,27 @@ export const GraphWidgetBarChart = ({
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const setActiveBarTooltip = useSetRecoilComponentState(
+  const setActiveBarTooltip = useSetAtomComponentState(
     graphWidgetBarTooltipComponentState,
   );
 
-  const setHoveredSliceIndex = useSetRecoilComponentState(
+  const setHoveredSliceIndex = useSetAtomComponentState(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const hoveredSliceIndexValue = useRecoilComponentValue(
+  const hoveredSliceIndexValue = useAtomComponentStateValue(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const draggingWidgetId = useRecoilComponentValue(
+  const draggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const resizingWidgetId = useRecoilComponentValue(
+  const resizingWidgetId = useAtomComponentStateValue(
     pageLayoutResizingWidgetIdComponentState,
   );
 
-  const isSidePanelAnimating = useRecoilValueV2(isSidePanelAnimatingStateV2);
+  const isSidePanelAnimating = useAtomStateValue(isSidePanelAnimatingState);
 
   const isLayoutAnimating =
     isSidePanelAnimating || draggingWidgetId === id || resizingWidgetId === id;

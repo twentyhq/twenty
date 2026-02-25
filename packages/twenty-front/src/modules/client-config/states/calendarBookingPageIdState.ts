@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const calendarBookingPageIdState = createStateV2<string | null>({
+export const calendarBookingPageIdState = createAtomState<string | null>({
   key: 'calendarBookingPageIdState',
   defaultValue: null,
 });

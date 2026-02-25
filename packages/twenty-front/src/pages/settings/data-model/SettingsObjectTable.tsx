@@ -16,7 +16,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -49,7 +49,7 @@ export const SettingsObjectTable = ({
 
   const theme = useTheme();
 
-  const isAdvancedModeEnabled = useRecoilValueV2(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
@@ -62,7 +62,7 @@ export const SettingsObjectTable = ({
   const { totalCountByObjectMetadataItemNamePlural } =
     useCombinedGetTotalCount();
 
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const allObjectSettingsArray = useMemo(
     () =>

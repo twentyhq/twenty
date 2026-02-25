@@ -1,13 +1,11 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, useEffect, type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
-
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -22,11 +20,7 @@ import { mockedUserData } from '~/testing/mock-data/users';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const Wrapper = ({ children }: { children: ReactNode }) =>
-  createElement(
-    JotaiProvider,
-    { store: jotaiStore },
-    createElement(RecoilRoot, null as any, children),
-  );
+  createElement(JotaiProvider, { store: jotaiStore }, children);
 
 const renderHooks = ({
   withCurrentUser,
@@ -42,11 +36,11 @@ const renderHooks = ({
 
   const { result } = renderHook(
     () => {
-      const setCurrentUser = useSetRecoilStateV2(currentUserState);
-      const setCurrentUserWorkspace = useSetRecoilStateV2(
+      const setCurrentUser = useSetAtomState(currentUserState);
+      const setCurrentUserWorkspace = useSetAtomState(
         currentUserWorkspaceState,
       );
-      const setCoreViews = useSetRecoilStateV2(coreViewsState);
+      const setCoreViews = useSetAtomState(coreViewsState);
 
       useEffect(() => {
         if (withExistingView) {

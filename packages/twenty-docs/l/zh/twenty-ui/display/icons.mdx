@@ -14,35 +14,44 @@ image: /images/user-guide/objects/objects.png
 我们在整个应用程序中使用了React的Tabler图标。
 
 <Tabs>
-  <Tab title="安装">
-    <br />
 
-    ```
-    yarn add @tabler/icons-react
-    ```
-  </Tab>
+<Tab title="安装">
+<br />
 
-  <Tab title="属性">
-    您可以将每个图标导入为组件。 以下是一个示例：
+```
+yarn add @tabler/icons-react
+```
 
-    <br />
+</Tab>
 
-    ```jsx
-    import { IconArrowLeft } from "@tabler/icons-react";
+<Tab title="属性">
 
-    export const MyComponent = () => {
-      return <IconArrowLeft color="red" size={48} />;
-    };
-    ```
-  </Tab>
+您可以将每个图标导入为组件。 以下是一个示例：
+<br />
 
-  <Tab title="属性">
-    | 属性 | 类型     | 描述               | 默认           |
-    | -- | ------ | ---------------- | ------------ |
-    | 大小 | 数字     | 图标的高度和宽度（以像素为单位） | 24           |
-    | 颜色 | string | 图标的颜色            | currentColor |
-    | 描边 | 数字     | 图标的描边宽度（以像素为单位）  | 2            |
-  </Tab>
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="属性">
+
+
+| 属性 | 类型     | 描述               | 默认           |
+| -- | ------ | ---------------- | ------------ |
+| 大小 | 数字     | 图标的高度和宽度（以像素为单位） | 24           |
+| 颜色 | string | 图标的颜色            | currentColor |
+| 描边 | 数字     | 图标的描边宽度（以像素为单位）  | 2            |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## 自定义图标
@@ -54,20 +63,29 @@ image: /images/user-guide/objects/objects.png
 显示一个通讯录图标。
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { IconAddressBook } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
-      return <IconAddressBook size={24} stroke={2} />;
-    };
-    ```
-  </Tab>
+<Tab title="用法">
 
-  <Tab title="属性">
-    | 属性 | 类型 | 描述               | 默认 |
-    | -- | -- | ---------------- | -- |
-    | 大小 | 数字 | 图标的高度和宽度（以像素为单位） | 24 |
-    | 描边 | 数字 | 图标的描边宽度（以像素为单位）  | 2  |
-  </Tab>
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="属性">
+
+
+| 属性 | 类型 | 描述               | 默认 |
+| -- | -- | ---------------- | -- |
+| 大小 | 数字 | 图标的高度和宽度（以像素为单位） | 24 |
+| 描边 | 数字 | 图标的描边宽度（以像素为单位）  | 2  |
+
+
+
+</Tab>
+
 </Tabs>

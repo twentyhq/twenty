@@ -17,7 +17,7 @@ export const useReloadWorkspaceMetadata = () => {
 
     await refreshObjectMetadataItems();
     const loadedObjects = store.get(objectMetadataItemsState.atom);
-    updateDraft('objects', loadedObjects);
+    updateDraft('objectMetadataItems', loadedObjects);
     applyChanges();
 
     const loadedViews = store.get(coreViewsState.atom);
@@ -36,7 +36,7 @@ export const useReloadWorkspaceMetadata = () => {
 
     await loadMockedObjectMetadataItems();
     const loadedObjects = store.get(objectMetadataItemsState.atom);
-    updateDraft('objects', loadedObjects);
+    updateDraft('objectMetadataItems', loadedObjects);
     applyChanges();
   }, [
     resetMetadataStore,

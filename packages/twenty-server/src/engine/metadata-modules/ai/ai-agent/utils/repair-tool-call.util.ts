@@ -1,4 +1,4 @@
-import { generateObject, type LanguageModel, NoSuchToolError } from 'ai';
+import { type LanguageModel, NoSuchToolError, Output, generateText } from 'ai';
 import { type z } from 'zod';
 
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
@@ -41,9 +41,9 @@ export const repairToolCall = async ({
   }
 
   try {
-    const { object: repairedInput } = await generateObject({
+    const { output: repairedInput } = await generateText({
       model,
-      schema: schema as z.ZodTypeAny,
+      output: Output.object({ schema: schema as z.ZodTypeAny }),
       prompt: [
         `The AI model attempted to call the tool "${toolCall.toolName}" with invalid input.`,
         ``,
@@ -61,6 +61,10 @@ export const repairToolCall = async ({
       ].join('\n'),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
     });
+
+    if (repairedInput == null) {
+      return null;
+    }
 
     return {
       type: 'tool-call',

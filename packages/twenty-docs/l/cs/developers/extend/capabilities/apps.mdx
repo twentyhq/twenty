@@ -4,7 +4,7 @@ description: Vytvářejte a spravujte přizpůsobení Twenty jako kód.
 ---
 
 <Warning>
-  Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stále se vyvíjí.
+Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stále se vyvíjí.
 </Warning>
 
 ## Co jsou aplikace?
@@ -31,13 +31,6 @@ Vytvořte novou aplikaci pomocí oficiálního scaffolderu, poté se ověřte a 
 # Vygenerujte kostru nové aplikace (ve výchozím nastavení zahrnuje všechny příklady)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
-
-# Pokud nepoužíváte yarn@4
-corepack enable
-yarn install
-
-# Přihlaste se pomocí svého API klíče (budete vyzváni)
-yarn twenty auth:login
 
 # Spusťte vývojový režim: automaticky synchronizuje místní změny s vaším pracovním prostorem
 yarn twenty app:dev
@@ -154,7 +147,7 @@ SDK detekuje entity analýzou vašich souborů TypeScript a hledá volání **`e
 | `defineSkill()`              | Definice dovedností agenta AI         |
 
 <Note>
-  **Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
+**Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
 </Note>
 
 Příklad detekované entity:
@@ -312,11 +305,11 @@ Hlavní body:
 * Nové objekty můžete vygenerovat pomocí `yarn twenty entity:add`, který vás provede pojmenováním, poli a vztahy.
 
 <Note>
-  **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole
-  jako `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`.
-  Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
-  Výchozí pole můžete přepsat definováním pole se stejným názvem v poli `fields`,
-  ale to se nedoporučuje.
+**Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole
+jako `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`.
+Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
+Výchozí pole můžete přepsat definováním pole se stejným názvem v poli `fields`,
+ale to se nedoporučuje.
 </Note>
 
 ### Konfigurace aplikace (application-config.ts)
@@ -550,27 +543,25 @@ Hlavní body:
 ### Payload spouštěče trasy
 
 <Warning>
-  **Zpětně nekompatibilní změna (v1.16, leden 2026):** Formát payloadu spouštěče trasy se změnil. Před verzí v1.16 byly parametry dotazu, parametry cesty a tělo odesílány přímo jako payload. Od verze v1.16 jsou zanořeny uvnitř strukturovaného objektu `RoutePayload`.
+**Zpětně nekompatibilní změna (v1.16, leden 2026):** Formát payloadu spouštěče trasy se změnil. Před verzí v1.16 byly parametry dotazu, parametry cesty a tělo odesílány přímo jako payload. Od verze v1.16 jsou zanořeny uvnitř strukturovaného objektu `RoutePayload`.
 
-  **Před v1.16:**
+**Před v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
 
-  ```typescript
-  const handler = async (params) => {
-    const { param1, param2 } = params; // Direct access
-  };
-  ```
+**Po v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
 
-  **Po v1.16:**
-
-  ```typescript
-  const handler = async (event: RoutePayload) => {
-    const { param1, param2 } = event.body; // Access via .body
-    const { queryParam } = event.queryStringParameters;
-    const { id } = event.pathParameters;
-  };
-  ```
-
-  **Jak migrovat existující funkce:** Aktualizujte svůj handler tak, aby destrukturoval z `event.body`, `event.queryStringParameters` nebo `event.pathParameters` místo přímo z objektu params.
+**Jak migrovat existující funkce:** Aktualizujte svůj handler tak, aby destrukturoval z `event.body`, `event.queryStringParameters` nebo `event.pathParameters` místo přímo z objektu params.
 </Warning>
 
 Když spouštěč trasy vyvolá vaši logickou funkci, ta obdrží objekt `RoutePayload`, který odpovídá formátu AWS HTTP API v2. Importujte typ z `twenty-sdk`:
@@ -706,7 +697,7 @@ Hlavní body:
 * Můžete kombinovat `isTool` se spouštěči — funkce může být zároveň nástrojem (volatelným agenty AI) i spouštěna událostmi (cron, databázové události, routes).
 
 <Note>
-  **Napište kvalitní `description`.** Agenti AI se spoléhají na pole funkce `description` při rozhodování, kdy nástroj použít. Buďte konkrétní ohledně toho, co nástroj dělá a kdy se má volat.
+**Napište kvalitní `description`.** Agenti AI se spoléhají na pole funkce `description` při rozhodování, kdy nástroj použít. Buďte konkrétní ohledně toho, co nástroj dělá a kdy se má volat.
 </Note>
 
 ### Frontendové komponenty

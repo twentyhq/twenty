@@ -1,15 +1,14 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
-import { useStore } from 'jotai';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
@@ -18,25 +17,26 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
-  const viewPickerIsPersistingCallbackState = useRecoilComponentCallbackState(
-    viewPickerIsPersistingComponentState,
-    viewBarInstanceId,
-  );
+  const viewPickerIsPersistingCallbackState =
+    useAtomComponentStateCallbackState(
+      viewPickerIsPersistingComponentState,
+      viewBarInstanceId,
+    );
 
-  const viewPickerIsDirtyCallbackState = useRecoilComponentCallbackState(
+  const viewPickerIsDirtyCallbackState = useAtomComponentStateCallbackState(
     viewPickerIsDirtyComponentState,
     viewBarInstanceId,
   );
 
   const viewPickerReferenceViewIdCallbackState =
-    useRecoilComponentCallbackState(
+    useAtomComponentStateCallbackState(
       viewPickerReferenceViewIdComponentState,
       viewBarInstanceId,
     );
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const viewsOnCurrentObject = useFamilySelectorValueV2(
+  const viewsOnCurrentObject = useAtomFamilySelectorValue(
     coreViewsFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );
@@ -49,51 +49,45 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
 
   const store = useStore();
 
-  const destroyViewFromCurrentState = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async () => {
-        set(viewPickerIsPersistingCallbackState, true);
-        closeAndResetViewPicker();
-        set(viewPickerIsDirtyCallbackState, false);
+  const destroyViewFromCurrentState = useCallback(async () => {
+    store.set(viewPickerIsPersistingCallbackState, true);
+    closeAndResetViewPicker();
+    store.set(viewPickerIsDirtyCallbackState, false);
 
-        const viewPickerReferenceViewId = getSnapshotValue(
-          snapshot,
-          viewPickerReferenceViewIdCallbackState,
-        );
-
-        const shouldChangeView = viewPickerReferenceViewId === currentView?.id;
-
-        if (shouldChangeView) {
-          changeView(
-            viewsOnCurrentObject.filter(
-              (view) => view.id !== viewPickerReferenceViewId,
-            )[0].id,
-          );
-        }
-
-        store.set(
-          coreViewsByObjectMetadataIdFamilySelector.selectorFamily(
-            objectMetadataItem.id,
-          ),
-          (views) =>
-            views.filter((view) => view.id !== viewPickerReferenceViewId),
-        );
-
-        await performViewAPIDestroy({ id: viewPickerReferenceViewId });
-      },
-    [
-      currentView,
-      closeAndResetViewPicker,
-      objectMetadataItem.id,
-      changeView,
-      performViewAPIDestroy,
-      store,
-      viewPickerIsDirtyCallbackState,
-      viewPickerIsPersistingCallbackState,
+    const viewPickerReferenceViewId = store.get(
       viewPickerReferenceViewIdCallbackState,
-      viewsOnCurrentObject,
-    ],
-  );
+    );
+
+    const shouldChangeView = viewPickerReferenceViewId === currentView?.id;
+
+    if (shouldChangeView) {
+      changeView(
+        viewsOnCurrentObject.filter(
+          (view) => view.id !== viewPickerReferenceViewId,
+        )[0].id,
+      );
+    }
+
+    store.set(
+      coreViewsByObjectMetadataIdFamilySelector.selectorFamily(
+        objectMetadataItem.id,
+      ),
+      (views) => views.filter((view) => view.id !== viewPickerReferenceViewId),
+    );
+
+    await performViewAPIDestroy({ id: viewPickerReferenceViewId });
+  }, [
+    currentView,
+    closeAndResetViewPicker,
+    objectMetadataItem.id,
+    changeView,
+    performViewAPIDestroy,
+    store,
+    viewPickerIsDirtyCallbackState,
+    viewPickerIsPersistingCallbackState,
+    viewPickerReferenceViewIdCallbackState,
+    viewsOnCurrentObject,
+  ]);
 
   return {
     destroyViewFromCurrentState,

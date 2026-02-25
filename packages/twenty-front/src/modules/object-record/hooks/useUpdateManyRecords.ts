@@ -20,7 +20,7 @@ import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils
 import { getUpdatedFieldsFromRecordInput } from '@/object-record/utils/getUpdatedFieldsFromRecordInput';
 import { getUpdateManyRecordsMutationResponseField } from '@/object-record/utils/getUpdateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
@@ -44,7 +44,7 @@ export const useUpdateManyRecords = <T extends ObjectRecord = ObjectRecord>({
   recordGqlFields,
 }: UseUpdateManyRecordsProps) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const apiConfig = useRecoilValueV2(apiConfigState);
+  const apiConfig = useAtomStateValue(apiConfigState);
 
   const mutationPageSize =
     apiConfig?.mutationMaximumAffectedRecords ?? DEFAULT_MUTATION_BATCH_SIZE;

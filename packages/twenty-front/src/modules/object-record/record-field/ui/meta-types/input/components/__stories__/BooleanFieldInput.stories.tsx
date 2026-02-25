@@ -1,9 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -23,7 +23,7 @@ const BooleanFieldValueSetterEffect = ({
   value: boolean;
   recordId: string;
 }) => {
-  const setField = useSetRecoilState(recordStoreFamilyState(recordId));
+  const setField = useSetAtomFamilyState(recordStoreFamilyState, recordId);
 
   useEffect(() => {
     setField({ id: recordId, Boolean: value, __typename: 'Person' });

@@ -1,4 +1,4 @@
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
@@ -18,10 +18,10 @@ import { v4 } from 'uuid';
 export const useCreateStep = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
-  const setWorkflowSelectedNode = useSetRecoilComponentState(
+  const setWorkflowSelectedNode = useSetAtomComponentState(
     workflowSelectedNodeComponentState,
   );
-  const setWorkflowLastCreatedStepId = useSetRecoilComponentState(
+  const setWorkflowLastCreatedStepId = useSetAtomComponentState(
     workflowLastCreatedStepIdComponentState,
   );
 

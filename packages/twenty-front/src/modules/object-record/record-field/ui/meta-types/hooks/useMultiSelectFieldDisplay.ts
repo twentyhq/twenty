@@ -6,14 +6,14 @@ import {
   type FieldMultiSelectMetadata,
   type FieldMultiSelectValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 
 export const useMultiSelectFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const fieldValue = useRecordFieldValueV2<FieldMultiSelectValue | undefined>(
+  const fieldValue = useRecordFieldValue<FieldMultiSelectValue | undefined>(
     recordId,
     fieldName,
     fieldDefinition,

@@ -12,8 +12,8 @@ import {
   type AuthProviders,
   useUpdateWorkspaceMutation,
 } from '~/generated-metadata/graphql';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -25,9 +25,9 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
   const { t } = useLingui();
 
   const { enqueueErrorSnackBar } = useSnackBar();
-  const authProviders = useRecoilValueV2(authProvidersState);
+  const authProviders = useAtomStateValue(authProvidersState);
 
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
 

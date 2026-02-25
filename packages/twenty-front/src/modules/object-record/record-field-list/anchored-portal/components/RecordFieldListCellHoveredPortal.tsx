@@ -1,4 +1,4 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordFieldListCellHoveredPortalContent } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortalContent';
@@ -23,7 +23,7 @@ export const RecordFieldListCellHoveredPortal = ({
     RecordFieldListComponentInstanceContext,
   );
 
-  const hoverPosition = useRecoilComponentValue(
+  const hoverPosition = useAtomComponentStateValue(
     recordFieldListHoverPositionComponentState,
   );
 

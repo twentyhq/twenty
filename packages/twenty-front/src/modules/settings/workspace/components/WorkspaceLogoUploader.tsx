@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { buildSignedPath } from 'twenty-shared/utils';
@@ -18,7 +18,7 @@ export const WorkspaceLogoUploader = () => {
   const [uploadLogoLegacy] = useUploadWorkspaceLogoLegacyMutation();
   const [uploadLogo] = useUploadWorkspaceLogoMutation();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
 

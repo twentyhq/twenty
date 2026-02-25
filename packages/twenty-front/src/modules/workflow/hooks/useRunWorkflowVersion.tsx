@@ -17,17 +17,19 @@ import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/ut
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
 import { type WorkflowRun } from '@/workflow/types/Workflow';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useCallback } from 'react';
 import { useMutation } from '@apollo/client';
-import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import {
   type RunWorkflowVersionMutation,
   type RunWorkflowVersionMutationVariables,
 } from '~/generated/graphql';
+import { useStore } from 'jotai';
 
 export const useRunWorkflowVersion = () => {
+  const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
@@ -40,7 +42,7 @@ export const useRunWorkflowVersion = () => {
   const createOneRecordInCache = useCreateOneRecordInCache<WorkflowRun>({
     objectMetadataItem,
   });
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const [mutate] = useMutation<
     RunWorkflowVersionMutation,
@@ -62,12 +64,11 @@ export const useRunWorkflowVersion = () => {
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const setRecordInStore = useRecoilCallback(
-    ({ set }) =>
-      (workflowRun: WorkflowRun) => {
-        set(recordStoreFamilyState(workflowRun.id), workflowRun);
-      },
-    [],
+  const setRecordInStore = useCallback(
+    (workflowRun: WorkflowRun) => {
+      store.set(recordStoreFamilyState.atomFamily(workflowRun.id), workflowRun);
+    },
+    [store],
   );
 
   const runWorkflowVersion = async ({

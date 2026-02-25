@@ -3,9 +3,9 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizationBecauseDataChanged';
 import { lastProcessedFieldMetadataUpdateIdComponentState } from '@/object-record/record-table/virtualization/states/lastProcessedFieldMetadataUpdateIdComponentState';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect } from 'react';
 
 export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
@@ -14,18 +14,18 @@ export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
   const { resetVirtualizationBecauseDataChanged } =
     useResetVirtualizationBecauseDataChanged(objectNameSingular);
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 
-  const lastFieldMetadataItemUpdate = useRecoilValueV2(
+  const lastFieldMetadataItemUpdate = useAtomStateValue(
     lastFieldMetadataItemUpdateState,
   );
 
   const [
     lastProcessedFieldMetadataUpdateId,
     setLastProcessedFieldMetadataUpdateId,
-  ] = useRecoilComponentState(lastProcessedFieldMetadataUpdateIdComponentState);
+  ] = useAtomComponentState(lastProcessedFieldMetadataUpdateIdComponentState);
 
   useEffect(() => {
     if (!lastFieldMetadataItemUpdate) {
@@ -42,7 +42,7 @@ export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
         lastFieldMetadataItemUpdate.fieldMetadataItemId,
     );
 
-    if (isFieldInCurrentView) {
+    if (isFieldInCurrentView === true) {
       setLastProcessedFieldMetadataUpdateId(lastFieldMetadataItemUpdate.id);
       resetVirtualizationBecauseDataChanged();
     }

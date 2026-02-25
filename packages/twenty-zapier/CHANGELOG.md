@@ -1,3 +1,6 @@
+## 2.2.0
+* Fix authentication issue
+
 ## 2.1.1
 * Add changelog
 

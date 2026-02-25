@@ -1,12 +1,13 @@
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
+  const store = useStore();
   const setLastVisitedViewForObjectMetadataNamePlural = useCallback(
     async ({
       objectNamePlural,
@@ -15,13 +16,13 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
       objectNamePlural: string;
       viewId: string;
     }) => {
-      const views = jotaiStore.get(coreViewsState.atom);
+      const views = store.get(coreViewsState.atom);
 
       const view = views.find(
         (view: CoreViewWithRelations) => view.id === viewId,
       );
 
-      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
 
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.namePlural === objectNamePlural,
@@ -35,7 +36,7 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
         return;
       }
 
-      const lastVisitedViewPerObjectMetadataItem = jotaiStore.get(
+      const lastVisitedViewPerObjectMetadataItem = store.get(
         lastVisitedViewPerObjectMetadataItemState.atom,
       );
 
@@ -43,13 +44,13 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
         lastVisitedViewPerObjectMetadataItem?.[objectMetadataItem?.id];
 
       if (isDefined(objectMetadataItem) && lastVisitedViewId !== viewId) {
-        jotaiStore.set(lastVisitedViewPerObjectMetadataItemState.atom, {
+        store.set(lastVisitedViewPerObjectMetadataItemState.atom, {
           ...lastVisitedViewPerObjectMetadataItem,
           [objectMetadataItem.id]: viewId,
         });
       }
     },
-    [],
+    [store],
   );
 
   return {

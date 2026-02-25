@@ -10,7 +10,7 @@ import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -18,7 +18,7 @@ import { Section } from 'twenty-ui/layout';
 
 export const SettingsAccounts = () => {
   const { t } = useLingui();
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,

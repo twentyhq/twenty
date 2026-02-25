@@ -2,7 +2,7 @@ import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
 const VIRTUAL_MODEL_IDS: Set<string> = new Set([
@@ -13,8 +13,8 @@ const VIRTUAL_MODEL_IDS: Set<string> = new Set([
 const isVirtualModel = (modelId: string) => VIRTUAL_MODEL_IDS.has(modelId);
 
 export const useWorkspaceAiModelAvailability = () => {
-  const aiModels = useRecoilValueV2(aiModelsState);
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const aiModels = useAtomStateValue(aiModelsState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const useRecommendedModels = currentWorkspace?.useRecommendedModels ?? true;
   const autoEnableNewAiModels = currentWorkspace?.autoEnableNewAiModels ?? true;

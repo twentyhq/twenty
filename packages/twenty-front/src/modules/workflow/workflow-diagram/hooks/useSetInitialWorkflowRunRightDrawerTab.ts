@@ -2,65 +2,59 @@ import { getIsInputTabDisabled } from '@/command-menu/pages/workflow/step/view-r
 import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useStore } from 'jotai';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
+import { useStore } from 'jotai';
 
 export const useSetInitialWorkflowRunRightDrawerTab = () => {
   const store = useStore();
+  const setInitialWorkflowRunRightDrawerTab = useCallback(
+    ({
+      workflowSelectedNode,
+      stepExecutionStatus,
+    }: {
+      workflowSelectedNode: string;
+      stepExecutionStatus: WorkflowRunStepStatus;
+    }) => {
+      const commandMenuPageInfo = store.get(commandMenuPageInfoState.atom);
 
-  const setInitialWorkflowRunRightDrawerTab = useRecoilCallback(
-    ({ snapshot }) =>
-      ({
-        workflowSelectedNode,
+      const activeTabId = activeTabIdComponentState.atomFamily({
+        instanceId: commandMenuPageInfo.instanceId,
+      });
+
+      const activeWorkflowRunRightDrawerTab = store.get(
+        activeTabId,
+      ) as WorkflowRunTabId | null;
+
+      const isInputTabDisabled = getIsInputTabDisabled({
         stepExecutionStatus,
-      }: {
-        workflowSelectedNode: string;
-        stepExecutionStatus: WorkflowRunStepStatus;
-      }) => {
-        const commandMenuPageInfo = getSnapshotValue(
-          snapshot,
-          commandMenuPageInfoState,
-        );
+        workflowSelectedNode,
+      });
+      const isOutputTabDisabled = getIsOutputTabDisabled({
+        stepExecutionStatus,
+      });
 
-        const activeTabIdAtom = activeTabIdComponentState.atomFamily({
-          instanceId: commandMenuPageInfo.instanceId,
-        });
+      if (!isDefined(activeWorkflowRunRightDrawerTab)) {
+        const defaultTabId = isOutputTabDisabled
+          ? WorkflowRunTabId.NODE
+          : WorkflowRunTabId.OUTPUT;
 
-        const activeWorkflowRunRightDrawerTab = store.get(
-          activeTabIdAtom,
-        ) as WorkflowRunTabId | null;
+        store.set(activeTabId, defaultTabId);
 
-        const isInputTabDisabled = getIsInputTabDisabled({
-          stepExecutionStatus,
-          workflowSelectedNode,
-        });
-        const isOutputTabDisabled = getIsOutputTabDisabled({
-          stepExecutionStatus,
-        });
+        return;
+      }
 
-        if (!isDefined(activeWorkflowRunRightDrawerTab)) {
-          const defaultTabId = isOutputTabDisabled
-            ? WorkflowRunTabId.NODE
-            : WorkflowRunTabId.OUTPUT;
-
-          store.set(activeTabIdAtom, defaultTabId);
-
-          return;
-        }
-
-        if (
-          (isInputTabDisabled &&
-            activeWorkflowRunRightDrawerTab === WorkflowRunTabId.INPUT) ||
-          (isOutputTabDisabled &&
-            activeWorkflowRunRightDrawerTab === WorkflowRunTabId.OUTPUT)
-        ) {
-          store.set(activeTabIdAtom, WorkflowRunTabId.NODE);
-        }
-      },
+      if (
+        (isInputTabDisabled &&
+          activeWorkflowRunRightDrawerTab === WorkflowRunTabId.INPUT) ||
+        (isOutputTabDisabled &&
+          activeWorkflowRunRightDrawerTab === WorkflowRunTabId.OUTPUT)
+      ) {
+        store.set(activeTabId, WorkflowRunTabId.NODE);
+      }
+    },
     [store],
   );
 

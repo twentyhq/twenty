@@ -9,7 +9,7 @@ import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -92,7 +92,7 @@ export const WidgetActionFieldSeeAll = () => {
     ({ id }) => id === relationMetadata?.relationFieldMetadataId,
   );
 
-  const indexViewId = useFamilySelectorValueV2(
+  const indexViewId = useAtomFamilySelectorValue(
     coreIndexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: relationObjectMetadataItem?.id ?? '' },
   );

@@ -10,9 +10,9 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 Aksiyonlar, bir tetikleyici devreye girdiğinde neler olacağını tanımlar. Karmaşık otomasyonlar oluşturmak için birden fazla eylemi birbirine zincirleyebilirsiniz.
 
 <Tip>
-  * Önceki adımlardaki kullanılabilir verileri gözden geçirmek için değişken seçicisini kullanın (`(x+)` simgesine tıklayın)
-  * Bir değişkenin hangi adımdan geldiğini görmek için herhangi bir giriş alanının üzerine gelin — aynı alanın (örn., ID) birden çok önceki adımda bulunduğu durumlarda faydalıdır
-  * Bakımı kolaylaştırmak için her eyleme açıklayıcı bir ad verin
+* Önceki adımlardaki kullanılabilir verileri gözden geçirmek için değişken seçicisini kullanın (`(x+)` simgesine tıklayın)
+* Bir değişkenin hangi adımdan geldiğini görmek için herhangi bir giriş alanının üzerine gelin — aynı alanın (örn., ID) birden çok önceki adımda bulunduğu durumlarda faydalıdır
+* Bakımı kolaylaştırmak için her eyleme açıklayıcı bir ad verin
 </Tip>
 
 ## Kayıt Eylemleri
@@ -71,7 +71,7 @@ Seçilen bir nesnede filtreleme koşulları kullanarak kayıt bulur.
 **Çıktı**: Belirlenen filtre koşullarına uyan kayıtlar, sonraki adımlarda kullanılmak üzere döner.
 
 <Note>
-  **Sınır**: Search Records en fazla **200 kayıt** döndürür. Daha fazlasını işlemeniz gerekiyorsa, sonuçları azaltmak için belirli filtreler ekleyin veya toplu olarak işlemek için zamanlanmış iş akışlarını kullanın.
+**Sınır**: Search Records en fazla **200 kayıt** döndürür. Daha fazlasını işlemeniz gerekiyorsa, sonuçları azaltmak için belirli filtreler ekleyin veya toplu olarak işlemek için zamanlanmış iş akışlarını kullanın.
 </Note>
 
 **En İyi Uygulama**: "bulundu" ve "bulunmadı" senaryolarını yönetmek için Search Records sonrasında [dallar](/l/tr/user-guide/workflows/capabilities/workflow-branches) kullanın.
@@ -89,7 +89,7 @@ Eşleştirme ölçütlerine göre yeni bir kayıt oluşturur veya mevcut bir kay
 * Alan değerlerini doldurun. Benzersiz tanımlayıcılardan en az birini doldurmayı unutmayın.
 
 <Note>
-  **Yalnızca bir benzersiz tanımlayıcı eklemek, genellikle eşleştirmenin daha iyi çalışmasını sağlar.** Örneğin, aşağıdaki ekran görüntüsü şirketleri alan adlarına göre eşleştirecektir. ID mutlaka gerekli değildir.
+**Yalnızca bir benzersiz tanımlayıcı eklemek, genellikle eşleştirmenin daha iyi çalışmasını sağlar.** Örneğin, aşağıdaki ekran görüntüsü şirketleri alan adlarına göre eşleştirecektir. ID mutlaka gerekli değildir.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
@@ -116,8 +116,8 @@ Eşleştirme ölçütlerine göre yeni bir kayıt oluşturur veya mevcut bir kay
 * Döngüde her kayıt üzerinde gerçekleştireceğiniz işlemleri tanımlayın.
 
 <Note>
-  - Bir yineleyici içinde birden fazla eylem ekleyebilirsiniz.
-  - Bir yineleyici içinde dallar kullanırken, her dalın son adımının döngüyü kapatmak için yineleyiciye geri bağlandığından emin olun.
+- Bir yineleyici içinde birden fazla eylem ekleyebilirsiniz.
+- Bir yineleyici içinde dallar kullanırken, her dalın son adımının döngüyü kapatmak için yineleyiciye geri bağlandığından emin olun.
 </Note>
 
 * `Current Item` Alanlarına Erişim: şu anda işlenen kayıttaki alanları kullanmak için **Iterator** adımına tıklayın, ardından **Current item** seçin. Bu kayıttan kullanılabilir alanların listesi görüntülenir ve sonraki eylemlerde kullanılmak üzere seçilebilir.
@@ -135,8 +135,8 @@ Belirtilen koşullara göre kayıtları filtreler ve yalnızca kriterleri karş�
 * Sonraki adımlara geçmesi gereken kayıtları yapılandırın
 
 <Note>
-  1. **Çıktı**: Filtre düğümleri veri döndürmez—geçit görevi görürler. Koşullar karşılanırsa iş akışı devam eder. Karşılanmazsa iş akışı o dalda durur.
-  2. `IS` işleci sayısal alanlarla kullanılabilir. Bir `EQUAL` gibi çalışır.
+1. **Çıktı**: Filtre düğümleri veri döndürmez—geçit görevi görürler. Koşullar karşılanırsa iş akışı devam eder. Karşılanmazsa iş akışı o dalda durur.
+2. `IS` işleci sayısal alanlarla kullanılabilir. Bir `EQUAL` gibi çalışır.
 </Note>
 
 ### Gecikme
@@ -167,7 +167,7 @@ Belirtilen koşullara göre kayıtları filtreler ve yalnızca kriterleri karş�
 * Eylemleri mesai saatlerine göre zamanlayın
 
 <Note>
-  Planlanan tarih geçmişte olamaz. Önceki bir adımdaki tarih alanı kullanılırsa ve tarih zaten geçmişse, iş akışı başarısız olur.
+Planlanan tarih geçmişte olamaz. Önceki bir adımdaki tarih alanı kullanılırsa ve tarih zaten geçmişse, iş akışı başarısız olur.
 </Note>
 
 **Sınırlar ve Krediler**:
@@ -190,7 +190,7 @@ Bültenler (daha zengin biçimlendirme gerektirir) veya otomatik e-posta diziler
 * Gönderen e-posta hesabını seçin
 
 <Note>
-  Yalnızca kendi Twenty hesabınıza senkronize edilmiş posta kutularından e-posta gönderebilirsiniz. Diğer ekip üyelerinin posta kutularından gönderim (ör. hesap sahibinin e-postası) yol haritasındadır.
+Yalnızca kendi Twenty hesabınıza senkronize edilmiş posta kutularından e-posta gönderebilirsiniz. Diğer ekip üyelerinin posta kutularından gönderim (ör. hesap sahibinin e-postası) yol haritasındadır.
 </Note>
 
 Aşağıdaki tüm adımlar için kişiselleştirme amacıyla önceki adımlardan gelen değişkenleri kullanabilirsiniz.
@@ -198,14 +198,14 @@ Aşağıdaki tüm adımlar için kişiselleştirme amacıyla önceki adımlardan
 * Alıcı e-posta adresini girin.
 
 <Note>
-  Şu anda yalnızca bir alıcı mümkündür.
+Şu anda yalnızca bir alıcı mümkündür.
 </Note>
 
 * Konu satırını ayarlayın.
 * Mesaj gövdesini yazın. Bağlantıları biçimlendirebilir, numaralı listeler ve madde işaretli listeler oluşturabilir, ekler ekleyebilirsiniz.
 
 <Note>
-  Şu anda HTML imzaları eklemek mümkün değildir.
+Şu anda HTML imzaları eklemek mümkün değildir.
 </Note>
 
 ### Form
@@ -213,7 +213,7 @@ Aşağıdaki tüm adımlar için kişiselleştirme amacıyla önceki adımlardan
 İş akışı gerçekleştirilirken kullanıcı girdisi toplamak için bir form açar. Yanıtlar daha sonra sonraki adımlarda, girdiye bağlı olarak kayıtlar oluşturmak, e-postalar göndermek veya başka herhangi bir eylemi yürütmek için kullanılabilir.
 
 <Warning>
-  **Formlar yalnızca manuel tetikleyiciler için tasarlanmıştır**. Diğer tetikleyicilerle (Kayıt Oluşturuldu, Güncellendi, vb.) iş akışlarında, formlar yalnızca iş akışı çalıştırma arayüzü üzerinden erişilebilir olup, bu beklenen kullanıcı deneyimi değildir. 2026'da formların otomatik iş akışlarını doğru bir şekilde desteklemesi için bir bildirim merkezi yayınlanacaktır.
+**Formlar yalnızca manuel tetikleyiciler için tasarlanmıştır**. Diğer tetikleyicilerle (Kayıt Oluşturuldu, Güncellendi, vb.) iş akışlarında, formlar yalnızca iş akışı çalıştırma arayüzü üzerinden erişilebilir olup, bu beklenen kullanıcı deneyimi değildir. 2026'da formların otomatik iş akışlarını doğru bir şekilde desteklemesi için bir bildirim merkezi yayınlanacaktır.
 </Warning>
 
 **Yapılandırma**:
@@ -234,7 +234,7 @@ Aşağıdaki tüm adımlar için kişiselleştirme amacıyla önceki adımlardan
 * Kenar panelde görüntülenen formu doldurun ve `Submit` düğmesine tıklayın.
 
 <Note>
-  Alanlar zorunlu hale getirilemez.
+Alanlar zorunlu hale getirilemez.
 </Note>
 
 <VimeoEmbed videoId="1147277989" title="Video gösterimi" />
@@ -256,15 +256,15 @@ Aşağıdaki tüm adımlar için kişiselleştirme amacıyla önceki adımlardan
 * Kodu doğrudan adımda test edin
 
 <Note>
-  Kodunuzda harici API anahtarlarını kullanmanız gerekiyorsa, bunları doğrudan fonksiyon gövdesine girmeniz gerekir. API anahtarlarını başka bir yerde yapılandıramazsınız ve bunlara mantık fonksiyonu içinde referans veremezsiniz.
+Kodunuzda harici API anahtarlarını kullanmanız gerekiyorsa, bunları doğrudan fonksiyon gövdesine girmeniz gerekir. API anahtarlarını başka bir yerde yapılandıramazsınız ve bunlara mantık fonksiyonu içinde referans veremezsiniz.
 </Note>
 
 <Tip>
-  **Dizilerle mi çalışıyorsunuz?** Harici sistemlerden veya önceki adımlardan gelen diziler metin (string) olarak gelebilir. Çözüm için [Kod eylemlerinde diziler nasıl ele alınır](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) bölümüne bakın.
+**Dizilerle mi çalışıyorsunuz?** Harici sistemlerden veya önceki adımlardan gelen diziler metin (string) olarak gelebilir. Çözüm için [Kod eylemlerinde diziler nasıl ele alınır](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) bölümüne bakın.
 </Tip>
 
 <Tip>
-  Kod düzenleyicisinin sağ üst kısmındaki kare simgeye tıklayarak tam ekranda görüntüleyin — varsayılan düzenleyici genişliği sınırlı olduğundan faydalıdır.
+Kod düzenleyicisinin sağ üst kısmındaki kare simgeye tıklayarak tam ekranda görüntüleyin — varsayılan düzenleyici genişliği sınırlı olduğundan faydalıdır.
 </Tip>
 
 ### HTTP İsteği
@@ -303,9 +303,9 @@ Aşağıdaki tüm adımlar için kişiselleştirme amacıyla önceki adımlardan
 **Çıktı**: Yapay zeka aracısının yanıtı, sonraki adımlarda kullanılmak üzere mevcuttur. Aracın yapılandırılmış bir çıktı şeması varsa, yanıt bu biçimi izler.
 
 <Note>
-  Yapay Zeka Aracısı eylemleri, kullanılan yapay zeka modeline bağlı olarak iş akışı kredileri tüketir. Ayrıntılar için [İş Akışı Kredileri](/l/tr/user-guide/workflows/capabilities/workflow-credits) bölümüne bakın.
+Yapay Zeka Aracısı eylemleri, kullanılan yapay zeka modeline bağlı olarak iş akışı kredileri tüketir. Ayrıntılar için [İş Akışı Kredileri](/l/tr/user-guide/workflows/capabilities/workflow-credits) bölümüne bakın.
 </Note>
 
 <Note>
-  Yapay zeka aracıları role dayalı izinlere uyar. **Ayarlar → Roller** altında aracılara hangi verilere erişebileceklerini kontrol etmek için belirli roller atayabilirsiniz. Ayrıntılar için [İzinler](/l/tr/user-guide/permissions-access/capabilities/permissions) bölümüne bakın.
+Yapay zeka aracıları role dayalı izinlere uyar. **Ayarlar → Roller** altında aracılara hangi verilere erişebileceklerini kontrol etmek için belirli roller atayabilirsiniz. Ayrıntılar için [İzinler](/l/tr/user-guide/permissions-access/capabilities/permissions) bölümüne bakın.
 </Note>

@@ -3,10 +3,10 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { multiWorkspaceDropdownStateV2 } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownStateV2';
+import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useState } from 'react';
 import { IconChevronLeft } from 'twenty-ui/display';
 
@@ -17,10 +17,10 @@ import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState
 export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const { t } = useLingui();
 
-  const availableWorkspaces = useRecoilValueV2(availableWorkspacesState);
+  const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
 
-  const setMultiWorkspaceDropdownState = useSetRecoilStateV2(
-    multiWorkspaceDropdownStateV2,
+  const setMultiWorkspaceDropdownState = useSetAtomState(
+    multiWorkspaceDropdownState,
   );
   const [searchValue, setSearchValue] = useState('');
 
