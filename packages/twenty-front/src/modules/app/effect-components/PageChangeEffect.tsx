@@ -180,25 +180,6 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
-        const isCommandMenuOpen = store.get(isCommandMenuOpenedState.atom);
-
-        const shouldEnableGlobalHotkeys = !isCommandMenuOpen;
-
-        resetFocusStackToFocusItem({
-          focusStackItem: {
-            focusId: PageFocusId.RecordShowPage,
-            componentInstance: {
-              componentType: FocusComponentType.PAGE,
-              componentInstanceId: PageFocusId.RecordShowPage,
-            },
-            globalHotkeysConfig: {
-              enableGlobalHotkeysWithModifiers: shouldEnableGlobalHotkeys,
-              enableGlobalHotkeysConflictingWithKeyboard:
-                shouldEnableGlobalHotkeys,
-            },
-          },
-        });
-
         const isNewRecord = location.state?.isNewRecord === true;
 
         if (
@@ -210,6 +191,26 @@ export const PageChangeEffect = () => {
             fieldName: location.state.labelIdentifierFieldName,
           });
         }
+
+        const isCommandMenuOpen = store.get(isCommandMenuOpenedState.atom);
+
+        if (isCommandMenuOpen) {
+          return;
+        }
+
+        resetFocusStackToFocusItem({
+          focusStackItem: {
+            focusId: PageFocusId.RecordShowPage,
+            componentInstance: {
+              componentType: FocusComponentType.PAGE,
+              componentInstanceId: PageFocusId.RecordShowPage,
+            },
+            globalHotkeysConfig: {
+              enableGlobalHotkeysWithModifiers: true,
+              enableGlobalHotkeysConflictingWithKeyboard: true,
+            },
+          },
+        });
         break;
       }
       case isMatchingLocation(location, AppPath.SignInUp): {

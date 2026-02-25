@@ -27,10 +27,24 @@ export const agentChatMessagesComponentState = createAtomComponentState<
   componentInstanceContext: AgentChatComponentInstanceContext,
 });
 
+export const processedNavigationMessageIdsComponentState =
+  createAtomComponentState<string[]>({
+    key: 'processedNavigationMessageIdsComponentState',
+    defaultValue: [],
+    componentInstanceContext: AgentChatComponentInstanceContext,
+  });
+
 export const useProcessAgentMessage = () => {
   const navigateApp = useNavigateApp();
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const processedNavigationMessageIdsCallbackState =
+    useAtomComponentStateCallbackState(
+      processedNavigationMessageIdsComponentState,
+    );
+
+  const store = useStore();
 
   const processAgentMessage = (agentMessage: ExtendedUIMessage) => {
     const executionMessageParts = agentMessage.parts.filter(
@@ -43,9 +57,46 @@ export const useProcessAgentMessage = () => {
       for (const executionPart of executionMessageParts) {
         const toolExecutionPart = executionPart as Prettify<ToolUIPart>;
 
-        if (toolExecutionPart.output === 'navigate_app') {
-          const navigateAppOutput = executionPart.output?.result
-            .result as NavigateAppToolOutput;
+        console.log({
+          toolExecutionPart,
+        });
+
+        const toolExecutionOutput = toolExecutionPart.output as Record<
+          string,
+          any
+        >;
+
+        if (toolExecutionOutput.toolName === 'navigate_app') {
+          const toolExecutionResult = toolExecutionOutput.result as Record<
+            string,
+            any
+          >;
+
+          if (!isDefined(toolExecutionResult)) {
+            continue;
+          }
+
+          if (toolExecutionResult.success !== true) {
+            continue;
+          }
+
+          const messageId = agentMessage.id;
+
+          const processedNavigationMessageIds = store.get(
+            processedNavigationMessageIdsCallbackState,
+          );
+
+          if (processedNavigationMessageIds.includes(messageId)) {
+            continue;
+          }
+
+          store.set(processedNavigationMessageIdsCallbackState, [
+            ...processedNavigationMessageIds,
+            messageId,
+          ]);
+
+          const navigateAppOutput =
+            toolExecutionResult?.result as NavigateAppToolOutput;
 
           switch (navigateAppOutput.action) {
             case 'navigateToDefaultViewForObject': {
