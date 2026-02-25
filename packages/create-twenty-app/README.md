@@ -31,10 +31,6 @@ See Twenty application documentation https://docs.twenty.com/developers/extend/c
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# If you don't use yarn@4
-corepack enable
-yarn install
-
 # Get help and list all available commands
 yarn twenty help
 
