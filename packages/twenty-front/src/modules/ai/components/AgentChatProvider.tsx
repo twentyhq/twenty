@@ -1,4 +1,7 @@
-import { AgentChatMessagesEffect } from '@/ai/components/AgentChatMessagesEffect';
+import {
+  AgentChatComponentInstanceContext,
+  AgentChatMessagesEffect,
+} from '@/ai/components/AgentChatMessagesEffect';
 import { AgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import { useAgentChatData } from '@/ai/hooks/useAgentChatData';
@@ -16,15 +19,19 @@ const AgentChatProviderContent = ({
   const combinedIsLoading = chatState.isLoading || isLoading;
 
   return (
-    <AgentChatContext.Provider
-      value={{
-        ...chatState,
-        isLoading: combinedIsLoading,
-      }}
+    <AgentChatComponentInstanceContext.Provider
+      value={{ instanceId: 'agentChatComponentInstance' }}
     >
-      <AgentChatMessagesEffect messages={chatState.messages} />
-      {children}
-    </AgentChatContext.Provider>
+      <AgentChatContext.Provider
+        value={{
+          ...chatState,
+          isLoading: combinedIsLoading,
+        }}
+      >
+        <AgentChatMessagesEffect messages={chatState.messages} />
+        {children}
+      </AgentChatContext.Provider>
+    </AgentChatComponentInstanceContext.Provider>
   );
 };
 

@@ -11,7 +11,10 @@ import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/dr
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
+import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbound-manager/messaging-send-manager.module';
 
@@ -24,6 +27,8 @@ import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbou
     FileModule,
     JwtModule,
     SecureHttpClientModule,
+    ObjectMetadataModule,
+    ViewModule,
   ],
   providers: [
     HttpTool,
@@ -32,6 +37,7 @@ import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbou
     EmailComposerService,
     SearchHelpCenterTool,
     CodeInterpreterTool,
+    NavigateAppTool,
   ],
   exports: [
     HttpTool,
@@ -40,6 +46,7 @@ import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbou
     EmailComposerService,
     SearchHelpCenterTool,
     CodeInterpreterTool,
+    NavigateAppTool,
   ],
 })
 export class ToolModule {}

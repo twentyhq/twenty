@@ -6,17 +6,10 @@ import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksO
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useCallback, useEffect, useState } from 'react';
-import {
-  matchPath,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -35,6 +28,15 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useStore } from 'jotai';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  matchPath,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
@@ -42,7 +44,6 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
-import { useStore } from 'jotai';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -99,11 +100,19 @@ export const PageChangeEffect = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const closeCommandMenuUnlessOnEditPage = useCallback(() => {
+  const closeCommandMenuUnlessNotRelevant = useCallback(() => {
     const currentPage = store.get(commandMenuPageState.atom);
+
     if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
       return;
     }
+
+    const commandMenuIsAiChat = currentPage === CommandMenuPages.AskAI;
+
+    if (commandMenuIsAiChat) {
+      return;
+    }
+
     closeCommandMenu();
   }, [closeCommandMenu, store]);
 
@@ -114,8 +123,8 @@ export const PageChangeEffect = () => {
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   useEffect(() => {
-    closeCommandMenuUnlessOnEditPage();
-  }, [location.pathname, closeCommandMenuUnlessOnEditPage]);
+    closeCommandMenuUnlessNotRelevant();
+  }, [location.pathname, closeCommandMenuUnlessNotRelevant]);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -171,6 +180,10 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
+        const isCommandMenuOpen = store.get(isCommandMenuOpenedState.atom);
+
+        const shouldEnableGlobalHotkeys = !isCommandMenuOpen;
+
         resetFocusStackToFocusItem({
           focusStackItem: {
             focusId: PageFocusId.RecordShowPage,
@@ -179,8 +192,9 @@ export const PageChangeEffect = () => {
               componentInstanceId: PageFocusId.RecordShowPage,
             },
             globalHotkeysConfig: {
-              enableGlobalHotkeysWithModifiers: true,
-              enableGlobalHotkeysConflictingWithKeyboard: true,
+              enableGlobalHotkeysWithModifiers: shouldEnableGlobalHotkeys,
+              enableGlobalHotkeysConflictingWithKeyboard:
+                shouldEnableGlobalHotkeys,
             },
           },
         });
@@ -340,6 +354,7 @@ export const PageChangeEffect = () => {
     resetFocusStackToRecordIndex,
     resetFocusStackToFocusItem,
     openNewRecordTitleCell,
+    store,
   ]);
 
   useEffect(() => {
