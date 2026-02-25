@@ -20,12 +20,12 @@ export const useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId =
       recordId,
     );
 
-    const searchRecord = useAtomFamilyStateValue(
+    const searchRecordStore = useAtomFamilyStateValue(
       searchRecordStoreFamilyState,
       recordId,
     );
 
-    if (!isDefined(pickableMorphItem) || !isDefined(searchRecord)) {
+    if (!isDefined(pickableMorphItem) || !isDefined(searchRecordStore)) {
       return { searchRecord: null, objectMetadataItem: null };
     }
 
@@ -38,5 +38,5 @@ export const useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId =
       return { searchRecord: null, objectMetadataItem: null };
     }
 
-    return { searchRecord, objectMetadataItem };
+    return { searchRecord: searchRecordStore, objectMetadataItem };
   };
