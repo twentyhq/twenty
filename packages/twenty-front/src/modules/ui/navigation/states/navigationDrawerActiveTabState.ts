@@ -1,4 +1,4 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 import {
   type NavigationDrawerActiveTab,
@@ -6,7 +6,7 @@ import {
 } from '@/ui/navigation/states/navigationDrawerTabs';
 
 export const navigationDrawerActiveTabState =
-  createStateV2<NavigationDrawerActiveTab>({
+  createAtomState<NavigationDrawerActiveTab>({
     key: 'navigationDrawerActiveTab',
     defaultValue: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
   });
