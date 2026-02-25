@@ -8,7 +8,7 @@ import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { type DateGroupKey } from '@/ai/utils/dateGroupKey';
 import { DATE_GROUP_KEYS } from '@/ai/utils/dateGroupKeys';
 import { getDateGroupTitle } from '@/ai/utils/getDateGroupTitle';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetChatThreadsQuery } from '~/generated-metadata/graphql';
 
 const StyledScrollableList = styled.div`
@@ -22,7 +22,7 @@ const StyledScrollableList = styled.div`
 `;
 
 export const NavigationDrawerAIChatThreadsList = () => {
-  const currentThreadId = useRecoilValueV2(currentAIChatThreadStateV2);
+  const currentThreadId = useAtomStateValue(currentAIChatThreadStateV2);
   const { handleThreadClick } = useAIChatThreadClick({
     resetNavigationStack: true,
   });
