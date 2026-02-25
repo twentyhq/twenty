@@ -9,7 +9,6 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { getLogicFunctionSubfolderForFromSource } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder-for-from-source';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
 import {
   FlatUpdateLogicFunctionAction,
@@ -72,10 +71,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
 
     const applicationUniversalIdentifier = flatApplication.universalIdentifier;
 
-    const sourcePathChanged =
-      isDefined(update.sourceHandlerPath) &&
-      update.sourceHandlerPath !== existingLogicFunction.sourceHandlerPath;
-
     const builtPathChanged =
       isDefined(update.builtHandlerPath) &&
       update.builtHandlerPath !== existingLogicFunction.builtHandlerPath;
@@ -89,15 +84,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       { id: entityId, workspaceId },
       update as Parameters<typeof logicFunctionRepository.update>[1],
     );
-
-    if (sourcePathChanged) {
-      await this.fileStorageService.delete({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: getLogicFunctionSubfolderForFromSource(entityId),
-      });
-    }
 
     if (builtPathChanged) {
       await this.fileStorageService.delete({
