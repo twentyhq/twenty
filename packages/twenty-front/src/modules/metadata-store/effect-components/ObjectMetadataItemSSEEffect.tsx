@@ -11,7 +11,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const ObjectMetadataSSEEffect = () => {
+export const ObjectMetadataItemSSEEffect = () => {
   const queryId = 'object-metadata-sse-effect';
 
   const store = useStore();
