@@ -3,11 +3,23 @@ import { generate } from '@genql/cli';
 import * as fs from 'fs-extra';
 import { join } from 'path';
 import {
-  DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
+  DEFAULT_APP_ACCESS_TOKEN_NAME,
   GENERATED_DIR,
 } from 'twenty-shared/application';
+
+type ClientWrapperOptions = {
+  className: string;
+  defaultUrl: string;
+  includeUploadFile: boolean;
+};
+
+const COMMON_SCALAR_TYPES = {
+  DateTime: 'string',
+  JSON: 'Record<string, unknown>',
+  UUID: 'string',
+};
 
 export class ClientService {
   private apiService: ApiService;
@@ -26,30 +38,55 @@ export class ClientService {
     const outputPath = this.resolveGeneratedPath(appPath);
     const tempPath = `${outputPath}.tmp`;
 
-    const getSchemaResponse = await this.apiService.getSchema({ authToken });
+    const [coreSchemaResponse, metadataSchemaResponse] = await Promise.all([
+      this.apiService.getSchema({ authToken }),
+      this.apiService.getMetadataSchema({ authToken }),
+    ]);
 
-    if (!getSchemaResponse.success) {
+    if (!coreSchemaResponse.success) {
       throw new Error(
-        `Failed to introspect schema: ${JSON.stringify(getSchemaResponse.error)}`,
+        `Failed to introspect core schema: ${JSON.stringify(coreSchemaResponse.error)}`,
       );
     }
 
-    const { data: schema } = getSchemaResponse;
+    if (!metadataSchemaResponse.success) {
+      throw new Error(
+        `Failed to introspect metadata schema: ${JSON.stringify(metadataSchemaResponse.error)}`,
+      );
+    }
 
     await fs.ensureDir(tempPath);
     await fs.emptyDir(tempPath);
 
-    await generate({
-      schema,
-      output: tempPath,
-      scalarTypes: {
-        DateTime: 'string',
-        JSON: 'Record<string, unknown>',
-        UUID: 'string',
-      },
+    await Promise.all([
+      generate({
+        schema: coreSchemaResponse.data,
+        output: join(tempPath, 'core'),
+        scalarTypes: COMMON_SCALAR_TYPES,
+      }),
+      generate({
+        schema: metadataSchemaResponse.data,
+        output: join(tempPath, 'metadata'),
+        scalarTypes: {
+          ...COMMON_SCALAR_TYPES,
+          Upload: 'File',
+        },
+      }),
+    ]);
+
+    await this.injectClientWrapper(join(tempPath, 'core'), {
+      className: 'CoreApiClient',
+      defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
+      includeUploadFile: false,
     });
 
-    await this.injectTwentyClient(tempPath);
+    await this.injectClientWrapper(join(tempPath, 'metadata'), {
+      className: 'MetadataApiClient',
+      defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\``,
+      includeUploadFile: true,
+    });
+
+    await this.writeBarrelIndex(tempPath);
 
     await fs.remove(outputPath);
     await fs.move(tempPath, outputPath);
@@ -59,19 +96,89 @@ export class ClientService {
     return join(appPath, 'node_modules', 'twenty-sdk', GENERATED_DIR);
   }
 
-  private async injectTwentyClient(output: string) {
-    const twentyClientContent = `
+  private async writeBarrelIndex(outputDir: string): Promise<void> {
+    const barrelContent = `export { CoreApiClient } from './core/index';
+export { MetadataApiClient } from './metadata/index';
+`;
+
+    await fs.writeFile(join(outputDir, 'index.ts'), barrelContent);
+  }
+
+  private async injectClientWrapper(
+    output: string,
+    options: ClientWrapperOptions,
+  ): Promise<void> {
+    const clientContent = this.buildClientWrapperTemplate(options);
+
+    await fs.appendFile(join(output, 'index.ts'), clientContent);
+  }
+
+  private buildClientWrapperTemplate(options: ClientWrapperOptions): string {
+    const { className, defaultUrl, includeUploadFile } = options;
+
+    const uploadFileMethod = includeUploadFile
+      ? `
+  async uploadFile(
+    fileBuffer: Buffer,
+    filename: string,
+    contentType: string = 'application/octet-stream',
+    fieldMetadataUniversalIdentifier: string,
+  ): Promise<{
+    id: string;
+    path: string;
+    size: number;
+    createdAt: string;
+    url: string;
+  }> {
+    const form = new FormData();
+
+    form.append(
+      'operations',
+      JSON.stringify({
+        query: \`mutation UploadFilesFieldFileByUniversalIdentifier($file: Upload!, $fieldMetadataUniversalIdentifier: String!) {
+        uploadFilesFieldFileByUniversalIdentifier(file: $file, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { id path size createdAt url }
+      }\`,
+        variables: { file: null, fieldMetadataUniversalIdentifier },
+      }),
+    );
+    form.append('map', JSON.stringify({ '0': ['variables.file'] }));
+    form.append('0', new Blob([fileBuffer], { type: contentType }), filename);
+
+    const result = await this.executeGraphqlRequestWithOptionalRefresh({
+      operation: form,
+      headers: {},
+      requestInit: {
+        method: 'POST',
+      },
+    });
+
+    if (result.errors) {
+      throw new GenqlError(result.errors, result.data);
+    }
+
+    const data = result.data as Record<string, unknown>;
+
+    return data.uploadFilesFieldFileByUniversalIdentifier as {
+      id: string;
+      path: string;
+      size: number;
+      createdAt: string;
+      url: string;
+    }
+  }
+`
+      : '';
+
+    return `
 
 // ----------------------------------------------------
-// Custom Twenty client (auto-injected)
+// ${className} (auto-injected)
 // ----------------------------------------------------
 
 const APP_ACCESS_TOKEN_ENV_KEY = '${DEFAULT_APP_ACCESS_TOKEN_NAME}';
 const API_KEY_ENV_KEY = '${DEFAULT_API_KEY_NAME}';
 
-type TwentyClientOptions = ClientOptions & {
-  metadataUrl?: string;
-}
+type ${className}Options = ClientOptions
 
 type ProcessEnvironment = Record<string, string | undefined>
 
@@ -157,39 +264,35 @@ const hasAuthenticationErrorInGraphqlPayload = (
   return payload.errors.some((error) => {
     return (
       error.extensions?.code === 'UNAUTHENTICATED' ||
-      // Fallback for payloads that don't provide structured error codes.
       error.message?.toLowerCase() === 'unauthorized'
     );
   });
 }
 
-const defaultOptions: TwentyClientOptions = {
-  url: \`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\`,
-  metadataUrl: \`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\`,
+const defaultOptions: ${className}Options = {
+  url: ${defaultUrl},
   headers: {
     'Content-Type': 'application/json',
   },
 }
 
-export default class Twenty {
+export class ${className} {
   private client: Client;
   private url: string;
-  private metadataUrl: string;
   private requestOptions: RequestInit;
   private headers: HeadersInit | (() => HeadersInit | Promise<HeadersInit>);
   private fetchImplementation: typeof globalThis.fetch | null;
   private authorizationToken: string | null;
   private refreshAccessTokenPromise: Promise<string | null> | null = null;
 
-  constructor(options?: TwentyClientOptions) {
-    const merged: TwentyClientOptions = {
+  constructor(options?: ${className}Options) {
+    const merged: ${className}Options = {
       ...defaultOptions,
       ...options,
     }
 
     const {
       url,
-      metadataUrl,
       headers,
       fetch: customFetchImplementation,
       fetcher: _fetcher,
@@ -198,7 +301,6 @@ export default class Twenty {
     } = merged;
 
     this.url = url ?? '';
-    this.metadataUrl = metadataUrl ?? this.url.replace(/\\/graphql$/, '/metadata');
     this.requestOptions = requestOptions;
     this.headers = headers ?? {};
     this.fetchImplementation = customFetchImplementation ?? globalThis.fetch ?? null;
@@ -232,71 +334,18 @@ export default class Twenty {
   mutation<R extends MutationGenqlSelection>(request: R & { __name?: string }) {
     return this.client.mutation(request);
   }
-
-  async uploadFile(
-    fileBuffer: Buffer,
-    filename: string,
-    contentType: string = 'application/octet-stream',
-    fieldMetadataUniversalIdentifier: string,
-  ): Promise<{
-    id: string;
-    path: string;
-    size: number;
-    createdAt: string;
-    url: string;
-  }> {
-    const form = new FormData();
-
-    form.append(
-      'operations',
-      JSON.stringify({
-        query: \`mutation UploadFilesFieldFileByUniversalIdentifier($file: Upload!, $fieldMetadataUniversalIdentifier: String!) {
-        uploadFilesFieldFileByUniversalIdentifier(file: $file, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { id path size createdAt url }
-      }\`,
-        variables: { file: null, fieldMetadataUniversalIdentifier },
-      }),
-    );
-    form.append('map', JSON.stringify({ '0': ['variables.file'] }));
-    form.append('0', new Blob([fileBuffer], { type: contentType }), filename);
-
-    const result = await this.executeGraphqlRequestWithOptionalRefresh({
-      operation: form,
-      url: this.metadataUrl,
-      headers: {},
-      requestInit: {
-        method: 'POST',
-      },
-    });
-
-    if (result.errors) {
-      throw new GenqlError(result.errors, result.data);
-    }
-
-    const data = result.data as Record<string, unknown>;
-
-    return data.uploadFilesFieldFileByUniversalIdentifier as {
-      id: string;
-      path: string;
-      size: number;
-      createdAt: string;
-      url: string;
-    }
-  }
-
+${uploadFileMethod}
   private async executeGraphqlRequestWithOptionalRefresh({
     operation,
-    url = this.url,
     headers,
     requestInit,
   }: {
     operation: GraphqlOperation | GraphqlOperation[] | FormData;
-    url?: string;
     headers?: HeadersInit;
     requestInit?: RequestInit;
   }) {
     const firstResponse = await this.executeGraphqlRequest({
       operation,
-      url,
       headers,
       requestInit,
       token: this.authorizationToken,
@@ -308,7 +357,6 @@ export default class Twenty {
       if (refreshedAccessToken) {
         const retryResponse = await this.executeGraphqlRequest({
           operation,
-          url,
           headers,
           requestInit,
           token: refreshedAccessToken,
@@ -323,13 +371,11 @@ export default class Twenty {
 
   private async executeGraphqlRequest({
     operation,
-    url,
     headers,
     requestInit,
     token,
   }: {
     operation: GraphqlOperation | GraphqlOperation[] | FormData;
-    url: string;
     headers?: HeadersInit;
     requestInit?: RequestInit;
     token: string | null;
@@ -359,7 +405,7 @@ export default class Twenty {
       requestHeaders.delete('Authorization');
     }
 
-    const response = await this.fetchImplementation.call(globalThis, url, {
+    const response = await this.fetchImplementation.call(globalThis, this.url, {
       ...this.requestOptions,
       ...requestInit,
       method: requestInit?.method ?? 'POST',
@@ -465,7 +511,5 @@ export default class Twenty {
 }
 
 `;
-
-    await fs.appendFile(join(output, 'index.ts'), twentyClientContent);
   }
 }
