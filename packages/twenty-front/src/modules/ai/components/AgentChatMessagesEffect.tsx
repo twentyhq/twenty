@@ -3,7 +3,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
-import { cloneDeep } from '@apollo/client/utilities';
+import { cloneDeep, type Prettify } from '@apollo/client/utilities';
+import { type ToolUIPart } from 'ai';
 import { atom, useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import {
@@ -35,12 +36,14 @@ export const useProcessAgentMessage = () => {
     const executionMessageParts = agentMessage.parts.filter(
       (part) =>
         part.type === 'tool-execute_tool' && part.state === 'output-available',
-    );
+    ) as ToolUIPart[];
 
     // TODO: detect if messages are incoming or just loaded from chat history.
     if (executionMessageParts.length > 0) {
       for (const executionPart of executionMessageParts) {
-        if (executionPart.output?.toolName === 'navigate_app') {
+        const toolExecutionPart = executionPart as Prettify<ToolUIPart>;
+
+        if (toolExecutionPart.output === 'navigate_app') {
           const navigateAppOutput = executionPart.output?.result
             .result as NavigateAppToolOutput;
 
@@ -84,8 +87,6 @@ const useGetUpdatedAgentMessages = () => {
   const getUpdatedAgentMessages = useCallback(
     (updatedMessages: ExtendedUIMessage[]) => {
       let updatedMessagesToProcess: ExtendedUIMessage[] = [];
-
-      // console.log(JSON.stringify(updatedMessages, null, 2));
 
       store.set(
         atom(null, (get, batchSet) => {
