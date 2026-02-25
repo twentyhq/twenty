@@ -19,6 +19,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   icon?: string;
   applicationVariables?: ApplicationVariables;
   marketplaceData?: ApplicationMarketplaceData;
+  postInstallLogicFunctionUniversalIdentifier?: string;
   packageJsonChecksum: string | null;
   yarnLockChecksum: string | null;
   apiClientChecksum: string | null;

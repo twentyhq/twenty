@@ -2,5 +2,8 @@ import { type ApplicationManifest } from 'twenty-shared/application';
 
 export type ApplicationConfig = Omit<
   ApplicationManifest,
-  'packageJsonChecksum' | 'yarnLockChecksum' | 'apiClientChecksum'
-> & { postInstallLogicFunctionUniversalIdentifier?: string };
+  | 'packageJsonChecksum'
+  | 'yarnLockChecksum'
+  | 'apiClientChecksum'
+  | 'postInstallLogicFunctionUniversalIdentifier'
+>;
