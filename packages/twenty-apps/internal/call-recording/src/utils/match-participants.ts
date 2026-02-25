@@ -1,9 +1,79 @@
+import Twenty from 'twenty-sdk/generated';
+
 export interface Participant {
   id: string;
   name: string;
   isHost: boolean;
   platform: string;
 }
+
+const parseName = (
+  fullName: string,
+): { firstName: string; lastName: string } => {
+  const parts = fullName.trim().split(/\s+/);
+  const firstName = parts[0] ?? '';
+  const lastName = parts.slice(1).join(' ');
+
+  return { firstName, lastName };
+};
+
+const findWorkspaceMember = async (
+  client: InstanceType<typeof Twenty>,
+  firstName: string,
+  lastName: string,
+): Promise<string | null> => {
+  const result: any = await client.query({
+    workspaceMembers: {
+      __args: {
+        filter: {
+          name: {
+            firstName: { ilike: `%${firstName}%` },
+            lastName: { ilike: `%${lastName}%` },
+          },
+        },
+      },
+      edges: {
+        node: {
+          id: true,
+          name: { firstName: true, lastName: true },
+        },
+      },
+    },
+  } as any);
+
+  const firstMatch = result.workspaceMembers?.edges?.[0]?.node;
+
+  return firstMatch?.id ?? null;
+};
+
+const findPerson = async (
+  client: InstanceType<typeof Twenty>,
+  firstName: string,
+  lastName: string,
+): Promise<string | null> => {
+  const result: any = await client.query({
+    people: {
+      __args: {
+        filter: {
+          name: {
+            firstName: { ilike: `%${firstName}%` },
+            lastName: { ilike: `%${lastName}%` },
+          },
+        },
+      },
+      edges: {
+        node: {
+          id: true,
+          name: { firstName: true, lastName: true },
+        },
+      },
+    },
+  } as any);
+
+  const firstMatch = result.people?.edges?.[0]?.node;
+
+  return firstMatch?.id ?? null;
+};
 
 export const matchParticipants = async (
   callRecordingId: string,
@@ -15,13 +85,64 @@ export const matchParticipants = async (
     return;
   }
 
-  console.log(
-    `Matching ${participants.length} participants for call recording ${callRecordingId}`,
-  );
+  const client = new Twenty();
 
   for (const participant of participants) {
+    const { firstName, lastName } = parseName(participant.name);
+
+    if (!firstName) {
+      console.log(
+        `Skipping participant with empty name: ${participant.id}`,
+      );
+      continue;
+    }
+
+    const workspaceMemberId = await findWorkspaceMember(
+      client,
+      firstName,
+      lastName,
+    );
+
+    if (workspaceMemberId) {
+      console.log(
+        `Matched "${participant.name}" to workspace member ${workspaceMemberId}`,
+      );
+
+      await client.mutation({
+        updateWorkspaceMember: {
+          __args: {
+            id: workspaceMemberId,
+            data: { callRecordingId },
+          },
+          id: true,
+        },
+      } as any);
+
+      continue;
+    }
+
+    const personId = await findPerson(client, firstName, lastName);
+
+    if (personId) {
+      console.log(
+        `Matched "${participant.name}" to person ${personId}`,
+      );
+
+      await client.mutation({
+        updatePerson: {
+          __args: {
+            id: personId,
+            data: { callRecordingId },
+          },
+          id: true,
+        },
+      } as any);
+
+      continue;
+    }
+
     console.log(
-      `Participant: name=${participant.name}, id=${participant.id}, isHost=${participant.isHost}, platform=${participant.platform}`,
+      `No match found for participant "${participant.name}"`,
     );
   }
 };

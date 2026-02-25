@@ -1,4 +1,4 @@
-import { COMPANIES_ON_CALL_RECORDING_ID } from 'src/fields/companies-on-call-recording.field';
+import { WORKSPACE_MEMBERS_ON_CALL_RECORDING_ID } from 'src/fields/workspace-members-on-call-recording.field';
 import { PEOPLE_ON_CALL_RECORDING_ID } from 'src/fields/people-on-call-recording.field';
 import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER, CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER, ENDED_AT_FIELD_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER, RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER, STATUS_FIELD_UNIVERSAL_IDENTIFIER, SUMMARY_FIELD_UNIVERSAL_IDENTIFIER, TRANSCRIPT_FIELD_UNIVERSAL_IDENTIFIER, TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
 import { defineView } from 'twenty-sdk';
@@ -64,7 +64,7 @@ export default defineView({
     },
     {
       universalIdentifier: '56925631-0077-4b65-a25a-24afec4d8bff',
-      fieldMetadataUniversalIdentifier: COMPANIES_ON_CALL_RECORDING_ID,
+      fieldMetadataUniversalIdentifier: WORKSPACE_MEMBERS_ON_CALL_RECORDING_ID,
       isVisible: true,
       size: 12,
       position: 7,
