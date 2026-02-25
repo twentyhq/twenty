@@ -49,13 +49,27 @@ export class AuditService {
         properties: TrackEventProperties<T> & {
           recordId: string;
           objectMetadataId: string;
+          isCustom?: boolean;
         },
-      ) =>
-        this.preventIfDisabled(() =>
+      ) => {
+        const { recordId, objectMetadataId, isCustom, ...restProperties } =
+          properties;
+
+        return this.preventIfDisabled(() =>
           this.clickHouseService.insert('objectEvent', [
-            { ...contextFields, ...makeTrackEvent(event, properties) },
+            {
+              ...contextFields,
+              ...makeTrackEvent(
+                event,
+                restProperties as unknown as TrackEventProperties<T>,
+              ),
+              recordId,
+              objectMetadataId,
+              isCustom,
+            },
           ]),
-        ),
+        );
+      },
       createPageviewEvent: (
         name: string,
         properties: Partial<PageviewProperties>,
