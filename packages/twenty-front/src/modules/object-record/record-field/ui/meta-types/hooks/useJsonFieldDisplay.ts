@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { type FieldJsonValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 import { useFormattedJsonFieldValue } from '@/object-record/record-field/ui/meta-types/hooks/useFormattedJsonFieldValue';
-import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useJsonFieldDisplay = () => {
@@ -12,7 +12,7 @@ export const useJsonFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValueV2<FieldJsonValue | undefined>(
+  const fieldValue = useRecordFieldValue<FieldJsonValue | undefined>(
     recordId,
     fieldName,
     fieldDefinition,

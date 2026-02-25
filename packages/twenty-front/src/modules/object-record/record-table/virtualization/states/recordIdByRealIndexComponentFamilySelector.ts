@@ -1,11 +1,11 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
-import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilySelectorV2';
+import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const recordIdByRealIndexComponentFamilySelector =
-  createComponentFamilySelectorV2<Nullable<string>, Nullable<number>>({
+  createAtomComponentFamilySelector<Nullable<string>, Nullable<number>>({
     key: 'recordIdByRealIndexComponentFamilySelector',
     componentInstanceContext: RecordTableComponentInstanceContext,
     get:

@@ -1,8 +1,10 @@
 import { type PublicFeatureFlag } from '~/generated-metadata/graphql';
 
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const labPublicFeatureFlagsStateV2 = createStateV2<PublicFeatureFlag[]>({
+export const labPublicFeatureFlagsStateV2 = createAtomState<
+  PublicFeatureFlag[]
+>({
   key: 'labPublicFeatureFlagsStateV2',
   defaultValue: [],
 });

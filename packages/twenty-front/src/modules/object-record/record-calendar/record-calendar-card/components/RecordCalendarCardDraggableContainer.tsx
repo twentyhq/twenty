@@ -8,7 +8,7 @@ import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar
 import { RecordCalendarCard } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledDraggableContainer = styled.div`
@@ -36,7 +36,7 @@ export const RecordCalendarCardDraggableContainer = ({
     objectMetadataItem.id,
   );
 
-  const recordIndexCalendarFieldMetadataId = useRecoilValueV2(
+  const recordIndexCalendarFieldMetadataId = useAtomStateValue(
     recordIndexCalendarFieldMetadataIdState,
   );
 

@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -17,7 +17,10 @@ describe('useUpsertRecordsInStore', () => {
 
     const { result } = renderHook(
       () => {
-        const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
+        const record = useAtomFamilyStateValue(
+          recordStoreFamilyState,
+          recordId,
+        );
         const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
         return { record, upsertRecordsInStore };
@@ -53,7 +56,10 @@ describe('useUpsertRecordsInStore', () => {
 
     const { result } = renderHook(
       () => {
-        const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
+        const record = useAtomFamilyStateValue(
+          recordStoreFamilyState,
+          recordId,
+        );
         const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
         return { record, upsertRecordsInStore };
@@ -111,7 +117,10 @@ describe('useUpsertRecordsInStore', () => {
 
     const { result } = renderHook(
       () => {
-        const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
+        const record = useAtomFamilyStateValue(
+          recordStoreFamilyState,
+          recordId,
+        );
         const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
         return { record, upsertRecordsInStore };

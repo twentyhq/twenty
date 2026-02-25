@@ -7,8 +7,8 @@ import { SPREADSHEET_IMPORT_MODAL_ID } from '@/spreadsheet-import/constants/Spre
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { matchColumnsState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const SpreadsheetImport = React.lazy(() =>
   import('./SpreadsheetImport').then((module) => ({
@@ -35,10 +35,11 @@ type SpreadsheetImportProviderProps = React.PropsWithChildren;
 export const SpreadsheetImportProvider = (
   props: SpreadsheetImportProviderProps,
 ) => {
-  const [spreadsheetImportDialog, setSpreadsheetImportDialog] =
-    useRecoilStateV2(spreadsheetImportDialogState);
+  const [spreadsheetImportDialog, setSpreadsheetImportDialog] = useAtomState(
+    spreadsheetImportDialogState,
+  );
 
-  const setMatchColumnsState = useSetRecoilStateV2(matchColumnsState);
+  const setMatchColumnsState = useSetAtomState(matchColumnsState);
 
   const { closeModal } = useModal();
 

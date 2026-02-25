@@ -6,8 +6,8 @@ import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/page
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,7 +22,7 @@ export const PageLayoutInitializationQueryEffect = ({
   pageLayoutId,
   onInitialized,
 }: PageLayoutInitializationQueryEffectProps) => {
-  const [isInitialized, setIsInitialized] = useRecoilComponentStateV2(
+  const [isInitialized, setIsInitialized] = useAtomComponentState(
     pageLayoutIsInitializedComponentState,
   );
 
@@ -31,15 +31,13 @@ export const PageLayoutInitializationQueryEffect = ({
   const pageLayout = usePageLayoutWithRelationWidgets(basePageLayout);
 
   const pageLayoutPersistedComponentCallbackState =
-    useRecoilComponentStateCallbackStateV2(pageLayoutPersistedComponentState);
+    useAtomComponentStateCallbackState(pageLayoutPersistedComponentState);
 
   const pageLayoutDraftComponentCallbackState =
-    useRecoilComponentStateCallbackStateV2(pageLayoutDraftComponentState);
+    useAtomComponentStateCallbackState(pageLayoutDraftComponentState);
 
   const pageLayoutCurrentLayoutsComponentCallbackState =
-    useRecoilComponentStateCallbackStateV2(
-      pageLayoutCurrentLayoutsComponentState,
-    );
+    useAtomComponentStateCallbackState(pageLayoutCurrentLayoutsComponentState);
 
   const store = useStore();
 

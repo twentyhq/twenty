@@ -1,7 +1,7 @@
 import { type IconComponent } from 'twenty-ui/display';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const commandMenuPageInfoState = createStateV2<{
+export const commandMenuPageInfoState = createAtomState<{
   title?: string;
   Icon?: IconComponent;
   instanceId: string;

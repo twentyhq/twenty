@@ -6,7 +6,7 @@ import { RelationFromManyFieldDisplay } from '@/object-record/record-field/ui/me
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
@@ -19,7 +19,7 @@ import {
 } from './relationFromManyFieldDisplayMock';
 
 const RelationFieldValueSetterEffect = () => {
-  const setEntity = useSetFamilyRecoilStateV2(
+  const setEntity = useSetAtomFamilyState(
     recordStoreFamilyState,
     relationFromManyFieldDisplayMock.entityValue.id,
   );

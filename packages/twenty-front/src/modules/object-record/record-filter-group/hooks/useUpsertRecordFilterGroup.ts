@@ -1,12 +1,12 @@
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useContext } from 'react';
 
 export const useUpsertRecordFilterGroup = () => {
-  const currentRecordFilterGroups = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilterGroups = useAtomComponentStateCallbackState(
     currentRecordFilterGroupsComponentState,
   );
   const store = useStore();

@@ -12,9 +12,9 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import styled from '@emotion/styled';
 import { useCallback, useRef, useState } from 'react';
 import { useStore } from 'jotai';
@@ -55,7 +55,7 @@ export const RecordTableContent = ({
     handleDragSelectionEnd();
   };
 
-  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
+  const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
@@ -73,12 +73,12 @@ export const RecordTableContent = ({
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const setRecordTableHoverPosition = useSetRecoilComponentStateV2(
+  const setRecordTableHoverPosition = useSetAtomComponentState(
     recordTableHoverPositionComponentState,
     recordTableId,
   );
 
-  const isSomeCellInEditMode = useRecoilComponentSelectorCallbackStateV2(
+  const isSomeCellInEditMode = useAtomComponentSelectorCallbackState(
     isSomeCellInEditModeComponentSelector,
     recordTableId,
   );

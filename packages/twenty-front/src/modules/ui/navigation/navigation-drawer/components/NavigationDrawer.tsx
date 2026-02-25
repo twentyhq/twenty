@@ -16,8 +16,8 @@ import {
   navigationDrawerWidthState,
 } from '@/ui/navigation/states/navigationDrawerWidthState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
@@ -82,14 +82,14 @@ export const NavigationDrawer = ({
   const isSettingsDrawer = useIsSettingsDrawer();
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useRecoilStateV2(isNavigationDrawerExpandedState);
-  const [navigationDrawerWidth, setNavigationDrawerWidth] = useRecoilStateV2(
+    useAtomState(isNavigationDrawerExpandedState);
+  const [navigationDrawerWidth, setNavigationDrawerWidth] = useAtomState(
     navigationDrawerWidthState,
   );
-  const setNavigationDrawerActiveTab = useSetRecoilStateV2(
+  const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
-  const setTableWidthResizeIsActive = useSetRecoilStateV2(
+  const setTableWidthResizeIsActive = useSetAtomState(
     tableWidthResizeIsActiveState,
   );
 

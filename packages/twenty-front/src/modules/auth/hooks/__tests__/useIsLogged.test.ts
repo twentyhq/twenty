@@ -3,13 +3,13 @@ import { RecoilRoot } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const isLogged = useIsLogged();
-      const setTokenPair = useSetRecoilStateV2(tokenPairState);
+      const setTokenPair = useSetAtomState(tokenPairState);
 
       return {
         isLogged,

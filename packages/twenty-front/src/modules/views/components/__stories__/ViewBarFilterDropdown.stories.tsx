@@ -7,7 +7,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
@@ -17,7 +17,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -38,16 +38,16 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
       )!;
       const instanceId = companyObjectMetadataItem.id;
 
-      const setCurrentRecordFields = useSetRecoilComponentStateV2(
+      const setCurrentRecordFields = useSetAtomComponentState(
         currentRecordFieldsComponentState,
         instanceId,
       );
 
-      const setCoreViews = useSetRecoilStateV2(coreViewsState);
+      const setCoreViews = useSetAtomState(coreViewsState);
 
       const mockCoreView = mockedCoreViewsData[0];
 
-      const setCurrentViewId = useSetRecoilComponentStateV2(
+      const setCurrentViewId = useSetAtomComponentState(
         contextStoreCurrentViewIdComponentState,
         MAIN_CONTEXT_STORE_INSTANCE_ID,
       );

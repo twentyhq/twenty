@@ -1,13 +1,13 @@
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordStoreRecordsFamilyKey = {
   recordIds: string[];
 };
 
-export const recordStoreRecordsSelectorV2 = createFamilySelectorV2<
+export const recordStoreRecordsSelectorV2 = createAtomFamilySelector<
   ObjectRecord[],
   RecordStoreRecordsFamilyKey
 >({

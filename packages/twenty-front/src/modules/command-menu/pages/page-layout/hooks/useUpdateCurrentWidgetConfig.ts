@@ -1,18 +1,18 @@
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import type { PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
-  const pageLayoutDraft = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraft = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
     pageLayoutIdFromProps,
   );
 
-  const currentlyEditingWidgetId = useRecoilComponentValueV2(
+  const currentlyEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutIdFromProps,
   );

@@ -1,5 +1,5 @@
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { act, renderHook } from '@testing-library/react';
 import { useSetAtom } from 'jotai';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -14,7 +14,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
     const { result } = renderHook(
       () => ({
         handler: usePageLayoutHandleLayoutChange(PAGE_LAYOUT_TEST_INSTANCE_ID),
-        layouts: useRecoilComponentValueV2(
+        layouts: useAtomComponentStateValue(
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -57,7 +57,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
     const { result } = renderHook(
       () => ({
         handler: usePageLayoutHandleLayoutChange(PAGE_LAYOUT_TEST_INSTANCE_ID),
-        layouts: useRecoilComponentValueV2(
+        layouts: useAtomComponentStateValue(
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -92,7 +92,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
     const { result } = renderHook(
       () => ({
         handler: usePageLayoutHandleLayoutChange(PAGE_LAYOUT_TEST_INSTANCE_ID),
-        layouts: useRecoilComponentValueV2(
+        layouts: useAtomComponentStateValue(
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),

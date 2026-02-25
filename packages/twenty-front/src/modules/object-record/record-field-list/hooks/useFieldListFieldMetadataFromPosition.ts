@@ -1,7 +1,7 @@
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { recordFieldListCellEditModePositionComponentState } from '@/object-record/record-field-list/states/recordFieldListCellEditModePositionComponentState';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseFieldListFieldMetadataFromPositionProps = {
@@ -11,11 +11,11 @@ type UseFieldListFieldMetadataFromPositionProps = {
 export const useFieldListFieldMetadataFromPosition = ({
   objectNameSingular,
 }: UseFieldListFieldMetadataFromPositionProps) => {
-  const hoverPosition = useRecoilComponentValueV2(
+  const hoverPosition = useAtomComponentStateValue(
     recordFieldListHoverPositionComponentState,
   );
 
-  const editModePosition = useRecoilComponentValueV2(
+  const editModePosition = useAtomComponentStateValue(
     recordFieldListCellEditModePositionComponentState,
   );
 

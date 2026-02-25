@@ -1,8 +1,8 @@
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const currentRecordFiltersComponentState = createComponentStateV2<
+export const currentRecordFiltersComponentState = createAtomComponentState<
   RecordFilter[]
 >({
   key: 'currentRecordFiltersComponentState',

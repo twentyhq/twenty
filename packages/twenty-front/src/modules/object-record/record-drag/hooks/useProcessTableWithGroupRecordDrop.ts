@@ -16,10 +16,10 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useProcessTableWithGroupRecordDrop = () => {
   const store = useStore();
@@ -31,32 +31,31 @@ export const useProcessTableWithGroupRecordDrop = () => {
 
   const { openModal } = useModal();
 
-  const recordIdsByGroupFamilyState =
-    useRecoilComponentFamilyStateCallbackStateV2(
-      recordIndexRecordIdsByGroupComponentFamilyState,
-    );
+  const recordIdsByGroupFamilyState = useAtomComponentFamilyStateCallbackState(
+    recordIndexRecordIdsByGroupComponentFamilyState,
+  );
 
-  const currentRecordSorts = useRecoilComponentStateCallbackStateV2(
+  const currentRecordSorts = useAtomComponentStateCallbackState(
     currentRecordSortsComponentState,
     recordTableId,
   );
 
-  const selectedRowIds = useRecoilComponentSelectorCallbackStateV2(
+  const selectedRowIds = useAtomComponentSelectorCallbackState(
     selectedRowIdsComponentSelector,
     recordTableId,
   );
 
-  const isDraggingRecord = useRecoilComponentStateCallbackStateV2(
+  const isDraggingRecord = useAtomComponentStateCallbackState(
     isDraggingRecordComponentState,
     recordIndexId,
   );
 
-  const originalDragSelection = useRecoilComponentStateCallbackStateV2(
+  const originalDragSelection = useAtomComponentStateCallbackState(
     originalDragSelectionComponentState,
     recordIndexId,
   );
 
-  const groupFieldMetadata = useRecoilComponentValueV2(
+  const groupFieldMetadata = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 

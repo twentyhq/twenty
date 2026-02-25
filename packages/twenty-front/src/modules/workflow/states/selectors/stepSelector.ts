@@ -1,11 +1,11 @@
-import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
+import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import type { WorkflowAction } from '@/workflow/types/Workflow';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 
 export const createStepSelector = (stepId: string) =>
-  createComponentSelectorV2<WorkflowAction | null>({
+  createAtomComponentSelector<WorkflowAction | null>({
     key: `stepSelector-${stepId}`,
     get:
       (componentStateKey) =>

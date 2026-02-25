@@ -1,8 +1,8 @@
 import { type FileUIPart } from 'ai';
 
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const agentChatUploadedFilesStateV2 = createStateV2<FileUIPart[]>({
+export const agentChatUploadedFilesStateV2 = createAtomState<FileUIPart[]>({
   key: 'ai/agentChatUploadedFilesStateV2',
   defaultValue: [],
 });

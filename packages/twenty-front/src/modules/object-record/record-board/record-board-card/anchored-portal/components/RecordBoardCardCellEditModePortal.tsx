@@ -1,4 +1,4 @@
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCardInputContextProvider } from '@/object-record/record-board/record-board-card/anchored-portal/components/RecordBoardCardInputContextProvider';
@@ -16,7 +16,7 @@ export const RecordBoardCardCellEditModePortal = () => {
   const { objectMetadataItem } = useContext(RecordBoardContext);
   const { recordId } = useContext(RecordBoardCardContext);
 
-  const editModePosition = useRecoilComponentValueV2(
+  const editModePosition = useAtomComponentStateValue(
     recordBoardCardEditModePositionComponentState,
   );
 

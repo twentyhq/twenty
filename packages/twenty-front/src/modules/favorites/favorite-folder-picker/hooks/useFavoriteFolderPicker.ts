@@ -6,8 +6,8 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,16 +26,15 @@ export const useFavoriteFolderPicker = ({
   record,
   objectNameSingular,
 }: useFavoriteFolderPickerProps): useFavoriteFolderPickerReturnType => {
-  const favoriteFoldersMultiSelectChecked =
-    useRecoilComponentStateCallbackStateV2(
-      favoriteFolderPickerCheckedComponentState,
-    );
+  const favoriteFoldersMultiSelectChecked = useAtomComponentStateCallbackState(
+    favoriteFolderPickerCheckedComponentState,
+  );
 
   const { sortedFavorites: favorites } = useFavorites();
   const { createFavorite } = useCreateFavorite();
   const { deleteFavorite } = useDeleteFavorite();
 
-  const favoriteFolders = useRecoilComponentSelectorValueV2(
+  const favoriteFolders = useAtomComponentSelectorValue(
     favoriteFoldersComponentSelector,
   );
 

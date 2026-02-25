@@ -3,7 +3,7 @@ import {
   type RecordGroupDefinition,
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
@@ -25,7 +25,7 @@ export const RecordGroupMenuItemDraggable = ({
   onVisibilityChange,
   isVisibleLimitReached = false,
 }: RecordGroupMenuItemDraggableProps) => {
-  const recordGroup = useFamilyRecoilValueV2(
+  const recordGroup = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
     recordGroupId,
   );

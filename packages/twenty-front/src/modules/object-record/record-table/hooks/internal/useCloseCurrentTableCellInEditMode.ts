@@ -5,15 +5,14 @@ import { recordTableCellEditModePositionComponentState } from '@/object-record/r
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useRemoveLastFocusItemFromFocusStackByComponentType } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackByComponentType';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
   const store = useStore();
-  const currentTableCellInEditModePosition =
-    useRecoilComponentStateCallbackStateV2(
-      recordTableCellEditModePositionComponentState,
-      recordTableId,
-    );
+  const currentTableCellInEditModePosition = useAtomComponentStateCallbackState(
+    recordTableCellEditModePositionComponentState,
+    recordTableId,
+  );
 
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();

@@ -1,10 +1,10 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import {
   type MetadataGqlOperationSignature,
   type RecordGqlOperationSignature,
 } from 'twenty-shared/types';
 
-export const requiredQueryListenersState = createStateV2<
+export const requiredQueryListenersState = createAtomState<
   {
     queryId: string;
     operationSignature:

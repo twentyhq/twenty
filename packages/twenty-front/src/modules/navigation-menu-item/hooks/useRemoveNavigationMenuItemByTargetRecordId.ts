@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { FIND_MANY_NAVIGATION_MENU_ITEMS } from '@/navigation-menu-item/graphql/queries/findManyNavigationMenuItems';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
 
@@ -12,7 +12,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
   const apolloCoreClient = useApolloCoreClient();
   const cache = apolloCoreClient.cache;
 
-  const setNavigationMenuItemsState = useSetRecoilStateV2(
+  const setNavigationMenuItemsState = useSetAtomState(
     prefetchNavigationMenuItemsState,
   );
 

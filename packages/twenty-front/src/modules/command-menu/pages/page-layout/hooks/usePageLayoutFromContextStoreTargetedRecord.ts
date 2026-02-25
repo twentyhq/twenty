@@ -1,10 +1,10 @@
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const usePageLayoutIdFromContextStoreTargetedRecord = () => {
-  const targetedRecordsRule = useRecoilComponentValueV2(
+  const targetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
@@ -19,7 +19,7 @@ export const usePageLayoutIdFromContextStoreTargetedRecord = () => {
 
   const recordId: string = targetedRecordsRule.selectedRecordIds[0];
 
-  const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
+  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   return { pageLayoutId: record?.pageLayoutId };
 };

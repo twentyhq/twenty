@@ -4,13 +4,13 @@ import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
 
 export const useAiModelOptions = (
   includeDeprecated = false,
 ): SelectOption<string>[] => {
-  const aiModels = useRecoilValueV2(aiModelsState);
+  const aiModels = useAtomStateValue(aiModelsState);
   const { isModelEnabled } = useWorkspaceAiModelAvailability();
 
   return aiModels
@@ -34,7 +34,7 @@ export const useAiModelLabel = (
   modelId: string | undefined,
   includeProvider = true,
 ): string => {
-  const aiModels = useRecoilValueV2(aiModelsState);
+  const aiModels = useAtomStateValue(aiModelsState);
 
   if (!modelId) {
     return '';

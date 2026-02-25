@@ -7,11 +7,11 @@ import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
-  const activeTab = useRecoilValueV2(navigationDrawerActiveTabState);
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const activeTab = useAtomStateValue(navigationDrawerActiveTabState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   return (
     <NavigationDrawer

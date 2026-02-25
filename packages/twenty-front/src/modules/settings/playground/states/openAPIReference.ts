@@ -1,5 +1,5 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
-export const openAPIReferenceState = createStateV2<any>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const openAPIReferenceState = createAtomState<any>({
   key: 'OpenAPIReference',
   defaultValue: null,
 });

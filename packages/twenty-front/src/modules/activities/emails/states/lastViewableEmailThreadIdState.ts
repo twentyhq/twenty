@@ -1,5 +1,5 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
-export const emailThreadIdWhenEmailThreadWasClosedState = createStateV2<
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const emailThreadIdWhenEmailThreadWasClosedState = createAtomState<
   string | null
 >({
   key: 'emailThreadIdWhenEmailThreadWasClosedState',

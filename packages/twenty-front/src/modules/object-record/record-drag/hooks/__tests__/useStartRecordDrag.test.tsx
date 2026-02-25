@@ -7,7 +7,7 @@ import { draggedRecordIdsComponentState } from '@/object-record/record-drag/stat
 import { isMultiDragActiveComponentState } from '@/object-record/record-drag/states/isMultiDragActiveComponentState';
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const createDragStart = (draggableId: string, index: number): DragStart => ({
@@ -26,16 +26,16 @@ describe('useStartRecordDrag', () => {
   it('should set single drag state when dragged record is not in selection', () => {
     const { result } = renderHook(
       () => {
-        const isMultiDragActive = useRecoilComponentValueV2(
+        const isMultiDragActive = useAtomComponentStateValue(
           isMultiDragActiveComponentState,
         );
-        const draggedRecordIds = useRecoilComponentValueV2(
+        const draggedRecordIds = useAtomComponentStateValue(
           draggedRecordIdsComponentState,
         );
-        const primaryDraggedRecordId = useRecoilComponentValueV2(
+        const primaryDraggedRecordId = useAtomComponentStateValue(
           primaryDraggedRecordIdComponentState,
         );
-        const originalSelection = useRecoilComponentValueV2(
+        const originalSelection = useAtomComponentStateValue(
           originalDragSelectionComponentState,
         );
 
@@ -68,16 +68,16 @@ describe('useStartRecordDrag', () => {
   it('should set single drag state when only one record is selected', () => {
     const { result } = renderHook(
       () => {
-        const isMultiDragActive = useRecoilComponentValueV2(
+        const isMultiDragActive = useAtomComponentStateValue(
           isMultiDragActiveComponentState,
         );
-        const draggedRecordIds = useRecoilComponentValueV2(
+        const draggedRecordIds = useAtomComponentStateValue(
           draggedRecordIdsComponentState,
         );
-        const primaryDraggedRecordId = useRecoilComponentValueV2(
+        const primaryDraggedRecordId = useAtomComponentStateValue(
           primaryDraggedRecordIdComponentState,
         );
-        const originalSelection = useRecoilComponentValueV2(
+        const originalSelection = useAtomComponentStateValue(
           originalDragSelectionComponentState,
         );
 
@@ -110,16 +110,16 @@ describe('useStartRecordDrag', () => {
   it('should set multi drag state when multiple records are selected', () => {
     const { result } = renderHook(
       () => {
-        const isMultiDragActive = useRecoilComponentValueV2(
+        const isMultiDragActive = useAtomComponentStateValue(
           isMultiDragActiveComponentState,
         );
-        const draggedRecordIds = useRecoilComponentValueV2(
+        const draggedRecordIds = useAtomComponentStateValue(
           draggedRecordIdsComponentState,
         );
-        const primaryDraggedRecordId = useRecoilComponentValueV2(
+        const primaryDraggedRecordId = useAtomComponentStateValue(
           primaryDraggedRecordIdComponentState,
         );
-        const originalSelection = useRecoilComponentValueV2(
+        const originalSelection = useAtomComponentStateValue(
           originalDragSelectionComponentState,
         );
 
@@ -160,16 +160,16 @@ describe('useStartRecordDrag', () => {
   it('should handle empty selection', () => {
     const { result } = renderHook(
       () => {
-        const isMultiDragActive = useRecoilComponentValueV2(
+        const isMultiDragActive = useAtomComponentStateValue(
           isMultiDragActiveComponentState,
         );
-        const draggedRecordIds = useRecoilComponentValueV2(
+        const draggedRecordIds = useAtomComponentStateValue(
           draggedRecordIdsComponentState,
         );
-        const primaryDraggedRecordId = useRecoilComponentValueV2(
+        const primaryDraggedRecordId = useAtomComponentStateValue(
           primaryDraggedRecordIdComponentState,
         );
-        const originalSelection = useRecoilComponentValueV2(
+        const originalSelection = useAtomComponentStateValue(
           originalDragSelectionComponentState,
         );
 
@@ -202,16 +202,16 @@ describe('useStartRecordDrag', () => {
   it('should set single drag state when dragged record is not in selection', () => {
     const { result } = renderHook(
       () => {
-        const isMultiDragActive = useRecoilComponentValueV2(
+        const isMultiDragActive = useAtomComponentStateValue(
           isMultiDragActiveComponentState,
         );
-        const draggedRecordIds = useRecoilComponentValueV2(
+        const draggedRecordIds = useAtomComponentStateValue(
           draggedRecordIdsComponentState,
         );
-        const primaryDraggedRecordId = useRecoilComponentValueV2(
+        const primaryDraggedRecordId = useAtomComponentStateValue(
           primaryDraggedRecordIdComponentState,
         );
-        const originalSelection = useRecoilComponentValueV2(
+        const originalSelection = useAtomComponentStateValue(
           originalDragSelectionComponentState,
         );
 
@@ -244,16 +244,16 @@ describe('useStartRecordDrag', () => {
   it('should set multi drag state when multiple records are selected', () => {
     const { result } = renderHook(
       () => {
-        const isMultiDragActive = useRecoilComponentValueV2(
+        const isMultiDragActive = useAtomComponentStateValue(
           isMultiDragActiveComponentState,
         );
-        const draggedRecordIds = useRecoilComponentValueV2(
+        const draggedRecordIds = useAtomComponentStateValue(
           draggedRecordIdsComponentState,
         );
-        const primaryDraggedRecordId = useRecoilComponentValueV2(
+        const primaryDraggedRecordId = useAtomComponentStateValue(
           primaryDraggedRecordIdComponentState,
         );
-        const originalSelection = useRecoilComponentValueV2(
+        const originalSelection = useAtomComponentStateValue(
           originalDragSelectionComponentState,
         );
 

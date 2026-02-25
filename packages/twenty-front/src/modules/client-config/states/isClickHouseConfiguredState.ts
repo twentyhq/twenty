@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const isClickHouseConfiguredState = createStateV2<boolean>({
+export const isClickHouseConfiguredState = createAtomState<boolean>({
   key: 'isClickHouseConfigured',
   defaultValue: false,
 });

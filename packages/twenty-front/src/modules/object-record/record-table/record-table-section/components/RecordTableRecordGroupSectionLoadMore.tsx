@@ -3,7 +3,7 @@ import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { t } from '@lingui/core/macro';
 import { IconArrowDown } from 'twenty-ui/display';
 
@@ -15,7 +15,7 @@ export const RecordTableRecordGroupSectionLoadMore = () => {
   const { fetchMoreRecordsLazy } =
     useRecordIndexTableFetchMore(objectNameSingular);
 
-  const hasFetchedAllRecords = useRecoilComponentFamilyValueV2(
+  const hasFetchedAllRecords = useAtomComponentFamilyStateValue(
     recordIndexHasFetchedAllRecordsByGroupComponentState,
     currentRecordGroupId,
   );

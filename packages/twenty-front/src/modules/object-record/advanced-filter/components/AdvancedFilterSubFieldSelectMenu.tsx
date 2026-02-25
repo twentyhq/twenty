@@ -1,8 +1,8 @@
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -37,21 +37,19 @@ export const AdvancedFilterSubFieldSelectMenu = ({
 }: AdvancedFilterSubFieldSelectMenuProps) => {
   const { getIcon } = useIcons();
 
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
+  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const [, setObjectFilterDropdownIsSelectingCompositeField] =
-    useRecoilComponentStateV2(
+    useAtomComponentState(
       objectFilterDropdownIsSelectingCompositeFieldComponentState,
     );
 
   const [
     objectFilterDropdownSubMenuFieldType,
     setObjectFilterDropdownSubMenuFieldType,
-  ] = useRecoilComponentStateV2(
-    objectFilterDropdownSubMenuFieldTypeComponentState,
-  );
+  ] = useAtomComponentState(objectFilterDropdownSubMenuFieldTypeComponentState);
 
   const { closeAdvancedFilterFieldSelectDropdown } =
     useAdvancedFilterFieldSelectDropdown(recordFilterId);
@@ -84,7 +82,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
   const { advancedFilterFieldSelectDropdownId } =
     useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     advancedFilterFieldSelectDropdownId,
   );

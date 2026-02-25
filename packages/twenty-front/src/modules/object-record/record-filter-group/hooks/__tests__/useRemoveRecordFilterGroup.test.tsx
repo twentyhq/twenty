@@ -6,7 +6,7 @@ import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -28,7 +28,7 @@ describe('useRemoveRecordFilterGroup', () => {
   it('should remove an existing record filter group', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilterGroups = useRecoilComponentValueV2(
+        const currentRecordFilterGroups = useAtomComponentStateValue(
           currentRecordFilterGroupsComponentState,
           'test',
         );
@@ -72,7 +72,7 @@ describe('useRemoveRecordFilterGroup', () => {
   it('should not modify record filter groups when trying to remove a non-existent record filter group', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilterGroups = useRecoilComponentValueV2(
+        const currentRecordFilterGroups = useAtomComponentStateValue(
           currentRecordFilterGroupsComponentState,
           'test',
         );

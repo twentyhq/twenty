@@ -5,8 +5,8 @@ import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/r
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -17,16 +17,15 @@ export const useResetRecordBoardSelection = (recordBoardId?: string) => {
   );
 
   const isRecordBoardCardSelectedFamilyState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       isRecordBoardCardSelectedComponentFamilyState,
       recordBoardId,
     );
 
-  const recordBoardSelectedRecordIds =
-    useRecoilComponentSelectorCallbackStateV2(
-      recordBoardSelectedRecordIdsComponentSelector,
-      recordBoardId,
-    );
+  const recordBoardSelectedRecordIds = useAtomComponentSelectorCallbackState(
+    recordBoardSelectedRecordIdsComponentSelector,
+    recordBoardId,
+  );
 
   const { closeDropdown } = useCloseDropdown();
   const store = useStore();

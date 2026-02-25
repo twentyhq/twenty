@@ -8,8 +8,8 @@ import { RecordTableRow } from '@/object-record/record-table/record-table-row/co
 import { RecordTableRecordGroupSectionAddNew } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew';
 import { RecordTableRecordGroupSectionLoadMore } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,16 +18,16 @@ export const RecordTableRecordGroupRows = () => {
 
   const shouldHide = useShouldHideRecordGroup(currentRecordGroupId);
 
-  const allRecordIds = useRecoilComponentSelectorValueV2(
+  const allRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
+  const recordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     currentRecordGroupId,
   );
 
-  const isRecordGroupTableSectionToggled = useRecoilComponentFamilyValueV2(
+  const isRecordGroupTableSectionToggled = useAtomComponentFamilyStateValue(
     isRecordGroupTableSectionToggledComponentState,
     currentRecordGroupId,
   );

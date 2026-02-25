@@ -8,8 +8,8 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { injectRelationWidgetsIntoLayout } from '@/page-layout/utils/injectRelationWidgetsIntoLayout';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,7 +25,7 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
 }: PageLayoutRelationWidgetsSyncEffectProps) => {
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
-  const isInitialized = useRecoilComponentValueV2(
+  const isInitialized = useAtomComponentStateValue(
     pageLayoutIsInitializedComponentState,
   );
 
@@ -36,15 +36,13 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
   });
 
   const pageLayoutPersistedComponentCallbackState =
-    useRecoilComponentStateCallbackStateV2(pageLayoutPersistedComponentState);
+    useAtomComponentStateCallbackState(pageLayoutPersistedComponentState);
 
   const pageLayoutDraftComponentCallbackState =
-    useRecoilComponentStateCallbackStateV2(pageLayoutDraftComponentState);
+    useAtomComponentStateCallbackState(pageLayoutDraftComponentState);
 
   const pageLayoutCurrentLayoutsComponentCallbackState =
-    useRecoilComponentStateCallbackStateV2(
-      pageLayoutCurrentLayoutsComponentState,
-    );
+    useAtomComponentStateCallbackState(pageLayoutCurrentLayoutsComponentState);
 
   const store = useStore();
 

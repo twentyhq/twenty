@@ -31,8 +31,8 @@ import { isAttachmentPreviewEnabledStateV2 } from '@/client-config/states/isAtta
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { getClientConfig } from '@/client-config/utils/getClientConfig';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useStore } from 'jotai';
 
 type UseClientConfigResult = {
@@ -45,91 +45,87 @@ type UseClientConfigResult = {
 
 export const useClientConfig = (): UseClientConfigResult => {
   const store = useStore();
-  const setIsAnalyticsEnabled = useSetRecoilStateV2(isAnalyticsEnabledState);
-  const setDomainConfiguration = useSetRecoilStateV2(domainConfigurationState);
-  const setAuthProviders = useSetRecoilStateV2(authProvidersState);
-  const setAiModels = useSetRecoilStateV2(aiModelsState);
+  const setIsAnalyticsEnabled = useSetAtomState(isAnalyticsEnabledState);
+  const setDomainConfiguration = useSetAtomState(domainConfigurationState);
+  const setAuthProviders = useSetAtomState(authProvidersState);
+  const setAiModels = useSetAtomState(aiModelsState);
 
-  const setIsDeveloperDefaultSignInPrefilled = useSetRecoilStateV2(
+  const setIsDeveloperDefaultSignInPrefilled = useSetAtomState(
     isDeveloperDefaultSignInPrefilledState,
   );
-  const setIsMultiWorkspaceEnabled = useSetRecoilStateV2(
+  const setIsMultiWorkspaceEnabled = useSetAtomState(
     isMultiWorkspaceEnabledState,
   );
-  const setIsEmailVerificationRequired = useSetRecoilStateV2(
+  const setIsEmailVerificationRequired = useSetAtomState(
     isEmailVerificationRequiredState,
   );
 
-  const setBilling = useSetRecoilStateV2(billingState);
-  const setSupportChat = useSetRecoilStateV2(supportChatState);
+  const setBilling = useSetAtomState(billingState);
+  const setSupportChat = useSetAtomState(supportChatState);
 
-  const setSentryConfig = useSetRecoilStateV2(sentryConfigState);
-  const [clientConfigApiStatus, setClientConfigApiStatus] = useRecoilStateV2(
+  const setSentryConfig = useSetAtomState(sentryConfigState);
+  const [clientConfigApiStatus, setClientConfigApiStatus] = useAtomState(
     clientConfigApiStatusState,
   );
 
-  const setCaptcha = useSetRecoilStateV2(captchaState);
+  const setCaptcha = useSetAtomState(captchaState);
 
-  const setChromeExtensionId = useSetRecoilStateV2(chromeExtensionIdState);
+  const setChromeExtensionId = useSetAtomState(chromeExtensionIdState);
 
-  const setApiConfig = useSetRecoilStateV2(apiConfigState);
+  const setApiConfig = useSetAtomState(apiConfigState);
 
-  const setCanManageFeatureFlags = useSetRecoilStateV2(
-    canManageFeatureFlagsState,
-  );
+  const setCanManageFeatureFlags = useSetAtomState(canManageFeatureFlagsState);
 
-  const setLabPublicFeatureFlags = useSetRecoilStateV2(
+  const setLabPublicFeatureFlags = useSetAtomState(
     labPublicFeatureFlagsStateV2,
   );
 
-  const setMicrosoftMessagingEnabled = useSetRecoilStateV2(
+  const setMicrosoftMessagingEnabled = useSetAtomState(
     isMicrosoftMessagingEnabledState,
   );
 
-  const setMicrosoftCalendarEnabled = useSetRecoilStateV2(
+  const setMicrosoftCalendarEnabled = useSetAtomState(
     isMicrosoftCalendarEnabledState,
   );
 
-  const setGoogleMessagingEnabled = useSetRecoilStateV2(
+  const setGoogleMessagingEnabled = useSetAtomState(
     isGoogleMessagingEnabledState,
   );
 
-  const setGoogleCalendarEnabled = useSetRecoilStateV2(
+  const setGoogleCalendarEnabled = useSetAtomState(
     isGoogleCalendarEnabledState,
   );
 
-  const setIsAttachmentPreviewEnabled = useSetRecoilStateV2(
+  const setIsAttachmentPreviewEnabled = useSetAtomState(
     isAttachmentPreviewEnabledState,
   );
 
-  const setIsConfigVariablesInDbEnabled = useSetRecoilStateV2(
+  const setIsConfigVariablesInDbEnabled = useSetAtomState(
     isConfigVariablesInDbEnabledState,
   );
 
-  const setCalendarBookingPageId = useSetRecoilStateV2(
-    calendarBookingPageIdState,
-  );
+  const setCalendarBookingPageId = useSetAtomState(calendarBookingPageIdState);
 
-  const setIsImapSmtpCaldavEnabled = useSetRecoilStateV2(
+  const setIsImapSmtpCaldavEnabled = useSetAtomState(
     isImapSmtpCaldavEnabledState,
   );
-  const setIsEmailingDomainsEnabled = useSetRecoilStateV2(
+  const setIsEmailingDomainsEnabled = useSetAtomState(
     isEmailingDomainsEnabledState,
   );
 
-  const setAllowRequestsToTwentyIcons = useSetRecoilStateV2(
+  const setAllowRequestsToTwentyIcons = useSetAtomState(
     allowRequestsToTwentyIconsState,
   );
 
-  const setIsCloudflareIntegrationEnabled = useSetRecoilStateV2(
+  const setIsCloudflareIntegrationEnabled = useSetAtomState(
     isCloudflareIntegrationEnabledState,
   );
 
-  const setIsClickHouseConfigured = useSetRecoilStateV2(
+  const setIsClickHouseConfigured = useSetAtomState(
     isClickHouseConfiguredState,
   );
 
-  const setAppVersion = useSetRecoilStateV2(appVersionState);
+  const setAppVersion = useSetAtomState(appVersionState);
 
   const fetchClientConfig = useCallback(async () => {
     setClientConfigApiStatus((prev) => ({

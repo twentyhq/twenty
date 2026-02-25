@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -126,7 +126,7 @@ export const ActivityRichTextEditor = ({
     }
   }, 300);
 
-  const [canCreateActivity, setCanCreateActivity] = useRecoilStateV2(
+  const [canCreateActivity, setCanCreateActivity] = useAtomState(
     canCreateActivityState,
   );
 

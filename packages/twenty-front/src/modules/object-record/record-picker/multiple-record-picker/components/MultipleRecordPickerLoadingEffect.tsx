@@ -1,24 +1,24 @@
 import { multipleRecordPickerIsFetchingMoreComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsFetchingMoreComponentState';
 import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
 import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const MultipleRecordPickerLoadingEffect = () => {
   const [previousLoading, setPreviousLoading] = useState(false);
 
-  const loading = useRecoilComponentValueV2(
+  const loading = useAtomComponentStateValue(
     multipleRecordPickerIsLoadingComponentState,
   );
 
-  const setMultipleRecordPickerShowSkeleton = useSetRecoilComponentStateV2(
+  const setMultipleRecordPickerShowSkeleton = useSetAtomComponentState(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 
-  const [multipleRecordPickerIsFetchingMore] = useRecoilComponentStateV2(
+  const [multipleRecordPickerIsFetchingMore] = useAtomComponentState(
     multipleRecordPickerIsFetchingMoreComponentState,
   );
 

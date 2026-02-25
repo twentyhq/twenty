@@ -1,18 +1,18 @@
 import { useCheckCustomDomainValidRecordsMutation } from '~/generated-metadata/graphql';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useCheckCustomDomainValidRecords = () => {
   const [checkCustomDomainValidRecords] =
     useCheckCustomDomainValidRecordsMutation();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const [{ isLoading }, setCustomDomainRecords] = useRecoilStateV2(
+  const [{ isLoading }, setCustomDomainRecords] = useAtomState(
     customDomainRecordsState,
   );
 

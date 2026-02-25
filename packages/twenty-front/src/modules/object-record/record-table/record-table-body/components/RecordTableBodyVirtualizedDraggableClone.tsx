@@ -26,7 +26,7 @@ import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/reco
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
-import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -147,7 +147,7 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
 
   const theme = useTheme();
 
-  const recordId = useRecoilComponentFamilySelectorValueV2(
+  const recordId = useAtomComponentFamilySelectorValue(
     recordIdByRealIndexComponentFamilySelector,
     realIndex,
   );

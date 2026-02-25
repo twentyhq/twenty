@@ -3,7 +3,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordShowPageTitle = ({
@@ -18,7 +18,10 @@ export const RecordShowPageTitle = ({
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
-  const record = useFamilyRecoilValueV2(recordStoreFamilyState, objectRecordId);
+  const record = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    objectRecordId,
+  );
 
   const pageName = isDefined(record)
     ? getLabelIdentifierFieldValue(record, labelIdentifierFieldMetadataItem)

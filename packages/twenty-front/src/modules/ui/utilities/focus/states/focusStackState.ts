@@ -1,7 +1,7 @@
 import { type FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const focusStackState = createStateV2<FocusStackItem[]>({
+export const focusStackState = createAtomState<FocusStackItem[]>({
   key: 'focusStackState',
   defaultValue: [],
 });

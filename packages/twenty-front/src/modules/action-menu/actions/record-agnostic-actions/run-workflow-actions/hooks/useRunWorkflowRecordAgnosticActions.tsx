@@ -4,7 +4,7 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
@@ -15,7 +15,7 @@ import { useIcons } from 'twenty-ui/display';
 export const useRunWorkflowRecordAgnosticActions = () => {
   const { getIcon } = useIcons();
 
-  const isPageInEditMode = useRecoilComponentValueV2(
+  const isPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

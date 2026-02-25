@@ -6,7 +6,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -16,13 +16,13 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     pageLayoutIdFromProps,
   );
 
-  const isPageLayoutInEditModeState = useRecoilComponentStateCallbackStateV2(
+  const isPageLayoutInEditModeState = useAtomComponentStateCallbackState(
     isPageLayoutInEditModeComponentState,
     pageLayoutId,
   );
 
   const contextStoreIsFullTabWidgetInEditModeState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       contextStoreIsPageInEditModeComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     );

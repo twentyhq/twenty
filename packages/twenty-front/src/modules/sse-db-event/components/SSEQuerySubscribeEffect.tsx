@@ -5,7 +5,7 @@ import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQuery
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ApolloError, useMutation } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect } from 'react';
@@ -22,8 +22,8 @@ import { useStore } from 'jotai';
 
 export const SSEQuerySubscribeEffect = () => {
   const store = useStore();
-  const sseEventStreamId = useRecoilValueV2(sseEventStreamIdState);
-  const sseEventStreamReady = useRecoilValueV2(sseEventStreamReadyState);
+  const sseEventStreamId = useAtomStateValue(sseEventStreamIdState);
+  const sseEventStreamReady = useAtomStateValue(sseEventStreamReadyState);
 
   const [addQueryToEventStream] = useMutation<
     boolean,
@@ -35,8 +35,8 @@ export const SSEQuerySubscribeEffect = () => {
     { input: RemoveQueryFromEventStreamInput }
   >(REMOVE_QUERY_FROM_EVENT_STREAM_MUTATION);
 
-  const requiredQueryListeners = useRecoilValueV2(requiredQueryListenersState);
-  const activeQueryListeners = useRecoilValueV2(activeQueryListenersState);
+  const requiredQueryListeners = useAtomStateValue(requiredQueryListenersState);
+  const activeQueryListeners = useAtomStateValue(activeQueryListenersState);
 
   const updateQueryListeners = useCallback(async () => {
     if (!isDefined(sseEventStreamId)) {

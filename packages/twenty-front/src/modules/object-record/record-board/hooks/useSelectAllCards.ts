@@ -2,26 +2,25 @@ import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { allCardsSelectedStatusComponentSelector } from '@/object-record/record-board/states/selectors/allCardsSelectedStatusComponentSelector';
 import { allRecordIdsOfAllRecordGroupsComponentSelector } from '@/object-record/record-index/states/selectors/allRecordIdsOfAllRecordGroupsComponentSelector';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const useSelectAllCards = (recordBoardId?: string) => {
-  const allCardsSelectedStatus = useRecoilComponentSelectorCallbackStateV2(
+  const allCardsSelectedStatus = useAtomComponentSelectorCallbackState(
     allCardsSelectedStatusComponentSelector,
     recordBoardId,
   );
   const isRecordBoardCardSelectedFamilyState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       isRecordBoardCardSelectedComponentFamilyState,
       recordBoardId,
     );
-  const allRecordIdsOfAllRecordGroups =
-    useRecoilComponentSelectorCallbackStateV2(
-      allRecordIdsOfAllRecordGroupsComponentSelector,
-      recordBoardId,
-    );
+  const allRecordIdsOfAllRecordGroups = useAtomComponentSelectorCallbackState(
+    allRecordIdsOfAllRecordGroupsComponentSelector,
+    recordBoardId,
+  );
 
   const { resetRecordBoardSelection } =
     useResetRecordBoardSelection(recordBoardId);

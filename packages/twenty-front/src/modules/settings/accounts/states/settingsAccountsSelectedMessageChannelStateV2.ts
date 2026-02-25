@@ -1,9 +1,9 @@
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const settingsAccountsSelectedMessageChannelStateV2 =
-  createStateV2<MessageChannel | null>({
+  createAtomState<MessageChannel | null>({
     key: 'settingsAccountsSelectedMessageChannelStateV2',
     defaultValue: null,
   });

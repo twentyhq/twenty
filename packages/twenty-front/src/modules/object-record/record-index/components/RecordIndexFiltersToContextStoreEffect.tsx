@@ -11,38 +11,38 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export const RecordIndexFiltersToContextStoreEffect = () => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const recordIndexFilters = useRecoilComponentValueV2(
+  const recordIndexFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
     recordIndexId,
   );
 
-  const recordIndexFilterGroups = useRecoilComponentValueV2(
+  const recordIndexFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
     recordIndexId,
   );
 
-  const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
+  const setContextStoreTargetedRecords = useSetAtomComponentState(
     contextStoreTargetedRecordsRuleComponentState,
     recordIndexId,
   );
 
-  const hasUserSelectedAllRows = useRecoilComponentValueV2(
+  const hasUserSelectedAllRows = useAtomComponentStateValue(
     hasUserSelectedAllRowsComponentState,
     recordIndexId,
   );
 
-  const selectedRowIds = useRecoilComponentSelectorValueV2(
+  const selectedRowIds = useAtomComponentSelectorValue(
     selectedRowIdsComponentSelector,
     recordIndexId,
   );
-  const unselectedRowIds = useRecoilComponentSelectorValueV2(
+  const unselectedRowIds = useAtomComponentSelectorValue(
     unselectedRowIdsComponentSelector,
     recordIndexId,
   );
@@ -73,12 +73,12 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     unselectedRowIds,
   ]);
 
-  const setContextStoreFilters = useSetRecoilComponentStateV2(
+  const setContextStoreFilters = useSetAtomComponentState(
     contextStoreFiltersComponentState,
     recordIndexId,
   );
 
-  const setContextStoreFilterGroups = useSetRecoilComponentStateV2(
+  const setContextStoreFilterGroups = useSetAtomComponentState(
     contextStoreFilterGroupsComponentState,
     recordIndexId,
   );
@@ -97,12 +97,12 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     setContextStoreFilters,
   ]);
 
-  const setContextStoreAnyFieldFilterValue = useSetRecoilComponentStateV2(
+  const setContextStoreAnyFieldFilterValue = useSetAtomComponentState(
     contextStoreAnyFieldFilterValueComponentState,
     recordIndexId,
   );
 
-  const anyFieldFilterValue = useRecoilComponentValueV2(
+  const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
     recordIndexId,
   );

@@ -4,7 +4,7 @@ import { type ReactNode, act } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { isKeyboardShortcutMenuOpenedStateV2 } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
@@ -36,7 +36,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 const renderHookConfig = () => {
   const { result } = renderHook(
     () => {
-      const isKeyboardShortcutMenuOpened = useRecoilValueV2(
+      const isKeyboardShortcutMenuOpened = useAtomStateValue(
         isKeyboardShortcutMenuOpenedStateV2,
       );
       return {

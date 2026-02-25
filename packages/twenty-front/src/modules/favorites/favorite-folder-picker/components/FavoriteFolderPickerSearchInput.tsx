@@ -1,12 +1,12 @@
 import { favoriteFolderSearchFilterComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFoldersSearchFilterComponentState';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const FavoriteFolderPickerSearchInput = () => {
   const [favoriteFoldersSearchFilter, setFavoriteFoldersSearchFilter] =
-    useRecoilComponentStateV2(favoriteFolderSearchFilterComponentState);
+    useAtomComponentState(favoriteFolderSearchFilterComponentState);
 
   const debouncedSetSearchFilter = useDebouncedCallback(
     setFavoriteFoldersSearchFilter,

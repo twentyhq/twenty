@@ -1,5 +1,5 @@
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -14,8 +14,9 @@ export const useSaveAnyFieldFilterToView = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const anyFieldFilterValueCallbackState =
-    useRecoilComponentStateCallbackStateV2(anyFieldFilterValueComponentState);
+  const anyFieldFilterValueCallbackState = useAtomComponentStateCallbackState(
+    anyFieldFilterValueComponentState,
+  );
 
   const store = useStore();
 

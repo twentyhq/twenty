@@ -16,10 +16,10 @@ import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
@@ -32,12 +32,12 @@ import {
 export const useResizeTableHeader = () => {
   const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const resizeFieldOffset = useRecoilComponentStateCallbackStateV2(
+  const resizeFieldOffset = useAtomComponentStateCallbackState(
     resizeFieldOffsetComponentState,
     recordTableId,
   );
 
-  const setResizeFieldOffset = useSetRecoilComponentStateV2(
+  const setResizeFieldOffset = useSetAtomComponentState(
     resizeFieldOffsetComponentState,
     recordTableId,
   );
@@ -47,7 +47,7 @@ export const useResizeTableHeader = () => {
   >(null);
 
   const [resizedFieldMetadataItemId, setResizedFieldMetadataItemId] =
-    useRecoilComponentStateV2(resizedFieldMetadataIdComponentState);
+    useAtomComponentState(resizedFieldMetadataIdComponentState);
 
   const recordField = visibleRecordFields.find(
     findByProperty('fieldMetadataItemId', resizedFieldMetadataItemId),
@@ -59,12 +59,12 @@ export const useResizeTableHeader = () => {
 
   const { updateRecordField } = useUpdateRecordField();
 
-  const recordTableWidth = useRecoilComponentValueV2(
+  const recordTableWidth = useAtomComponentStateValue(
     recordTableWidthComponentState,
     recordTableId,
   );
 
-  const shouldCompactRecordTableFirstColumn = useRecoilComponentValueV2(
+  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
     shouldCompactRecordTableFirstColumnComponentState,
     recordTableId,
   );

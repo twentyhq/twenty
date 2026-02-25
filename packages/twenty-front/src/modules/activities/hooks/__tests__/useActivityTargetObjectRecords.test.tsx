@@ -9,7 +9,7 @@ import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTa
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
@@ -140,7 +140,7 @@ describe('useActivityTargetObjectRecords', () => {
 
     const { result } = renderHook(
       () => {
-        const setRecordFromStore = useSetFamilyRecoilStateV2(
+        const setRecordFromStore = useSetAtomFamilyState(
           recordStoreFamilyState,
           task.id,
         );

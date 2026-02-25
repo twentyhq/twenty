@@ -1,7 +1,7 @@
 import { getAdvancedFilterInputPlaceholderText } from '@/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -36,7 +36,7 @@ type AdvancedFilterValueInputDropdownButtonClickableSelectProps = {
 export const AdvancedFilterValueInputDropdownButtonClickableSelect = ({
   recordFilterId,
 }: AdvancedFilterValueInputDropdownButtonClickableSelectProps) => {
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 

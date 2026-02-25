@@ -8,8 +8,8 @@ import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isMergeInProgressState } from '@/object-record/record-merge/states/mergeInProgressState';
 import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type UseMergeRecordsActionsProps = {
   objectNameSingular: string;
@@ -18,7 +18,7 @@ type UseMergeRecordsActionsProps = {
 export const useMergeRecordsActions = ({
   objectNameSingular,
 }: UseMergeRecordsActionsProps) => {
-  const mergeSettings = useRecoilValueV2(mergeSettingsState);
+  const mergeSettings = useAtomStateValue(mergeSettingsState);
 
   const { selectedRecords } = useMergeRecordsSelectedRecords();
 
@@ -26,7 +26,7 @@ export const useMergeRecordsActions = ({
     objectNameSingular,
   });
 
-  const setMergeInProgress = useSetRecoilStateV2(isMergeInProgressState);
+  const setMergeInProgress = useSetAtomState(isMergeInProgressState);
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();

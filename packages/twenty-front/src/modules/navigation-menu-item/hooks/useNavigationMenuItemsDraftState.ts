@@ -5,16 +5,16 @@ import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useNavigationMenuItemsDraftState = () => {
-  const isNavigationMenuInEditMode = useRecoilValueV2(
+  const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeStateV2,
   );
-  const prefetchNavigationMenuItems = useRecoilValueV2(
+  const prefetchNavigationMenuItems = useAtomStateValue(
     prefetchNavigationMenuItemsState,
   );
-  const navigationMenuItemsDraft = useRecoilValueV2(
+  const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftStateV2,
   );
 

@@ -6,7 +6,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useStore } from 'jotai';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -19,7 +19,7 @@ export const useFocusRecordTableCell = (recordTableId?: string) => {
   );
 
   const store = useStore();
-  const focusPosition = useRecoilComponentStateCallbackStateV2(
+  const focusPosition = useAtomComponentStateCallbackState(
     recordTableFocusPositionComponentState,
     recordTableIdFromProps,
   );

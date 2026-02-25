@@ -4,7 +4,7 @@ import { useStore } from 'jotai';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 
 export type HandleContainerMouseEnterArgs = {
   cellPosition: TableCellPosition;
@@ -17,11 +17,10 @@ export const useHandleContainerMouseEnter = ({
 }) => {
   const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
-  const isSomeCellInEditModeSelector =
-    useRecoilComponentSelectorCallbackStateV2(
-      isSomeCellInEditModeComponentSelector,
-      recordTableId,
-    );
+  const isSomeCellInEditModeSelector = useAtomComponentSelectorCallbackState(
+    isSomeCellInEditModeComponentSelector,
+    recordTableId,
+  );
 
   const store = useStore();
 

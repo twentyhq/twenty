@@ -8,7 +8,7 @@ import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMe
 import { CommandMenuMessageThreadIntermediaryMessages } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadIntermediaryMessages';
 import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
 import { messageThreadComponentState } from '@/command-menu/pages/message-thread/states/messageThreadComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -47,7 +47,7 @@ const ALLOWED_REPLY_PROVIDERS = [
 ];
 
 export const CommandMenuMessageThreadPage = () => {
-  const setMessageThread = useSetRecoilComponentStateV2(
+  const setMessageThread = useSetAtomComponentState(
     messageThreadComponentState,
   );
 

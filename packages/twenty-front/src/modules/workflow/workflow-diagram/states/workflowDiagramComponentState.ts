@@ -1,8 +1,8 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 
-export const workflowDiagramComponentState = createComponentStateV2<
+export const workflowDiagramComponentState = createAtomComponentState<
   WorkflowDiagram | undefined
 >({
   key: 'workflowDiagramComponentState',

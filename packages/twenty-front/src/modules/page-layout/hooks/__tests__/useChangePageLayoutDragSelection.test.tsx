@@ -1,4 +1,4 @@
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
@@ -24,7 +24,7 @@ describe('useChangePageLayoutDragSelection', () => {
         changeDragSelection: useChangePageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValueV2(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -67,7 +67,7 @@ describe('useChangePageLayoutDragSelection', () => {
         changeDragSelection: useChangePageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValueV2(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -102,7 +102,7 @@ describe('useChangePageLayoutDragSelection', () => {
         changeDragSelection: useChangePageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValueV2(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -145,7 +145,7 @@ describe('useChangePageLayoutDragSelection', () => {
         changeDragSelection: useChangePageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValueV2(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),

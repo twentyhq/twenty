@@ -1,9 +1,9 @@
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { useCallback } from 'react';
 
 export const useResetWorkflowInsertStepIds = () => {
-  const setWorkflowInsertStepIds = useSetRecoilComponentStateV2(
+  const setWorkflowInsertStepIds = useSetAtomComponentState(
     workflowInsertStepIdsComponentState,
   );
 

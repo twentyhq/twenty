@@ -9,7 +9,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
 import { FieldActorSource } from 'twenty-shared/types';
 import { type SelectOption } from 'twenty-ui/input';
@@ -33,7 +33,7 @@ export const AdvancedFilterCommandMenuValueFormCompositeFieldInput = ({
 }) => {
   const { VariablePicker } = useContext(AdvancedFilterContext);
 
-  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
+  const subFieldNameUsedInDropdown = useAtomComponentStateValue(
     subFieldNameUsedInDropdownComponentState,
   );
 

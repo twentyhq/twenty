@@ -10,7 +10,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
@@ -66,7 +66,7 @@ export const useUpdateActivityTargetFromCell = ({
       : isNoteTargetMigrated;
 
   const store = useStore();
-  const setActivityFromStore = useSetFamilyRecoilStateV2(
+  const setActivityFromStore = useSetAtomFamilyState(
     recordStoreFamilyState,
     activityId,
   );

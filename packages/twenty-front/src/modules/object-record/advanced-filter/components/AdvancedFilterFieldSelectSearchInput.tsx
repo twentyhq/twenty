@@ -1,5 +1,5 @@
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 
@@ -31,7 +31,7 @@ export const StyledInput = styled.input`
 
 export const AdvancedFilterFieldSelectSearchInput = () => {
   const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =
-    useRecoilComponentStateV2(objectFilterDropdownSearchInputComponentState);
+    useAtomComponentState(objectFilterDropdownSearchInputComponentState);
 
   return (
     <StyledInput

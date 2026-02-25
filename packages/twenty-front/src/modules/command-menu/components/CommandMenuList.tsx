@@ -8,7 +8,7 @@ import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/Comman
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -63,7 +63,7 @@ export const CommandMenuList = ({
   noResults = false,
   noResultsText,
 }: CommandMenuListProps) => {
-  const setHasUserSelectedCommand = useSetRecoilStateV2(
+  const setHasUserSelectedCommand = useSetAtomState(
     hasUserSelectedCommandState,
   );
 

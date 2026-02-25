@@ -14,7 +14,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -44,7 +44,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const isLabelIdentifier = useFamilySelectorValueV2(
+  const isLabelIdentifier = useAtomFamilySelectorValue(
     isFieldMetadataItemLabelIdentifierSelector,
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
@@ -124,7 +124,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
   };
 
-  const { isFilterable, isSortable } = useFamilySelectorValueV2(
+  const { isFilterable, isSortable } = useAtomFamilySelectorValue(
     isFieldMetadataItemFilterableAndSortableSelector,
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );

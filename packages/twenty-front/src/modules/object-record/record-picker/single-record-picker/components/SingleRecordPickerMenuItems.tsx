@@ -18,9 +18,9 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { type IconComponent } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
@@ -53,7 +53,7 @@ export const SingleRecordPickerMenuItems = ({
     selectableListComponentInstanceId,
   );
 
-  const isSelectedSelectNoneButton = useRecoilComponentFamilyValueV2(
+  const isSelectedSelectNoneButton = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     selectableListComponentInstanceId,
     'select-none',
@@ -72,15 +72,15 @@ export const SingleRecordPickerMenuItems = ({
   const selectableItemIds = pickableMorphItems.map(
     (morphItem) => morphItem.recordId,
   );
-  const [selectedRecordId, setSelectedRecordId] = useRecoilComponentStateV2(
+  const [selectedRecordId, setSelectedRecordId] = useAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
   );
 
-  const singleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
+  const singleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
     singleRecordPickerShouldShowSkeletonComponentState,
   );
 
-  const singleRecordPickerShouldShowInitialLoading = useRecoilComponentValueV2(
+  const singleRecordPickerShouldShowInitialLoading = useAtomComponentStateValue(
     singleRecordPickerShouldShowInitialLoadingComponentState,
   );
 

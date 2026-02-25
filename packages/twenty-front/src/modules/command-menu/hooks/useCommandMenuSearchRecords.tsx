@@ -11,7 +11,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { t } from '@lingui/core/macro';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { Avatar } from 'twenty-ui/display';
@@ -19,7 +19,7 @@ import { useDebounce } from 'use-debounce';
 import { useSearchQuery } from '~/generated/graphql';
 
 export const useCommandMenuSearchRecords = () => {
-  const commandMenuSearch = useRecoilValueV2(commandMenuSearchState);
+  const commandMenuSearch = useAtomStateValue(commandMenuSearchState);
   const coreClient = useApolloCoreClient();
 
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300);

@@ -1,9 +1,9 @@
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const multipleRecordPickerPickableMorphItemsComponentState =
-  createComponentStateV2<RecordPickerPickableMorphItem[]>({
+  createAtomComponentState<RecordPickerPickableMorphItem[]>({
     key: 'multipleRecordPickerPickableMorphItemsComponentState',
     defaultValue: [],
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,

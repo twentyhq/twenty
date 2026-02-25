@@ -1,8 +1,8 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { type WorkflowDiagramEdgeDescriptor } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeDescriptor';
 
-export const workflowHoveredEdgeComponentState = createComponentStateV2<
+export const workflowHoveredEdgeComponentState = createAtomComponentState<
   WorkflowDiagramEdgeDescriptor | undefined
 >({
   key: 'workflowHoveredEdgeComponentState',

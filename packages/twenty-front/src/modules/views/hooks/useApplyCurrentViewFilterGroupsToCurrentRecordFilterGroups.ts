@@ -1,8 +1,8 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { useStore } from 'jotai';
@@ -12,15 +12,15 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
   () => {
-    const currentViewId = useRecoilComponentValueV2(
+    const currentViewId = useAtomComponentStateValue(
       contextStoreCurrentViewIdComponentState,
     );
 
-    const setCurrentRecordFilterGroups = useSetRecoilComponentStateV2(
+    const setCurrentRecordFilterGroups = useSetAtomComponentState(
       currentRecordFilterGroupsComponentState,
     );
 
-    const currentRecordFilterGroups = useRecoilComponentStateCallbackStateV2(
+    const currentRecordFilterGroups = useAtomComponentStateCallbackState(
       currentRecordFilterGroupsComponentState,
     );
 

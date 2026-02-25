@@ -1,10 +1,9 @@
 import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder-picker/states/context/FavoriteFolderPickerInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const favoriteFolderPickerCheckedComponentState = createComponentStateV2<
-  string[]
->({
-  key: 'favoriteFolderPickerCheckedComponentState',
-  defaultValue: [],
-  componentInstanceContext: FavoriteFolderPickerInstanceContext,
-});
+export const favoriteFolderPickerCheckedComponentState =
+  createAtomComponentState<string[]>({
+    key: 'favoriteFolderPickerCheckedComponentState',
+    defaultValue: [],
+    componentInstanceContext: FavoriteFolderPickerInstanceContext,
+  });

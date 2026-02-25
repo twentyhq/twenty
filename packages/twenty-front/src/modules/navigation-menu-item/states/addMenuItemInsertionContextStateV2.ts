@@ -1,9 +1,9 @@
 import type { AddMenuItemInsertionContext } from '@/navigation-menu-item/types/AddMenuItemInsertionContext';
 
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const addMenuItemInsertionContextStateV2 =
-  createStateV2<AddMenuItemInsertionContext | null>({
+  createAtomState<AddMenuItemInsertionContext | null>({
     key: 'addMenuItemInsertionContextStateV2',
     defaultValue: null,
   });

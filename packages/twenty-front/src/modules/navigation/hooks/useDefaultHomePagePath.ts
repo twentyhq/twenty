@@ -4,7 +4,7 @@ import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import isEmpty from 'lodash.isempty';
@@ -15,7 +15,7 @@ import { useStore } from 'jotai';
 
 export const useDefaultHomePagePath = () => {
   const store = useStore();
-  const currentUser = useRecoilValueV2(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
@@ -43,7 +43,7 @@ export const useDefaultHomePagePath = () => {
     [readableAlphaSortedActiveNonSystemObjectMetadataItems],
   );
 
-  const coreViews = useRecoilValueV2(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsState);
 
   const getFirstView = useCallback(
     (objectMetadataItemId: string | undefined | null) => {

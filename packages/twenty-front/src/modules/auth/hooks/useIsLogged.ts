@@ -1,7 +1,7 @@
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export const useIsLogged = (): boolean => {
-  const [tokenPair] = useRecoilStateV2(tokenPairState);
+  const [tokenPair] = useAtomState(tokenPairState);
   return !!tokenPair;
 };

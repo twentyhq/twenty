@@ -1,7 +1,7 @@
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { isHeadlessFrontComponentMountedFamilySelector } from '@/front-components/selectors/isHeadlessFrontComponentMountedFamilySelector';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useContext } from 'react';
 
 import { ActionDisplay } from './ActionDisplay';
@@ -20,7 +20,7 @@ export const HeadlessFrontComponentAction = ({
     closeSidePanelOnCommandMenuListActionExecution: false,
   });
 
-  const isMounted = useFamilySelectorValueV2(
+  const isMounted = useAtomFamilySelectorValue(
     isHeadlessFrontComponentMountedFamilySelector,
     frontComponentId,
   );

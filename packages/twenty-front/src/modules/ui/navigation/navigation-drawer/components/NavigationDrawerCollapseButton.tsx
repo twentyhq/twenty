@@ -1,8 +1,8 @@
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import styled from '@emotion/styled';
 import {
   IconLayoutSidebarLeftCollapse,
@@ -30,8 +30,8 @@ export const NavigationDrawerCollapseButton = ({
   direction = 'left',
 }: NavigationDrawerCollapseButtonProps) => {
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useRecoilStateV2(isNavigationDrawerExpandedState);
-  const setNavigationDrawerActiveTab = useSetRecoilStateV2(
+    useAtomState(isNavigationDrawerExpandedState);
+  const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
 

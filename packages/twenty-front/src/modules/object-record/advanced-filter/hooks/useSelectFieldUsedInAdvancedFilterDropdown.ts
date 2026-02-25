@@ -15,8 +15,8 @@ import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/recor
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
 type SelectFilterParams = {
@@ -26,19 +26,19 @@ type SelectFilterParams = {
 };
 
 export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
-  const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
+  const setSelectedOperandInDropdown = useSetAtomComponentState(
     selectedOperandInDropdownComponentState,
   );
 
-  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentStateV2(
+  const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
     fieldMetadataItemIdUsedInDropdownComponentState,
   );
 
-  const setObjectFilterDropdownSearchInput = useSetRecoilComponentStateV2(
+  const setObjectFilterDropdownSearchInput = useSetAtomComponentState(
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
@@ -47,14 +47,13 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
 
-  const setSubFieldNameUsedInDropdown = useSetRecoilComponentStateV2(
+  const setSubFieldNameUsedInDropdown = useSetAtomComponentState(
     subFieldNameUsedInDropdownComponentState,
   );
 
-  const setObjectFilterDropdownCurrentRecordFilter =
-    useSetRecoilComponentStateV2(
-      objectFilterDropdownCurrentRecordFilterComponentState,
-    );
+  const setObjectFilterDropdownCurrentRecordFilter = useSetAtomComponentState(
+    objectFilterDropdownCurrentRecordFilterComponentState,
+  );
 
   const { upsertRecordFilter } = useUpsertRecordFilter();
   const { getInitialFilterValue } = useGetInitialFilterValue();

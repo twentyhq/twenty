@@ -19,7 +19,7 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AnimatedPlaceholder,
@@ -62,7 +62,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     resolvedFieldMetadataId ?? '',
   );
 
-  const record = useFamilySelectorValueV2(recordStoreFamilySelectorV2, {
+  const record = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
     recordId: targetRecord.id,
     fieldName: fieldMetadataItem?.name ?? '',
   });

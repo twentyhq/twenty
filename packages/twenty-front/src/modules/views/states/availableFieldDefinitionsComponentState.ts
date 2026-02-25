@@ -1,9 +1,9 @@
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
-export const availableFieldDefinitionsComponentState = createComponentStateV2<
+export const availableFieldDefinitionsComponentState = createAtomComponentState<
   ColumnDefinition<FieldMetadata>[]
 >({
   key: 'availableFieldDefinitionsComponentState',

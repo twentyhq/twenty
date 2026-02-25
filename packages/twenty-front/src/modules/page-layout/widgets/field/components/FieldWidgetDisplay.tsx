@@ -17,7 +17,7 @@ import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -41,7 +41,7 @@ export const FieldWidgetDisplay = ({
 }: FieldWidgetDisplayProps) => {
   const widget = useCurrentWidget();
 
-  const [isHovered, setIsHovered] = useRecoilComponentStateV2(
+  const [isHovered, setIsHovered] = useAtomComponentState(
     fieldWidgetHoverComponentState,
   );
 

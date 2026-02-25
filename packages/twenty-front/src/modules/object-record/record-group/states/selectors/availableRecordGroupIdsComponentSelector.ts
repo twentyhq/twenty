@@ -5,12 +5,12 @@ import {
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordGroupSortedInsert } from '@/object-record/record-group/utils/recordGroupSortedInsert';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
+import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 
 export const availableRecordGroupIdsComponentSelector =
-  createComponentSelectorV2<RecordGroupDefinition['id'][]>({
+  createAtomComponentSelector<RecordGroupDefinition['id'][]>({
     key: 'availableRecordGroupIdsComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:

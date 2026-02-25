@@ -2,10 +2,10 @@ import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder
 import { favoriteFolderIdsPickerComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFolderIdPickerComponentState';
 import { favoriteFolderPickerComponentFamilyState } from '@/favorites/favorite-folder-picker/states/favoriteFolderPickerComponentFamilyState';
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
+import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 import { isDefined } from 'twenty-shared/utils';
 
-export const favoriteFoldersComponentSelector = createComponentSelectorV2<
+export const favoriteFoldersComponentSelector = createAtomComponentSelector<
   FavoriteFolder[]
 >({
   key: 'favoriteFoldersComponentSelector',

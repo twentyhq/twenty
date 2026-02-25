@@ -1,9 +1,9 @@
 import { RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext } from '@/object-record/record-board/contexts/RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const aggregateOperationComponentState =
-  createComponentStateV2<ExtendedAggregateOperations | null>({
+  createAtomComponentState<ExtendedAggregateOperations | null>({
     key: 'aggregateOperationComponentFamilyState',
     defaultValue: null,
     componentInstanceContext:

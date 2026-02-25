@@ -2,16 +2,16 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStoreOrThrow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord =
   () => {
-    const targetedRecordsRule = useRecoilComponentValueV2(
+    const targetedRecordsRule = useAtomComponentStateValue(
       contextStoreTargetedRecordsRuleComponentState,
     );
 
-    const objectMetadataId = useRecoilComponentValueV2(
+    const objectMetadataId = useAtomComponentStateValue(
       contextStoreCurrentObjectMetadataItemIdComponentState,
     );
 

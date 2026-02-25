@@ -11,8 +11,8 @@ import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorksp
 import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
 import { type AddMenuItemInsertionContext } from '@/navigation-menu-item/types/AddMenuItemInsertionContext';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CommandMenuPages } from 'twenty-shared/types';
 
 const getAddMenuItemInsertionContext = (
@@ -49,13 +49,13 @@ export const useNavigationMenuItemEditOrganizeActions =
     const { t } = useLingui();
     const { closeCommandMenu } = useCommandMenu();
     const { navigateCommandMenu } = useNavigateCommandMenu();
-    const selectedNavigationMenuItemInEditMode = useRecoilValueV2(
+    const selectedNavigationMenuItemInEditMode = useAtomStateValue(
       selectedNavigationMenuItemInEditModeStateV2,
     );
-    const setSelectedNavigationMenuItemInEditMode = useSetRecoilStateV2(
+    const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
       selectedNavigationMenuItemInEditModeStateV2,
     );
-    const setAddMenuItemInsertionContext = useSetRecoilStateV2(
+    const setAddMenuItemInsertionContext = useSetAtomState(
       addMenuItemInsertionContextStateV2,
     );
     const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();

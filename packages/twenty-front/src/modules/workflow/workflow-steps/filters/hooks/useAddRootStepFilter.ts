@@ -1,5 +1,5 @@
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentFamilyStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
@@ -19,22 +19,21 @@ export const useAddRootStepFilter = () => {
   const { stepId, onFilterSettingsUpdate } = useContext(
     WorkflowStepFilterContext,
   );
-  const currentStepFilterGroups = useRecoilComponentStateCallbackStateV2(
+  const currentStepFilterGroups = useAtomComponentStateCallbackState(
     currentStepFilterGroupsComponentState,
   );
 
-  const currentStepFilters = useRecoilComponentStateCallbackStateV2(
+  const currentStepFilters = useAtomComponentStateCallbackState(
     currentStepFiltersComponentState,
   );
 
-  const setHasInitializedCurrentStepFilters =
-    useSetRecoilComponentFamilyStateV2(
-      hasInitializedCurrentStepFiltersComponentFamilyState,
-      { stepId },
-    );
+  const setHasInitializedCurrentStepFilters = useSetAtomComponentFamilyState(
+    hasInitializedCurrentStepFiltersComponentFamilyState,
+    { stepId },
+  );
 
   const setHasInitializedCurrentStepFilterGroups =
-    useSetRecoilComponentFamilyStateV2(
+    useSetAtomComponentFamilyState(
       hasInitializedCurrentStepFilterGroupsComponentFamilyState,
       { stepId },
     );

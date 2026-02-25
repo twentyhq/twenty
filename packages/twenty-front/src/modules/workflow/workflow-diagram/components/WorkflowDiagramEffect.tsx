@@ -1,6 +1,6 @@
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
@@ -16,7 +16,7 @@ import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramEffect = () => {
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
 
@@ -24,13 +24,13 @@ export const WorkflowDiagramEffect = () => {
     workflowVisualizerWorkflowId,
   );
 
-  const workflowDiagram = useRecoilComponentStateCallbackStateV2(
+  const workflowDiagram = useAtomComponentStateCallbackState(
     workflowDiagramComponentState,
   );
-  const setFlow = useSetRecoilComponentStateV2(flowComponentState);
+  const setFlow = useSetAtomComponentState(flowComponentState);
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
-  const workflowLastCreatedStepId = useRecoilComponentStateCallbackStateV2(
+  const workflowLastCreatedStepId = useAtomComponentStateCallbackState(
     workflowLastCreatedStepIdComponentState,
   );
 

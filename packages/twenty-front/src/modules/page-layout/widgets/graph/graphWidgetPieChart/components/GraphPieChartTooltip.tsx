@@ -6,7 +6,7 @@ import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidg
 import { getPieChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/getPieChartTooltipData';
 import { createVirtualElementFromContainerOffset } from '@/page-layout/widgets/graph/utils/createVirtualElementFromContainerOffset';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,7 +25,7 @@ export const GraphPieChartTooltip = ({
   displayType,
   onSliceClick,
 }: GraphPieChartTooltipProps) => {
-  const tooltipState = useRecoilComponentValueV2(
+  const tooltipState = useAtomComponentStateValue(
     graphWidgetPieTooltipComponentState,
   );
 

@@ -1,5 +1,5 @@
 import { currentFavoriteFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentFavoriteFolderIdStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconX } from 'twenty-ui/display';
@@ -35,9 +35,7 @@ export const FavoritesBackButton = ({
   folderName,
 }: FavoritesBackButtonProps) => {
   const theme = useTheme();
-  const setCurrentFolderId = useSetRecoilStateV2(
-    currentFavoriteFolderIdStateV2,
-  );
+  const setCurrentFolderId = useSetAtomState(currentFavoriteFolderIdStateV2);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();

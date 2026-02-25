@@ -14,6 +14,7 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
     isUnique,
     settings,
     id,
+    universalIdentifier,
     label,
     name,
     objectMetadataId,
@@ -32,6 +33,7 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
 
   return {
     id,
+    universalIdentifier,
     label,
     name,
     objectMetadataId,

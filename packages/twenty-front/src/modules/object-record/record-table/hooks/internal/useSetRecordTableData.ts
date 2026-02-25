@@ -18,10 +18,10 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 
 import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -33,37 +33,36 @@ export const useSetRecordTableData = ({
   recordTableId,
 }: useSetRecordTableDataProps) => {
   const recordIndexRecordIdsByGroupFamilyState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const recordIndexAllRecordIdsSelector =
-    useRecoilComponentSelectorCallbackStateV2(
-      recordIndexAllRecordIdsComponentSelector,
-      recordTableId,
-    );
+  const recordIndexAllRecordIdsSelector = useAtomComponentSelectorCallbackState(
+    recordIndexAllRecordIdsComponentSelector,
+    recordTableId,
+  );
 
-  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
+  const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
 
-  const hasUserSelectedAllRows = useRecoilComponentStateCallbackStateV2(
+  const hasUserSelectedAllRows = useAtomComponentStateCallbackState(
     hasUserSelectedAllRowsComponentState,
     recordTableId,
   );
 
-  const isRecordTableInitialLoading = useRecoilComponentStateCallbackStateV2(
+  const isRecordTableInitialLoading = useAtomComponentStateCallbackState(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );
 
-  const recordIdByRealIndex = useRecoilComponentStateCallbackStateV2(
+  const recordIdByRealIndex = useAtomComponentStateCallbackState(
     recordIdByRealIndexComponentState,
     recordTableId,
   );
 
-  const setRecordTableHoverPosition = useSetRecoilComponentStateV2(
+  const setRecordTableHoverPosition = useSetAtomComponentState(
     recordTableHoverPositionComponentState,
     recordTableId,
   );

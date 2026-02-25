@@ -23,18 +23,18 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '@/auth/hooks/useAuth';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
-  const [signInUpStep, setSignInUpStep] = useRecoilStateV2(signInUpStepState);
-  const [signInUpMode, setSignInUpMode] = useRecoilStateV2(signInUpModeState);
+  const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
+  const [signInUpMode, setSignInUpMode] = useAtomState(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const { isCaptchaReady } = useCaptcha();
-  const setLastAuthenticatedMethod = useSetRecoilStateV2(
+  const setLastAuthenticatedMethod = useSetAtomState(
     lastAuthenticatedMethodState,
   );
 

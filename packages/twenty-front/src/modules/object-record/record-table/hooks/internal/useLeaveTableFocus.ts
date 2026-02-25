@@ -7,7 +7,7 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export const useLeaveTableFocus = (recordTableId?: string) => {
   const recordTableIdFromContext = useAvailableComponentInstanceIdOrThrow(
@@ -17,12 +17,12 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
 
   const { resetTableRowSelection } = useResetTableRowSelection();
 
-  const setRecordTableHoverPosition = useSetRecoilComponentStateV2(
+  const setRecordTableHoverPosition = useSetAtomComponentState(
     recordTableHoverPositionComponentState,
     recordTableIdFromContext,
   );
 
-  const setRecordTableFocusPosition = useSetRecoilComponentStateV2(
+  const setRecordTableFocusPosition = useSetAtomComponentState(
     recordTableFocusPositionComponentState,
     recordTableIdFromContext,
   );

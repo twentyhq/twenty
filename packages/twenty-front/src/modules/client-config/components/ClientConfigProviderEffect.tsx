@@ -1,11 +1,11 @@
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ClientConfigProviderEffect = () => {
-  const [clientConfigApiStatus, setClientConfigApiStatus] = useRecoilStateV2(
+  const [clientConfigApiStatus, setClientConfigApiStatus] = useAtomState(
     clientConfigApiStatusState,
   );
 

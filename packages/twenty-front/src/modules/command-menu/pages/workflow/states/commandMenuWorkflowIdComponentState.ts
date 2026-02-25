@@ -1,7 +1,7 @@
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const commandMenuWorkflowIdComponentState = createComponentStateV2<
+export const commandMenuWorkflowIdComponentState = createAtomComponentState<
   string | undefined
 >({
   key: 'command-menu/workflow-id',

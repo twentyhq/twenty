@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 
 import { isDragSelectionStartEnabledStateV2 } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 
 export const useDragSelect = () => {
   const store = useStore();
 
-  const setIsDragSelectionStartEnabled = useSetRecoilStateV2(
+  const setIsDragSelectionStartEnabled = useSetAtomState(
     isDragSelectionStartEnabledStateV2,
   );
 

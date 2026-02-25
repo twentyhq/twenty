@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const agentChatSelectedFilesStateV2 = createStateV2<File[]>({
+export const agentChatSelectedFilesStateV2 = createAtomState<File[]>({
   key: 'ai/agentChatSelectedFilesStateV2',
   defaultValue: [],
 });
