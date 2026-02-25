@@ -1070,14 +1070,10 @@ export class OldCrmPolicyPreprocessor {
 
     const searchLower = trimmedName.toLowerCase();
     const matched = agents.find((agent) => {
-      const nameObj = agent.name as Record<string, string> | undefined;
-      const agentName = (
-        (nameObj?.firstName || '') +
-        ' ' +
-        (nameObj?.lastName || '')
-      )
-        .trim()
-        .toLowerCase();
+      // name is a plain string field, not a composite {firstName, lastName}
+      const agentName = ((agent.name as string) || '').trim().toLowerCase();
+
+      if (!agentName) return false;
 
       return agentName.includes(searchLower) || searchLower.includes(agentName);
     });
@@ -1087,11 +1083,7 @@ export class OldCrmPolicyPreprocessor {
     if (!id) {
       const agentNames = agents
         .slice(0, 10)
-        .map((a) => {
-          const n = a.name as Record<string, string> | undefined;
-
-          return `"${n?.firstName || ''} ${n?.lastName || ''}"`.trim();
-        })
+        .map((a) => `"${(a.name as string) || ''}"`)
         .join(', ');
 
       this.logger.warn(
