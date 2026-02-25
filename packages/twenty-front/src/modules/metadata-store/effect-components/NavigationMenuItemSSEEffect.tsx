@@ -1,6 +1,5 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useStore } from 'jotai';
@@ -15,8 +14,6 @@ export const NavigationMenuItemSSEEffect = () => {
   const queryId = 'navigation-menu-item-sse-effect';
 
   const store = useStore();
-
-  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
   const { updateDraft, applyChanges } = useMetadataStore();
 
   const [findManyNavigationMenuItemsLazy] =
