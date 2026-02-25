@@ -1,4 +1,4 @@
-import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/settingsPersistedRole/constants/SettingsRoleDetailTabs';
+import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/SettingsRoleDetailTabs';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
