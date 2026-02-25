@@ -12,6 +12,7 @@ import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/type
 type FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs =
   FromEntityToFlatEntityArgs<'pageLayoutWidget'> & {
     fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+    frontComponentUniversalIdentifierById?: Partial<Record<string, string>>;
     viewFieldGroupUniversalIdentifierById?: Partial<Record<string, string>>;
     viewUniversalIdentifierById?: Partial<Record<string, string>>;
   };
@@ -22,6 +23,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
   pageLayoutTabIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
   fieldMetadataUniversalIdentifierById,
+  frontComponentUniversalIdentifierById,
   viewFieldGroupUniversalIdentifierById,
   viewUniversalIdentifierById,
 }: FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs): FlatPageLayoutWidget => {
@@ -74,6 +76,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
     fromPageLayoutWidgetConfigurationToUniversalConfiguration({
       configuration: pageLayoutWidgetEntityWithoutRelations.configuration,
       fieldMetadataUniversalIdentifierById,
+      frontComponentUniversalIdentifierById,
       viewFieldGroupUniversalIdentifierById,
       viewUniversalIdentifierById,
     });
