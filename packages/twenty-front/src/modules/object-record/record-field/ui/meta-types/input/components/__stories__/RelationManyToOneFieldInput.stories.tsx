@@ -32,7 +32,7 @@ import { getFieldInputEventContextProviderWithJestMocks } from './utils/getField
 const RelationWorkspaceSetterEffect = () => {
   const setRecordFieldInputLayoutDirectionLoading = useSetAtomComponentState(
     recordFieldInputLayoutDirectionLoadingComponentState,
-    'relation-to-one-field-input-123-Relation',
+    'relation-to-one-field-input-123-company',
   );
 
   useEffect(() => {
@@ -75,18 +75,18 @@ const RelationManyToOneFieldInputWithContext = ({
       <FieldContext.Provider
         value={{
           fieldDefinition: {
-            fieldMetadataId: 'e82262eb-7f58-4167-a23c-fc51ec584d1b',
-            label: 'Relation',
+            fieldMetadataId: 'f6be42ac-ccb8-4df0-8c22-a9627d655c76',
+            label: 'Company',
             type: FieldMetadataType.RELATION,
             iconName: 'IconLink',
             metadata: {
-              fieldName: 'Relation',
+              fieldName: 'company',
               relationObjectMetadataNamePlural: 'companies',
               relationObjectMetadataNameSingular:
                 CoreObjectNameSingular.Company,
-              relationObjectMetadataId: '4a45f524-b8cb-40e8-8450-28e402b442cf',
+              relationObjectMetadataId: '69e0aa5d-a9c5-486b-a99d-fe191195a19d',
               objectMetadataNameSingular: 'person',
-              relationFieldMetadataId: '3c211c59-02a1-4904-ad0f-5bb30b736461',
+              relationFieldMetadataId: '94902a74-b8ca-4a56-8573-7469f0b664f6',
             },
           },
           recordId: recordId,
@@ -96,7 +96,7 @@ const RelationManyToOneFieldInputWithContext = ({
       >
         <RecordFieldComponentInstanceContext.Provider
           value={{
-            instanceId: 'relation-to-one-field-input-123-Relation',
+            instanceId: 'relation-to-one-field-input-123-company',
           }}
         >
           <FieldInputEventContextProviderWithJestMocks>

@@ -24,7 +24,6 @@ import { ClientService } from '@/cli/utilities/client/client-service';
 
 type TwentyClassType = new (options?: {
   url?: string;
-  metadataUrl?: string;
   fetch?: typeof globalThis.fetch;
 }) => {
   query: (request: Record<string, unknown>) => Promise<unknown>;
@@ -49,7 +48,6 @@ export type GraphqlOperation = Record<string, unknown>
 
 export type ClientOptions = {
   url?: string
-  metadataUrl?: string
   headers?: HeadersInit | (() => HeadersInit | Promise<HeadersInit>)
   fetcher?: (operation: GraphqlOperation | GraphqlOperation[]) => Promise<unknown>
   fetch?: typeof globalThis.fetch
@@ -128,9 +126,20 @@ describe('ClientService generated Twenty auth behavior', () => {
     const clientService = new ClientService();
     await (
       clientService as unknown as {
-        injectTwentyClient: (output: string) => Promise<void>;
+        injectClientWrapper: (
+          output: string,
+          options: {
+            className: string;
+            defaultUrl: string;
+            includeUploadFile: boolean;
+          },
+        ) => Promise<void>;
       }
-    ).injectTwentyClient(temporaryGeneratedClientDirectory);
+    ).injectClientWrapper(temporaryGeneratedClientDirectory, {
+      className: 'MetadataApiClient',
+      defaultUrl: '`${process.env.TWENTY_API_URL}/metadata`',
+      includeUploadFile: true,
+    });
 
     const generatedIndexContent = await readFile(
       temporaryGeneratedIndexTsPath,
@@ -153,7 +162,7 @@ describe('ClientService generated Twenty auth behavior', () => {
       `${pathToFileURL(temporaryGeneratedIndexMjsPath).href}?t=${Date.now()}`
     );
 
-    TwentyClass = generatedModule.default as TwentyClassType;
+    TwentyClass = generatedModule.MetadataApiClient as TwentyClassType;
   });
 
   beforeEach(() => {
@@ -379,7 +388,6 @@ describe('ClientService generated Twenty auth behavior', () => {
 
     const twentyClient = new TwentyClass({
       url: 'https://example.com/graphql',
-      metadataUrl: 'https://example.com/metadata',
       fetch: fetchMock as unknown as typeof globalThis.fetch,
     });
 

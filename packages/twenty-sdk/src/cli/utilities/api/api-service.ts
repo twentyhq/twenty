@@ -434,6 +434,19 @@ export class ApiService {
   async getSchema(options?: {
     authToken?: string;
   }): Promise<ApiResponse<string>> {
+    return this.introspectEndpoint('/graphql', options);
+  }
+
+  async getMetadataSchema(options?: {
+    authToken?: string;
+  }): Promise<ApiResponse<string>> {
+    return this.introspectEndpoint('/metadata', options);
+  }
+
+  private async introspectEndpoint(
+    endpoint: string,
+    options?: { authToken?: string },
+  ): Promise<ApiResponse<string>> {
     try {
       const introspectionQuery = getIntrospectionQuery();
 
@@ -447,7 +460,7 @@ export class ApiService {
       }
 
       const response = await this.client.post(
-        '/graphql',
+        endpoint,
         {
           query: introspectionQuery,
         },
@@ -466,7 +479,7 @@ export class ApiService {
       return {
         success: true,
         data: printSchema(schema),
-        message: 'Successfully load schema',
+        message: `Successfully loaded schema from ${endpoint}`,
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -474,7 +487,7 @@ export class ApiService {
           success: false,
           error:
             error.response.data.errors[0]?.message ||
-            'Failed to load graphql Schema',
+            `Failed to load schema from ${endpoint}`,
         };
       }
       throw error;
