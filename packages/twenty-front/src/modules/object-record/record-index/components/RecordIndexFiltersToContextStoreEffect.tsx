@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import {
+  contextStoreTargetedRecordsRuleComponentState,
+  type ContextStoreTargetedRecordsRule,
+} from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
@@ -24,10 +26,6 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const store = useStore();
-
-  const renderCount = useRef(0);
-  renderCount.current++;
-  console.log(`[FiltersToCtxStore] RENDER #${renderCount.current}`);
 
   const recordIndexFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
@@ -90,9 +88,6 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
             anyFieldFilterValue: string;
           },
         ) => {
-          console.log('[FiltersToCtxStore] syncAllWriteAtom called');
-
-          // Sync selection
           const hasUserSelectedAllRows = get(hasUserSelectedAllRowsAtom);
           let newRule: ContextStoreTargetedRecordsRule;
 
@@ -112,30 +107,27 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
 
           const currentRule = get(contextStoreTargetedRecordsRuleAtom);
           if (!isDeeplyEqual(currentRule, newRule)) {
-            console.log('[FiltersToCtxStore] WRITING targetedRecordsRule');
             set(contextStoreTargetedRecordsRuleAtom, newRule);
           }
 
-          // Sync filters
           const currentFilters = get(contextStoreFiltersAtom);
           if (!isDeeplyEqual(currentFilters, payload.filters)) {
-            console.log('[FiltersToCtxStore] WRITING filters');
             set(contextStoreFiltersAtom, payload.filters);
           }
 
           const currentFilterGroups = get(contextStoreFilterGroupsAtom);
           if (!isDeeplyEqual(currentFilterGroups, payload.filterGroups)) {
-            console.log('[FiltersToCtxStore] WRITING filterGroups');
             set(contextStoreFilterGroupsAtom, payload.filterGroups);
           }
 
-          // Sync anyFieldFilter
           const currentAnyFieldFilter = get(
             contextStoreAnyFieldFilterValueAtom,
           );
           if (currentAnyFieldFilter !== payload.anyFieldFilterValue) {
-            console.log('[FiltersToCtxStore] WRITING anyFieldFilter');
-            set(contextStoreAnyFieldFilterValueAtom, payload.anyFieldFilterValue);
+            set(
+              contextStoreAnyFieldFilterValueAtom,
+              payload.anyFieldFilterValue,
+            );
           }
         },
       ),
@@ -199,15 +191,9 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
   }, [store, resetWriteAtom]);
 
   useEffect(() => {
-    console.log('[FiltersToCtxStore] EFFECT fired', {
-      filtersCount: recordIndexFilters.length,
-      filterGroupsCount: recordIndexFilterGroups.length,
-      anyFieldFilterValue,
-    });
     syncAll(recordIndexFilters, recordIndexFilterGroups, anyFieldFilterValue);
 
     return () => {
-      console.log('[FiltersToCtxStore] EFFECT cleanup');
       resetAll();
     };
   }, [
