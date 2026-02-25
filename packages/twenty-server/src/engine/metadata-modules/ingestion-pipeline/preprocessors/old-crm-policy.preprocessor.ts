@@ -154,6 +154,26 @@ export class OldCrmPolicyPreprocessor {
 
     this.logger.log(`Preprocessing old CRM policy ${payload.policy_id}`);
 
+    // Cross-reference dedup: skip if a policy already exists where
+    // applicationId matches the incoming policy_number (agents sometimes
+    // enter the HealthSherpa application ID as the policy number in the
+    // old CRM, so the standard policyNumber dedup misses it).
+    if (payload.policy_number) {
+      const existingByAppId = await this.findPolicyByApplicationId(
+        payload.policy_number,
+        workspaceId,
+      );
+
+      if (existingByAppId) {
+        this.logger.log(
+          `Skipping policy ${payload.policy_id}: policy_number "${payload.policy_number}" ` +
+            `matches existing policy ${existingByAppId} by applicationId`,
+        );
+
+        return null;
+      }
+    }
+
     // Resolve lead source from vendor_name (needed before person creation)
     const leadSourceId = payload.vendor_name
       ? await this.findOrCreateLeadSource(payload.vendor_name, workspaceId)
@@ -1094,5 +1114,26 @@ export class OldCrmPolicyPreprocessor {
     this.agentCache.set(trimmedName, id);
 
     return id;
+  }
+
+  private async findPolicyByApplicationId(
+    applicationId: string,
+    workspaceId: string,
+  ): Promise<string | null> {
+    const policyRepo = await this.globalWorkspaceOrmManager.getRepository(
+      workspaceId,
+      'policy',
+      { shouldBypassPermissionChecks: true },
+    );
+
+    const existing = await policyRepo.findOne({
+      where: { applicationId },
+    });
+
+    if (isDefined(existing)) {
+      return (existing as Record<string, unknown>).id as string;
+    }
+
+    return null;
   }
 }

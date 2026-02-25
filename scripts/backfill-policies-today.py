@@ -259,6 +259,21 @@ def find_agent_by_name(name):
     return None
 
 
+def find_policy_by_application_id(app_id):
+    """Cross-reference dedup: check if a policy exists with this applicationId."""
+    data, _ = gql("""
+        query($filter: PolicyFilterInput) {
+            policies(filter: $filter, first: 1) {
+                edges { node { id } }
+            }
+        }
+    """, {"filter": {"applicationId": {"eq": app_id}}})
+
+    if data and data["policies"]["edges"]:
+        return data["policies"]["edges"][0]["node"]["id"]
+    return None
+
+
 def fetch_todays_policies(target_date):
     """Fetch ALL policies from old CRM, filter to target_date by reg_date."""
     print(f"Fetching policies for {target_date} from old CRM...")
@@ -409,6 +424,13 @@ def main():
         agent = policy.get("member_name", "")
         policy_num = policy.get("policy_number", "")
 
+        # Cross-reference dedup: skip if policy_number matches an existing
+        # policy's applicationId (agents enter HealthSherpa app IDs as
+        # policy numbers in the old CRM)
+        if policy_num and find_policy_by_application_id(policy_num):
+            stats["skipped"] += 1
+            continue
+
         if not phone:
             print(f"  [{i}/{len(policies)}] SKIP {first} {last} — no phone")
             stats["no_person"] += 1
@@ -457,6 +479,7 @@ def main():
     print("=" * 60)
     print(f"  Target:     {len(policies)} policies from old CRM")
     print(f"  Created:    {stats['created']}")
+    print(f"  Skipped:    {stats['skipped']} (already exists by applicationId)")
     print(f"  No person:  {stats['no_person']} (lead not found in CRM)")
     print(f"  Failed:     {stats['failed']}")
     print("=" * 60)

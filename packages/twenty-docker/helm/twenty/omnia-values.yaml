@@ -36,7 +36,7 @@ server:
         if ($request_uri ~* \.(?:js|css|woff2?|svg|png|jpg|jpeg|gif|ico)$) {
           add_header Cache-Control "public, max-age=31536000, immutable" always;
         }
-        if ($request_uri = /index.html) {
+        if ($request_uri !~* \.(?:js|css|woff2?|svg|png|jpg|jpeg|gif|ico|json|map|wasm)$) {
           add_header Cache-Control "no-cache, no-store, must-revalidate" always;
         }
     hosts:
