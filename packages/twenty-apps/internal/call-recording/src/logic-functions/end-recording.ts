@@ -2,6 +2,10 @@ import {
   RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER,
   TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/objects/call-recording';
+import {
+  matchParticipants,
+  type Participant,
+} from 'src/utils/match-participants';
 import { summarizeTranscript } from 'src/utils/summarize-transcript';
 import { defineLogicFunction } from 'twenty-sdk';
 import Twenty from 'twenty-sdk/generated';
@@ -11,6 +15,7 @@ interface EndRecordingBody {
   callRecordingId: string;
   audioUrl: string;
   transcriptUrl?: string;
+  participants?: Participant[];
 }
 
 type UploadedFileRef = { fileId: string; label: string };
@@ -114,7 +119,7 @@ const handler = async (event: any) => {
       },
       id: true,
       name: true,
-      endedAt: true,
+      status: true,
     },
   });
 
@@ -122,7 +127,7 @@ const handler = async (event: any) => {
     throw new Error(`Call recording not found: ${body.callRecordingId}`);
   }
 
-  if (callRecording.endedAt) {
+  if (callRecording.status === 'ENDED') {
     throw new Error(`Call recording already ended: ${body.callRecordingId}`);
   }
 
@@ -145,6 +150,7 @@ const handler = async (event: any) => {
       __args: {
         id: callRecording.id,
         data: {
+          status: 'ENDED',
           endedAt: new Date().toISOString(),
           recordingFile: [{ fileId: uploadedRecording.id, label: fileName }],
           ...transcriptData,
@@ -152,6 +158,7 @@ const handler = async (event: any) => {
       },
       id: true,
       endedAt: true,
+      status: true,
     },
   });
 
@@ -178,6 +185,10 @@ const handler = async (event: any) => {
     } catch {
       // AI summarization is best-effort; don't fail the end-recording flow
     }
+  }
+
+  if (body.participants?.length) {
+    await matchParticipants(callRecording.id, body.participants);
   }
 };
 

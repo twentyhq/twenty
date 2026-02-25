@@ -1,0 +1,22 @@
+import { CALL_RECORDING_ON_COMPANY_ID } from 'src/fields/call-recording-on-company.field';
+import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
+import { defineField, FieldType, RelationType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk';
+
+export const COMPANIES_ON_CALL_RECORDING_ID =
+  '5550e26a-4354-434b-b32e-3f7b04585113';
+
+export default defineField({
+  universalIdentifier: COMPANIES_ON_CALL_RECORDING_ID,
+  objectUniversalIdentifier: CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'companies',
+  label: 'Companies',
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier:
+    CALL_RECORDING_ON_COMPANY_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
+  icon: 'IconCompany',
+});

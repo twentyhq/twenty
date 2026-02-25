@@ -24,6 +24,9 @@ export const TRANSCRIPT_FIELD_UNIVERSAL_IDENTIFIER =
 export const SUMMARY_FIELD_UNIVERSAL_IDENTIFIER =
   '55eb083f-0b68-4f5c-bcd7-c853ad77ba11';
 
+export const STATUS_FIELD_UNIVERSAL_IDENTIFIER =
+  '24c92ad0-4559-4bf9-a9fa-09168914a142';
+
 export default defineObject({
   universalIdentifier: CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
   nameSingular: 'callRecording',
@@ -83,6 +86,31 @@ export default defineObject({
       label: 'Transcript',
       description: 'Human-readable transcript of the call',
       icon: 'IconMessage',
+    },
+    {
+      universalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      name: 'status',
+      label: 'Status',
+      description: 'Status of the call recording',
+      icon: 'IconStatusChange',
+      defaultValue: "'ONGOING'",
+      options: [
+        {
+          id: '8b275a4d-98ba-4718-912d-b1d97e713f5d',
+          value: 'ONGOING',
+          label: 'Ongoing',
+          position: 0,
+          color: 'blue',
+        },
+        {
+          id: 'a515ac77-44f8-4744-9c50-0a29352a800d',
+          value: 'ENDED',
+          label: 'Ended',
+          position: 1,
+          color: 'green',
+        },
+      ],
     },
     {
       universalIdentifier: SUMMARY_FIELD_UNIVERSAL_IDENTIFIER,

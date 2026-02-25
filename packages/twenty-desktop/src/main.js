@@ -377,6 +377,7 @@ async function endCallRecordingWithRetry(windowId, maxAttempts = 10, delayMs = 5
             callRecordingId: meeting.twentyRecordId,
             audioUrl,
             transcriptUrl,
+            participants: meeting.participants,
           });
           return;
         }

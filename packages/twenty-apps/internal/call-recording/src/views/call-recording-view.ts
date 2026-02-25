@@ -1,4 +1,6 @@
-import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER, CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER, ENDED_AT_FIELD_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER, RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER, SUMMARY_FIELD_UNIVERSAL_IDENTIFIER, TRANSCRIPT_FIELD_UNIVERSAL_IDENTIFIER, TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
+import { COMPANIES_ON_CALL_RECORDING_ID } from 'src/fields/companies-on-call-recording.field';
+import { PEOPLE_ON_CALL_RECORDING_ID } from 'src/fields/people-on-call-recording.field';
+import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER, CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER, ENDED_AT_FIELD_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER, RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER, STATUS_FIELD_UNIVERSAL_IDENTIFIER, SUMMARY_FIELD_UNIVERSAL_IDENTIFIER, TRANSCRIPT_FIELD_UNIVERSAL_IDENTIFIER, TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
 import { defineView } from 'twenty-sdk';
 
 export const CALL_RECORDING_VIEW_UNIVERSAL_IDENTIFIER =
@@ -33,25 +35,46 @@ export default defineView({
       position: 2,
     },
     {
+      universalIdentifier: '17c4e68a-5b62-4509-b8ed-19f82dfb8e2f',
+      fieldMetadataUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      isVisible: true,
+      size: 12,
+      position: 3,
+    },
+    {
       universalIdentifier: 'a7bce6c7-39ce-406a-bc6f-00b495951b4a',
       fieldMetadataUniversalIdentifier: RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
       size: 12,
-      position: 3,
+      position: 4,
     },
     {
       universalIdentifier: 'f3e2d1c0-a9b8-47c6-85d4-3e2f1a0b9c8d',
       fieldMetadataUniversalIdentifier: TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
       size: 12,
-      position: 4,
+      position: 5,
     },
     {
       universalIdentifier: 'e4c3b2a1-0d9e-48f7-a6b5-1c2d3e4f5a6b',
       fieldMetadataUniversalIdentifier: TRANSCRIPT_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
       size: 12,
-      position: 5,
+      position: 6,
+    },
+    {
+      universalIdentifier: '56925631-0077-4b65-a25a-24afec4d8bff',
+      fieldMetadataUniversalIdentifier: COMPANIES_ON_CALL_RECORDING_ID,
+      isVisible: true,
+      size: 12,
+      position: 7,
+    },
+    {
+      universalIdentifier: '1ba8538d-9c8e-47bf-b485-a8ba07b3d9a3',
+      fieldMetadataUniversalIdentifier: PEOPLE_ON_CALL_RECORDING_ID,
+      isVisible: true,
+      size: 12,
+      position: 8,
     },
     {
       universalIdentifier: '58124ded-56ff-40a0-8858-eae1b5ae75d7',
