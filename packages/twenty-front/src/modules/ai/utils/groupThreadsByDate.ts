@@ -11,7 +11,7 @@ export const groupThreadsByDate = (
 
   return threads.reduce<Record<DateGroupKey, AgentChatThread[]>>(
     (acc, thread) => {
-      const threadDate = new Date(thread.createdAt);
+      const threadDate = new Date(thread.updatedAt);
       const threadDateString = threadDate.toDateString();
 
       if (threadDateString === today.toDateString()) {
