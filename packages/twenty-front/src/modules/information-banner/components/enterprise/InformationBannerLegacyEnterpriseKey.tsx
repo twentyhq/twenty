@@ -1,10 +1,10 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconKey } from 'twenty-ui/display';
@@ -14,9 +14,9 @@ const COMPONENT_INSTANCE_ID = 'information-banner-legacy-enterprise-key';
 export const InformationBannerLegacyEnterpriseKey = () => {
   const { t } = useLingui();
   const navigate = useNavigate();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const setIsOpen = useSetRecoilComponentState(
+  const setIsOpen = useSetAtomComponentState(
     informationBannerIsOpenComponentState,
     COMPONENT_INSTANCE_ID,
   );

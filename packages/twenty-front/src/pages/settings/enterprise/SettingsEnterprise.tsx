@@ -1,8 +1,8 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
 import { SubscriptionInfoRowContainer } from '@/billing/components/internal/SubscriptionInfoRowContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -76,7 +76,7 @@ export const SettingsEnterprise = ({
   isAdminPanelTab = false,
 }: SettingsEnterpriseProps = {}) => {
   const { t } = useLingui();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const [enterpriseKey, setEnterpriseKey] = useState('');
   const [isActivating, setIsActivating] = useState(false);
   const [setEnterpriseKeyMutation] = useMutation(SET_ENTERPRISE_KEY);

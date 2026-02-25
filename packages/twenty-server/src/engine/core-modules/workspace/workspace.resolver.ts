@@ -28,8 +28,6 @@ import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/dom
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { EnterpriseLicenseInfoDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-license-info.dto';
-import { EnterpriseSubscriptionStatusDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-subscription-status.dto';
 import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -64,8 +62,6 @@ import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
-import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -518,88 +514,5 @@ export class WorkspaceResolver {
       workspace,
       domainValidRecords,
     );
-  }
-
-  @Query(() => String, { nullable: true })
-  @UseGuards(
-    WorkspaceAuthGuard,
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
-  async enterprisePortalSession(
-    @Args('returnUrlPath', { nullable: true }) returnUrlPath?: string,
-  ): Promise<string | null> {
-    return this.enterpriseKeyService.getPortalUrl(returnUrlPath ?? undefined);
-  }
-
-  @Query(() => String, { nullable: true })
-  @UseGuards(
-    WorkspaceAuthGuard,
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
-  async enterpriseCheckoutSession(
-    @Args('billingInterval', { nullable: true }) billingInterval?: string,
-  ): Promise<string | null> {
-    const interval = billingInterval === 'yearly' ? 'yearly' : 'monthly';
-    const seatCount =
-      await this.userWorkspaceService.getActiveUserWorkspaceCountTotal();
-
-    return this.enterpriseKeyService.getCheckoutUrl(interval, seatCount);
-  }
-
-  @Query(() => EnterpriseSubscriptionStatusDTO, { nullable: true })
-  @UseGuards(
-    WorkspaceAuthGuard,
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
-  async enterpriseSubscriptionStatus(): Promise<EnterpriseSubscriptionStatusDTO | null> {
-    return this.enterpriseKeyService.getSubscriptionStatus();
-  }
-
-  @Mutation(() => EnterpriseLicenseInfoDTO)
-  @UseGuards(
-    WorkspaceAuthGuard,
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
-  async setEnterpriseKey(
-    @Args('enterpriseKey') enterpriseKey: string,
-  ): Promise<EnterpriseLicenseInfoDTO> {
-    try {
-      if (
-        !this.enterpriseKeyService.isValidEnterpriseKeyFormat(enterpriseKey)
-      ) {
-        throw new WorkspaceException(
-          'Invalid enterprise key',
-          WorkspaceExceptionCode.INVALID_ENTERPRISE_KEY,
-        );
-      }
-
-      await this.twentyConfigService.set('ENTERPRISE_KEY', enterpriseKey);
-
-      await this.enterpriseKeyService.refreshValidityToken();
-
-      const seatCount =
-        await this.userWorkspaceService.getActiveUserWorkspaceCountTotal();
-
-      await this.enterpriseKeyService.reportSeats(seatCount);
-
-      return this.enterpriseKeyService.getLicenseInfo();
-    } catch (error) {
-      workspaceGraphqlApiExceptionHandler(error);
-
-      return {
-        isValid: false,
-        licensee: null,
-        expiresAt: null,
-        subscriptionId: null,
-      };
-    }
   }
 }
