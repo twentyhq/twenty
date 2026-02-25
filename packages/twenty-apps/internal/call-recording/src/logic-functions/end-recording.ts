@@ -145,6 +145,10 @@ const handler = async (event: any) => {
     body.transcriptUrl,
   );
 
+  const callName = body.participants?.length
+    ? `Call ${body.participants.map((participant) => participant.name).join(' / ')}`
+    : undefined;
+
   await client.mutation({
     updateCallRecording: {
       __args: {
@@ -154,6 +158,7 @@ const handler = async (event: any) => {
           endedAt: new Date().toISOString(),
           recordingFile: [{ fileId: uploadedRecording.id, label: fileName }],
           ...transcriptData,
+          ...(callName ? { name: callName } : {}),
         },
       },
       id: true,

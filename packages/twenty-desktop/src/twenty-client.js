@@ -64,7 +64,10 @@ async function createCallRecording(name) {
   const client = getClient();
 
   try {
-    const response = await client.post('/callRecordings', { name });
+    const response = await client.post('/callRecordings', {
+      name,
+      createdAt: new Date().toISOString(),
+    });
     const record = response.data?.data?.createCallRecording;
 
     console.log(
