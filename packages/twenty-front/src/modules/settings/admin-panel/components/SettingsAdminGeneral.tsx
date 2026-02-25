@@ -42,7 +42,6 @@ export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
     SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,

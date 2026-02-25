@@ -31,7 +31,6 @@ export const useJsonField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldJsonValue>();
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );

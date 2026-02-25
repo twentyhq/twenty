@@ -204,7 +204,6 @@ export const WorkflowEditActionAiAgent = ({
     },
   ];
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     componentInstanceId,

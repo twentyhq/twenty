@@ -43,13 +43,11 @@ describe('useToggleDropdown', () => {
   it('should toggle dropdown from inside component instance context', async () => {
     const { result } = renderHook(
       () => {
-        // eslint-disable-next-line twenty/matching-state-variable
         const isOutsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
         );
 
-        // eslint-disable-next-line twenty/matching-state-variable
         const isInsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
         );
@@ -90,13 +88,11 @@ describe('useToggleDropdown', () => {
   it('should toggle dropdown from outside component instance context', async () => {
     const { result } = renderHook(
       () => {
-        // eslint-disable-next-line twenty/matching-state-variable
         const isOutsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
         );
 
-        // eslint-disable-next-line twenty/matching-state-variable
         const isInsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
         );

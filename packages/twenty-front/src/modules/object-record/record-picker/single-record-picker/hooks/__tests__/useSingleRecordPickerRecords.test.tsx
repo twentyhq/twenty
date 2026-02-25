@@ -18,7 +18,6 @@ describe('useSingleRecordPickerRecords', () => {
     const { result } = renderHook(
       () => {
         const recordSelectSearchHook = useSingleRecordPickerSearch(instanceId);
-        // eslint-disable-next-line twenty/matching-state-variable
         const internallyStoredFilter = useAtomComponentStateValue(
           singleRecordPickerSearchFilterComponentState,
           instanceId,

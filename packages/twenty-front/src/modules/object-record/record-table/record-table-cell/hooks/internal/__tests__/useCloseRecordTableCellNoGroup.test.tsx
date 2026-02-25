@@ -74,7 +74,6 @@ describe('useCloseRecordTableCellNoGroup', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
-        // eslint-disable-next-line twenty/matching-state-variable
         const currentTableCellInEditModePosition = useAtomComponentStateValue(
           recordTableCellEditModePositionComponentState,
           recordTableId,

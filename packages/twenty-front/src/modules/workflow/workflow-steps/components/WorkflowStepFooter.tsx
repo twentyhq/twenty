@@ -98,7 +98,6 @@ export const WorkflowStepFooter = ({
     }
   };
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     dropdownId,

@@ -26,7 +26,6 @@ export const useFilesField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldFilesValue[]>();
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );

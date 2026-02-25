@@ -34,7 +34,6 @@ describe('useCloseAnyOpenDropdown', () => {
   it('should open dropdown and then close it with closeAnyOpenDropdown', async () => {
     const { result } = renderHook(
       () => {
-        // eslint-disable-next-line twenty/matching-state-variable
         const isDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           dropdownId,

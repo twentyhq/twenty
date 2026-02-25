@@ -30,7 +30,6 @@ export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
     { recordId, fieldName },
   ) as [FieldRelationValue<T>, (value: FieldRelationValue<T>) => void];
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );

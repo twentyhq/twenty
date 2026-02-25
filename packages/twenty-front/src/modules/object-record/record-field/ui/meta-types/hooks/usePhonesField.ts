@@ -26,7 +26,6 @@ export const usePhonesField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldPhonesValue>();
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );

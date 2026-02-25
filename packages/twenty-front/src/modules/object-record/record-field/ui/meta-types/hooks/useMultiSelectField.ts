@@ -34,7 +34,6 @@ export const useMultiSelectField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldMultiSelectValue>();
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );

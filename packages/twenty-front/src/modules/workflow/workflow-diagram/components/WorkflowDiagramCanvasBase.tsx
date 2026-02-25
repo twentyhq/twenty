@@ -170,11 +170,9 @@ export const WorkflowDiagramCanvasBase = ({
 
   const reactflow = useReactFlow();
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const currentWorkflowDiagram = useAtomComponentStateValue(
     workflowDiagramComponentState,
   );
-  // eslint-disable-next-line twenty/matching-state-variable
   const workflowDiagramPanOnDrag = useAtomComponentStateValue(
     workflowDiagramPanOnDragComponentState,
   );
@@ -196,7 +194,6 @@ export const WorkflowDiagramCanvasBase = ({
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const workflowInsertStepIds = useAtomComponentStateValue(
     workflowInsertStepIdsComponentState,
   );

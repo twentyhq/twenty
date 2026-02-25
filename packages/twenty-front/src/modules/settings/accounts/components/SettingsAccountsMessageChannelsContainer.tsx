@@ -26,7 +26,6 @@ const StyledMessageContainer = styled.div`
 `;
 
 export const SettingsAccountsMessageChannelsContainer = () => {
-  // eslint-disable-next-line twenty/matching-state-variable
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID,

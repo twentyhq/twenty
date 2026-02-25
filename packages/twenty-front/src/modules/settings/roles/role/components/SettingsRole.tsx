@@ -36,7 +36,6 @@ type SettingsRoleProps = {
 
 export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
-  // eslint-disable-next-line twenty/matching-state-variable
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,

@@ -99,17 +99,14 @@ export const GraphWidgetBarChart = ({
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const hoveredSliceIndexValue = useAtomComponentStateValue(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const draggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const resizingWidgetId = useAtomComponentStateValue(
     pageLayoutResizingWidgetIdComponentState,
   );
