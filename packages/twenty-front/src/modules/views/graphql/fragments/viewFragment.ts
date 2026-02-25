@@ -1,4 +1,5 @@
 import { VIEW_FIELD_FRAGMENT } from '@/views/graphql/fragments/viewFieldFragment';
+import { VIEW_FIELD_GROUP_FRAGMENT } from '@/views/graphql/fragments/viewFieldGroupFragment';
 import { VIEW_FILTER_FRAGMENT } from '@/views/graphql/fragments/viewFilterFragment';
 import { VIEW_FILTER_GROUP_FRAGMENT } from '@/views/graphql/fragments/viewFilterGroupFragment';
 import { VIEW_GROUP_FRAGMENT } from '@/views/graphql/fragments/viewGroupFragment';
@@ -6,6 +7,7 @@ import { VIEW_SORT_FRAGMENT } from '@/views/graphql/fragments/viewSortFragment';
 import { gql } from '@apollo/client';
 
 export const VIEW_FRAGMENT = gql`
+  ${VIEW_FIELD_GROUP_FRAGMENT}
   ${VIEW_FIELD_FRAGMENT}
   ${VIEW_FILTER_FRAGMENT}
   ${VIEW_FILTER_GROUP_FRAGMENT}
@@ -33,6 +35,9 @@ export const VIEW_FRAGMENT = gql`
     createdByUserWorkspaceId
     viewFields {
       ...ViewFieldFragment
+    }
+    viewFieldGroups {
+      ...ViewFieldGroupFragment
     }
     viewFilters {
       ...ViewFilterFragment

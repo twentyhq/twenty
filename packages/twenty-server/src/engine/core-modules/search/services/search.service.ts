@@ -25,16 +25,17 @@ import {
   SearchExceptionCode,
 } from 'src/engine/core-modules/search/exceptions/search.exception';
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
+import { escapeForIlike } from 'src/engine/core-modules/search/utils/escape-for-ilike';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -98,10 +99,11 @@ export class SearchService {
 
               return {
                 objectMetadataItem: flatObjectMetadata,
-                records: await this.buildSearchQueryAndGetRecords({
+                records: await this.buildSearchQueryAndGetRecordsWithFallback({
                   entityManager: repository,
                   flatObjectMetadata,
                   flatFieldMetadataMaps,
+                  searchInput,
                   searchTerms: formatSearchTerms(searchInput, 'and'),
                   searchTermsOr: formatSearchTerms(searchInput, 'or'),
                   limit: limit as number,
@@ -147,6 +149,65 @@ export class SearchService {
         return true;
       },
     );
+  }
+
+  // Runs a fast tsvector query first (uses GIN index). If tsvector returns zero
+  // results for an object type on the first page, falls back to ILIKE on the
+  // searchVector text to catch cases where tokenization fails (e.g. CJK text).
+  // Skipped when tsvector finds any results (partial results mean the data just
+  // has fewer matches, not a tokenization issue) and on paginated requests.
+  async buildSearchQueryAndGetRecordsWithFallback<
+    Entity extends ObjectLiteral,
+  >({
+    entityManager,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    searchInput,
+    searchTerms,
+    searchTermsOr,
+    limit,
+    filter,
+    after,
+  }: {
+    entityManager: WorkspaceRepository<Entity>;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    searchInput: string;
+    searchTerms: string;
+    searchTermsOr: string;
+    limit: number;
+    filter: ObjectRecordFilterInput;
+    after?: string;
+  }) {
+    const tsvectorResults = await this.buildSearchQueryAndGetRecords({
+      entityManager,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      searchTerms,
+      searchTermsOr,
+      limit,
+      filter,
+      after,
+    });
+
+    if (
+      tsvectorResults.length > 0 ||
+      !isNonEmptyString(searchInput.trim()) ||
+      isDefined(after)
+    ) {
+      return tsvectorResults;
+    }
+
+    const fallbackResults = await this.buildIlikeFallbackQuery({
+      entityManager,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      searchInput,
+      limit: limit + 1,
+      filter,
+    });
+
+    return [...tsvectorResults, ...fallbackResults];
   }
 
   async buildSearchQueryAndGetRecords<Entity extends ObjectLiteral>({
@@ -248,6 +309,81 @@ export class SearchService {
       .setParameter('searchTermsOr', searchTermsOr)
       .take(limit + 1) // We take one more to check if hasNextPage is true
       .getRawMany();
+  }
+
+  private async buildIlikeFallbackQuery<Entity extends ObjectLiteral>({
+    entityManager,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    searchInput,
+    limit,
+    filter,
+  }: {
+    entityManager: WorkspaceRepository<Entity>;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    searchInput: string;
+    limit: number;
+    filter: ObjectRecordFilterInput;
+  }) {
+    const queryBuilder = entityManager.createQueryBuilder();
+
+    const { flatObjectMetadataMaps } = entityManager.internalContext;
+
+    const queryParser = new GraphqlQueryParser(
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    );
+
+    queryParser.applyFilterToBuilder(
+      queryBuilder,
+      flatObjectMetadata.nameSingular,
+      filter,
+    );
+
+    queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
+
+    const imageIdentifierField = this.getImageIdentifierColumn(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    const fieldsToSelect = [
+      'id',
+      ...this.getLabelIdentifierColumns(
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      ),
+      ...(imageIdentifierField ? [imageIdentifierField] : []),
+    ].map((field) => `"${field}"`);
+
+    queryBuilder.select(fieldsToSelect);
+
+    const searchWords = searchInput
+      .trim()
+      .split(/\s+/)
+      .filter(isNonEmptyString);
+
+    searchWords.forEach((word, index) => {
+      const paramName = `ilikeFallback${index}`;
+
+      queryBuilder.andWhere(
+        `public.unaccent_immutable("${SEARCH_VECTOR_FIELD.name}"::text) ILIKE public.unaccent_immutable(:${paramName})`,
+        { [paramName]: `%${escapeForIlike(word)}%` },
+      );
+    });
+
+    const rawResults = await queryBuilder
+      .orderBy('"id"', 'ASC')
+      .take(limit)
+      .getRawMany();
+
+    return rawResults.map((record) => ({
+      ...record,
+      tsRankCD: 0,
+      tsRank: 0,
+    }));
   }
 
   computeCursorWhereCondition({

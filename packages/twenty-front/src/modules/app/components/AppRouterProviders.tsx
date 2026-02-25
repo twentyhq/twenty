@@ -1,5 +1,9 @@
+import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
+import { MetadataGater } from '@/metadata-store/components/MetadataGater';
+import { IsAppMetadataReadyEffect } from '@/metadata-store/effect-components/IsAppMetadataReadyEffect';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
+import { MetadataProviderInitialEffects } from '@/metadata-store/effect-components/MetadataProviderInitialEffects';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
@@ -10,9 +14,9 @@ import { ClientConfigProviderEffect } from '@/client-config/components/ClientCon
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
+import { HeadlessFrontComponentMountRoot } from '@/front-components/components/HeadlessFrontComponentMountRoot';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
-import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
-import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
 import { SupportChatEffect } from '@/support/components/SupportChatEffect';
@@ -24,8 +28,7 @@ import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
-import { MetadataProviderEffect } from '@/users/components/MetadataProviderEffect';
-import { UserProvider } from '@/users/components/UserProvider';
+import { LazyMetadataLoadEffect } from '@/users/components/LazyMetadataLoadEffect';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
@@ -39,46 +42,50 @@ export const AppRouterProviders = () => {
     <ApolloProvider>
       <BaseThemeProvider>
         <ClientConfigProviderEffect />
-        <MetadataProviderEffect />
+        <MetadataProviderInitialEffects />
+        <LazyMetadataLoadEffect />
+        <IsAppMetadataReadyEffect />
         <WorkspaceProviderEffect />
         <ClientConfigProvider>
           <CaptchaProvider>
             <ChromeExtensionSidecarEffect />
             <ChromeExtensionSidecarProvider>
-              <UserProvider>
+              <MetadataGater>
                 <AuthProvider>
                   <ApolloCoreProvider>
                     <SSEProvider>
-                      <ObjectMetadataItemsLoadEffect />
-                      <ObjectMetadataItemsProvider>
+                      <PreComputedChipGeneratorsProvider>
                         <PrefetchDataProvider>
                           <UserThemeProviderEffect />
                           <SnackBarProvider>
                             <ErrorMessageEffect />
-                            <DialogComponentInstanceContext.Provider
-                              value={{ instanceId: 'dialog-manager' }}
-                            >
-                              <DialogManager>
-                                <StrictMode>
-                                  <PromiseRejectionEffect />
-                                  <GotoHotkeysEffectsProvider />
-                                  <PageTitle title={pageTitle} />
-                                  <PageFavicon />
-                                  <Outlet />
-                                  <GlobalFilePreviewModal />
-                                </StrictMode>
-                              </DialogManager>
-                            </DialogComponentInstanceContext.Provider>
+                            <AgentChatProvider>
+                              <DialogComponentInstanceContext.Provider
+                                value={{ instanceId: 'dialog-manager' }}
+                              >
+                                <DialogManager>
+                                  <StrictMode>
+                                    <PromiseRejectionEffect />
+                                    <GotoHotkeysEffectsProvider />
+                                    <PageTitle title={pageTitle} />
+                                    <PageFavicon />
+                                    <Outlet />
+                                    <GlobalFilePreviewModal />
+                                    <HeadlessFrontComponentMountRoot />
+                                  </StrictMode>
+                                </DialogManager>
+                              </DialogComponentInstanceContext.Provider>
+                            </AgentChatProvider>
                           </SnackBarProvider>
                           <MainContextStoreProvider />
                           <SupportChatEffect />
                         </PrefetchDataProvider>
                         <PageChangeEffect />
-                      </ObjectMetadataItemsProvider>
+                      </PreComputedChipGeneratorsProvider>
                     </SSEProvider>
                   </ApolloCoreProvider>
                 </AuthProvider>
-              </UserProvider>
+              </MetadataGater>
             </ChromeExtensionSidecarProvider>
           </CaptchaProvider>
         </ClientConfigProvider>

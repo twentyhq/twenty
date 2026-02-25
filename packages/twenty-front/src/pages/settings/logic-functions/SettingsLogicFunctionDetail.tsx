@@ -1,20 +1,15 @@
-import { getToolInputSchemaFromSourceCode } from '@/logic-functions/utils/getToolInputSchemaFromSourceCode';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
+import { useLogicFunctionEditor } from '@/logic-functions/hooks/useLogicFunctionEditor';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
 import { SettingsLogicFunctionSettingsTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionSettingsTab';
 import { SettingsLogicFunctionTestTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab';
 import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab';
-import {
-  type LogicFunctionFormValues,
-  useLogicFunctionUpdateFormState,
-} from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -26,9 +21,7 @@ import {
 } from 'twenty-ui/display';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValue } from 'recoil';
-import { useDebouncedCallback } from 'use-debounce';
-import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsLogicFunctionCodeEditorTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab';
 
 const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
@@ -37,7 +30,7 @@ export const SettingsLogicFunctionDetail = () => {
   const { logicFunctionId = '', applicationId = '' } = useParams();
 
   const navigate = useNavigate();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { data, loading: applicationLoading } = useFindOneApplicationQuery({
     variables: { id: applicationId },
@@ -53,67 +46,19 @@ export const SettingsLogicFunctionDetail = () => {
 
   const instanceId = `${LOGIC_FUNCTION_DETAIL_ID}-${logicFunctionId}`;
 
-  const activeTabId = useRecoilComponentValue(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     instanceId,
   );
 
-  const { formValues, setFormValues, logicFunction, loading } =
-    useLogicFunctionUpdateFormState({ logicFunctionId });
-
-  const { updateLogicFunction } = usePersistLogicFunction();
-
-  const { executeLogicFunction, isExecuting } = useExecuteLogicFunction({
-    logicFunctionId,
-  });
-
-  const handleExecute = async () => {
-    await executeLogicFunction();
-  };
-
-  const handleSave = useDebouncedCallback(
-    async (toolInputSchema?: object | null) => {
-      await updateLogicFunction({
-        input: {
-          id: logicFunctionId,
-          update: {
-            name: formValues.name,
-            description: formValues.description,
-            sourceHandlerCode: formValues.code,
-            ...(toolInputSchema !== undefined && { toolInputSchema }),
-          },
-        },
-      });
-    },
-    500,
-  );
-
-  const onChange = (key: string) => {
-    return (value: string) => {
-      setFormValues((prevState: LogicFunctionFormValues) => ({
-        ...prevState,
-        [key]: value,
-      }));
-    };
-  };
-
-  const onCodeChange = async (filePath: string, value: string) => {
-    setFormValues((prevState: LogicFunctionFormValues) => {
-      return {
-        ...prevState,
-        code: value,
-      };
-    });
-
-    // Parse and save schema if editing the handler file
-    let toolInputSchema: object | null | undefined;
-
-    if (filePath === logicFunction?.sourceHandlerPath) {
-      toolInputSchema = await getToolInputSchemaFromSourceCode(value);
-    }
-
-    await handleSave(toolInputSchema);
-  };
+  const {
+    formValues,
+    logicFunction,
+    loading,
+    onChange,
+    executeLogicFunction,
+    isExecuting,
+  } = useLogicFunctionEditor({ logicFunctionId });
 
   const handleTestFunction = async () => {
     navigate('#test');
@@ -177,7 +122,7 @@ export const SettingsLogicFunctionDetail = () => {
   const files = [
     {
       path: 'index.ts',
-      content: formValues.code,
+      content: formValues.sourceHandlerCode,
       language: 'typescript',
     },
   ];
@@ -200,7 +145,7 @@ export const SettingsLogicFunctionDetail = () => {
             <SettingsLogicFunctionCodeEditorTab
               files={files}
               handleExecute={handleTestFunction}
-              onChange={onCodeChange}
+              onChange={onChange('sourceHandlerCode')}
               isTesting={isExecuting}
             />
           )}
@@ -215,7 +160,7 @@ export const SettingsLogicFunctionDetail = () => {
           )}
           {isTestTab && (
             <SettingsLogicFunctionTestTab
-              handleExecute={handleExecute}
+              handleExecute={executeLogicFunction}
               logicFunctionId={logicFunctionId}
               isTesting={isExecuting}
             />

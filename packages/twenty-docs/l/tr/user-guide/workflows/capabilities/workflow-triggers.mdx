@@ -10,14 +10,13 @@ description: İş akışlarınızı başlatan farklı tetikleyiciler hakkında b
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Gelişmiş nesneler destekleniyor!** Standart CRM nesnelerinin (Kişiler, Şirketler, Fırsatlar) ötesinde, ayrıca şu öğelerde iş akışlarını tetikleyebilir ve işlemler gerçekleştirebilirsiniz:
+**Gelişmiş nesneler destekleniyor!** Standart CRM nesnelerinin (Kişiler, Şirketler, Fırsatlar) ötesinde, ayrıca şu öğelerde iş akışlarını tetikleyebilir ve işlemler gerçekleştirebilirsiniz:
+* Çalışma Alanı Üyeleri
+* Takvim etkinlikleri
+* Mesajlar (E-postalar)
+* Görevler, Notlar ve daha birçok sistem nesnesi
 
-  * Çalışma Alanı Üyeleri
-  * Takvim etkinlikleri
-  * Mesajlar (E-postalar)
-  * Görevler, Notlar ve daha birçok sistem nesnesi
-
-  Bu, takvim etkinlikleri oluşturulduğunda ekip üyelerini bilgilendirme ya da gelen e-postaları otomatik olarak işleme gibi güçlü otomasyonların önünü açar.
+Bu, takvim etkinlikleri oluşturulduğunda ekip üyelerini bilgilendirme ya da gelen e-postaları otomatik olarak işleme gibi güçlü otomasyonların önünü açar.
 </Tip>
 
 ## Kayıt Oluşturuldu
@@ -27,9 +26,9 @@ Seçilen bir nesneye (Kişiler, Şirketler, Fırsatlar veya herhangi bir özel n
 **Yapılandırma**: Yeni kayıtları izlemek için nesne türünü seçin.
 
 <Note>
-  * Bu tetikleyici, csv, posta kutusu ve takvim eşzamanlaması ile API tarafından oluşturulan kayıtlar için harikadır.
-  * **El ile oluşturulan kayıtlar için önerilmez**: bu tetikleyici ile kayıt oluşturulur oluşturulmaz iş akışları başlar. Twenty UI anında otomatik kaydetme sunduğundan (kayıtları kaydetmek için bir düzenleme modu ve ardından doğrulama yoktur), kullanıcı tüm alanları girmeden önce iş akışı tetiklenecektir.
-    Bu iş akışını el ile oluşturulan kayıtlarda tetiklemek için bunun yerine `Record is created or updated` tetikleyicisini kullanmanız önerilir.
+* Bu tetikleyici, csv, posta kutusu ve takvim eşzamanlaması ile API tarafından oluşturulan kayıtlar için harikadır.
+* **El ile oluşturulan kayıtlar için önerilmez**: bu tetikleyici ile kayıt oluşturulur oluşturulmaz iş akışları başlar. Twenty UI anında otomatik kaydetme sunduğundan (kayıtları kaydetmek için bir düzenleme modu ve ardından doğrulama yoktur), kullanıcı tüm alanları girmeden önce iş akışı tetiklenecektir.
+  Bu iş akışını el ile oluşturulan kayıtlarda tetiklemek için bunun yerine `Record is created or updated` tetikleyicisini kullanmanız önerilir.
 </Note>
 
 ## Kayıt Güncellendi
@@ -82,7 +81,7 @@ Bir kullanıcı eylemi tarafından tetiklendiğinde iş akışını başlatır. 
 * **Toplu**: Seçilen kayıt(lar) iş akışınıza iletilecektir. Bu, belirli bir nesne için yapılandırılmıştır. İş akışını başlatmadan önce birkaç kayıt seçilebilir. İş akışı bir kere çalışacak, tüm kayıt listesini girdi olarak sağlayacak. Bu, iş akışının bir [Yineleyici eylemi](/l/tr/user-guide/workflows/capabilities/workflow-actions#iterator) içermesi gerektiği anlamına gelir.
 
 <Note>
-  Bu daha gelişmiştir ve iş akışı çalıştırmalarının sayısını optimize etmek isteyenler için en uygunudur.
+Bu daha gelişmiştir ve iş akışı çalıştırmalarının sayısını optimize etmek isteyenler için en uygunudur.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
@@ -108,7 +107,7 @@ Belirlediğiniz aralıklarla iş akışını başlatır.
 * İleri düzey zamanlama için bir değer girin veya özel cron ifadeleri kullanın.
 
 <Note>
-  **Saat dilimi**: Zamanlanmış iş akışları **UTC**'de çalışır. Günlük zamanlamalar için saatleri ayarlarken yerel saatinizi UTC'ye dönüştürün.
+**Saat dilimi**: Zamanlanmış iş akışları **UTC**'de çalışır. Günlük zamanlamalar için saatleri ayarlarken yerel saatinizi UTC'ye dönüştürün.
 </Note>
 
 ## Harici Tetikleyici: Webhook

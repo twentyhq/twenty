@@ -13,6 +13,7 @@ export type FormRelationToOneFieldInputProps = {
   objectNameSingular?: string;
   defaultValue?: FieldRelationValue<FieldRelationToOneValue> | string;
   onChange: (value: JsonValue) => void;
+  onClear?: () => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
 };
@@ -27,6 +28,7 @@ export const FormRelationToOneFieldInput = ({
   label,
   objectNameSingular,
   onChange,
+  onClear,
   defaultValue,
   readonly,
   VariablePicker,
@@ -41,6 +43,7 @@ export const FormRelationToOneFieldInput = ({
             : defaultValue
         }
         onChange={onChange}
+        onClear={onClear}
         objectNameSingulars={[objectNameSingular]}
         disabled={readonly}
         VariablePicker={VariablePicker}

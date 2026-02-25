@@ -12,8 +12,8 @@ import {
   isDefined,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
-import { useRecoilValue } from 'recoil';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type ObjectFilterDropdownRecordSelectProps = {
   recordFilter: RecordFilter;
@@ -23,7 +23,7 @@ type ObjectFilterDropdownRecordSelectProps = {
 export const useComputeRecordRelationFilterLabelValue = ({
   recordFilter,
 }: ObjectFilterDropdownRecordSelectProps) => {
-  const allowRequestsToTwentyIcons = useRecoilValue(
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
 

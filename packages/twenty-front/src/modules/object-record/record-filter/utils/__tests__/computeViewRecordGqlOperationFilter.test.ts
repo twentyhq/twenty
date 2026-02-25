@@ -1024,9 +1024,9 @@ describe('should work as expected for the different field types', () => {
 
     const dateFilterIs: RecordFilter = {
       id: 'company-date-filter-is',
-      value: '2024-09-17T20:46:58.922Z',
+      value: '2024-09-17',
       fieldMetadataId: companyMockDateFieldMetadataId?.id,
-      displayValue: '2024-09-17T20:46:58.922Z',
+      displayValue: '2024-09-17',
       operand: ViewFilterOperand.IS,
       label: 'Created At',
       type: FieldMetadataType.DATE_TIME,
@@ -1081,12 +1081,12 @@ describe('should work as expected for the different field types', () => {
           and: [
             {
               createdAt: {
-                lt: '2024-09-17T20:47:00Z',
+                gte: '2024-09-16T22:00:00Z',
               },
             },
             {
               createdAt: {
-                gte: '2024-09-17T20:46:00Z',
+                lt: '2024-09-17T22:00:00Z',
               },
             },
           ],

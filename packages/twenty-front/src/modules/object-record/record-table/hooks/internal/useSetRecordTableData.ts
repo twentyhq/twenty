@@ -1,10 +1,13 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import {
+  NO_RECORD_GROUP_FAMILY_KEY,
+  recordIndexAllRecordIdsComponentSelector,
+} from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
@@ -12,13 +15,12 @@ import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 
-import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
+import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -30,138 +32,131 @@ export const useSetRecordTableData = ({
   recordTableId,
 }: useSetRecordTableDataProps) => {
   const recordIndexRecordIdsByGroupFamilyState =
-    useRecoilComponentFamilyCallbackState(
+    useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
-      recordTableId,
     );
 
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
+  const recordIndexAllRecordIdsSelector = useAtomComponentSelectorCallbackState(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentFamilyCallbackState(
+  const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
 
-  const hasUserSelectedAllRowsState = useRecoilComponentCallbackState(
+  const hasUserSelectedAllRows = useAtomComponentStateCallbackState(
     hasUserSelectedAllRowsComponentState,
     recordTableId,
   );
 
-  const isRecordTableInitialLoadingCallbackState =
-    useRecoilComponentCallbackState(
-      isRecordTableInitialLoadingComponentState,
-      recordTableId,
-    );
+  const isRecordTableInitialLoading = useAtomComponentStateCallbackState(
+    isRecordTableInitialLoadingComponentState,
+    recordTableId,
+  );
 
-  const recordIdByRealIndexCallbackSelector =
-    useRecoilComponentFamilyCallbackState(
-      recordIdByRealIndexComponentFamilySelector,
-      recordTableId,
-    );
+  const recordIdByRealIndex = useAtomComponentStateCallbackState(
+    recordIdByRealIndexComponentState,
+    recordTableId,
+  );
 
-  const setRecordTableHoverPosition = useSetRecoilComponentState(
+  const setRecordTableHoverPosition = useSetAtomComponentState(
     recordTableHoverPositionComponentState,
     recordTableId,
   );
 
   const { unfocusRecordTableCell } = useUnfocusRecordTableCell(recordTableId);
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
+  const store = useStore();
 
-  return useRecoilCallback(
-    ({ set, snapshot }) =>
-      <T extends ObjectRecord>({
-        records,
-        currentRecordGroupId,
-      }: {
-        records: T[];
-        currentRecordGroupId?: string;
-      }) => {
-        for (const record of records) {
-          // TODO: refactor with scoped state later
-          const currentRecord = snapshot
-            .getLoadable(recordStoreFamilyState(record.id))
-            .getValue();
+  return useCallback(
+    <T extends ObjectRecord>({
+      records,
+      currentRecordGroupId,
+    }: {
+      records: T[];
+      currentRecordGroupId?: string;
+    }) => {
+      for (const record of records) {
+        const currentRecord = store.get(
+          recordStoreFamilyState.atomFamily(record.id),
+        );
 
-          if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
-            const newRecord = {
-              ...currentRecord,
-              ...record,
-            };
+        if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
+          const newRecord = {
+            ...(currentRecord ?? {}),
+            ...record,
+          } as T;
 
-            set(recordStoreFamilyState(record.id), newRecord);
-            jotaiStore.set(
-              recordStoreFamilyStateV2.atomFamily(record.id),
-              newRecord,
-            );
+          store.set(recordStoreFamilyState.atomFamily(record.id), newRecord);
+        }
+      }
+
+      const currentRowIds = currentRecordGroupId
+        ? store.get(
+            recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
+          )
+        : store.get(recordIndexAllRecordIdsSelector);
+
+      const isAllRowsSelected = store.get(hasUserSelectedAllRows);
+
+      const recordIds = records.map((record) => record.id);
+
+      if (!isDeeplyEqual(currentRowIds, recordIds)) {
+        unfocusRecordTableCell();
+        unfocusRecordTableRow();
+        setRecordTableHoverPosition(null);
+
+        if (isAllRowsSelected) {
+          for (const rowId of recordIds) {
+            store.set(isRowSelectedFamilyState(rowId), true);
           }
         }
 
-        const currentRowIds = getSnapshotValue(
-          snapshot,
-          currentRecordGroupId
-            ? recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId)
-            : recordIndexAllRecordIdsSelector,
-        );
-
-        const hasUserSelectedAllRows = getSnapshotValue(
-          snapshot,
-          hasUserSelectedAllRowsState,
-        );
-
-        const recordIds = records.map((record) => record.id);
-
-        if (!isDeeplyEqual(currentRowIds, recordIds)) {
-          unfocusRecordTableCell();
-          unfocusRecordTableRow();
-          setRecordTableHoverPosition(null);
-
-          if (hasUserSelectedAllRows) {
-            for (const rowId of recordIds) {
-              set(isRowSelectedFamilyState(rowId), true);
-            }
-          }
-
-          if (isDefined(currentRecordGroupId)) {
-            set(
-              recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
-              recordIds,
-            );
-          } else {
-            set(recordIndexAllRecordIdsSelector, recordIds);
-          }
-
-          const isTableInitialLoading = getSnapshotValue(
-            snapshot,
-            isRecordTableInitialLoadingCallbackState,
+        if (isDefined(currentRecordGroupId)) {
+          store.set(
+            recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
+            recordIds,
           );
+        } else {
+          store.set(
+            recordIndexRecordIdsByGroupFamilyState(NO_RECORD_GROUP_FAMILY_KEY),
+            recordIds,
+          );
+        }
 
-          if (isTableInitialLoading) {
-            for (const [realIndex, recordId] of recordIds.entries()) {
-              const currentRecordIdAtRealIndex = getSnapshotValue(
-                snapshot,
-                recordIdByRealIndexCallbackSelector(realIndex),
-              );
+        const isTableInitialLoading = store.get(isRecordTableInitialLoading);
 
-              if (recordId !== currentRecordIdAtRealIndex) {
-                set(recordIdByRealIndexCallbackSelector(realIndex), recordId);
-              }
+        if (isTableInitialLoading) {
+          const currentMap = store.get(recordIdByRealIndex);
+          const newMap = new Map(currentMap);
+          let mapChanged = false;
+
+          for (const [realIndex, recordId] of recordIds.entries()) {
+            if (recordId !== currentMap.get(realIndex)) {
+              newMap.set(realIndex, recordId);
+              mapChanged = true;
             }
           }
+
+          if (mapChanged) {
+            store.set(recordIdByRealIndex, newMap);
+          }
         }
-      },
+      }
+    },
     [
       recordIndexRecordIdsByGroupFamilyState,
       recordIndexAllRecordIdsSelector,
-      hasUserSelectedAllRowsState,
+      hasUserSelectedAllRows,
       unfocusRecordTableCell,
       unfocusRecordTableRow,
       setRecordTableHoverPosition,
       isRowSelectedFamilyState,
-      recordIdByRealIndexCallbackSelector,
-      isRecordTableInitialLoadingCallbackState,
+      recordIdByRealIndex,
+      isRecordTableInitialLoading,
+      store,
     ],
   );
 };

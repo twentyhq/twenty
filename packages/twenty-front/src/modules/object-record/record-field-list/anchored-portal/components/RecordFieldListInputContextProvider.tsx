@@ -13,9 +13,9 @@ import {
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
 
 type RecordFieldListInputContextProviderProps = {
   children: React.ReactNode;
@@ -32,13 +32,14 @@ export const RecordFieldListInputContextProvider = ({
   objectMetadataItem,
   instanceIdPrefix,
 }: RecordFieldListInputContextProviderProps) => {
+  const store = useStore();
   const instanceId = useAvailableComponentInstanceId(
     RecordFieldComponentInstanceContext,
   );
 
   const { closeFieldInput } = useOpenFieldInputEditMode();
 
-  const setRecordFieldListCellEditModePosition = useSetRecoilComponentState(
+  const setRecordFieldListCellEditModePosition = useSetAtomComponentState(
     recordFieldListCellEditModePositionComponentState,
   );
 
@@ -86,29 +87,27 @@ export const RecordFieldListInputContextProvider = ({
     closeInlineCellAndResetEditModePosition();
   };
 
-  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
-    ({ snapshot }) =>
-      ({ newValue, event, skipPersist }) => {
-        const currentFocusId = snapshot
-          .getLoadable(currentFocusIdSelector)
-          .getValue();
+  const handleClickOutside: FieldInputClickOutsideEvent = useCallback(
+    ({ newValue, event, skipPersist }) => {
+      const currentFocusId = store.get(currentFocusIdSelector.atom);
 
-        if (currentFocusId !== instanceId) {
-          return;
-        }
-        event?.preventDefault();
-        event?.stopImmediatePropagation();
+      if (currentFocusId !== instanceId) {
+        return;
+      }
+      event?.preventDefault();
+      event?.stopImmediatePropagation();
 
-        if (skipPersist !== true) {
-          persistFieldFromFieldInputContext(newValue);
-        }
+      if (skipPersist !== true) {
+        persistFieldFromFieldInputContext(newValue);
+      }
 
-        closeInlineCellAndResetEditModePosition();
-      },
+      closeInlineCellAndResetEditModePosition();
+    },
     [
       closeInlineCellAndResetEditModePosition,
       instanceId,
       persistFieldFromFieldInputContext,
+      store,
     ],
   );
 

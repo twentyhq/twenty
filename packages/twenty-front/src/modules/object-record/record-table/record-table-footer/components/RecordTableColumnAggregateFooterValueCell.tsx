@@ -5,11 +5,12 @@ import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/rec
 import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
 import { hasAggregateOperationForViewFieldFamilySelector } from '@/object-record/record-table/record-table-footer/states/hasAggregateOperationForViewFieldFamilySelector';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { IconChevronDown } from 'twenty-ui/display';
 
 const StyledCell = styled.div<{ isUnfolded: boolean; isFirstCell: boolean }>`
@@ -57,7 +58,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const isDropdownOpen = useRecoilComponentValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
@@ -67,13 +68,12 @@ export const RecordTableColumnAggregateFooterValueCell = ({
     RecordTableColumnAggregateFooterCellContext,
   );
 
-  const hasAggregateOperationForViewField = useRecoilValue(
-    hasAggregateOperationForViewFieldFamilySelector({
-      viewFieldId,
-    }),
+  const hasAggregateOperationForViewField = useAtomFamilySelectorValue(
+    hasAggregateOperationForViewFieldFamilySelector,
+    { viewFieldId },
   );
 
-  const hasRecordGroups = useRecoilComponentValue(
+  const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
 

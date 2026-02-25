@@ -1,21 +1,19 @@
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
 import { useSortedFavorites } from '@/favorites/hooks/useSortedFavorites';
 import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { validateAndExtractFolderId } from '@/ui/layout/draggable-list/utils/validateAndExtractFolderId';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
-import { useSetRecoilState } from 'recoil';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
 export const useHandleFavoriteDragAndDrop = () => {
   const { favorites } = usePrefetchedFavoritesData();
   const { favoritesSorted } = useSortedFavorites();
   const { updateOneRecord } = useUpdateOneRecord();
-  const setOpenFavoriteFolderIds = useSetRecoilState(
-    openFavoriteFolderIdsState,
-  );
+  const setOpenFavoriteFolderIds = useSetAtomState(openFavoriteFolderIdsState);
 
   const openDestinationFolder = (folderId: string | null) => {
     if (!folderId) return;

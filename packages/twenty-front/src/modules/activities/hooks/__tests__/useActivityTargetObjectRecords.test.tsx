@@ -2,12 +2,14 @@ import { gql, InMemoryCache } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
@@ -111,7 +113,7 @@ const task = {
 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
+  <JotaiProvider store={jotaiStore}>
     <MockedProvider cache={cache}>
       <JestObjectMetadataItemSetter>
         <SnackBarComponentInstanceContext.Provider
@@ -121,22 +123,23 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
         </SnackBarComponentInstanceContext.Provider>
       </JestObjectMetadataItemSetter>
     </MockedProvider>
-  </RecoilRoot>
+  </JotaiProvider>
 );
 
 describe('useActivityTargetObjectRecords', () => {
   it('return targetObjects', async () => {
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockWorkspaceMembers[0]);
+
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+
     const { result } = renderHook(
       () => {
-        const setCurrentWorkspaceMember = useSetRecoilState(
-          currentWorkspaceMemberState,
-        );
-        const setObjectMetadataItems = useSetRecoilState(
-          objectMetadataItemsState,
-        );
-
-        const setRecordFromStore = useSetRecoilState(
-          recordStoreFamilyState(task.id),
+        const setRecordFromStore = useSetAtomFamilyState(
+          recordStoreFamilyState,
+          task.id,
         );
 
         const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
@@ -145,8 +148,6 @@ describe('useActivityTargetObjectRecords', () => {
 
         return {
           activityTargetObjectRecords,
-          setCurrentWorkspaceMember,
-          setObjectMetadataItems,
           setRecordFromStore,
         };
       },
@@ -154,8 +155,6 @@ describe('useActivityTargetObjectRecords', () => {
     );
 
     act(() => {
-      result.current.setCurrentWorkspaceMember(mockWorkspaceMembers[0]);
-      result.current.setObjectMetadataItems(generatedMockObjectMetadataItems);
       result.current.setRecordFromStore(task);
     });
 

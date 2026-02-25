@@ -19,6 +19,9 @@
     "**/*.test.ts",
     "**/*.spec.ts",
     "**/*.e2e-spec.ts",
-    "**/__tests__/**"
+    "**/__tests__/**",
+    "**/__stories__/**",
+    "**/*.stories.ts",
+    "**/*.stories.tsx"
   ]
 }

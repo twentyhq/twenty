@@ -5,13 +5,13 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -44,7 +44,7 @@ export const WorkflowStepFooter = ({
   } = useWorkflowCommandMenu();
   const { deleteStep } = useDeleteStep();
   const navigateSettings = useNavigateSettings();
-  const workflowAiAgentActionAgent = useRecoilValue(
+  const workflowAiAgentActionAgent = useAtomStateValue(
     workflowAiAgentActionAgentState,
   );
   const shouldPinDeleteButton =
@@ -98,7 +98,7 @@ export const WorkflowStepFooter = ({
     }
   };
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     dropdownId,
   );

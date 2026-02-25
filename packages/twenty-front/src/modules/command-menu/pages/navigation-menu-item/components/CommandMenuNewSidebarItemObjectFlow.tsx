@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuObjectPickerSubView } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuObjectPickerSubView';
@@ -10,6 +9,8 @@ import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -33,10 +34,10 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
   const { addObjectToDraft } = useAddObjectToNavigationMenuDraft();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const addMenuItemInsertionContext = useRecoilValue(
+  const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextState,
   );
-  const setAddMenuItemInsertionContext = useSetRecoilState(
+  const setAddMenuItemInsertionContext = useSetAtomState(
     addMenuItemInsertionContextState,
   );
   const { views, objectMetadataIdsWithIndexView } =

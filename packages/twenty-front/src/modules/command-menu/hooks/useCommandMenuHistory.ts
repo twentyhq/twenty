@@ -1,4 +1,4 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
@@ -10,77 +10,77 @@ import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getSh
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useCommandMenuHistory = () => {
+  const store = useStore();
   const { closeCommandMenu } = useCommandMenu();
 
-  const goBackFromCommandMenu = useRecoilCallback(
-    ({ snapshot, set }) => {
-      return () => {
-        const currentNavigationStack = snapshot
-          .getLoadable(commandMenuNavigationStackState)
-          .getValue();
+  const goBackFromCommandMenu = useCallback(() => {
+    const currentNavigationStack = store.get(
+      commandMenuNavigationStackState.atom,
+    );
 
-        const newNavigationStack = currentNavigationStack.slice(0, -1);
-        const lastNavigationStackItem = newNavigationStack.at(-1);
+    const newNavigationStack = currentNavigationStack.slice(0, -1);
+    const lastNavigationStackItem = newNavigationStack.at(-1);
 
-        if (!isDefined(lastNavigationStackItem)) {
-          closeCommandMenu();
-          return;
+    if (!isDefined(lastNavigationStackItem)) {
+      closeCommandMenu();
+      return;
+    }
+
+    store.set(commandMenuPageState.atom, lastNavigationStackItem.page);
+
+    store.set(commandMenuPageInfoState.atom, {
+      title: lastNavigationStackItem.pageTitle,
+      Icon: lastNavigationStackItem.pageIcon,
+      instanceId: lastNavigationStackItem.pageId,
+    });
+
+    store.set(commandMenuNavigationStackState.atom, newNavigationStack);
+
+    const currentMorphItems = store.get(
+      commandMenuNavigationMorphItemsByPageState.atom,
+    );
+
+    if (currentNavigationStack.length > 0) {
+      const removedItem = currentNavigationStack.at(-1);
+
+      if (isDefined(removedItem)) {
+        const newMorphItems = new Map(currentMorphItems);
+        newMorphItems.delete(removedItem.pageId);
+        store.set(
+          commandMenuNavigationMorphItemsByPageState.atom,
+          newMorphItems,
+        );
+
+        const morphItems = currentMorphItems.get(removedItem.pageId);
+        if (isNonEmptyArray(morphItems)) {
+          store.set(
+            activeTabIdComponentState.atomFamily({
+              instanceId: getShowPageTabListComponentId({
+                pageId: removedItem.pageId,
+                targetObjectId: morphItems[0].recordId,
+              }),
+            }),
+            null,
+          );
         }
+      }
+    }
 
-        set(commandMenuPageState, lastNavigationStackItem.page);
+    store.set(hasUserSelectedCommandState.atom, false);
+  }, [closeCommandMenu, store]);
 
-        set(commandMenuPageInfoState, {
-          title: lastNavigationStackItem.pageTitle,
-          Icon: lastNavigationStackItem.pageIcon,
-          instanceId: lastNavigationStackItem.pageId,
-        });
-
-        set(commandMenuNavigationStackState, newNavigationStack);
-
-        const currentMorphItems = snapshot
-          .getLoadable(commandMenuNavigationMorphItemsByPageState)
-          .getValue();
-
-        if (currentNavigationStack.length > 0) {
-          const removedItem = currentNavigationStack.at(-1);
-
-          if (isDefined(removedItem)) {
-            const newMorphItems = new Map(currentMorphItems);
-            newMorphItems.delete(removedItem.pageId);
-            set(commandMenuNavigationMorphItemsByPageState, newMorphItems);
-
-            const morphItems = currentMorphItems.get(removedItem.pageId);
-            if (isNonEmptyArray(morphItems)) {
-              set(
-                activeTabIdComponentState.atomFamily({
-                  instanceId: getShowPageTabListComponentId({
-                    pageId: removedItem.pageId,
-                    targetObjectId: morphItems[0].recordId,
-                  }),
-                }),
-                null,
-              );
-            }
-          }
-        }
-
-        set(hasUserSelectedCommandState, false);
-      };
-    },
-    [closeCommandMenu],
-  );
-
-  const navigateCommandMenuHistory = useRecoilCallback(({ snapshot, set }) => {
-    return (pageIndex: number) => {
-      const currentNavigationStack = snapshot
-        .getLoadable(commandMenuNavigationStackState)
-        .getValue();
+  const navigateCommandMenuHistory = useCallback(
+    (pageIndex: number) => {
+      const currentNavigationStack = store.get(
+        commandMenuNavigationStackState.atom,
+      );
 
       const newNavigationStack = currentNavigationStack.slice(0, pageIndex + 1);
 
-      set(commandMenuNavigationStackState, newNavigationStack);
+      store.set(commandMenuNavigationStackState.atom, newNavigationStack);
 
       const newNavigationStackItem = newNavigationStack.at(-1);
 
@@ -90,19 +90,19 @@ export const useCommandMenuHistory = () => {
         );
       }
 
-      set(commandMenuPageState, newNavigationStackItem.page);
-      set(commandMenuPageInfoState, {
+      store.set(commandMenuPageState.atom, newNavigationStackItem.page);
+      store.set(commandMenuPageInfoState.atom, {
         title: newNavigationStackItem.pageTitle,
         Icon: newNavigationStackItem.pageIcon,
         instanceId: newNavigationStackItem.pageId,
       });
-      const currentMorphItems = snapshot
-        .getLoadable(commandMenuNavigationMorphItemsByPageState)
-        .getValue();
+      const currentMorphItems = store.get(
+        commandMenuNavigationMorphItemsByPageState.atom,
+      );
 
       for (const [pageId, morphItems] of currentMorphItems.entries()) {
         if (!newNavigationStack.some((item) => item.pageId === pageId)) {
-          set(
+          store.set(
             activeTabIdComponentState.atomFamily({
               instanceId: getShowPageTabListComponentId({
                 pageId,
@@ -120,11 +120,12 @@ export const useCommandMenuHistory = () => {
         ),
       );
 
-      set(commandMenuNavigationMorphItemsByPageState, newMorphItems);
+      store.set(commandMenuNavigationMorphItemsByPageState.atom, newMorphItems);
 
-      set(hasUserSelectedCommandState, false);
-    };
-  }, []);
+      store.set(hasUserSelectedCommandState.atom, false);
+    },
+    [store],
+  );
 
   return {
     goBackFromCommandMenu,

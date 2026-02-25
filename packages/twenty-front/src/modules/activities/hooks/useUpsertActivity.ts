@@ -1,15 +1,15 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
-
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { useRefreshShowPageFindManyActivitiesQueries } from '@/activities/hooks/useRefreshShowPageFindManyActivitiesQueries';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
-import { objectShowPageTargetableObjectState } from '@/activities/timeline-activities/states/objectShowPageTargetableObjectIdState';
+import { objectShowPageTargetableObjectState } from '@/activities/timeline-activities/states/objectShowPageTargetableObjectState';
 import { type Note } from '@/activities/types/Note';
 import { type Task } from '@/activities/types/Task';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isDefined } from 'twenty-shared/utils';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useUpsertActivity = ({
   activityObjectNameSingular,
@@ -18,7 +18,7 @@ export const useUpsertActivity = ({
     | CoreObjectNameSingular.Task
     | CoreObjectNameSingular.Note;
 }) => {
-  const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
+  const [isActivityInCreateMode] = useAtomState(isActivityInCreateModeState);
 
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord();
 
@@ -26,11 +26,11 @@ export const useUpsertActivity = ({
     activityObjectNameSingular,
   });
 
-  const [, setIsUpsertingActivityInDB] = useRecoilState(
+  const [, setIsUpsertingActivityInDB] = useAtomState(
     isUpsertingActivityInDBState,
   );
 
-  const objectShowPageTargetableObject = useRecoilValue(
+  const objectShowPageTargetableObject = useAtomStateValue(
     objectShowPageTargetableObjectState,
   );
 

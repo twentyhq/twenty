@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const agentChatSelectedFilesState = atom<File[]>({
+export const agentChatSelectedFilesState = createAtomState<File[]>({
   key: 'ai/agentChatSelectedFilesState',
-  default: [],
+  defaultValue: [],
 });

@@ -4,18 +4,19 @@ import { SettingsAdminTabContent } from '@/settings/admin-panel/components/Setti
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
 import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminTabsId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
 import {
   IconHeart,
   IconKey,
   IconSettings2,
+  IconSparkles,
   IconVariable,
 } from 'twenty-ui/display';
 
 export const SettingsAdminContent = () => {
-  const currentUser = useRecoilValue(currentUserState);
-  const billing = useRecoilValue(billingState);
+  const currentUser = useAtomStateValue(currentUserState);
+  const billing = useAtomStateValue(billingState);
 
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
   const canImpersonate = currentUser?.canImpersonate;
@@ -28,14 +29,20 @@ export const SettingsAdminContent = () => {
       disabled: !canAccessFullAdminPanel && !canImpersonate,
     },
     {
+      id: SETTINGS_ADMIN_TABS.AI,
+      title: t`AI`,
+      Icon: IconSparkles,
+      disabled: !canAccessFullAdminPanel,
+    },
+    {
       id: SETTINGS_ADMIN_TABS.CONFIG_VARIABLES,
-      title: t`Config Variables`,
+      title: t`Config`,
       Icon: IconVariable,
       disabled: !canAccessFullAdminPanel,
     },
     {
       id: SETTINGS_ADMIN_TABS.HEALTH_STATUS,
-      title: t`Health Status`,
+      title: t`Health`,
       Icon: IconHeart,
       disabled: !canAccessFullAdminPanel,
     },

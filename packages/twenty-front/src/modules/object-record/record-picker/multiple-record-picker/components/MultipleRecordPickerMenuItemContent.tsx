@@ -8,10 +8,11 @@ import { multipleRecordPickerIsSelectedComponentFamilySelector } from '@/object-
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
@@ -42,13 +43,13 @@ export const MultipleRecordPickerMenuItemContent = ({
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
-  const isSelectedByKeyboard = useRecoilComponentFamilyValue(
-    isSelectedItemIdComponentFamilySelector,
+  const isSelectedByKeyboard = useAtomComponentFamilyStateValue(
+    isSelectedItemIdComponentFamilyState,
     searchRecord.recordId,
     selectableListComponentInstanceId,
   );
 
-  const isRecordSelectedWithObjectItem = useRecoilComponentFamilyValue(
+  const isRecordSelectedWithObjectItem = useAtomComponentFamilySelectorValue(
     multipleRecordPickerIsSelectedComponentFamilySelector,
     searchRecord.recordId,
     componentInstanceId,
@@ -67,7 +68,7 @@ export const MultipleRecordPickerMenuItemContent = ({
   const displayText =
     searchRecord.label?.trim() || t`Untitled ${labelSingular}`;
 
-  const searchableObjectMetadataItems = useRecoilComponentValue(
+  const searchableObjectMetadataItems = useAtomComponentStateValue(
     multipleRecordPickerSearchableObjectMetadataItemsComponentState,
     componentInstanceId,
   );

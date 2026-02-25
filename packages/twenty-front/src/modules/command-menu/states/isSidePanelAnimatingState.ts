@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const isSidePanelAnimatingState = atom({
+export const isSidePanelAnimatingState = createAtomState<boolean>({
   key: 'command-menu/isSidePanelAnimatingState',
-  default: false,
+  defaultValue: false,
 });

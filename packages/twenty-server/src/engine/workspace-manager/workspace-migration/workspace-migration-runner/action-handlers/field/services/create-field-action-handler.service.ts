@@ -7,7 +7,6 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -48,40 +47,44 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerArgs<UniversalCreateFieldAction>,
   ): Promise<FlatCreateFieldAction> {
     const { action, allFlatEntityMaps } = context;
-    const { universalFlatFieldMetadatas, fieldIdByUniversalIdentifier } =
-      action;
 
     const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
       string,
       string
     >();
 
-    for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
-      const providedId =
-        fieldIdByUniversalIdentifier?.[
-          universalFlatFieldMetadata.universalIdentifier
-        ];
+    allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
+      action.flatEntity.universalIdentifier,
+      action.id ?? v4(),
+    );
 
+    if (isDefined(action.relatedUniversalFlatFieldMetadata)) {
       allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
-        universalFlatFieldMetadata.universalIdentifier,
-        providedId ?? v4(),
+        action.relatedUniversalFlatFieldMetadata.universalIdentifier,
+        action.relatedFieldId ?? v4(),
       );
     }
+    const universalFlatFieldMetadatas = isDefined(
+      action.relatedUniversalFlatFieldMetadata,
+    )
+      ? [action.flatEntity, action.relatedUniversalFlatFieldMetadata]
+      : [action.flatEntity];
 
-    const flatFieldMetadatas = universalFlatFieldMetadatas.map(
-      (universalFlatFieldMetadata) =>
+    const [flatFieldMetadata, relatedFlatFieldMetadata] =
+      universalFlatFieldMetadatas.map((universalFlatFieldMetadata) =>
         fromUniversalFlatFieldMetadataToFlatFieldMetadata({
           universalFlatFieldMetadata,
           allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
           allFlatEntityMaps,
           context,
         }),
-    );
+      );
 
     return {
       type: action.type,
       metadataName: action.metadataName,
-      flatFieldMetadatas,
+      flatEntity: flatFieldMetadata,
+      relatedFlatFieldMetadata,
     };
   }
 
@@ -89,14 +92,12 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>,
   ): Promise<void> {
     const { queryRunner, flatAction } = context;
-    const { flatFieldMetadatas } = flatAction;
+    const { flatEntity, relatedFlatFieldMetadata } = flatAction;
 
-    const fieldMetadataRepository =
-      queryRunner.manager.getRepository<FieldMetadataEntity>(
-        FieldMetadataEntity,
-      );
-
-    await fieldMetadataRepository.insert(flatFieldMetadatas);
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity, relatedFlatFieldMetadata].filter(isDefined),
+    });
   }
 
   async executeForWorkspaceSchema(
@@ -108,14 +109,14 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       allFlatEntityMaps: { flatObjectMetadataMaps },
       workspaceId,
     } = context;
-    const { flatFieldMetadatas } = flatAction;
+    const { flatEntity, relatedFlatFieldMetadata } = flatAction;
 
-    const fieldsByObjectMetadataId = new Map<
-      string,
-      typeof flatFieldMetadatas
-    >();
+    const fieldsByObjectMetadataId = new Map<string, FlatFieldMetadata[]>();
 
-    for (const flatFieldMetadata of flatFieldMetadatas) {
+    for (const flatFieldMetadata of [
+      flatEntity,
+      relatedFlatFieldMetadata,
+    ].filter(isDefined)) {
       const existingFields = fieldsByObjectMetadataId.get(
         flatFieldMetadata.objectMetadataId,
       );

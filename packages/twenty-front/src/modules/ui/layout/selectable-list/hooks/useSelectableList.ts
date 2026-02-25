@@ -1,10 +1,10 @@
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSelectableList = (instanceId?: string) => {
@@ -12,70 +12,66 @@ export const useSelectableList = (instanceId?: string) => {
     SelectableListComponentInstanceContext,
     instanceId,
   );
-  const resetSelectedItem = useRecoilCallback(
-    ({ snapshot, set }) =>
-      () => {
-        const selectedItemId = getSnapshotValue(
-          snapshot,
-          selectedItemIdComponentState.atomFamily({
-            instanceId: selectableListInstanceId,
-          }),
-        );
 
-        if (isDefined(selectedItemId)) {
-          set(
-            selectedItemIdComponentState.atomFamily({
-              instanceId: selectableListInstanceId,
-            }),
-            null,
-          );
-          set(
-            isSelectedItemIdComponentFamilySelector.selectorFamily({
-              instanceId: selectableListInstanceId,
-              familyKey: selectedItemId,
-            }),
-            false,
-          );
-        }
-      },
-    [selectableListInstanceId],
-  );
+  const store = useStore();
 
-  const setSelectedItemId = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (itemId: string) => {
-        const selectedItemId = getSnapshotValue(
-          snapshot,
-          selectedItemIdComponentState.atomFamily({
-            instanceId: selectableListInstanceId,
-          }),
-        );
+  const resetSelectedItem = useCallback(() => {
+    const selectedItemId = store.get(
+      selectedItemIdComponentState.atomFamily({
+        instanceId: selectableListInstanceId,
+      }),
+    );
 
-        if (isDefined(selectedItemId)) {
-          set(
-            isSelectedItemIdComponentFamilySelector.selectorFamily({
-              instanceId: selectableListInstanceId,
-              familyKey: selectedItemId,
-            }),
-            false,
-          );
-        }
+    if (isDefined(selectedItemId)) {
+      store.set(
+        selectedItemIdComponentState.atomFamily({
+          instanceId: selectableListInstanceId,
+        }),
+        null,
+      );
+      store.set(
+        isSelectedItemIdComponentFamilyState.atomFamily({
+          instanceId: selectableListInstanceId,
+          familyKey: selectedItemId,
+        }),
+        false,
+      );
+    }
+  }, [store, selectableListInstanceId]);
 
-        set(
-          selectedItemIdComponentState.atomFamily({
+  const setSelectedItemId = useCallback(
+    (itemId: string) => {
+      const selectedItemId = store.get(
+        selectedItemIdComponentState.atomFamily({
+          instanceId: selectableListInstanceId,
+        }),
+      );
+
+      if (isDefined(selectedItemId)) {
+        store.set(
+          isSelectedItemIdComponentFamilyState.atomFamily({
             instanceId: selectableListInstanceId,
+            familyKey: selectedItemId,
           }),
-          itemId,
+          false,
         );
-        set(
-          isSelectedItemIdComponentFamilySelector.selectorFamily({
-            instanceId: selectableListInstanceId,
-            familyKey: itemId,
-          }),
-          true,
-        );
-      },
-    [selectableListInstanceId],
+      }
+
+      store.set(
+        selectedItemIdComponentState.atomFamily({
+          instanceId: selectableListInstanceId,
+        }),
+        itemId,
+      );
+      store.set(
+        isSelectedItemIdComponentFamilyState.atomFamily({
+          instanceId: selectableListInstanceId,
+          familyKey: itemId,
+        }),
+        true,
+      );
+    },
+    [store, selectableListInstanceId],
   );
 
   return {

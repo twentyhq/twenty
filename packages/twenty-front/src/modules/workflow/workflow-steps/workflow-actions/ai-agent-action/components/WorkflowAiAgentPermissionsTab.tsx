@@ -3,13 +3,14 @@ import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permiss
 import { TextInput } from '@/ui/input/components/TextInput';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { useWorkflowAiAgentPermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -74,18 +75,18 @@ export const WorkflowAiAgentPermissionsTab = ({
   isAgentLoading,
   refetchAgent,
 }: WorkflowAiAgentPermissionsTabProps) => {
-  const workflowAiAgentActionAgent = useRecoilValue(
+  const workflowAiAgentActionAgent = useAtomStateValue(
     workflowAiAgentActionAgentState,
   );
 
   const [
     workflowAiAgentPermissionsSelectedObjectId,
     setWorkflowAiAgentPermissionsSelectedObjectId,
-  ] = useRecoilState(workflowAiAgentPermissionsSelectedObjectIdState);
+  ] = useAtomState(workflowAiAgentPermissionsSelectedObjectIdState);
   const [
     workflowAiAgentPermissionsIsAddingPermission,
     setWorkflowAiAgentPermissionsIsAddingPermission,
-  ] = useRecoilState(workflowAiAgentPermissionsIsAddingPermissionState);
+  ] = useAtomState(workflowAiAgentPermissionsIsAddingPermissionState);
 
   const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();

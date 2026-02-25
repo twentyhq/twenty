@@ -12,16 +12,13 @@ import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSessi
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
-import {
-  CAL_LINK,
-  ClickToActionLink,
-  TWENTY_PRICING_LINK,
-} from 'twenty-ui/navigation';
+import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { BillingPlanKey, type Billing } from '~/generated-metadata/graphql';
 
 const StyledSubscriptionContainer = styled.div<{
@@ -99,13 +96,13 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
   const { getBaseLicensedPriceByPlanKeyAndInterval } =
     useBaseLicensedPriceByPlanKeyAndInterval();
 
-  const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
+  const [billingCheckoutSession, setBillingCheckoutSession] = useAtomState(
     billingCheckoutSessionState,
   );
 
-  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
+  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
 
-  const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useRecoilState(
+  const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useAtomState(
     verifyEmailRedirectPathState,
   );
   if (isDefined(verifyEmailRedirectPath)) {
@@ -184,6 +181,14 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
     };
   };
 
+  const planChangeLink = (plan: BillingPlanKey) => {
+    const interval = billingCheckoutSession.interval;
+    const requirePaymentMethod = billingCheckoutSession.requirePaymentMethod;
+    return AppPath.PlanRequired.concat(
+      `?billingCheckoutSession={%22plan%22:%22${plan}%22,%22interval%22:%22${interval}%22,%22requirePaymentMethod%22:${requirePaymentMethod}}`,
+    );
+  };
+
   const { signOut } = useAuth();
 
   const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
@@ -259,10 +264,6 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
           <Trans>Log out</Trans>
         </ClickToActionLink>
         <span />
-        <ClickToActionLink href={TWENTY_PRICING_LINK}>
-          <Trans>Change Plan</Trans>
-        </ClickToActionLink>
-        <span />
         <ClickToActionLink
           href={calendarBookingPageId ? AppPath.BookCall : CAL_LINK}
           target={calendarBookingPageId ? '_self' : '_blank'}
@@ -270,6 +271,16 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
         >
           <Trans>Book a Call</Trans>
         </ClickToActionLink>
+        <span />
+        {currentPlanKey === BillingPlanKey.PRO ? (
+          <ClickToActionLink href={planChangeLink(BillingPlanKey.ENTERPRISE)}>
+            <Trans>Organization plan</Trans>
+          </ClickToActionLink>
+        ) : (
+          <ClickToActionLink href={planChangeLink(BillingPlanKey.PRO)}>
+            <Trans>Pro plan</Trans>
+          </ClickToActionLink>
+        )}
       </StyledLinkGroup>
     </>
   );

@@ -7,8 +7,8 @@ import {
   type CodeExecutionFile,
   type CodeExecutionState,
 } from 'twenty-shared/ai';
-import { v4 } from 'uuid';
 import { FileFolder } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import {
   type InputFile,
@@ -226,7 +226,9 @@ export class CodeInterpreterTool implements Tool {
 
       const executionTimeMs = Date.now() - startTime;
       const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
+        error instanceof Error
+          ? error.message
+          : `Unexpected error: ${String(error)}`;
 
       onCodeExecutionUpdate?.(
         this.buildExecutionState(

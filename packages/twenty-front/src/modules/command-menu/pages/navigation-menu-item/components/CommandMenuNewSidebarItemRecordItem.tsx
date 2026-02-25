@@ -1,4 +1,3 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Avatar } from 'twenty-ui/display';
 
 import { CommandMenuItemWithAddToNavigationDrag } from '@/command-menu/components/CommandMenuItemWithAddToNavigationDrag';
@@ -7,6 +6,8 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useAddRecordToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddRecordToNavigationMenuDraft';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/types/add-to-navigation-drag-payload';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -31,10 +32,10 @@ export const CommandMenuNewSidebarItemRecordItem = ({
   const { closeCommandMenu } = useCommandMenu();
   const { addRecordToDraft } = useAddRecordToNavigationMenuDraft();
   const { currentDraft } = useDraftNavigationMenuItems();
-  const addMenuItemInsertionContext = useRecoilValue(
+  const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextState,
   );
-  const setAddMenuItemInsertionContext = useSetRecoilState(
+  const setAddMenuItemInsertionContext = useSetAtomState(
     addMenuItemInsertionContextState,
   );
   const { objectMetadataItems } = useObjectMetadataItems();

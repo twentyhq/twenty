@@ -1,4 +1,3 @@
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -7,6 +6,7 @@ import { useDraftNavigationMenuItemsWorkspaceFolders } from '@/navigation-menu-i
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/hooks/useNavigationMenuItemMoveRemove';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 
 type FolderOption = {
@@ -47,7 +47,7 @@ export const useFolderPickerSelectionData = ({
 }: UseFolderPickerSelectionDataParams) => {
   const { closeCommandMenu } = useCommandMenu();
   const { moveToFolder } = useNavigationMenuItemMoveRemove();
-  const selectedNavigationMenuItemInEditMode = useRecoilValue(
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeState,
   );
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();

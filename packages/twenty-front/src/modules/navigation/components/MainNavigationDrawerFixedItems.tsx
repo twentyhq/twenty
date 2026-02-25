@@ -4,10 +4,11 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSearch, IconSettings, IconSparkles } from 'twenty-ui/display';
@@ -17,13 +18,13 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const MainNavigationDrawerFixedItems = () => {
   const isMobile = useIsMobile();
   const location = useLocation();
-  const setNavigationMemorizedUrl = useSetRecoilState(
+  const setNavigationMemorizedUrl = useSetAtomState(
     navigationMemorizedUrlState,
   );
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useRecoilState(isNavigationDrawerExpandedState);
-  const setNavigationDrawerExpandedMemorized = useSetRecoilState(
+    useAtomState(isNavigationDrawerExpandedState);
+  const setNavigationDrawerExpandedMemorized = useSetAtomState(
     navigationDrawerExpandedMemorizedState,
   );
 

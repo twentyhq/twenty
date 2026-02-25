@@ -9,14 +9,14 @@ import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ViewType } from '@/views/types/ViewType';
 import { t } from '@lingui/core/macro';
 import { isUndefined } from '@sniptt/guards';
 import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -49,18 +49,18 @@ export const useRecordGroupActions = ({
     objectNameSingular,
   });
 
-  const recordIndexGroupFieldMetadataItem = useRecoilComponentValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility();
 
-  const setNavigationMemorizedUrl = useSetRecoilState(
+  const setNavigationMemorizedUrl = useSetAtomState(
     navigationMemorizedUrlState,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
+  const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
     viewType,
   );

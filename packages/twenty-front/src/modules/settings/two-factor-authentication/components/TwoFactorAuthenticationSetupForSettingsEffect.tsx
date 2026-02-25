@@ -4,8 +4,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { gql, useMutation } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER = gql`
   mutation initiateOTPProvisioningForAuthenticatedUser {
@@ -17,8 +18,8 @@ const INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER = gql`
 
 export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [qrCode, setQrCode] = useRecoilState(qrCodeState);
-  const currentUser = useRecoilValue(currentUserState);
+  const [qrCode, setQrCode] = useAtomState(qrCodeState);
+  const currentUser = useAtomStateValue(currentUserState);
 
   const { t } = useLingui();
 

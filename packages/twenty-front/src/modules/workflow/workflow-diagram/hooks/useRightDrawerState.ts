@@ -1,13 +1,13 @@
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { type CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 export const useRightDrawerState = (): {
   rightDrawerState: CommandMenuAnimationVariant;
 } => {
   const isMobile = useIsMobile();
-  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
 
   if (isMobile) {
     return {

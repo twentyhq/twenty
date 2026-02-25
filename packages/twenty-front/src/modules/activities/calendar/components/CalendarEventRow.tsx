@@ -2,7 +2,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   CalendarChannelVisibility,
   type TimelineCalendarEvent,
@@ -85,7 +85,7 @@ export const CalendarEventRow = ({
   className,
 }: CalendarEventRowProps) => {
   const theme = useTheme();
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { openCalendarEventInCommandMenu } =
     useOpenCalendarEventInCommandMenu();
 

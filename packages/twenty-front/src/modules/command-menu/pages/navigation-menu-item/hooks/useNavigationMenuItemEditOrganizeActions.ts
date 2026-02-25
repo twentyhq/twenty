@@ -1,18 +1,19 @@
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { type OrganizeActionsProps } from '@/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/hooks/useNavigationMenuItemMoveRemove';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { type AddMenuItemInsertionContext } from '@/navigation-menu-item/types/AddMenuItemInsertionContext';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { CommandMenuPages } from 'twenty-shared/types';
 
 const getAddMenuItemInsertionContext = (
   selectedItem: { id: string; folderId?: string | null },
@@ -48,13 +49,13 @@ export const useNavigationMenuItemEditOrganizeActions =
     const { t } = useLingui();
     const { closeCommandMenu } = useCommandMenu();
     const { navigateCommandMenu } = useNavigateCommandMenu();
-    const selectedNavigationMenuItemInEditMode = useRecoilValue(
+    const selectedNavigationMenuItemInEditMode = useAtomStateValue(
       selectedNavigationMenuItemInEditModeState,
     );
-    const setSelectedNavigationMenuItemInEditMode = useSetRecoilState(
+    const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
       selectedNavigationMenuItemInEditModeState,
     );
-    const setAddMenuItemInsertionContext = useSetRecoilState(
+    const setAddMenuItemInsertionContext = useSetAtomState(
       addMenuItemInsertionContextState,
     );
     const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();

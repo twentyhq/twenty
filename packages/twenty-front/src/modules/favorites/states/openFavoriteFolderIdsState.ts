@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const openFavoriteFolderIdsState = atom<string[]>({
+export const openFavoriteFolderIdsState = createAtomState<string[]>({
   key: 'openFavoriteFolderIdsState',
-  default: [],
+  defaultValue: [],
 });

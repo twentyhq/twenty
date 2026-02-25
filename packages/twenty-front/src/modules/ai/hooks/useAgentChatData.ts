@@ -4,13 +4,12 @@ import {
   type AgentChatUsageState,
 } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
-import {
-  type SetterOrUpdater,
-  useRecoilState,
-  useSetRecoilState,
-} from 'recoil';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { type SetStateAction } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type AgentChatThread,
@@ -21,7 +20,9 @@ import {
 
 const setUsageFromThread = (
   thread: AgentChatThread,
-  setAgentChatUsage: SetterOrUpdater<AgentChatUsageState | null>,
+  setAgentChatUsage: (
+    update: SetStateAction<AgentChatUsageState | null>,
+  ) => void,
 ) => {
   const hasUsageData =
     (thread.conversationSize ?? 0) > 0 && isDefined(thread.contextWindowTokens);
@@ -42,11 +43,14 @@ const setUsageFromThread = (
 };
 
 export const useAgentChatData = () => {
-  const [currentAIChatThread, setCurrentAIChatThread] = useRecoilState(
+  const [currentAIChatThread, setCurrentAIChatThread] = useAtomState(
     currentAIChatThreadState,
   );
-  const setAgentChatUsage = useSetRecoilState(agentChatUsageState);
-  const [isCreatingChatThread, setIsCreatingChatThread] = useRecoilState(
+  const setAgentChatUsage = useSetAtomState(agentChatUsageState);
+  const setCurrentAIChatThreadTitle = useSetAtomState(
+    currentAIChatThreadTitleState,
+  );
+  const [isCreatingChatThread, setIsCreatingChatThread] = useAtomState(
     isCreatingChatThreadState,
   );
 
@@ -56,6 +60,7 @@ export const useAgentChatData = () => {
     onCompleted: (data) => {
       setIsCreatingChatThread(false);
       setCurrentAIChatThread(data.createChatThread.id);
+      setCurrentAIChatThreadTitle(null);
       setAgentChatUsage(null);
     },
     onError: () => {
@@ -70,6 +75,7 @@ export const useAgentChatData = () => {
         const firstThread = data.chatThreads[0];
 
         setCurrentAIChatThread(firstThread.id);
+        setCurrentAIChatThreadTitle(firstThread.title ?? null);
         setUsageFromThread(firstThread, setAgentChatUsage);
       } else if (!isCreatingChatThread) {
         setIsCreatingChatThread(true);

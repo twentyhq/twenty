@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const isDragSelectionStartEnabledState = atom({
+export const isDragSelectionStartEnabledState = createAtomState<boolean>({
   key: 'drag-select/isDragSelectionStartEnabledState',
-  default: true,
+  defaultValue: true,
 });

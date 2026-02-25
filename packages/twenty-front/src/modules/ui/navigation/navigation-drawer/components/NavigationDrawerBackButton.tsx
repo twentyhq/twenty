@@ -1,10 +1,11 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IconX } from 'twenty-ui/display';
@@ -46,12 +47,12 @@ export const NavigationDrawerBackButton = ({
   title,
 }: NavigationDrawerBackButtonProps) => {
   const theme = useTheme();
-  const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
+  const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
 
-  const setIsNavigationDrawerExpanded = useSetRecoilState(
+  const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
   );
-  const navigationDrawerExpandedMemorized = useRecoilValue(
+  const navigationDrawerExpandedMemorized = useAtomStateValue(
     navigationDrawerExpandedMemorizedState,
   );
 

@@ -1,9 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
 import { IconX } from 'twenty-ui/display';
 
 import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledBackButton = styled.button`
   display: flex;
@@ -36,7 +36,7 @@ export const NavigationMenuItemBackButton = ({
   folderName,
 }: NavigationMenuItemBackButtonProps) => {
   const theme = useTheme();
-  const setCurrentFolderId = useSetRecoilState(
+  const setCurrentFolderId = useSetAtomState(
     currentNavigationMenuItemFolderIdState,
   );
 

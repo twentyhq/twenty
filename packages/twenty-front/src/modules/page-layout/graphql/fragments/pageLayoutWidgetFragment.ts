@@ -58,6 +58,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         groupMode
         layout
         isCumulative
+        splitMultiValueFields
         timezone
         firstDayOfTheWeek
       }
@@ -86,6 +87,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         filter
         isStacked
         isCumulative
+        splitMultiValueFields
         timezone
         firstDayOfTheWeek
       }
@@ -102,6 +104,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         showCenterMetric
         displayLegend
         hideEmptyCategory
+        splitMultiValueFields
         color
         description
         filter
@@ -162,6 +165,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       }
       ... on FieldsConfiguration {
         configurationType
+        viewId
       }
       ... on FilesConfiguration {
         configurationType

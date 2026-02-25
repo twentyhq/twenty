@@ -1,8 +1,8 @@
-import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { publicDomainRecordsState } from '@/settings/domains/states/publicDomainRecordsState';
 import { useCheckPublicDomainValidRecordsMutation } from '~/generated-metadata/graphql';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export const useCheckPublicDomainValidRecords = () => {
   const [checkPublicDomainValidRecords] =
@@ -10,7 +10,7 @@ export const useCheckPublicDomainValidRecords = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const [{ isLoading, publicDomainRecords }, setPublicDomainRecords] =
-    useRecoilState(publicDomainRecordsState);
+    useAtomState(publicDomainRecordsState);
 
   const checkPublicDomainRecords = (domain: string) => {
     if (isLoading) {

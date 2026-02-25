@@ -4,9 +4,9 @@ import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hoo
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isMergeInProgressState } from '@/object-record/record-merge/states/mergeInProgressState';
 import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type UseMergePreviewProps = {
   objectNameSingular: string;
@@ -20,8 +20,8 @@ export const usePerformMergePreview = ({
   const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const mergeSettings = useRecoilValue(mergeSettingsState);
-  const isMergeInProgress = useRecoilValue(isMergeInProgressState);
+  const mergeSettings = useAtomStateValue(mergeSettingsState);
+  const isMergeInProgress = useAtomStateValue(isMergeInProgressState);
 
   const { mergeManyRecords } = useMergeManyRecords({
     objectNameSingular,

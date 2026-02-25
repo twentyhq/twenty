@@ -1,5 +1,4 @@
 import { type ReactNode, useCallback, useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -21,8 +20,9 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -71,9 +71,10 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     );
   }
 
-  const fieldValue = useRecoilValue<
-    ({ id: string } & Record<string, any>) | ObjectRecord[] | null
-  >(recordStoreFamilySelector({ recordId, fieldName }));
+  const fieldValue = useAtomFamilySelectorValue(recordStoreFamilySelector, {
+    recordId,
+    fieldName,
+  }) as ({ id: string } & Record<string, unknown>) | ObjectRecord[] | null;
 
   const relationRecords: ObjectRecord[] = (fieldValue as ObjectRecord[]) ?? [];
 
@@ -85,23 +86,23 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const dropdownPlacement = useRecoilComponentValue(
+  const dropdownPlacement = useAtomComponentStateValue(
     dropdownPlacementComponentState,
     dropdownId,
   );
 
-  const setMultipleRecordPickerSearchFilter = useSetRecoilComponentState(
+  const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
     multipleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
-  const setMultipleRecordPickerPickableMorphItems = useSetRecoilComponentState(
+  const setMultipleRecordPickerPickableMorphItems = useSetAtomComponentState(
     multipleRecordPickerPickableMorphItemsComponentState,
     dropdownId,
   );
 
   const setMultipleRecordPickerSearchableObjectMetadataItems =
-    useSetRecoilComponentState(
+    useSetAtomComponentState(
       multipleRecordPickerSearchableObjectMetadataItemsComponentState,
       dropdownId,
     );

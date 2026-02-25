@@ -16,8 +16,8 @@ import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/reco
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconForbid, IconPencil } from 'twenty-ui/display';
@@ -65,17 +65,17 @@ export const RecordDetailMorphRelationSectionDropdownManyToOne = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const dropdownPlacement = useRecoilComponentValue(
+  const dropdownPlacement = useAtomComponentStateValue(
     dropdownPlacementComponentState,
     dropdownId,
   );
 
-  const setSingleRecordPickerSearchFilter = useSetRecoilComponentState(
+  const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
-  const setSingleRecordPickerSelectedId = useSetRecoilComponentState(
+  const setSingleRecordPickerSelectedId = useSetAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );

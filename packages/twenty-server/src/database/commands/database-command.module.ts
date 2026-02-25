@@ -8,13 +8,14 @@ import { ConfirmationQuestion } from 'src/database/commands/questions/confirmati
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
-import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
+import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/enterprise-key-validation.cron.command';
+import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogCleanupModule } from 'src/engine/core-modules/event-logs/cleanup/event-log-cleanup.module';
-import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
+import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -66,6 +67,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     CronRegisterAllCommand,
     ListOrphanedWorkspaceEntitiesCommand,
     EnterpriseKeyValidationCronCommand,
+    GenerateApiKeyCommand,
   ],
 })
 export class DatabaseCommandModule {}

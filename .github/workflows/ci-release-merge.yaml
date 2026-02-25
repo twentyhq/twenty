@@ -15,7 +15,7 @@ defaults:
 jobs:
   tag_and_release:
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'release')
     steps:
       - name: Check PR Author

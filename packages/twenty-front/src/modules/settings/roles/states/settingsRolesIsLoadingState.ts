@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const settingsRolesIsLoadingState = atom<boolean>({
+export const settingsRolesIsLoadingState = createAtomState<boolean>({
   key: 'settingsRolesIsLoadingState',
-  default: true,
+  defaultValue: true,
 });

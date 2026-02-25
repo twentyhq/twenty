@@ -1,5 +1,7 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
-export const chromeExtensionIdState = createState<string | null | undefined>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const chromeExtensionIdState = createAtomState<
+  string | null | undefined
+>({
   key: 'chromeExtensionIdState',
   defaultValue: null,
 });

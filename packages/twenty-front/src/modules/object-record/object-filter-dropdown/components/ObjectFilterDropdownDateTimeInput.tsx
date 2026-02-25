@@ -6,11 +6,11 @@ import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { ViewFilterOperand, type FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
   isDefined,
@@ -26,12 +26,12 @@ import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
 export const ObjectFilterDropdownDateTimeInput = () => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useRecoilValue(dateLocaleState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const dateLocale = useAtomStateValue(dateLocaleState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { userTimezone } = useUserTimezone();
 
-  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
+  const objectFilterDropdownCurrentRecordFilter = useAtomComponentStateValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 

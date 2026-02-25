@@ -3,7 +3,7 @@ import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -12,11 +12,11 @@ import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/us
 import { WorkflowAiAgentPermissionsTab } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab';
 import { WORKFLOW_AI_AGENT_TABS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentTabs';
 import { useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
 import {
   type AgentResponseSchema,
   type ModelConfiguration,
@@ -66,7 +66,7 @@ export const WorkflowEditActionAiAgent = ({
   const componentInstanceId = `${WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID}-${action.id}`;
   const agentId = action.settings.input.agentId;
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
-    useRecoilState(workflowAiAgentActionAgentState);
+    useAtomState(workflowAiAgentActionAgentState);
   const { loading: agentLoading, refetch: refetchAgent } = useFindOneAgentQuery(
     {
       variables: { id: agentId || '' },
@@ -204,7 +204,7 @@ export const WorkflowEditActionAiAgent = ({
     },
   ];
 
-  const activeTabId = useRecoilComponentValue(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     componentInstanceId,
   );
@@ -217,7 +217,7 @@ export const WorkflowEditActionAiAgent = ({
   const [
     workflowAiAgentPermissionsIsAddingPermission,
     setWorkflowAiAgentPermissionsIsAddingPermission,
-  ] = useRecoilState(workflowAiAgentPermissionsIsAddingPermissionState);
+  ] = useAtomState(workflowAiAgentPermissionsIsAddingPermissionState);
 
   const role = rolesData?.getRoles.find(
     (item) => item.id === workflowAiAgentActionAgent?.roleId,

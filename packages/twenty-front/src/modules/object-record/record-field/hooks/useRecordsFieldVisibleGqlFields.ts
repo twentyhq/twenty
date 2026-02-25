@@ -8,7 +8,7 @@ import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -22,7 +22,7 @@ export const useRecordsFieldVisibleGqlFields = ({
   objectMetadataItem,
   additionalFieldMetadataId,
 }: UseRecordsFieldVisibleGqlFields) => {
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 
@@ -37,10 +37,12 @@ export const useRecordsFieldVisibleGqlFields = ({
 
   const allDepthOneGqlFields = generateDepthRecordGqlFieldsFromFields({
     objectMetadataItems,
-    fields: visibleRecordFields.map(
-      (field) =>
-        fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],
-    ),
+    fields: visibleRecordFields
+      .map(
+        (field) =>
+          fieldMetadataItemByFieldMetadataItemId[field.fieldMetadataItemId],
+      )
+      .filter(isDefined),
     depth: 1,
     isFilesFieldMigrated,
   });

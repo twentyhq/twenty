@@ -1,10 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -25,15 +26,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
 
 const RelationWorkspaceSetterEffect = () => {
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setCurrentWorkspaceMember = useSetRecoilState(
-    currentWorkspaceMemberState,
-  );
-
   useEffect(() => {
-    setCurrentWorkspace(mockCurrentWorkspace);
-    setCurrentWorkspaceMember(mockedWorkspaceMemberData);
-  }, [setCurrentWorkspace, setCurrentWorkspaceMember]);
+    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
+  }, []);
 
   return <></>;
 };
@@ -59,8 +55,8 @@ const RelationOneToManyFieldInputWithContext = () => {
     [],
   );
 
-  const setRecordStoreFieldValue = useSetRecoilState(
-    recordStoreFamilySelector({
+  const setRecordStoreFieldValue = useSetAtom(
+    recordStoreFamilySelector.selectorFamily({
       fieldName: 'people',
       recordId: 'recordId',
     }),

@@ -6,16 +6,16 @@ import {
   StyledLabel,
 } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspacesDropdownStyles';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useTheme } from '@emotion/react';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { Avatar } from 'twenty-ui/display';
 
 export const MultiWorkspaceDropdownClickableComponent = () => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const theme = useTheme();
 
-  const isNavigationDrawerExpanded = useRecoilValue(
+  const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
   return (

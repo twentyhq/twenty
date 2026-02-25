@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
@@ -42,7 +42,7 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         const { applyViewFiltersToCurrentRecordFilters } =
           useApplyViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValue(
+        const currentFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
         );
 
@@ -83,7 +83,7 @@ describe('useApplyViewFiltersToCurrentRecordFilters', () => {
         const { applyViewFiltersToCurrentRecordFilters } =
           useApplyViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValue(
+        const currentFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
         );
 

@@ -2,11 +2,11 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { useRecoilValue } from 'recoil';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -54,13 +54,8 @@ const StyledFooterContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-const DEFAULT_TOOL_INPUT_SCHEMA = {
-  type: 'object',
-  properties: {},
-};
-
 export const SettingsToolsTable = () => {
-  const logicFunctions = useRecoilValue(logicFunctionsState);
+  const logicFunctions = useAtomStateValue(logicFunctionsState);
   const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();
   const { createLogicFunction } = usePersistLogicFunction();
 
@@ -126,7 +121,6 @@ export const SettingsToolsTable = () => {
         input: {
           name: 'new-tool',
           isTool: true,
-          toolInputSchema: DEFAULT_TOOL_INPUT_SCHEMA,
         },
       });
 

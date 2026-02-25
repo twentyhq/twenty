@@ -1,9 +1,9 @@
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import React, { useRef } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
@@ -18,7 +18,7 @@ const StyledFileInput = styled.input`
 `;
 
 export const AgentChatFileUploadButton = () => {
-  const setAgentChatSelectedFiles = useSetRecoilState(
+  const setAgentChatSelectedFiles = useSetAtomState(
     agentChatSelectedFilesState,
   );
   const fileInputRef = useRef<HTMLInputElement>(null);

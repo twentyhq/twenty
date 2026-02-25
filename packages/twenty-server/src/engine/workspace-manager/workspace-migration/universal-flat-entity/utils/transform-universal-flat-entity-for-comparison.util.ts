@@ -8,10 +8,12 @@ import { type MetadataUniversalFlatEntityPropertiesToStringify } from 'src/engin
 export function transformUniversalFlatEntityForComparison<
   T extends AllMetadataName,
 >({
+  metadataName,
   universalFlatEntity,
   propertiesToCompare,
   propertiesToStringify,
 }: {
+  metadataName: T;
   universalFlatEntity: MetadataUniversalFlatEntity<T>;
   propertiesToCompare: MetadataUniversalFlatEntityPropertiesToCompare<T>[];
   propertiesToStringify: MetadataUniversalFlatEntityPropertiesToStringify<T>[];
@@ -20,9 +22,21 @@ export function transformUniversalFlatEntityForComparison<
     (flatEntityAccumulator, propertyToCompare) => {
       const currentValue = universalFlatEntity[propertyToCompare];
 
+      // TODO remove once https://github.com/twentyhq/core-team-issues/issues/2227 has been resolved
+      if (
+        metadataName === 'index' &&
+        propertyToCompare === 'universalFlatIndexFieldMetadatas' &&
+        Array.isArray(currentValue)
+      ) {
+        for (const item of currentValue) {
+          delete item['createdAt'];
+          delete item['updatedAt'];
+        }
+      }
+
       if (
         propertiesToStringify.includes(
-          propertyToCompare as MetadataUniversalFlatEntityPropertiesToStringify<T>,
+          propertyToCompare as string as MetadataUniversalFlatEntityPropertiesToStringify<T>,
         )
       ) {
         const orderedValue = orderObjectProperties(currentValue);

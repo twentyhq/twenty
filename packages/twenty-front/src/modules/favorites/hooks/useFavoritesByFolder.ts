@@ -1,7 +1,7 @@
 import { sortFavorites } from '@/favorites/utils/sortFavorites';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { useRecoilValue } from 'recoil';
 import { useFavoritesMetadata } from './useFavoritesMetadata';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 import { usePrefetchedFavoritesFoldersData } from './usePrefetchedFavoritesFoldersData';
@@ -15,7 +15,7 @@ export const useFavoritesByFolder = () => {
     favoriteRelationFields,
   } = useFavoritesMetadata();
 
-  const coreViews = useRecoilValue(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsState);
 
   const views = coreViews.map(convertCoreViewToView);
 

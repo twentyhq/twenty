@@ -1,5 +1,5 @@
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 type ClientConfigApiStatus = {
   isLoadedOnce: boolean;
@@ -10,14 +10,15 @@ type ClientConfigApiStatus = {
   data?: { clientConfig: ClientConfig };
 };
 
-export const clientConfigApiStatusState = createState<ClientConfigApiStatus>({
-  key: 'clientConfigApiStatus',
-  defaultValue: {
-    isLoadedOnce: false,
-    isLoading: false,
-    isErrored: false,
-    isSaved: false,
-    error: undefined,
-    data: undefined,
-  },
-});
+export const clientConfigApiStatusState =
+  createAtomState<ClientConfigApiStatus>({
+    key: 'clientConfigApiStatus',
+    defaultValue: {
+      isLoadedOnce: false,
+      isLoading: false,
+      isErrored: false,
+      isSaved: false,
+      error: undefined,
+      data: undefined,
+    },
+  });

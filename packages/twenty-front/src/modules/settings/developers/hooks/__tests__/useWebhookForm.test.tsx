@@ -2,7 +2,6 @@ import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { CREATE_WEBHOOK } from '@/settings/developers/graphql/mutations/createWebhook';
@@ -10,6 +9,7 @@ import { DELETE_WEBHOOK } from '@/settings/developers/graphql/mutations/deleteWe
 import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWebhook';
 import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
+import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
 
 const mockNavigateSettings = jest.fn();
 const mockEnqueueSuccessSnackBar = jest.fn();
@@ -124,9 +124,7 @@ const Wrapper = ({
   mocks?: any[];
 }) => (
   <MockedProvider mocks={mocks} addTypename={false}>
-    <RecoilRoot>
-      <MemoryRouter>{children}</MemoryRouter>
-    </RecoilRoot>
+    <MemoryRouter>{children}</MemoryRouter>
   </MockedProvider>
 );
 
@@ -146,7 +144,7 @@ describe('useWebhookForm', () => {
       expect(result.current.formConfig.getValues()).toEqual({
         targetUrl: '',
         description: '',
-        operations: [{ object: '*', action: '*' }],
+        operations: [{ object: '*', action: '*' }, WEBHOOK_EMPTY_OPERATION],
         secret: '',
       });
     });

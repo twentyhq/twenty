@@ -7,9 +7,10 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
-import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UploadProfilePicturePermissionGuard } from 'src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -51,6 +52,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
         PermissionsModule,
         OnboardingModule,
         EnterpriseModule,
+        FeatureFlagModule,
       ],
       services: [UserWorkspaceService],
     }),

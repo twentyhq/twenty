@@ -6,7 +6,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -53,7 +53,7 @@ export const TabList = ({
   const visibleTabs = tabs.filter((tab) => !tab.hide);
   const navigate = useNavigate();
 
-  const [activeTabId, setActiveTabId] = useRecoilComponentState(
+  const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
     componentInstanceId,
   );

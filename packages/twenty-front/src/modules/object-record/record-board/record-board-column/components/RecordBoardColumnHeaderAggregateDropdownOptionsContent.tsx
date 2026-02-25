@@ -15,8 +15,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import isEmpty from 'lodash.isempty';
 import { IconCheck, IconChevronLeft } from 'twenty-ui/display';
@@ -35,17 +35,17 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
       },
     );
 
-  const setAggregateOperation = useSetRecoilComponentState(
+  const setAggregateOperation = useSetAtomComponentState(
     aggregateOperationComponentState,
   );
 
-  const setAvailableFieldsForAggregateOperation = useSetRecoilComponentState(
+  const setAvailableFieldsForAggregateOperation = useSetAtomComponentState(
     availableFieldIdsForAggregateOperationComponentState,
   );
 
   const { updateViewAggregate } = useUpdateViewAggregate();
 
-  const recordIndexGroupAggregateOperation = useRecoilComponentValue(
+  const recordIndexGroupAggregateOperation = useAtomComponentStateValue(
     recordIndexGroupAggregateOperationComponentState,
   );
 

@@ -18,22 +18,23 @@ import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCu
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '@/auth/hooks/useAuth';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
-  const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
-  const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
+  const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
+  const [signInUpMode, setSignInUpMode] = useAtomState(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const { isCaptchaReady } = useCaptcha();
-  const setLastAuthenticatedMethod = useSetRecoilState(
+  const setLastAuthenticatedMethod = useSetAtomState(
     lastAuthenticatedMethodState,
   );
 

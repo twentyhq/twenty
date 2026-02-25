@@ -1,5 +1,5 @@
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { type SnackBarProps } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 
 export type SnackBarOptions = SnackBarProps & {
@@ -12,7 +12,7 @@ export type SnackBarState = {
 };
 
 export const snackBarInternalComponentState =
-  createComponentState<SnackBarState>({
+  createAtomComponentState<SnackBarState>({
     key: 'snackBarState',
     defaultValue: {
       maxQueue: 3,

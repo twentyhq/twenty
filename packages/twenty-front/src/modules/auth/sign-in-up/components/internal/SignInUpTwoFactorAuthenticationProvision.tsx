@@ -5,15 +5,16 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import QRCode from 'react-qr-code';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledMainContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -68,9 +69,9 @@ const StyledCopySetupKeyLink = styled.button`
 export const SignInUpTwoFactorAuthenticationProvision = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { enqueueSuccessSnackBar } = useSnackBar();
-  const qrCode = useRecoilValue(qrCodeState);
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
+  const { copyToClipboard } = useCopyToClipboard();
+  const qrCode = useAtomStateValue(qrCodeState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
 
   const handleClick = () => {
     setSignInUpStep(SignInUpStep.TwoFactorAuthenticationVerification);
@@ -81,14 +82,7 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
 
     const secret = extractSecretFromOtpUri(qrCode);
     if (secret !== null) {
-      await navigator.clipboard.writeText(secret);
-      enqueueSuccessSnackBar({
-        message: t`Setup key copied to clipboard`,
-        options: {
-          icon: <IconCopy size={theme.icon.size.md} />,
-          duration: 2000,
-        },
-      });
+      await copyToClipboard(secret, t`Setup key copied to clipboard`);
     }
   };
 

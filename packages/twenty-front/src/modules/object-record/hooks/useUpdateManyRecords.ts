@@ -16,11 +16,11 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { useUpdateManyRecordsMutation } from '@/object-record/hooks/useUpdateManyRecordsMutation';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getUpdatedFieldsFromRecordInput } from '@/object-record/utils/getUpdatedFieldsFromRecordInput';
 import { getUpdateManyRecordsMutationResponseField } from '@/object-record/utils/getUpdateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
@@ -44,7 +44,7 @@ export const useUpdateManyRecords = <T extends ObjectRecord = ObjectRecord>({
   recordGqlFields,
 }: UseUpdateManyRecordsProps) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const apiConfig = useRecoilValue(apiConfigState);
+  const apiConfig = useAtomStateValue(apiConfigState);
 
   const mutationPageSize =
     apiConfig?.mutationMaximumAffectedRecords ?? DEFAULT_MUTATION_BATCH_SIZE;

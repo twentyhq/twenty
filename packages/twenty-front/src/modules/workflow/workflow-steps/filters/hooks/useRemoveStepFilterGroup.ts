@@ -1,79 +1,73 @@
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
-import { useContext } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRemoveStepFilterGroup = () => {
   const { onFilterSettingsUpdate } = useContext(WorkflowStepFilterContext);
 
-  const currentStepFilterGroupsCallbackState = useRecoilComponentCallbackState(
+  const currentStepFilterGroups = useAtomComponentStateCallbackState(
     currentStepFilterGroupsComponentState,
   );
 
-  const currentStepFiltersCallbackState = useRecoilComponentCallbackState(
+  const currentStepFilters = useAtomComponentStateCallbackState(
     currentStepFiltersComponentState,
   );
 
-  const removeStepFilterGroupRecoilCallback = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (stepFilterGroupId: string) => {
-        const stepFilterGroups = getSnapshotValue(
-          snapshot,
-          currentStepFilterGroupsCallbackState,
-        );
+  const store = useStore();
 
-        const stepFilters = getSnapshotValue(
-          snapshot,
-          currentStepFiltersCallbackState,
-        );
+  const removeStepFilterGroup = useCallback(
+    (stepFilterGroupId: string) => {
+      const stepFilterGroups = store.get(currentStepFilterGroups);
+      const stepFilters = store.get(currentStepFilters);
 
-        const rootStepFilterGroup = stepFilterGroups?.find(
-          (filterGroup) => !isDefined(filterGroup.parentStepFilterGroupId),
-        );
+      const rootStepFilterGroup = stepFilterGroups.find(
+        (filterGroup) => !isDefined(filterGroup.parentStepFilterGroupId),
+      );
 
-        const updatedStepFilterGroups = (stepFilterGroups ?? []).filter(
-          (filterGroup) => filterGroup.id !== stepFilterGroupId,
-        );
+      const updatedStepFilterGroups = stepFilterGroups.filter(
+        (filterGroup) => filterGroup.id !== stepFilterGroupId,
+      );
 
-        const updatedStepFilters = (stepFilters ?? []).filter(
-          (filter) => filter.stepFilterGroupId !== stepFilterGroupId,
-        );
+      const updatedStepFilters = stepFilters.filter(
+        (filter) => filter.stepFilterGroupId !== stepFilterGroupId,
+      );
 
-        const shouldResetStepFilterSettings =
-          updatedStepFilterGroups.length === 1 &&
-          updatedStepFilterGroups[0].id === rootStepFilterGroup?.id &&
-          updatedStepFilters.length === 0;
+      const shouldResetStepFilterSettings =
+        updatedStepFilterGroups.length === 1 &&
+        updatedStepFilterGroups[0].id === rootStepFilterGroup?.id &&
+        updatedStepFilters.length === 0;
 
-        if (shouldResetStepFilterSettings) {
-          set(currentStepFilterGroupsCallbackState, []);
-          set(currentStepFiltersCallbackState, []);
+      if (shouldResetStepFilterSettings) {
+        store.set(currentStepFilterGroups, []);
+        store.set(currentStepFilters, []);
 
-          onFilterSettingsUpdate({
-            stepFilterGroups: [],
-            stepFilters: [],
-          });
-        } else {
-          set(currentStepFilterGroupsCallbackState, updatedStepFilterGroups);
-          set(currentStepFiltersCallbackState, updatedStepFilters);
+        onFilterSettingsUpdate({
+          stepFilterGroups: [],
+          stepFilters: [],
+        });
+      } else {
+        store.set(currentStepFilterGroups, updatedStepFilterGroups);
+        store.set(currentStepFilters, updatedStepFilters);
 
-          onFilterSettingsUpdate({
-            stepFilterGroups: updatedStepFilterGroups,
-            stepFilters: updatedStepFilters,
-          });
-        }
-      },
+        onFilterSettingsUpdate({
+          stepFilterGroups: updatedStepFilterGroups,
+          stepFilters: updatedStepFilters,
+        });
+      }
+    },
     [
       onFilterSettingsUpdate,
-      currentStepFilterGroupsCallbackState,
-      currentStepFiltersCallbackState,
+      currentStepFilterGroups,
+      currentStepFilters,
+      store,
     ],
   );
 
   return {
-    removeStepFilterGroup: removeStepFilterGroupRecoilCallback,
+    removeStepFilterGroup,
   };
 };

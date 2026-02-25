@@ -6,7 +6,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 import {
@@ -22,6 +22,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { Toggle2FA } from './Toggle2FA';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -33,10 +34,10 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { t } = useLingui();
 
   const { enqueueErrorSnackBar } = useSnackBar();
-  const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
-  const authProviders = useRecoilValue(authProvidersState);
+  const SSOIdentitiesProviders = useAtomStateValue(SSOIdentitiesProvidersState);
+  const authProviders = useAtomStateValue(authProvidersState);
 
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
 
@@ -174,12 +175,11 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               description={t`Allow the invitation of new users by sharing an invite link.`}
               checked={currentWorkspace.isPublicInviteLinkEnabled}
               advancedMode
+              divider
               onChange={() =>
                 handleChange(!currentWorkspace.isPublicInviteLinkEnabled)
               }
             />
-          </Card>
-          <Card rounded>
             <Toggle2FA />
           </Card>
         </>

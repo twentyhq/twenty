@@ -1,8 +1,8 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { AggregateOperations } from 'twenty-shared/types';
 
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 registerEnumType(AggregateOperations, { name: 'AggregateOperations' });
@@ -29,6 +29,9 @@ export class ViewFieldDTO {
 
   @Field(() => UUIDScalarType, { nullable: false })
   viewId: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  viewFieldGroupId?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;

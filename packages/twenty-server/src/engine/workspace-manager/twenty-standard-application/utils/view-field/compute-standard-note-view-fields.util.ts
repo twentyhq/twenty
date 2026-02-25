@@ -68,5 +68,46 @@ export const computeStandardNoteViewFields = (
         size: 150,
       },
     }),
+
+    // noteRecordPageFields view fields
+    noteRecordPageFieldsTitle: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'title',
+        fieldName: 'title',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    noteRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'createdAt',
+        fieldName: 'createdAt',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'other',
+      },
+    }),
+    noteRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'createdBy',
+        fieldName: 'createdBy',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'other',
+      },
+    }),
   };
 };

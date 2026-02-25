@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
@@ -84,7 +83,7 @@ export class ViewFilterService {
         },
       );
 
-    if (isDefined(buildAndRunResult)) {
+    if (buildAndRunResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         buildAndRunResult,
         'Multiple validation errors occurred while creating view filter',
@@ -161,7 +160,7 @@ export class ViewFilterService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating view filter',
@@ -232,7 +231,7 @@ export class ViewFilterService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while deleting view filter',
@@ -306,7 +305,7 @@ export class ViewFilterService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while destroying view filter',

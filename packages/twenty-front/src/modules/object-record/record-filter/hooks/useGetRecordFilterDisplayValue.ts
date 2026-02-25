@@ -1,3 +1,6 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { Temporal } from 'temporal-polyfill';
+
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useGetDateFilterDisplayValue } from '@/object-record/object-filter-dropdown/hooks/useGetDateFilterDisplayValue';
 import { useGetDateTimeFilterDisplayValue } from '@/object-record/object-filter-dropdown/hooks/useGetDateTimeFilterDisplayValue';
@@ -7,8 +10,7 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime';
-import { isNonEmptyString } from '@sniptt/guards';
-import { Temporal } from 'temporal-polyfill';
+
 import { type Nullable } from 'twenty-shared/types';
 import {
   isDefined,
@@ -87,7 +89,23 @@ export const useGetRecordFilterDisplayValue = () => {
       }
     } else if (recordFilter.type === 'DATE_TIME') {
       switch (recordFilter.operand) {
-        case RecordFilterOperand.IS:
+        case RecordFilterOperand.IS: {
+          if (!isNonEmptyString(recordFilter.value)) {
+            return '';
+          }
+
+          const zonedDateTime = recordFilter.value.includes('T')
+            ? Temporal.Instant.from(recordFilter.value).toZonedDateTimeISO(
+                userTimezone,
+              )
+            : Temporal.PlainDate.from(recordFilter.value).toZonedDateTime(
+                userTimezone,
+              );
+
+          const { displayValue } = getDateFilterDisplayValue(zonedDateTime);
+
+          return `${displayValue}`;
+        }
         case RecordFilterOperand.IS_AFTER:
         case RecordFilterOperand.IS_BEFORE: {
           if (!isNonEmptyString(recordFilter.value)) {

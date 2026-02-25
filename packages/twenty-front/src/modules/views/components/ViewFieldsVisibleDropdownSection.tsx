@@ -11,7 +11,8 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { dropdownYPositionComponentState } from '@/ui/layout/dropdown/states/internal/dropdownYPositionComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -59,7 +60,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
   const fieldMetadataItemLabelIdentifier =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 
@@ -77,7 +78,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
     )
     .toSorted(sortByProperty('position'));
 
-  const dropdownYPosition = useRecoilComponentValue(
+  const dropdownYPosition = useAtomComponentStateValue(
     dropdownYPositionComponentState,
   );
 
@@ -89,7 +90,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
             LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
             text={fieldMetadataItemLabelIdentifier.label}
             accent="placeholder"
-            showGrip={true}
+            gripMode="always"
             isDragDisabled
           />
         )}
@@ -131,7 +132,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                             },
                           ]}
                           text={fieldMetadataItem.label}
-                          showGrip
+                          gripMode="always"
                         />
                       }
                     />

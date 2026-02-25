@@ -1,5 +1,5 @@
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useCallback } from 'react';
 
 type UseLegendItemToggleProps = {
@@ -11,7 +11,7 @@ export const useLegendItemToggle = ({
   itemIds,
   isInteractive,
 }: UseLegendItemToggleProps) => {
-  const setHiddenLegendIds = useSetRecoilComponentState(
+  const setHiddenLegendIds = useSetAtomComponentState(
     graphWidgetHiddenLegendIdsComponentState,
   );
 

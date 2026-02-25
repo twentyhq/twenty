@@ -1,5 +1,4 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -11,7 +10,7 @@ import { PageLayoutMainContent } from '@/page-layout/PageLayoutMainContent';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutId';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
@@ -19,10 +18,11 @@ import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -52,17 +52,18 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 export const PageLayoutRendererContent = () => {
   const { currentPageLayout } = useCurrentPageLayout();
 
-  const { isInRightDrawer } = useLayoutRenderingContext();
+  const { isInRightDrawer, layoutType, targetRecordIdentifier } =
+    useLayoutRenderingContext();
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
-  const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
+  const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
 
   const { createPageLayoutTab } = useCreatePageLayoutTab(currentPageLayout?.id);
   const { reorderTabs } = useReorderPageLayoutTabs(currentPageLayout?.id ?? '');
-  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+  const setTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
   );
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
@@ -104,9 +105,11 @@ export const PageLayoutRendererContent = () => {
     isInRightDrawer,
   });
 
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(
-    currentPageLayout.id,
-  );
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+    pageLayoutId: currentPageLayout.id,
+    layoutType,
+    targetRecordIdentifier,
+  });
 
   const sortedTabs = sortTabsByPosition(tabsToRenderInTabList);
 

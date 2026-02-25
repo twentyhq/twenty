@@ -11,7 +11,11 @@ type MetadataRequiredForValidation = {
   };
 };
 
-// TODO deprecate in favor of ALL_METADATA_RELATIONS
+export type MetadataRelatedMetadataNameForValidation<
+  T extends AllMetadataName,
+> = keyof (typeof ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION)[T];
+
+// TODO deprecate in favor of ALL_METADATA_SERIALIZED_RELATION
 export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   fieldMetadata: {
     objectMetadata: true,

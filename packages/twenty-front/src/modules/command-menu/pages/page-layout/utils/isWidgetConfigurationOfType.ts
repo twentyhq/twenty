@@ -1,11 +1,11 @@
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
-import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import {
   type AggregateChartConfiguration,
   type BarChartConfiguration,
   type CalendarConfiguration,
   type EmailsConfiguration,
   type FieldRichTextConfiguration,
+  type FieldsConfiguration,
   type FilesConfiguration,
   type FrontComponentConfiguration,
   type GaugeChartConfiguration,

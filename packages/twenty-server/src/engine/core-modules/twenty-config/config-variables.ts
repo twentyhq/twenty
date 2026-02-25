@@ -72,7 +72,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,
     description:
-      'Enable safe mode for outbound HTTP requests (prevents private IPs and other security risks). Applies to HTTP workflow actions and webhooks.',
+      'Enable safe mode for outbound requests (prevents private IPs and other security risks). Applies to HTTP workflow actions, webhooks, and IMAP/SMTP/CalDAV connections.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -1196,7 +1196,7 @@ export class ConfigVariables {
   })
   @IsOptional()
   DEFAULT_AI_SPEED_MODEL_ID =
-    'gpt-4.1-mini,claude-haiku-4-5-20251001,grok-3-mini';
+    'gpt-5-mini,claude-haiku-4-5-20251001,gemini-3-flash-preview,grok-4-1-fast-reasoning,mistral-large-latest';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
@@ -1205,7 +1205,8 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  DEFAULT_AI_PERFORMANCE_MODEL_ID = 'gpt-4.1,claude-sonnet-4-5-20250929,grok-4';
+  DEFAULT_AI_PERFORMANCE_MODEL_ID =
+    'gpt-5.2,claude-sonnet-4-6,gemini-3.1-pro-preview,grok-4,mistral-large-latest';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
@@ -1270,6 +1271,87 @@ export class ConfigVariables {
   })
   @IsOptional()
   GROQ_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for Google AI (Gemini) integration',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  GOOGLE_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for Mistral AI integration',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  MISTRAL_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description: 'AWS region for Bedrock integration (e.g., us-east-1)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsAWSRegion()
+  @IsOptional()
+  AWS_BEDROCK_REGION: AwsRegion;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'AWS access key ID for Bedrock authentication',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_BEDROCK_ACCESS_KEY_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'AWS secret access key for Bedrock authentication',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_BEDROCK_SECRET_ACCESS_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'AWS session token for Bedrock (for IAM role-based auth)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AWS_BEDROCK_SESSION_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'When true, newly added models are automatically available to all workspaces',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  AI_AUTO_ENABLE_NEW_MODELS = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Model IDs to disable (used when AI_AUTO_ENABLE_NEW_MODELS is true)',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_DISABLED_MODEL_IDS: string[] = [];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Model IDs to enable (used when AI_AUTO_ENABLE_NEW_MODELS is false)',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_ENABLED_MODEL_IDS: string[] = [];
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

@@ -15,7 +15,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
@@ -49,7 +49,7 @@ export const RecordIndexActionMenuDropdown = () => {
   const dropdownId = getActionMenuDropdownIdFromActionMenuId(actionMenuId);
   const { closeDropdown } = useCloseDropdown();
 
-  const actionMenuDropdownPosition = useRecoilComponentValue(
+  const actionMenuDropdownPosition = useAtomComponentStateValue(
     recordIndexActionMenuDropdownPositionComponentState,
     dropdownId,
   );
@@ -61,7 +61,7 @@ export const RecordIndexActionMenuDropdown = () => {
     'more-actions',
   ];
 
-  const selectedItemId = useRecoilComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     dropdownId,
   );

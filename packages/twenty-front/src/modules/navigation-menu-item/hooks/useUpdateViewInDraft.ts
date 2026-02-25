@@ -1,10 +1,9 @@
-import { useSetRecoilState } from 'recoil';
-
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type View } from '@/views/types/View';
 
 export const useUpdateViewInDraft = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilState(
+  const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
 

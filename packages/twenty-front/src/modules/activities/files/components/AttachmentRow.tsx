@@ -15,16 +15,15 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FileIcon } from '@/file/components/FileIcon';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { t } from '@lingui/core/macro';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { isNavigationModifierPressed } from 'twenty-ui/utilities';
 import {
-  PermissionFlagType,
   FeatureFlagKey,
+  PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
@@ -97,7 +96,11 @@ export const AttachmentRow = ({
   );
 
   const { name: originalFileName, extension: attachmentFileExtension } =
-    getFileNameAndExtension(attachment.name);
+    getFileNameAndExtension(
+      isFilesFieldMigrated
+        ? (attachment.file?.[0]?.label as string)
+        : attachment.name,
+    );
 
   const [attachmentFileName, setAttachmentFileName] =
     useState(originalFileName);
@@ -107,10 +110,8 @@ export const AttachmentRow = ({
     : attachment.fileCategory;
 
   const fileUrl = isFilesFieldMigrated
-    ? attachment.file?.[0]?.url
+    ? (attachment.file?.[0]?.url as string) // TODO : fix attachment.file type after Files field migration
     : attachment.fullPath;
-
-  assertIsDefinedOrThrow(fileUrl, new Error(t`File URL is not defined`));
 
   const { destroyOneRecord: destroyOneAttachment } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,
@@ -209,7 +210,9 @@ export const AttachmentRow = ({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <OverflowingTextWithTooltip text={attachment.name} />
+                <OverflowingTextWithTooltip
+                  text={`${attachmentFileName}${attachmentFileExtension}`}
+                />
               </StyledLink>
             </StyledLinkContainer>
           )}

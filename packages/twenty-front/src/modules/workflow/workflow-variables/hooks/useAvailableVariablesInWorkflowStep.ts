@@ -1,14 +1,16 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
-import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import {
+  type InputSchemaPropertyType,
+  TRIGGER_STEP_ID,
+} from 'twenty-shared/workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
-import { useRecoilValue } from 'recoil';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 export const useAvailableVariablesInWorkflowStep = ({
   shouldDisplayRecordFields,
@@ -19,7 +21,7 @@ export const useAvailableVariablesInWorkflowStep = ({
   shouldDisplayRecordObjects: boolean;
   fieldTypesToExclude?: InputSchemaPropertyType[];
 }): StepOutputSchemaV2[] => {
-  const workflowSelectedNode = useRecoilComponentValue(
+  const workflowSelectedNode = useAtomComponentStateValue(
     workflowSelectedNodeComponentState,
   );
   const flow = useFlowOrThrow();
@@ -30,12 +32,11 @@ export const useAvailableVariablesInWorkflowStep = ({
     ? getPreviousSteps({ steps, currentStep }).map((step) => step.id)
     : [];
 
-  const availableStepsOutputSchema: StepOutputSchemaV2[] = useRecoilValue(
-    stepsOutputSchemaFamilySelector({
+  const availableStepsOutputSchema: StepOutputSchemaV2[] =
+    useAtomFamilySelectorValue(stepsOutputSchemaFamilySelector, {
       workflowVersionId: flow.workflowVersionId,
       stepIds: [TRIGGER_STEP_ID, ...previousStepIds],
-    }),
-  );
+    });
 
   const availableVariablesInWorkflowStep = availableStepsOutputSchema
     .map((stepOutputSchema) => {

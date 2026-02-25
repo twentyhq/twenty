@@ -13,8 +13,9 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useTheme } from '@emotion/react';
 import { cx } from '@linaria/core';
 import { IconPlus } from 'twenty-ui/display';
@@ -61,28 +62,28 @@ const StyledDropdownContainer = styled.div`
 export const RecordTableHeaderAddColumnButton = () => {
   const theme = useTheme();
 
-  const isFirstRowActive = useRecoilComponentFamilyValue(
+  const isFirstRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useRecoilComponentFamilyValue(
+  const isFirstRowFocused = useAtomComponentFamilyStateValue(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );
 
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
   );
 
   const isFirstRowActiveOrFocused =
     isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
 
-  const isScrolledVertically = useRecoilComponentValue(
+  const isScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const hasRecordGroups = useRecoilComponentValue(
+  const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
 

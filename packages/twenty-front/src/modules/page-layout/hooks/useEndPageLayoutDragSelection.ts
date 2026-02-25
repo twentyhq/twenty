@@ -1,14 +1,15 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
 import { calculateGridBoundsFromSelectedCells } from '@/page-layout/utils/calculateGridBoundsFromSelectedCells';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
+import { CommandMenuPages } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useEndPageLayoutDragSelection = (
   pageLayoutIdFromProps?: string,
@@ -18,54 +19,51 @@ export const useEndPageLayoutDragSelection = (
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutSelectedCellsState = useRecoilComponentCallbackState(
+  const pageLayoutSelectedCellsState = useAtomComponentStateCallbackState(
     pageLayoutSelectedCellsComponentState,
     pageLayoutId,
   );
-  const pageLayoutDraggedAreaState = useRecoilComponentCallbackState(
+  const pageLayoutDraggedAreaState = useAtomComponentStateCallbackState(
     pageLayoutDraggedAreaComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutEditingWidgetIdState = useRecoilComponentCallbackState(
+  const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
-  const endPageLayoutDragSelection = useRecoilCallback(
-    ({ snapshot, set }) =>
-      () => {
-        const pageLayoutSelectedCells = snapshot
-          .getLoadable(pageLayoutSelectedCellsState)
-          .getValue();
+  const store = useStore();
 
-        if (pageLayoutSelectedCells.size > 0) {
-          const draggedBounds = calculateGridBoundsFromSelectedCells(
-            Array.from(pageLayoutSelectedCells),
-          );
+  const endPageLayoutDragSelection = useCallback(() => {
+    const pageLayoutSelectedCells = store.get(pageLayoutSelectedCellsState);
 
-          if (isDefined(draggedBounds)) {
-            set(pageLayoutDraggedAreaState, draggedBounds);
-            set(pageLayoutEditingWidgetIdState, null);
+    if (pageLayoutSelectedCells.size > 0) {
+      const draggedBounds = calculateGridBoundsFromSelectedCells(
+        Array.from(pageLayoutSelectedCells),
+      );
 
-            navigatePageLayoutCommandMenu({
-              commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
-              resetNavigationStack: true,
-            });
-          }
-        }
+      if (isDefined(draggedBounds)) {
+        store.set(pageLayoutDraggedAreaState, draggedBounds);
+        store.set(pageLayoutEditingWidgetIdState, null);
 
-        set(pageLayoutSelectedCellsState, new Set());
-      },
-    [
-      navigatePageLayoutCommandMenu,
-      pageLayoutDraggedAreaState,
-      pageLayoutEditingWidgetIdState,
-      pageLayoutSelectedCellsState,
-    ],
-  );
+        navigatePageLayoutCommandMenu({
+          commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+          resetNavigationStack: true,
+        });
+      }
+    }
+
+    store.set(pageLayoutSelectedCellsState, new Set());
+  }, [
+    navigatePageLayoutCommandMenu,
+    pageLayoutDraggedAreaState,
+    pageLayoutEditingWidgetIdState,
+    pageLayoutSelectedCellsState,
+    store,
+  ]);
 
   return { endPageLayoutDragSelection };
 };

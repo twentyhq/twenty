@@ -1,5 +1,5 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
-export const isActivityInCreateModeState = createState<boolean>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const isActivityInCreateModeState = createAtomState<boolean>({
   key: 'isActivityInCreateModeState',
   defaultValue: false,
 });

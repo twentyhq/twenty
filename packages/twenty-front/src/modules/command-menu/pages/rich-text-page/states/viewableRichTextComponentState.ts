@@ -1,11 +1,11 @@
-import { atom, type RecoilState } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const viewableRichTextComponentState: RecoilState<{
+export const viewableRichTextComponentState = createAtomState<{
   activityId: string;
   activityObjectNameSingular: string;
-}> = atom({
+}>({
   key: 'viewableRichTextComponentState',
-  default: {
+  defaultValue: {
     activityId: '',
     activityObjectNameSingular: '',
   },

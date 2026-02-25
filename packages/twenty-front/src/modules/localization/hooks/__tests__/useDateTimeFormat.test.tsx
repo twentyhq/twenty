@@ -1,11 +1,12 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CalendarStartDay } from 'twenty-shared/constants';
 
 const mockPreferences = {
@@ -17,16 +18,14 @@ const mockPreferences = {
 };
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot
-    initializeState={({ set }) => {
-      set(workspaceMemberFormatPreferencesState, mockPreferences);
-    }}
-  >
-    {children}
-  </RecoilRoot>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 describe('useDateTimeFormat', () => {
+  beforeEach(() => {
+    jotaiStore.set(workspaceMemberFormatPreferencesState.atom, mockPreferences);
+  });
+
   it('should be a function', () => {
     expect(typeof useDateTimeFormat).toBe('function');
   });
@@ -45,20 +44,14 @@ describe('useDateTimeFormat', () => {
   });
 
   it('should return updated values when preferences change', () => {
+    jotaiStore.set(workspaceMemberFormatPreferencesState.atom, {
+      ...mockPreferences,
+      timeZone: 'Europe/London',
+      dateFormat: DateFormat.DAY_FIRST,
+    });
+
     const { result } = renderHook(() => useDateTimeFormat(), {
-      wrapper: ({ children }: { children: ReactNode }) => (
-        <RecoilRoot
-          initializeState={({ set }) => {
-            set(workspaceMemberFormatPreferencesState, {
-              ...mockPreferences,
-              timeZone: 'Europe/London',
-              dateFormat: DateFormat.DAY_FIRST,
-            });
-          }}
-        >
-          {children}
-        </RecoilRoot>
-      ),
+      wrapper: Wrapper,
     });
 
     expect(result.current.timeZone).toBe('Europe/London');

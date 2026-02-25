@@ -36,7 +36,7 @@ exports[`CommandMenuItem deletion should fail when deleting with empty id 1`] = 
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -51,7 +51,7 @@ exports[`CommandMenuItem deletion should fail when deleting with invalid id (not
     "userFriendlyMessage": "An error occurred.",
     "value": "not-a-valid-uuid",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;

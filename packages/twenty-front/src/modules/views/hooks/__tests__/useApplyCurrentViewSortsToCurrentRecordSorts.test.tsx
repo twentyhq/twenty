@@ -2,10 +2,14 @@ import { act, renderHook } from '@testing-library/react';
 
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -32,6 +36,10 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
       'Missing mock object metadata item with name singular "company"',
     );
   }
+
+  afterEach(() => {
+    resetJotaiStore();
+  });
 
   const mockFieldMetadataItem = mockObjectMetadataItem.fields.find(
     (field) => field.name === 'name',
@@ -69,13 +77,16 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
   } satisfies CoreViewWithRelations;
 
   it('should apply sorts from current view', () => {
+    jotaiStore.set(coreViewsState.atom, [mockCoreView]);
+
     const { result } = renderHook(
       () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
           useApplyCurrentViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useRecoilComponentValue(
+        const currentSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
+          'recordIndexId',
         );
 
         return {
@@ -90,9 +101,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           contextStoreCurrentViewId: mockView.id,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(coreViewsState, [mockCoreView]);
-          },
         }),
       },
     );
@@ -111,13 +119,16 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
   });
 
   it('should not apply sorts when current view is not found', () => {
+    jotaiStore.set(coreViewsState.atom, []);
+
     const { result } = renderHook(
       () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
           useApplyCurrentViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useRecoilComponentValue(
+        const currentSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
+          'recordIndexId',
         );
 
         return {
@@ -131,15 +142,13 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
+          onInitializeJotaiStore: (store) => {
+            store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
               mockView.id,
             );
-
-            snapshot.set(coreViewsState, []);
           },
         }),
       },
@@ -158,13 +167,16 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
       viewSorts: [],
     };
 
+    jotaiStore.set(coreViewsState.atom, [viewWithNoSorts]);
+
     const { result } = renderHook(
       () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
           useApplyCurrentViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useRecoilComponentValue(
+        const currentSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
+          'recordIndexId',
         );
 
         return {
@@ -178,15 +190,13 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
+          onInitializeJotaiStore: (store) => {
+            store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
               mockView.id,
             );
-
-            snapshot.set(coreViewsState, [viewWithNoSorts]);
           },
         }),
       },

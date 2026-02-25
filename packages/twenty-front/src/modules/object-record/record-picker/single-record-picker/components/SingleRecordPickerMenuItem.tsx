@@ -7,11 +7,11 @@ import { singleRecordPickerSearchableObjectMetadataItemsComponentState } from '@
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
@@ -39,17 +39,18 @@ export const SingleRecordPickerMenuItem = ({
   const selectableListComponentInstanceId =
     getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
-  const isSelectedByKeyboard = useRecoilComponentFamilyValue(
-    isSelectedItemIdComponentFamilySelector,
+  const isSelectedByKeyboard = useAtomComponentFamilyStateValue(
+    isSelectedItemIdComponentFamilyState,
     morphItem.recordId,
     selectableListComponentInstanceId,
   );
 
-  const searchRecord = useRecoilValue(
-    searchRecordStoreFamilyState(morphItem.recordId),
+  const searchRecord = useAtomFamilyStateValue(
+    searchRecordStoreFamilyState,
+    morphItem.recordId,
   );
 
-  const searchableObjectMetadataItems = useRecoilComponentValue(
+  const searchableObjectMetadataItems = useAtomComponentStateValue(
     singleRecordPickerSearchableObjectMetadataItemsComponentState,
     recordPickerComponentInstanceId,
   );

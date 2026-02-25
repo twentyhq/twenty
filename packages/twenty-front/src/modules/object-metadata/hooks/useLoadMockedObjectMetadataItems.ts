@@ -1,36 +1,30 @@
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useStore } from 'jotai';
 
 export const useLoadMockedObjectMetadataItems = () => {
-  const loadMockedObjectMetadataItems = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async () => {
-        if (
-          !isDeeplyEqual(
-            snapshot.getLoadable(objectMetadataItemsState).getValue(),
-            generatedMockObjectMetadataItems,
-          )
-        ) {
-          set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-        }
+  const store = useStore();
+  const loadMockedObjectMetadataItems = useCallback(async () => {
+    if (
+      !isDeeplyEqual(
+        store.get(objectMetadataItemsState.atom),
+        generatedMockObjectMetadataItems,
+      )
+    ) {
+      store.set(
+        objectMetadataItemsState.atom,
+        generatedMockObjectMetadataItems,
+      );
+    }
 
-        if (snapshot.getLoadable(shouldAppBeLoadingState).getValue() === true) {
-          set(shouldAppBeLoadingState, false);
-        }
+    if (store.get(isAppEffectRedirectEnabledState.atom) === false) {
+      store.set(isAppEffectRedirectEnabledState.atom, true);
+    }
+  }, [store]);
 
-        if (
-          snapshot.getLoadable(isAppEffectRedirectEnabledState).getValue() ===
-          false
-        ) {
-          set(isAppEffectRedirectEnabledState, true);
-        }
-      },
-    [],
-  );
   return {
     loadMockedObjectMetadataItems,
   };

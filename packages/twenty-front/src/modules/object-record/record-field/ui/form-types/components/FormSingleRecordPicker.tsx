@@ -12,7 +12,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -63,6 +63,7 @@ export type FormSingleRecordPickerProps = {
   label?: string;
   defaultValue?: RecordId | Variable;
   onChange: (value: RecordId | Variable | null) => void;
+  onClear?: () => void;
   objectNameSingulars: string[];
   disabled?: boolean;
   testId?: string;
@@ -74,6 +75,7 @@ export const FormSingleRecordPicker = ({
   defaultValue,
   objectNameSingulars,
   onChange,
+  onClear,
   disabled,
   testId,
   VariablePicker,
@@ -114,7 +116,7 @@ export const FormSingleRecordPicker = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const setRecordPickerSearchFilter = useSetRecoilComponentState(
+  const setRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
@@ -127,7 +129,7 @@ export const FormSingleRecordPicker = ({
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
   ) => {
     if (!isNonEmptyString(selectedMorphItem?.recordId)) {
-      onChange(null);
+      onClear?.();
 
       return;
     }
@@ -143,10 +145,10 @@ export const FormSingleRecordPicker = ({
   const handleUnlinkVariable = (event?: React.MouseEvent<HTMLDivElement>) => {
     // Prevents the dropdown to open when clicking on the chip
     event?.stopPropagation();
-    onChange(null);
+    onClear?.();
   };
 
-  const setRecordPickerSelectedId = useSetRecoilComponentState(
+  const setRecordPickerSelectedId = useSetAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );

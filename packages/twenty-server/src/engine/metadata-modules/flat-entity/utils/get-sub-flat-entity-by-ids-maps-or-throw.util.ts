@@ -1,8 +1,8 @@
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 export const getSubFlatEntityByIdsMapsOrThrow = <T extends SyncableFlatEntity>({
   flatEntityIds,
@@ -11,15 +11,19 @@ export const getSubFlatEntityByIdsMapsOrThrow = <T extends SyncableFlatEntity>({
   flatEntityMaps: FlatEntityMaps<T>;
   flatEntityIds: string[];
 }): FlatEntityMaps<T> => {
-  return flatEntityIds.reduce<FlatEntityMaps<T>>((acc, flatEntityId) => {
+  const flatEntityMapsToMutate = createEmptyFlatEntityMaps();
+
+  flatEntityIds.forEach((flatEntityId) => {
     const flatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId,
       flatEntityMaps,
     });
 
-    return addFlatEntityToFlatEntityMapsOrThrow({
+    addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
       flatEntity,
-      flatEntityMaps: acc,
+      flatEntityMapsToMutate,
     });
-  }, createEmptyFlatEntityMaps());
+  });
+
+  return flatEntityMapsToMutate;
 };

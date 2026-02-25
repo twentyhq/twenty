@@ -11,8 +11,8 @@ import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/const
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { IconFunction } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -28,13 +28,20 @@ export const CommandMenuWorkflowSelectAction = ({
   onActionSelected: (selection: WorkflowActionSelection) => void;
 }) => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const isDraftEmailEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_DRAFT_EMAIL_ENABLED,
+  );
   const theme = useTheme();
 
   const { t } = useLingui();
 
-  const logicFunctions = useRecoilValue(logicFunctionsState);
+  const logicFunctions = useAtomStateValue(logicFunctionsState);
 
   const toolFunctions = logicFunctions.filter((fn) => fn.isTool === true);
+
+  const coreActions = isDraftEmailEnabled
+    ? CORE_ACTIONS
+    : CORE_ACTIONS.filter((action) => action.type !== 'DRAFT_EMAIL');
 
   const handleActionClick = (actionType: WorkflowActionType) => {
     onActionSelected({ type: actionType });
@@ -83,7 +90,7 @@ export const CommandMenuWorkflowSelectAction = ({
         {t`Core`}
       </RightDrawerWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={CORE_ACTIONS}
+        actions={coreActions}
         onClick={handleActionClick}
       />
 

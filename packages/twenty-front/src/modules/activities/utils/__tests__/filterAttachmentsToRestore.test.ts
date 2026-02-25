@@ -9,18 +9,22 @@ describe('filterAttachmentsToRestore', () => {
         fullPath: 'https://exemple.com/test.txt',
       },
     ] as Attachment[];
-    const attachmentIdsToRestore = filterAttachmentsToRestore(
-      [],
+    const attachmentIdsToRestore = filterAttachmentsToRestore({
+      attachmentPathsToRestore: [],
       softDeletedAttachments,
-    );
+      isFilesFieldMigrated: false,
+    });
     expect(attachmentIdsToRestore).toEqual([]);
   });
 
   it('should not return any ids if there are no soft deleted attachments', () => {
-    const attachmentIdsToRestore = filterAttachmentsToRestore(
-      ['https://exemple.com/files/attachment/test.txt'],
-      [],
-    );
+    const attachmentIdsToRestore = filterAttachmentsToRestore({
+      attachmentPathsToRestore: [
+        'https://exemple.com/files/attachment/test.txt',
+      ],
+      softDeletedAttachments: [],
+      isFilesFieldMigrated: false,
+    });
     expect(attachmentIdsToRestore).toEqual([]);
   });
 
@@ -35,10 +39,11 @@ describe('filterAttachmentsToRestore', () => {
         fullPath: 'https://exemple.com/files/images/test2.txt',
       },
     ] as Attachment[];
-    const attachmentIdsToRestore = filterAttachmentsToRestore(
-      ['https://exemple.com/files/images/test.txt'],
+    const attachmentIdsToRestore = filterAttachmentsToRestore({
+      attachmentPathsToRestore: ['https://exemple.com/files/images/test.txt'],
       softDeletedAttachments,
-    );
+      isFilesFieldMigrated: false,
+    });
     expect(attachmentIdsToRestore).toEqual(['1']);
   });
 });

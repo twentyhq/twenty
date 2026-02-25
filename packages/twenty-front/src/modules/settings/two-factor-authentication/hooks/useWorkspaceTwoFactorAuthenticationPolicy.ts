@@ -1,8 +1,8 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useCurrentWorkspaceTwoFactorAuthenticationPolicy = () => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   return {
     isEnforced: currentWorkspace?.isTwoFactorAuthenticationEnforced ?? false,

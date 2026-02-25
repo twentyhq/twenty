@@ -1,40 +1,43 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { parseCellIdToCoordinates } from '@/page-layout/utils/parseCellIdToCoordinates';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
+import { CommandMenuPages } from 'twenty-shared/types';
 
 export const useCreateWidgetFromClick = () => {
-  const pageLayoutDraggedAreaState = useRecoilComponentCallbackState(
+  const pageLayoutDraggedAreaState = useAtomComponentStateCallbackState(
     pageLayoutDraggedAreaComponentState,
   );
 
-  const pageLayoutEditingWidgetIdState = useRecoilComponentCallbackState(
+  const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
     pageLayoutEditingWidgetIdComponentState,
   );
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
-  const createWidgetFromClick = useRecoilCallback(
-    ({ set }) =>
-      (cellId: string) => {
-        const { col, row } = parseCellIdToCoordinates(cellId);
-        const bounds = { x: col, y: row, w: 1, h: 1 };
+  const store = useStore();
 
-        set(pageLayoutDraggedAreaState, bounds);
-        set(pageLayoutEditingWidgetIdState, null);
+  const createWidgetFromClick = useCallback(
+    (cellId: string) => {
+      const { col, row } = parseCellIdToCoordinates(cellId);
+      const bounds = { x: col, y: row, w: 1, h: 1 };
 
-        navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
-          resetNavigationStack: true,
-        });
-      },
+      store.set(pageLayoutDraggedAreaState, bounds);
+      store.set(pageLayoutEditingWidgetIdState, null);
+
+      navigatePageLayoutCommandMenu({
+        commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+        resetNavigationStack: true,
+      });
+    },
     [
       navigatePageLayoutCommandMenu,
       pageLayoutDraggedAreaState,
       pageLayoutEditingWidgetIdState,
+      store,
     ],
   );
 

@@ -42,13 +42,13 @@ import { MessagingDeleteGroupEmailMessagesService } from 'src/modules/messaging/
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
+import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
-import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
 import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/messaging-monitoring.module';
 @Module({
@@ -94,6 +94,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessageImportManagerMessageChannelListener,
     MessagingCleanCacheJob,
     MessagingMessageService,
+    MessagingMessageFolderAssociationService,
     MessagingMessageListFetchService,
     MessagingMessagesImportService,
     MessagingSaveMessagesAndEnqueueContactCreationService,
@@ -101,7 +102,6 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingGetMessagesService,
     MessageImportExceptionHandlerService,
     MessagingCursorService,
-    MessagingSendMessageService,
     MessagingAccountAuthenticationService,
     MessagingProcessFolderActionsService,
     MessagingProcessGroupEmailActionsService,
@@ -109,7 +109,6 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingDeleteGroupEmailMessagesService,
   ],
   exports: [
-    MessagingSendMessageService,
     MessagingAccountAuthenticationService,
     MessagingMessageListFetchCronCommand,
     MessagingMessagesImportCronCommand,

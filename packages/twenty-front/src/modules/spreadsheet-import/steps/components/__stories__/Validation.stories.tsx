@@ -10,7 +10,8 @@ import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/S
 import { ValidationStep } from '@/spreadsheet-import/steps/components/ValidationStep/ValidationStep';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { RecoilRoot } from 'recoil';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { Provider as JotaiProvider } from 'jotai';
 
 const meta: Meta<typeof ValidationStep> = {
   title: 'Modules/SpreadsheetImport/ValidationStep',
@@ -19,20 +20,19 @@ const meta: Meta<typeof ValidationStep> = {
     layout: 'fullscreen',
   },
   decorators: [
-    (Story) => (
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(
-            isModalOpenedComponentState.atomFamily({
-              instanceId: 'validation-step',
-            }),
-            true,
-          );
-        }}
-      >
-        <Story />
-      </RecoilRoot>
-    ),
+    (Story) => {
+      jotaiStore.set(
+        isModalOpenedComponentState.atomFamily({
+          instanceId: 'validation-step',
+        }),
+        true,
+      );
+      return (
+        <JotaiProvider store={jotaiStore}>
+          <Story />
+        </JotaiProvider>
+      );
+    },
   ],
 };
 

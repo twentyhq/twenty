@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreateNavigationMenuItemAction,
@@ -37,6 +37,11 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
         universalForeignKeyValues: action.flatEntity,
       });
 
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'navigationMenuItem',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -47,6 +52,7 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }
@@ -54,17 +60,12 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateNavigationMenuItemAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner } = context;
     const { flatEntity } = flatAction;
 
-    const navigationMenuItemRepository =
-      queryRunner.manager.getRepository<NavigationMenuItemEntity>(
-        NavigationMenuItemEntity,
-      );
-
-    await navigationMenuItemRepository.insert({
-      ...flatEntity,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 

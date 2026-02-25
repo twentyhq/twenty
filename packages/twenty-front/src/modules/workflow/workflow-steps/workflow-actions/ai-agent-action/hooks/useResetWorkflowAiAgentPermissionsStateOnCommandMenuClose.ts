@@ -1,22 +1,22 @@
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
 
 export const useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose = () => {
-  const resetSelectedObjectId = useResetRecoilState(
+  const setSelectedObjectId = useSetAtomState(
     workflowAiAgentPermissionsSelectedObjectIdState,
   );
-  const setIsAddingPermission = useSetRecoilState(
+  const setIsAddingPermission = useSetAtomState(
     workflowAiAgentPermissionsIsAddingPermissionState,
   );
-  const resetAgentState = useResetRecoilState(workflowAiAgentActionAgentState);
+  const setAgentState = useSetAtomState(workflowAiAgentActionAgentState);
 
   const resetPermissionState = () => {
-    resetSelectedObjectId();
+    setSelectedObjectId(undefined);
     setIsAddingPermission(false);
-    resetAgentState();
+    setAgentState(undefined);
   };
 
   useListenToSidePanelClosing(resetPermissionState);

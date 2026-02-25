@@ -1,36 +1,37 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableRichTextComponentState } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { t } from '@lingui/core/macro';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconPencil } from 'twenty-ui/display';
 
 export const useRichTextCommandMenu = () => {
   const { navigateCommandMenu, openCommandMenu } = useCommandMenu();
 
-  const openRichTextInCommandMenu = useRecoilCallback(
-    ({ set }) =>
-      ({
+  const store = useStore();
+
+  const openRichTextInCommandMenu = useCallback(
+    ({
+      activityId,
+      activityObjectNameSingular,
+    }: {
+      activityId: string;
+      activityObjectNameSingular: string;
+    }) => {
+      store.set(viewableRichTextComponentState.atom, {
         activityId,
         activityObjectNameSingular,
-      }: {
-        activityId: string;
-        activityObjectNameSingular: string;
-      }) => {
-        set(viewableRichTextComponentState, {
-          activityId,
-          activityObjectNameSingular,
-        });
+      });
 
-        openCommandMenu();
-        navigateCommandMenu({
-          page: CommandMenuPages.EditRichText,
-          pageTitle: t`Rich Text`,
-          pageIcon: IconPencil,
-        });
-      },
-    [navigateCommandMenu, openCommandMenu],
+      openCommandMenu();
+      navigateCommandMenu({
+        page: CommandMenuPages.EditRichText,
+        pageTitle: t`Rich Text`,
+        pageIcon: IconPencil,
+      });
+    },
+    [navigateCommandMenu, openCommandMenu, store],
   );
 
   const editRichText = useCallback(

@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreatePageLayoutWidgetAction,
@@ -42,6 +42,14 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
       fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration({
         universalConfiguration: action.flatEntity.universalConfiguration,
         flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+        flatFrontComponentMaps: allFlatEntityMaps.flatFrontComponentMaps,
+        flatViewMaps: allFlatEntityMaps.flatViewMaps,
+        flatViewFieldGroupMaps: allFlatEntityMaps.flatViewFieldGroupMaps,
+      });
+
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'pageLayoutWidget',
       });
 
     return {
@@ -54,6 +62,7 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }
@@ -61,17 +70,12 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreatePageLayoutWidgetAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner } = context;
     const { flatEntity } = flatAction;
 
-    const pageLayoutWidgetRepository =
-      queryRunner.manager.getRepository<PageLayoutWidgetEntity>(
-        PageLayoutWidgetEntity,
-      );
-
-    await pageLayoutWidgetRepository.insert({
-      ...flatEntity,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 

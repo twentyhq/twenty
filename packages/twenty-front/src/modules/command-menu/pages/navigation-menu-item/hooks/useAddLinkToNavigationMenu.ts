@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink } from 'twenty-ui/display';
 
@@ -9,23 +8,25 @@ import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/h
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useAddLinkToNavigationMenu = () => {
   const { t } = useLingui();
   const { addLinkToDraft } = useAddLinkToNavigationMenuDraft();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
-  const navigationMenuItemsDraft = useRecoilValue(
+  const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftState,
   );
-  const setSelectedNavigationMenuItemInEditMode = useSetRecoilState(
+  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
     selectedNavigationMenuItemInEditModeState,
   );
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
-  const addMenuItemInsertionContext = useRecoilValue(
+  const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextState,
   );
-  const setAddMenuItemInsertionContext = useSetRecoilState(
+  const setAddMenuItemInsertionContext = useSetAtomState(
     addMenuItemInsertionContextState,
   );
 

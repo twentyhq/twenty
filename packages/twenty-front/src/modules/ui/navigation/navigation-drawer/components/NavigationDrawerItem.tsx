@@ -6,13 +6,13 @@ import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/ho
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
 import {
@@ -305,7 +305,7 @@ export const NavigationDrawerItem = ({
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useRecoilState(isNavigationDrawerExpandedState);
+    useAtomState(isNavigationDrawerExpandedState);
 
   const { navigationItemId } = useNavigationDrawerTooltip(label, to);
 
@@ -356,6 +356,7 @@ export const NavigationDrawerItem = ({
         as={
           to ? (isExternalLink ? 'a' : Link) : rightOptions ? 'div' : undefined
         }
+        role={to ? undefined : rightOptions ? 'button' : undefined}
         to={isExternalLink ? undefined : to}
         href={isExternalLink ? to : undefined}
         target={isExternalLink ? '_blank' : undefined}

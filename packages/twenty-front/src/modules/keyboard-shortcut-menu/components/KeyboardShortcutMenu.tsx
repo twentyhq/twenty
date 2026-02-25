@@ -1,5 +1,3 @@
-import { useRecoilValue } from 'recoil';
-
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
@@ -7,10 +5,11 @@ import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/stat
 
 import { KeyboardShortcutMenuOpenContent } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const KeyboardShortcutMenu = () => {
   const { toggleKeyboardShortcutMenu } = useKeyboardShortcutMenu();
-  const isKeyboardShortcutMenuOpened = useRecoilValue(
+  const isKeyboardShortcutMenuOpened = useAtomStateValue(
     isKeyboardShortcutMenuOpenedState,
   );
   const { closeCommandMenu } = useCommandMenu();

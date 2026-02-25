@@ -6,14 +6,14 @@ import {
 import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
-import { type MutableSnapshot } from 'recoil';
 import { expect, within } from 'storybook/test';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
+import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -145,6 +145,7 @@ const createPageLayoutWithWidget = (
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      applicationId: '',
       id: TAB_ID_OVERVIEW,
       title: 'Overview',
       position: 0,
@@ -277,29 +278,30 @@ export const WithNumberChart: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(widget);
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(widget);
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
 
     return (
       <div style={{ width: '300px', height: '100px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -362,29 +364,30 @@ export const WithGaugeChart: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(widget);
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(widget);
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
 
     return (
       <div style={{ width: '300px', height: '400px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -451,29 +454,30 @@ export const WithBarChart: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(widget);
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(widget);
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
 
     return (
       <div style={{ width: '300px', height: '500px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -543,29 +547,30 @@ export const SmallWidget: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(widget);
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(widget);
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
 
     return (
       <div style={{ width: '300px', height: '100px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -639,29 +644,30 @@ export const MediumWidget: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(widget);
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(widget);
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
 
     return (
       <div style={{ width: '400px', height: '250px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -735,29 +741,30 @@ export const LargeWidget: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(widget);
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(widget);
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
 
     return (
       <div style={{ width: '600px', height: '400px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -827,29 +834,30 @@ export const WideWidget: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(widget);
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(widget);
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
 
     return (
       <div style={{ width: '800px', height: '200px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -923,29 +931,30 @@ export const TallWidget: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(widget);
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(widget);
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
 
     return (
       <div style={{ width: '300px', height: '500px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -1015,51 +1024,55 @@ export const WithManyToOneRelationFieldWidget: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(
-        widget,
-        PageLayoutType.RECORD_PAGE,
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(
+      widget,
+      PageLayoutType.RECORD_PAGE,
+    );
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      isPageLayoutInEditModeComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      false,
+    );
+    jotaiStore.set(
+      recordStoreFamilyState.atomFamily(TEST_RECORD_ID),
+      mockCompanyRecord,
+    );
+    // Set the related WorkspaceMember record for relation field display
+    if (
+      mockCompanyRecord.accountOwner !== null &&
+      mockCompanyRecord.accountOwner !== undefined
+    ) {
+      jotaiStore.set(
+        recordStoreFamilyState.atomFamily(
+          (mockCompanyRecord.accountOwner as ObjectRecord).id,
+        ),
+        mockCompanyRecord.accountOwner,
       );
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        isPageLayoutInEditModeComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        false,
-      );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
-      // Set the related WorkspaceMember record for relation field display
-      if (
-        mockCompanyRecord.accountOwner !== null &&
-        mockCompanyRecord.accountOwner !== undefined
-      ) {
-        snapshot.set(
-          recordStoreFamilyState(
-            (mockCompanyRecord.accountOwner as ObjectRecord).id,
-          ),
-          mockCompanyRecord.accountOwner,
-        );
-      }
-    };
+    }
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -1129,43 +1142,47 @@ export const WithOneToManyRelationFieldWidget: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(
-        widget,
-        PageLayoutType.RECORD_PAGE,
-      );
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        isPageLayoutInEditModeComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        false,
-      );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
-      snapshot.set(
-        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
-        mockPersonRecord,
-      );
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(
+      widget,
+      PageLayoutType.RECORD_PAGE,
+    );
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      isPageLayoutInEditModeComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      false,
+    );
+    jotaiStore.set(
+      recordStoreFamilyState.atomFamily(TEST_RECORD_ID),
+      mockCompanyRecord,
+    );
+    jotaiStore.set(
+      recordStoreFamilyState.atomFamily(TEST_PERSON_RECORD_ID),
+      mockPersonRecord,
+    );
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -1235,51 +1252,55 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(
-        widget,
-        PageLayoutType.RECORD_PAGE,
-      );
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        isPageLayoutInEditModeComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        false,
-      );
-      snapshot.set(recordStoreFamilyState(TEST_RECORD_ID), mockCompanyRecord);
-      snapshot.set(
-        recordStoreFamilyState(TEST_PERSON_RECORD_ID),
-        mockPersonRecord,
-      );
-      // Set hover state to make the "See all" button visible
-      snapshot.set(
-        widgetCardHoveredComponentFamilyState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-          familyKey: WIDGET_ID_ONE_TO_MANY_RELATION,
-        }),
-        true,
-      );
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(
+      widget,
+      PageLayoutType.RECORD_PAGE,
+    );
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      isPageLayoutInEditModeComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      false,
+    );
+    jotaiStore.set(
+      recordStoreFamilyState.atomFamily(TEST_RECORD_ID),
+      mockCompanyRecord,
+    );
+    jotaiStore.set(
+      recordStoreFamilyState.atomFamily(TEST_PERSON_RECORD_ID),
+      mockPersonRecord,
+    );
+    // Set hover state to make the "See all" button visible
+    jotaiStore.set(
+      widgetCardHoveredComponentFamilyState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        familyKey: WIDGET_ID_ONE_TO_MANY_RELATION,
+      }),
+      true,
+    );
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -1368,32 +1389,33 @@ export const OnMobile: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(
-        widget,
-        PageLayoutType.RECORD_PAGE,
-      );
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(
+      widget,
+      PageLayoutType.RECORD_PAGE,
+    );
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
 
     return (
       <div style={{ width: '100%', padding: '20px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,
@@ -1464,32 +1486,33 @@ export const InSidePanel: Story = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
-      const pageLayoutData = createPageLayoutWithWidget(
-        widget,
-        PageLayoutType.RECORD_PAGE,
-      );
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        pageLayoutData,
-      );
-    };
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
+    const pageLayoutData = createPageLayoutWithWidget(
+      widget,
+      PageLayoutType.RECORD_PAGE,
+    );
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
 
     return (
       <div style={{ width: '400px', padding: '20px' }}>
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: true,
@@ -1621,142 +1644,147 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       deletedAt: null,
     };
 
-    const initializeState = (snapshot: MutableSnapshot) => {
-      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
-      snapshot.set(shouldAppBeLoadingState, false);
+    jotaiStore.set(
+      objectMetadataItemsState.atom,
+      generatedMockObjectMetadataItems,
+    );
+    jotaiStore.set(isAppMetadataReadyState.atom, true);
 
-      if (state === 'hover') {
-        snapshot.set(
-          widgetCardHoveredComponentFamilyState.atomFamily({
-            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-            familyKey: widget.id,
-          }),
-          true,
-        );
-      }
+    if (state === 'hover') {
+      jotaiStore.set(
+        widgetCardHoveredComponentFamilyState.atomFamily({
+          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          familyKey: widget.id,
+        }),
+        true,
+      );
+    }
 
-      if (state === 'selected') {
-        snapshot.set(
-          pageLayoutEditingWidgetIdComponentState.atomFamily({
-            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-          }),
-          widget.id,
-        );
-      }
-
-      if (state === 'dragging') {
-        snapshot.set(
-          pageLayoutDraggingWidgetIdComponentState.atomFamily({
-            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-          }),
-          widget.id,
-        );
-      }
-
-      if (isRestricted === true) {
-        snapshot.set(currentUserWorkspaceState, {
-          permissionFlags: [],
-          twoFactorAuthenticationMethodSummary: null,
-          objectsPermissions: [
-            {
-              objectMetadataId: companyObjectMetadataItem.id,
-              canReadObjectRecords: false,
-              canUpdateObjectRecords: false,
-              canSoftDeleteObjectRecords: false,
-              canDestroyObjectRecords: false,
-              restrictedFields: {},
-              rowLevelPermissionPredicates: [],
-              rowLevelPermissionPredicateGroups: [],
-            },
-          ],
-        });
-      } else {
-        snapshot.set(currentUserWorkspaceState, {
-          permissionFlags: [],
-          twoFactorAuthenticationMethodSummary: null,
-          objectsPermissions: [
-            {
-              objectMetadataId: companyObjectMetadataItem.id,
-              canReadObjectRecords: true,
-              canUpdateObjectRecords: true,
-              canSoftDeleteObjectRecords: true,
-              canDestroyObjectRecords: true,
-              restrictedFields: {},
-              rowLevelPermissionPredicates: [],
-              rowLevelPermissionPredicateGroups: [],
-            },
-          ],
-        });
-      }
-
-      const pageLayoutData: PageLayout = {
-        id: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        name: 'Mock Page Layout',
-        type: pageLayoutType,
-        objectMetadataId: companyObjectMetadataItem.id,
-        tabs:
-          variant === 'side-column'
-            ? [
-                {
-                  __typename: 'PageLayoutTab',
-                  id: 'pinned-tab',
-                  title: 'Pinned Tab',
-                  position: 0,
-                  pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-                  widgets: [widget],
-                  createdAt: '2024-01-01T00:00:00Z',
-                  updatedAt: '2024-01-01T00:00:00Z',
-                  deletedAt: null,
-                },
-                {
-                  __typename: 'PageLayoutTab',
-                  id: 'other-tab',
-                  title: 'Other Tab',
-                  position: 1,
-                  pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-                  widgets: [],
-                  createdAt: '2024-01-01T00:00:00Z',
-                  updatedAt: '2024-01-01T00:00:00Z',
-                  deletedAt: null,
-                },
-              ]
-            : [
-                {
-                  __typename: 'PageLayoutTab',
-                  id: TAB_ID_OVERVIEW,
-                  title: 'Overview',
-                  position: 0,
-                  pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-                  widgets: [widget],
-                  createdAt: '2024-01-01T00:00:00Z',
-                  updatedAt: '2024-01-01T00:00:00Z',
-                  deletedAt: null,
-                },
-              ],
-        createdAt: '2024-01-01T00:00:00Z',
-        updatedAt: '2024-01-01T00:00:00Z',
-        deletedAt: null,
-      };
-
-      snapshot.set(
-        pageLayoutPersistedComponentState.atomFamily({
+    if (state === 'selected') {
+      jotaiStore.set(
+        pageLayoutEditingWidgetIdComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
         }),
-        pageLayoutData,
+        widget.id,
       );
-      snapshot.set(
-        pageLayoutDraftComponentState.atomFamily({
+    }
+
+    if (state === 'dragging') {
+      jotaiStore.set(
+        pageLayoutDraggingWidgetIdComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
         }),
-        pageLayoutData,
+        widget.id,
       );
-      snapshot.set(
-        isPageLayoutInEditModeComponentState.atomFamily({
-          instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-        }),
-        isInEditMode,
-      );
+    }
+
+    // currentUserWorkspaceState is now a Jotai state, set it directly
+    if (isRestricted === true) {
+      jotaiStore.set(currentUserWorkspaceState.atom, {
+        permissionFlags: [],
+        twoFactorAuthenticationMethodSummary: null,
+        objectsPermissions: [
+          {
+            objectMetadataId: companyObjectMetadataItem.id,
+            canReadObjectRecords: false,
+            canUpdateObjectRecords: false,
+            canSoftDeleteObjectRecords: false,
+            canDestroyObjectRecords: false,
+            restrictedFields: {},
+            rowLevelPermissionPredicates: [],
+            rowLevelPermissionPredicateGroups: [],
+          },
+        ],
+      });
+    } else {
+      jotaiStore.set(currentUserWorkspaceState.atom, {
+        permissionFlags: [],
+        twoFactorAuthenticationMethodSummary: null,
+        objectsPermissions: [
+          {
+            objectMetadataId: companyObjectMetadataItem.id,
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: true,
+            canSoftDeleteObjectRecords: true,
+            canDestroyObjectRecords: true,
+            restrictedFields: {},
+            rowLevelPermissionPredicates: [],
+            rowLevelPermissionPredicateGroups: [],
+          },
+        ],
+      });
+    }
+
+    const pageLayoutData: PageLayout = {
+      id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      name: 'Mock Page Layout',
+      type: pageLayoutType,
+      objectMetadataId: companyObjectMetadataItem.id,
+      tabs:
+        variant === 'side-column'
+          ? [
+              {
+                __typename: 'PageLayoutTab',
+                applicationId: '',
+                id: 'pinned-tab',
+                title: 'Pinned Tab',
+                position: 0,
+                pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+                widgets: [widget],
+                createdAt: '2024-01-01T00:00:00Z',
+                updatedAt: '2024-01-01T00:00:00Z',
+                deletedAt: null,
+              },
+              {
+                __typename: 'PageLayoutTab',
+                applicationId: '',
+                id: 'other-tab',
+                title: 'Other Tab',
+                position: 1,
+                pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+                widgets: [],
+                createdAt: '2024-01-01T00:00:00Z',
+                updatedAt: '2024-01-01T00:00:00Z',
+                deletedAt: null,
+              },
+            ]
+          : [
+              {
+                __typename: 'PageLayoutTab',
+                applicationId: '',
+                id: TAB_ID_OVERVIEW,
+                title: 'Overview',
+                position: 0,
+                pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+                widgets: [widget],
+                createdAt: '2024-01-01T00:00:00Z',
+                updatedAt: '2024-01-01T00:00:00Z',
+                deletedAt: null,
+              },
+            ],
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+      deletedAt: null,
     };
+
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      isPageLayoutInEditModeComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      isInEditMode,
+    );
 
     const containerClassName = state === 'hover' ? 'hover-state' : '';
 
@@ -1767,7 +1795,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       >
         <JestMetadataAndApolloMocksWrapper>
           <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper initializeState={initializeState}>
+            <PageLayoutTestWrapper store={jotaiStore}>
               <LayoutRenderingProvider
                 value={{
                   isInRightDrawer: false,

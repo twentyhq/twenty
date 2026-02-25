@@ -27,9 +27,9 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -67,14 +67,14 @@ export const SettingsObjectFieldEdit = () => {
 
   const navigate = useNavigate();
 
-  const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useRecoilState(
+  const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useAtomState(
     navigationMemorizedUrlState,
   );
 
   const [
     shouldNavigateBackToMemorizedUrlOnSave,
     setShouldNavigateBackToMemorizedUrlOnSave,
-  ] = useRecoilState(shouldNavigateBackToMemorizedUrlOnSaveState);
+  ] = useAtomState(shouldNavigateBackToMemorizedUrlOnSaveState);
 
   const { objectNamePlural = '', fieldName = '' } = useParams();
 

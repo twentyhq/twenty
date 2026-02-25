@@ -186,7 +186,10 @@ export class MatchParticipantService<
       await participantRepository.updateMany(
         partipantsToBeUpdated.map((participant) => ({
           criteria: participant.id,
-          partialEntity: participant,
+          partialEntity: {
+            personId: participant.personId,
+            workspaceMemberId: participant.workspaceMemberId,
+          },
         })),
       );
 

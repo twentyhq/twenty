@@ -1,8 +1,8 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 export const workflowDiagramPanOnDragComponentState =
-  createComponentState<boolean>({
+  createAtomComponentState<boolean>({
     key: 'workflowDiagramPanOnDragComponentState',
     defaultValue: true,
     componentInstanceContext: WorkflowVisualizerComponentInstanceContext,

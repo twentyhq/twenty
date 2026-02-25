@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreateViewFieldAction,
@@ -37,6 +37,11 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
         universalForeignKeyValues: action.flatEntity,
       });
 
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'viewField',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -47,6 +52,7 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
         id: action.id ?? v4(),
         applicationId: flatApplication.id,
         workspaceId,
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }
@@ -54,15 +60,12 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateViewFieldAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner } = context;
     const { flatEntity } = flatAction;
 
-    const viewFieldRepository =
-      queryRunner.manager.getRepository<ViewFieldEntity>(ViewFieldEntity);
-
-    await viewFieldRepository.insert({
-      ...flatEntity,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 

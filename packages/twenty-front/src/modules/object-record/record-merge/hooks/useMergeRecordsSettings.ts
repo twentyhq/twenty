@@ -1,10 +1,9 @@
-import { useRecoilState } from 'recoil';
-
 import { type MergeManySettings } from '@/object-record/hooks/useMergeManyRecords';
 import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export const useMergeRecordsSettings = () => {
-  const [mergeSettings, setMergeSettings] = useRecoilState(mergeSettingsState);
+  const [mergeSettings, setMergeSettings] = useAtomState(mergeSettingsState);
 
   const updateMergeSettings = (settings: MergeManySettings) => {
     setMergeSettings(settings);

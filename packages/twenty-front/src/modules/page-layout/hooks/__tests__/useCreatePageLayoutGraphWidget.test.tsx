@@ -3,15 +3,15 @@ import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { act, renderHook } from '@testing-library/react';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  WidgetType,
   PageLayoutType,
   WidgetConfigurationType,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -30,21 +30,21 @@ describe('useCreatePageLayoutGraphWidget', () => {
   it('should create widget in the correct tab with isolated layouts', () => {
     const { result } = renderHook(
       () => {
-        const setActiveTabId = useSetRecoilState(
+        const setActiveTabId = useSetAtom(
           activeTabIdComponentState.atomFamily({
             instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
           }),
         );
-        const setPageLayoutDraft = useSetRecoilComponentState(
+        const setPageLayoutDraft = useSetAtomComponentState(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const pageLayoutDraft = useRecoilComponentValue(
+        const pageLayoutDraft = useAtomComponentStateValue(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
         const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
-        const pageLayoutCurrentLayouts = useRecoilComponentValue(
+        const pageLayoutCurrentLayouts = useAtomComponentStateValue(
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
@@ -73,6 +73,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
         tabs: [
           {
             id: 'tab-1',
+            applicationId: '',
             title: 'Tab 1',
             position: 0,
             pageLayoutId: '',
@@ -108,21 +109,21 @@ describe('useCreatePageLayoutGraphWidget', () => {
   it('should handle different graph types', () => {
     const { result } = renderHook(
       () => {
-        const setPageLayoutDraft = useSetRecoilComponentState(
+        const setPageLayoutDraft = useSetAtomComponentState(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const setActiveTabId = useSetRecoilState(
+        const setActiveTabId = useSetAtom(
           activeTabIdComponentState.atomFamily({
             instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
           }),
         );
-        const pageLayoutDraft = useRecoilComponentValue(
+        const pageLayoutDraft = useAtomComponentStateValue(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
         const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
-        const pageLayoutCurrentLayouts = useRecoilComponentValue(
+        const pageLayoutCurrentLayouts = useAtomComponentStateValue(
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
@@ -152,6 +153,7 @@ describe('useCreatePageLayoutGraphWidget', () => {
         tabs: [
           {
             id: 'tab-1',
+            applicationId: '',
             title: 'Tab 1',
             position: 0,
             pageLayoutId: '',

@@ -1,8 +1,8 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const workflowAiAgentPermissionsSelectedObjectIdState = atom<
+export const workflowAiAgentPermissionsSelectedObjectIdState = createAtomState<
   string | undefined
 >({
   key: 'workflowAiAgentPermissionsSelectedObjectIdState',
-  default: undefined,
+  defaultValue: undefined,
 });

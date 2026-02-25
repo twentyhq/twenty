@@ -1,12 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
@@ -14,6 +14,8 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -27,27 +29,30 @@ import { RecordTableContextProvider } from '@/object-record/record-table/context
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const RelationFieldValueSetterEffect = () => {
-  const setEntity = useSetRecoilState(
-    recordStoreFamilyState(mockPerformance.recordId),
+  const setEntity = useSetAtomFamilyState(
+    recordStoreFamilyState,
+    mockPerformance.recordId,
   );
 
-  const setRelationEntity = useSetRecoilState(
-    recordStoreFamilyState(mockPerformance.relationRecordId),
+  const setRelationEntity = useSetAtomFamilyState(
+    recordStoreFamilyState,
+    mockPerformance.relationRecordId,
   );
 
-  const setCurrentRecordFields = useSetRecoilComponentState(
+  const setCurrentRecordFields = useSetAtomComponentState(
     currentRecordFieldsComponentState,
     'recordTableId',
   );
 
-  const [, setObjectMetadataItems] = useRecoilState(objectMetadataItemsState);
+  const [, setObjectMetadataItems] = useAtomState(objectMetadataItemsState);
 
   useEffect(() => {
     setEntity(mockPerformance.entityValue);
@@ -82,12 +87,12 @@ const meta: Meta = {
     MemoryRouterDecorator,
     ChipGeneratorsDecorator,
     (Story) => {
-      const currentRecordFields = useRecoilComponentValue(
+      const currentRecordFields = useAtomComponentStateValue(
         currentRecordFieldsComponentState,
         'recordTableId',
       );
 
-      const visibleRecordFields = useRecoilComponentValue(
+      const visibleRecordFields = useAtomComponentSelectorValue(
         visibleRecordFieldsComponentSelector,
         'recordTableId',
       );
@@ -125,10 +130,11 @@ const meta: Meta = {
         ]),
       );
 
-      const labelIdentifierFieldMetadataItem = useRecoilValue(
-        labelIdentifierFieldMetadataItemSelector({
+      const labelIdentifierFieldMetadataItem = useAtomFamilySelectorValue(
+        labelIdentifierFieldMetadataItemSelector,
+        {
           objectMetadataItemId: mockPerformance.objectMetadataItem.id,
-        }),
+        },
       );
 
       return (

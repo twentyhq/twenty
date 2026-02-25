@@ -9,6 +9,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Matches,
   Max,
   Min,
   ValidateNested,
@@ -21,6 +22,7 @@ import {
 } from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @InputType()
@@ -53,6 +55,9 @@ class UpdateLogicFunctionFromSourceInputUpdates {
   toolInputSchema?: object;
 
   @IsString()
+  @Matches(HANDLER_NAME_REGEX, {
+    message: 'handlerName must be a valid JavaScript identifier or dotted path',
+  })
   @Field({ nullable: true })
   @IsOptional()
   handlerName?: string;
@@ -66,16 +71,6 @@ class UpdateLogicFunctionFromSourceInputUpdates {
   @Field({ nullable: true })
   @IsOptional()
   isTool?: boolean;
-
-  @IsBoolean()
-  @Field({ nullable: true })
-  @IsOptional()
-  isBuildUpToDate?: boolean;
-
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  checksum?: string;
 
   @IsObject()
   @Field(() => graphqlTypeJson, { nullable: true })

@@ -11,8 +11,9 @@ import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import styled from '@emotion/styled';
 import {
   FloatingPortal,
@@ -21,7 +22,6 @@ import {
 } from '@floating-ui/react';
 import { useContext, useEffect } from 'react';
 import { type Keys } from 'react-hotkeys-hook';
-import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 export const StyledDropdownContentContainer = styled.div<{
@@ -70,23 +70,25 @@ export const DropdownInternalContainer = ({
   excludedClickOutsideIds,
   isDropdownInModal = false,
 }: DropdownInternalContainerProps) => {
-  const isDropdownOpen = useRecoilComponentValue(isDropdownOpenComponentState);
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+  );
 
   const { closeDropdown } = useCloseDropdown();
 
-  const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
+  const activeDropdownFocusId = useAtomStateValue(activeDropdownFocusIdState);
 
-  const dropdownMaxHeight = useRecoilComponentValue(
+  const dropdownMaxHeight = useAtomComponentStateValue(
     dropdownMaxHeightComponentState,
     dropdownId,
   );
 
-  const dropdownMaxWidth = useRecoilComponentValue(
+  const dropdownMaxWidth = useAtomComponentStateValue(
     dropdownMaxWidthComponentState,
     dropdownId,
   );
 
-  const setDropdownPlacement = useSetRecoilComponentState(
+  const setDropdownPlacement = useSetAtomComponentState(
     dropdownPlacementComponentState,
     dropdownId,
   );

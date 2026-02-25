@@ -93,6 +93,15 @@ export const WorkflowStepFilterValueInput = ({
     });
   };
 
+  const handleClearValue = () => {
+    upsertStepFilterSettings({
+      stepFilterToUpsert: {
+        ...stepFilter,
+        value: '',
+      },
+    });
+  };
+
   const handleRelativeDateFilterChange = (
     newRelativeDateFilter: RelativeDateFilter,
   ) => {
@@ -182,6 +191,7 @@ export const WorkflowStepFilterValueInput = ({
       <WorkflowStepFilterValueCompositeInput
         stepFilter={stepFilter}
         onChange={handleValueChange}
+        onClear={handleClearValue}
       />
     );
   }
@@ -269,6 +279,7 @@ export const WorkflowStepFilterValueInput = ({
       field={field}
       defaultValue={stepFilter.value}
       onChange={handleValueChange}
+      onClear={handleClearValue}
       readonly={readonly}
       VariablePicker={WorkflowVariablePicker}
       placeholder={t`Enter value`}

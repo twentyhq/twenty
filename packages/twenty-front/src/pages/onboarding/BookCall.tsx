@@ -9,7 +9,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
 import { IconChevronLeft, IconChevronRightPipe } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
@@ -37,9 +37,9 @@ const StyledScrollWrapper = styled(ScrollWrapper)<{ isMobile: boolean }>`
 export const BookCall = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
+  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const currentUser = useRecoilValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const [skipBookOnboardingStepMutation] = useSkipBookOnboardingStepMutation();
 
   const isMobile = useIsMobile();

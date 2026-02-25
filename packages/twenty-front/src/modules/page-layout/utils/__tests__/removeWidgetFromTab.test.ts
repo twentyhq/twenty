@@ -1,16 +1,17 @@
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import {
   AggregateOperations,
   GraphOrderBy,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 
 describe('removeWidgetFromTab', () => {
   const mockTabs: PageLayoutTab[] = [
     {
       id: 'tab-1',
+      applicationId: '',
       title: 'Tab 1',
       position: 0,
       pageLayoutId: 'layout-1',
@@ -60,6 +61,7 @@ describe('removeWidgetFromTab', () => {
     },
     {
       id: 'tab-2',
+      applicationId: '',
       title: 'Tab 2',
       position: 1,
       pageLayoutId: 'layout-1',

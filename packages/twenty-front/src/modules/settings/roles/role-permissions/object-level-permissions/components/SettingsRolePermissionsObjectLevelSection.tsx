@@ -1,13 +1,15 @@
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { Table } from '@/ui/layout/table/components/Table';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
+import { useMemo } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
@@ -30,7 +32,9 @@ const StyledTableRows = styled.div`
 
 type SettingsRolePermissionsObjectLevelSectionProps = {
   roleId: string;
+  isEditable: boolean;
   fromAgentId?: string;
+  objectMetadataItemsFromMarketplaceApp?: ObjectMetadataItem[];
 };
 
 const StyledNoOverride = styled(TableCell)`
@@ -40,15 +44,44 @@ const StyledNoOverride = styled(TableCell)`
 export const SettingsRolePermissionsObjectLevelSection = ({
   roleId,
   fromAgentId,
+  isEditable,
+  objectMetadataItemsFromMarketplaceApp,
 }: SettingsRolePermissionsObjectLevelSectionProps) => {
   const navigateSettings = useNavigateSettings();
 
-  const settingsDraftRole = useRecoilValue(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const { objectMetadataItemsThatCanHavePermission } =
     useObjectMetadataItemsThatCanHavePermission();
+
+  const allObjectMetadataItems = useMemo(() => {
+    if (
+      !isDefined(objectMetadataItemsFromMarketplaceApp) ||
+      objectMetadataItemsFromMarketplaceApp.length === 0
+    ) {
+      return objectMetadataItemsThatCanHavePermission;
+    }
+
+    const existingIds = new Set(
+      objectMetadataItemsThatCanHavePermission.map((item) => item.id),
+    );
+
+    const additionalObjectMetadataItemsFromApp =
+      objectMetadataItemsFromMarketplaceApp.filter(
+        (item) => !existingIds.has(item.id),
+      );
+
+    return [
+      ...objectMetadataItemsThatCanHavePermission,
+      ...additionalObjectMetadataItemsFromApp,
+    ];
+  }, [
+    objectMetadataItemsThatCanHavePermission,
+    objectMetadataItemsFromMarketplaceApp,
+  ]);
 
   const { filterObjectMetadataItemsWithPermissionOverride } =
     useFilterObjectMetadataItemsWithPermissionOverride({
@@ -56,13 +89,13 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     });
 
   const objectMetadataItemsWithPermissionOverride =
-    objectMetadataItemsThatCanHavePermission.filter(
+    allObjectMetadataItems.filter(
       filterObjectMetadataItemsWithPermissionOverride,
     );
 
   const allObjectsHaveSetPermission =
     objectMetadataItemsWithPermissionOverride.length ===
-    objectMetadataItemsThatCanHavePermission.length;
+    allObjectMetadataItems.length;
 
   const handleAddRule = () => {
     navigateSettings(
@@ -91,6 +124,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
                   objectMetadataItem={objectMetadataItem}
                   roleId={roleId}
                   fromAgentId={fromAgentId}
+                  isEditable={isEditable}
                 />
               ),
             )
@@ -101,18 +135,20 @@ export const SettingsRolePermissionsObjectLevelSection = ({
           )}
         </StyledTableRows>
       </Table>
-      <StyledCreateObjectOverrideSection>
-        <Button
-          Icon={IconPlus}
-          title={t`Add rule`}
-          variant="secondary"
-          size="small"
-          disabled={
-            !settingsDraftRole.isEditable || allObjectsHaveSetPermission
-          }
-          onClick={handleAddRule}
-        />
-      </StyledCreateObjectOverrideSection>
+      {isEditable && (
+        <StyledCreateObjectOverrideSection>
+          <Button
+            Icon={IconPlus}
+            title={t`Add rule`}
+            variant="secondary"
+            size="small"
+            disabled={
+              !settingsDraftRole.isEditable || allObjectsHaveSetPermission
+            }
+            onClick={handleAddRule}
+          />
+        </StyledCreateObjectOverrideSection>
+      )}
     </Section>
   );
 };

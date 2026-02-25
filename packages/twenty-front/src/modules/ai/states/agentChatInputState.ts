@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const agentChatInputState = atom<string>({
-  default: '',
+export const agentChatInputState = createAtomState<string>({
   key: 'agentChatInputState',
+  defaultValue: '',
 });

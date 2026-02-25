@@ -1,7 +1,7 @@
 import { type MergeManySettings } from '@/object-record/hooks/useMergeManyRecords';
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const mergeSettingsState = createState<MergeManySettings>({
+export const mergeSettingsState = createAtomState<MergeManySettings>({
   key: 'mergeSettingsState',
   defaultValue: {
     conflictPriorityIndex: 0,

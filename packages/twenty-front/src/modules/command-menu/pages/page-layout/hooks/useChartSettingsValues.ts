@@ -10,7 +10,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { plural, t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type GraphOrderBy } from '~/generated-metadata/graphql';
@@ -22,7 +22,7 @@ export const useChartSettingsValues = ({
   objectMetadataId: string;
   configuration?: ChartConfiguration;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) => objectMetadataItem.id === objectMetadataId,
@@ -257,6 +257,11 @@ export const useChartSettingsValues = ({
         return isBarOrLineChart
           ? (configuration.omitNullValues ?? false)
           : false;
+      case CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS_X:
+      case CHART_CONFIGURATION_SETTING_IDS.SPLIT_MULTI_VALUE_FIELDS_Y:
+        return isBarOrLineChart || isPieChart
+          ? (configuration.splitMultiValueFields ?? true)
+          : true;
       case CHART_CONFIGURATION_SETTING_IDS.HIDE_EMPTY_CATEGORY:
         return isPieChart ? (configuration.hideEmptyCategory ?? false) : false;
       case CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE:

@@ -1,7 +1,5 @@
-import { useRecoilValue } from 'recoil';
-import styled from '@emotion/styled';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import styled from '@emotion/styled';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
 import { NavigationMenuItemFolderContentDispatcherEffect } from '@/navigation-menu-item/components/NavigationMenuItemFolderContentDispatcher';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/hooks/useNavigationMenuItemsByFolder';
@@ -12,6 +10,7 @@ import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { currentFavoriteFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentFavoriteFolderIdState';
 import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -21,15 +20,17 @@ const StyledScrollableContent = styled.div`
 `;
 
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const currentFavoriteFolderId = useRecoilValue(currentFavoriteFolderIdState);
-  const currentNavigationMenuItemFolderId = useRecoilValue(
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const currentFavoriteFolderId = useAtomStateValue(
+    currentFavoriteFolderIdState,
+  );
+  const currentNavigationMenuItemFolderId = useAtomStateValue(
     currentNavigationMenuItemFolderIdState,
   );
   const { favoritesByFolder } = useFavoritesByFolder();
   const { navigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
-  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
 
   const openedFavoriteFolder = favoritesByFolder.find(
@@ -40,7 +41,7 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
     (f) => f.id === currentNavigationMenuItemFolderId,
   );
 
-  const openedFolder = isNavigationMenuItemEnabled
+  const openedFolder = isNavigationMenuItemEditingEnabled
     ? openedNavigationMenuItemFolder
     : openedFavoriteFolder;
 
@@ -56,7 +57,7 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
       </NavigationDrawerFixedContent>
 
       <NavigationDrawerScrollableContent>
-        {isNavigationMenuItemEnabled ? (
+        {isNavigationMenuItemEditingEnabled ? (
           <StyledScrollableContent>
             {openedFolder ? (
               <NavigationMenuItemFolderContentDispatcherEffect

@@ -35,7 +35,7 @@ export class AiService {
       maxOutputTokens?: number;
       model: LanguageModel;
     };
-  }) {
+  }): ReturnType<typeof streamText> {
     return streamText({
       model: options.model,
       messages,

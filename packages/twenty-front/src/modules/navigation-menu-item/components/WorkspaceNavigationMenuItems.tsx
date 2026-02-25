@@ -1,40 +1,35 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import {
-  useRecoilCallback,
-  useRecoilState,
-  useRecoilValue,
-  useSetRecoilState,
-} from 'recoil';
-import {
-  IconFolder,
-  IconLink,
-  IconPlus,
-  IconTool,
-  useIcons,
-} from 'twenty-ui/display';
+import { useNavigate } from 'react-router-dom';
+import { IconLink, IconPlus, IconTool, useIcons } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
+import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
 import {
   type NavigationMenuItemClickParams,
   useWorkspaceSectionItems,
 } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { NavigationDrawerSectionForWorkspaceItems } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useStore } from 'jotai';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isNonEmptyString } from '@sniptt/guards';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledRightIconsContainer = styled.div`
@@ -45,33 +40,31 @@ const StyledRightIconsContainer = styled.div`
 
 export const WorkspaceNavigationMenuItems = () => {
   const items = useWorkspaceSectionItems();
-  const enterEditMode = useRecoilCallback(
-    ({ set, snapshot }) =>
-      () => {
-        const prefetchNavigationMenuItems = snapshot
-          .getLoadable(prefetchNavigationMenuItemsState)
-          .getValue();
-        const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
-          prefetchNavigationMenuItems,
-        );
-        set(navigationMenuItemsDraftState, workspaceNavigationMenuItems);
-        set(isNavigationMenuInEditModeState, true);
-      },
-    [],
-  );
+  const store = useStore();
+  const enterEditMode = () => {
+    const prefetchNavigationMenuItems = store.get(
+      prefetchNavigationMenuItemsState.atom,
+    );
+    const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
+      prefetchNavigationMenuItems,
+    );
+    store.set(navigationMenuItemsDraftState.atom, workspaceNavigationMenuItems);
+    store.set(isNavigationMenuInEditModeState.atom, true);
+  };
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
-  const isNavigationMenuInEditMode = useRecoilValue(
+  const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
   const [
     selectedNavigationMenuItemInEditMode,
     setSelectedNavigationMenuItemInEditMode,
-  ] = useRecoilState(selectedNavigationMenuItemInEditModeState);
-  const setOpenNavigationMenuItemFolderIds = useSetRecoilState(
+  ] = useAtomState(selectedNavigationMenuItemInEditModeState);
+  const setOpenNavigationMenuItemFolderIds = useSetAtomState(
     openNavigationMenuItemFolderIdsState,
   );
+  const navigate = useNavigate();
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
@@ -99,7 +92,7 @@ export const WorkspaceNavigationMenuItems = () => {
       );
       openNavigationMenuItemInCommandMenu({
         pageTitle: t`Edit folder`,
-        pageIcon: IconFolder,
+        pageIcon: getIcon(item.icon ?? item.Icon ?? FOLDER_ICON_DEFAULT),
       });
     } else if (item.itemType === NavigationMenuItemType.LINK) {
       openNavigationMenuItemInCommandMenu({
@@ -111,6 +104,10 @@ export const WorkspaceNavigationMenuItems = () => {
         pageTitle: objectMetadataItem.labelPlural,
         pageIcon: getIcon(objectMetadataItem.icon),
       });
+
+      if (isNonEmptyString(item.link)) {
+        navigate(item.link);
+      }
     }
   };
 

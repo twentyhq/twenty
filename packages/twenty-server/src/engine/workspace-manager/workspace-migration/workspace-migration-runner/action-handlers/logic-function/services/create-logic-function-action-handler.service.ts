@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import {
   FlatCreateLogicFunctionAction,
   UniversalCreateLogicFunctionAction,
@@ -24,6 +24,11 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateLogicFunctionAction>): Promise<FlatCreateLogicFunctionAction> {
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'logicFunction',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -31,6 +36,7 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }
@@ -38,17 +44,12 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateLogicFunctionAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner } = context;
     const { flatEntity: logicFunction } = flatAction;
 
-    const logicFunctionRepository =
-      queryRunner.manager.getRepository<LogicFunctionEntity>(
-        LogicFunctionEntity,
-      );
-
-    await logicFunctionRepository.insert({
-      ...logicFunction,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [logicFunction],
     });
   }
 

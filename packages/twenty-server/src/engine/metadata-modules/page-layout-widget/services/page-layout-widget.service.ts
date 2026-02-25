@@ -90,7 +90,7 @@ export class PageLayoutWidgetService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         errorMessage,
@@ -243,6 +243,9 @@ export class PageLayoutWidgetService {
       flatPageLayoutTabMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFrontComponentMaps,
+      flatViewFieldGroupMaps,
+      flatViewMaps,
     } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -251,6 +254,9 @@ export class PageLayoutWidgetService {
             'flatPageLayoutTabMaps',
             'flatObjectMetadataMaps',
             'flatFieldMetadataMaps',
+            'flatFrontComponentMaps',
+            'flatViewFieldGroupMaps',
+            'flatViewMaps',
           ],
         },
       );
@@ -263,6 +269,9 @@ export class PageLayoutWidgetService {
         flatPageLayoutTabMaps,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        flatFrontComponentMaps,
+        flatViewFieldGroupMaps,
+        flatViewMaps,
       });
 
     if (isDefined(createInput.configuration)) {
@@ -321,13 +330,21 @@ export class PageLayoutWidgetService {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-    } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-        },
-      );
+      flatFrontComponentMaps: existingFlatFrontComponentMaps,
+      flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
+      flatViewMaps: existingFlatViewMaps,
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatObjectMetadataMaps',
+          'flatFieldMetadataMaps',
+          'flatFrontComponentMaps',
+          'flatViewFieldGroupMaps',
+          'flatViewMaps',
+        ],
+      },
+    );
 
     const isConfigurationBeingUpdated = Object.prototype.hasOwnProperty.call(
       updateData,
@@ -357,6 +374,9 @@ export class PageLayoutWidgetService {
         flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+        flatFrontComponentMaps: existingFlatFrontComponentMaps,
+        flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
+        flatViewMaps: existingFlatViewMaps,
       });
 
     const shouldValidateChartFields =

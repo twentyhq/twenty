@@ -1,6 +1,6 @@
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -14,8 +14,8 @@ export const TabListFromUrlOptionalEffect = ({
   isInRightDrawer,
 }: TabListFromUrlOptionalEffectProps) => {
   const location = useLocation();
-  const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
-  const setActiveTabId = useSetRecoilComponentState(activeTabIdComponentState);
+  const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
+  const setActiveTabId = useSetAtomComponentState(activeTabIdComponentState);
 
   const hash = location.hash.replace('#', '');
 

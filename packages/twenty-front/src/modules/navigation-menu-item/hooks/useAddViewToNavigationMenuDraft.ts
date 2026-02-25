@@ -1,13 +1,13 @@
-import { useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
 
 export const useAddViewToNavigationMenuDraft = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilState(
+  const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
 

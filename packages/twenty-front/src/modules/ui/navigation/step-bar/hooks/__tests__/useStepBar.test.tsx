@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { Provider } from 'jotai';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { stepBarInternalState } from '@/ui/navigation/step-bar/states/stepBarInternalState';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
@@ -10,7 +11,7 @@ const renderHooks = (initialStep: number) => {
       const { nextStep, prevStep, reset, setStep } = useStepBar({
         initialStep,
       });
-      const stepBarInternal = useRecoilValue(stepBarInternalState);
+      const stepBarInternal = useAtomStateValue(stepBarInternalState);
 
       return {
         nextStep,
@@ -21,7 +22,7 @@ const renderHooks = (initialStep: number) => {
       };
     },
     {
-      wrapper: RecoilRoot,
+      wrapper: Provider,
     },
   );
 

@@ -3,7 +3,7 @@ import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-type
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
 import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
@@ -14,13 +14,11 @@ import { WEBHOOK_TRIGGER_HTTP_METHOD_OPTIONS } from '@/workflow/workflow-trigger
 import { getWebhookTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getWebhookTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  buildOutputSchemaFromValue,
-  TRIGGER_STEP_ID,
-} from 'twenty-shared/workflow';
+import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
 import { IconCopy } from 'twenty-ui/display';
 
@@ -56,10 +54,10 @@ export const WorkflowEditTriggerWebhookForm = ({
   const { copyToClipboard } = useCopyToClipboard();
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const onBlur = () => {
     setErrorMessagesVisible(true);
@@ -153,9 +151,7 @@ export const WorkflowEditTriggerWebhookForm = ({
                 expectedBody: undefined,
               }));
 
-              const outputSchema = buildOutputSchemaFromValue(
-                parsingResult.data,
-              );
+              const outputSchema = getOutputSchemaFromValue(parsingResult.data);
 
               triggerOptions.onTriggerUpdate(
                 {

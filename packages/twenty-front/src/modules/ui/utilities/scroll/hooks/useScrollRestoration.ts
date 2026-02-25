@@ -1,6 +1,6 @@
 import { SCROLL_RESTORATION_TOP_THRESHOLD_PX } from '@/ui/utilities/scroll/constants/ScrollRestorationTopThreshold';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,7 +10,7 @@ export const useScrollRestoration = (componentInstanceId: string) => {
   const storageKey = `scroll-${location.pathname}`;
   const [isRestoring, setIsRestoring] = useState(false);
 
-  const scrollTop = useRecoilComponentValue(
+  const scrollTop = useAtomComponentStateValue(
     scrollWrapperScrollTopComponentState,
     componentInstanceId,
   );

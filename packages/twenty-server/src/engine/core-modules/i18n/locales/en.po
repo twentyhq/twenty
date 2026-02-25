@@ -120,6 +120,16 @@ msgstr "A skill with this name already exists"
 msgid "A skill with this name already exists."
 msgstr "A skill with this name already exists."
 
+#. js-lingui-id: 73tqJw
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "A system field has invalid properties."
+msgstr "A system field has invalid properties."
+
+#. js-lingui-id: WYnYE1
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+msgid "A system field is missing."
+msgstr "A system field is missing."
+
 #. js-lingui-id: c1qcYo
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A temporary error occurred. Please try again."
@@ -488,6 +498,11 @@ msgstr "Body must be an object"
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Body must be an object for widget \"{widgetTitle}\""
 
+#. js-lingui-id: AjVXBS
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Calendar"
+msgstr "Calendar"
+
 #. js-lingui-id: bQS4UN
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Calendar channel is misconfigured."
@@ -737,6 +752,16 @@ msgstr "Command menu item not found."
 msgid "Composite type not found."
 msgstr "Composite type not found."
 
+#. js-lingui-id: yU57/s
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
+msgid "Configuration is required for fields widget"
+msgstr "Configuration is required for fields widget"
+
+#. js-lingui-id: tj1Qu0
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
+msgid "Configuration is required for fields widget \"{widgetTitle}\""
+msgstr "Configuration is required for fields widget \"{widgetTitle}\""
+
 #. js-lingui-id: 3UUjIe
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for front component widget"
@@ -776,6 +801,16 @@ msgstr "Configuration is required for standalone rich text widget"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for standalone rich text widget \"{widgetTitle}\""
 msgstr "Configuration is required for standalone rich text widget \"{widgetTitle}\""
+
+#. js-lingui-id: XZ4djQ
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
+msgid "Configuration is required for widget"
+msgstr "Configuration is required for widget"
+
+#. js-lingui-id: FCKoEz
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
+msgid "Configuration is required for widget \"{widgetTitle}\""
+msgstr "Configuration is required for widget \"{widgetTitle}\""
 
 #. js-lingui-id: oH0/eJ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
@@ -828,7 +863,7 @@ msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingu
 msgstr "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingular}"
 
 #. js-lingui-id: /OJTzk
-#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "Connected account not found."
 msgstr "Connected account not found."
 
@@ -1043,6 +1078,11 @@ msgstr "Email is required"
 msgid "Email is required."
 msgstr "Email is required."
 
+#. js-lingui-id: 3wAyvl
+#: src/utils/get-domain-name-by-email.ts
+msgid "Email is required. Please provide a valid email address."
+msgstr "Email is required. Please provide a valid email address."
+
 #. js-lingui-id: y+BSWq
 #: src/engine/core-modules/user/user.exception.ts
 msgid "Email is unchanged."
@@ -1062,6 +1102,11 @@ msgstr "Email verification is not required."
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Email verification not required."
 msgstr "Email verification not required."
+
+#. js-lingui-id: BXEcos
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Emails"
+msgstr "Emails"
 
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -1089,6 +1134,11 @@ msgstr "Environment variable CLOUDFLARE_API_KEY must be defined to use this feat
 #: src/engine/core-modules/feature-flag/validates/feature-flag.validate.spec.ts
 msgid "Error"
 msgstr "Error"
+
+#. js-lingui-id: b3ictS
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Exactly one of \"groups\" or \"fields\" must be provided"
+msgstr "Exactly one of \"groups\" or \"fields\" must be provided"
 
 #. js-lingui-id: ksMwKk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -1126,7 +1176,7 @@ msgid "Failed to create record."
 msgstr "Failed to create record."
 
 #. js-lingui-id: mWj8el
-#: src/engine/core-modules/file/files-field/files-field.service.ts
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "Failed to delete file {fileId}"
 msgstr "Failed to delete file {fileId}"
 
@@ -1308,15 +1358,25 @@ msgstr "Field to update object metadata not found"
 msgid "Field type NUMERIC is not supported. Use Number instead."
 msgstr "Field type NUMERIC is not supported. Use Number instead."
 
-#. js-lingui-id: q2XPsD
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
-msgid "Field type POSITION is a system type and cannot be created manually."
-msgstr "Field type POSITION is a system type and cannot be created manually."
+#. js-lingui-id: p6JTHU
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-position-flat-field-metadata.util.ts
+msgid "Field type POSITION must be a system field"
+msgstr "Field type POSITION must be a system field"
 
-#. js-lingui-id: FDPb27
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
-msgid "Field type TS_VECTOR is a system type and cannot be created manually."
-msgstr "Field type TS_VECTOR is a system type and cannot be created manually."
+#. js-lingui-id: VDesPB
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-position-flat-field-metadata.util.ts
+msgid "Field type POSITION must be named \"position\""
+msgstr "Field type POSITION must be named \"position\""
+
+#. js-lingui-id: 7cWO6W
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must be a system field"
+msgstr "Field type TS_VECTOR must be a system field"
+
+#. js-lingui-id: hoCDqQ
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must be named \"searchVector\""
+msgstr "Field type TS_VECTOR must be named \"searchVector\""
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -1361,15 +1421,25 @@ msgstr "FieldMetadataId is required to create a view group."
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "FieldMetadataId is required to create a view sort."
 
+#. js-lingui-id: VgGXR3
+#: src/engine/core-modules/file/files-field/services/files-field.service.ts
+msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
+msgstr "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
+
+#. js-lingui-id: 9HjeLQ
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Fields widget has no associated view"
+msgstr "Fields widget has no associated view"
+
+#. js-lingui-id: 8sAaBn
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "Fields widget not found"
+msgstr "Fields widget not found"
+
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr "File {fileId} is already associated with a permanent files field. Please re-upload the file."
-
-#. js-lingui-id: pFq+yh
-#: src/engine/core-modules/file/files-field/files-field.service.ts
-msgid "File {fileId} is not associated with a files field. It can't be downloaded."
-msgstr "File {fileId} is not associated with a files field. It can't be downloaded."
 
 #. js-lingui-id: v+527c
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
@@ -1377,16 +1447,26 @@ msgid "File {fileId} was not uploaded for this field. Please re-upload the file.
 msgstr "File {fileId} was not uploaded for this field. Please re-upload the file."
 
 #. js-lingui-id: weWV3g
-#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
 #: src/engine/core-modules/file/file.exception.ts
 msgid "File not found."
 msgstr "File not found."
 
+#. js-lingui-id: sER+bs
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Files"
+msgstr "Files"
+
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
 msgstr "Files field is not supported for unique fields"
+
+#. js-lingui-id: ylQd2j
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Flow"
+msgstr "Flow"
 
 #. js-lingui-id: 9110hD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -1505,6 +1585,11 @@ msgstr "Group by field is required for pie chart widget \"{widgetTitle}\""
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Handle aliases are required."
 msgstr "Handle aliases are required."
+
+#. js-lingui-id: i0qMbr
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Home"
+msgstr "Home"
 
 #. js-lingui-id: 6cVc+b
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -1645,6 +1730,16 @@ msgstr "Invalid command menu item input."
 msgid "Invalid configuration for widget \"{widgetTitle}\": Chart type {chartType} requires IS_DASHBOARD_V2_ENABLED feature flag"
 msgstr "Invalid configuration for widget \"{widgetTitle}\": Chart type {chartType} requires IS_DASHBOARD_V2_ENABLED feature flag"
 
+#. js-lingui-id: wJMQQx
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
+msgid "Invalid configuration type for fields widget"
+msgstr "Invalid configuration type for fields widget"
+
+#. js-lingui-id: luyinP
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
+msgid "Invalid configuration type for fields widget \"{widgetTitle}\". Expected FIELDS, got {actualString}"
+msgstr "Invalid configuration type for fields widget \"{widgetTitle}\". Expected FIELDS, got {actualString}"
+
 #. js-lingui-id: /xPxQo
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
 msgid "Invalid configuration type for front component widget"
@@ -1685,8 +1780,20 @@ msgstr "Invalid configuration type for standalone rich text widget"
 msgid "Invalid configuration type for standalone rich text widget \"{widgetTitle}\". Expected STANDALONE_RICH_TEXT, got {configurationTypeString}"
 msgstr "Invalid configuration type for standalone rich text widget \"{widgetTitle}\". Expected STANDALONE_RICH_TEXT, got {configurationTypeString}"
 
+#. js-lingui-id: IptMRL
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
+msgid "Invalid configuration type for widget"
+msgstr "Invalid configuration type for widget"
+
+#. js-lingui-id: nFIvYZ
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util.ts
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
+msgid "Invalid configuration type for widget \"{widgetTitle}\". Expected {expectedString}, got {actualString}"
+msgstr "Invalid configuration type for widget \"{widgetTitle}\". Expected {expectedString}, got {actualString}"
+
 #. js-lingui-id: jUt31O
-#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "Invalid connected account ID."
 msgstr "Invalid connected account ID."
 
@@ -1711,7 +1818,7 @@ msgid "Invalid depth parameter."
 msgstr "Invalid depth parameter."
 
 #. js-lingui-id: 9lqqpY
-#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Invalid email address."
 msgstr "Invalid email address."
@@ -1726,8 +1833,13 @@ msgstr "Invalid feature flag key."
 msgid "Invalid field input."
 msgstr "Invalid field input."
 
+#. js-lingui-id: dqt3x1
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Invalid file folder."
+msgstr "Invalid file folder."
+
 #. js-lingui-id: d6DMa/
-#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "Invalid file ID."
 msgstr "Invalid file ID."
 
@@ -2021,10 +2133,15 @@ msgstr "Invalid value for address."
 msgid "Invalid value for currency."
 msgstr "Invalid value for currency."
 
-#. js-lingui-id: AUbno1
-#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util.ts
-msgid "Invalid value for date: \"{inspectedValue}\""
-msgstr "Invalid value for date: \"{inspectedValue}\""
+#. js-lingui-id: MnHbVB
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
+msgid "Invalid value for date-time: \"{inspectedValue}\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"
+msgstr "Invalid value for date-time: \"{inspectedValue}\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"
+
+#. js-lingui-id: U4Wdjc
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
+msgid "Invalid value for date: \"{inspectedValue}\". Expected format: 'YYYY-MM-DD'"
+msgstr "Invalid value for date: \"{inspectedValue}\". Expected format: 'YYYY-MM-DD'"
 
 #. js-lingui-id: mANTdg
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util.ts
@@ -2110,6 +2227,16 @@ msgstr "Invalid verification code."
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Invalid verification code. Please try again."
+
+#. js-lingui-id: bKmxhF
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
+msgid "Invalid viewId for fields widget"
+msgstr "Invalid viewId for fields widget"
+
+#. js-lingui-id: DpWmTi
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
+msgid "Invalid viewId for fields widget \"{widgetTitle}\". Expected a valid UUID"
+msgstr "Invalid viewId for fields widget \"{widgetTitle}\". Expected a valid UUID"
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -2671,6 +2798,16 @@ msgstr "No valid authentication context found."
 msgid "Not Set"
 msgstr "Not Set"
 
+#. js-lingui-id: KiJn9B
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Note"
+msgstr "Note"
+
+#. js-lingui-id: 1DBGsz
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Notes"
+msgstr "Notes"
+
 #. js-lingui-id: t9QlBd
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "November"
@@ -3050,13 +3187,13 @@ msgstr "Please use single sign-on to authenticate."
 msgid "Position layoutMode \"{layoutMode}\" does not match tab layoutMode \"{tabLayoutMode}\""
 msgstr "Position layoutMode \"{layoutMode}\" does not match tab layoutMode \"{tabLayoutMode}\""
 
-#. js-lingui-id: KTTUV3
+#. js-lingui-id: rFj1tD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Position must be a non-negative integer"
-msgstr "Position must be a non-negative integer"
+msgid "Position must be a finite number"
+msgstr "Position must be a finite number"
 
 #. js-lingui-id: +DJKfQ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
@@ -3480,11 +3617,6 @@ msgstr "SSO is disabled."
 msgid "Standard agents cannot be modified."
 msgstr "Standard agents cannot be modified."
 
-#. js-lingui-id: dc5N0o
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
-msgid "Standard fields cannot be deleted"
-msgstr "Standard fields cannot be deleted"
-
 #. js-lingui-id: Ptv+nG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -3536,6 +3668,38 @@ msgstr "Subscription phase not found."
 msgid "Sunday"
 msgstr "Sunday"
 
+#. js-lingui-id: Bhmfez
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
+msgid "System field {expectedFieldName} has invalid {property}"
+msgstr "System field {expectedFieldName} has invalid {property}"
+
+#. js-lingui-id: 1gOTOh
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
+msgid "System field {expectedFieldName} is missing"
+msgstr "System field {expectedFieldName} is missing"
+
+#. js-lingui-id: q1oDDx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
+msgid "System fields cannot be deleted"
+msgstr "System fields cannot be deleted"
+
+#. js-lingui-id: oEsYJM
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
+msgid "System fields cannot be updated"
+msgstr "System fields cannot be updated"
+
+#. js-lingui-id: /ojawH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
+msgid "System objects cannot be deleted"
+msgstr "System objects cannot be deleted"
+
+#. js-lingui-id: sndTPB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
+msgid "System objects cannot be updated"
+msgstr "System objects cannot be updated"
+
 #. js-lingui-id: 8UWeLh
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
 msgid "Tab not found for widget duplication."
@@ -3578,6 +3742,16 @@ msgstr "targetObjectMetadataId is required when targetRecordId is provided"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "targetRecordId is required when targetObjectMetadataId is provided"
 msgstr "targetRecordId is required when targetObjectMetadataId is provided"
+
+#. js-lingui-id: GtycJ/
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Tasks"
+msgstr "Tasks"
+
+#. js-lingui-id: 2kFzQB
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Temporary file cannot be downloaded."
+msgstr "Temporary file cannot be downloaded."
 
 #. js-lingui-id: M10it4
 #: src/utils/__test__/custom-exception.spec.ts
@@ -3657,6 +3831,16 @@ msgstr "The initial version of a workflow can not be deleted"
 msgid "The object you are trying to set permissions for could not be found. It may have been deleted."
 msgstr "The object you are trying to set permissions for could not be found. It may have been deleted."
 
+#. js-lingui-id: tl8xOZ
+#: src/utils/get-domain-name-by-email.ts
+msgid "The provided email address is missing a domain. Please use a standard email format (e.g., user@example.com)."
+msgstr "The provided email address is missing a domain. Please use a standard email format (e.g., user@example.com)."
+
+#. js-lingui-id: h8R4RO
+#: src/utils/get-domain-name-by-email.ts
+msgid "The provided email address is not valid. Please use a standard email format (e.g., user@example.com)."
+msgstr "The provided email address is not valid. Please use a standard email format (e.g., user@example.com)."
+
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "The request is too complex to process. Please try reducing the amount of requested fields."
@@ -3680,6 +3864,11 @@ msgstr "The role you are looking for could not be found. It may have been delete
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
 msgstr "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
+
+#. js-lingui-id: vD3FVp
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "The server address you entered is not allowed. Please use a public server address."
+msgstr "The server address you entered is not allowed. Please use a public server address."
 
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -3913,6 +4102,11 @@ msgstr "This variable can only be set via environment."
 msgid "Thursday"
 msgstr "Thursday"
 
+#. js-lingui-id: cklVjM
+#: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+msgid "Timeline"
+msgstr "Timeline"
+
 #. js-lingui-id: /ObxXq
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
@@ -4103,6 +4297,7 @@ msgid "User not found. Please check the email or ID."
 msgstr "User not found. Please check the email or ID."
 
 #. js-lingui-id: VkcC68
+#: src/engine/core-modules/auth/services/auth.service.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
 msgstr "User was not created with email/password"
@@ -4368,6 +4563,11 @@ msgstr "View kanban aggregate field metadata not found"
 msgid "View not found"
 msgstr "View not found"
 
+#. js-lingui-id: BHDATQ
+#: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+msgid "View not found after upsert"
+msgstr "View not found after upsert"
+
 #. js-lingui-id: yheEin
 #: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
 msgid "View not found."
@@ -4517,83 +4717,17 @@ msgstr "Widget position type must match the tab layout mode"
 msgid "Widget row exceeds grid height"
 msgstr "Widget row exceeds grid height"
 
-#. js-lingui-id: deSJ/B
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type CALENDAR is not supported yet."
-msgstr "Widget type CALENDAR is not supported yet."
-
-#. js-lingui-id: +IjuqI
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type EMAILS is not supported yet."
-msgstr "Widget type EMAILS is not supported yet."
-
 #. js-lingui-id: F+TRXG
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 msgid "Widget type FIELD is not supported yet."
 msgstr "Widget type FIELD is not supported yet."
 
-#. js-lingui-id: nuvnbi
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type FIELD_RICH_TEXT is not supported yet."
-msgstr "Widget type FIELD_RICH_TEXT is not supported yet."
-
-#. js-lingui-id: GNisQR
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type FIELDS is not supported yet."
-msgstr "Widget type FIELDS is not supported yet."
-
-#. js-lingui-id: UZo3be
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type FILES is not supported yet."
-msgstr "Widget type FILES is not supported yet."
-
-#. js-lingui-id: SL+U0X
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type NOTES is not supported yet."
-msgstr "Widget type NOTES is not supported yet."
-
-#. js-lingui-id: vczFIm
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type TASKS is not supported yet."
-msgstr "Widget type TASKS is not supported yet."
-
-#. js-lingui-id: ynJTP+
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type TIMELINE is not supported yet."
-msgstr "Widget type TIMELINE is not supported yet."
-
 #. js-lingui-id: rL2haJ
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 msgid "Widget type VIEW is not supported yet."
 msgstr "Widget type VIEW is not supported yet."
-
-#. js-lingui-id: geYIT7
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type WORKFLOW is not supported yet."
-msgstr "Widget type WORKFLOW is not supported yet."
-
-#. js-lingui-id: RcZOVk
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type WORKFLOW_RUN is not supported yet."
-msgstr "Widget type WORKFLOW_RUN is not supported yet."
-
-#. js-lingui-id: U4YrVk
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type WORKFLOW_VERSION is not supported yet."
-msgstr "Widget type WORKFLOW_VERSION is not supported yet."
 
 #. js-lingui-id: KSK8fH
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -4655,7 +4789,6 @@ msgstr "Workspace {workspaceId} is not found."
 
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-#: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"
 msgstr "Workspace creation is restricted to admins"
 
@@ -4698,7 +4831,7 @@ msgstr "Workspace not found for subscription event."
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 #: src/engine/core-modules/workspace/workspace.exception.ts
-#: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts

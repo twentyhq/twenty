@@ -5,6 +5,7 @@ import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-d
 import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 
 import { ViewFilterOperand } from 'twenty-shared/types';
 
@@ -16,7 +17,8 @@ import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/cons
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
@@ -28,11 +30,15 @@ export const ObjectFilterDropdownFilterInput = ({
   filterDropdownId,
   recordFilterId,
 }: ObjectFilterDropdownFilterInputProps) => {
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
+  const featureFlags = useFeatureFlagsMap();
+  const isWholeDayFilterEnabled =
+    featureFlags.IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED ?? false;
+
+  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const selectedOperandInDropdown = useRecoilComponentValue(
+  const selectedOperandInDropdown = useAtomComponentStateValue(
     selectedOperandInDropdownComponentState,
   );
 
@@ -76,6 +82,18 @@ export const ObjectFilterDropdownFilterInput = ({
       </>
     );
   } else if (filterType === 'DATE_TIME') {
+    if (
+      isWholeDayFilterEnabled &&
+      selectedOperandInDropdown === ViewFilterOperand.IS
+    ) {
+      return (
+        <>
+          <ObjectFilterDropdownInnerSelectOperandDropdown />
+          <DropdownMenuSeparator />
+          <ObjectFilterDropdownDateInput />
+        </>
+      );
+    }
     return (
       <>
         <ObjectFilterDropdownInnerSelectOperandDropdown />

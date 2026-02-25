@@ -1,10 +1,10 @@
-import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
+import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useWorkspaceMemberRoles = (workspaceMemberId: string) => {
-  const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
-  const settingsRolesIsLoading = useRecoilValue(settingsRolesIsLoadingState);
+  const settingsAllRoles = useSettingsAllRoles();
+  const settingsRolesIsLoading = useAtomStateValue(settingsRolesIsLoadingState);
 
   const roles = workspaceMemberId
     ? settingsAllRoles.filter((role) =>

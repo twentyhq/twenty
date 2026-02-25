@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
@@ -11,10 +10,13 @@ import { CommandMenuSubViewWithSearch } from '@/command-menu/components/CommandM
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFilteredPickerItems } from '@/command-menu/hooks/useFilteredPickerItems';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
+import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { type View } from '@/views/types/View';
@@ -35,10 +37,10 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
   const { closeCommandMenu } = useCommandMenu();
   const { addViewToDraft } = useAddViewToNavigationMenuDraft();
   const { currentDraft } = useDraftNavigationMenuItems();
-  const addMenuItemInsertionContext = useRecoilValue(
+  const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextState,
   );
-  const setAddMenuItemInsertionContext = useSetRecoilState(
+  const setAddMenuItemInsertionContext = useSetAtomState(
     addMenuItemInsertionContextState,
   );
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -109,7 +111,21 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
                     onEnter={() => handleSelectView(view)}
                   >
                     <CommandMenuItemWithAddToNavigationDrag
-                      icon={getIcon(view.icon)}
+                      customIconContent={
+                        selectedObjectMetadataItem ? (
+                          <ObjectIconWithViewOverlay
+                            ObjectIcon={getIcon(
+                              selectedObjectMetadataItem.icon,
+                            )}
+                            ViewIcon={getIcon(view.icon)}
+                          />
+                        ) : undefined
+                      }
+                      icon={
+                        selectedObjectMetadataItem
+                          ? undefined
+                          : getIcon(view.icon)
+                      }
                       label={view.name}
                       id={view.id}
                       onClick={() => handleSelectView(view)}

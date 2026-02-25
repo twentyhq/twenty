@@ -540,7 +540,7 @@ export class RowLevelPermissionPredicateService {
         },
       );
 
-    if (isDefined(validateAndBuildResult)) {
+    if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Validation errors occurred while upserting row level permission predicates',

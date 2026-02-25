@@ -10,7 +10,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { StandaloneRichTextEditorContent } from '@/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextEditorContent';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
@@ -39,11 +39,11 @@ export const StandaloneRichTextWidget = ({
   widget,
 }: StandaloneRichTextWidgetProps) => {
   const containerElementRef = useRef<HTMLDivElement>(null);
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
-  const editingWidgetId = useRecoilComponentValue(
+  const editingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
   );
 
@@ -91,7 +91,6 @@ export const StandaloneRichTextWidget = ({
         <StandaloneRichTextEditorContent
           key={isEditable ? 'editing' : 'readonly'}
           widget={widget}
-          dashboardId={dashboardId}
           currentBody={currentBody}
           attachments={attachments}
           isEditable={isEditable}

@@ -7,13 +7,15 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { type MetadataUniversalFlatEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
 import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { METADATA_EVENTS_TO_EMIT } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/metadata-event-to-emit.constant';
 import {
-  type UpdateMetadataEventDiff,
   type CreateMetadataEvent,
   type DeleteMetadataEvent,
   type MetadataEvent,
   type UpdateMetadataEvent,
+  type UpdateMetadataEventDiff,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
 
 export type DeriveMetadataEventsFromUpdateActionArgs = {
   flatAction: AllFlatWorkspaceMigrationAction<'update'>;
@@ -42,18 +44,34 @@ const buildUpdateMetadataEvent = <TMetadataName extends AllMetadataName>({
   ) as UpdateMetadataEventDiff<TMetadataName, (typeof updatedFields)[number]>;
 
   return {
-    type: 'update',
+    type: 'updated',
     metadataName,
+    recordId: before.id,
     properties: {
       updatedFields,
       diff,
-      before,
-      after,
+      before: flatEntityToScalarFlatEntity({
+        flatEntity: before,
+        metadataName,
+      }),
+      after: flatEntityToScalarFlatEntity({ flatEntity: after, metadataName }),
     },
   };
 };
 
 export const deriveMetadataEventsFromUpdateAction = ({
+  flatAction,
+  allFlatEntityMaps,
+}: DeriveMetadataEventsFromUpdateActionArgs): MetadataEvent[] => {
+  const events = deriveAllMetadataEventsFromUpdateAction({
+    flatAction,
+    allFlatEntityMaps,
+  });
+
+  return events.filter((event) => METADATA_EVENTS_TO_EMIT[event.metadataName]);
+};
+
+const deriveAllMetadataEventsFromUpdateAction = ({
   flatAction,
   allFlatEntityMaps,
 }: DeriveMetadataEventsFromUpdateActionArgs): MetadataEvent[] => {
@@ -68,18 +86,26 @@ export const deriveMetadataEventsFromUpdateAction = ({
 
       const deleteIndexMetadataEvent: DeleteMetadataEvent<'index'> = {
         metadataName: 'index',
+        recordId: fromFlatEntity.id,
         properties: {
-          before: fromFlatEntity,
+          before: flatEntityToScalarFlatEntity({
+            flatEntity: fromFlatEntity,
+            metadataName: 'index',
+          }),
         },
-        type: 'delete',
+        type: 'deleted',
       };
 
       const createIndexMetadataEvent: CreateMetadataEvent<'index'> = {
         metadataName: 'index',
+        recordId: toFlatEntity.id,
         properties: {
-          after: toFlatEntity,
+          after: flatEntityToScalarFlatEntity({
+            flatEntity: toFlatEntity,
+            metadataName: 'index',
+          }),
         },
-        type: 'create',
+        type: 'created',
       };
 
       return [deleteIndexMetadataEvent, createIndexMetadataEvent];

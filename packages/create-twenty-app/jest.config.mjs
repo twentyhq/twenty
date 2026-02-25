@@ -1,5 +1,5 @@
 const jestConfig = {
-  displayName: 'twenty-cli',
+  displayName: 'create-twenty-app',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   transformIgnorePatterns: ['../../node_modules/'],

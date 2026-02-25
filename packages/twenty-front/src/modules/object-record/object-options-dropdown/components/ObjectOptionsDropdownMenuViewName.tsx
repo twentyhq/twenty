@@ -3,9 +3,9 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type View } from '@/views/types/View';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
@@ -60,12 +60,12 @@ export const ObjectOptionsDropdownMenuViewName = ({
   currentView,
 }: ObjectOptionsDropdownMenuViewNameProps) => {
   const [viewPickerSelectedIcon, setViewPickerSelectedIcon] =
-    useRecoilComponentState(viewPickerSelectedIconComponentState);
+    useAtomComponentState(viewPickerSelectedIconComponentState);
 
-  const viewPickerIsPersisting = useRecoilComponentValue(
+  const viewPickerIsPersisting = useAtomComponentStateValue(
     viewPickerIsPersistingComponentState,
   );
-  const setViewPickerIsDirty = useSetRecoilComponentState(
+  const setViewPickerIsDirty = useSetAtomComponentState(
     viewPickerIsDirtyComponentState,
   );
 

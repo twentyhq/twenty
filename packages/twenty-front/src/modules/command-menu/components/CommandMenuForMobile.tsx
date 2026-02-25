@@ -1,11 +1,11 @@
 import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import styled from '@emotion/styled';
 
 import { AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
-import { useRecoilValue } from 'recoil';
 
 const StyledCommandMenuMobileFullScreenContainer = styled.div`
   height: 100%;
@@ -13,7 +13,7 @@ const StyledCommandMenuMobileFullScreenContainer = styled.div`
 `;
 
 export const CommandMenuForMobile = () => {
-  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
 
   return (
     <AnimatePresence>

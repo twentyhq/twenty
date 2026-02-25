@@ -1,7 +1,7 @@
 import { WidgetActionRenderer } from '@/page-layout/widgets/components/WidgetActionRenderer';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -26,6 +26,7 @@ export type WidgetCardHeaderProps = {
   className?: string;
   isResizing?: boolean;
   isReorderEnabled?: boolean;
+  isDeletingWidgetEnabled?: boolean;
 };
 
 const StyledWidgetCardHeader = styled.div`
@@ -80,6 +81,7 @@ export const WidgetCardHeader = ({
   isInEditMode = false,
   isResizing = false,
   isReorderEnabled = true,
+  isDeletingWidgetEnabled = true,
   title,
   onRemove,
   forbiddenDisplay,
@@ -88,7 +90,7 @@ export const WidgetCardHeader = ({
 }: WidgetCardHeaderProps) => {
   const theme = useTheme();
 
-  const isWidgetCardHovered = useRecoilComponentFamilyValue(
+  const isWidgetCardHovered = useAtomComponentFamilyStateValue(
     widgetCardHoveredComponentFamilyState,
     widgetId,
   );
@@ -119,6 +121,7 @@ export const WidgetCardHeader = ({
           {!isResizing &&
             !isEmpty &&
             isInEditMode &&
+            isDeletingWidgetEnabled &&
             onRemove &&
             isWidgetCardHovered && (
               <StyledIconButtonContainer

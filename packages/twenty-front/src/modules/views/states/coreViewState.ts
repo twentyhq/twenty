@@ -1,7 +1,7 @@
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const coreViewsState = createState<CoreViewWithRelations[]>({
+export const coreViewsState = createAtomState<CoreViewWithRelations[]>({
   key: 'coreViewsState',
   defaultValue: [],
 });

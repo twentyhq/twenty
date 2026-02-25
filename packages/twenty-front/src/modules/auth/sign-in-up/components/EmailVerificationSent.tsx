@@ -9,7 +9,7 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
 import { t } from '@lingui/core/macro';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   IconGmail,
   IconMail,
@@ -89,7 +89,7 @@ export const EmailVerificationSent = ({
   email: string | null;
   isError?: boolean;
 }) => {
-  const setSignInUpStep = useSetRecoilState(signInUpStepState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
 
   const { handleResendEmailVerificationToken, loading: isLoading } =
     useHandleResendEmailVerificationToken();

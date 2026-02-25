@@ -6,14 +6,15 @@ import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWo
 import { RoleAssignmentSection } from '@/settings/roles/role-assignment/components/RoleAssignmentSection';
 import { SettingsRoleAssignmentConfirmationModal } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal';
 import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedRoleTarget';
-import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
+import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   useFindManyAgentsQuery,
@@ -39,8 +40,9 @@ export const SettingsRoleAssignment = ({
 }: SettingsRoleAssignmentProps) => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  const settingsDraftRole = useRecoilValue(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const navigateSettings = useNavigateSettings();
@@ -64,9 +66,11 @@ export const SettingsRoleAssignment = ({
       null,
     );
 
-  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const settingsAllRoles = useSettingsAllRoles();
 
   const roleMaps = buildRoleMaps(settingsAllRoles);
 
@@ -85,7 +89,7 @@ export const SettingsRoleAssignment = ({
     setSelectRoleTarget(null);
   };
 
-  const isModalOpened = useRecoilComponentValue(
+  const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID,
   );

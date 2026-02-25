@@ -1,11 +1,12 @@
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   matchesWorkspaceFolderId,
   validateAndExtractWorkspaceFolderId,
@@ -17,16 +18,16 @@ import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationM
 export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
   const { workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
-  const isNavigationMenuInEditMode = useRecoilValue(
+  const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
-  const navigationMenuItemsDraft = useRecoilValue(
+  const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftState,
   );
-  const setNavigationMenuItemsDraft = useSetRecoilState(
+  const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
-  const setOpenNavigationMenuItemFolderIds = useSetRecoilState(
+  const setOpenNavigationMenuItemFolderIds = useSetAtomState(
     openNavigationMenuItemFolderIdsState,
   );
 

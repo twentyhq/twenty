@@ -1,12 +1,3 @@
-import { useEffect, useState } from 'react';
-import {
-  matchPath,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-
 import {
   setSessionId,
   useEventTracker,
@@ -15,8 +6,17 @@ import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksO
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  matchPath,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -34,18 +34,20 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { AppBasePath, AppPath } from 'twenty-shared/types';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { useStore } from 'jotai';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
+  const store = useStore();
   const navigate = useNavigate();
 
   const [previousLocation, setPreviousLocation] = useState('');
@@ -64,12 +66,12 @@ export const PageChangeEffect = () => {
   const objectNamePlural =
     useParams().objectNamePlural ?? CoreObjectNamePlural.Person;
 
-  const contextStoreCurrentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const contextStoreCurrentViewType = useRecoilComponentValue(
+  const contextStoreCurrentViewType = useAtomComponentStateValue(
     contextStoreCurrentViewTypeComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
@@ -91,11 +93,19 @@ export const PageChangeEffect = () => {
   const { executeTasksOnAnyLocationChange } =
     useExecuteTasksOnAnyLocationChange();
 
-  const isAppEffectRedirectEnabled = useRecoilValue(
+  const isAppEffectRedirectEnabled = useAtomStateValue(
     isAppEffectRedirectEnabledState,
   );
 
   const { closeCommandMenu } = useCommandMenu();
+
+  const closeCommandMenuUnlessOnEditPage = useCallback(() => {
+    const currentPage = store.get(commandMenuPageState.atom);
+    if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
+      return;
+    }
+    closeCommandMenu();
+  }, [closeCommandMenu, store]);
 
   const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
 
@@ -104,8 +114,8 @@ export const PageChangeEffect = () => {
   const { openNewRecordTitleCell } = useOpenNewRecordTitleCell();
 
   useEffect(() => {
-    closeCommandMenu();
-  }, [location.pathname, closeCommandMenu]);
+    closeCommandMenuUnlessOnEditPage();
+  }, [location.pathname, closeCommandMenuUnlessOnEditPage]);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -350,7 +360,7 @@ export const PageChangeEffect = () => {
   }, [eventTracker, location.pathname]);
 
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
-  const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
+  const isCaptchaScriptLoaded = useAtomStateValue(isCaptchaScriptLoadedState);
 
   useEffect(() => {
     if (isCaptchaScriptLoaded && isCaptchaRequiredForPath(location.pathname)) {

@@ -1,7 +1,7 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalComponentInstanceContext';
 
-export const isModalOpenedComponentState = createComponentState<boolean>({
+export const isModalOpenedComponentState = createAtomComponentState<boolean>({
   key: 'isModalOpenedComponentState',
   defaultValue: false,
   componentInstanceContext: ModalComponentInstanceContext,

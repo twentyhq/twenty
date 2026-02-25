@@ -4,7 +4,6 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
@@ -14,119 +13,112 @@ import { workflowRunDiagramAutomaticallyOpenedStepsComponentState } from '@/work
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { useStore } from 'jotai';
 
 export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
+  const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
   const { getIcon } = useIcons();
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
-    ({ snapshot, set }) =>
-      ({
+  const runWorkflowRunOpeningInCommandMenuSideEffects = useCallback(
+    ({
+      objectMetadataItem,
+      recordId,
+    }: {
+      objectMetadataItem: ObjectMetadataItem;
+      recordId: string;
+    }) => {
+      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+
+      const workflowRunRecord = getRecordFromCache<WorkflowRun>({
         objectMetadataItem,
+        cache: apolloCoreClient.cache,
         recordId,
-      }: {
-        objectMetadataItem: ObjectMetadataItem;
-        recordId: string;
-      }) => {
-        const objectMetadataItems = getSnapshotValue(
-          snapshot,
-          objectMetadataItemsState,
-        );
+        objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+      });
+      if (
+        !(isDefined(workflowRunRecord) && isDefined(workflowRunRecord.state))
+      ) {
+        return;
+      }
 
-        const workflowRunRecord = getRecordFromCache<WorkflowRun>({
-          objectMetadataItem,
-          cache: apolloCoreClient.cache,
-          recordId,
-          objectMetadataItems,
-          objectPermissionsByObjectMetadataId,
-        });
-        if (
-          !(isDefined(workflowRunRecord) && isDefined(workflowRunRecord.state))
-        ) {
-          return;
-        }
+      const { stepToOpenByDefault } = generateWorkflowRunDiagram({
+        steps: workflowRunRecord.state.flow.steps,
+        stepInfos: workflowRunRecord.state.stepInfos,
+        trigger: workflowRunRecord.state.flow.trigger,
+      });
 
-        const { stepToOpenByDefault } = generateWorkflowRunDiagram({
-          steps: workflowRunRecord.state.flow.steps,
-          stepInfos: workflowRunRecord.state.stepInfos,
+      if (!isDefined(stepToOpenByDefault)) {
+        return;
+      }
+
+      const instanceId = getWorkflowVisualizerComponentInstanceId({
+        recordId,
+      });
+
+      store.set(
+        workflowVisualizerWorkflowRunIdComponentState.atomFamily({
+          instanceId,
+        }),
+        workflowRunRecord.id,
+      );
+      store.set(
+        workflowVisualizerWorkflowIdComponentState.atomFamily({
+          instanceId,
+        }),
+        workflowRunRecord.workflowId,
+      );
+      store.set(
+        flowComponentState.atomFamily({
+          instanceId,
+        }),
+        {
+          workflowVersionId: workflowRunRecord.workflowVersionId,
           trigger: workflowRunRecord.state.flow.trigger,
-        });
+          steps: workflowRunRecord.state.flow.steps,
+        },
+      );
+      store.set(
+        workflowSelectedNodeComponentState.atomFamily({
+          instanceId,
+        }),
+        stepToOpenByDefault.id,
+      );
 
-        if (!isDefined(stepToOpenByDefault)) {
-          return;
-        }
-
-        set(
-          workflowVisualizerWorkflowRunIdComponentState.atomFamily({
-            instanceId: getWorkflowVisualizerComponentInstanceId({
-              recordId,
-            }),
-          }),
-          workflowRunRecord.id,
-        );
-        set(
-          workflowVisualizerWorkflowIdComponentState.atomFamily({
-            instanceId: getWorkflowVisualizerComponentInstanceId({
-              recordId,
-            }),
-          }),
-          workflowRunRecord.workflowId,
-        );
-        set(
-          flowComponentState.atomFamily({
-            instanceId: getWorkflowVisualizerComponentInstanceId({
-              recordId,
-            }),
-          }),
+      store.set(
+        workflowRunDiagramAutomaticallyOpenedStepsComponentState.atomFamily({
+          instanceId,
+        }),
+        (steps) => [
+          ...steps,
           {
-            workflowVersionId: workflowRunRecord.workflowVersionId,
-            trigger: workflowRunRecord.state.flow.trigger,
-            steps: workflowRunRecord.state.flow.steps,
+            stepId: stepToOpenByDefault.id,
+            isInRightDrawer: true,
           },
-        );
-        set(
-          workflowSelectedNodeComponentState.atomFamily({
-            instanceId: getWorkflowVisualizerComponentInstanceId({
-              recordId,
-            }),
-          }),
-          stepToOpenByDefault.id,
-        );
-
-        set(
-          workflowRunDiagramAutomaticallyOpenedStepsComponentState.atomFamily({
-            instanceId: getWorkflowVisualizerComponentInstanceId({
-              recordId,
-            }),
-          }),
-          (steps) => [
-            ...steps,
-            {
-              stepId: stepToOpenByDefault.id,
-              isInRightDrawer: true,
-            },
-          ],
-        );
-        openWorkflowRunViewStepInCommandMenu({
-          workflowId: workflowRunRecord.workflowId,
-          workflowRunId: workflowRunRecord.id,
-          title: stepToOpenByDefault.data.name,
-          icon: getIcon(getWorkflowNodeIconKey(stepToOpenByDefault.data)),
-          workflowSelectedNode: stepToOpenByDefault.id,
-          stepExecutionStatus: stepToOpenByDefault.data.runStatus,
-        });
-      },
+        ],
+      );
+      openWorkflowRunViewStepInCommandMenu({
+        workflowId: workflowRunRecord.workflowId,
+        workflowRunId: workflowRunRecord.id,
+        title: stepToOpenByDefault.data.name,
+        icon: getIcon(getWorkflowNodeIconKey(stepToOpenByDefault.data)),
+        workflowSelectedNode: stepToOpenByDefault.id,
+        stepExecutionStatus: stepToOpenByDefault.data.runStatus,
+      });
+    },
     [
       apolloCoreClient.cache,
       objectPermissionsByObjectMetadataId,
       openWorkflowRunViewStepInCommandMenu,
       getIcon,
+      store,
     ],
   );
 

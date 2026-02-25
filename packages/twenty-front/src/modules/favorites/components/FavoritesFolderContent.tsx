@@ -7,8 +7,8 @@ import { type ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Droppable } from '@hello-pangea/dnd';
-import { useRecoilValue } from 'recoil';
 import { IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -23,7 +23,7 @@ export const FavoritesFolderContent = ({
   folderId,
   favorites,
 }: FavoritesFolderContentProps) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { deleteFavorite } = useDeleteFavorite();
 
   return (

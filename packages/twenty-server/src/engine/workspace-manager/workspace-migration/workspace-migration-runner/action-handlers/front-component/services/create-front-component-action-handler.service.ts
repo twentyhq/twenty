@@ -7,11 +7,11 @@ import { v4 } from 'uuid';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import {
   FrontComponentException,
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import {
   FlatCreateFrontComponentAction,
   UniversalCreateFrontComponentAction,
@@ -35,6 +35,11 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateFrontComponentAction>): Promise<FlatCreateFrontComponentAction> {
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'frontComponent',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -42,6 +47,7 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }
@@ -62,14 +68,9 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
       });
     }
 
-    const frontComponentRepository =
-      queryRunner.manager.getRepository<FrontComponentEntity>(
-        FrontComponentEntity,
-      );
-
-    await frontComponentRepository.insert({
-      ...frontComponent,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [frontComponent],
     });
   }
 

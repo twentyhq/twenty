@@ -7,10 +7,6 @@ import {
     RULE_NAME as effectComponentsName,
 } from './rules/effect-components';
 import {
-    rule as exportComponentProps,
-    RULE_NAME as exportComponentPropsName,
-} from './rules/export-component-props';
-import {
     rule as explicitBooleanPredicatesInIf,
     RULE_NAME as explicitBooleanPredicatesInIfName,
 } from './rules/explicit-boolean-predicates-in-if';
@@ -62,14 +58,8 @@ import {
     rule as styledComponentsPrefixedWithStyled,
     RULE_NAME as styledComponentsPrefixedWithStyledName,
 } from './rules/styled-components-prefixed-with-styled';
-import {
-    rule as useGetLoadableAndGetValueToGetAtoms,
-    RULE_NAME as useGetLoadableAndGetValueToGetAtomsName,
-} from './rules/use-getLoadable-and-getValue-to-get-atoms';
-import {
-    rule as useRecoilCallbackHasDependencyArray,
-    RULE_NAME as useRecoilCallbackHasDependencyArrayName,
-} from './rules/useRecoilCallback-has-dependency-array';
+
+
 
 /**
  * Import your custom workspace rules at the top of this file.
@@ -99,7 +89,6 @@ module.exports = {
   rules: {
     [componentPropsNamingName]: componentPropsNaming,
     [effectComponentsName]: effectComponents,
-    [exportComponentPropsName]: exportComponentProps,
     [matchingStateVariableName]: matchingStateVariable,
     [noHardcodedColorsName]: noHardcodedColors,
     [noStateUserefName]: noStateUseref,
@@ -107,11 +96,7 @@ module.exports = {
     [styledComponentsPrefixedWithStyledName]:
       styledComponentsPrefixedWithStyled,
     [explicitBooleanPredicatesInIfName]: explicitBooleanPredicatesInIf,
-    [useGetLoadableAndGetValueToGetAtomsName]:
-      useGetLoadableAndGetValueToGetAtoms,
     [maxConstsPerFileName]: maxConstsPerFile,
-    [useRecoilCallbackHasDependencyArrayName]:
-      useRecoilCallbackHasDependencyArray,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
     [injectWorkspaceRepositoryName]: injectWorkspaceRepository,
     [restApiMethodsShouldBeGuardedName]: restApiMethodsShouldBeGuarded,

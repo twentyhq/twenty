@@ -1,9 +1,9 @@
-import { atom } from 'recoil';
-
 import { type RecordGqlOperationVariables } from 'twenty-shared/types';
 
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+
 export const currentNotesQueryVariablesState =
-  atom<RecordGqlOperationVariables | null>({
-    default: null,
+  createAtomState<RecordGqlOperationVariables | null>({
     key: 'currentNotesQueryVariablesState',
+    defaultValue: null,
   });

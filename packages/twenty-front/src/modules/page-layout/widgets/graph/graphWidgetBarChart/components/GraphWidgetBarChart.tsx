@@ -19,12 +19,12 @@ import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/co
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { BarChartLayout } from '~/generated-metadata/graphql';
@@ -91,27 +91,27 @@ export const GraphWidgetBarChart = ({
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const setActiveBarTooltip = useSetRecoilComponentState(
+  const setActiveBarTooltip = useSetAtomComponentState(
     graphWidgetBarTooltipComponentState,
   );
 
-  const setHoveredSliceIndex = useSetRecoilComponentState(
+  const setHoveredSliceIndex = useSetAtomComponentState(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const hoveredSliceIndexValue = useRecoilComponentValue(
+  const hoveredSliceIndexValue = useAtomComponentStateValue(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const draggingWidgetId = useRecoilComponentValue(
+  const draggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const resizingWidgetId = useRecoilComponentValue(
+  const resizingWidgetId = useAtomComponentStateValue(
     pageLayoutResizingWidgetIdComponentState,
   );
 
-  const isSidePanelAnimating = useRecoilValue(isSidePanelAnimatingState);
+  const isSidePanelAnimating = useAtomStateValue(isSidePanelAnimatingState);
 
   const isLayoutAnimating =
     isSidePanelAnimating || draggingWidgetId === id || resizingWidgetId === id;

@@ -1,9 +1,8 @@
-import { useRecoilValue } from 'recoil';
-
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useReadWorkspaceUrlFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceUrlFromCurrentLocation';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticatedWorkspaceDomainState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useCallback } from 'react';
 
 import { useInitializeQueryParamState } from '@/app/hooks/useInitializeQueryParamState';
@@ -16,7 +15,7 @@ import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 export const WorkspaceProviderEffect = () => {
   const { data: getPublicWorkspaceData } = useGetPublicWorkspaceDataByDomain();
 
-  const lastAuthenticatedWorkspaceDomain = useRecoilValue(
+  const lastAuthenticatedWorkspaceDomain = useAtomStateValue(
     lastAuthenticatedWorkspaceDomainState,
   );
 
@@ -25,7 +24,9 @@ export const WorkspaceProviderEffect = () => {
 
   const { currentLocationHostname } = useReadWorkspaceUrlFromCurrentLocation();
 
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
 
   const { initializeQueryParamState } = useInitializeQueryParamState();
 

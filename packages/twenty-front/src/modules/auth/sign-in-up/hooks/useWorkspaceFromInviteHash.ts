@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
@@ -16,7 +16,7 @@ export const useWorkspaceFromInviteHash = () => {
   const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
   const navigate = useNavigateApp();
   const workspaceInviteHash = useParams().workspaceInviteHash;
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const [initiallyLoggedIn] = useState(isDefined(currentWorkspace));
 
   const { data: workspaceFromInviteHash, loading } =

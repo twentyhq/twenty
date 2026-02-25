@@ -1,6 +1,7 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
+  IsBoolean,
   IsDateString,
   IsNotEmpty,
   IsOptional,
@@ -9,6 +10,7 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/dtos/application-token-pair.dto';
 
 @ObjectType('FrontComponent')
 export class FrontComponentDTO {
@@ -61,4 +63,11 @@ export class FrontComponentDTO {
   @IsDateString()
   @Field()
   updatedAt: Date;
+
+  @IsBoolean()
+  @Field()
+  isHeadless: boolean;
+
+  @Field(() => ApplicationTokenPairDTO, { nullable: true })
+  applicationTokenPair?: ApplicationTokenPairDTO;
 }

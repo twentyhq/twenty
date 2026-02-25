@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
+import type { PackageJson } from 'type-fest';
 
 const moduleEntries = Object.keys((packageJson as any).exports || {})
   .filter(
@@ -70,13 +71,23 @@ export default defineConfig(() => {
       outDir: 'dist',
       lib: { entry: entries, name: 'create-twenty-app' },
       rollupOptions: {
-        external: [
-          ...Object.keys((packageJson as any).dependencies || {}),
-          'path',
-          'fs',
-          'child_process',
-          'util',
-        ],
+        external: (id: string) => {
+          if (/^node:/.test(id)) {
+            return true;
+          }
+
+          const builtins = ['path', 'fs', 'child_process', 'util'];
+
+          if (builtins.includes(id)) {
+            return true;
+          }
+
+          const deps = Object.keys(
+            (packageJson as PackageJson).dependencies || {},
+          );
+
+          return deps.some((dep) => id === dep || id.startsWith(dep + '/'));
+        },
         output: [
           {
             format: 'es',

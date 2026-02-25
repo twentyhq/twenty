@@ -1,28 +1,27 @@
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filterUserFacingFieldMetadataItems';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 
 type SettingsRolePermissionsObjectLevelUpdateFieldsValueForObjectProps = {
   roleId: string;
-  objectMetadataItemId: string;
+  objectMetadataItem: ObjectMetadataItem;
 };
 
 export const SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject = ({
   roleId,
-  objectMetadataItemId,
+  objectMetadataItem,
 }: SettingsRolePermissionsObjectLevelUpdateFieldsValueForObjectProps) => {
   const { t } = useLingui();
 
-  const settingsDraftRole = useRecoilValue(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataItemId,
-  });
+  const objectMetadataItemId = objectMetadataItem.id;
 
   const restrictableFieldMetadataItems = objectMetadataItem.fields.filter(
     filterUserFacingFieldMetadataItems,

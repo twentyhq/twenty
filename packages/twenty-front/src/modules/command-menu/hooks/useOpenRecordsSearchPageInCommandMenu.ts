@@ -1,14 +1,14 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
-import { v4 } from 'uuid';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconSearch } from 'twenty-ui/display';
+import { v4 } from 'uuid';
 
 export const useOpenRecordsSearchPageInCommandMenu = () => {
   const { navigateCommandMenu } = useCommandMenu();
-  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
 
   const openRecordsSearchPage = () => {
     navigateCommandMenu({

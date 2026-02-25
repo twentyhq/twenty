@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
+  DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
 } from 'twenty-shared/application';
@@ -179,7 +180,7 @@ export class LogicFunctionExecutorService {
     flatApplicationVariables: FlatApplicationVariable[];
   }) {
     const applicationAccessToken =
-      await this.applicationTokenService.generateApplicationToken({
+      await this.applicationTokenService.generateApplicationAccessToken({
         workspaceId,
         applicationId: flatApplication.id,
         expiresInSeconds: Math.max(
@@ -192,6 +193,7 @@ export class LogicFunctionExecutorService {
 
     return {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
+      [DEFAULT_APP_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       ...buildEnvVar(flatApplicationVariables, this.secretEncryptionService),
     };

@@ -1,8 +1,8 @@
 import { ClickOutsideListenerComponentInstanceContext } from '@/ui/utilities/pointer-event/states/contexts/ClickOutsideListenerComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const clickOutsideListenerIsMouseDownInsideComponentState =
-  createComponentState<boolean>({
+  createAtomComponentState<boolean>({
     key: 'clickOutsideListenerIsMouseDownInsideComponentState',
     defaultValue: false,
     componentInstanceContext: ClickOutsideListenerComponentInstanceContext,

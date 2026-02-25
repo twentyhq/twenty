@@ -59,17 +59,17 @@ Prima di importare i dati, prepara il tuo spazio di lavoro Twenty:
 4. Configura le impostazioni dei campi (univoche, obbligatorie, opzioni dei campi di selezione, ecc.)
 
 <Warning>
-  **I campi devono esistere prima dell'importazione.**
+**I campi devono esistere prima dell'importazione.**
 
-  L'importazione CSV crea record, non campi. Crea tutti i campi personalizzati in Impostazioni → Modello dati prima dell'importazione.
+L'importazione CSV crea record, non campi. Crea tutti i campi personalizzati in Impostazioni → Modello dati prima dell'importazione.
 </Warning>
 
 ### Invita il tuo team
 
 <Warning>
-  **Invita gli utenti PRIMA di importare i dati.**
+**Invita gli utenti PRIMA di importare i dati.**
 
-  Se i tuoi dati includono riferimenti a utenti (Proprietario dell'account, Assegnatario, ecc.), tali utenti devono esistere in Twenty prima dell'importazione. In caso contrario, tali relazioni non possono essere mappate.
+Se i tuoi dati includono riferimenti a utenti (Proprietario dell'account, Assegnatario, ecc.), tali utenti devono esistere in Twenty prima dell'importazione. In caso contrario, tali relazioni non possono essere mappate.
 </Warning>
 
 1. Vai a **Impostazioni → Membri**
@@ -116,9 +116,9 @@ Apri ogni file CSV esportato in un'applicazione di fogli di calcolo e preparalo 
 | **Campi di selezione** | Usa i nomi API, non le etichette visualizzate              |
 
 <Warning>
-  **Il formato del dominio è fondamentale.**
+**Il formato del dominio è fondamentale.**
 
-  Usa `https://domain.com` (non `domain.com` o `www.domain.com`). Questo corrisponde al formato di Twenty ed evita duplicati quando colleghi la sincronizzazione di email e calendario.
+Usa `https://domain.com` (non `domain.com` o `www.domain.com`). Questo corrisponde al formato di Twenty ed evita duplicati quando colleghi la sincronizzazione di email e calendario.
 </Warning>
 
 Consulta [Come preparare i tuoi file CSV](/l/it/user-guide/data-migration/how-tos/prepare-your-csv-files) per i requisiti di formattazione completi per tutti i tipi di campo.
@@ -149,17 +149,16 @@ Consulta [Come preparare i tuoi file CSV](/l/it/user-guide/data-migration/how-to
 ## Passaggio 6: Importa in Twenty
 
 <Warning>
-  **L'ordine di importazione è importante!**
+**L'ordine di importazione è importante!**
 
-  Importa sempre in questo ordine:
+Importa sempre in questo ordine:
+1. **Aziende** per prime (nessuna dipendenza)
+2. **Persone** al secondo posto (collegate alle Aziende)
+3. **Opportunità** al terzo posto (collegate ad Aziende/Persone)
+4. **Note e Attività** (collegate ai record)
+5. **Oggetti personalizzati** seguendo le relative dipendenze
 
-  1. **Aziende** per prime (nessuna dipendenza)
-  2. **Persone** al secondo posto (collegate alle Aziende)
-  3. **Opportunità** al terzo posto (collegate ad Aziende/Persone)
-  4. **Note e Attività** (collegate ai record)
-  5. **Oggetti personalizzati** seguendo le relative dipendenze
-
-  Il record padre deve esistere prima di potervi fare riferimento.
+Il record padre deve esistere prima di potervi fare riferimento.
 </Warning>
 
 ### Importa ogni oggetto

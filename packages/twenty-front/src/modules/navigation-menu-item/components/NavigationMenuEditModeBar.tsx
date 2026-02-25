@@ -1,11 +1,5 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconCheck, useIcons } from 'twenty-ui/display';
-
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/hooks/useSaveNavigationMenuItemsDraft';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
@@ -13,7 +7,15 @@ import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/nav
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { CommandMenuPages } from 'twenty-shared/types';
+import { IconCheck, useIcons } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -39,14 +41,15 @@ export const NavigationMenuEditModeBar = () => {
   const { getIcon } = useIcons();
   const [isSaving, setIsSaving] = useState(false);
   const { closeCommandMenu } = useCommandMenu();
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const setNavigationMenuItemsDraft = useSetRecoilState(
+  const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
-  const setSelectedNavigationMenuItemInEditMode = useSetRecoilState(
+  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
     selectedNavigationMenuItemInEditModeState,
   );
-  const setIsNavigationMenuInEditMode = useSetRecoilState(
+  const setIsNavigationMenuInEditMode = useSetAtomState(
     isNavigationMenuInEditModeState,
   );
   const { saveDraft } = useSaveNavigationMenuItemsDraft();
@@ -56,9 +59,15 @@ export const NavigationMenuEditModeBar = () => {
     setNavigationMenuItemsDraft(null);
     setSelectedNavigationMenuItemInEditMode(null);
     setIsNavigationMenuInEditMode(false);
+    const isNavItemPageOpen =
+      commandMenuPage === CommandMenuPages.NavigationMenuAddItem ||
+      commandMenuPage === CommandMenuPages.NavigationMenuItemEdit;
+    if (isNavItemPageOpen) {
+      closeCommandMenu();
+    }
   };
 
-  const isNavigationMenuInEditMode = useRecoilValue(
+  const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(

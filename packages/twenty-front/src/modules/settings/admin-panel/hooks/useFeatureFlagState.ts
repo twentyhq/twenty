@@ -1,10 +1,10 @@
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
-import { useRecoilState } from 'recoil';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useFeatureFlagState = () => {
-  const [userLookupResult, setUserLookupResult] = useRecoilState(
+  const [userLookupResult, setUserLookupResult] = useAtomState(
     userLookupResultState,
   );
 

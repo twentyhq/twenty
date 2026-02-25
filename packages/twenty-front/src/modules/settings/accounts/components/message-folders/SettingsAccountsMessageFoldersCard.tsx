@@ -17,8 +17,8 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { Label } from 'twenty-ui/display';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -72,7 +72,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const settingsAccountsSelectedMessageChannel = useRecoilValue(
+  const settingsAccountsSelectedMessageChannel = useAtomStateValue(
     settingsAccountsSelectedMessageChannelState,
   );
 

@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
@@ -9,6 +8,8 @@ import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isMergeInProgressState } from '@/object-record/record-merge/states/mergeInProgressState';
 import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type UseMergeRecordsActionsProps = {
   objectNameSingular: string;
@@ -17,7 +18,7 @@ type UseMergeRecordsActionsProps = {
 export const useMergeRecordsActions = ({
   objectNameSingular,
 }: UseMergeRecordsActionsProps) => {
-  const mergeSettings = useRecoilValue(mergeSettingsState);
+  const mergeSettings = useAtomStateValue(mergeSettingsState);
 
   const { selectedRecords } = useMergeRecordsSelectedRecords();
 
@@ -25,7 +26,7 @@ export const useMergeRecordsActions = ({
     objectNameSingular,
   });
 
-  const setMergeInProgress = useSetRecoilState(isMergeInProgressState);
+  const setMergeInProgress = useSetAtomState(isMergeInProgressState);
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();

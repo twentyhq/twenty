@@ -1,10 +1,10 @@
 import { type Options, useHotkeys } from 'react-hotkeys-hook';
 import { type Keys } from 'react-hotkeys-hook/dist/types';
-import { useRecoilState } from 'recoil';
 
 import { pendingHotkeyState } from '@/ui/utilities/hotkey/states/internal/pendingHotkeysState';
 
 import { useGlobalHotkeysCallback } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeysCallback';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useGlobalHotkeysSequence = (
@@ -18,7 +18,7 @@ export const useGlobalHotkeysSequence = (
   },
   deps: any[] = [],
 ) => {
-  const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
+  const [pendingHotkey, setPendingHotkey] = useAtomState(pendingHotkeyState);
 
   const callGlobalHotkeysCallback = useGlobalHotkeysCallback();
 

@@ -20,7 +20,7 @@ import { ApolloError } from '@apollo/client';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
@@ -74,7 +74,7 @@ export const CreateWorkspace = () => {
   const [pendingCreationLoaderStep, setPendingCreationLoaderStep] = useState(
     PendingCreationLoaderStep.None,
   );
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const validationSchema = z
     .object({

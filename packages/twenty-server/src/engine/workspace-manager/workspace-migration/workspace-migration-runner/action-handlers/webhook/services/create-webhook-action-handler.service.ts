@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
+import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import {
   FlatCreateWebhookAction,
   UniversalCreateWebhookAction,
@@ -28,6 +28,11 @@ export class CreateWebhookActionHandlerService extends WorkspaceMigrationRunnerA
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateWebhookAction>): Promise<FlatCreateWebhookAction> {
+    const emptyUniversalForeignKeyAggregators =
+      getUniversalFlatEntityEmptyForeignKeyAggregators({
+        metadataName: 'webhook',
+      });
+
     return {
       ...action,
       flatEntity: {
@@ -35,6 +40,7 @@ export class CreateWebhookActionHandlerService extends WorkspaceMigrationRunnerA
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
+        ...emptyUniversalForeignKeyAggregators,
       },
     };
   }
@@ -42,15 +48,12 @@ export class CreateWebhookActionHandlerService extends WorkspaceMigrationRunnerA
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateWebhookAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner } = context;
     const { flatEntity } = flatAction;
 
-    const webhookRepository =
-      queryRunner.manager.getRepository<WebhookEntity>(WebhookEntity);
-
-    await webhookRepository.insert({
-      ...flatEntity,
-      workspaceId,
+    await this.insertFlatEntitiesInRepository({
+      queryRunner,
+      flatEntities: [flatEntity],
     });
   }
 

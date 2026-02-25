@@ -28,7 +28,7 @@ See:
 🚀 [Self-hosting](https://docs.twenty.com/developers/self-hosting/docker-compose)
 🖥️ [Local Setup](https://docs.twenty.com/developers/local-setup)
 
-# Does the world need another CRM?
+# Why Twenty
 
 We built Twenty for three reasons:
 
@@ -120,6 +120,7 @@ Below are a few features we have implemented to date:
   <a href="https://greptile.com"><img src="./packages/twenty-website/public/images/readme/greptile.png" height="30" alt="Greptile" /></a>
   <a href="https://sentry.io/"><img src="./packages/twenty-website/public/images/readme/sentry.png" height="30" alt="Sentry" /></a>
   <a href="https://crowdin.com/"><img src="./packages/twenty-website/public/images/readme/crowdin.png" height="30" alt="Crowdin" /></a>
+  <a href="https://e2b.dev/"><img src="./packages/twenty-website/public/images/readme/e2b.svg" height="30" alt="E2B" /></a>
 </p>
 
   Thanks to these amazing services that we use and recommend for UI testing (Chromatic), code review (Greptile), catching bugs (Sentry) and translating (Crowdin).

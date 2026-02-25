@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const workspaceBypassModeState = createState<boolean>({
+export const workspaceBypassModeState = createAtomState<boolean>({
   key: 'workspaceBypassModeState',
   defaultValue: false,
 });

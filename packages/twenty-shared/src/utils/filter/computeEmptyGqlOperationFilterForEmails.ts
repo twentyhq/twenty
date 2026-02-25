@@ -12,7 +12,7 @@ export const computeEmptyGqlOperationFilterForEmails = ({
   recordFilter,
   correspondingFieldMetadataItem,
 }: {
-  recordFilter: RecordFilter;
+  recordFilter: Omit<RecordFilter, 'id'>;
   correspondingFieldMetadataItem: Pick<
     PartialFieldMetadataItem,
     'name' | 'type'

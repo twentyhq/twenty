@@ -11,7 +11,6 @@ import { useCommandMenuContextChips } from '@/command-menu/hooks/useCommandMenuC
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -19,8 +18,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useRef } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -79,7 +80,7 @@ const StyledContentContainer = styled.div`
 `;
 
 export const CommandMenuTopBar = () => {
-  const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
+  const [commandMenuSearch, setCommandMenuSearch] = useAtomState(
     commandMenuSearchState,
   );
   const inputRef = useRef<HTMLInputElement>(null);
@@ -94,9 +95,9 @@ export const CommandMenuTopBar = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
 
-  const commandMenuNavigationStack = useRecoilValue(
+  const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );
 

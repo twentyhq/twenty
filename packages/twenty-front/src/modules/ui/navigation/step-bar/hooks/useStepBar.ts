@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { stepBarInternalState } from '@/ui/navigation/step-bar/states/stepBarInternalState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export type StepsOptions = {
   initialStep: number;
@@ -9,7 +9,7 @@ export type StepsOptions = {
 
 export const useStepBar = ({ initialStep }: StepsOptions) => {
   const [stepBarInternal, setStepBarInternal] =
-    useRecoilState(stepBarInternalState);
+    useAtomState(stepBarInternalState);
 
   const nextStep = () => {
     setStepBarInternal((prevState) => ({
