@@ -1,7 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { renderHook } from '@testing-library/react';
-import { type ReactNode } from 'react';
 import { useRelatedRecordActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRelatedRecordActions';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
@@ -23,8 +22,6 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   }),
 }));
 
-const Wrapper = ({ children }: { children: ReactNode }) => <>{children}</>;
-
 describe('useRelatedRecordActions', () => {
   const mockGetIcon = jest.fn();
 
@@ -39,14 +36,12 @@ describe('useRelatedRecordActions', () => {
       updatableFields: [],
     } as unknown as ObjectMetadataItem;
 
-    const { result } = renderHook(
-      () =>
-        useRelatedRecordActions({
-          sourceObjectMetadataItem: objectMetadataItem,
-          getIcon: mockGetIcon,
-          startPosition: 18,
-        }),
-      { wrapper: Wrapper },
+    const { result } = renderHook(() =>
+      useRelatedRecordActions({
+        sourceObjectMetadataItem: objectMetadataItem,
+        getIcon: mockGetIcon,
+        startPosition: 18,
+      }),
     );
 
     expect(result.current).toEqual({});
@@ -55,14 +50,12 @@ describe('useRelatedRecordActions', () => {
   it('should return empty object when objectMetadataItem is undefined', () => {
     const objectMetadataItem = undefined as unknown as ObjectMetadataItem;
 
-    const { result } = renderHook(
-      () =>
-        useRelatedRecordActions({
-          sourceObjectMetadataItem: objectMetadataItem,
-          getIcon: mockGetIcon,
-          startPosition: 18,
-        }),
-      { wrapper: Wrapper },
+    const { result } = renderHook(() =>
+      useRelatedRecordActions({
+        sourceObjectMetadataItem: objectMetadataItem,
+        getIcon: mockGetIcon,
+        startPosition: 18,
+      }),
     );
 
     expect(result.current).toEqual({});
@@ -101,14 +94,12 @@ describe('useRelatedRecordActions', () => {
       updatableFields: fields,
     } as unknown as ObjectMetadataItem;
 
-    const { result } = renderHook(
-      () =>
-        useRelatedRecordActions({
-          sourceObjectMetadataItem: objectMetadataItem,
-          getIcon: mockGetIcon,
-          startPosition: 18,
-        }),
-      { wrapper: Wrapper },
+    const { result } = renderHook(() =>
+      useRelatedRecordActions({
+        sourceObjectMetadataItem: objectMetadataItem,
+        getIcon: mockGetIcon,
+        startPosition: 18,
+      }),
     );
 
     expect(Object.keys(result.current)).toHaveLength(2);
@@ -153,14 +144,12 @@ describe('useRelatedRecordActions', () => {
       updatableFields: fields,
     } as unknown as ObjectMetadataItem;
 
-    const { result } = renderHook(
-      () =>
-        useRelatedRecordActions({
-          sourceObjectMetadataItem: objectMetadataItem,
-          getIcon: mockGetIcon,
-          startPosition: 18,
-        }),
-      { wrapper: Wrapper },
+    const { result } = renderHook(() =>
+      useRelatedRecordActions({
+        sourceObjectMetadataItem: objectMetadataItem,
+        getIcon: mockGetIcon,
+        startPosition: 18,
+      }),
     );
 
     expect(Object.keys(result.current)).toHaveLength(1);
@@ -201,14 +190,12 @@ describe('useRelatedRecordActions', () => {
       updatableFields: fields,
     } as unknown as ObjectMetadataItem;
 
-    const { result } = renderHook(
-      () =>
-        useRelatedRecordActions({
-          sourceObjectMetadataItem: objectMetadataItem,
-          getIcon: mockGetIcon,
-          startPosition: 18,
-        }),
-      { wrapper: Wrapper },
+    const { result } = renderHook(() =>
+      useRelatedRecordActions({
+        sourceObjectMetadataItem: objectMetadataItem,
+        getIcon: mockGetIcon,
+        startPosition: 18,
+      }),
     );
 
     expect(result.current['create-related-person'].position).toBe(18);
@@ -249,14 +236,12 @@ describe('useRelatedRecordActions', () => {
       updatableFields: fields,
     } as unknown as ObjectMetadataItem;
 
-    const { result } = renderHook(
-      () =>
-        useRelatedRecordActions({
-          sourceObjectMetadataItem: objectMetadataItem,
-          getIcon: mockGetIcon,
-          startPosition: 18,
-        }),
-      { wrapper: Wrapper },
+    const { result } = renderHook(() =>
+      useRelatedRecordActions({
+        sourceObjectMetadataItem: objectMetadataItem,
+        getIcon: mockGetIcon,
+        startPosition: 18,
+      }),
     );
 
     expect(Object.keys(result.current)).toHaveLength(1);

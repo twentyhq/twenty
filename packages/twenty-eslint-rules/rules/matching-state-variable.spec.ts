@@ -3,7 +3,7 @@ import { rule, RULE_NAME } from './matching-state-variable';
 
 const ruleTester = new TSESLint.RuleTester();
 
-ruleTester.run(RULE_NAME, rule as any, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
       code: 'const variable = useAtomStateValue(variableState);',

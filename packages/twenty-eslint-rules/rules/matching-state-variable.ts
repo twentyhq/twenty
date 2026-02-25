@@ -62,8 +62,9 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
                   hookName: stateNameBase,
                   callee: node.init.callee.name,
                 },
-                fix: (fixer) =>
-                  fixer.replaceText(node.id, expectedVariableNameBase),
+                fix: (fixer) => {
+                  return fixer.replaceText(node.id, expectedVariableNameBase);
+                },
               });
             }
 
@@ -88,11 +89,15 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
                   expected: expectedVariableNameBase,
                   callee: node.init.callee.name,
                 },
-                fix: (fixer) =>
-                  fixer.replaceText(
-                    node.id.elements[0]!,
-                    expectedVariableNameBase,
-                  ),
+                fix: (fixer) => {
+                  if (node.id.type === AST_NODE_TYPES.ArrayPattern) {
+                    return fixer.replaceText(
+                      node.id.elements[0] as TSESTree.Node,
+                      expectedVariableNameBase,
+                    );
+                  }
+                  return null;
+                },
               });
             }
 
@@ -111,11 +116,15 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
                     actualName: actualSetterName,
                     expectedName: expectedSetterName,
                   },
-                  fix: (fixer) =>
-                    fixer.replaceText(
-                      node.id.elements[1]!,
-                      expectedSetterName,
-                    ),
+                  fix: (fixer) => {
+                    if (node.id.type === AST_NODE_TYPES.ArrayPattern) {
+                      return fixer.replaceText(
+                        node.id.elements[1]!,
+                        expectedSetterName,
+                      );
+                    }
+                    return null;
+                  },
                 });
               }
             }

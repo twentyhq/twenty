@@ -1,5 +1,4 @@
 import { act, renderHook } from '@testing-library/react';
-import { type ReactNode } from 'react';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
@@ -14,8 +13,6 @@ const mockGetFormatPreferencesFromWorkspaceMember =
     typeof getFormatPreferencesFromWorkspaceMember
   >;
 
-const Wrapper = ({ children }: { children: ReactNode }) => <>{children}</>;
-
 describe('useInitializeFormatPreferences', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -26,9 +23,7 @@ describe('useInitializeFormatPreferences', () => {
   });
 
   it('should return initializeFormatPreferences function', () => {
-    const { result } = renderHook(() => useInitializeFormatPreferences(), {
-      wrapper: Wrapper,
-    });
+    const { result } = renderHook(() => useInitializeFormatPreferences());
 
     expect(result.current).toHaveProperty('initializeFormatPreferences');
     expect(typeof result.current.initializeFormatPreferences).toBe('function');
@@ -56,9 +51,7 @@ describe('useInitializeFormatPreferences', () => {
       mockPreferences,
     );
 
-    const { result } = renderHook(() => useInitializeFormatPreferences(), {
-      wrapper: Wrapper,
-    });
+    const { result } = renderHook(() => useInitializeFormatPreferences());
 
     act(() => {
       result.current.initializeFormatPreferences(mockWorkspaceMember);
@@ -70,9 +63,7 @@ describe('useInitializeFormatPreferences', () => {
   });
 
   it('should not initialize format preferences when workspace member is null', () => {
-    const { result } = renderHook(() => useInitializeFormatPreferences(), {
-      wrapper: Wrapper,
-    });
+    const { result } = renderHook(() => useInitializeFormatPreferences());
 
     act(() => {
       result.current.initializeFormatPreferences(null);
@@ -82,9 +73,7 @@ describe('useInitializeFormatPreferences', () => {
   });
 
   it('should not initialize format preferences when workspace member is undefined', () => {
-    const { result } = renderHook(() => useInitializeFormatPreferences(), {
-      wrapper: Wrapper,
-    });
+    const { result } = renderHook(() => useInitializeFormatPreferences());
 
     act(() => {
       result.current.initializeFormatPreferences(undefined as any);

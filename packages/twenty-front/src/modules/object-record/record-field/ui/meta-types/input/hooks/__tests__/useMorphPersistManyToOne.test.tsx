@@ -1,5 +1,4 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { type ReactNode } from 'react';
 
 import { useMorphPersistManyToOne } from '@/object-record/record-field/ui/meta-types/input/hooks/useMorphPersistManyToOne';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
@@ -89,22 +88,16 @@ const mockMorphFieldDefinition = {
   },
 } as FieldDefinition<FieldMorphRelationMetadata>;
 
-const Wrapper = ({ children }: { children: ReactNode }) => <>{children}</>;
-
 describe('useMorphPersistManyToOne', () => {
   beforeEach(() => {
     mockUpdateOneRecord.mockClear();
   });
 
   it('should set all morph relation fields to null when detaching (valueToPersist is null)', async () => {
-    const { result } = renderHook(
-      () =>
-        useMorphPersistManyToOne({
-          objectMetadataNameSingular: 'task',
-        }),
-      {
-        wrapper: Wrapper,
-      },
+    const { result } = renderHook(() =>
+      useMorphPersistManyToOne({
+        objectMetadataNameSingular: 'task',
+      }),
     );
 
     await act(async () => {
@@ -129,14 +122,10 @@ describe('useMorphPersistManyToOne', () => {
   });
 
   it('should set all morph relation fields to null when detaching (valueToPersist is undefined)', async () => {
-    const { result } = renderHook(
-      () =>
-        useMorphPersistManyToOne({
-          objectMetadataNameSingular: 'task',
-        }),
-      {
-        wrapper: Wrapper,
-      },
+    const { result } = renderHook(() =>
+      useMorphPersistManyToOne({
+        objectMetadataNameSingular: 'task',
+      }),
     );
 
     await act(async () => {
@@ -161,14 +150,10 @@ describe('useMorphPersistManyToOne', () => {
   });
 
   it('should update the specific relation field when selecting a record', async () => {
-    const { result } = renderHook(
-      () =>
-        useMorphPersistManyToOne({
-          objectMetadataNameSingular: 'task',
-        }),
-      {
-        wrapper: Wrapper,
-      },
+    const { result } = renderHook(() =>
+      useMorphPersistManyToOne({
+        objectMetadataNameSingular: 'task',
+      }),
     );
 
     await act(async () => {

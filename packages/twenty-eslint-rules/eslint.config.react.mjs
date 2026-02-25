@@ -125,12 +125,7 @@ export default [
 
       // React hooks rules
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': [
-        'warn',
-        {
-          additionalHooks: '',
-        },
-      ],
+      'react-hooks/exhaustive-deps': 'warn',
       // Lingui - detect untranslated strings
       'lingui/no-unlocalized-strings': [
         'error',
