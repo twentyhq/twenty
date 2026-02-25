@@ -13,7 +13,11 @@ const mockCreateOneNote = jest.fn();
 const mockCreateOneNoteTarget = jest.fn();
 
 jest.mock('@/object-record/hooks/useCreateOneRecord', () => ({
-  useCreateOneRecord: ({ objectNameSingular }: { objectNameSingular: string }) =>
+  useCreateOneRecord: ({
+    objectNameSingular,
+  }: {
+    objectNameSingular: string;
+  }) =>
     objectNameSingular === CoreObjectNameSingular.NoteTarget
       ? { createOneRecord: mockCreateOneNoteTarget }
       : { createOneRecord: mockCreateOneNote },
