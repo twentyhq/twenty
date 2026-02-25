@@ -13,6 +13,7 @@ export enum WorkspaceExceptionCode {
   WORKSPACE_CUSTOM_DOMAIN_DISABLED = 'WORKSPACE_CUSTOM_DOMAIN_DISABLED',
   ENVIRONMENT_VAR_NOT_ENABLED = 'ENVIRONMENT_VAR_NOT_ENABLED',
   CUSTOM_DOMAIN_NOT_FOUND = 'CUSTOM_DOMAIN_NOT_FOUND',
+  INVALID_ENTERPRISE_KEY = 'INVALID_ENTERPRISE_KEY',
 }
 
 const getWorkspaceExceptionUserFriendlyMessage = (
@@ -35,6 +36,8 @@ const getWorkspaceExceptionUserFriendlyMessage = (
       return msg`This feature is not enabled.`;
     case WorkspaceExceptionCode.CUSTOM_DOMAIN_NOT_FOUND:
       return msg`Custom domain not found.`;
+    case WorkspaceExceptionCode.INVALID_ENTERPRISE_KEY:
+      return msg`Invalid enterprise key.`;
     default:
       assertUnreachable(code);
   }

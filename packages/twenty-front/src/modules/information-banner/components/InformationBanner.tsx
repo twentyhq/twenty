@@ -15,7 +15,6 @@ import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
 const StyledText = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledCloseButton = styled(IconButton)`

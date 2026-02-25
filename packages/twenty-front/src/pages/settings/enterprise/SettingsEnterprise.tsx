@@ -17,7 +17,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import styled from '@emotion/styled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -84,15 +84,39 @@ export const SettingsEnterprise = ({
   const { openModal } = useModal();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
-  const isActive = currentWorkspace?.hasActivatedAndValidEnterpriseKey === true;
-
-  const { data: subscriptionStatusData } = useQuery(
-    ENTERPRISE_SUBSCRIPTION_STATUS,
-    { skip: !isActive },
+  const [isActive, setIsActive] = useState(
+    currentWorkspace?.hasActivatedAndValidEnterpriseKey === true,
   );
 
-  const subscriptionStatus =
-    subscriptionStatusData?.enterpriseSubscriptionStatus;
+  const [fetchSubscriptionStatus] = useLazyQuery(
+    ENTERPRISE_SUBSCRIPTION_STATUS,
+    { fetchPolicy: 'network-only' },
+  );
+
+  type SubscriptionStatus = {
+    status: string | null;
+    licensee: string | null;
+    expiresAt: string | null;
+    cancelAt: string | null;
+    currentPeriodEnd: string | null;
+    isCancellationScheduled: boolean;
+  };
+
+  const [subscriptionStatus, setSubscriptionStatus] =
+    useState<SubscriptionStatus | null>(null);
+
+  // useEffect(() => {
+  //   if (!isActive) return;
+
+  //   const loadStatus = async () => {
+  //     const { data } = await fetchSubscriptionStatus();
+
+  //     setSubscriptionStatus(data?.enterpriseSubscriptionStatus ?? null);
+  //   };
+
+  //   loadStatus();
+  // }, [subscriptionStatus, isActive, fetchSubscriptionStatus]);
+
   const licensee = subscriptionStatus?.licensee ?? null;
   const expiresAt = subscriptionStatus?.expiresAt
     ? new Date(subscriptionStatus.expiresAt)
@@ -129,6 +153,9 @@ export const SettingsEnterprise = ({
           message: t`Enterprise license activated successfully`,
         });
         setEnterpriseKey('');
+        const { data: statusData } = await fetchSubscriptionStatus();
+        setSubscriptionStatus(statusData?.enterpriseSubscriptionStatus ?? null);
+        setIsActive(true);
       } else {
         enqueueErrorSnackBar({
           message: t`Failed to activate enterprise license. Please check your key or contact support.`,
@@ -146,6 +173,8 @@ export const SettingsEnterprise = ({
     setEnterpriseKeyMutation,
     enqueueErrorSnackBar,
     enqueueSuccessSnackBar,
+    fetchSubscriptionStatus,
+    setSubscriptionStatus,
     t,
   ]);
 

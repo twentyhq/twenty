@@ -97,6 +97,10 @@ export class EnterpriseKeyService implements OnModuleInit {
     return false;
   }
 
+  isValidEnterpriseKeyFormat(key: string): boolean {
+    return this.verifyJwt<EnterpriseKeyPayload>(key) !== null;
+  }
+
   private checkLegacyKey(): boolean {
     const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
 
@@ -162,6 +166,8 @@ export class EnterpriseKeyService implements OnModuleInit {
     }
 
     const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
+
+    console.log('****enterpriseKey', enterpriseKey);
 
     if (!enterpriseKey) {
       this.logger.warn('No ENTERPRISE_KEY configured, skipping refresh');

@@ -63,6 +63,7 @@ import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -476,7 +477,8 @@ export class WorkspaceResolver {
   @UseGuards(
     WorkspaceAuthGuard,
     BillingDisabledGuard,
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
+    AdminPanelGuard,
+    NoPermissionGuard,
   )
   async enterprisePortalSession(
     @Args('returnUrlPath', { nullable: true }) returnUrlPath?: string,
@@ -488,7 +490,8 @@ export class WorkspaceResolver {
   @UseGuards(
     WorkspaceAuthGuard,
     BillingDisabledGuard,
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
+    AdminPanelGuard,
+    NoPermissionGuard,
   )
   async enterpriseCheckoutSession(
     @Args('billingInterval', { nullable: true }) billingInterval?: string,
@@ -504,7 +507,8 @@ export class WorkspaceResolver {
   @UseGuards(
     WorkspaceAuthGuard,
     BillingDisabledGuard,
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
+    AdminPanelGuard,
+    NoPermissionGuard,
   )
   async enterpriseSubscriptionStatus(): Promise<EnterpriseSubscriptionStatusDTO | null> {
     return this.enterpriseKeyService.getSubscriptionStatus();
@@ -514,12 +518,22 @@ export class WorkspaceResolver {
   @UseGuards(
     WorkspaceAuthGuard,
     BillingDisabledGuard,
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
+    AdminPanelGuard,
+    NoPermissionGuard,
   )
   async setEnterpriseKey(
     @Args('enterpriseKey') enterpriseKey: string,
   ): Promise<EnterpriseLicenseInfoDTO> {
     try {
+      if (
+        !this.enterpriseKeyService.isValidEnterpriseKeyFormat(enterpriseKey)
+      ) {
+        throw new WorkspaceException(
+          'Invalid enterprise key',
+          WorkspaceExceptionCode.INVALID_ENTERPRISE_KEY,
+        );
+      }
+
       await this.twentyConfigService.set('ENTERPRISE_KEY', enterpriseKey);
 
       await this.enterpriseKeyService.refreshValidityToken();
