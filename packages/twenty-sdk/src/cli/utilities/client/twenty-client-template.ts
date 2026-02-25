@@ -1,47 +1,70 @@
-import {
-  DEFAULT_API_KEY_NAME,
-  DEFAULT_API_URL_NAME,
-  DEFAULT_APP_ACCESS_TOKEN_NAME,
-} from 'twenty-shared/application';
+// Ambient type stubs for the genql-generated code this template gets
+// injected into. They enable full typecheck/lint on this file.
+// The section between the markers is stripped at injection time.
+// __GENQL_AMBIENT_START__
+/* eslint-disable @typescript-eslint/no-unused-vars */
+type QueryGenqlSelection = Record<string, unknown>;
+type MutationGenqlSelection = Record<string, unknown>;
+type GraphqlOperation = Record<string, unknown>;
 
-export const TWENTY_CLIENT_CONTENT = `
+type ClientOptions = {
+  url?: string;
+  headers?: HeadersInit | (() => HeadersInit | Promise<HeadersInit>);
+  fetcher?: (
+    operation: GraphqlOperation | GraphqlOperation[],
+  ) => Promise<unknown>;
+  fetch?: typeof globalThis.fetch;
+  batch?: unknown;
+};
 
-// ----------------------------------------------------
-// Custom Twenty client (auto-injected)
-// ----------------------------------------------------
+type Client = {
+  query: (
+    request: QueryGenqlSelection & { __name?: string },
+  ) => Promise<unknown>;
+  mutation: (
+    request: MutationGenqlSelection & { __name?: string },
+  ) => Promise<unknown>;
+};
 
-const APP_ACCESS_TOKEN_ENV_KEY = '${DEFAULT_APP_ACCESS_TOKEN_NAME}';
-const API_KEY_ENV_KEY = '${DEFAULT_API_KEY_NAME}';
+declare function createClient(options: ClientOptions): Client;
 
-type TwentyClientOptions = ClientOptions & {
-  metadataUrl?: string;
+declare class GenqlError extends Error {
+  constructor(errors: unknown, data: unknown);
 }
+/* eslint-enable @typescript-eslint/no-unused-vars */
+// __GENQL_AMBIENT_END__
 
-type ProcessEnvironment = Record<string, string | undefined>
+const APP_ACCESS_TOKEN_ENV_KEY = 'TWENTY_APP_ACCESS_TOKEN';
+const API_KEY_ENV_KEY = 'TWENTY_API_KEY';
 
-type GraphqlError = {
+type TwentyGeneratedClientOptions = ClientOptions;
+
+type ProcessEnvironment = Record<string, string | undefined>;
+
+type GraphqlErrorPayloadEntry = {
   message?: string;
   extensions?: { code?: string };
-}
+};
 
 type GraphqlResponsePayload = {
-  data?: Record<string, unknown>
-  errors?: GraphqlError[];
-}
+  data?: Record<string, unknown>;
+  errors?: GraphqlErrorPayloadEntry[];
+};
 
 type GraphqlResponse = {
   status: number;
   statusText: string;
   payload: GraphqlResponsePayload | null;
   rawBody: string;
-}
+};
 
 const getProcessEnvironment = (): ProcessEnvironment => {
-  const processObject = (globalThis as { process?: { env?: ProcessEnvironment } })
-    .process;
+  const processObject = (
+    globalThis as { process?: { env?: ProcessEnvironment } }
+  ).process;
 
   return processObject?.env ?? {};
-}
+};
 
 const getTokenFromAuthorizationHeader = (
   authorizationHeader: string | undefined,
@@ -65,15 +88,19 @@ const getTokenFromAuthorizationHeader = (
   }
 
   return trimmedAuthorizationHeader;
-}
+};
 
-const getTokenFromHeaders = (headers: HeadersInit | undefined): string | null => {
+const getTokenFromHeaders = (
+  headers: HeadersInit | undefined,
+): string | null => {
   if (!headers) {
     return null;
   }
 
   if (headers instanceof Headers) {
-    return getTokenFromAuthorizationHeader(headers.get('Authorization') ?? undefined);
+    return getTokenFromAuthorizationHeader(
+      headers.get('Authorization') ?? undefined,
+    );
   }
 
   if (Array.isArray(headers)) {
@@ -81,7 +108,9 @@ const getTokenFromHeaders = (headers: HeadersInit | undefined): string | null =>
       ([headerName]) => headerName.toLowerCase() === 'authorization',
     );
 
-    return getTokenFromAuthorizationHeader(matchedAuthorizationHeader?.[1]);
+    return getTokenFromAuthorizationHeader(
+      matchedAuthorizationHeader?.[1],
+    );
   }
 
   const headersRecord = headers as Record<string, string | undefined>;
@@ -89,7 +118,7 @@ const getTokenFromHeaders = (headers: HeadersInit | undefined): string | null =>
   return getTokenFromAuthorizationHeader(
     headersRecord.Authorization ?? headersRecord.authorization,
   );
-}
+};
 
 const hasAuthenticationErrorInGraphqlPayload = (
   payload: GraphqlResponsePayload | null,
@@ -98,42 +127,39 @@ const hasAuthenticationErrorInGraphqlPayload = (
     return false;
   }
 
-  return payload.errors.some((error) => {
+  return payload.errors.some((graphqlError) => {
     return (
-      error.extensions?.code === 'UNAUTHENTICATED' ||
-      // Fallback for payloads that don't provide structured error codes.
-      error.message?.toLowerCase() === 'unauthorized'
+      graphqlError.extensions?.code === 'UNAUTHENTICATED' ||
+      graphqlError.message?.toLowerCase() === 'unauthorized'
     );
   });
-}
+};
 
-const defaultOptions: TwentyClientOptions = {
-  url: \`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\`,
-  metadataUrl: \`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\`,
+const defaultOptions: TwentyGeneratedClientOptions = {
+  url: '__TWENTY_DEFAULT_URL__',
   headers: {
     'Content-Type': 'application/json',
   },
-}
+};
 
-export default class Twenty {
+export class TwentyGeneratedClient {
   private client: Client;
   private url: string;
-  private metadataUrl: string;
   private requestOptions: RequestInit;
   private headers: HeadersInit | (() => HeadersInit | Promise<HeadersInit>);
   private fetchImplementation: typeof globalThis.fetch | null;
   private authorizationToken: string | null;
-  private refreshAccessTokenPromise: Promise<string | null> | null = null;
+  private refreshAccessTokenPromise: Promise<string | null> | null =
+    null;
 
-  constructor(options?: TwentyClientOptions) {
-    const merged: TwentyClientOptions = {
+  constructor(options?: TwentyGeneratedClientOptions) {
+    const merged: TwentyGeneratedClientOptions = {
       ...defaultOptions,
       ...options,
-    }
+    };
 
     const {
       url,
-      metadataUrl,
       headers,
       fetch: customFetchImplementation,
       fetcher: _fetcher,
@@ -142,17 +168,17 @@ export default class Twenty {
     } = merged;
 
     this.url = url ?? '';
-    this.metadataUrl = metadataUrl ?? this.url.replace(/\\/graphql$/, '/metadata');
     this.requestOptions = requestOptions;
     this.headers = headers ?? {};
-    this.fetchImplementation = customFetchImplementation ?? globalThis.fetch ?? null;
+    this.fetchImplementation =
+      customFetchImplementation ?? globalThis.fetch ?? null;
 
     const processEnvironment = getProcessEnvironment();
     const tokenFromHeaders = getTokenFromHeaders(
       typeof headers === 'function' ? undefined : headers,
     );
 
-    // Priority: explicit header > TWENTY_APP_ACCESS_TOKEN > TWENTY_API_KEY (legacy fallback).
+    // Priority: explicit header > app access token > api key (legacy).
     this.authorizationToken =
       tokenFromHeaders ??
       processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] ??
@@ -169,14 +195,19 @@ export default class Twenty {
     });
   }
 
-  query<R extends QueryGenqlSelection>(request: R & { __name?: string }) {
+  query<R extends QueryGenqlSelection>(
+    request: R & { __name?: string },
+  ) {
     return this.client.query(request);
   }
 
-  mutation<R extends MutationGenqlSelection>(request: R & { __name?: string }) {
+  mutation<R extends MutationGenqlSelection>(
+    request: R & { __name?: string },
+  ) {
     return this.client.mutation(request);
   }
 
+  // __UPLOAD_FILE_START__
   async uploadFile(
     fileBuffer: Buffer,
     filename: string,
@@ -194,23 +225,33 @@ export default class Twenty {
     form.append(
       'operations',
       JSON.stringify({
-        query: \`mutation UploadFilesFieldFileByUniversalIdentifier($file: Upload!, $fieldMetadataUniversalIdentifier: String!) {
+        query: `mutation UploadFilesFieldFileByUniversalIdentifier($file: Upload!, $fieldMetadataUniversalIdentifier: String!) {
         uploadFilesFieldFileByUniversalIdentifier(file: $file, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { id path size createdAt url }
-      }\`,
-        variables: { file: null, fieldMetadataUniversalIdentifier },
+      }`,
+        variables: {
+          file: null,
+          fieldMetadataUniversalIdentifier,
+        },
       }),
     );
-    form.append('map', JSON.stringify({ '0': ['variables.file'] }));
-    form.append('0', new Blob([fileBuffer], { type: contentType }), filename);
+    form.append(
+      'map',
+      JSON.stringify({ '0': ['variables.file'] }),
+    );
+    form.append(
+      '0',
+      new Blob([fileBuffer as BlobPart], { type: contentType }),
+      filename,
+    );
 
-    const result = await this.executeGraphqlRequestWithOptionalRefresh({
-      operation: form,
-      url: this.metadataUrl,
-      headers: {},
-      requestInit: {
-        method: 'POST',
-      },
-    });
+    const result =
+      await this.executeGraphqlRequestWithOptionalRefresh({
+        operation: form,
+        headers: {},
+        requestInit: {
+          method: 'POST',
+        },
+      });
 
     if (result.errors) {
       throw new GenqlError(result.errors, result.data);
@@ -224,35 +265,33 @@ export default class Twenty {
       size: number;
       createdAt: string;
       url: string;
-    }
+    };
   }
+  // __UPLOAD_FILE_END__
 
   private async executeGraphqlRequestWithOptionalRefresh({
     operation,
-    url = this.url,
     headers,
     requestInit,
   }: {
     operation: GraphqlOperation | GraphqlOperation[] | FormData;
-    url?: string;
     headers?: HeadersInit;
     requestInit?: RequestInit;
   }) {
     const firstResponse = await this.executeGraphqlRequest({
       operation,
-      url,
       headers,
       requestInit,
       token: this.authorizationToken,
     });
 
     if (this.shouldRefreshToken(firstResponse)) {
-      const refreshedAccessToken = await this.requestRefreshedAccessToken();
+      const refreshedAccessToken =
+        await this.requestRefreshedAccessToken();
 
       if (refreshedAccessToken) {
         const retryResponse = await this.executeGraphqlRequest({
           operation,
-          url,
           headers,
           requestInit,
           token: refreshedAccessToken,
@@ -267,20 +306,19 @@ export default class Twenty {
 
   private async executeGraphqlRequest({
     operation,
-    url,
     headers,
     requestInit,
     token,
   }: {
     operation: GraphqlOperation | GraphqlOperation[] | FormData;
-    url: string;
     headers?: HeadersInit;
     requestInit?: RequestInit;
     token: string | null;
   }): Promise<GraphqlResponse> {
     if (!this.fetchImplementation) {
       throw new Error(
-        'Global \`fetch\` function is not available, pass a fetch implementation to the Twenty client',
+        'Global `fetch` function is not available, ' +
+          'pass a fetch implementation to the Twenty client',
       );
     }
 
@@ -288,7 +326,9 @@ export default class Twenty {
     const requestHeaders = new Headers(resolvedHeaders);
 
     if (headers) {
-      new Headers(headers).forEach((value, key) => requestHeaders.set(key, value));
+      new Headers(headers).forEach((value, key) =>
+        requestHeaders.set(key, value),
+      );
     }
 
     if (operation instanceof FormData) {
@@ -298,25 +338,34 @@ export default class Twenty {
     }
 
     if (token) {
-      requestHeaders.set('Authorization', \`Bearer \${token}\`);
+      requestHeaders.set('Authorization', `Bearer ${token}`);
     } else {
       requestHeaders.delete('Authorization');
     }
 
-    const response = await this.fetchImplementation.call(globalThis, url, {
-      ...this.requestOptions,
-      ...requestInit,
-      method: requestInit?.method ?? 'POST',
-      headers: requestHeaders,
-      body: operation instanceof FormData ? operation : JSON.stringify(operation),
-    });
+    const response = await this.fetchImplementation.call(
+      globalThis,
+      this.url,
+      {
+        ...this.requestOptions,
+        ...requestInit,
+        method: requestInit?.method ?? 'POST',
+        headers: requestHeaders,
+        body:
+          operation instanceof FormData
+            ? operation
+            : JSON.stringify(operation),
+      },
+    );
 
     const rawBody = await response.text();
     let payload: GraphqlResponsePayload | null = null;
 
     if (rawBody.trim().length > 0) {
       try {
-        payload = JSON.parse(rawBody) as GraphqlResponsePayload;
+        payload = JSON.parse(
+          rawBody,
+        ) as GraphqlResponsePayload;
       } catch {
         payload = null;
       }
@@ -327,7 +376,7 @@ export default class Twenty {
       statusText: response.statusText,
       payload,
       rawBody,
-    }
+    };
   }
 
   private async resolveHeaders(): Promise<HeadersInit> {
@@ -348,7 +397,9 @@ export default class Twenty {
 
   private assertResponseIsSuccessful(response: GraphqlResponse) {
     if (response.status < 200 || response.status >= 300) {
-      throw new Error(\`\${response.statusText}: \${response.rawBody}\`);
+      throw new Error(
+        `${response.statusText}: ${response.rawBody}`,
+      );
     }
 
     if (response.payload === null) {
@@ -362,8 +413,8 @@ export default class Twenty {
     const refreshAccessTokenFunction = (
       globalThis as {
         frontComponentHostCommunicationApi?: {
-          requestAccessTokenRefresh?: () => Promise<string>
-        }
+          requestAccessTokenRefresh?: () => Promise<string>;
+        };
       }
     ).frontComponentHostCommunicationApi?.requestAccessTokenRefresh;
 
@@ -385,8 +436,11 @@ export default class Twenty {
 
           return refreshedAccessToken;
         })
-        .catch((error) => {
-          console.error('Twenty client: token refresh failed', error);
+        .catch((refreshError: unknown) => {
+          console.error(
+            'Twenty client: token refresh failed',
+            refreshError,
+          );
 
           return null;
         })
@@ -406,5 +460,3 @@ export default class Twenty {
     processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] = token;
   }
 }
-
-`;
