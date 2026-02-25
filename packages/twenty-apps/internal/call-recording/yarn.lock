@@ -3148,7 +3148,7 @@ __metadata:
     "@types/react": "npm:^18.2.0"
     eslint: "npm:^9.32.0"
     react: "npm:^18.2.0"
-    twenty-sdk: "npm:latest"
+    twenty-sdk: "portal:../../../twenty-sdk"
     typescript: "npm:^5.9.3"
     typescript-eslint: "npm:^8.50.0"
   languageName: unknown
@@ -6576,9 +6576,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:latest":
-  version: 0.6.0
-  resolution: "twenty-sdk@npm:0.6.0"
+"twenty-sdk@portal:../../../twenty-sdk::locator=call-recording%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "twenty-sdk@portal:../../../twenty-sdk::locator=call-recording%40workspace%3A."
   dependencies:
     "@chakra-ui/react": "npm:^3.33.0"
     "@emotion/react": "npm:^11.14.0"
@@ -6614,9 +6614,8 @@ __metadata:
     zod: "npm:^4.1.11"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/7bcf646a309f9bcf8491d2c236f0a0cc62692ddd5f0e4996e2a4c483efa812da8ed54cf8fa904b0478ed31225aa21d78fe0a5188a6d1e7205406802a3e5ed66e
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "type-check@npm:^0.4.0, type-check@npm:~0.4.0":
   version: 0.4.0

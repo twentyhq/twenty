@@ -13,6 +13,7 @@ import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useR
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -101,9 +102,12 @@ export const useFrontComponentExecutionContext = ({
       }
     };
 
+  const { targetRecordIdentifier } = useLayoutRenderingContext();
+
   const executionContext: FrontComponentExecutionContext = {
     frontComponentId,
     userId: currentUser?.id ?? null,
+    recordId: targetRecordIdentifier?.id ?? null,
   };
 
   const unmountFrontComponent: FrontComponentHostCommunicationApi['unmountFrontComponent'] =

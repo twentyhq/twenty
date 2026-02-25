@@ -1,10 +1,13 @@
-import { defineFrontComponent } from 'twenty-sdk';
+import { VideoPlayer } from 'src/components/VideoPlayer';
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
 
 export const MediaPlayer = () => {
+  const recordId = useRecordId();
+
   return (
-    <video controls>
-      <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4"/>
-    </video>
+    <VideoPlayer
+      src={`https://www.w3schools.com/html/mov_bbb.mp4`}
+    />
   );
 };
 

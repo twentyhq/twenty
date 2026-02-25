@@ -14,7 +14,7 @@
     "lint:fix": "eslint --fix"
   },
   "dependencies": {
-    "twenty-sdk": "latest"
+    "twenty-sdk": "portal:../../../twenty-sdk"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",

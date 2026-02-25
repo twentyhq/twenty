@@ -82,6 +82,7 @@ export {
   unmountFrontComponent,
   useFrontComponentExecutionContext,
   useFrontComponentId,
+  useRecordId,
   useUserId,
 } from './front-component-api';
 export type { FrontComponentExecutionContext } from './front-component-api';
