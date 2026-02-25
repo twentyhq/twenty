@@ -1,6 +1,9 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { isDynamicRelationWidget } from '@/page-layout/utils/isDynamicRelationWidget';
-import { type UpdatePageLayoutWithTabsInput } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  type UpdatePageLayoutWithTabsInput,
+} from '~/generated-metadata/graphql';
 
 export const convertPageLayoutDraftToUpdateInput = (
   pageLayoutDraft: DraftPageLayout,
@@ -28,7 +31,7 @@ export const convertPageLayoutDraftToUpdateInput = (
             columnSpan: widget.gridPosition.columnSpan,
           },
           position: {
-            layoutMode: 'GRID',
+            layoutMode: PageLayoutTabLayoutMode.GRID,
             row: widget.gridPosition.row,
             column: widget.gridPosition.column,
             rowSpan: widget.gridPosition.rowSpan,

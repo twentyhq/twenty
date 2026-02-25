@@ -25,7 +25,6 @@ export const convertLayoutsToWidgets = (
         columnSpan,
       },
       position: {
-        __typename: 'PageLayoutWidgetGridPosition' as const,
         layoutMode: PageLayoutTabLayoutMode.GRID,
         row,
         column,
