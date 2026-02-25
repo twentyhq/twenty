@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -16,13 +15,13 @@ import {
 import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -82,9 +81,10 @@ export const RecordDetailRelationSection = ({
     );
   }
 
-  const fieldValue = useRecoilValue<
-    ({ id: string } & Record<string, any>) | ObjectRecord[] | null
-  >(recordStoreFamilySelector({ recordId, fieldName }));
+  const fieldValue = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
+    recordId,
+    fieldName,
+  }) as ({ id: string } & Record<string, unknown>) | ObjectRecord[] | null;
 
   // TODO: use new relation type
   const isToOneObject = relationType === RelationType.MANY_TO_ONE;
@@ -101,12 +101,12 @@ export const RecordDetailRelationSection = ({
     instanceId: scopeInstanceId,
   });
 
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
 
-  const indexViewId = useFamilySelectorValueV2(
+  const indexViewId = useAtomFamilySelectorValue(
     coreIndexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: relationObjectMetadataItem.id },
   );

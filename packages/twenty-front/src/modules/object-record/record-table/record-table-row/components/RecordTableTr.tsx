@@ -11,8 +11,9 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { forwardRef, type ReactNode } from 'react';
 
 type RecordTableTrProps = {
@@ -40,41 +41,41 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
   ) => {
     const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-    const currentRowSelected = useRecoilComponentFamilyValue(
+    const currentRowSelected = useAtomComponentFamilyStateValue(
       isRowSelectedComponentFamilyState,
       recordId,
     );
 
-    const isActive = useRecoilComponentFamilyValue(
+    const isActive = useAtomComponentFamilyStateValue(
       isRecordTableRowActiveComponentFamilyState,
       focusIndex,
     );
 
-    const isNextRowActive = useRecoilComponentFamilyValue(
+    const isNextRowActive = useAtomComponentFamilyStateValue(
       isRecordTableRowActiveComponentFamilyState,
       focusIndex + 1,
     );
 
-    const nextRecordId = useRecoilComponentFamilyValue(
+    const nextRecordId = useAtomComponentFamilySelectorValue(
       recordIdByRealIndexComponentFamilySelector,
       focusIndex + 1,
     );
 
-    const isNextRecordIdFirstOfGroup = useRecoilComponentFamilyValue(
+    const isNextRecordIdFirstOfGroup = useAtomComponentFamilySelectorValue(
       isRecordIdFirstOfGroupComponentFamilySelector,
-      nextRecordId,
+      nextRecordId ?? '',
     );
 
-    const isFocused = useRecoilComponentFamilyValue(
+    const isFocused = useAtomComponentFamilyStateValue(
       isRecordTableRowFocusedComponentFamilyState,
       focusIndex,
     );
 
-    const isRowFocusActive = useRecoilComponentValue(
+    const isRowFocusActive = useAtomComponentStateValue(
       isRecordTableRowFocusActiveComponentState,
     );
 
-    const isNextRowFocused = useRecoilComponentFamilyValue(
+    const isNextRowFocused = useAtomComponentFamilyStateValue(
       isRecordTableRowFocusedComponentFamilyState,
       focusIndex + 1,
     );

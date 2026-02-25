@@ -1,5 +1,3 @@
-import { useRecoilState } from 'recoil';
-
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { useRefreshShowPageFindManyActivitiesQueries } from '@/activities/hooks/useRefreshShowPageFindManyActivitiesQueries';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
@@ -10,8 +8,8 @@ import { type Task } from '@/activities/types/Task';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isDefined } from 'twenty-shared/utils';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useUpsertActivity = ({
   activityObjectNameSingular,
@@ -20,9 +18,7 @@ export const useUpsertActivity = ({
     | CoreObjectNameSingular.Task
     | CoreObjectNameSingular.Note;
 }) => {
-  const [isActivityInCreateMode] = useRecoilStateV2(
-    isActivityInCreateModeState,
-  );
+  const [isActivityInCreateMode] = useAtomState(isActivityInCreateModeState);
 
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord();
 
@@ -30,11 +26,11 @@ export const useUpsertActivity = ({
     activityObjectNameSingular,
   });
 
-  const [, setIsUpsertingActivityInDB] = useRecoilState(
+  const [, setIsUpsertingActivityInDB] = useAtomState(
     isUpsertingActivityInDBState,
   );
 
-  const objectShowPageTargetableObject = useRecoilValueV2(
+  const objectShowPageTargetableObject = useAtomStateValue(
     objectShowPageTargetableObjectStateV2,
   );
 

@@ -13,6 +13,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     shortcut,
     duplicateCriteria,
     id,
+    universalIdentifier,
     isActive,
     isCustom,
     isLabelSyncedWithName,
@@ -32,6 +33,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
 
   return {
     id,
+    universalIdentifier,
     isActive,
     isCustom,
     isLabelSyncedWithName,

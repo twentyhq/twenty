@@ -1,3 +1,6 @@
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
+
 import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { isMultiDragActiveComponentState } from '@/object-record/record-drag/states/isMultiDragActiveComponentState';
@@ -7,98 +10,100 @@ import { originalDragSelectionComponentState } from '@/object-record/record-drag
 
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
 import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { type DragStart } from '@hello-pangea/dnd';
-import { useRecoilCallback } from 'recoil';
 
 export const useStartRecordDrag = (contextStoreInstanceId?: string) => {
-  const isMultiDragActiveCallbackState = useRecoilComponentCallbackState(
+  const store = useStore();
+  const isMultiDragActiveCallbackState = useAtomComponentStateCallbackState(
     isMultiDragActiveComponentState,
     contextStoreInstanceId,
   );
 
-  const draggedRecordIdsCallbackState = useRecoilComponentCallbackState(
+  const draggedRecordIdsCallbackState = useAtomComponentStateCallbackState(
     draggedRecordIdsComponentState,
     contextStoreInstanceId,
   );
 
   const isRecordIdPrimaryDragMultipleCallbackState =
-    useRecoilComponentCallbackState(
+    useAtomComponentFamilyStateCallbackState(
       isRecordIdPrimaryDragMultipleComponentFamilyState,
       contextStoreInstanceId,
     );
 
   const isRecordIdSecondaryDragMultipleCallbackState =
-    useRecoilComponentCallbackState(
+    useAtomComponentFamilyStateCallbackState(
       isRecordIdSecondaryDragMultipleComponentFamilyState,
       contextStoreInstanceId,
     );
 
-  const primaryDraggedRecordIdCallbackState = useRecoilComponentCallbackState(
-    primaryDraggedRecordIdComponentState,
-    contextStoreInstanceId,
-  );
+  const primaryDraggedRecordIdCallbackState =
+    useAtomComponentStateCallbackState(
+      primaryDraggedRecordIdComponentState,
+      contextStoreInstanceId,
+    );
 
-  const originalSelectionCallbackState = useRecoilComponentCallbackState(
+  const originalSelection = useAtomComponentStateCallbackState(
     originalDragSelectionComponentState,
     contextStoreInstanceId,
   );
 
-  const isDraggingRecordCallbackState = useRecoilComponentCallbackState(
+  const isDraggingRecord = useAtomComponentStateCallbackState(
     isDraggingRecordComponentState,
     contextStoreInstanceId,
   );
 
-  const startRecordDrag = useRecoilCallback(
-    ({ set }) =>
-      (start: DragStart, selectedRecordIds: string[]) => {
-        set(isDraggingRecordCallbackState, true);
+  const startRecordDrag = useCallback(
+    (start: DragStart, selectedRecordIds: string[]) => {
+      store.set(isDraggingRecord, true);
 
-        const draggedRecordId = start.draggableId;
+      const draggedRecordId = start.draggableId;
 
-        const dragOperationType = getDragOperationType({
-          draggedRecordId,
-          selectedRecordIds,
-        });
+      const dragOperationType = getDragOperationType({
+        draggedRecordId,
+        selectedRecordIds,
+      });
 
-        if (dragOperationType === 'multi') {
-          set(isMultiDragActiveCallbackState, true);
-          set(draggedRecordIdsCallbackState, selectedRecordIds);
-          set(primaryDraggedRecordIdCallbackState, draggedRecordId);
-          set(originalSelectionCallbackState, selectedRecordIds);
+      if (dragOperationType === 'multi') {
+        store.set(isMultiDragActiveCallbackState, true);
+        store.set(draggedRecordIdsCallbackState, selectedRecordIds);
+        store.set(primaryDraggedRecordIdCallbackState, draggedRecordId);
+        store.set(originalSelection, selectedRecordIds);
 
-          set(
-            isRecordIdPrimaryDragMultipleCallbackState({
-              recordId: draggedRecordId,
+        store.set(
+          isRecordIdPrimaryDragMultipleCallbackState({
+            recordId: draggedRecordId,
+          }),
+          true,
+        );
+
+        const secondaryDraggedIds = selectedRecordIds.filter(
+          (recordIdToFilter) => recordIdToFilter !== draggedRecordId,
+        );
+
+        for (const secondaryDraggedId of secondaryDraggedIds) {
+          store.set(
+            isRecordIdSecondaryDragMultipleCallbackState({
+              recordId: secondaryDraggedId,
             }),
             true,
           );
-
-          const secondaryDraggedIds = selectedRecordIds.filter(
-            (recordIdToFilter) => recordIdToFilter !== draggedRecordId,
-          );
-
-          for (const secondaryDraggedId of secondaryDraggedIds) {
-            set(
-              isRecordIdSecondaryDragMultipleCallbackState({
-                recordId: secondaryDraggedId,
-              }),
-              true,
-            );
-          }
-        } else {
-          set(isMultiDragActiveCallbackState, true);
-          set(draggedRecordIdsCallbackState, [draggedRecordId]);
-          set(primaryDraggedRecordIdCallbackState, draggedRecordId);
-          set(originalSelectionCallbackState, [draggedRecordId]);
         }
-      },
+      } else {
+        store.set(isMultiDragActiveCallbackState, true);
+        store.set(draggedRecordIdsCallbackState, [draggedRecordId]);
+        store.set(primaryDraggedRecordIdCallbackState, draggedRecordId);
+        store.set(originalSelection, [draggedRecordId]);
+      }
+    },
     [
+      store,
       isMultiDragActiveCallbackState,
       draggedRecordIdsCallbackState,
       primaryDraggedRecordIdCallbackState,
-      originalSelectionCallbackState,
-      isDraggingRecordCallbackState,
+      originalSelection,
+      isDraggingRecord,
       isRecordIdSecondaryDragMultipleCallbackState,
       isRecordIdPrimaryDragMultipleCallbackState,
     ],

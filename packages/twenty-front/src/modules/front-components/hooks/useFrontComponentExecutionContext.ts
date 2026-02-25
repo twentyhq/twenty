@@ -1,4 +1,4 @@
-import { useSetRecoilState } from 'recoil';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
@@ -9,9 +9,10 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -24,10 +25,13 @@ export const useFrontComponentExecutionContext = ({
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
 } => {
-  const currentUser = useRecoilValueV2(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const navigateApp = useNavigateApp();
+  const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
+    frontComponentId,
+  });
   const { navigateCommandMenu } = useNavigateCommandMenu();
-  const setCommandMenuSearchState = useSetRecoilState(commandMenuSearchState);
+  const setCommandMenuSearchState = useSetAtomState(commandMenuSearchState);
   const { getIcon } = useIcons();
   const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();
   const {
@@ -115,6 +119,7 @@ export const useFrontComponentExecutionContext = ({
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
+      requestAccessTokenRefresh,
       openSidePanelPage,
       enqueueSnackbar,
       unmountFrontComponent,

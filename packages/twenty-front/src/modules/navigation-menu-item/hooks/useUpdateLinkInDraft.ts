@@ -1,9 +1,9 @@
 import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
 
 export const useUpdateLinkInDraft = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilStateV2(
+  const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftStateV2,
   );
 

@@ -2,10 +2,9 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { commandMenuWidthState } from '@/command-menu/states/commandMenuWidthState';
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
 import { WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyNodeDefinition';
 import { useResetWorkflowInsertStepIds } from '@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds';
@@ -61,10 +60,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useRecoilCallback } from 'recoil';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
+import { useStore } from 'jotai';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -166,35 +165,36 @@ export const WorkflowDiagramCanvasBase = ({
     event: MouseEvent | React.MouseEvent<Element, MouseEvent>;
   }) => void;
 }) => {
+  const store = useStore();
   const theme = useTheme();
 
   const reactflow = useReactFlow();
 
-  const workflowDiagram = useRecoilComponentValue(
+  const currentWorkflowDiagram = useAtomComponentStateValue(
     workflowDiagramComponentState,
   );
-  const workflowDiagramPanOnDrag = useRecoilComponentValue(
+  const workflowDiagramPanOnDrag = useAtomComponentStateValue(
     workflowDiagramPanOnDragComponentState,
   );
-  const workflowDiagramState = useRecoilComponentCallbackState(
+  const workflowDiagram = useAtomComponentStateCallbackState(
     workflowDiagramComponentState,
   );
-  const setWorkflowDiagram = useSetRecoilComponentState(
+  const setWorkflowDiagram = useSetAtomComponentState(
     workflowDiagramComponentState,
   );
-  const setWorkflowSelectedNode = useSetRecoilComponentState(
+  const setWorkflowSelectedNode = useSetAtomComponentState(
     workflowSelectedNodeComponentState,
   );
   const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
-  const workflowDiagramWaitingNodesDimensionsState =
-    useRecoilComponentCallbackState(
+  const workflowDiagramWaitingNodesDimensions =
+    useAtomComponentStateCallbackState(
       workflowDiagramWaitingNodesDimensionsComponentState,
     );
-  const setWorkflowDiagramWaitingNodesDimensions = useSetRecoilComponentState(
+  const setWorkflowDiagramWaitingNodesDimensions = useSetAtomComponentState(
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
 
-  const workflowInsertStepIds = useRecoilComponentValue(
+  const workflowInsertStepIds = useAtomComponentStateValue(
     workflowInsertStepIdsComponentState,
   );
 
@@ -213,12 +213,12 @@ export const WorkflowDiagramCanvasBase = ({
   } | null>(null);
 
   const { nodes, edges } = useMemo(() => {
-    if (!isDefined(workflowDiagram)) {
+    if (!isDefined(currentWorkflowDiagram)) {
       return { nodes: [], edges: [] };
     }
 
-    const nodes = [...workflowDiagram.nodes];
-    const edges = [...workflowDiagram.edges];
+    const nodes = [...currentWorkflowDiagram.nodes];
+    const edges = [...currentWorkflowDiagram.edges];
 
     if (
       isDefined(workflowInsertStepIds.position) &&
@@ -255,9 +255,9 @@ export const WorkflowDiagramCanvasBase = ({
     }
 
     return { nodes, edges };
-  }, [workflowDiagram, workflowInsertStepIds]);
+  }, [currentWorkflowDiagram, workflowInsertStepIds]);
 
-  const isCommandMenuOpened = useRecoilValueV2(isCommandMenuOpenedStateV2);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedStateV2);
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const handleEdgesChange = (
@@ -284,91 +284,83 @@ export const WorkflowDiagramCanvasBase = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const setFlowViewport = useRecoilCallback(
-    ({ snapshot }) =>
-      ({
-        workflowDiagramFlowInitialized,
-        isCommandMenuOpened,
-        workflowDiagram,
-        isInRightDrawer,
-      }: {
-        workflowDiagramFlowInitialized: boolean;
-        isCommandMenuOpened: boolean;
-        workflowDiagram: WorkflowDiagram | undefined;
-        isInRightDrawer: boolean;
-      }) => {
-        if (
-          !isDefined(containerRef.current) ||
-          !workflowDiagramFlowInitialized
-        ) {
-          return;
-        }
+  const setFlowViewport = useCallback(
+    ({
+      workflowDiagramFlowInitialized,
+      isCommandMenuOpened,
+      workflowDiagram,
+      isInRightDrawer,
+    }: {
+      workflowDiagramFlowInitialized: boolean;
+      isCommandMenuOpened: boolean;
+      workflowDiagram: WorkflowDiagram | undefined;
+      isInRightDrawer: boolean;
+    }) => {
+      if (!isDefined(containerRef.current) || !workflowDiagramFlowInitialized) {
+        return;
+      }
 
-        const currentViewport = reactflow.getViewport();
-        const nodes = workflowDiagram?.nodes ?? [];
+      const currentViewport = reactflow.getViewport();
+      const nodes = workflowDiagram?.nodes ?? [];
 
-        const canComputeNodesBounds = nodes.every((node) =>
-          isDefined(node.measured),
-        );
+      const canComputeNodesBounds = nodes.every((node) =>
+        isDefined(node.measured),
+      );
 
-        if (!canComputeNodesBounds) {
-          setWorkflowDiagramWaitingNodesDimensions(true);
-          return;
-        }
+      if (!canComputeNodesBounds) {
+        setWorkflowDiagramWaitingNodesDimensions(true);
+        return;
+      }
 
-        setWorkflowDiagramWaitingNodesDimensions(false);
+      setWorkflowDiagramWaitingNodesDimensions(false);
 
-        const baseContainerWidth = containerRef.current.offsetWidth;
-        const hasViewportBeenMoved = currentViewport.x !== 0;
+      const baseContainerWidth = containerRef.current.offsetWidth;
+      const hasViewportBeenMoved = currentViewport.x !== 0;
 
-        let adjustedContainerWidth = baseContainerWidth;
+      let adjustedContainerWidth = baseContainerWidth;
 
-        const commandMenuWidth = getSnapshotValue(
-          snapshot,
-          commandMenuWidthState,
-        );
+      const commandMenuWidth = store.get(commandMenuWidthState.atom);
 
-        if (!isInRightDrawer && isCommandMenuOpened) {
-          adjustedContainerWidth = baseContainerWidth - commandMenuWidth;
-        } else if (!isInRightDrawer && hasViewportBeenMoved) {
-          adjustedContainerWidth = baseContainerWidth + commandMenuWidth;
-        }
+      if (!isInRightDrawer && isCommandMenuOpened) {
+        adjustedContainerWidth = baseContainerWidth - commandMenuWidth;
+      } else if (!isInRightDrawer && hasViewportBeenMoved) {
+        adjustedContainerWidth = baseContainerWidth + commandMenuWidth;
+      }
 
-        const flowBounds = reactflow.getNodesBounds(nodes);
-        const centeredXPosition =
-          adjustedContainerWidth / 2 - flowBounds.width / 2;
+      const flowBounds = reactflow.getNodesBounds(nodes);
+      const centeredXPosition =
+        adjustedContainerWidth / 2 - flowBounds.width / 2;
 
-        reactflow.setViewport(
-          {
-            ...currentViewport,
-            x: centeredXPosition,
-            zoom: defaultFitViewOptions.maxZoom,
-          },
-          { duration: hasViewportBeenMoved ? 300 : 0 },
-        );
-      },
-    [reactflow, setWorkflowDiagramWaitingNodesDimensions],
+      reactflow.setViewport(
+        {
+          ...currentViewport,
+          x: centeredXPosition,
+          zoom: defaultFitViewOptions.maxZoom,
+        },
+        { duration: hasViewportBeenMoved ? 300 : 0 },
+      );
+    },
+    [reactflow, setWorkflowDiagramWaitingNodesDimensions, store],
   );
 
-  const handleSetFlowViewportOnChange = useRecoilCallback(
-    ({ snapshot }) =>
-      ({
-        workflowDiagramFlowInitialized,
-        isCommandMenuOpened,
+  const handleSetFlowViewportOnChange = useCallback(
+    ({
+      workflowDiagramFlowInitialized,
+      isCommandMenuOpened,
+      isInRightDrawer,
+    }: {
+      workflowDiagramFlowInitialized: boolean;
+      isCommandMenuOpened: boolean;
+      isInRightDrawer: boolean;
+    }) => {
+      setFlowViewport({
         isInRightDrawer,
-      }: {
-        workflowDiagramFlowInitialized: boolean;
-        isCommandMenuOpened: boolean;
-        isInRightDrawer: boolean;
-      }) => {
-        setFlowViewport({
-          isInRightDrawer,
-          isCommandMenuOpened,
-          workflowDiagramFlowInitialized,
-          workflowDiagram: getSnapshotValue(snapshot, workflowDiagramState),
-        });
-      },
-    [setFlowViewport, workflowDiagramState],
+        isCommandMenuOpened,
+        workflowDiagramFlowInitialized,
+        workflowDiagram: store.get(workflowDiagram),
+      });
+    },
+    [setFlowViewport, workflowDiagram, store],
   );
 
   useEffect(() => {
@@ -384,54 +376,53 @@ export const WorkflowDiagramCanvasBase = ({
     isInRightDrawer,
   ]);
 
-  const handleNodesChanges = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (changes: NodeChange<WorkflowDiagramNode>[]) => {
-        const workflowDiagram = getSnapshotValue(
-          snapshot,
-          workflowDiagramState,
-        );
+  const handleNodesChanges = useCallback(
+    (changes: NodeChange<WorkflowDiagramNode>[]) => {
+      const existingWorkflowDiagram = store.get(workflowDiagram);
 
-        const filteredChanges = changes.filter(
-          (change) =>
-            !(
-              'id' in change &&
-              change.id === WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION.id
-            ),
-        );
+      const filteredChanges = changes.filter(
+        (change) =>
+          !(
+            'id' in change &&
+            change.id === WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION.id
+          ),
+      );
 
-        let updatedWorkflowDiagram = workflowDiagram;
-        if (isDefined(workflowDiagram) && filteredChanges.length > 0) {
-          updatedWorkflowDiagram = {
-            ...workflowDiagram,
-            nodes: applyNodeChanges(filteredChanges, workflowDiagram.nodes),
-          };
-        }
+      let updatedWorkflowDiagram = existingWorkflowDiagram;
+      if (isDefined(existingWorkflowDiagram) && filteredChanges.length > 0) {
+        updatedWorkflowDiagram = {
+          ...existingWorkflowDiagram,
+          nodes: applyNodeChanges(
+            filteredChanges,
+            existingWorkflowDiagram.nodes,
+          ),
+        };
+      }
 
-        set(workflowDiagramState, updatedWorkflowDiagram);
+      store.set(workflowDiagram, updatedWorkflowDiagram);
 
-        const workflowDiagramWaitingNodesDimensions = getSnapshotValue(
-          snapshot,
-          workflowDiagramWaitingNodesDimensionsState,
-        );
-        if (!workflowDiagramWaitingNodesDimensions) {
-          return;
-        }
+      const currentWorkflowDiagramWaitingNodesDimensions = store.get(
+        workflowDiagramWaitingNodesDimensions,
+      );
+      if (!currentWorkflowDiagramWaitingNodesDimensions) {
+        return;
+      }
 
-        setFlowViewport({
-          isCommandMenuOpened,
-          workflowDiagramFlowInitialized,
-          workflowDiagram: updatedWorkflowDiagram,
-          isInRightDrawer,
-        });
-      },
+      setFlowViewport({
+        isCommandMenuOpened,
+        workflowDiagramFlowInitialized,
+        workflowDiagram: updatedWorkflowDiagram,
+        isInRightDrawer,
+      });
+    },
     [
       isCommandMenuOpened,
       setFlowViewport,
       workflowDiagramFlowInitialized,
-      workflowDiagramState,
-      workflowDiagramWaitingNodesDimensionsState,
+      workflowDiagram,
+      workflowDiagramWaitingNodesDimensions,
       isInRightDrawer,
+      store,
     ],
   );
 

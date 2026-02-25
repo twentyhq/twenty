@@ -6,22 +6,25 @@ import { type BoardCardIndexes } from '@/object-record/record-board/types/BoardC
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useFocusedRecordBoardCard = (recordBoardId?: string) => {
-  const isCardFocusedState = useRecoilComponentCallbackState(
+  const store = useStore();
+  const isCardFocused = useAtomComponentFamilyStateCallbackState(
     isRecordBoardCardFocusedComponentFamilyState,
     recordBoardId,
   );
 
-  const focusedBoardCardIndexesState = useRecoilComponentCallbackState(
+  const focusedBoardCardIndexes = useAtomComponentStateCallbackState(
     focusedRecordBoardCardIndexesComponentState,
     recordBoardId,
   );
 
-  const isCardFocusActiveState = useRecoilComponentCallbackState(
+  const isCardFocusActive = useAtomComponentStateCallbackState(
     isRecordBoardCardFocusActiveComponentState,
     recordBoardId,
   );
@@ -30,85 +33,79 @@ export const useFocusedRecordBoardCard = (recordBoardId?: string) => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const unfocusBoardCard = useRecoilCallback(
-    ({ set, snapshot }) =>
-      () => {
-        const focusedBoardCardIndexes = snapshot
-          .getLoadable(focusedBoardCardIndexesState)
-          .getValue();
+  const unfocusBoardCard = useCallback(() => {
+    const currentFocusedBoardCardIndexes = store.get(focusedBoardCardIndexes);
 
-        if (!isDefined(focusedBoardCardIndexes)) {
-          return;
-        }
+    if (!isDefined(currentFocusedBoardCardIndexes)) {
+      return;
+    }
 
-        const focusId = getRecordBoardCardFocusId({
+    const focusId = getRecordBoardCardFocusId({
+      recordBoardId: recordBoardId || '',
+      cardIndexes: currentFocusedBoardCardIndexes,
+    });
+
+    removeFocusItemFromFocusStackById({
+      focusId,
+    });
+
+    store.set(focusedBoardCardIndexes, null);
+    store.set(isCardFocused(currentFocusedBoardCardIndexes), false);
+    store.set(isCardFocusActive, false);
+  }, [
+    store,
+    focusedBoardCardIndexes,
+    isCardFocused,
+    isCardFocusActive,
+    recordBoardId,
+    removeFocusItemFromFocusStackById,
+  ]);
+
+  const focusBoardCard = useCallback(
+    (boardCardIndexes: BoardCardIndexes) => {
+      const currentFocusedBoardCardIndexes = store.get(focusedBoardCardIndexes);
+
+      if (
+        isDefined(currentFocusedBoardCardIndexes) &&
+        (currentFocusedBoardCardIndexes.rowIndex !==
+          boardCardIndexes.rowIndex ||
+          currentFocusedBoardCardIndexes.columnIndex !==
+            boardCardIndexes.columnIndex)
+      ) {
+        store.set(isCardFocused(currentFocusedBoardCardIndexes), false);
+
+        const currentFocusId = getRecordBoardCardFocusId({
           recordBoardId: recordBoardId || '',
-          cardIndexes: focusedBoardCardIndexes,
+          cardIndexes: currentFocusedBoardCardIndexes,
         });
 
         removeFocusItemFromFocusStackById({
-          focusId,
+          focusId: currentFocusId,
         });
+      }
 
-        set(focusedBoardCardIndexesState, null);
-        set(isCardFocusedState(focusedBoardCardIndexes), false);
-        set(isCardFocusActiveState, false);
-      },
+      const focusId = getRecordBoardCardFocusId({
+        recordBoardId: recordBoardId || '',
+        cardIndexes: boardCardIndexes,
+      });
+
+      pushFocusItemToFocusStack({
+        focusId,
+        component: {
+          type: FocusComponentType.RECORD_BOARD_CARD,
+          instanceId: focusId,
+        },
+      });
+
+      store.set(focusedBoardCardIndexes, boardCardIndexes);
+      store.set(isCardFocused(boardCardIndexes), true);
+      store.set(isCardFocusActive, true);
+    },
     [
-      focusedBoardCardIndexesState,
-      isCardFocusedState,
-      isCardFocusActiveState,
-      recordBoardId,
-      removeFocusItemFromFocusStackById,
-    ],
-  );
-
-  const focusBoardCard = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (boardCardIndexes: BoardCardIndexes) => {
-        const focusedBoardCardIndexes = snapshot
-          .getLoadable(focusedBoardCardIndexesState)
-          .getValue();
-
-        if (
-          isDefined(focusedBoardCardIndexes) &&
-          (focusedBoardCardIndexes.rowIndex !== boardCardIndexes.rowIndex ||
-            focusedBoardCardIndexes.columnIndex !==
-              boardCardIndexes.columnIndex)
-        ) {
-          set(isCardFocusedState(focusedBoardCardIndexes), false);
-
-          const currentFocusId = getRecordBoardCardFocusId({
-            recordBoardId: recordBoardId || '',
-            cardIndexes: focusedBoardCardIndexes,
-          });
-
-          removeFocusItemFromFocusStackById({
-            focusId: currentFocusId,
-          });
-        }
-
-        const focusId = getRecordBoardCardFocusId({
-          recordBoardId: recordBoardId || '',
-          cardIndexes: boardCardIndexes,
-        });
-
-        pushFocusItemToFocusStack({
-          focusId,
-          component: {
-            type: FocusComponentType.RECORD_BOARD_CARD,
-            instanceId: focusId,
-          },
-        });
-
-        set(focusedBoardCardIndexesState, boardCardIndexes);
-        set(isCardFocusedState(boardCardIndexes), true);
-        set(isCardFocusActiveState, true);
-      },
-    [
-      focusedBoardCardIndexesState,
-      isCardFocusedState,
-      isCardFocusActiveState,
+      store,
+      focusedBoardCardIndexes,
+      isCardFocused,
+      isCardFocusActive,
       recordBoardId,
       pushFocusItemToFocusStack,
       removeFocusItemFromFocusStackById,

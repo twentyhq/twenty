@@ -5,9 +5,9 @@ import { renderHook } from '@testing-library/react';
 
 const mockUseRecoilComponentValue = jest.fn();
 jest.mock(
-  '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue',
+  '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
   () => ({
-    useRecoilComponentValue: () => mockUseRecoilComponentValue(),
+    useAtomComponentStateValue: () => mockUseRecoilComponentValue(),
   }),
 );
 

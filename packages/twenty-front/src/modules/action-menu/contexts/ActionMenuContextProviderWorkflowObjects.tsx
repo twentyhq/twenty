@@ -6,13 +6,14 @@ import {
 import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
 import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 type ActionMenuContextProviderWorkflowObjectsProps = {
@@ -122,8 +123,9 @@ export const ActionMenuContextProviderWorkflowObjects = ({
   actionMenuType,
   children,
 }: ActionMenuContextProviderWorkflowObjectsProps) => {
-  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const recordId =
@@ -133,7 +135,8 @@ export const ActionMenuContextProviderWorkflowObjects = ({
       : undefined;
 
   const selectedRecord =
-    useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
+    useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '') ||
+    undefined;
 
   if (isDefined(selectedRecord?.id)) {
     return (

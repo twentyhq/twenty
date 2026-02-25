@@ -5,8 +5,9 @@ import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/reco
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { cx } from '@linaria/core';
 
@@ -29,28 +30,28 @@ const StyledLastColumnHeader = styled.div<{
 `;
 
 export const RecordTableHeaderLastEmptyColumn = () => {
-  const isScrolledVertically = useRecoilComponentValue(
+  const isScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const isFirstRowActive = useRecoilComponentFamilyValue(
+  const isFirstRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useRecoilComponentFamilyValue(
+  const isFirstRowFocused = useAtomComponentFamilyStateValue(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );
 
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
   );
 
   const isFirstRowActiveOrFocused =
     isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
 
-  const hasRecordGroups = useRecoilComponentValue(
+  const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
 

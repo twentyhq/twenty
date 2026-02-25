@@ -3,7 +3,7 @@ import { type SuggestionItem } from '@/blocknote-editor/types/types';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 
 export type CustomSlashMenuListItemProps = {
@@ -15,7 +15,7 @@ export const CustomSlashMenuListItem = ({
 }: CustomSlashMenuListItemProps) => {
   const { resetSelectedItem } = useSelectableList(SLASH_MENU_LIST_ID);
 
-  const isSelectedItem = useRecoilComponentFamilyValueV2(
+  const isSelectedItem = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     item.title,
   );

@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { IconLink } from 'twenty-ui/display';
 
 import { CommandMenuPageInfoLayout } from '@/command-menu/components/CommandMenuPageInfoLayout';
@@ -11,21 +10,21 @@ import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/co
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 
 export const CommandMenuLinkInfo = () => {
   const theme = useTheme();
   const { t } = useLingui();
-  const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
+  const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
   const [shouldFocusTitleInput, setShouldFocusTitleInput] =
-    useRecoilComponentState(
+    useAtomComponentState(
       commandMenuShouldFocusTitleInputComponentState,
       commandMenuPageInfo.instanceId,
     );
-  const selectedNavigationMenuItemInEditMode = useRecoilValueV2(
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeStateV2,
   );
   const items = useWorkspaceSectionItems();

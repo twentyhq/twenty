@@ -34,7 +34,7 @@ const EmailValueSetterEffect = ({ value }: { value: FieldEmailsValue }) => {
 const EmailFieldValueGater = () => {
   const { fieldValue } = useEmailsField();
 
-  return fieldValue && <EmailsFieldInput />;
+  return fieldValue ? <EmailsFieldInput /> : null;
 };
 
 type EmailInputWithContextProps = {

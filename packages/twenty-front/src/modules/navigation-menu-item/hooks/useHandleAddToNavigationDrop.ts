@@ -1,6 +1,6 @@
 import type { DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolder, IconLink, useIcons } from 'twenty-ui/display';
 
@@ -18,44 +18,43 @@ import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states
 import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
 import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useStore } from 'jotai';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { useStore } from 'jotai';
 
 export const useHandleAddToNavigationDrop = () => {
+  const store = useStore();
   const { addObjectToDraft } = useAddObjectToNavigationMenuDraft();
   const { addViewToDraft } = useAddViewToNavigationMenuDraft();
   const { addRecordToDraft } = useAddRecordToNavigationMenuDraft();
   const { addFolderToDraft } = useAddFolderToNavigationMenuDraft();
   const { addLinkToDraft } = useAddLinkToNavigationMenuDraft();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
-  const navigationMenuItemsDraft = useRecoilValueV2(
+  const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftStateV2,
   );
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const coreViews = useRecoilValueV2(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsState);
   const { getIcon } = useIcons();
-  const setSelectedNavigationMenuItemInEditMode = useSetRecoilStateV2(
+  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
     selectedNavigationMenuItemInEditModeStateV2,
   );
-  const setIsNavigationMenuInEditMode = useSetRecoilStateV2(
+  const setIsNavigationMenuInEditMode = useSetAtomState(
     isNavigationMenuInEditModeStateV2,
   );
-  const setOpenNavigationMenuItemFolderIds = useSetRecoilStateV2(
+  const setOpenNavigationMenuItemFolderIds = useSetAtomState(
     openNavigationMenuItemFolderIdsStateV2,
   );
 
-  const store = useStore();
-
-  const handleAddToNavigationDrop = useRecoilCallback(
-    () => (result: DropResult, _provided: ResponderProvided) => {
+  const handleAddToNavigationDrop = useCallback(
+    (result: DropResult, _provided: ResponderProvided) => {
       const { source, destination, draggableId } = result;
       if (
         source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID ||
@@ -203,8 +202,8 @@ export const useHandleAddToNavigationDrop = () => {
       setOpenNavigationMenuItemFolderIds,
       setIsNavigationMenuInEditMode,
       setSelectedNavigationMenuItemInEditMode,
-      store,
       workspaceNavigationMenuItems,
+      store,
     ],
   );
 

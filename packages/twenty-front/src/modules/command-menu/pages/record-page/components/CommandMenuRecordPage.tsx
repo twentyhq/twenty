@@ -8,11 +8,11 @@ import { INFORMATION_BANNER_HEIGHT } from '@/information-banner/constants/Inform
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 const StyledRightDrawerRecord = styled.div<{
   hasDeletedRecordBanner: boolean;
@@ -26,11 +26,11 @@ const StyledRightDrawerRecord = styled.div<{
 `;
 
 export const CommandMenuRecordPage = () => {
-  const viewableRecordNameSingular = useRecoilComponentValue(
+  const viewableRecordNameSingular = useAtomComponentStateValue(
     viewableRecordNameSingularComponentState,
   );
 
-  const viewableRecordId = useRecoilComponentValue(
+  const viewableRecordId = useAtomComponentStateValue(
     viewableRecordIdComponentState,
   );
 
@@ -47,11 +47,12 @@ export const CommandMenuRecordPage = () => {
     viewableRecordId,
   );
 
-  const recordDeletedAt = useRecoilValue(
-    recordStoreFamilySelector({
+  const recordDeletedAt = useAtomFamilySelectorValue(
+    recordStoreFamilySelectorV2,
+    {
       recordId: objectRecordId,
       fieldName: 'deletedAt',
-    }),
+    },
   );
 
   const commandMenuPageInstanceId = useComponentInstanceStateContext(

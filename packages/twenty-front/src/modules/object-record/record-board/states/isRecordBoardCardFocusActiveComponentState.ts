@@ -1,8 +1,8 @@
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const isRecordBoardCardFocusActiveComponentState =
-  createComponentState<boolean>({
+  createAtomComponentState<boolean>({
     key: 'isRecordBoardCardFocusActiveComponentState',
     defaultValue: false,
     componentInstanceContext: RecordBoardComponentInstanceContext,

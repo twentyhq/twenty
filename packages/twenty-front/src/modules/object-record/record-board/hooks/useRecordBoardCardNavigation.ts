@@ -1,141 +1,132 @@
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { focusedRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/focusedRecordBoardCardIndexesComponentState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
 type NavigationDirection = 'up' | 'down' | 'left' | 'right';
 
 export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
+  const store = useStore();
   const { focusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const focusedBoardCardIndexesState = useRecoilComponentCallbackState(
+  const focusedBoardCardIndexes = useAtomComponentStateCallbackState(
     focusedRecordBoardCardIndexesComponentState,
     recordBoardId,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
+  const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Kanban,
   );
 
-  const recordIdsByGroupState = useRecoilComponentCallbackState(
+  const recordIdsByGroupState = useAtomComponentFamilyStateCallbackState(
     recordIndexRecordIdsByGroupComponentFamilyState,
   );
 
-  const focusFirstAvailableRecord = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        if (visibleRecordGroupIds.length === 0) {
-          return;
-        }
+  const focusFirstAvailableRecord = useCallback(() => {
+    if (visibleRecordGroupIds.length === 0) {
+      return;
+    }
 
-        const firstColumnWithRecords = visibleRecordGroupIds.findIndex(
-          (groupId) => {
-            const recordIdsInGroup = snapshot
-              .getLoadable(recordIdsByGroupState(groupId))
-              .getValue();
-            return (
-              Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0
-            );
-          },
+    const firstColumnWithRecords = visibleRecordGroupIds.findIndex(
+      (groupId) => {
+        const recordIdsInGroup = store.get(recordIdsByGroupState(groupId));
+        return Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0;
+      },
+    );
+
+    if (firstColumnWithRecords !== -1) {
+      focusBoardCard({
+        columnIndex: firstColumnWithRecords,
+        rowIndex: 0,
+      });
+    }
+  }, [store, visibleRecordGroupIds, recordIdsByGroupState, focusBoardCard]);
+
+  const moveHorizontally = useCallback(
+    (direction: 'left' | 'right') => {
+      const currentFocusedBoardCardIndexes = store.get(focusedBoardCardIndexes);
+
+      if (!isDefined(currentFocusedBoardCardIndexes)) {
+        focusFirstAvailableRecord();
+        return;
+      }
+
+      if (visibleRecordGroupIds.length === 0) {
+        return;
+      }
+
+      let newColumnIndex =
+        direction === 'right'
+          ? currentFocusedBoardCardIndexes.columnIndex + 1
+          : currentFocusedBoardCardIndexes.columnIndex - 1;
+
+      if (newColumnIndex < 0) {
+        newColumnIndex = 0;
+      } else if (newColumnIndex >= visibleRecordGroupIds.length) {
+        newColumnIndex = visibleRecordGroupIds.length - 1;
+      }
+
+      if (newColumnIndex === currentFocusedBoardCardIndexes.columnIndex) {
+        return;
+      }
+
+      let foundColumnWithRecords = false;
+      const initialColumnIndex = newColumnIndex;
+
+      while (!foundColumnWithRecords) {
+        const currentGroupId = visibleRecordGroupIds[newColumnIndex];
+        const recordIdsInGroup = store.get(
+          recordIdsByGroupState(currentGroupId),
         );
 
-        if (firstColumnWithRecords !== -1) {
-          focusBoardCard({
-            columnIndex: firstColumnWithRecords,
-            rowIndex: 0,
-          });
-        }
-      },
-    [visibleRecordGroupIds, recordIdsByGroupState, focusBoardCard],
-  );
+        if (Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0) {
+          foundColumnWithRecords = true;
+        } else {
+          newColumnIndex =
+            direction === 'right' ? newColumnIndex + 1 : newColumnIndex - 1;
 
-  const moveHorizontally = useRecoilCallback(
-    ({ snapshot }) =>
-      (direction: 'left' | 'right') => {
-        const focusedBoardCardIndexes = snapshot
-          .getLoadable(focusedBoardCardIndexesState)
-          .getValue();
+          if (
+            newColumnIndex < 0 ||
+            newColumnIndex >= visibleRecordGroupIds.length
+          ) {
+            focusFirstAvailableRecord();
+            return;
+          }
 
-        if (!isDefined(focusedBoardCardIndexes)) {
-          focusFirstAvailableRecord();
-          return;
-        }
-
-        if (visibleRecordGroupIds.length === 0) {
-          return;
-        }
-
-        let newColumnIndex =
-          direction === 'right'
-            ? focusedBoardCardIndexes.columnIndex + 1
-            : focusedBoardCardIndexes.columnIndex - 1;
-
-        if (newColumnIndex < 0) {
-          newColumnIndex = 0;
-        } else if (newColumnIndex >= visibleRecordGroupIds.length) {
-          newColumnIndex = visibleRecordGroupIds.length - 1;
-        }
-
-        if (newColumnIndex === focusedBoardCardIndexes.columnIndex) {
-          return;
-        }
-
-        let foundColumnWithRecords = false;
-        const initialColumnIndex = newColumnIndex;
-
-        while (!foundColumnWithRecords) {
-          const currentGroupId = visibleRecordGroupIds[newColumnIndex];
-          const recordIdsInGroup = snapshot
-            .getLoadable(recordIdsByGroupState(currentGroupId))
-            .getValue();
-
-          if (Array.isArray(recordIdsInGroup) && recordIdsInGroup.length > 0) {
-            foundColumnWithRecords = true;
-          } else {
-            newColumnIndex =
-              direction === 'right' ? newColumnIndex + 1 : newColumnIndex - 1;
-
-            if (
-              newColumnIndex < 0 ||
-              newColumnIndex >= visibleRecordGroupIds.length
-            ) {
-              focusFirstAvailableRecord();
-              return;
-            }
-
-            if (
-              (direction === 'right' && newColumnIndex <= initialColumnIndex) ||
-              (direction === 'left' && newColumnIndex >= initialColumnIndex)
-            ) {
-              return;
-            }
+          if (
+            (direction === 'right' && newColumnIndex <= initialColumnIndex) ||
+            (direction === 'left' && newColumnIndex >= initialColumnIndex)
+          ) {
+            return;
           }
         }
+      }
 
-        const currentGroupId = visibleRecordGroupIds[newColumnIndex];
-        const recordIdsInGroup = snapshot
-          .getLoadable(recordIdsByGroupState(currentGroupId))
-          .getValue();
+      const currentGroupId = visibleRecordGroupIds[newColumnIndex];
+      const recordIdsInGroup = store.get(recordIdsByGroupState(currentGroupId));
 
-        let newRowIndex = focusedBoardCardIndexes.rowIndex;
-        if (newRowIndex >= recordIdsInGroup.length) {
-          newRowIndex = recordIdsInGroup.length - 1;
-        }
+      let newRowIndex = currentFocusedBoardCardIndexes.rowIndex;
+      if (newRowIndex >= recordIdsInGroup.length) {
+        newRowIndex = recordIdsInGroup.length - 1;
+      }
 
-        focusBoardCard({
-          columnIndex: newColumnIndex,
-          rowIndex: newRowIndex,
-        });
-      },
+      focusBoardCard({
+        columnIndex: newColumnIndex,
+        rowIndex: newRowIndex,
+      });
+    },
     [
-      focusedBoardCardIndexesState,
+      store,
+      focusedBoardCardIndexes,
       visibleRecordGroupIds,
       recordIdsByGroupState,
       focusBoardCard,
@@ -143,53 +134,49 @@ export const useRecordBoardCardNavigation = (recordBoardId?: string) => {
     ],
   );
 
-  const moveVertically = useRecoilCallback(
-    ({ snapshot }) =>
-      (direction: 'up' | 'down') => {
-        const focusedBoardCardIndexes = snapshot
-          .getLoadable(focusedBoardCardIndexesState)
-          .getValue();
+  const moveVertically = useCallback(
+    (direction: 'up' | 'down') => {
+      const currentFocusedBoardCardIndexes = store.get(focusedBoardCardIndexes);
 
-        if (!isDefined(focusedBoardCardIndexes)) {
-          focusFirstAvailableRecord();
-          return;
-        }
+      if (!isDefined(currentFocusedBoardCardIndexes)) {
+        focusFirstAvailableRecord();
+        return;
+      }
 
-        if (visibleRecordGroupIds.length === 0) return;
+      if (visibleRecordGroupIds.length === 0) return;
 
-        const currentGroupId =
-          visibleRecordGroupIds[focusedBoardCardIndexes.columnIndex];
-        const recordIdsInGroup = snapshot
-          .getLoadable(recordIdsByGroupState(currentGroupId))
-          .getValue();
+      const currentGroupId =
+        visibleRecordGroupIds[currentFocusedBoardCardIndexes.columnIndex];
+      const recordIdsInGroup = store.get(recordIdsByGroupState(currentGroupId));
 
-        if (!Array.isArray(recordIdsInGroup) || recordIdsInGroup.length === 0) {
-          focusFirstAvailableRecord();
-          return;
-        }
+      if (!Array.isArray(recordIdsInGroup) || recordIdsInGroup.length === 0) {
+        focusFirstAvailableRecord();
+        return;
+      }
 
-        let newRowIndex =
-          direction === 'down'
-            ? focusedBoardCardIndexes.rowIndex + 1
-            : focusedBoardCardIndexes.rowIndex - 1;
+      let newRowIndex =
+        direction === 'down'
+          ? currentFocusedBoardCardIndexes.rowIndex + 1
+          : currentFocusedBoardCardIndexes.rowIndex - 1;
 
-        if (newRowIndex < 0) {
-          newRowIndex = 0;
-        } else if (newRowIndex >= recordIdsInGroup.length) {
-          newRowIndex = recordIdsInGroup.length - 1;
-        }
+      if (newRowIndex < 0) {
+        newRowIndex = 0;
+      } else if (newRowIndex >= recordIdsInGroup.length) {
+        newRowIndex = recordIdsInGroup.length - 1;
+      }
 
-        if (newRowIndex === focusedBoardCardIndexes.rowIndex) {
-          return;
-        }
+      if (newRowIndex === currentFocusedBoardCardIndexes.rowIndex) {
+        return;
+      }
 
-        focusBoardCard({
-          columnIndex: focusedBoardCardIndexes.columnIndex,
-          rowIndex: newRowIndex,
-        });
-      },
+      focusBoardCard({
+        columnIndex: currentFocusedBoardCardIndexes.columnIndex,
+        rowIndex: newRowIndex,
+      });
+    },
     [
-      focusedBoardCardIndexesState,
+      store,
+      focusedBoardCardIndexes,
       visibleRecordGroupIds,
       recordIdsByGroupState,
       focusBoardCard,

@@ -1,4 +1,4 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordFieldListInputContextProvider } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListInputContextProvider';
@@ -24,7 +24,7 @@ export const RecordFieldListCellEditModePortal = ({
     RecordFieldListComponentInstanceContext,
   );
 
-  const editModePosition = useRecoilComponentValue(
+  const editModePosition = useAtomComponentStateValue(
     recordFieldListCellEditModePositionComponentState,
   );
 

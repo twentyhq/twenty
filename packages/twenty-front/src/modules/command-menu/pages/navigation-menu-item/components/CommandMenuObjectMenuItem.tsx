@@ -9,7 +9,7 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 
 type CommandMenuObjectMenuItemProps = {
@@ -31,7 +31,7 @@ export const CommandMenuObjectMenuItem = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const iconColors = getNavigationMenuItemIconColors(theme);
-  const defaultViewId = useFamilySelectorValueV2(
+  const defaultViewId = useAtomFamilySelectorValue(
     coreIndexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );

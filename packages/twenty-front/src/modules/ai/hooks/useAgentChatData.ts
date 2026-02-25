@@ -4,11 +4,11 @@ import {
   type AgentChatUsageState,
 } from '@/ai/states/agentChatUsageStateV2';
 import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
-import { currentAIChatThreadTitleStateV2 } from '@/ai/states/currentAIChatThreadTitleStateV2';
+import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { isCreatingChatThreadStateV2 } from '@/ai/states/isCreatingChatThreadStateV2';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type SetterOrUpdater } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -41,14 +41,14 @@ const setUsageFromThread = (
 };
 
 export const useAgentChatData = () => {
-  const [currentAIChatThread, setCurrentAIChatThread] = useRecoilStateV2(
+  const [currentAIChatThread, setCurrentAIChatThread] = useAtomState(
     currentAIChatThreadStateV2,
   );
-  const setAgentChatUsage = useSetRecoilStateV2(agentChatUsageStateV2);
-  const setCurrentAIChatThreadTitle = useSetRecoilStateV2(
-    currentAIChatThreadTitleStateV2,
+  const setAgentChatUsage = useSetAtomState(agentChatUsageStateV2);
+  const setCurrentAIChatThreadTitle = useSetAtomState(
+    currentAIChatThreadTitleState,
   );
-  const [isCreatingChatThread, setIsCreatingChatThread] = useRecoilStateV2(
+  const [isCreatingChatThread, setIsCreatingChatThread] = useAtomState(
     isCreatingChatThreadStateV2,
   );
 

@@ -11,15 +11,16 @@ import { isDraggingRecordComponentState } from '@/object-record/record-drag/stat
 import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 
 export const RecordBoardClickOutsideEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
 
-  const isDraggingRecord = useRecoilComponentValue(
+  const isDraggingRecord = useAtomComponentStateValue(
     isDraggingRecordComponentState,
+    recordBoardId,
   );
 
   const { deactivateBoardCard } = useActiveRecordBoardCard(recordBoardId);

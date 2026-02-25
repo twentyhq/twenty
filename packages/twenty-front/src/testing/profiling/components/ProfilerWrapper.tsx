@@ -1,5 +1,6 @@
-import { Profiler, type ProfilerOnRenderCallback } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { Profiler, type ProfilerOnRenderCallback, useCallback } from 'react';
+
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { profilingQueueState } from '~/testing/profiling/states/profilingQueueState';
 import { profilingSessionDataPointsState } from '~/testing/profiling/states/profilingSessionDataPointsState';
 import { profilingSessionState } from '~/testing/profiling/states/profilingSessionState';
@@ -20,55 +21,52 @@ export const ProfilerWrapper = ({
   runName: string;
   children: React.ReactNode;
 }) => {
-  const handleRender: ProfilerOnRenderCallback = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (id, phase, actualDurationInMs) => {
-        const dataPointId = getProfilingQueueIdentifier(
-          profilingId,
-          testIndex,
-          runName,
-        );
+  const handleRender: ProfilerOnRenderCallback = useCallback(
+    (id, phase, actualDurationInMs) => {
+      const dataPointId = getProfilingQueueIdentifier(
+        profilingId,
+        testIndex,
+        runName,
+      );
 
-        const newDataPoint: ProfilingDataPoint = {
-          componentName,
-          runName,
-          id: dataPointId,
-          phase,
-          durationInMs: actualDurationInMs,
-        };
+      const newDataPoint: ProfilingDataPoint = {
+        componentName,
+        runName,
+        id: dataPointId,
+        phase,
+        durationInMs: actualDurationInMs,
+      };
 
-        set(
-          profilingSessionDataPointsState,
-          (currentProfilingSessionDataPoints) => [
-            ...currentProfilingSessionDataPoints,
-            newDataPoint,
-          ],
-        );
+      jotaiStore.set(
+        profilingSessionDataPointsState.atom,
+        (currentProfilingSessionDataPoints) => [
+          ...currentProfilingSessionDataPoints,
+          newDataPoint,
+        ],
+      );
 
-        set(profilingSessionState, (currentProfilingSession) => ({
-          ...currentProfilingSession,
-          [id]: [...(currentProfilingSession[id] ?? []), newDataPoint],
-        }));
+      jotaiStore.set(profilingSessionState.atom, (currentProfilingSession) => ({
+        ...currentProfilingSession,
+        [id]: [...(currentProfilingSession[id] ?? []), newDataPoint],
+      }));
 
-        const queueIdentifier = dataPointId;
+      const queueIdentifier = dataPointId;
 
-        const currentProfilingQueue = snapshot
-          .getLoadable(profilingQueueState)
-          .getValue();
+      const currentProfilingQueue = jotaiStore.get(profilingQueueState.atom);
 
-        const currentQueue = currentProfilingQueue[runName];
+      const currentQueue = currentProfilingQueue[runName];
 
-        if (!isDefined(currentQueue)) {
-          return;
-        }
+      if (!isDefined(currentQueue)) {
+        return;
+      }
 
-        const newQueue = currentQueue.filter((id) => id !== queueIdentifier);
+      const newQueue = currentQueue.filter((id) => id !== queueIdentifier);
 
-        set(profilingQueueState, (currentProfilingQueue) => ({
-          ...currentProfilingQueue,
-          [runName]: newQueue,
-        }));
-      },
+      jotaiStore.set(profilingQueueState.atom, (currentProfilingQueue) => ({
+        ...currentProfilingQueue,
+        [runName]: newQueue,
+      }));
+    },
     [profilingId, testIndex, componentName, runName],
   );
 

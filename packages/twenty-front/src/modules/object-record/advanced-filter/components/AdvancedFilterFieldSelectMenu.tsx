@@ -6,7 +6,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedFilterFieldSelectSearchInput } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput';
@@ -23,8 +23,8 @@ import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/h
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
@@ -41,8 +41,9 @@ export const AdvancedFilterFieldSelectMenu = ({
     advancedFilterFieldSelectDropdownId,
   } = useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-  const [objectFilterDropdownSearchInput] = useRecoilComponentState(
+  const [objectFilterDropdownSearchInput] = useAtomComponentState(
     objectFilterDropdownSearchInputComponentState,
+    advancedFilterFieldSelectDropdownId,
   );
 
   const { objectMetadataItem } = useContext(AdvancedFilterContext);
@@ -50,7 +51,7 @@ export const AdvancedFilterFieldSelectMenu = ({
   const { filterableFieldMetadataItems: filterableFieldMetadataItems } =
     useFilterableFieldMetadataItems(objectMetadataItem.id);
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 
@@ -90,17 +91,20 @@ export const AdvancedFilterFieldSelectMenu = ({
   const { selectFieldUsedInAdvancedFilterDropdown } =
     useSelectFieldUsedInAdvancedFilterDropdown();
 
-  const [, setObjectFilterDropdownSubMenuFieldType] = useRecoilComponentState(
+  const [, setObjectFilterDropdownSubMenuFieldType] = useAtomComponentState(
     objectFilterDropdownSubMenuFieldTypeComponentState,
+    advancedFilterFieldSelectDropdownId,
   );
 
   const [, setObjectFilterDropdownIsSelectingCompositeField] =
-    useRecoilComponentState(
+    useAtomComponentState(
       objectFilterDropdownIsSelectingCompositeFieldComponentState,
+      advancedFilterFieldSelectDropdownId,
     );
 
-  const setFieldMetadataItemIdUsedInDropdown = useSetRecoilComponentState(
+  const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
     fieldMetadataItemIdUsedInDropdownComponentState,
+    advancedFilterFieldSelectDropdownId,
   );
 
   const handleFieldMetadataItemSelect = (

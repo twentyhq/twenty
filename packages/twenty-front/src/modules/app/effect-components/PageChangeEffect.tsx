@@ -6,15 +6,14 @@ import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksO
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useEffect, useState } from 'react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useCallback, useEffect, useState } from 'react';
 import {
   matchPath,
   useLocation,
   useNavigate,
   useParams,
 } from 'react-router-dom';
-import { useRecoilCallback } from 'recoil';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -35,7 +34,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
@@ -43,10 +42,12 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { useStore } from 'jotai';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
+  const store = useStore();
   const navigate = useNavigate();
 
   const [previousLocation, setPreviousLocation] = useState('');
@@ -65,12 +66,12 @@ export const PageChangeEffect = () => {
   const objectNamePlural =
     useParams().objectNamePlural ?? CoreObjectNamePlural.Person;
 
-  const contextStoreCurrentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const contextStoreCurrentViewType = useRecoilComponentValue(
+  const contextStoreCurrentViewType = useAtomComponentStateValue(
     contextStoreCurrentViewTypeComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
@@ -92,25 +93,19 @@ export const PageChangeEffect = () => {
   const { executeTasksOnAnyLocationChange } =
     useExecuteTasksOnAnyLocationChange();
 
-  const isAppEffectRedirectEnabled = useRecoilValueV2(
+  const isAppEffectRedirectEnabled = useAtomStateValue(
     isAppEffectRedirectEnabledState,
   );
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const closeCommandMenuUnlessOnEditPage = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const currentPage = snapshot
-          .getLoadable(commandMenuPageState)
-          .getValue();
-        if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
-          return;
-        }
-        closeCommandMenu();
-      },
-    [closeCommandMenu],
-  );
+  const closeCommandMenuUnlessOnEditPage = useCallback(() => {
+    const currentPage = store.get(commandMenuPageState.atom);
+    if (currentPage === CommandMenuPages.NavigationMenuItemEdit) {
+      return;
+    }
+    closeCommandMenu();
+  }, [closeCommandMenu, store]);
 
   const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
 
@@ -365,7 +360,7 @@ export const PageChangeEffect = () => {
   }, [eventTracker, location.pathname]);
 
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
-  const isCaptchaScriptLoaded = useRecoilValueV2(isCaptchaScriptLoadedState);
+  const isCaptchaScriptLoaded = useAtomStateValue(isCaptchaScriptLoadedState);
 
   useEffect(() => {
     if (isCaptchaScriptLoaded && isCaptchaRequiredForPath(location.pathname)) {

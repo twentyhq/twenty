@@ -1,7 +1,7 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
 import { type ViewGroup } from '@/views/types/ViewGroup';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { type CoreViewGroup } from '~/generated-metadata/graphql';
@@ -10,7 +10,7 @@ const useViewsSideEffectsOnViewGroups = () => {
   const { triggerViewGroupOptimisticEffect } =
     useTriggerViewGroupOptimisticEffect();
 
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const triggerViewGroupOptimisticEffectAtViewCreation = ({
     newViewId,

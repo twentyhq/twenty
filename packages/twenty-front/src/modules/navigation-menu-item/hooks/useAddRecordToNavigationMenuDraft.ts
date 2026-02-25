@@ -4,8 +4,8 @@ import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
 
 type SearchRecord = {
@@ -20,10 +20,10 @@ type SearchRecordWithOptionalMetadataId = SearchRecord & {
 };
 
 export const useAddRecordToNavigationMenuDraft = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilStateV2(
+  const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftStateV2,
   );
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const addRecordToDraft = (
     searchRecord: SearchRecordWithOptionalMetadataId,

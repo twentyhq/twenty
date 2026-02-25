@@ -2,12 +2,15 @@ import { ActionLink } from '@/action-menu/actions/components/ActionLink';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { AppPath } from 'twenty-shared/types';
 
 export const SeeWorkflowWorkflowVersionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
-  const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
+  const workflowVersion = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   return (
     <ActionLink

@@ -1,9 +1,12 @@
+import { pathsToModuleNameMapper } from 'ts-jest';
+
 export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  transform: {
-    '^.+\\.ts?$': 'ts-jest',
-  },
-  moduleFileExtensions: ['ts', 'js'],
-  transformIgnorePatterns: ['/node_modules/'],
+  rootDir: './src',
+  testMatch: ['**/__tests__/**/*.test.ts'],
+  moduleNameMapper: pathsToModuleNameMapper(
+    { 'src/*': ['./src/*'] },
+    { prefix: '<rootDir>/../' },
+  ),
 };

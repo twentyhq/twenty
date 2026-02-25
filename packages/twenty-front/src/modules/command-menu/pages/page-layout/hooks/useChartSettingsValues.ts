@@ -10,7 +10,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { plural, t } from '@lingui/core/macro';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type GraphOrderBy } from '~/generated-metadata/graphql';
@@ -22,7 +22,7 @@ export const useChartSettingsValues = ({
   objectMetadataId: string;
   configuration?: ChartConfiguration;
 }) => {
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) => objectMetadataItem.id === objectMetadataId,

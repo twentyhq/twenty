@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const qrCodeState = createStateV2<string | null>({
+export const qrCodeState = createAtomState<string | null>({
   key: 'qrCodeState',
   defaultValue: null,
 });

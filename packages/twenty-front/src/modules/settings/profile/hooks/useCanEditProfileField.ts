@@ -3,7 +3,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export type EditableProfileField =
   | 'email'
@@ -12,9 +12,9 @@ export type EditableProfileField =
   | 'profilePicture';
 
 export const useCanEditProfileField = (field: EditableProfileField) => {
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
-  const currentUserWorkspace = useRecoilValueV2(currentUserWorkspaceState);
-  const availableWorkspaces = useRecoilValueV2(availableWorkspacesState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+  const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
 
   if (!currentWorkspace || !currentUserWorkspace) {
     return { canEdit: false };

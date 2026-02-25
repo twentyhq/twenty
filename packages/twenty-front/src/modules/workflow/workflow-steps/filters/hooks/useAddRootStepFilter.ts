@@ -1,12 +1,12 @@
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
 import { hasInitializedCurrentStepFilterGroupsComponentFamilyState } from '@/workflow/workflow-steps/filters/states/hasInitializedCurrentStepFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentStepFiltersComponentFamilyState } from '@/workflow/workflow-steps/filters/states/hasInitializedCurrentStepFiltersComponentFamilyState';
-import { useContext } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback, useContext } from 'react';
 import {
   type StepFilter,
   type StepFilterGroup,
@@ -19,64 +19,63 @@ export const useAddRootStepFilter = () => {
   const { stepId, onFilterSettingsUpdate } = useContext(
     WorkflowStepFilterContext,
   );
-  const currentStepFilterGroupsCallbackState = useRecoilComponentCallbackState(
+  const currentStepFilterGroups = useAtomComponentStateCallbackState(
     currentStepFilterGroupsComponentState,
   );
 
-  const currentStepFiltersCallbackState = useRecoilComponentCallbackState(
+  const currentStepFilters = useAtomComponentStateCallbackState(
     currentStepFiltersComponentState,
   );
 
-  const setHasInitializedCurrentStepFilters = useSetRecoilComponentFamilyState(
+  const setHasInitializedCurrentStepFilters = useSetAtomComponentFamilyState(
     hasInitializedCurrentStepFiltersComponentFamilyState,
     { stepId },
   );
 
   const setHasInitializedCurrentStepFilterGroups =
-    useSetRecoilComponentFamilyState(
+    useSetAtomComponentFamilyState(
       hasInitializedCurrentStepFilterGroupsComponentFamilyState,
       { stepId },
     );
 
-  const addRootStepFilterRecoilCallback = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        const newStepFilterGroup: StepFilterGroup = {
-          id: v4(),
-          logicalOperator: StepLogicalOperator.AND,
-        };
+  const store = useStore();
 
-        const newStepFilter: StepFilter = {
-          id: v4(),
-          type: 'unknown',
-          value: '',
-          operand: ViewFilterOperand.IS,
-          stepFilterGroupId: newStepFilterGroup.id,
-          stepOutputKey: '',
-          positionInStepFilterGroup: 0,
-        };
+  const addRootStepFilter = useCallback(() => {
+    const newStepFilterGroup: StepFilterGroup = {
+      id: v4(),
+      logicalOperator: StepLogicalOperator.AND,
+    };
 
-        set(currentStepFilterGroupsCallbackState, [newStepFilterGroup]);
-        set(currentStepFiltersCallbackState, [newStepFilter]);
+    const newStepFilter: StepFilter = {
+      id: v4(),
+      type: 'unknown',
+      value: '',
+      operand: ViewFilterOperand.IS,
+      stepFilterGroupId: newStepFilterGroup.id,
+      stepOutputKey: '',
+      positionInStepFilterGroup: 0,
+    };
 
-        setHasInitializedCurrentStepFilters(true);
-        setHasInitializedCurrentStepFilterGroups(true);
+    store.set(currentStepFilterGroups, [newStepFilterGroup]);
+    store.set(currentStepFilters, [newStepFilter]);
 
-        onFilterSettingsUpdate({
-          stepFilterGroups: [newStepFilterGroup],
-          stepFilters: [newStepFilter],
-        });
-      },
-    [
-      onFilterSettingsUpdate,
-      currentStepFilterGroupsCallbackState,
-      currentStepFiltersCallbackState,
-      setHasInitializedCurrentStepFilters,
-      setHasInitializedCurrentStepFilterGroups,
-    ],
-  );
+    setHasInitializedCurrentStepFilters(true);
+    setHasInitializedCurrentStepFilterGroups(true);
+
+    onFilterSettingsUpdate({
+      stepFilterGroups: [newStepFilterGroup],
+      stepFilters: [newStepFilter],
+    });
+  }, [
+    onFilterSettingsUpdate,
+    currentStepFilterGroups,
+    currentStepFilters,
+    setHasInitializedCurrentStepFilters,
+    setHasInitializedCurrentStepFilterGroups,
+    store,
+  ]);
 
   return {
-    addRootStepFilter: addRootStepFilterRecoilCallback,
+    addRootStepFilter,
   };
 };

@@ -1,7 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useCurrentPlan } from '@/billing/hooks/useCurrentPlan';
 import type { MeteredBillingPrice } from '@/billing/types/billing-price-tiers.type';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { assertIsDefinedOrThrow, findOrThrow } from 'twenty-shared/utils';
 import {
   BillingProductKey,
@@ -11,7 +11,7 @@ import {
 export const useCurrentMetered = () => {
   const { currentPlan } = useCurrentPlan();
 
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   assertIsDefinedOrThrow(currentWorkspace);
 

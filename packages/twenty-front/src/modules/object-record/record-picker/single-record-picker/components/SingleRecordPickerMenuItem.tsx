@@ -9,9 +9,9 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
@@ -39,17 +39,18 @@ export const SingleRecordPickerMenuItem = ({
   const selectableListComponentInstanceId =
     getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
-  const isSelectedByKeyboard = useRecoilComponentFamilyValueV2(
+  const isSelectedByKeyboard = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     morphItem.recordId,
     selectableListComponentInstanceId,
   );
 
-  const searchRecord = useRecoilValue(
-    searchRecordStoreFamilyState(morphItem.recordId),
+  const searchRecord = useAtomFamilyStateValue(
+    searchRecordStoreFamilyState,
+    morphItem.recordId,
   );
 
-  const searchableObjectMetadataItems = useRecoilComponentValue(
+  const searchableObjectMetadataItems = useAtomComponentStateValue(
     singleRecordPickerSearchableObjectMetadataItemsComponentState,
     recordPickerComponentInstanceId,
   );

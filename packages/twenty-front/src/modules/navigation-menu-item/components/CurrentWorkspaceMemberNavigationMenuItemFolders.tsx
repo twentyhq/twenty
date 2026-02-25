@@ -9,25 +9,25 @@ import { NavigationMenuItemSkeletonLoader } from '@/navigation-menu-item/compone
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/hooks/useNavigationMenuItemsByFolder';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
 import { isNavigationMenuItemFolderCreatingStateV2 } from '@/navigation-menu-item/states/isNavigationMenuItemFolderCreatingStateV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
 
   const [
     isNavigationMenuItemFolderCreating,
     setIsNavigationMenuItemFolderCreating,
-  ] = useRecoilStateV2(isNavigationMenuItemFolderCreatingStateV2);
+  ] = useAtomState(isNavigationMenuItemFolderCreatingStateV2);
 
   const loading = useIsPrefetchLoading();
 
@@ -35,7 +35,7 @@ export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
 
   const { toggleNavigationSection, openNavigationSection } =
     useNavigationSection('Favorites');
-  const isNavigationSectionOpen = useFamilyRecoilValueV2(
+  const isNavigationSectionOpen = useAtomFamilyStateValue(
     isNavigationSectionOpenFamilyState,
     'Favorites',
   );

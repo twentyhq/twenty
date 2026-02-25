@@ -5,7 +5,7 @@ import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVis
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
@@ -14,7 +14,7 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
   const { currentPageLayout } = useCurrentPageLayout();
   const isMobile = useIsMobile();
   const { isInRightDrawer } = useLayoutRenderingContext();
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 

@@ -1,11 +1,11 @@
 import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useReapplyRowSelection = () => {
   const { selectAllRows } = useSelectAllRows();
 
-  const hasUserSelectedAllRows = useRecoilComponentValue(
+  const hasUserSelectedAllRows = useAtomComponentStateValue(
     hasUserSelectedAllRowsComponentState,
   );
 

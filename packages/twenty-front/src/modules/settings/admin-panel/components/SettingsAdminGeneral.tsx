@@ -8,18 +8,18 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useState } from 'react';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import {
   H2Title,
@@ -42,24 +42,24 @@ export const SettingsAdminGeneral = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+  const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
     SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
   );
-  const [userLookupResult, setUserLookupResult] = useRecoilStateV2(
+  const [userLookupResult, setUserLookupResult] = useAtomState(
     userLookupResultStateV2,
   );
   const [isUserLookupLoading, setIsUserLookupLoading] = useState(false);
 
   const [userLookup] = useUserLookupAdminPanelMutation();
 
-  const currentUser = useRecoilValueV2(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
 
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
 
   const canImpersonate = currentUser?.canImpersonate;
 
-  const canManageFeatureFlags = useRecoilValueV2(canManageFeatureFlagsState);
+  const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
 
   const handleSearch = async () => {
     setActiveTabId('');

@@ -7,7 +7,8 @@ import { MultipleSelectDropdown } from '@/object-record/select/components/Multip
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,15 +21,15 @@ export const ObjectFilterDropdownSourceSelect = ({
 }: {
   dropdownId: string;
 }) => {
-  const objectFilterDropdownSearchInput = useRecoilComponentValue(
+  const objectFilterDropdownSearchInput = useAtomComponentStateValue(
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const fieldMetadataItemUsedInFilterDropdown = useRecoilComponentValue(
+  const fieldMetadataItemUsedInFilterDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
+  const objectFilterDropdownCurrentRecordFilter = useAtomComponentStateValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 

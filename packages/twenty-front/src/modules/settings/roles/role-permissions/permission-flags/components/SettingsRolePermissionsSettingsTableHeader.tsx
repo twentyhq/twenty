@@ -6,7 +6,8 @@ import { Checkbox } from 'twenty-ui/input';
 
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useRecoilState } from 'recoil';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { v4 } from 'uuid';
 
 type SettingsRolePermissionsSettingsTableHeaderProps = {
@@ -27,8 +28,13 @@ export const SettingsRolePermissionsSettingsTableHeader = ({
   settingsPermissionsConfig,
   isEditable,
 }: SettingsRolePermissionsSettingsTableHeaderProps) => {
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+  const setSettingsDraftRole = useSetAtomFamilyState(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
   const allSettingsPermissionsEnabled = settingsPermissionsConfig.every(
     (permission) =>

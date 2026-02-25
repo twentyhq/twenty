@@ -13,8 +13,8 @@ import { singleRecordPickerSelectedIdComponentState } from '@/object-record/reco
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { CustomError, isDefined } from 'twenty-shared/utils';
@@ -77,15 +77,16 @@ export const RelationManyToOneFieldInput = () => {
       recordId,
     });
 
-  const layoutDirection = useRecoilComponentValue(
+  const layoutDirection = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 
-  const isLoading = useRecoilComponentValue(
+  const isLoading = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionLoadingComponentState,
+    instanceId,
   );
 
-  const setSingleRecordPickerSelectedId = useSetRecoilComponentState(
+  const setSingleRecordPickerSelectedId = useSetAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
     instanceId,
   );

@@ -620,7 +620,7 @@ export class ApiService {
     const twentyConfig = await this.configService.getConfig();
 
     const wsClient = createClient({
-      url: twentyConfig.apiUrl + '/graphql',
+      url: twentyConfig.apiUrl + '/metadata',
       headers: {
         Authorization: `Bearer ${twentyConfig.apiKey}`,
         'Content-Type': 'application/json',

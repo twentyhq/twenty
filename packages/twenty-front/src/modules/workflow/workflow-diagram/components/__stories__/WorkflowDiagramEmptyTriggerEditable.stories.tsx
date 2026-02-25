@@ -4,9 +4,35 @@ import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
 import '@xyflow/react/dist/style.css';
+import { useStore } from 'jotai';
+import { useEffect } from 'react';
 import { RecoilRoot } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
+
+const JotaiInitializer = ({
+  children,
+  selectedNodeId,
+}: {
+  children: React.ReactNode;
+  selectedNodeId?: string;
+}) => {
+  const store = useStore();
+
+  useEffect(() => {
+    if (isDefined(selectedNodeId)) {
+      store.set(
+        workflowSelectedNodeComponentState.atomFamily({
+          instanceId: 'workflow-visualizer-instance-id',
+        }),
+        selectedNodeId,
+      );
+    }
+  }, [store, selectedNodeId]);
+
+  return <>{children}</>;
+};
 
 const meta: Meta<typeof WorkflowDiagramEmptyTriggerEditable> = {
   title: 'Modules/Workflow/WorkflowDiagramEmptyTriggerEditable',
@@ -45,20 +71,13 @@ export const Selected: Story = {
   decorators: [
     (Story) => (
       <div style={{ position: 'relative' }}>
-        <RecoilRoot
-          initializeState={({ set }) => {
-            set(
-              workflowSelectedNodeComponentState.atomFamily({
-                instanceId: 'workflow-visualizer-instance-id',
-              }),
-              'trigger-node',
-            );
-          }}
-        >
+        <RecoilRoot>
           <WorkflowVisualizerComponentInstanceContext.Provider
             value={{ instanceId: 'workflow-visualizer-instance-id' }}
           >
-            <Story />
+            <JotaiInitializer selectedNodeId="trigger-node">
+              <Story />
+            </JotaiInitializer>
           </WorkflowVisualizerComponentInstanceContext.Provider>
         </RecoilRoot>
       </div>

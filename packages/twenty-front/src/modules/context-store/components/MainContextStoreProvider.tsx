@@ -4,8 +4,8 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
@@ -48,9 +48,9 @@ export const MainContextStoreProvider = () => {
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('viewId');
 
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
-  const viewsEntry = useFamilyRecoilValueV2(metadataStoreState, 'views');
-  const coreViews = useRecoilValueV2(coreViewsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const viewsEntry = useAtomFamilyStateValue(metadataStoreState, 'views');
+  const coreViews = useAtomStateValue(coreViewsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>

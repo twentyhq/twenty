@@ -4,7 +4,7 @@ import { RecoilRoot } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
@@ -43,7 +43,7 @@ describe('useColorScheme', () => {
       () => {
         const colorScheme = useColorScheme();
 
-        const setCurrentWorkspaceMember = useSetRecoilStateV2(
+        const setCurrentWorkspaceMember = useSetAtomState(
           currentWorkspaceMemberState,
         );
 

@@ -3,14 +3,14 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useSignInWithMicrosoft = () => {
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const [searchParams] = useSearchParams();
   const workspacePersonalInviteToken =
     searchParams.get('inviteToken') ?? undefined;
-  const billingCheckoutSession = useRecoilValueV2(billingCheckoutSessionState);
+  const billingCheckoutSession = useAtomStateValue(billingCheckoutSessionState);
 
   const { signInWithMicrosoft } = useAuth();
   return {

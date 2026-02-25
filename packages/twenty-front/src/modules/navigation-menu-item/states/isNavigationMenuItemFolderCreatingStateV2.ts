@@ -1,8 +1,7 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const isNavigationMenuItemFolderCreatingStateV2 = createStateV2<boolean>(
-  {
+export const isNavigationMenuItemFolderCreatingStateV2 =
+  createAtomState<boolean>({
     key: 'isNavigationMenuItemFolderCreatingStateV2',
     defaultValue: false,
-  },
-);
+  });

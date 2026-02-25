@@ -1,8 +1,7 @@
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { RecoilRoot } from 'recoil';
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -21,11 +20,8 @@ const renderHooks = () => {
     () => {
       const { onItemClick } = useCommandMenuOnItemClick();
 
-      const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
-
       return {
         onItemClick,
-        isCommandMenuOpened,
       };
     },
     {

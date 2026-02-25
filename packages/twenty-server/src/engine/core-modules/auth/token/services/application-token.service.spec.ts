@@ -5,7 +5,10 @@ import { Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -205,18 +208,49 @@ describe('ApplicationTokenService', () => {
       expect(() => service.validateApplicationRefreshToken(mockToken)).toThrow(
         AuthException,
       );
+
+      try {
+        service.validateApplicationRefreshToken(mockToken);
+      } catch (error) {
+        expect((error as AuthException).code).toBe(
+          AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
+        );
+      }
     });
 
-    it('should throw when token verification fails', () => {
+    it('should throw dedicated code when token verification fails', () => {
       const mockToken = 'invalid-token';
 
       jest.spyOn(jwtWrapperService, 'verifyJwtToken').mockImplementation(() => {
-        throw new Error('Invalid token');
+        throw new AuthException(
+          'Token has expired.',
+          AuthExceptionCode.UNAUTHENTICATED,
+        );
       });
 
-      expect(() =>
-        service.validateApplicationRefreshToken(mockToken),
-      ).toThrow();
+      expect(() => service.validateApplicationRefreshToken(mockToken)).toThrow(
+        AuthException,
+      );
+
+      try {
+        service.validateApplicationRefreshToken(mockToken);
+      } catch (error) {
+        expect((error as AuthException).code).toBe(
+          AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED,
+        );
+      }
+    });
+
+    it('should rethrow unexpected token verification errors', () => {
+      const mockToken = 'invalid-token';
+
+      jest.spyOn(jwtWrapperService, 'verifyJwtToken').mockImplementation(() => {
+        throw new Error('Unexpected verification error');
+      });
+
+      expect(() => service.validateApplicationRefreshToken(mockToken)).toThrow(
+        'Unexpected verification error',
+      );
     });
   });
 

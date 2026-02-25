@@ -15,8 +15,8 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { type View } from '@/views/types/View';
@@ -37,10 +37,10 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
   const { closeCommandMenu } = useCommandMenu();
   const { addViewToDraft } = useAddViewToNavigationMenuDraft();
   const { currentDraft } = useDraftNavigationMenuItems();
-  const addMenuItemInsertionContext = useRecoilValueV2(
+  const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextStateV2,
   );
-  const setAddMenuItemInsertionContext = useSetRecoilStateV2(
+  const setAddMenuItemInsertionContext = useSetAtomState(
     addMenuItemInsertionContextStateV2,
   );
   const { objectMetadataItems } = useObjectMetadataItems();
