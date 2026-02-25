@@ -477,10 +477,7 @@ export const DateTimePicker = ({
   );
 
   return (
-    <StyledContainer
-      calendarDisabled={isRelative}
-      onKeyDown={handleKeyDown}
-    >
+    <StyledContainer calendarDisabled={isRelative} onKeyDown={handleKeyDown}>
       <Suspense
         fallback={
           <StyledDatePickerFallback>

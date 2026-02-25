@@ -453,10 +453,7 @@ export const DatePicker = ({
   );
 
   return (
-    <StyledContainer
-      calendarDisabled={isRelative}
-      onKeyDown={handleKeyDown}
-    >
+    <StyledContainer calendarDisabled={isRelative} onKeyDown={handleKeyDown}>
       <div className={clearable ? 'clearable ' : ''}>
         <Suspense
           fallback={
