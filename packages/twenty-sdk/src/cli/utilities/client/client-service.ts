@@ -1,5 +1,4 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
-// eslint-disable-next-line import/no-default-export
 import twentyClientTemplateSource from '@/cli/utilities/client/twenty-client-template.ts?raw';
 import { generate } from '@genql/cli';
 import * as fs from 'fs-extra';
@@ -7,7 +6,7 @@ import { join } from 'path';
 import { DEFAULT_API_URL_NAME, GENERATED_DIR } from 'twenty-shared/application';
 
 type ClientWrapperOptions = {
-  className: string;
+  apiClientName: string;
   defaultUrl: string;
   includeUploadFile: boolean;
 };
@@ -18,30 +17,27 @@ const COMMON_SCALAR_TYPES = {
   UUID: 'string',
 };
 
-const GENQL_AMBIENT_START = '// __GENQL_AMBIENT_START__';
-const GENQL_AMBIENT_END = '// __GENQL_AMBIENT_END__';
+const STRIPPED_TYPES_START = '// __STRIPPED_DURING_INJECTION_START__';
+const STRIPPED_TYPES_END = '// __STRIPPED_DURING_INJECTION_END__';
 const UPLOAD_FILE_START = '// __UPLOAD_FILE_START__';
 const UPLOAD_FILE_END = '// __UPLOAD_FILE_END__';
 
-const buildClientWrapperSource = (
-  options: ClientWrapperOptions,
-): string => {
+const buildClientWrapperSource = (options: ClientWrapperOptions): string => {
   let source = twentyClientTemplateSource;
 
   source = source.replace(
     new RegExp(
-      `${escapeRegExp(GENQL_AMBIENT_START)}[\\s\\S]*?${escapeRegExp(GENQL_AMBIENT_END)}\\n?`,
+      `${escapeRegExp(STRIPPED_TYPES_START)}[\\s\\S]*?${escapeRegExp(STRIPPED_TYPES_END)}\\n?`,
     ),
     '',
   );
 
-  source = source.replace(
-    "'__TWENTY_DEFAULT_URL__'",
-    options.defaultUrl,
-  );
+  source = source.replace("'__TWENTY_DEFAULT_URL__'", options.defaultUrl);
 
-  // TwentyGeneratedClient → className (also covers TwentyGeneratedClientOptions)
-  source = source.replace(/TwentyGeneratedClient/g, options.className);
+  source = source.replace(
+    /TwentyGeneratedClient/g,
+    options.apiClientName,
+  );
 
   if (!options.includeUploadFile) {
     source = source.replace(
@@ -51,11 +47,17 @@ const buildClientWrapperSource = (
       '\n',
     );
   } else {
-    source = source.replace(new RegExp(`\\s*${escapeRegExp(UPLOAD_FILE_START)}\\n`), '\n');
-    source = source.replace(new RegExp(`\\s*${escapeRegExp(UPLOAD_FILE_END)}\\n`), '\n');
+    source = source.replace(
+      new RegExp(`\\s*${escapeRegExp(UPLOAD_FILE_START)}\\n`),
+      '\n',
+    );
+    source = source.replace(
+      new RegExp(`\\s*${escapeRegExp(UPLOAD_FILE_END)}\\n`),
+      '\n',
+    );
   }
 
-  return `\n// ${options.className} (auto-injected by twenty-sdk)\n${source}`;
+  return `\n// ${options.apiClientName} (auto-injected by twenty-sdk)\n${source}`;
 };
 
 const escapeRegExp = (value: string): string =>
@@ -115,13 +117,13 @@ export class ClientService {
     ]);
 
     await this.injectClientWrapper(join(tempPath, 'core'), {
-      className: 'CoreApiClient',
+      apiClientName: 'CoreApiClient',
       defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
       includeUploadFile: false,
     });
 
     await this.injectClientWrapper(join(tempPath, 'metadata'), {
-      className: 'MetadataApiClient',
+      apiClientName: 'MetadataApiClient',
       defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/metadata\``,
       includeUploadFile: true,
     });

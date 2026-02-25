@@ -1,8 +1,6 @@
 // Ambient type stubs for the genql-generated code this template gets
 // injected into. They enable full typecheck/lint on this file.
-// The section between the markers is stripped at injection time.
-// __GENQL_AMBIENT_START__
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// __STRIPPED_DURING_INJECTION_START__
 type QueryGenqlSelection = Record<string, unknown>;
 type MutationGenqlSelection = Record<string, unknown>;
 type GraphqlOperation = Record<string, unknown>;
@@ -31,8 +29,7 @@ declare function createClient(options: ClientOptions): Client;
 declare class GenqlError extends Error {
   constructor(errors: unknown, data: unknown);
 }
-/* eslint-enable @typescript-eslint/no-unused-vars */
-// __GENQL_AMBIENT_END__
+// __STRIPPED_DURING_INJECTION_END__
 
 const APP_ACCESS_TOKEN_ENV_KEY = 'TWENTY_APP_ACCESS_TOKEN';
 const API_KEY_ENV_KEY = 'TWENTY_API_KEY';
@@ -108,9 +105,7 @@ const getTokenFromHeaders = (
       ([headerName]) => headerName.toLowerCase() === 'authorization',
     );
 
-    return getTokenFromAuthorizationHeader(
-      matchedAuthorizationHeader?.[1],
-    );
+    return getTokenFromAuthorizationHeader(matchedAuthorizationHeader?.[1]);
   }
 
   const headersRecord = headers as Record<string, string | undefined>;
@@ -149,8 +144,7 @@ export class TwentyGeneratedClient {
   private headers: HeadersInit | (() => HeadersInit | Promise<HeadersInit>);
   private fetchImplementation: typeof globalThis.fetch | null;
   private authorizationToken: string | null;
-  private refreshAccessTokenPromise: Promise<string | null> | null =
-    null;
+  private refreshAccessTokenPromise: Promise<string | null> | null = null;
 
   constructor(options?: TwentyGeneratedClientOptions) {
     const merged: TwentyGeneratedClientOptions = {
@@ -195,15 +189,11 @@ export class TwentyGeneratedClient {
     });
   }
 
-  query<R extends QueryGenqlSelection>(
-    request: R & { __name?: string },
-  ) {
+  query<R extends QueryGenqlSelection>(request: R & { __name?: string }) {
     return this.client.query(request);
   }
 
-  mutation<R extends MutationGenqlSelection>(
-    request: R & { __name?: string },
-  ) {
+  mutation<R extends MutationGenqlSelection>(request: R & { __name?: string }) {
     return this.client.mutation(request);
   }
 
@@ -234,24 +224,20 @@ export class TwentyGeneratedClient {
         },
       }),
     );
-    form.append(
-      'map',
-      JSON.stringify({ '0': ['variables.file'] }),
-    );
+    form.append('map', JSON.stringify({ '0': ['variables.file'] }));
     form.append(
       '0',
       new Blob([fileBuffer as BlobPart], { type: contentType }),
       filename,
     );
 
-    const result =
-      await this.executeGraphqlRequestWithOptionalRefresh({
-        operation: form,
-        headers: {},
-        requestInit: {
-          method: 'POST',
-        },
-      });
+    const result = await this.executeGraphqlRequestWithOptionalRefresh({
+      operation: form,
+      headers: {},
+      requestInit: {
+        method: 'POST',
+      },
+    });
 
     if (result.errors) {
       throw new GenqlError(result.errors, result.data);
@@ -286,8 +272,7 @@ export class TwentyGeneratedClient {
     });
 
     if (this.shouldRefreshToken(firstResponse)) {
-      const refreshedAccessToken =
-        await this.requestRefreshedAccessToken();
+      const refreshedAccessToken = await this.requestRefreshedAccessToken();
 
       if (refreshedAccessToken) {
         const retryResponse = await this.executeGraphqlRequest({
@@ -343,29 +328,21 @@ export class TwentyGeneratedClient {
       requestHeaders.delete('Authorization');
     }
 
-    const response = await this.fetchImplementation.call(
-      globalThis,
-      this.url,
-      {
-        ...this.requestOptions,
-        ...requestInit,
-        method: requestInit?.method ?? 'POST',
-        headers: requestHeaders,
-        body:
-          operation instanceof FormData
-            ? operation
-            : JSON.stringify(operation),
-      },
-    );
+    const response = await this.fetchImplementation.call(globalThis, this.url, {
+      ...this.requestOptions,
+      ...requestInit,
+      method: requestInit?.method ?? 'POST',
+      headers: requestHeaders,
+      body:
+        operation instanceof FormData ? operation : JSON.stringify(operation),
+    });
 
     const rawBody = await response.text();
     let payload: GraphqlResponsePayload | null = null;
 
     if (rawBody.trim().length > 0) {
       try {
-        payload = JSON.parse(
-          rawBody,
-        ) as GraphqlResponsePayload;
+        payload = JSON.parse(rawBody) as GraphqlResponsePayload;
       } catch {
         payload = null;
       }
@@ -397,9 +374,7 @@ export class TwentyGeneratedClient {
 
   private assertResponseIsSuccessful(response: GraphqlResponse) {
     if (response.status < 200 || response.status >= 300) {
-      throw new Error(
-        `${response.statusText}: ${response.rawBody}`,
-      );
+      throw new Error(`${response.statusText}: ${response.rawBody}`);
     }
 
     if (response.payload === null) {
@@ -437,10 +412,7 @@ export class TwentyGeneratedClient {
           return refreshedAccessToken;
         })
         .catch((refreshError: unknown) => {
-          console.error(
-            'Twenty client: token refresh failed',
-            refreshError,
-          );
+          console.error('Twenty client: token refresh failed', refreshError);
 
           return null;
         })

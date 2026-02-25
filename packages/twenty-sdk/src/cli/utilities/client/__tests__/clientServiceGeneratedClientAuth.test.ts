@@ -129,14 +129,14 @@ describe('ClientService generated Twenty auth behavior', () => {
         injectClientWrapper: (
           output: string,
           options: {
-            className: string;
+            apiClientName: string;
             defaultUrl: string;
             includeUploadFile: boolean;
           },
         ) => Promise<void>;
       }
     ).injectClientWrapper(temporaryGeneratedClientDirectory, {
-      className: 'MetadataApiClient',
+      apiClientName: 'MetadataApiClient',
       defaultUrl: '`${process.env.TWENTY_API_URL}/metadata`',
       includeUploadFile: true,
     });
