@@ -1,6 +1,6 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconColumnInsertRight } from 'twenty-ui/display';
@@ -14,8 +14,8 @@ type OpenAddItemToFolderPageParams = {
 export const useOpenAddItemToFolderPage = () => {
   const { t } = useLingui();
   const { navigateCommandMenu } = useNavigateCommandMenu();
-  const setAddMenuItemInsertionContext = useSetRecoilStateV2(
-    addMenuItemInsertionContextStateV2,
+  const setAddMenuItemInsertionContext = useSetAtomState(
+    addMenuItemInsertionContextState,
   );
 
   const openAddItemToFolderPage = ({
