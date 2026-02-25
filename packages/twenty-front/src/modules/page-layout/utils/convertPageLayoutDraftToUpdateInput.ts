@@ -27,6 +27,13 @@ export const convertPageLayoutDraftToUpdateInput = (
             rowSpan: widget.gridPosition.rowSpan,
             columnSpan: widget.gridPosition.columnSpan,
           },
+          position: {
+            layoutMode: 'GRID',
+            row: widget.gridPosition.row,
+            column: widget.gridPosition.column,
+            rowSpan: widget.gridPosition.rowSpan,
+            columnSpan: widget.gridPosition.columnSpan,
+          },
           configuration: widget.configuration ?? null,
         })),
     })),
