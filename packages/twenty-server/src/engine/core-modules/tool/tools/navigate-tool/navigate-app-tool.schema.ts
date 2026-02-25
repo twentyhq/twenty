@@ -25,6 +25,23 @@ export const NavigateAppInputZodSchema = z.discriminatedUnion('type', [
         'The singular name of the object to navigate to (e.g. "company", "person", "opportunity")',
       ),
   }),
+  z.object({
+    type: z
+      .literal('navigateToRecord')
+      .describe(
+        'Navigate to a specific record page. Use this when the user wants to go to a particular record by name (e.g. "go to the company Acme", "open the person John Doe", "show me the deal Enterprise Plan").',
+      ),
+    objectNameSingular: z
+      .string()
+      .describe(
+        'The singular name of the object type (e.g. "company", "person", "opportunity")',
+      ),
+    recordName: z
+      .string()
+      .describe(
+        'The name or label of the record to navigate to (e.g. "Acme", "John Doe", "Enterprise Plan")',
+      ),
+  }),
 ]);
 
 export type NavigateAppInput = z.infer<typeof NavigateAppInputZodSchema>;

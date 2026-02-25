@@ -104,6 +104,14 @@ export const useProcessAgentMessage = () => {
 
               break;
             }
+            case 'navigateToRecordPage': {
+              navigateApp(AppPath.RecordShowPage, {
+                objectNameSingular: navigateAppOutput.objectNameSingular,
+                objectRecordId: navigateAppOutput.recordId,
+              });
+
+              break;
+            }
             case 'navigateToIndexPageView':
               // TODO: implement
               break;

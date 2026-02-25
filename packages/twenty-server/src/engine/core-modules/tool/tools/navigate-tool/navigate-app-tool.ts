@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import Fuse from 'fuse.js';
 import { NavigateAppToolOutput } from 'twenty-shared/ai';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -15,14 +16,18 @@ import {
   type ToolExecutionContext,
 } from 'src/engine/core-modules/tool/types/tool.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
 export class NavigateAppTool implements Tool {
   description =
-    'Navigate the application. Default to navigateToObject for all navigation requests. Only use navigateToView when the user explicitly mentions the word "view" in their request.';
+    'Navigate the application. Use navigateToRecord when the user wants to go to a specific record by name. Default to navigateToObject for all other navigation requests. Only use navigateToView when the user explicitly mentions the word "view" in their request.';
 
   inputSchema = NavigateAppInputZodSchema;
 
@@ -31,6 +36,7 @@ export class NavigateAppTool implements Tool {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly viewService: ViewService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async execute(
@@ -59,6 +65,12 @@ export class NavigateAppTool implements Tool {
       case 'navigateToObject':
         return this.navigateToObject(
           input.objectNameSingular,
+          context.workspaceId,
+        );
+      case 'navigateToRecord':
+        return this.navigateToRecord(
+          input.objectNameSingular,
+          input.recordName,
           context.workspaceId,
         );
     }
@@ -182,6 +194,144 @@ export class NavigateAppTool implements Tool {
       result: {
         action: 'navigateToDefaultViewForObject',
         objectNameSingular: firstMatchingNavigationItemLabel,
+      },
+    };
+  }
+
+  private async navigateToRecord(
+    objectNameSingular: string,
+    recordName: string,
+    workspaceId: string,
+  ): Promise<ToolOutput<NavigateAppToolOutput>> {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
+
+    const flatObjectMetadata = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    ).find(
+      (metadata): metadata is FlatObjectMetadata =>
+        isDefined(metadata) &&
+        metadata.nameSingular === objectNameSingular &&
+        metadata.isActive,
+    );
+
+    if (!isDefined(flatObjectMetadata)) {
+      const availableObjectNames = Object.values(
+        flatObjectMetadataMaps.byUniversalIdentifier,
+      )
+        .filter(
+          (metadata): metadata is FlatObjectMetadata =>
+            isDefined(metadata) && metadata.isActive,
+        )
+        .map((metadata) => metadata.nameSingular)
+        .join(', ');
+
+      return {
+        success: false,
+        message: `Object "${objectNameSingular}" not found`,
+        error: `No object with singular name "${objectNameSingular}" was found. Available objects: ${availableObjectNames}`,
+      };
+    }
+
+    if (!isDefined(flatObjectMetadata.labelIdentifierFieldMetadataId)) {
+      return {
+        success: false,
+        message: `Object "${objectNameSingular}" has no label identifier field`,
+        error: `Cannot search records by name for object "${objectNameSingular}" because it has no label identifier field configured.`,
+      };
+    }
+
+    const labelIdentifierField = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatObjectMetadata.labelIdentifierFieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (!isDefined(labelIdentifierField)) {
+      return {
+        success: false,
+        message: `Label identifier field not found for object "${objectNameSingular}"`,
+        error: `The label identifier field metadata could not be resolved for object "${objectNameSingular}".`,
+      };
+    }
+
+    const isFullName =
+      labelIdentifierField.type === FieldMetadataType.FULL_NAME;
+
+    const selectColumns = isFullName
+      ? [
+          'id',
+          `${labelIdentifierField.name}FirstName`,
+          `${labelIdentifierField.name}LastName`,
+        ]
+      : ['id', labelIdentifierField.name];
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const records =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const repository =
+            await this.globalWorkspaceOrmManager.getRepository<ObjectRecord>(
+              workspaceId,
+              objectNameSingular,
+              { shouldBypassPermissionChecks: true },
+            );
+
+          return repository.find({
+            select: selectColumns as any,
+          });
+        },
+        authContext,
+      );
+
+    const recordsWithDisplayName = records.map((record) => {
+      let displayName: string;
+
+      if (isFullName) {
+        const firstName =
+          (record[`${labelIdentifierField.name}FirstName`] as string) ?? '';
+        const lastName =
+          (record[`${labelIdentifierField.name}LastName`] as string) ?? '';
+
+        displayName = `${firstName} ${lastName}`.trim();
+      } else {
+        displayName = String(record[labelIdentifierField.name] ?? '');
+      }
+
+      return {
+        id: record.id as string,
+        displayName,
+      };
+    });
+
+    const fuse = new Fuse(recordsWithDisplayName, {
+      keys: ['displayName'],
+      threshold: 0.4,
+    });
+
+    const results = fuse.search(recordName);
+    const matchingRecord = results[0]?.item;
+
+    if (!isDefined(matchingRecord)) {
+      return {
+        success: false,
+        message: `Record "${recordName}" not found in ${objectNameSingular}`,
+        error: `No ${objectNameSingular} record matching "${recordName}" was found.`,
+      };
+    }
+
+    return {
+      success: true,
+      message: `Navigating to ${objectNameSingular} record "${matchingRecord.displayName}"`,
+      result: {
+        action: 'navigateToRecordPage',
+        objectNameSingular,
+        recordId: matchingRecord.id,
       },
     };
   }

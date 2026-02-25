@@ -6,4 +6,9 @@ export type NavigateAppToolOutput =
   | {
       action: 'navigateToIndexPageView';
       viewName: string;
+    }
+  | {
+      action: 'navigateToRecordPage';
+      objectNameSingular: string;
+      recordId: string;
     };
