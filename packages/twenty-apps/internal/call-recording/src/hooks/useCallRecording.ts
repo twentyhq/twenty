@@ -23,7 +23,7 @@ export const useCallRecording = () => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (isDefined(recordId)) {
+    if (!isDefined(recordId)) {
       setError(new Error('Record ID is not defined'));
 
       setLoading(false);

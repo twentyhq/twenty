@@ -3,11 +3,20 @@ import { VideoPlayer } from 'src/components/VideoPlayer';
 import { useCallRecording } from 'src/hooks/useCallRecording';
 import { isAudioExtension } from 'src/utils/is-audio-extension';
 import { isVideoExtension } from 'src/utils/is-video-extension';
+import { MEDIA_PLAYER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/media-player-front-component-universal-identifier';
 import { defineFrontComponent } from 'twenty-sdk';
 import { isDefined } from 'twenty-shared/utils';
 
 export const MediaPlayer = () => {
-  const { callRecording } = useCallRecording();
+  const { callRecording, loading, error } = useCallRecording();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isDefined(error)) {
+    throw error;
+  }
 
   const recordingFile = callRecording?.recordingFile[0];
 
@@ -22,21 +31,19 @@ export const MediaPlayer = () => {
     throw new Error('Recording file extension not found');
   }
 
-  if (isAudioExtension(recordingFileExtension)) {
+  const normalizedExtension = recordingFileExtension
+    .toLowerCase()
+    .replace(/^\./, '');
+
+  if (isAudioExtension(normalizedExtension)) {
     return (
-      <AudioPlayer
-        src={recordingFileUrl}
-        extension={recordingFileExtension}
-      />
+      <AudioPlayer src={recordingFileUrl} extension={normalizedExtension} />
     );
   }
 
-  if (isVideoExtension(recordingFileExtension)) {
+  if (isVideoExtension(normalizedExtension)) {
     return (
-      <VideoPlayer
-        src={recordingFileUrl}
-        extension={recordingFileExtension}
-      />
+      <VideoPlayer src={recordingFileUrl} extension={normalizedExtension} />
     );
   }
 
@@ -44,7 +51,7 @@ export const MediaPlayer = () => {
 };
 
 export default defineFrontComponent({
-  universalIdentifier: '9f3bbb39-042d-4216-b8fc-bedfc3487208',
+  universalIdentifier: MEDIA_PLAYER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'Call Recording Media Player',
   description: 'A media player for call recordings',
   component: MediaPlayer,
