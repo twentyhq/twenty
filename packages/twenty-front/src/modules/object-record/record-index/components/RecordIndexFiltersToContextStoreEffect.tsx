@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -75,7 +75,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
       contextStoreAnyFieldFilterValueComponentState,
     );
 
-  const syncAllWriteAtom = useMemo(
+  const syncWriteAtom = useMemo(
     () =>
       atom(
         null,
@@ -171,37 +171,23 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     ],
   );
 
-  const syncAll = useCallback(
-    (
-      filters: RecordFilter[],
-      filterGroups: RecordFilterGroup[],
-      anyFieldFilter: string,
-    ) => {
-      store.set(syncAllWriteAtom, {
-        filters,
-        filterGroups,
-        anyFieldFilterValue: anyFieldFilter,
-      });
-    },
-    [store, syncAllWriteAtom],
-  );
-
-  const resetAll = useCallback(() => {
-    store.set(resetWriteAtom);
-  }, [store, resetWriteAtom]);
-
   useEffect(() => {
-    syncAll(recordIndexFilters, recordIndexFilterGroups, anyFieldFilterValue);
+    store.set(syncWriteAtom, {
+      filters: recordIndexFilters,
+      filterGroups: recordIndexFilterGroups,
+      anyFieldFilterValue,
+    });
 
     return () => {
-      resetAll();
+      store.set(resetWriteAtom);
     };
   }, [
     recordIndexFilters,
     recordIndexFilterGroups,
     anyFieldFilterValue,
-    syncAll,
-    resetAll,
+    store,
+    syncWriteAtom,
+    resetWriteAtom,
   ]);
 
   return <></>;
