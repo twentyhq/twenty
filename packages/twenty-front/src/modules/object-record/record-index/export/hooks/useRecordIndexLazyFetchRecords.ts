@@ -70,22 +70,18 @@ export const useRecordIndexLazyFetchRecords = ({
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
-    recordIndexId,
   );
 
   const contextStoreFilters = useAtomComponentStateValue(
     contextStoreFiltersComponentState,
-    recordIndexId,
   );
 
   const contextStoreFilterGroups = useAtomComponentStateValue(
     contextStoreFilterGroupsComponentState,
-    recordIndexId,
   );
 
   const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
     contextStoreAnyFieldFilterValueComponentState,
-    recordIndexId,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();

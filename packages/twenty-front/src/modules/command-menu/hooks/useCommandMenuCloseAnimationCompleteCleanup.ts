@@ -42,10 +42,20 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
   const commandMenuCloseAnimationCompleteCleanup = useCallback(() => {
     closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
 
+    // Snapshot values before any mutations (Jotai store.get is live, unlike
+    // Recoil snapshots which were immutable point-in-time captures).
+    const currentPage = store.get(commandMenuPageState.atom);
+    const targetedRecordsRule = store.get(
+      contextStoreTargetedRecordsRuleComponentState.atomFamily({
+        instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+      }),
+    );
+    const morphItemsByPage = store.get(
+      commandMenuNavigationMorphItemsByPageState.atom,
+    );
+
     resetContextStoreStates(COMMAND_MENU_COMPONENT_INSTANCE_ID);
     resetContextStoreStates(COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID);
-
-    const currentPage = store.get(commandMenuPageState.atom);
 
     const isPageLayoutEditingPage =
       currentPage === CommandMenuPages.PageLayoutWidgetTypeSelect ||
@@ -54,12 +64,6 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
       currentPage === CommandMenuPages.PageLayoutTabSettings;
 
     if (isPageLayoutEditingPage) {
-      const targetedRecordsRule = store.get(
-        contextStoreTargetedRecordsRuleComponentState.atomFamily({
-          instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-        }),
-      );
-
       if (
         targetedRecordsRule.mode === 'selection' &&
         targetedRecordsRule.selectedRecordIds.length === 1
@@ -111,10 +115,6 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         instanceId: WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
       }),
       WorkflowLogicFunctionTabId.CODE,
-    );
-
-    const morphItemsByPage = store.get(
-      commandMenuNavigationMorphItemsByPageState.atom,
     );
 
     for (const [pageId, morphItems] of morphItemsByPage) {

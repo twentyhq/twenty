@@ -30,7 +30,6 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
 
   const setContextStoreTargetedRecords = useSetAtomComponentState(
     contextStoreTargetedRecordsRuleComponentState,
-    recordIndexId,
   );
 
   const hasUserSelectedAllRows = useAtomComponentStateValue(
@@ -75,12 +74,10 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
 
   const setContextStoreFilters = useSetAtomComponentState(
     contextStoreFiltersComponentState,
-    recordIndexId,
   );
 
   const setContextStoreFilterGroups = useSetAtomComponentState(
     contextStoreFilterGroupsComponentState,
-    recordIndexId,
   );
 
   useEffect(() => {
@@ -99,7 +96,6 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
 
   const setContextStoreAnyFieldFilterValue = useSetAtomComponentState(
     contextStoreAnyFieldFilterValueComponentState,
-    recordIndexId,
   );
 
   const anyFieldFilterValue = useAtomComponentStateValue(
