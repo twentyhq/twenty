@@ -1,6 +1,6 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
@@ -9,7 +9,7 @@ export const useUpdateRecordField = (
   recordFieldComponentInstanceId?: string,
 ) => {
   const store = useStore();
-  const currentRecordFields = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFields = useAtomComponentStateCallbackState(
     currentRecordFieldsComponentState,
     recordFieldComponentInstanceId,
   );

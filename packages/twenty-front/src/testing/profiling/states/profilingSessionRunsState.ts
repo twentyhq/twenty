@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const profilingSessionRunsState = createStateV2<string[]>({
+export const profilingSessionRunsState = createAtomState<string[]>({
   key: 'profilingSessionRunsState',
   defaultValue: [],
 });

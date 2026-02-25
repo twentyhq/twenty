@@ -4,7 +4,7 @@ import { type FieldLinksValue } from '@/object-record/record-field/ui/types/Fiel
 
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
-import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
@@ -15,7 +15,7 @@ export const useLinksFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValueV2<FieldLinksValue | undefined>(
+  const fieldValue = useRecordFieldValue<FieldLinksValue | undefined>(
     recordId,
     fieldName,
     fieldDefinition,

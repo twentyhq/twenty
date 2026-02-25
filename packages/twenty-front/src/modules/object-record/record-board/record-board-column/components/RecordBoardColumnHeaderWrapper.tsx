@@ -3,8 +3,8 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordBoardColumnHeaderWrapperProps = {
@@ -16,12 +16,12 @@ export const RecordBoardColumnHeaderWrapper = ({
   columnId,
   columnIndex,
 }: RecordBoardColumnHeaderWrapperProps) => {
-  const recordGroupDefinition = useFamilyRecoilValueV2(
+  const recordGroupDefinition = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
     columnId,
   );
 
-  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
+  const recordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     columnId,
   );

@@ -1,5 +1,5 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 type ContextStoreTargetedRecordsRuleSelectionMode = {
   mode: 'selection';
@@ -16,7 +16,7 @@ export type ContextStoreTargetedRecordsRule =
   | ContextStoreTargetedRecordsRuleExclusionMode;
 
 export const contextStoreTargetedRecordsRuleComponentState =
-  createComponentStateV2<ContextStoreTargetedRecordsRule>({
+  createAtomComponentState<ContextStoreTargetedRecordsRule>({
     key: 'contextStoreTargetedRecordsRuleComponentState',
     defaultValue: {
       mode: 'selection',

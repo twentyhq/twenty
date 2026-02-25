@@ -5,10 +5,10 @@ import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/adv
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentFamilyStateV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
@@ -23,11 +23,11 @@ export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { readonly } = useContext(AdvancedFilterContext);
-  const rootRecordFilterGroup = useRecoilComponentSelectorValueV2(
+  const rootRecordFilterGroup = useAtomComponentSelectorValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
 
-  const availableFieldMetadataItemsForFilter = useFamilySelectorValueV2(
+  const availableFieldMetadataItemsForFilter = useAtomFamilySelectorValue(
     availableFieldMetadataItemsForFilterFamilySelector,
     {
       objectMetadataItemId: objectMetadataItem.id,
@@ -48,11 +48,10 @@ export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
   const { createEmptyRecordFilterFromFieldMetadataItem } =
     useCreateEmptyRecordFilterFromFieldMetadataItem();
 
-  const setHasInitializedCurrentRecordFilters =
-    useSetRecoilComponentFamilyStateV2(
-      hasInitializedCurrentRecordFiltersComponentFamilyState,
-      {},
-    );
+  const setHasInitializedCurrentRecordFilters = useSetAtomComponentFamilyState(
+    hasInitializedCurrentRecordFiltersComponentFamilyState,
+    {},
+  );
 
   const addRootRecordFilterGroup = () => {
     const alreadyHasAdvancedFilterGroup = isDefined(rootRecordFilterGroup);

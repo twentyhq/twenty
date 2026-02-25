@@ -3,8 +3,8 @@ import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permiss
 import { TextInput } from '@/ui/input/components/TextInput';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { useWorkflowAiAgentPermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { workflowAiAgentActionAgentStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentStateV2';
 import { workflowAiAgentPermissionsIsAddingPermissionStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionStateV2';
 import { workflowAiAgentPermissionsSelectedObjectIdStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdStateV2';
@@ -75,18 +75,18 @@ export const WorkflowAiAgentPermissionsTab = ({
   isAgentLoading,
   refetchAgent,
 }: WorkflowAiAgentPermissionsTabProps) => {
-  const workflowAiAgentActionAgent = useRecoilValueV2(
+  const workflowAiAgentActionAgent = useAtomStateValue(
     workflowAiAgentActionAgentStateV2,
   );
 
   const [
     workflowAiAgentPermissionsSelectedObjectId,
     setWorkflowAiAgentPermissionsSelectedObjectId,
-  ] = useRecoilStateV2(workflowAiAgentPermissionsSelectedObjectIdStateV2);
+  ] = useAtomState(workflowAiAgentPermissionsSelectedObjectIdStateV2);
   const [
     workflowAiAgentPermissionsIsAddingPermission,
     setWorkflowAiAgentPermissionsIsAddingPermission,
-  ] = useRecoilStateV2(workflowAiAgentPermissionsIsAddingPermissionStateV2);
+  ] = useAtomState(workflowAiAgentPermissionsIsAddingPermissionStateV2);
 
   const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();

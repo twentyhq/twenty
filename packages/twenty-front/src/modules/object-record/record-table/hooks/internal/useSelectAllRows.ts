@@ -5,28 +5,28 @@ import { useResetTableRowSelection } from '@/object-record/record-table/hooks/in
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useStore } from 'jotai';
 
 export const useSelectAllRows = (recordTableId?: string) => {
-  const hasUserSelectedAllRows = useRecoilComponentStateCallbackStateV2(
+  const hasUserSelectedAllRows = useAtomComponentStateCallbackState(
     hasUserSelectedAllRowsComponentState,
     recordTableId,
   );
 
-  const allRowsSelectedStatus = useRecoilComponentSelectorCallbackStateV2(
+  const allRowsSelectedStatus = useAtomComponentSelectorCallbackState(
     allRowsSelectedStatusComponentSelector,
     recordTableId,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
+  const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
 
-  const recordIndexAllRecordIds = useRecoilComponentSelectorCallbackStateV2(
+  const recordIndexAllRecordIds = useAtomComponentSelectorCallbackState(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );

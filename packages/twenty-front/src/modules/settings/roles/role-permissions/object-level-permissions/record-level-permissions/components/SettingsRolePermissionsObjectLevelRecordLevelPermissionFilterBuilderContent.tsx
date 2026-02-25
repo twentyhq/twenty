@@ -22,10 +22,10 @@ import { useRecordLevelPermissionFilterActions } from '@/settings/roles/role-per
 import { useRecordLevelPermissionFilterInitialization } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionFilterInitialization';
 import { useRecordLevelPermissionSyncToDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionSyncToDraftRole';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 const StyledContainer = styled.div`
   align-items: start;
@@ -56,7 +56,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
     roleId,
     objectMetadataItem,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContentProps) => {
-    const settingsDraftRole = useFamilyRecoilValueV2(
+    const settingsDraftRole = useAtomFamilyStateValue(
       settingsDraftRoleFamilyState,
       roleId,
     );
@@ -65,26 +65,26 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
       objectMetadataItem.id,
     );
 
-    const setCurrentRecordFilters = useSetRecoilComponentStateV2(
+    const setCurrentRecordFilters = useSetAtomComponentState(
       currentRecordFiltersComponentState,
     );
 
-    const setCurrentRecordFilterGroups = useSetRecoilComponentStateV2(
+    const setCurrentRecordFilterGroups = useSetAtomComponentState(
       currentRecordFilterGroupsComponentState,
     );
 
-    const currentRecordFilters = useRecoilComponentValueV2(
+    const currentRecordFilters = useAtomComponentStateValue(
       currentRecordFiltersComponentState,
     );
 
-    const currentRecordFilterGroups = useRecoilComponentValueV2(
+    const currentRecordFilterGroups = useAtomComponentStateValue(
       currentRecordFilterGroupsComponentState,
     );
 
     const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
       useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
-    const rootRecordFilterGroup = useRecoilComponentSelectorValueV2(
+    const rootRecordFilterGroup = useAtomComponentSelectorValue(
       rootLevelRecordFilterGroupComponentSelector,
     );
 

@@ -2,7 +2,7 @@ import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDi
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type MessageDescriptor } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
@@ -26,7 +26,7 @@ export const ActionOpenSidePanelPage = ({
 
   const { navigateCommandMenu } = useNavigateCommandMenu();
 
-  const setCommandMenuSearchState = useSetRecoilStateV2(commandMenuSearchState);
+  const setCommandMenuSearchState = useSetAtomState(commandMenuSearchState);
 
   if (!actionConfig) {
     return null;

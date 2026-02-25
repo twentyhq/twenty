@@ -14,7 +14,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -49,12 +49,12 @@ export const ChartFiltersSettings = ({
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  const currentRecordFilters = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilters = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
     instanceId,
   );
 
-  const currentRecordFilterGroups = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilterGroups = useAtomComponentStateCallbackState(
     currentRecordFilterGroupsComponentState,
     instanceId,
   );

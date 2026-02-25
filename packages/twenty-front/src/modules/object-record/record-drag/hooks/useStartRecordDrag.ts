@@ -10,46 +10,46 @@ import { originalDragSelectionComponentState } from '@/object-record/record-drag
 
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
 import { getDragOperationType } from '@/object-record/record-drag/utils/getDragOperationType';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { type DragStart } from '@hello-pangea/dnd';
 
 export const useStartRecordDrag = (contextStoreInstanceId?: string) => {
   const store = useStore();
-  const isMultiDragActiveCallbackState = useRecoilComponentStateCallbackStateV2(
+  const isMultiDragActiveCallbackState = useAtomComponentStateCallbackState(
     isMultiDragActiveComponentState,
     contextStoreInstanceId,
   );
 
-  const draggedRecordIdsCallbackState = useRecoilComponentStateCallbackStateV2(
+  const draggedRecordIdsCallbackState = useAtomComponentStateCallbackState(
     draggedRecordIdsComponentState,
     contextStoreInstanceId,
   );
 
   const isRecordIdPrimaryDragMultipleCallbackState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       isRecordIdPrimaryDragMultipleComponentFamilyState,
       contextStoreInstanceId,
     );
 
   const isRecordIdSecondaryDragMultipleCallbackState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       isRecordIdSecondaryDragMultipleComponentFamilyState,
       contextStoreInstanceId,
     );
 
   const primaryDraggedRecordIdCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       primaryDraggedRecordIdComponentState,
       contextStoreInstanceId,
     );
 
-  const originalSelection = useRecoilComponentStateCallbackStateV2(
+  const originalSelection = useAtomComponentStateCallbackState(
     originalDragSelectionComponentState,
     contextStoreInstanceId,
   );
 
-  const isDraggingRecord = useRecoilComponentStateCallbackStateV2(
+  const isDraggingRecord = useAtomComponentStateCallbackState(
     isDraggingRecordComponentState,
     contextStoreInstanceId,
   );

@@ -5,7 +5,7 @@ import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/r
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { Table } from '@/ui/layout/table/components/Table';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -49,7 +49,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
 }: SettingsRolePermissionsObjectLevelSectionProps) => {
   const navigateSettings = useNavigateSettings();
 
-  const settingsDraftRole = useFamilyRecoilValueV2(
+  const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
   );

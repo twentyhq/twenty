@@ -5,7 +5,7 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -28,7 +28,7 @@ describe('useUpsertRecordFilter', () => {
   it('should add a new filter when record filter id does not exist', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilters = useRecoilComponentValueV2(
+        const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
           'test',
         );
@@ -63,7 +63,7 @@ describe('useUpsertRecordFilter', () => {
   it('should update an existing filter when record filter id exists', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilters = useRecoilComponentValueV2(
+        const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
           'test',
         );

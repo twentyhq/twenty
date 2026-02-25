@@ -1,6 +1,6 @@
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -19,7 +19,7 @@ export const RecordIndexPageKanbanAddMenuItem = ({
   columnId,
   onItemClick,
 }: RecordIndexPageKanbanAddMenuItemProps) => {
-  const recordGroupDefinition = useFamilyRecoilValueV2(
+  const recordGroupDefinition = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
     columnId,
   );

@@ -14,8 +14,8 @@ import { RecordCard } from '@/object-record/record-card/components/RecordCard';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import styled from '@emotion/styled';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
@@ -37,7 +37,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
 
   const isCompactModeActive = currentView?.isCompact ?? false;
   const [isCurrentCardSelected, setIsCurrentCardSelected] =
-    useRecoilComponentFamilyStateV2(
+    useAtomComponentFamilyState(
       isRecordCalendarCardSelectedComponentFamilyState,
       recordId,
     );
@@ -51,7 +51,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
   const actionMenuDropdownId =
     getActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
-  const setActionMenuDropdownPosition = useSetRecoilComponentStateV2(
+  const setActionMenuDropdownPosition = useSetAtomComponentState(
     recordIndexActionMenuDropdownPositionComponentState,
     actionMenuDropdownId,
   );

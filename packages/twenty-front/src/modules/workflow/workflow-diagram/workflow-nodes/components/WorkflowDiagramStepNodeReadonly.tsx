@@ -1,8 +1,8 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
@@ -21,7 +21,7 @@ import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/co
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { isNodeTitleHighlighted } from '@/workflow/workflow-diagram/workflow-nodes/utils/isNodeTitleHighlighted';
 import { Position } from '@xyflow/react';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useContext } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -35,15 +35,16 @@ export const WorkflowDiagramStepNodeReadonly = ({
 }) => {
   const { getIcon } = useIcons();
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const workflowVisualizerWorkflowVersionId = useRecoilComponentValueV2(
+  const workflowVisualizerWorkflowVersionId = useAtomComponentStateValue(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
 
-  const [workflowSelectedNode, setWorkflowSelectedNode] =
-    useRecoilComponentStateV2(workflowSelectedNodeComponentState);
+  const [workflowSelectedNode, setWorkflowSelectedNode] = useAtomComponentState(
+    workflowSelectedNodeComponentState,
+  );
 
   const selected = workflowSelectedNode === id;
 
@@ -51,7 +52,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const setCommandMenuNavigationStack = useSetRecoilStateV2(
+  const setCommandMenuNavigationStack = useSetAtomState(
     commandMenuNavigationStackState,
   );
 

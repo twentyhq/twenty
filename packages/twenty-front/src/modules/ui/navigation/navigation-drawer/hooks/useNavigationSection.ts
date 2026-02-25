@@ -2,11 +2,11 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const useNavigationSection = (navigationSectionId: string) => {
   const store = useStore();
-  const isNavigationSectionOpen = useFamilyRecoilValueV2(
+  const isNavigationSectionOpen = useAtomFamilyStateValue(
     isNavigationSectionOpenFamilyState,
     navigationSectionId,
   );

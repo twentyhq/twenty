@@ -9,7 +9,7 @@ import {
 } from '@/ui/layout/dropdown/components/Dropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export type CommandMenuItemDropdownProps = CommandMenuItemProps &
   Pick<
@@ -31,7 +31,7 @@ export const CommandMenuItemDropdown = ({
   dropdownId,
   disabled = false,
 }: CommandMenuItemDropdownProps) => {
-  const isDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );

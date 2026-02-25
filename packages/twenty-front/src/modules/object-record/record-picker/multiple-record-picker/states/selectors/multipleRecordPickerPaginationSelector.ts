@@ -1,9 +1,9 @@
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
+import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 
-export const multipleRecordPickerPaginationSelector = createComponentSelectorV2(
-  {
+export const multipleRecordPickerPaginationSelector =
+  createAtomComponentSelector({
     key: 'multipleRecordPickerPaginationSelector',
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
     get:
@@ -11,5 +11,4 @@ export const multipleRecordPickerPaginationSelector = createComponentSelectorV2(
       ({ get }) => {
         return get(multipleRecordPickerPaginationState, componentStateKey);
       },
-  },
-);
+  });

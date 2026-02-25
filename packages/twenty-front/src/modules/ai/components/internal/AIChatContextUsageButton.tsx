@@ -13,7 +13,7 @@ import {
   agentChatUsageStateV2,
   type AgentChatLastMessageUsage,
 } from '@/ai/states/agentChatUsageStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
   position: relative;
@@ -114,7 +114,7 @@ export const AIChatContextUsageButton = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
-  const agentChatUsage = useRecoilValueV2(agentChatUsageStateV2);
+  const agentChatUsage = useAtomStateValue(agentChatUsageStateV2);
 
   if (!agentChatUsage) {
     return (

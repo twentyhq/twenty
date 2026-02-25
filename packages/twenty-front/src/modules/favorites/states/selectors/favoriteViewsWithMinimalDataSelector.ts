@@ -1,9 +1,9 @@
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type View } from '@/views/types/View';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { createSelectorV2 } from '@/ui/utilities/state/jotai/utils/createSelectorV2';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const favoriteViewsWithMinimalDataSelector = createSelectorV2<
+export const favoriteViewsWithMinimalDataSelector = createAtomSelector<
   Pick<View, 'id' | 'name' | 'objectMetadataId' | 'icon'>[]
 >({
   key: 'favoriteViewsWithMinimalDataSelector',

@@ -8,7 +8,7 @@ import { type WritableFamilySelectorV2 } from '@/ui/utilities/state/jotai/types/
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
 import { buildSetHelper } from '@/ui/utilities/state/jotai/utils/buildSetHelper';
 
-export const createWritableFamilySelectorV2 = <ValueType, FamilyKey>({
+export const createAtomWritableFamilySelector = <ValueType, FamilyKey>({
   key,
   get,
   set,

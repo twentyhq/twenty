@@ -1,9 +1,9 @@
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const objectShowPageTargetableObjectStateV2 =
-  createStateV2<ActivityTargetableObject | null>({
+  createAtomState<ActivityTargetableObject | null>({
     key: 'objectShowPageTargetableObjectStateV2',
     defaultValue: null,
   });

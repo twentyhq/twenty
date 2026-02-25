@@ -12,7 +12,7 @@ import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-re
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 
 import { useStore } from 'jotai';
@@ -23,27 +23,25 @@ import { v4 } from 'uuid';
 export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
   () => {
     const selectedOperandInDropdownCallbackState =
-      useRecoilComponentStateCallbackStateV2(
+      useAtomComponentStateCallbackState(
         selectedOperandInDropdownComponentState,
       );
 
     const currentRecordFiltersCallbackState =
-      useRecoilComponentStateCallbackStateV2(
-        currentRecordFiltersComponentState,
-      );
+      useAtomComponentStateCallbackState(currentRecordFiltersComponentState);
 
     const objectFilterDropdownCurrentRecordFilterCallbackState =
-      useRecoilComponentStateCallbackStateV2(
+      useAtomComponentStateCallbackState(
         objectFilterDropdownCurrentRecordFilterComponentState,
       );
 
     const fieldMetadataItemUsedInDropdownCallbackState =
-      useRecoilComponentStateCallbackStateV2(
+      useAtomComponentStateCallbackState(
         fieldMetadataItemIdUsedInDropdownComponentState,
       );
 
     const objectFilterDropdownFilterIsSelectedCallbackState =
-      useRecoilComponentStateCallbackStateV2(
+      useAtomComponentStateCallbackState(
         objectFilterDropdownFilterIsSelectedComponentState,
       );
 

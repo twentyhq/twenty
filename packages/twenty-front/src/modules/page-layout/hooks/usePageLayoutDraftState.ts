@@ -1,7 +1,7 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -12,11 +12,11 @@ export const usePageLayoutDraftState = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const [pageLayoutDraft, setPageLayoutDraft] = useRecoilComponentStateV2(
+  const [pageLayoutDraft, setPageLayoutDraft] = useAtomComponentState(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
-  const pageLayoutPersisted = useRecoilComponentValueV2(
+  const pageLayoutPersisted = useAtomComponentStateValue(
     pageLayoutPersistedComponentState,
     pageLayoutId,
   );

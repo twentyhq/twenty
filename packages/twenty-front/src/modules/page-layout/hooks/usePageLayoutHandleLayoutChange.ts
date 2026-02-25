@@ -2,7 +2,7 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { type Layout, type Layouts } from 'react-grid-layout';
 import { useCallback } from 'react';
@@ -22,12 +22,12 @@ export const usePageLayoutHandleLayoutChange = (
   const store = useStore();
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
-  const pageLayoutCurrentLayoutsState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );

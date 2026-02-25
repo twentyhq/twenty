@@ -7,8 +7,8 @@ import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-reco
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
 
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,21 +20,18 @@ export const RecordTableScrollAndZIndexEffect = () => {
   const [
     isRecordTableScrolledHorizontally,
     setIsRecordTableScrolledHorizontally,
-  ] = useRecoilComponentStateV2(
-    isRecordTableScrolledHorizontallyComponentState,
-  );
+  ] = useAtomComponentState(isRecordTableScrolledHorizontallyComponentState);
 
-  const setShouldCompactRecordTableFirstColumn = useSetRecoilComponentStateV2(
+  const setShouldCompactRecordTableFirstColumn = useSetAtomComponentState(
     shouldCompactRecordTableFirstColumnComponentState,
   );
 
-  const setShouldCompactRecordIndexLabelIdentifier =
-    useSetRecoilComponentStateV2(
-      shouldCompactRecordIndexLabelIdentifierComponentState,
-    );
+  const setShouldCompactRecordIndexLabelIdentifier = useSetAtomComponentState(
+    shouldCompactRecordIndexLabelIdentifierComponentState,
+  );
 
   const [isRecordTableScrolledVertically, setIsRecordTableScrolledVertically] =
-    useRecoilComponentStateV2(isRecordTableScrolledVerticallyComponentState);
+    useAtomComponentState(isRecordTableScrolledVerticallyComponentState);
 
   useEffect(() => {
     if (!isDefined(scrollWrapperHTMLElement)) {

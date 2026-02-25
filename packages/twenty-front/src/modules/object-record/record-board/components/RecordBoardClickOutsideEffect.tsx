@@ -11,14 +11,14 @@ import { isDraggingRecordComponentState } from '@/object-record/record-drag/stat
 import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 
 export const RecordBoardClickOutsideEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
 
-  const isDraggingRecord = useRecoilComponentValueV2(
+  const isDraggingRecord = useAtomComponentStateValue(
     isDraggingRecordComponentState,
     recordBoardId,
   );

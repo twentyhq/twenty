@@ -3,19 +3,19 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { computeNewPositionOfDraggedRecord } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 export const useReorderVisibleRecordFields = (recordTableId: string) => {
   const store = useStore();
-  const visibleRecordFields = useRecoilComponentSelectorCallbackStateV2(
+  const visibleRecordFields = useAtomComponentSelectorCallbackState(
     visibleRecordFieldsComponentSelector,
     recordTableId,
   );
 
-  const currentRecordFields = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFields = useAtomComponentStateCallbackState(
     currentRecordFieldsComponentState,
     recordTableId,
   );

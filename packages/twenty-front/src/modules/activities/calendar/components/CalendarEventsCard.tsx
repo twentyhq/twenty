@@ -1,4 +1,4 @@
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { format, getYear } from 'date-fns';
@@ -49,7 +49,7 @@ const StyledTitleContainer = styled.div`
 export const CalendarEventsCard = () => {
   const { t } = useLingui();
   const targetRecord = useTargetRecord();
-  const { localeCatalog } = useRecoilValueV2(dateLocaleState);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const [query, queryName] =
     targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Person

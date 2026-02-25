@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -45,7 +45,7 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
         const { applyViewSortsToCurrentRecordSorts } =
           useApplyViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useRecoilComponentValueV2(
+        const currentSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
         );
 
@@ -80,7 +80,7 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
         const { applyViewSortsToCurrentRecordSorts } =
           useApplyViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useRecoilComponentValueV2(
+        const currentSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
         );
 

@@ -2,8 +2,8 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { focusedRecordTableRowIndexComponentState } from '@/object-record/record-table/states/focusedRecordTableRowIndexComponentState';
 import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,12 +11,12 @@ import { isDefined } from 'twenty-shared/utils';
 export const useRecordTableMoveFocusedRow = (recordTableId?: string) => {
   const { focusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
-  const focusedRowIndex = useRecoilComponentStateCallbackStateV2(
+  const focusedRowIndex = useAtomComponentStateCallbackState(
     focusedRecordTableRowIndexComponentState,
     recordTableId,
   );
 
-  const recordIndexAllRecordIds = useRecoilComponentSelectorCallbackStateV2(
+  const recordIndexAllRecordIds = useAtomComponentSelectorCallbackState(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );

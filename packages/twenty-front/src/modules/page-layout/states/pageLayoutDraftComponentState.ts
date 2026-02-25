@@ -1,11 +1,11 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
 export const pageLayoutDraftComponentState =
-  createComponentStateV2<DraftPageLayout>({
+  createAtomComponentState<DraftPageLayout>({
     key: 'pageLayoutDraftComponentState',
     defaultValue: {
       id: '',

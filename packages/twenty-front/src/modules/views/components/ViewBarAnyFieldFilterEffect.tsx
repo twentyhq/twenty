@@ -1,36 +1,38 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { hasInitializedAnyFieldFilterComponentFamilyState } from '@/views/states/hasInitializedAnyFieldFilterComponentFamilyState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarAnyFieldFilterEffect = () => {
-  const currentViewId = useRecoilComponentValueV2(
+  const currentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
   const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
 
-  const currentView = useFamilySelectorValueV2(
+  const currentView = useAtomFamilySelectorValue(
     coreViewFromViewIdFamilySelector,
-    { viewId: currentViewId ?? '' },
+    {
+      viewId: currentViewId ?? '',
+    },
   );
 
   const [hasInitializedAnyFieldFilter, setHasInitializedAnyFieldFilter] =
-    useRecoilComponentFamilyStateV2(
+    useAtomComponentFamilyState(
       hasInitializedAnyFieldFilterComponentFamilyState,
       {
         viewId: currentViewId ?? undefined,
       },
     );
 
-  const setAnyFieldFilterValue = useSetRecoilComponentStateV2(
+  const setAnyFieldFilterValue = useSetAtomComponentState(
     anyFieldFilterValueComponentState,
     recordIndexId,
   );

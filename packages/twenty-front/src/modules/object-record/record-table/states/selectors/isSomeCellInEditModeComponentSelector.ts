@@ -1,10 +1,10 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
+import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 import { isDefined } from 'twenty-shared/utils';
 
 export const isSomeCellInEditModeComponentSelector =
-  createComponentSelectorV2<boolean>({
+  createAtomComponentSelector<boolean>({
     key: 'isSomeCellInEditModeComponentSelector',
     componentInstanceContext: RecordTableComponentInstanceContext,
     get:

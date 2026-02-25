@@ -4,8 +4,8 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,22 +13,20 @@ import { useGetPublicWorkspaceDataByDomainQuery } from '~/generated-metadata/gra
 
 export const useGetPublicWorkspaceDataByDomain = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
-  const isMultiWorkspaceEnabled = useRecoilValueV2(
+  const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
   const { origin } = useOrigin();
-  const setWorkspaceAuthProviders = useSetRecoilStateV2(
+  const setWorkspaceAuthProviders = useSetAtomState(
     workspaceAuthProvidersState,
   );
-  const setWorkspaceAuthBypassProviders = useSetRecoilStateV2(
+  const setWorkspaceAuthBypassProviders = useSetAtomState(
     workspaceAuthBypassProvidersState,
   );
-  const workspacePublicData = useRecoilValueV2(workspacePublicDataState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
-  const setWorkspacePublicDataState = useSetRecoilStateV2(
-    workspacePublicDataState,
-  );
-  const clientConfigApiStatus = useRecoilValueV2(clientConfigApiStatusState);
+  const setWorkspacePublicDataState = useSetAtomState(workspacePublicDataState);
+  const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
   const { loading, data, error } = useGetPublicWorkspaceDataByDomainQuery({
     variables: {

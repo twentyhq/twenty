@@ -4,7 +4,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
 
 export const WorkflowSSESubscribeEffect = ({
@@ -14,7 +14,7 @@ export const WorkflowSSESubscribeEffect = ({
 }) => {
   const queryId = `workflow-versions-for-workflow-${workflowId}`;
 
-  const setShouldWorkflowRefetchRequest = useSetFamilyRecoilStateV2(
+  const setShouldWorkflowRefetchRequest = useSetAtomFamilyState(
     shouldWorkflowRefetchRequestFamilyState,
     workflowId,
   );

@@ -15,7 +15,7 @@ import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { getWidgetTitle } from '@/page-layout/utils/getWidgetTitle';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -39,17 +39,17 @@ export const useCreatePageLayoutGraphWidget = (
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
-  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutCurrentLayoutsState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
     pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutDraggedAreaState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraggedAreaState = useAtomComponentStateCallbackState(
     pageLayoutDraggedAreaComponentState,
     pageLayoutId,
   );

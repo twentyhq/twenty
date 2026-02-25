@@ -19,8 +19,8 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
@@ -43,14 +43,14 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
     isWorkflowFindRecords,
   } = useContext(AdvancedFilterContext);
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
   const dropdownInstanceId =
     getAdvancedFilterObjectFilterDropdownComponentInstanceId(recordFilterId);
 
-  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
+  const subFieldNameUsedInDropdown = useAtomComponentStateValue(
     subFieldNameUsedInDropdownComponentState,
     dropdownInstanceId,
   );
@@ -91,7 +91,7 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
     applyObjectFilterDropdownFilterValue(stringifyRelativeDateFilter(newValue));
   };
 
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
+  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
     dropdownInstanceId,
   );

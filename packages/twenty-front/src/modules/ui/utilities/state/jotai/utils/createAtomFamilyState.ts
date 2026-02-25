@@ -3,7 +3,7 @@ import { atomWithStorage } from 'jotai/utils';
 
 import { type FamilyStateV2 } from '@/ui/utilities/state/jotai/types/FamilyStateV2';
 
-export const createFamilyStateV2 = <ValueType, FamilyKey>({
+export const createAtomFamilyState = <ValueType, FamilyKey>({
   key,
   defaultValue,
   useLocalStorage = false,

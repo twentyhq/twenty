@@ -10,7 +10,7 @@ import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { currentFavoriteFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentFavoriteFolderIdStateV2';
 import { currentNavigationMenuItemFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -20,11 +20,11 @@ const StyledScrollableContent = styled.div`
 `;
 
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
-  const currentFavoriteFolderId = useRecoilValueV2(
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const currentFavoriteFolderId = useAtomStateValue(
     currentFavoriteFolderIdStateV2,
   );
-  const currentNavigationMenuItemFolderId = useRecoilValueV2(
+  const currentNavigationMenuItemFolderId = useAtomStateValue(
     currentNavigationMenuItemFolderIdStateV2,
   );
   const { favoritesByFolder } = useFavoritesByFolder();

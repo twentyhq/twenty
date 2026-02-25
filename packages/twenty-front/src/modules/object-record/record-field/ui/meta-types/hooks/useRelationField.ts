@@ -10,8 +10,8 @@ import { recordFieldInputDraftValueComponentState } from '@/object-record/record
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
@@ -25,12 +25,12 @@ export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useFamilySelectorStateV2(
+  const [fieldValue, setFieldValue] = useAtomFamilySelectorState(
     recordStoreFamilySelectorV2,
     { recordId, fieldName },
   ) as [FieldRelationValue<T>, (value: FieldRelationValue<T>) => void];
 
-  const draftValue = useRecoilComponentValueV2(
+  const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 

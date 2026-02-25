@@ -1,8 +1,8 @@
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
@@ -17,7 +17,7 @@ export const WorkflowFindRecordsFiltersEffect = ({
   const [
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
-  ] = useRecoilComponentFamilyStateV2(
+  ] = useAtomComponentFamilyState(
     hasInitializedCurrentRecordFiltersComponentFamilyState,
     {},
   );
@@ -25,16 +25,16 @@ export const WorkflowFindRecordsFiltersEffect = ({
   const [
     hasInitializedCurrentRecordFilterGroups,
     setHasInitializedCurrentRecordFilterGroups,
-  ] = useRecoilComponentFamilyStateV2(
+  ] = useAtomComponentFamilyState(
     hasInitializedCurrentRecordFilterGroupsComponentFamilyState,
     {},
   );
 
-  const setCurrentRecordFilters = useSetRecoilComponentStateV2(
+  const setCurrentRecordFilters = useSetAtomComponentState(
     currentRecordFiltersComponentState,
   );
 
-  const setCurrentRecordFilterGroups = useSetRecoilComponentStateV2(
+  const setCurrentRecordFilterGroups = useSetAtomComponentState(
     currentRecordFilterGroupsComponentState,
   );
 

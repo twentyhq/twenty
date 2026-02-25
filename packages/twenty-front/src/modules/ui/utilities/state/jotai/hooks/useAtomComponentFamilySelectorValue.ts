@@ -4,7 +4,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentFamilySelectorV2 } from '@/ui/utilities/state/jotai/types/ComponentFamilySelectorV2';
 
-export const useRecoilComponentFamilySelectorValueV2 = <StateType, FamilyKey>(
+export const useAtomComponentFamilySelectorValue = <StateType, FamilyKey>(
   componentFamilySelector: ComponentFamilySelectorV2<StateType, FamilyKey>,
   familyKey: FamilyKey,
   instanceIdFromProps?: string,

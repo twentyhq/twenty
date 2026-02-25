@@ -1,20 +1,21 @@
-import { useMemo } from 'react';
+import { useAtomValue } from 'jotai';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type ComponentSelectorV2 } from '@/ui/utilities/state/jotai/types/ComponentSelectorV2';
+import { type ComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/types/ComponentFamilyStateV2';
 
-export const useRecoilComponentSelectorCallbackStateV2 = <StateType>(
-  componentSelector: ComponentSelectorV2<StateType>,
+export const useAtomComponentFamilyStateValue = <StateType, FamilyKey>(
+  componentState: ComponentFamilyStateV2<StateType, FamilyKey>,
+  familyKey: FamilyKey,
   instanceIdFromProps?: string,
-): ReturnType<ComponentSelectorV2<StateType>['selectorFamily']> => {
+): StateType => {
   const componentInstanceContext = globalComponentInstanceContextMap.get(
-    componentSelector.key,
+    componentState.key,
   );
 
   if (!componentInstanceContext) {
     throw new Error(
-      `Instance context for key "${componentSelector.key}" is not defined`,
+      `Instance context for key "${componentState.key}" is not defined`,
     );
   }
 
@@ -23,8 +24,5 @@ export const useRecoilComponentSelectorCallbackStateV2 = <StateType>(
     instanceIdFromProps,
   );
 
-  return useMemo(
-    () => componentSelector.selectorFamily({ instanceId }),
-    [componentSelector, instanceId],
-  );
+  return useAtomValue(componentState.atomFamily({ instanceId, familyKey }));
 };

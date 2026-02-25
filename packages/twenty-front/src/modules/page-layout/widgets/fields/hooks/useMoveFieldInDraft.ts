@@ -1,5 +1,5 @@
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -12,7 +12,7 @@ export const useMoveFieldInDraft = ({
   pageLayoutId,
   widgetId,
 }: UseMoveFieldInDraftParams) => {
-  const fieldsWidgetGroupsDraftState = useRecoilComponentStateCallbackStateV2(
+  const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );

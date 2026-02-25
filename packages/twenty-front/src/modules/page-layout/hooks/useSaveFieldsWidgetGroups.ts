@@ -1,7 +1,7 @@
 import { UPSERT_FIELDS_WIDGET } from '@/page-layout/graphql/mutations/upsertFieldsWidget';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { useMutation } from '@apollo/client';
 import { useStore } from 'jotai';
@@ -40,16 +40,15 @@ type UseSaveFieldsWidgetGroupsParams = {
 export const useSaveFieldsWidgetGroups = ({
   pageLayoutId,
 }: UseSaveFieldsWidgetGroupsParams) => {
-  const fieldsWidgetGroupsDraftState = useRecoilComponentStateCallbackStateV2(
+  const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
-  const fieldsWidgetGroupsPersistedState =
-    useRecoilComponentStateCallbackStateV2(
-      fieldsWidgetGroupsPersistedComponentState,
-      pageLayoutId,
-    );
+  const fieldsWidgetGroupsPersistedState = useAtomComponentStateCallbackState(
+    fieldsWidgetGroupsPersistedComponentState,
+    pageLayoutId,
+  );
 
   const [upsertFieldsWidgetMutation] = useMutation<
     UpsertFieldsWidgetResult,

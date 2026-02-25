@@ -2,7 +2,7 @@ import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { captchaState } from '@/client-config/states/captchaState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCallback } from 'react';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
@@ -10,8 +10,8 @@ import { useStore } from 'jotai';
 
 export const useRequestFreshCaptchaToken = () => {
   const store = useStore();
-  const setCaptchaToken = useSetRecoilStateV2(captchaTokenState);
-  const setIsRequestingCaptchaToken = useSetRecoilStateV2(
+  const setCaptchaToken = useSetAtomState(captchaTokenState);
+  const setIsRequestingCaptchaToken = useSetAtomState(
     isRequestingCaptchaTokenState,
   );
 

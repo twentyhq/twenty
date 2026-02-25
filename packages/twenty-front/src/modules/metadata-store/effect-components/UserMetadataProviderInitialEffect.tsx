@@ -9,8 +9,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useStore } from 'jotai';
@@ -27,26 +27,24 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const UserMetadataProviderInitialEffect = () => {
   const isLoggedIn = useIsLogged();
-  const currentUser = useRecoilValueV2(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const store = useStore();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const setCurrentUser = useSetRecoilStateV2(currentUserState);
-  const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
-  const setCurrentUserWorkspace = useSetRecoilStateV2(
-    currentUserWorkspaceState,
-  );
-  const setAvailableWorkspaces = useSetRecoilStateV2(availableWorkspacesState);
-  const setCurrentWorkspaceMember = useSetRecoilStateV2(
+  const setCurrentUser = useSetAtomState(currentUserState);
+  const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
+  const setCurrentUserWorkspace = useSetAtomState(currentUserWorkspaceState);
+  const setAvailableWorkspaces = useSetAtomState(availableWorkspacesState);
+  const setCurrentWorkspaceMember = useSetAtomState(
     currentWorkspaceMemberState,
   );
-  const setCurrentWorkspaceMembers = useSetRecoilStateV2(
+  const setCurrentWorkspaceMembers = useSetAtomState(
     currentWorkspaceMembersState,
   );
-  const setCurrentWorkspaceMembersWithDeleted = useSetRecoilStateV2(
+  const setCurrentWorkspaceMembersWithDeleted = useSetAtomState(
     currentWorkspaceDeletedMembersState,
   );
-  const setIsCurrentUserLoaded = useSetRecoilStateV2(isCurrentUserLoadedState);
+  const setIsCurrentUserLoaded = useSetAtomState(isCurrentUserLoadedState);
 
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
 

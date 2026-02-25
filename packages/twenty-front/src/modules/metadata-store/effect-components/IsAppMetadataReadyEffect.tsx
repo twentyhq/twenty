@@ -3,20 +3,20 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 export const IsAppMetadataReadyEffect = () => {
   const isLoggedIn = useIsLogged();
-  const currentUser = useRecoilValueV2(currentUserState);
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
-  const objectsEntry = useFamilyRecoilValueV2(metadataStoreState, 'objects');
-  const viewsEntry = useFamilyRecoilValueV2(metadataStoreState, 'views');
-  const setIsAppMetadataReady = useSetRecoilStateV2(isAppMetadataReadyState);
+  const currentUser = useAtomStateValue(currentUserState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const objectsEntry = useAtomFamilyStateValue(metadataStoreState, 'objects');
+  const viewsEntry = useAtomFamilyStateValue(metadataStoreState, 'views');
+  const setIsAppMetadataReady = useSetAtomState(isAppMetadataReadyState);
 
   useEffect(() => {
     const hasActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);

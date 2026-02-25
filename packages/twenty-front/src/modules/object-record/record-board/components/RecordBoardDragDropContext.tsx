@@ -8,8 +8,8 @@ import { originalDragSelectionComponentState } from '@/object-record/record-drag
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useStore } from 'jotai';
 import {
   DragDropContext,
@@ -23,20 +23,19 @@ export const RecordBoardDragDropContext = ({
 }: React.PropsWithChildren) => {
   const { recordBoardId } = useContext(RecordBoardContext);
 
-  const currentRecordSorts = useRecoilComponentStateCallbackStateV2(
+  const currentRecordSorts = useAtomComponentStateCallbackState(
     currentRecordSortsComponentState,
     recordBoardId,
   );
 
-  const recordBoardSelectedRecordIds =
-    useRecoilComponentSelectorCallbackStateV2(
-      recordBoardSelectedRecordIdsComponentSelector,
-      recordBoardId,
-    );
+  const recordBoardSelectedRecordIds = useAtomComponentSelectorCallbackState(
+    recordBoardSelectedRecordIdsComponentSelector,
+    recordBoardId,
+  );
 
   const store = useStore();
 
-  const originalDragSelection = useRecoilComponentStateCallbackStateV2(
+  const originalDragSelection = useAtomComponentStateCallbackState(
     originalDragSelectionComponentState,
     recordBoardId,
   );

@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 
 const swapPositionsInDraft = (
@@ -21,7 +21,7 @@ const swapPositionsInDraft = (
   });
 
 export const useNavigationMenuItemMoveRemove = () => {
-  const setNavigationMenuItemsDraft = useSetRecoilStateV2(
+  const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftStateV2,
   );
 

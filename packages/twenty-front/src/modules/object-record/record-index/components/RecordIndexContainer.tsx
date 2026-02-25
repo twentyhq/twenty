@@ -5,7 +5,7 @@ import { RecordBoardContainer } from '@/object-record/record-board/components/Re
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -32,7 +32,7 @@ const StyledContainerWithPadding = styled.div`
 `;
 
 export const RecordIndexContainer = () => {
-  const recordIndexViewType = useRecoilValueV2(recordIndexViewTypeState);
+  const recordIndexViewType = useAtomStateValue(recordIndexViewTypeState);
 
   const {
     objectNamePlural,

@@ -9,7 +9,7 @@ import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestr
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { captureException } from '@sentry/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { print, type ExecutionResult } from 'graphql';
@@ -22,7 +22,7 @@ import { useStore } from 'jotai';
 
 export const useTriggerEventStreamCreation = () => {
   const store = useStore();
-  const setIsCreatingSseEventStream = useSetRecoilStateV2(
+  const setIsCreatingSseEventStream = useSetAtomState(
     isCreatingSseEventStreamState,
   );
 

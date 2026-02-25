@@ -1,13 +1,13 @@
-import { useSetAtom } from 'jotai';
+import { useMemo } from 'react';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentStateV2 } from '@/ui/utilities/state/jotai/types/ComponentStateV2';
 
-export const useSetRecoilComponentStateV2 = <ValueType>(
-  componentState: ComponentStateV2<ValueType>,
+export const useAtomComponentStateCallbackState = <StateType>(
+  componentState: ComponentStateV2<StateType>,
   instanceIdFromProps?: string,
-): ((value: ValueType | ((prev: ValueType) => ValueType)) => void) => {
+): ReturnType<ComponentStateV2<StateType>['atomFamily']> => {
   const componentInstanceContext = globalComponentInstanceContextMap.get(
     componentState.key,
   );
@@ -23,5 +23,8 @@ export const useSetRecoilComponentStateV2 = <ValueType>(
     instanceIdFromProps,
   );
 
-  return useSetAtom(componentState.atomFamily({ instanceId }));
+  return useMemo(
+    () => componentState.atomFamily({ instanceId }),
+    [componentState, instanceId],
+  );
 };

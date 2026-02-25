@@ -1,7 +1,7 @@
 import { BlockEditorComponentInstanceContext } from '@/blocknote-editor/contexts/BlockEditorCompoponeInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const isSlashMenuOpenComponentState = createComponentStateV2<boolean>({
+export const isSlashMenuOpenComponentState = createAtomComponentState<boolean>({
   key: 'isSlashMenuOpenComponentState',
   defaultValue: false,
   componentInstanceContext: BlockEditorComponentInstanceContext,

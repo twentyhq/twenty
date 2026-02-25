@@ -1,9 +1,9 @@
 import { commandMenuWorkflowRunIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowRunIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuWorkflowRunIdOrThrow = () => {
-  const workflowRunId = useRecoilComponentValueV2(
+  const workflowRunId = useAtomComponentStateValue(
     commandMenuWorkflowRunIdComponentState,
   );
   if (!isDefined(workflowRunId)) {

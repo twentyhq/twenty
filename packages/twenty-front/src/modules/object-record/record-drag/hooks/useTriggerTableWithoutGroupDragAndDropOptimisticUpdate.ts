@@ -10,23 +10,24 @@ import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/
 import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentFamilySelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
 import { findById, isDefined } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
   const store = useStore();
   const recordIdByRealIndexCallbackSelector =
-    useRecoilComponentFamilySelectorCallbackStateV2(
+    useAtomComponentFamilySelectorCallbackState(
       recordIdByRealIndexComponentFamilySelector,
     );
 
-  const lastScrollPositionCallbackState =
-    useRecoilComponentStateCallbackStateV2(lastScrollPositionComponentState);
+  const lastScrollPositionCallbackState = useAtomComponentStateCallbackState(
+    lastScrollPositionComponentState,
+  );
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
   const totalNumberOfRecordsToVirtualizeCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       totalNumberOfRecordsToVirtualizeComponentState,
     );
 

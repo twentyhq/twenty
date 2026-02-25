@@ -4,7 +4,7 @@ import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRe
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useStore } from 'jotai';
 import {
   DragDropContext,
@@ -21,7 +21,7 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
   const { recordIndexId } = useRecordIndexContextOrThrow();
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const selectedRowIds = useRecoilComponentSelectorCallbackStateV2(
+  const selectedRowIds = useAtomComponentSelectorCallbackState(
     selectedRowIdsComponentSelector,
     recordTableId,
   );

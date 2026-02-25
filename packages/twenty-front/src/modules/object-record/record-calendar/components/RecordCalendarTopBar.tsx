@@ -8,7 +8,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
@@ -52,7 +52,7 @@ export const RecordCalendarTopBar = () => {
   );
 
   const [recordCalendarSelectedDate, setRecordCalendarSelectedDate] =
-    useRecoilComponentStateV2(recordCalendarSelectedDateComponentState);
+    useAtomComponentState(recordCalendarSelectedDateComponentState);
 
   const datePickerDropdownId = `record-calendar-date-picker-${recordCalendarId}`;
   const { closeDropdown } = useCloseDropdown();

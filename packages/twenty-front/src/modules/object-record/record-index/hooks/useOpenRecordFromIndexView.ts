@@ -8,7 +8,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -26,17 +26,17 @@ export const useOpenRecordFromIndexView = () => {
 
   const isMobile = useIsMobile();
 
-  const currentRecordFilters = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilters = useAtomComponentStateCallbackState(
     currentRecordFiltersComponentState,
     recordIndexId,
   );
 
-  const currentRecordSorts = useRecoilComponentStateCallbackStateV2(
+  const currentRecordSorts = useAtomComponentStateCallbackState(
     currentRecordSortsComponentState,
     recordIndexId,
   );
 
-  const currentRecordFilterGroups = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFilterGroups = useAtomComponentStateCallbackState(
     currentRecordFilterGroupsComponentState,
     recordIndexId,
   );

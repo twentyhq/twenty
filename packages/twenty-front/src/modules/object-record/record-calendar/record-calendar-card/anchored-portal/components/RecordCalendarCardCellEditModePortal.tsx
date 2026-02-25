@@ -1,4 +1,4 @@
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCalendarCardInputContextProvider } from '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardInputContextProvider';
@@ -19,7 +19,7 @@ export const RecordCalendarCardCellEditModePortal = ({
 }: RecordCalendarCardCellEditModePortalProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
-  const editModePosition = useRecoilComponentValueV2(
+  const editModePosition = useAtomComponentStateValue(
     recordCalendarCardEditModePositionComponentState,
   );
 

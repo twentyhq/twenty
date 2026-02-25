@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const currentProfilingRunIndexState = createStateV2<number>({
+export const currentProfilingRunIndexState = createAtomState<number>({
   key: 'currentProfilingRunIndexState',
   defaultValue: 0,
 });

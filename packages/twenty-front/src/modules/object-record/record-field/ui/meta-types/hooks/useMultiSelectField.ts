@@ -8,8 +8,8 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelectValue';
 import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
-import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useMultiSelectField = () => {
@@ -23,7 +23,7 @@ export const useMultiSelectField = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const [fieldValues, setFieldValue] = useFamilySelectorStateV2(
+  const [fieldValues, setFieldValue] = useAtomFamilySelectorState(
     recordStoreFamilySelectorV2,
     { recordId, fieldName },
   );
@@ -34,7 +34,7 @@ export const useMultiSelectField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldMultiSelectValue>();
 
-  const draftValue = useRecoilComponentValueV2(
+  const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 

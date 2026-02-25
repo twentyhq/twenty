@@ -1,8 +1,8 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 export const workflowDiagramWaitingNodesDimensionsComponentState =
-  createComponentStateV2<boolean>({
+  createAtomComponentState<boolean>({
     key: 'workflowDiagramWaitingNodesDimensionsComponentState',
     defaultValue: false,
     componentInstanceContext: WorkflowVisualizerComponentInstanceContext,

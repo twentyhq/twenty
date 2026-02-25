@@ -18,8 +18,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useRef } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
@@ -80,7 +80,7 @@ const StyledContentContainer = styled.div`
 `;
 
 export const CommandMenuTopBar = () => {
-  const [commandMenuSearch, setCommandMenuSearch] = useRecoilStateV2(
+  const [commandMenuSearch, setCommandMenuSearch] = useAtomState(
     commandMenuSearchState,
   );
   const inputRef = useRef<HTMLInputElement>(null);
@@ -95,9 +95,9 @@ export const CommandMenuTopBar = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const commandMenuPage = useRecoilValueV2(commandMenuPageState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
 
-  const commandMenuNavigationStack = useRecoilValueV2(
+  const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );
 

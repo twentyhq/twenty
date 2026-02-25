@@ -1,10 +1,10 @@
 import { flattenedReadableFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedReadableFieldMetadataItemIdsSelector';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useFilterVisibleAndReadableRecordField = () => {
-  const flattenedReadableFieldMetadataItems = useRecoilValueV2(
+  const flattenedReadableFieldMetadataItems = useAtomStateValue(
     flattenedReadableFieldMetadataItemsSelector,
   );
 

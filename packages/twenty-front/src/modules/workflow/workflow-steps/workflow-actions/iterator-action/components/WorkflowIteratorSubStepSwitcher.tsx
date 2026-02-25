@@ -1,5 +1,5 @@
 import { workflowRunIteratorSubStepIterationIndexComponentState } from '@/command-menu/pages/workflow/step/view-run/states/workflowRunIteratorSubStepIterationIndexComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
@@ -37,7 +37,7 @@ export const WorkflowIteratorSubStepSwitcher = ({
   const [
     workflowRunIteratorSubStepIterationIndex,
     setWorkflowRunIteratorSubStepIterationIndex,
-  ] = useRecoilComponentStateV2(
+  ] = useAtomComponentState(
     workflowRunIteratorSubStepIterationIndexComponentState,
   );
 

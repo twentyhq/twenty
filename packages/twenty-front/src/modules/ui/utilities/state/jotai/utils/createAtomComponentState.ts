@@ -1,14 +1,12 @@
 import { atom } from 'jotai';
 
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
+import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import {
-  type ComponentFamilyStateKey,
-  type ComponentFamilyStateV2,
-} from '@/ui/utilities/state/jotai/types/ComponentFamilyStateV2';
+import { type ComponentStateV2 } from '@/ui/utilities/state/jotai/types/ComponentStateV2';
 import { isDefined } from 'twenty-shared/utils';
 
-export const createComponentFamilyStateV2 = <ValueType, FamilyKey>({
+export const createAtomComponentState = <ValueType>({
   key,
   defaultValue,
   componentInstanceContext,
@@ -16,41 +14,36 @@ export const createComponentFamilyStateV2 = <ValueType, FamilyKey>({
   key: string;
   defaultValue: ValueType;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-}): ComponentFamilyStateV2<ValueType, FamilyKey> => {
+}): ComponentStateV2<ValueType> => {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
 
   const atomCache = new Map<
     string,
-    ReturnType<ComponentFamilyStateV2<ValueType, FamilyKey>['atomFamily']>
+    ReturnType<ComponentStateV2<ValueType>['atomFamily']>
   >();
 
   const familyFunction = ({
     instanceId,
-    familyKey,
-  }: ComponentFamilyStateKey<FamilyKey>): ReturnType<
-    ComponentFamilyStateV2<ValueType, FamilyKey>['atomFamily']
+  }: ComponentStateKey): ReturnType<
+    ComponentStateV2<ValueType>['atomFamily']
   > => {
-    const familyKeyStr =
-      typeof familyKey === 'string' ? familyKey : JSON.stringify(familyKey);
-
-    const cacheKey = `${instanceId}__${familyKeyStr}`;
-    const existing = atomCache.get(cacheKey);
+    const existing = atomCache.get(instanceId);
 
     if (existing !== undefined) {
       return existing;
     }
 
     const baseAtom = atom(defaultValue);
-    baseAtom.debugLabel = `${key}__${cacheKey}`;
-    atomCache.set(cacheKey, baseAtom);
+    baseAtom.debugLabel = `${key}__${instanceId}`;
+    atomCache.set(instanceId, baseAtom);
 
     return baseAtom;
   };
 
   return {
-    type: 'ComponentFamilyStateV2',
+    type: 'ComponentStateV2',
     key,
     atomFamily: familyFunction,
   };

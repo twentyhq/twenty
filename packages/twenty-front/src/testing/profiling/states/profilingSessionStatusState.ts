@@ -1,9 +1,9 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export type ProfilingSessionStatus = 'running' | 'finished' | 'not_started';
 
 export const profilingSessionStatusState =
-  createStateV2<ProfilingSessionStatus>({
+  createAtomState<ProfilingSessionStatus>({
     key: 'profilingSessionStatusState',
     defaultValue: 'not_started',
   });

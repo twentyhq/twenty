@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const modalId = 'test-modal-id';
 
@@ -26,7 +26,7 @@ describe('useModal', () => {
     const { result } = renderHook(
       () => {
         const modal = useModal();
-        const isModalOpened = useRecoilComponentValueV2(
+        const isModalOpened = useAtomComponentStateValue(
           isModalOpenedComponentState,
           modalId,
         );
@@ -48,7 +48,7 @@ describe('useModal', () => {
     const { result } = renderHook(
       () => {
         const modal = useModal();
-        const isModalOpened = useRecoilComponentValueV2(
+        const isModalOpened = useAtomComponentStateValue(
           isModalOpenedComponentState,
           modalId,
         );
@@ -75,7 +75,7 @@ describe('useModal', () => {
     const { result } = renderHook(
       () => {
         const modal = useModal();
-        const isModalOpened = useRecoilComponentValueV2(
+        const isModalOpened = useAtomComponentStateValue(
           isModalOpenedComponentState,
           modalId,
         );
@@ -99,7 +99,7 @@ describe('useModal', () => {
     const { result } = renderHook(
       () => {
         const modal = useModal();
-        const isModalOpened = useRecoilComponentValueV2(
+        const isModalOpened = useAtomComponentStateValue(
           isModalOpenedComponentState,
           modalId,
         );

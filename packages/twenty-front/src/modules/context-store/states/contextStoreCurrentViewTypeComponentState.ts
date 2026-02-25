@@ -1,9 +1,9 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { type ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const contextStoreCurrentViewTypeComponentState =
-  createComponentStateV2<ContextStoreViewType | null>({
+  createAtomComponentState<ContextStoreViewType | null>({
     key: 'contextStoreCurrentViewTypeComponentState',
     defaultValue: null,
     componentInstanceContext: ContextStoreComponentInstanceContext,

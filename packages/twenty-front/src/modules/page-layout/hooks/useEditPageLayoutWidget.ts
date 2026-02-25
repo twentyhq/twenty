@@ -2,14 +2,14 @@ import { useCallback } from 'react';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { CommandMenuPages } from 'twenty-shared/types';
 
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { t } from '@lingui/core/macro';
 import { WidgetType } from '~/generated-metadata/graphql';
 
@@ -19,14 +19,14 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     pageLayoutIdFromProps,
   );
 
-  const setPageLayoutEditingWidgetId = useSetRecoilComponentStateV2(
+  const setPageLayoutEditingWidgetId = useSetAtomComponentState(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
   const { closeCommandMenu } = useCommandMenu();
-  const setCommandMenuPage = useSetRecoilStateV2(commandMenuPageState);
+  const setCommandMenuPage = useSetAtomState(commandMenuPageState);
 
   const handleEditWidget = useCallback(
     ({

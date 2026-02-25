@@ -6,7 +6,7 @@ import { RecordCalendarComponentInstanceContext } from '@/object-record/record-c
 import { recordCalendarRecordIdsComponentState } from '@/object-record/record-calendar/states/recordCalendarRecordIdsComponentState';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilySelectorV2';
+import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { Temporal } from 'temporal-polyfill';
@@ -14,7 +14,7 @@ import { isDefined, isSamePlainDate } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const calendarDayRecordIdsComponentFamilySelector =
-  createComponentFamilySelectorV2<
+  createAtomComponentFamilySelector<
     string[],
     { day: Temporal.PlainDate; timeZone: string }
   >({

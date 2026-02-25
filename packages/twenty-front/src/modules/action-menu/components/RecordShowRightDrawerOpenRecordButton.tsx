@@ -14,11 +14,11 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
@@ -37,7 +37,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
   objectNameSingular,
   recordId,
 }: RecordShowRightDrawerOpenRecordButtonProps) => {
-  const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId) as
+  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId) as
     | ObjectRecord
     | null
     | undefined;
@@ -52,7 +52,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     targetObjectId: recordId,
   });
 
-  const activeTabIdInRightDrawer = useRecoilComponentValueV2(
+  const activeTabIdInRightDrawer = useAtomComponentStateValue(
     activeTabIdComponentState,
     tabListComponentId,
   );
@@ -61,12 +61,12 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     targetObjectId: recordId,
   });
 
-  const setActiveTabIdInRecordPage = useSetRecoilComponentStateV2(
+  const setActiveTabIdInRecordPage = useSetAtomComponentState(
     activeTabIdComponentState,
     tabListComponentIdInRecordPage,
   );
 
-  const parentViewState = useRecoilComponentStateCallbackStateV2(
+  const parentViewState = useAtomComponentStateCallbackState(
     contextStoreRecordShowParentViewComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

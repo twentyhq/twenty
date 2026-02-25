@@ -1,7 +1,7 @@
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity.constant';
 import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useArcsTransition } from '@nivo/arcs';
 import { type MouseEventHandler, type PieCustomLayerProps } from '@nivo/pie';
 import { animated } from '@react-spring/web';
@@ -27,7 +27,7 @@ export const CustomArcsLayer = ({
   onMouseLeave,
   onClick,
 }: CustomArcsLayerProps) => {
-  const highlightedLegendId = useRecoilComponentValueV2(
+  const highlightedLegendId = useAtomComponentStateValue(
     graphWidgetHighlightedLegendIdComponentState,
   );
 

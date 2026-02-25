@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PROFILING_REPORTER_DIV_ID } from '~/testing/profiling/constants/ProfilingReporterDivId';
 import { currentProfilingRunIndexState } from '~/testing/profiling/states/currentProfilingRunIndexState';
 import { profilingSessionDataPointsState } from '~/testing/profiling/states/profilingSessionDataPointsState';
@@ -22,15 +22,15 @@ const StyledTable = styled.table`
 `;
 
 export const ProfilingReporter = () => {
-  const profilingSessionDataPoints = useRecoilValueV2(
+  const profilingSessionDataPoints = useAtomStateValue(
     profilingSessionDataPointsState,
   );
 
-  const currentProfilingRunIndex = useRecoilValueV2(
+  const currentProfilingRunIndex = useAtomStateValue(
     currentProfilingRunIndexState,
   );
 
-  const profilingSessionStatus = useRecoilValueV2(profilingSessionStatusState);
+  const profilingSessionStatus = useAtomStateValue(profilingSessionStatusState);
 
   const profilingReport = useMemo(
     () => computeProfilingReport(profilingSessionDataPoints),

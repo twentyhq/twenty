@@ -3,7 +3,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -33,7 +33,7 @@ const SeeVersionsWorkflowVersionSingleRecordActionContent = ({
 
 export const SeeVersionsWorkflowVersionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
-  const workflowVersion = useFamilyRecoilValueV2(
+  const workflowVersion = useAtomFamilyStateValue(
     recordStoreFamilyState,
     recordId,
   );

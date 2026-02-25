@@ -1,5 +1,5 @@
 import { type Decorator } from '@storybook/react-vite';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
@@ -7,8 +7,8 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -26,9 +26,9 @@ import { useSetRecordTableData } from '@/object-record/record-table/hooks/intern
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -47,16 +47,16 @@ const InternalTableStateLoaderEffect = ({
 }) => {
   const { recordTableId } = useRecordTableContextOrThrow();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
-  const setCurrentRecordFields = useSetRecoilComponentStateV2(
+  const setCurrentRecordFields = useSetAtomComponentState(
     currentRecordFieldsComponentState,
   );
 
-  const setContextStoreCurrentViewId = useSetRecoilComponentStateV2(
+  const setContextStoreCurrentViewId = useSetAtomComponentState(
     contextStoreCurrentViewIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const setCoreViews = useSetRecoilStateV2(coreViewsState);
+  const setCoreViews = useSetAtomState(coreViewsState);
 
   const setRecordTableData = useSetRecordTableData({
     recordTableId,
@@ -107,11 +107,11 @@ const InternalTableContextProviders = ({
 }) => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const currentRecordFields = useRecoilComponentValueV2(
+  const currentRecordFields = useAtomComponentStateValue(
     currentRecordFieldsComponentState,
   );
 
-  const visibleRecordFields = useRecoilComponentSelectorValueV2(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 
@@ -145,7 +145,7 @@ const InternalTableContextProviders = ({
     ]),
   );
 
-  const labelIdentifierFieldMetadataItem = useFamilySelectorValueV2(
+  const labelIdentifierFieldMetadataItem = useAtomFamilySelectorValue(
     labelIdentifierFieldMetadataItemSelector,
     {
       objectMetadataItemId: objectMetadataItem.id,
@@ -206,7 +206,7 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
   const { recordTableObjectNameSingular: objectNameSingular } =
     context.parameters;
 
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>

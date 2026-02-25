@@ -8,7 +8,7 @@ import { type SelectorGetterV2 } from '@/ui/utilities/state/jotai/types/Selector
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
 import { isDefined } from 'twenty-shared/utils';
 
-export const createComponentSelectorV2 = <ValueType>({
+export const createAtomComponentSelector = <ValueType>({
   key,
   get,
   componentInstanceContext,

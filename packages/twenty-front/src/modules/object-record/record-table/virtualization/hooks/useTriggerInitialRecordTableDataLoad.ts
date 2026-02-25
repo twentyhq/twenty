@@ -26,11 +26,11 @@ import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { dataLoadingStatusByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentState';
 import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useTriggerInitialRecordTableDataLoad = () => {
@@ -42,50 +42,52 @@ export const useTriggerInitialRecordTableDataLoad = () => {
     useRecordIndexTableFetchMore(objectNameSingular);
 
   const isInitializingVirtualTableDataLoadingCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       isInitializingVirtualTableDataLoadingComponentState,
     );
 
-  const dataPagesLoadedCallbackState = useRecoilComponentStateCallbackStateV2(
+  const dataPagesLoadedCallbackState = useAtomComponentStateCallbackState(
     dataPagesLoadedComponentState,
   );
 
-  const isRecordTableInitialLoading = useRecoilComponentStateCallbackStateV2(
+  const isRecordTableInitialLoading = useAtomComponentStateCallbackState(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );
 
-  const recordIndexAllRecordIds = useRecoilComponentSelectorCallbackStateV2(
+  const recordIndexAllRecordIds = useAtomComponentSelectorCallbackState(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
 
   const store = useStore();
 
-  const recordIdByRealIndexCallbackState =
-    useRecoilComponentStateCallbackStateV2(recordIdByRealIndexComponentState);
+  const recordIdByRealIndexCallbackState = useAtomComponentStateCallbackState(
+    recordIdByRealIndexComponentState,
+  );
 
   const dataLoadingStatusByRealIndexCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       dataLoadingStatusByRealIndexComponentState,
     );
 
-  const setIsRecordTableScrolledHorizontally = useSetRecoilComponentStateV2(
+  const setIsRecordTableScrolledHorizontally = useSetAtomComponentState(
     isRecordTableScrolledHorizontallyComponentState,
   );
 
-  const setIsRecordTableScrolledVertically = useSetRecoilComponentStateV2(
+  const setIsRecordTableScrolledVertically = useSetAtomComponentState(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const lastScrollPositionCallbackState =
-    useRecoilComponentStateCallbackStateV2(lastScrollPositionComponentState);
+  const lastScrollPositionCallbackState = useAtomComponentStateCallbackState(
+    lastScrollPositionComponentState,
+  );
 
-  const lastRealIndexSetCallbackState = useRecoilComponentStateCallbackStateV2(
+  const lastRealIndexSetCallbackState = useAtomComponentStateCallbackState(
     lastRealIndexSetComponentState,
   );
 
-  const scrollAtRealIndexCallbackState = useRecoilComponentStateCallbackStateV2(
+  const scrollAtRealIndexCallbackState = useAtomComponentStateCallbackState(
     scrollAtRealIndexComponentState,
   );
 
@@ -101,7 +103,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
   const { reapplyRowSelection } = useReapplyRowSelection();
 
   const totalNumberOfRecordsToVirtualizeCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       totalNumberOfRecordsToVirtualizeComponentState,
     );
 

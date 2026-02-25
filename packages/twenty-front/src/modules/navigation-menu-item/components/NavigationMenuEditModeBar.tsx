@@ -7,8 +7,8 @@ import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/n
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -41,15 +41,15 @@ export const NavigationMenuEditModeBar = () => {
   const { getIcon } = useIcons();
   const [isSaving, setIsSaving] = useState(false);
   const { closeCommandMenu } = useCommandMenu();
-  const commandMenuPage = useRecoilValueV2(commandMenuPageState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const setNavigationMenuItemsDraft = useSetRecoilStateV2(
+  const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftStateV2,
   );
-  const setSelectedNavigationMenuItemInEditMode = useSetRecoilStateV2(
+  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
     selectedNavigationMenuItemInEditModeStateV2,
   );
-  const setIsNavigationMenuInEditMode = useSetRecoilStateV2(
+  const setIsNavigationMenuInEditMode = useSetAtomState(
     isNavigationMenuInEditModeStateV2,
   );
   const { saveDraft } = useSaveNavigationMenuItemsDraft();
@@ -67,7 +67,7 @@ export const NavigationMenuEditModeBar = () => {
     }
   };
 
-  const isNavigationMenuInEditMode = useRecoilValueV2(
+  const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeStateV2,
   );
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(

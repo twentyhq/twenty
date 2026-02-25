@@ -1,6 +1,6 @@
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -68,21 +68,21 @@ export const WorkflowEditActionIfElseBody = ({
   const { updateWorkflowVersionPosition } = useTidyUpWorkflowVersion();
   const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
   const { deleteStepsOutputSchema } = useStepsOutputSchema();
-  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
-  const currentStepFilters = useRecoilComponentValueV2(
+  const currentStepFilters = useAtomComponentStateValue(
     currentStepFiltersComponentState,
   );
-  const currentStepFilterGroups = useRecoilComponentValueV2(
+  const currentStepFilterGroups = useAtomComponentStateValue(
     currentStepFilterGroupsComponentState,
   );
-  const setCurrentStepFilters = useSetRecoilComponentStateV2(
+  const setCurrentStepFilters = useSetAtomComponentState(
     currentStepFiltersComponentState,
   );
-  const setCurrentStepFilterGroups = useSetRecoilComponentStateV2(
+  const setCurrentStepFilterGroups = useSetAtomComponentState(
     currentStepFilterGroupsComponentState,
   );
 

@@ -14,8 +14,8 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import isEmpty from 'lodash.isempty';
 
 export const RecordTable = () => {
@@ -36,17 +36,17 @@ export const RecordTable = () => {
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
   );
 
-  const isRecordTableInitialLoading = useRecoilComponentValueV2(
+  const isRecordTableInitialLoading = useAtomComponentStateValue(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );
 
-  const recordTableHasRecords = useRecoilComponentSelectorValueV2(
+  const recordTableHasRecords = useAtomComponentSelectorValue(
     recordIndexHasRecordsComponentSelector,
     recordTableId,
   );
 
-  const hasRecordGroups = useRecoilComponentSelectorValueV2(
+  const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
     recordTableId,
   );

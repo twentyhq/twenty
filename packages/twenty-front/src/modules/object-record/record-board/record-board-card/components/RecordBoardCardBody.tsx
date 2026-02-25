@@ -15,8 +15,8 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
 
 export const RecordBoardCardBody = () => {
@@ -40,7 +40,7 @@ export const RecordBoardCardBody = () => {
     return [updateEntity, { loading: false }];
   };
 
-  const visibleRecordFields = useRecoilComponentSelectorValueV2(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 
@@ -49,7 +49,7 @@ export const RecordBoardCardBody = () => {
       recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
   );
 
-  const setRecordBoardCardHoverPosition = useSetRecoilComponentStateV2(
+  const setRecordBoardCardHoverPosition = useSetAtomComponentState(
     recordBoardCardHoverPositionComponentState,
   );
 

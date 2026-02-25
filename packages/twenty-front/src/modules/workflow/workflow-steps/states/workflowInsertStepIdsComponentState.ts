@@ -1,4 +1,4 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
 
@@ -10,7 +10,7 @@ type WorkflowInsertStepIdsState = {
 };
 
 export const workflowInsertStepIdsComponentState =
-  createComponentStateV2<WorkflowInsertStepIdsState>({
+  createAtomComponentState<WorkflowInsertStepIdsState>({
     key: 'workflowInsertStepIdsComponentState',
     defaultValue: {
       parentStepId: undefined,

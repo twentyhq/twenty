@@ -4,7 +4,7 @@ import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permiss
 import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { workflowAiAgentActionAgentStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentStateV2';
 import { workflowAiAgentPermissionsIsAddingPermissionStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionStateV2';
 import { workflowAiAgentPermissionsSelectedObjectIdStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdStateV2';
@@ -37,7 +37,7 @@ export const useWorkflowAiAgentPermissionActions = ({
 }: UseWorkflowAiAgentPermissionActionsParams) => {
   const { enqueueSuccessSnackBar } = useSnackBar();
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
-    useRecoilStateV2(workflowAiAgentActionAgentStateV2);
+    useAtomState(workflowAiAgentActionAgentStateV2);
   const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
   const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig({
@@ -47,10 +47,10 @@ export const useWorkflowAiAgentPermissionActions = ({
     assignmentCapabilities: { canBeAssignedToAgents: true },
   });
 
-  const [, setWorkflowAiAgentPermissionsSelectedObjectId] = useRecoilStateV2(
+  const [, setWorkflowAiAgentPermissionsSelectedObjectId] = useAtomState(
     workflowAiAgentPermissionsSelectedObjectIdStateV2,
   );
-  const [, setWorkflowAiAgentPermissionsIsAddingPermission] = useRecoilStateV2(
+  const [, setWorkflowAiAgentPermissionsIsAddingPermission] = useAtomState(
     workflowAiAgentPermissionsIsAddingPermissionStateV2,
   );
 

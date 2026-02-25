@@ -10,7 +10,7 @@ import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -62,7 +62,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   const jotaiStore = useStore();
 
-  const apiKeyToken = useFamilyRecoilValueV2(apiKeyTokenFamilyState, apiKeyId);
+  const apiKeyToken = useAtomFamilyStateValue(apiKeyTokenFamilyState, apiKeyId);
 
   const setApiKeyTokenCallback = useCallback(
     (apiKeyId: string, token: string) => {

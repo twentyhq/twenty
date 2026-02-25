@@ -9,8 +9,8 @@ import { useSetRecordIndexAggregateDisplayValueForRecordGroupValue } from '@/obj
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue } from '@/object-record/record-index/utils/turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useEffect } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,10 +40,9 @@ export const RecordIndexGroupAggregateQueryEffect = ({
       recordIndexGroupAggregateOperation,
     });
 
-  const recordIndexAggregateDisplayLabel =
-    useRecoilComponentStateCallbackStateV2(
-      recordIndexAggregateDisplayLabelComponentState,
-    );
+  const recordIndexAggregateDisplayLabel = useAtomComponentStateCallbackState(
+    recordIndexAggregateDisplayLabelComponentState,
+  );
 
   const { setRecordIndexAggregateDisplayLabel } =
     useSetRecordIndexAggregateDisplayLabel();
@@ -51,7 +50,7 @@ export const RecordIndexGroupAggregateQueryEffect = ({
   const { setRecordIndexAggregateDisplayValueForRecordGroupValue } =
     useSetRecordIndexAggregateDisplayValueForRecordGroupValue();
 
-  const recordGroupDefinitions = useRecoilComponentSelectorValueV2(
+  const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
   );
 

@@ -13,7 +13,7 @@ import { CommandMenuWorkflowStepInfo } from '@/command-menu/components/CommandMe
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CommandMenuPages } from 'twenty-shared/types';
 
 import { type CommandMenuContextChipProps } from './CommandMenuContextChip';
@@ -29,7 +29,7 @@ type CommandMenuPageInfoProps = {
 };
 
 export const CommandMenuPageInfo = ({ pageChip }: CommandMenuPageInfoProps) => {
-  const selectedNavigationMenuItemInEditMode = useRecoilValueV2(
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeStateV2,
   );
   const items = useWorkspaceSectionItems();

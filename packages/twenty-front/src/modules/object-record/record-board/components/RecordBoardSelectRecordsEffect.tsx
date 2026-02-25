@@ -3,17 +3,17 @@ import { useEffect } from 'react';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export const RecordBoardSelectRecordsEffect = () => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const selectedRecordIds = useRecoilComponentSelectorValueV2(
+  const selectedRecordIds = useAtomComponentSelectorValue(
     recordBoardSelectedRecordIdsComponentSelector,
   );
 
-  const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
+  const setContextStoreTargetedRecords = useSetAtomComponentState(
     contextStoreTargetedRecordsRuleComponentState,
     recordIndexId,
   );

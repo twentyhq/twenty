@@ -4,7 +4,7 @@ import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,8 +23,8 @@ const INDEX_VIEW_TYPES = [
 
 export const ViewMetadataProviderInitialEffect = () => {
   const isLoggedIn = useIsLogged();
-  const isCurrentUserLoaded = useRecoilValueV2(isCurrentUserLoadedState);
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const store = useStore();
   const [isInitialized, setIsInitialized] = useState(false);
 

@@ -19,8 +19,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
@@ -66,19 +66,19 @@ import { useStore } from 'jotai';
 
 export const useAuth = () => {
   const store = useStore();
-  const setTokenPair = useSetRecoilStateV2(tokenPairState);
-  const setLoginToken = useSetRecoilStateV2(loginTokenState);
-  const setIsAppEffectRedirectEnabled = useSetRecoilStateV2(
+  const setTokenPair = useSetAtomState(tokenPairState);
+  const setLoginToken = useSetAtomState(loginTokenState);
+  const setIsAppEffectRedirectEnabled = useSetAtomState(
     isAppEffectRedirectEnabledState,
   );
 
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
-  const isCaptchaScriptLoaded = useRecoilValueV2(isCaptchaScriptLoadedState);
-  const isMultiWorkspaceEnabled = useRecoilValueV2(
+  const isCaptchaScriptLoaded = useAtomStateValue(isCaptchaScriptLoadedState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
-  const isEmailVerificationRequired = useRecoilValueV2(
+  const isEmailVerificationRequired = useAtomStateValue(
     isEmailVerificationRequiredState,
   );
   const { loadCurrentUser } = useLoadCurrentUser();
@@ -87,7 +87,7 @@ export const useAuth = () => {
     useReloadWorkspaceMetadata();
   const { createWorkspace } = useSignUpInNewWorkspace();
 
-  const setSignInUpStep = useSetRecoilStateV2(signInUpStepState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
@@ -104,7 +104,7 @@ export const useAuth = () => {
     useVerifyEmailAndGetWorkspaceAgnosticTokenMutation();
   const [getAuthTokensFromOtp] = useGetAuthTokensFromOtpMutation();
 
-  const workspacePublicData = useRecoilValueV2(workspacePublicDataState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
 
   const { setLastAuthenticateWorkspaceDomain } =
     useLastAuthenticatedWorkspaceDomain();

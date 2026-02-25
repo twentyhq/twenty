@@ -4,7 +4,7 @@ import { type FamilySelectorV2 } from '@/ui/utilities/state/jotai/types/FamilySe
 import { type SelectorGetterV2 } from '@/ui/utilities/state/jotai/types/SelectorCallbacksV2';
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
 
-export const createFamilySelectorV2 = <ValueType, FamilyKey>({
+export const createAtomFamilySelector = <ValueType, FamilyKey>({
   key,
   get,
 }: {

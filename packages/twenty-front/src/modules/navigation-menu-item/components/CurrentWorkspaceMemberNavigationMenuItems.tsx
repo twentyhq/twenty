@@ -25,12 +25,12 @@ import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDel
 import { useDeleteNavigationMenuItemFolder } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItemFolder';
 import { useRenameNavigationMenuItemFolder } from '@/navigation-menu-item/hooks/useRenameNavigationMenuItemFolder';
 import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -42,9 +42,9 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { currentNavigationMenuItemFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -66,7 +66,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
   const { t } = useLingui();
   const theme = useTheme();
   const iconColors = getNavigationMenuItemIconColors(theme);
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
@@ -83,9 +83,9 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
   const isMobile = useIsMobile();
 
   const [openNavigationMenuItemFolderIds, setOpenNavigationMenuItemFolderIds] =
-    useRecoilStateV2(openNavigationMenuItemFolderIdsStateV2);
+    useAtomState(openNavigationMenuItemFolderIdsStateV2);
 
-  const setCurrentFolderId = useSetRecoilStateV2(
+  const setCurrentFolderId = useSetAtomState(
     currentNavigationMenuItemFolderIdStateV2,
   );
 
@@ -123,7 +123,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
 
   const dropdownId = `navigation-menu-item-folder-edit-${folder.id}`;
 
-  const isDropdownOpenComponent = useRecoilComponentValueV2(
+  const isDropdownOpenComponent = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
@@ -194,7 +194,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
     />
   );
 
-  const isModalOpened = useRecoilComponentValueV2(
+  const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     modalId,
   );

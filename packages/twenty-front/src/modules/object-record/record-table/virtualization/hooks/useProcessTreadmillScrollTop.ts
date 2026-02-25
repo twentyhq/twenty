@@ -8,25 +8,26 @@ import { lastScrollPositionComponentState } from '@/object-record/record-table/v
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
 import { scrollAtRealIndexComponentState } from '@/object-record/record-table/virtualization/states/scrollAtRealIndexComponentState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 export const useProcessTreadmillScrollTop = () => {
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
-  const lastScrollPositionCallbackState =
-    useRecoilComponentStateCallbackStateV2(lastScrollPositionComponentState);
+  const lastScrollPositionCallbackState = useAtomComponentStateCallbackState(
+    lastScrollPositionComponentState,
+  );
 
-  const lastRealIndexSetCallbackState = useRecoilComponentStateCallbackStateV2(
+  const lastRealIndexSetCallbackState = useAtomComponentStateCallbackState(
     lastRealIndexSetComponentState,
   );
 
-  const scrollAtRealIndexCallbackState = useRecoilComponentStateCallbackStateV2(
+  const scrollAtRealIndexCallbackState = useAtomComponentStateCallbackState(
     scrollAtRealIndexComponentState,
   );
 
   const virtualizedRowRealIndexByVirtualIndexCallbackState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       realIndexByVirtualIndexComponentFamilyState,
     );
 

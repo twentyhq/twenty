@@ -3,7 +3,7 @@ import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/is
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
@@ -17,7 +17,7 @@ export const useChipField = () => {
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 
-  const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
+  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   return {
     objectNameSingular,

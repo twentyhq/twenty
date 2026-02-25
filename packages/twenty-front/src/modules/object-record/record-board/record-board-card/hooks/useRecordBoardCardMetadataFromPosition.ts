@@ -3,23 +3,23 @@ import { recordBoardCardEditModePositionComponentState } from '@/object-record/r
 import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordBoardCardMetadataFromPosition = () => {
   const { objectMetadataItem } = useContext(RecordBoardContext);
 
-  const hoverPosition = useRecoilComponentValueV2(
+  const hoverPosition = useAtomComponentStateValue(
     recordBoardCardHoverPositionComponentState,
   );
 
-  const editModePosition = useRecoilComponentValueV2(
+  const editModePosition = useAtomComponentStateValue(
     recordBoardCardEditModePositionComponentState,
   );
 
-  const visibleRecordFields = useRecoilComponentSelectorValueV2(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 

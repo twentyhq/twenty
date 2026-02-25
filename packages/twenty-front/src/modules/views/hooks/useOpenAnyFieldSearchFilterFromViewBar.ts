@@ -2,24 +2,24 @@ import { objectFilterDropdownAnyFieldSearchIsSelectedComponentState } from '@/ob
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const useOpenAnyFieldSearchFilterFromViewBar = () => {
-  const setAnyFieldFilterValue = useSetRecoilComponentStateV2(
+  const setAnyFieldFilterValue = useSetAtomComponentState(
     anyFieldFilterValueComponentState,
   );
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const setObjectFilterDropdownAnyFieldSearchIsSelectedComponentState =
-    useSetRecoilComponentStateV2(
+    useSetAtomComponentState(
       objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
     );
 
-  const objectFilterDropdownSearchInput = useRecoilComponentValueV2(
+  const objectFilterDropdownSearchInput = useAtomComponentStateValue(
     objectFilterDropdownSearchInputComponentState,
   );
 

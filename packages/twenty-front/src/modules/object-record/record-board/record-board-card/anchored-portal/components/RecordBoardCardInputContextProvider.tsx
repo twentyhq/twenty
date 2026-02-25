@@ -10,7 +10,7 @@ import {
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -23,7 +23,7 @@ export const RecordBoardCardInputContextProvider = ({
 }: RecordBoardCardInputContextProviderProps) => {
   const store = useStore();
   const { closeInlineCell } = useInlineCell();
-  const setRecordBoardCardEditModePosition = useSetRecoilComponentStateV2(
+  const setRecordBoardCardEditModePosition = useSetAtomComponentState(
     recordBoardCardEditModePositionComponentState,
   );
 

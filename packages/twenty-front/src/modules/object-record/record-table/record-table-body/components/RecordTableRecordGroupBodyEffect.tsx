@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
@@ -11,8 +11,8 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
-import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentFamilyStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const RecordTableRecordGroupBodyEffect = () => {
@@ -23,7 +23,7 @@ export const RecordTableRecordGroupBodyEffect = () => {
     recordTableId,
   });
 
-  const setIsRecordTableInitialLoading = useSetRecoilComponentStateV2(
+  const setIsRecordTableInitialLoading = useSetAtomComponentState(
     isRecordTableInitialLoadingComponentState,
   );
 
@@ -33,12 +33,12 @@ export const RecordTableRecordGroupBodyEffect = () => {
     useRecordIndexTableQuery(objectNameSingular);
 
   const setHasRecordFetchedAllRecordsComponents =
-    useSetRecoilComponentFamilyStateV2(
+    useSetAtomComponentFamilyState(
       recordIndexHasFetchedAllRecordsByGroupComponentState,
       recordGroupId,
     );
 
-  const lastShowPageRecordId = useRecoilValueV2(lastShowPageRecordIdState);
+  const lastShowPageRecordId = useAtomStateValue(lastShowPageRecordIdState);
 
   const { scrollToPosition } = useScrollToPosition();
 

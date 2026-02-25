@@ -1,6 +1,6 @@
 import { agentChatSelectedFilesStateV2 } from '@/ai/states/agentChatSelectedFilesStateV2';
 import { agentChatUploadedFilesStateV2 } from '@/ai/states/agentChatUploadedFilesStateV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import styled from '@emotion/styled';
 import { AgentChatFilePreview } from './AgentChatFilePreview';
 
@@ -19,10 +19,10 @@ const StyledPreviewsContainer = styled.div`
 `;
 
 export const AgentChatContextPreview = () => {
-  const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useRecoilStateV2(
+  const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useAtomState(
     agentChatSelectedFilesStateV2,
   );
-  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilStateV2(
+  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useAtomState(
     agentChatUploadedFilesStateV2,
   );
 

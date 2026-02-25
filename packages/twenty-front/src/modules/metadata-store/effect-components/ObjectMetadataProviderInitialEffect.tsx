@@ -4,14 +4,14 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 export const ObjectMetadataProviderInitialEffect = () => {
-  const isCurrentUserLoaded = useRecoilValueV2(isCurrentUserLoadedState);
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const store = useStore();
   const [isInitialized, setIsInitialized] = useState(false);
 

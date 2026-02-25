@@ -5,7 +5,7 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
 import { calculateGridBoundsFromSelectedCells } from '@/page-layout/utils/calculateGridBoundsFromSelectedCells';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
@@ -19,16 +19,16 @@ export const useEndPageLayoutDragSelection = (
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutSelectedCellsState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutSelectedCellsState = useAtomComponentStateCallbackState(
     pageLayoutSelectedCellsComponentState,
     pageLayoutId,
   );
-  const pageLayoutDraggedAreaState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraggedAreaState = useAtomComponentStateCallbackState(
     pageLayoutDraggedAreaComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutEditingWidgetIdState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );

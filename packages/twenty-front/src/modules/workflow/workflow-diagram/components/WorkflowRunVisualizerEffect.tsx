@@ -1,7 +1,7 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
@@ -30,36 +30,36 @@ export const WorkflowRunVisualizerEffect = ({
   const { getIcon } = useIcons();
 
   const workflowRun = useWorkflowRun({ workflowRunId });
-  const setWorkflowRunId = useSetRecoilComponentStateV2(
+  const setWorkflowRunId = useSetAtomComponentState(
     workflowVisualizerWorkflowRunIdComponentState,
   );
 
   const workflowVersionId = workflowRun?.workflowVersionId;
   const workflowVersion = useWorkflowVersion(workflowVersionId);
-  const setWorkflowVisualizerWorkflowVersionId = useSetRecoilComponentStateV2(
+  const setWorkflowVisualizerWorkflowVersionId = useSetAtomComponentState(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
 
-  const workflowVisualizerWorkflowId = useRecoilComponentStateCallbackStateV2(
+  const workflowVisualizerWorkflowId = useAtomComponentStateCallbackState(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const setWorkflowVisualizerWorkflowId = useSetRecoilComponentStateV2(
+  const setWorkflowVisualizerWorkflowId = useSetAtomComponentState(
     workflowVisualizerWorkflowIdComponentState,
   );
 
-  const flow = useRecoilComponentStateCallbackStateV2(flowComponentState);
-  const workflowDiagram = useRecoilComponentStateCallbackStateV2(
+  const flow = useAtomComponentStateCallbackState(flowComponentState);
+  const workflowDiagram = useAtomComponentStateCallbackState(
     workflowDiagramComponentState,
   );
-  const workflowSelectedNode = useRecoilComponentStateCallbackStateV2(
+  const workflowSelectedNode = useAtomComponentStateCallbackState(
     workflowSelectedNodeComponentState,
   );
 
-  const workflowDiagramStatusState = useRecoilComponentStateCallbackStateV2(
+  const workflowDiagramStatusState = useAtomComponentStateCallbackState(
     workflowDiagramStatusComponentState,
   );
   const workflowRunDiagramAutomaticallyOpenedStepsState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       workflowRunDiagramAutomaticallyOpenedStepsComponentState,
     );
 

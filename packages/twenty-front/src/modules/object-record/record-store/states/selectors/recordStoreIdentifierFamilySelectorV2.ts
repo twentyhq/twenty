@@ -2,7 +2,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { createFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createFamilySelectorV2';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { uncapitalize } from 'twenty-shared/utils';
 
 type RecordStoreIdentifierFamilyKey = {
@@ -11,7 +11,7 @@ type RecordStoreIdentifierFamilyKey = {
   isFilesFieldMigrated?: boolean;
 };
 
-export const recordStoreIdentifierFamilySelectorV2 = createFamilySelectorV2<
+export const recordStoreIdentifierFamilySelectorV2 = createAtomFamilySelector<
   ObjectRecordIdentifier | null,
   RecordStoreIdentifierFamilyKey
 >({

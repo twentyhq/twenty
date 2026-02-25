@@ -8,7 +8,7 @@ import { type WritableSelectorV2 } from '@/ui/utilities/state/jotai/types/Writab
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
 import { buildSetHelper } from '@/ui/utilities/state/jotai/utils/buildSetHelper';
 
-export const createWritableSelectorV2 = <ValueType>({
+export const createAtomWritableSelector = <ValueType>({
   key,
   get,
   set,

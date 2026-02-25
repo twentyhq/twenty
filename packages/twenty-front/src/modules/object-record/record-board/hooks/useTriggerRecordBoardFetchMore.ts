@@ -16,10 +16,10 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
@@ -27,18 +27,18 @@ import { sleep } from '~/utils/sleep';
 
 export const useTriggerRecordBoardFetchMore = () => {
   const store = useStore();
-  const recordGroupDefinitions = useRecoilComponentSelectorValueV2(
+  const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
   );
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const recordIndexGroupFieldMetadataItem = useRecoilComponentValueV2(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
   const recordBoardShouldFetchMoreInColumnFamilyCallbackState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       recordBoardShouldFetchMoreInColumnComponentFamilyState,
     );
 
@@ -47,7 +47,7 @@ export const useTriggerRecordBoardFetchMore = () => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const recordBoardCurrentGroupByQueryOffsetCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       recordBoardCurrentGroupByQueryOffsetComponentState,
     );
 
@@ -58,11 +58,11 @@ export const useTriggerRecordBoardFetchMore = () => {
     });
 
   const recordIndexRecordIdsByGroupCallbackState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const recordBoardIsFetchingMore = useRecoilComponentStateCallbackStateV2(
+  const recordBoardIsFetchingMore = useAtomComponentStateCallbackState(
     recordBoardIsFetchingMoreComponentState,
   );
 

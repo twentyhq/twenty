@@ -1,7 +1,7 @@
 import { type Billing } from '~/generated-metadata/graphql';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const billingState = createStateV2<Billing | null>({
+export const billingState = createAtomState<Billing | null>({
   key: 'billingState',
   defaultValue: null,
 });

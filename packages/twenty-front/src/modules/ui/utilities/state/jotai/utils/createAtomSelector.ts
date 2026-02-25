@@ -4,7 +4,7 @@ import { type SelectorGetterV2 } from '@/ui/utilities/state/jotai/types/Selector
 import { type SelectorV2 } from '@/ui/utilities/state/jotai/types/SelectorV2';
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
 
-export const createSelectorV2 = <ValueType>({
+export const createAtomSelector = <ValueType>({
   key,
   get,
 }: {

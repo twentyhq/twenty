@@ -3,8 +3,8 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,8 +19,11 @@ export const SettingsRoleEditEffect = ({
 }: SettingsRoleEditEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const role = useFamilyRecoilValueV2(settingsPersistedRoleFamilyState, roleId);
-  const setActiveTabId = useSetRecoilComponentStateV2(
+  const role = useAtomFamilyStateValue(
+    settingsPersistedRoleFamilyState,
+    roleId,
+  );
+  const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
   );

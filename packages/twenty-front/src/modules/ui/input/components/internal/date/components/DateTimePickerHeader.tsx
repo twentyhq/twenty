@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Select } from '@/ui/input/components/Select';
 
 import { DateTimePickerInput } from '@/ui/input/components/internal/date/components/DateTimePickerInput';
@@ -61,7 +61,7 @@ export const DateTimePickerHeader = ({
   nextMonthButtonDisabled,
   hideInput = false,
 }: DateTimePickerHeaderProps) => {
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
   return (

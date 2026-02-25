@@ -6,13 +6,13 @@ import { recordGroupSortedInsert } from '@/object-record/record-group/utils/reco
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
-import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentFamilySelectorV2';
+import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
 export const visibleRecordGroupIdsComponentFamilySelector =
-  createComponentFamilySelectorV2<RecordGroupDefinition['id'][], ViewType>({
+  createAtomComponentFamilySelector<RecordGroupDefinition['id'][], ViewType>({
     key: 'visibleRecordGroupIdsComponentFamilySelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:

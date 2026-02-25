@@ -1,8 +1,8 @@
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { type LineSeries, type SliceTooltipProps } from '@nivo/line';
 
-export const graphWidgetLineTooltipComponentState = createComponentStateV2<{
+export const graphWidgetLineTooltipComponentState = createAtomComponentState<{
   slice: SliceTooltipProps<LineSeries>['slice'];
   offsetLeft: number;
   offsetTop: number;

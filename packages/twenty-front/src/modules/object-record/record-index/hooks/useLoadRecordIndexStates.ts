@@ -25,7 +25,7 @@ import { type ColumnDefinition } from '@/object-record/record-table/types/Column
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { hasInitializedCurrentRecordFieldsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFieldsComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { hasInitializedCurrentRecordSortsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordSortsComponentFamilyState';
@@ -43,27 +43,27 @@ export const useLoadRecordIndexStates = () => {
   const store = useStore();
 
   const contextStoreTargetedRecordsRuleAtom =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       contextStoreTargetedRecordsRuleComponentState,
     );
 
   const recordIndexGroupFieldMetadataItemAtom =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       recordIndexGroupFieldMetadataItemComponentState,
     );
 
   const recordIndexGroupAggregateOperationAtom =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       recordIndexGroupAggregateOperationComponentState,
     );
 
   const recordIndexGroupAggregateFieldMetadataItemAtom =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       recordIndexGroupAggregateFieldMetadataItemComponentState,
     );
 
   const recordIndexShouldHideEmptyRecordGroupsAtom =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       recordIndexShouldHideEmptyRecordGroupsComponentState,
     );
 

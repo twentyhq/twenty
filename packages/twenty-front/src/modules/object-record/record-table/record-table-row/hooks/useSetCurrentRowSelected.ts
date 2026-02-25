@@ -5,24 +5,24 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { lastSelectedRowIndexComponentState } from '@/object-record/record-table/record-table-row/states/lastSelectedRowIndexComponentState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSetCurrentRowSelected = () => {
   const { recordId, rowIndex } = useRecordTableRowContextOrThrow();
 
-  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
+  const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
     isRowSelectedComponentFamilyState,
   );
 
-  const recordIndexAllRecordIds = useRecoilComponentSelectorCallbackStateV2(
+  const recordIndexAllRecordIds = useAtomComponentSelectorCallbackState(
     recordIndexAllRecordIdsComponentSelector,
   );
 
   const lastSelectedRowIndexComponentCallbackState =
-    useRecoilComponentStateCallbackStateV2(lastSelectedRowIndexComponentState);
+    useAtomComponentStateCallbackState(lastSelectedRowIndexComponentState);
 
   const store = useStore();
 

@@ -1,11 +1,11 @@
 import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
-import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
 export type SortedIndexByTableFamilyStateKey = {
   objectMetadataItemId: string;
 };
 
-export const settingsObjectIndexesFamilyState = createFamilyStateV2<
+export const settingsObjectIndexesFamilyState = createAtomFamilyState<
   IndexMetadataItem[] | null,
   SortedIndexByTableFamilyStateKey
 >({

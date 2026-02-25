@@ -5,10 +5,10 @@ import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/r
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -16,27 +16,26 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
   recordBoardIndexId: string,
 ) => {
   const store = useStore();
-  const recordGroupDefinitions = useRecoilComponentSelectorValueV2(
+  const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
     recordBoardIndexId,
   );
 
-  const groupByFieldMetadataItem = useRecoilComponentValueV2(
+  const groupByFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
     recordBoardIndexId,
   );
 
   const recordIndexRecordIdsByGroupCallbackState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
       recordBoardIndexId,
     );
 
-  const recordBoardSelectedRecordIds =
-    useRecoilComponentSelectorCallbackStateV2(
-      recordBoardSelectedRecordIdsComponentSelector,
-      recordBoardIndexId,
-    );
+  const recordBoardSelectedRecordIds = useAtomComponentSelectorCallbackState(
+    recordBoardSelectedRecordIdsComponentSelector,
+    recordBoardIndexId,
+  );
 
   const { resetRecordBoardSelection } =
     useResetRecordBoardSelection(recordBoardIndexId);

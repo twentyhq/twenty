@@ -9,7 +9,7 @@ import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/com
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -21,7 +21,7 @@ import {
 } from 'twenty-ui/display';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsLogicFunctionCodeEditorTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab';
 
 const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
@@ -30,7 +30,7 @@ export const SettingsLogicFunctionDetail = () => {
   const { logicFunctionId = '', applicationId = '' } = useParams();
 
   const navigate = useNavigate();
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { data, loading: applicationLoading } = useFindOneApplicationQuery({
     variables: { id: applicationId },
@@ -46,7 +46,7 @@ export const SettingsLogicFunctionDetail = () => {
 
   const instanceId = `${LOGIC_FUNCTION_DETAIL_ID}-${logicFunctionId}`;
 
-  const activeTabId = useRecoilComponentValueV2(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     instanceId,
   );
