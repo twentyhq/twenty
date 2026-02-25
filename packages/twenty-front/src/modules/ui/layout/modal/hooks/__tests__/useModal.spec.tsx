@@ -23,6 +23,7 @@ describe('useModal', () => {
     const { result } = renderHook(
       () => {
         const modal = useModal();
+        // eslint-disable-next-line twenty/matching-state-variable
         const isModalOpened = useAtomComponentStateValue(
           isModalOpenedComponentState,
           modalId,
@@ -45,6 +46,7 @@ describe('useModal', () => {
     const { result } = renderHook(
       () => {
         const modal = useModal();
+        // eslint-disable-next-line twenty/matching-state-variable
         const isModalOpened = useAtomComponentStateValue(
           isModalOpenedComponentState,
           modalId,
@@ -72,6 +74,7 @@ describe('useModal', () => {
     const { result } = renderHook(
       () => {
         const modal = useModal();
+        // eslint-disable-next-line twenty/matching-state-variable
         const isModalOpened = useAtomComponentStateValue(
           isModalOpenedComponentState,
           modalId,
@@ -96,6 +99,7 @@ describe('useModal', () => {
     const { result } = renderHook(
       () => {
         const modal = useModal();
+        // eslint-disable-next-line twenty/matching-state-variable
         const isModalOpened = useAtomComponentStateValue(
           isModalOpenedComponentState,
           modalId,

@@ -2,7 +2,7 @@ import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInit
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/FocusClickOutsideListenerId';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
@@ -94,7 +94,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       const isFirstColumnCell = cellPosition.column === 0;
 
       const fieldValue = store.get(
-        recordStoreFamilySelectorV2.selectorFamily({
+        recordStoreFamilySelector.selectorFamily({
           recordId,
           fieldName: fieldDefinition.metadata.fieldName,
         }),

@@ -35,39 +35,37 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
     <JotaiProvider store={jotaiStore}>
       <RecordTableComponentInstance recordTableId={recordTableId}>
         <RecordTableContextProvider
-            recordTableId={recordTableId}
-            viewBarId="viewBarId"
-            objectNameSingular={CoreObjectNameSingular.Person}
-            onRecordIdentifierClick={() => {}}
+          recordTableId={recordTableId}
+          viewBarId="viewBarId"
+          objectNameSingular={CoreObjectNameSingular.Person}
+          onRecordIdentifierClick={() => {}}
+        >
+          <RecordComponentInstanceContextsWrapper
+            componentInstanceId={recordTableId}
           >
-            <RecordComponentInstanceContextsWrapper
-              componentInstanceId={recordTableId}
+            <FieldContext.Provider
+              value={{
+                fieldDefinition: textfieldDefinition,
+                recordId: 'recordId',
+                isLabelIdentifier: false,
+                isRecordFieldReadOnly: false,
+              }}
             >
-              <FieldContext.Provider
-                value={{
-                  fieldDefinition: textfieldDefinition,
-                  recordId: 'recordId',
-                  isLabelIdentifier: false,
-                  isRecordFieldReadOnly: false,
-                }}
-              >
-                <RecordTableRowContextProvider
-                  value={recordTableRowContextValue}
+              <RecordTableRowContextProvider value={recordTableRowContextValue}>
+                <RecordTableRowDraggableContextProvider
+                  value={recordTableRowDraggableContextValue}
                 >
-                  <RecordTableRowDraggableContextProvider
-                    value={recordTableRowDraggableContextValue}
+                  <RecordTableCellContext.Provider
+                    value={{ ...recordTableCellContextValue }}
                   >
-                    <RecordTableCellContext.Provider
-                      value={{ ...recordTableCellContextValue }}
-                    >
-                      {children}
-                    </RecordTableCellContext.Provider>
-                  </RecordTableRowDraggableContextProvider>
-                </RecordTableRowContextProvider>
-              </FieldContext.Provider>
-            </RecordComponentInstanceContextsWrapper>
-          </RecordTableContextProvider>
-        </RecordTableComponentInstance>
+                    {children}
+                  </RecordTableCellContext.Provider>
+                </RecordTableRowDraggableContextProvider>
+              </RecordTableRowContextProvider>
+            </FieldContext.Provider>
+          </RecordComponentInstanceContextsWrapper>
+        </RecordTableContextProvider>
+      </RecordTableComponentInstance>
     </JotaiProvider>
   );
 };
@@ -76,6 +74,7 @@ describe('useCloseRecordTableCellNoGroup', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
+        // eslint-disable-next-line twenty/matching-state-variable
         const currentTableCellInEditModePosition = useAtomComponentStateValue(
           recordTableCellEditModePositionComponentState,
           recordTableId,

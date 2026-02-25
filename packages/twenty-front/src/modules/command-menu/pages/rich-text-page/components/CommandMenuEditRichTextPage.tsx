@@ -4,7 +4,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { viewableRichTextComponentStateV2 } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentStateV2';
+import { viewableRichTextComponentState } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const ActivityRichTextEditor = lazy(() =>
@@ -36,7 +36,7 @@ const LoadingSkeleton = () => {
 
 export const CommandMenuEditRichTextPage = () => {
   const { activityId, activityObjectNameSingular } = useAtomStateValue(
-    viewableRichTextComponentStateV2,
+    viewableRichTextComponentState,
   );
 
   if (

@@ -203,7 +203,10 @@ describe('usePieChartData', () => {
   });
 
   it('should handle hidden ids that do not exist in data', () => {
-    mockUseAtomComponentStateValue.mockReturnValue(['nonexistent', 'alsoNotReal']);
+    mockUseAtomComponentStateValue.mockReturnValue([
+      'nonexistent',
+      'alsoNotReal',
+    ]);
 
     const { result } = renderHook(() =>
       usePieChartData({

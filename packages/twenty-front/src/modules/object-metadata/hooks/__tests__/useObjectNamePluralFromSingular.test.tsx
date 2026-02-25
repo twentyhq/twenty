@@ -8,7 +8,9 @@ describe('useObjectNamePluralFromSingular', () => {
       () => useObjectNamePluralFromSingular({ objectNameSingular: 'person' }),
       {
         wrapper: ({ children }) => (
-          <JestObjectMetadataItemSetter>{children}</JestObjectMetadataItemSetter>
+          <JestObjectMetadataItemSetter>
+            {children}
+          </JestObjectMetadataItemSetter>
         ),
       },
     );

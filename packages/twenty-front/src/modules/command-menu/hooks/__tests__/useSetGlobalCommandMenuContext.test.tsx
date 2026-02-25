@@ -70,31 +70,37 @@ describe('useSetGlobalCommandMenuContext', () => {
         const { setGlobalCommandMenuContext } =
           useSetGlobalCommandMenuContext();
 
+        // eslint-disable-next-line twenty/matching-state-variable
         const targetedRecordsRule = useAtomComponentStateValue(
           contextStoreTargetedRecordsRuleComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
+        // eslint-disable-next-line twenty/matching-state-variable
         const numberOfSelectedRecords = useAtomComponentStateValue(
           contextStoreNumberOfSelectedRecordsComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
+        // eslint-disable-next-line twenty/matching-state-variable
         const filters = useAtomComponentStateValue(
           contextStoreFiltersComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
+        // eslint-disable-next-line twenty/matching-state-variable
         const filterGroups = useAtomComponentStateValue(
           contextStoreFilterGroupsComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
+        // eslint-disable-next-line twenty/matching-state-variable
         const anyFieldFilterValue = useAtomComponentStateValue(
           contextStoreAnyFieldFilterValueComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
+        // eslint-disable-next-line twenty/matching-state-variable
         const currentViewType = useAtomComponentStateValue(
           contextStoreCurrentViewTypeComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,

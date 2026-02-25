@@ -22,7 +22,7 @@ import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/t
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -67,7 +67,7 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
         )
       ) {
         const fieldValue = store.get(
-          recordStoreFamilySelectorV2.selectorFamily({
+          recordStoreFamilySelector.selectorFamily({
             recordId,
             fieldName: fieldDefinition.metadata.fieldName,
           }),

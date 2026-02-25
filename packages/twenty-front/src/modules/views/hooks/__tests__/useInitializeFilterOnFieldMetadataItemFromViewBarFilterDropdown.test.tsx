@@ -80,9 +80,11 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
         const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
           fieldMetadataItemUsedInDropdownComponentSelector,
         );
+        // eslint-disable-next-line twenty/matching-state-variable
         const objectFilterDropdownFilterIsSelected = useAtomComponentStateValue(
           objectFilterDropdownFilterIsSelectedComponentState,
         );
+        // eslint-disable-next-line twenty/matching-state-variable
         const selectedOperandInDropdown = useAtomComponentStateValue(
           selectedOperandInDropdownComponentState,
         );
@@ -132,9 +134,11 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
         const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
           fieldMetadataItemUsedInDropdownComponentSelector,
         );
+        // eslint-disable-next-line twenty/matching-state-variable
         const objectFilterDropdownFilterIsSelected = useAtomComponentStateValue(
           objectFilterDropdownFilterIsSelectedComponentState,
         );
+        // eslint-disable-next-line twenty/matching-state-variable
         const selectedOperandInDropdown = useAtomComponentStateValue(
           selectedOperandInDropdownComponentState,
         );
@@ -193,13 +197,16 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
         const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
           fieldMetadataItemUsedInDropdownComponentSelector,
         );
+        // eslint-disable-next-line twenty/matching-state-variable
         const objectFilterDropdownFilterIsSelected = useAtomComponentStateValue(
           objectFilterDropdownFilterIsSelectedComponentState,
         );
+        // eslint-disable-next-line twenty/matching-state-variable
         const selectedOperandInDropdown = useAtomComponentStateValue(
           selectedOperandInDropdownComponentState,
         );
 
+        // eslint-disable-next-line twenty/matching-state-variable
         const objectFilterDropdownCurrentRecordFilter =
           useAtomComponentStateValue(
             objectFilterDropdownCurrentRecordFilterComponentState,
@@ -210,6 +217,7 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
           'test',
         );
 
+        // eslint-disable-next-line twenty/matching-state-variable
         const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
           'test',
@@ -276,13 +284,16 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
         const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
           fieldMetadataItemUsedInDropdownComponentSelector,
         );
+        // eslint-disable-next-line twenty/matching-state-variable
         const objectFilterDropdownFilterIsSelected = useAtomComponentStateValue(
           objectFilterDropdownFilterIsSelectedComponentState,
         );
+        // eslint-disable-next-line twenty/matching-state-variable
         const selectedOperandInDropdown = useAtomComponentStateValue(
           selectedOperandInDropdownComponentState,
         );
 
+        // eslint-disable-next-line twenty/matching-state-variable
         const objectFilterDropdownCurrentRecordFilter =
           useAtomComponentStateValue(
             objectFilterDropdownCurrentRecordFilterComponentState,
@@ -293,6 +304,7 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
           'test',
         );
 
+        // eslint-disable-next-line twenty/matching-state-variable
         const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
           'test',

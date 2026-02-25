@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode, act } from 'react';
 
-import { isKeyboardShortcutMenuOpenedStateV2 } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedStateV2';
+import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
@@ -34,7 +34,7 @@ const renderHookConfig = () => {
   const { result } = renderHook(
     () => {
       const isKeyboardShortcutMenuOpened = useAtomStateValue(
-        isKeyboardShortcutMenuOpenedStateV2,
+        isKeyboardShortcutMenuOpenedState,
       );
       return {
         ...useKeyboardShortcutMenu(),

@@ -12,7 +12,7 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -93,7 +93,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
         Icon: IconList,
         instanceId: 'test-id',
       });
-      jotaiStore.set(isCommandMenuOpenedStateV2.atom, true);
+      jotaiStore.set(isCommandMenuOpenedState.atom, true);
       jotaiStore.set(commandMenuSearchState.atom, 'test search');
       jotaiStore.set(commandMenuNavigationStackState.atom, [
         {
@@ -116,7 +116,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
       Icon: IconList,
       instanceId: 'test-id',
     });
-    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(true);
+    expect(jotaiStore.get(isCommandMenuOpenedState.atom)).toBe(true);
     expect(jotaiStore.get(commandMenuSearchState.atom)).toBe('test search');
     expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toEqual([
       {
@@ -142,7 +142,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
       Icon: undefined,
       instanceId: '',
     });
-    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(false);
+    expect(jotaiStore.get(isCommandMenuOpenedState.atom)).toBe(false);
     expect(jotaiStore.get(commandMenuSearchState.atom)).toBe('');
     expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toEqual([]);
     expect(jotaiStore.get(hasUserSelectedCommandState.atom)).toBe(false);

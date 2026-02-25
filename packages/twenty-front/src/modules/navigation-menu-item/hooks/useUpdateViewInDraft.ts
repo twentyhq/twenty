@@ -1,10 +1,10 @@
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type View } from '@/views/types/View';
 
 export const useUpdateViewInDraft = () => {
   const setNavigationMenuItemsDraft = useSetAtomState(
-    navigationMenuItemsDraftStateV2,
+    navigationMenuItemsDraftState,
   );
 
   const updateViewInDraft = (navigationMenuItemId: string, view: View) => {

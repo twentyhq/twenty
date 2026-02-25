@@ -1,11 +1,11 @@
 import { useAgentChatScrollToBottom } from '@/ai/hooks/useAgentChatScrollToBottom';
 import {
-  agentChatUsageStateV2,
+  agentChatUsageState,
   type AgentChatUsageState,
-} from '@/ai/states/agentChatUsageStateV2';
-import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
+} from '@/ai/states/agentChatUsageState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
-import { isCreatingChatThreadStateV2 } from '@/ai/states/isCreatingChatThreadStateV2';
+import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -44,14 +44,14 @@ const setUsageFromThread = (
 
 export const useAgentChatData = () => {
   const [currentAIChatThread, setCurrentAIChatThread] = useAtomState(
-    currentAIChatThreadStateV2,
+    currentAIChatThreadState,
   );
-  const setAgentChatUsage = useSetAtomState(agentChatUsageStateV2);
+  const setAgentChatUsage = useSetAtomState(agentChatUsageState);
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
   );
   const [isCreatingChatThread, setIsCreatingChatThread] = useAtomState(
-    isCreatingChatThreadStateV2,
+    isCreatingChatThreadState,
   );
 
   const { scrollToBottom } = useAgentChatScrollToBottom();

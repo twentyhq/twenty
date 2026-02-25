@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 
-import { type SelectorGetterV2 } from '@/ui/utilities/state/jotai/types/SelectorCallbacksV2';
-import { type SelectorV2 } from '@/ui/utilities/state/jotai/types/SelectorV2';
+import { type SelectorGetter } from '@/ui/utilities/state/jotai/types/SelectorCallbacks';
+import { type Selector } from '@/ui/utilities/state/jotai/types/Selector';
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
 
 export const createAtomSelector = <ValueType>({
@@ -9,8 +9,8 @@ export const createAtomSelector = <ValueType>({
   get,
 }: {
   key: string;
-  get: (callbacks: SelectorGetterV2) => ValueType;
-}): SelectorV2<ValueType> => {
+  get: (callbacks: SelectorGetter) => ValueType;
+}): Selector<ValueType> => {
   const derivedAtom = atom((jotaiGet) => {
     const getHelper = buildGetHelper(jotaiGet);
 
@@ -20,7 +20,7 @@ export const createAtomSelector = <ValueType>({
   derivedAtom.debugLabel = key;
 
   return {
-    type: 'SelectorV2',
+    type: 'Selector',
     key,
     atom: derivedAtom,
   };

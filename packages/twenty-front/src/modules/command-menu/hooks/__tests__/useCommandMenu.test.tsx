@@ -7,7 +7,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/display';
@@ -51,31 +51,31 @@ describe('useCommandMenu', () => {
       result.current.commandMenu.openCommandMenu();
     });
 
-    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(true);
+    expect(jotaiStore.get(isCommandMenuOpenedState.atom)).toBe(true);
 
     act(() => {
       result.current.commandMenu.closeCommandMenu();
     });
 
-    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(false);
+    expect(jotaiStore.get(isCommandMenuOpenedState.atom)).toBe(false);
   });
 
   it('should toggle the command menu', () => {
     const { result } = renderHooks();
 
-    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(false);
+    expect(jotaiStore.get(isCommandMenuOpenedState.atom)).toBe(false);
 
     act(() => {
       result.current.commandMenu.toggleCommandMenu();
     });
 
-    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(true);
+    expect(jotaiStore.get(isCommandMenuOpenedState.atom)).toBe(true);
 
     act(() => {
       result.current.commandMenu.toggleCommandMenu();
     });
 
-    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(false);
+    expect(jotaiStore.get(isCommandMenuOpenedState.atom)).toBe(false);
   });
 
   it('should navigate command menu and reset navigation stack when resetNavigationStack is true', () => {

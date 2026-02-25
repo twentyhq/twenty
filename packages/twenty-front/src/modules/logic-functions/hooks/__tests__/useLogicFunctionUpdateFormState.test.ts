@@ -30,8 +30,8 @@ describe('useLogicFunctionUpdateFormState', () => {
         loading: false,
       },
     );
-    const { result } = renderHook(
-      () => useLogicFunctionUpdateFormState({ logicFunctionId }),
+    const { result } = renderHook(() =>
+      useLogicFunctionUpdateFormState({ logicFunctionId }),
     );
 
     const { formValues } = result.current;

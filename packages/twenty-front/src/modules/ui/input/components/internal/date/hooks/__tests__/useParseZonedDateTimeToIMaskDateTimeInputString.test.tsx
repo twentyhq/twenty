@@ -30,9 +30,7 @@ describe('useParseZonedDateTimeToIMaskDateTimeInputString', () => {
         numberFormat: NumberFormat.COMMAS_AND_DOT,
         calendarStartDay: CalendarStartDay.MONDAY,
       });
-      return (
-        <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
-      );
+      return <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>;
     };
 
   it('should format with day first format (DD/MM/YYYY, HH:mm)', () => {

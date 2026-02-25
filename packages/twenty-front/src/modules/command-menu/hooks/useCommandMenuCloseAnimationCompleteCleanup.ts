@@ -10,7 +10,7 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -97,7 +97,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
       Icon: undefined,
       instanceId: '',
     });
-    store.set(isCommandMenuOpenedStateV2.atom, false);
+    store.set(isCommandMenuOpenedState.atom, false);
     store.set(commandMenuSearchState.atom, '');
     store.set(commandMenuNavigationMorphItemsByPageState.atom, new Map());
     store.set(commandMenuNavigationStackState.atom, []);

@@ -57,9 +57,7 @@ describe('useUserTimezone', () => {
       children,
     }: {
       children: React.ReactNode;
-    }) => (
-      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
-    );
+    }) => <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>;
 
     const { result } = renderHook(() => useUserTimezone(), {
       wrapper: WrapperWithSystemTimezone,
@@ -92,9 +90,7 @@ describe('useUserTimezone', () => {
       children,
     }: {
       children: React.ReactNode;
-    }) => (
-      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
-    );
+    }) => <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>;
 
     const { result } = renderHook(() => useUserTimezone(), {
       wrapper: WrapperWithUserTimezone,

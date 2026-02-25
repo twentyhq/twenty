@@ -23,11 +23,7 @@ const currentWorkspace = {
 } as CurrentWorkspace;
 
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
-  createElement(
-    JotaiProvider,
-    { store: jotaiStore },
-    children,
-  );
+  createElement(JotaiProvider, { store: jotaiStore }, children);
 
 const renderHooks = () => {
   const { result } = renderHook(

@@ -90,9 +90,7 @@ const renderUseChartSettingsValues = (configuration: ChartConfiguration) => {
       }),
     {
       wrapper: ({ children }) => (
-        <JotaiProvider store={jotaiStore}>
-          {children}
-        </JotaiProvider>
+        <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
       ),
     },
   );
@@ -423,9 +421,7 @@ describe('useChartSettingsValues', () => {
           }),
         {
           wrapper: ({ children }) => (
-            <JotaiProvider store={jotaiStore}>
-              {children}
-            </JotaiProvider>
+            <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
           ),
         },
       );

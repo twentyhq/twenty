@@ -1,7 +1,7 @@
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { workflowAiAgentActionAgentStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentStateV2';
+import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import {
@@ -33,7 +33,7 @@ export const WorkflowAiAgentPromptTab = ({
   onResponseFormatChange,
 }: WorkflowAiAgentPromptTabProps) => {
   const workflowAiAgentActionAgent = useAtomStateValue(
-    workflowAiAgentActionAgentStateV2,
+    workflowAiAgentActionAgentState,
   );
   return (
     <>

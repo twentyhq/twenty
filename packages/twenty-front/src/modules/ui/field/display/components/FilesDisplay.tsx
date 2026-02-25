@@ -1,9 +1,9 @@
 import { downloadFile } from '@/activities/files/utils/downloadFile';
-import { isAttachmentPreviewEnabledStateV2 } from '@/client-config/states/isAttachmentPreviewEnabledStateV2';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FileChip } from '@/ui/field/display/components/FileChip';
 import { UploadFileChip } from '@/ui/field/display/components/UploadFileChip';
-import { filePreviewStateV2 } from '@/ui/field/display/states/filePreviewStateV2';
+import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -22,9 +22,9 @@ export const FilesDisplay = ({
   isUploadWindowOpen = false,
   isFileUploading = false,
 }: FilesDisplayProps) => {
-  const setFilePreview = useSetAtomState(filePreviewStateV2);
+  const setFilePreview = useSetAtomState(filePreviewState);
   const isAttachmentPreviewEnabled = useAtomStateValue(
-    isAttachmentPreviewEnabledStateV2,
+    isAttachmentPreviewEnabledState,
   );
 
   const handlePreview = (file: FieldFilesValue) => {

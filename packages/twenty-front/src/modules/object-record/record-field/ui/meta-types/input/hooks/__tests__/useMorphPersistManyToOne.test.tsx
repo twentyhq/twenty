@@ -89,9 +89,7 @@ const mockMorphFieldDefinition = {
   },
 } as FieldDefinition<FieldMorphRelationMetadata>;
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <>{children}</>
-);
+const Wrapper = ({ children }: { children: ReactNode }) => <>{children}</>;
 
 describe('useMorphPersistManyToOne', () => {
   beforeEach(() => {

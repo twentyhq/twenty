@@ -1,5 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { viewableRichTextComponentStateV2 } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentStateV2';
+import { viewableRichTextComponentState } from '@/command-menu/pages/rich-text-page/states/viewableRichTextComponentState';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -19,7 +19,7 @@ export const useRichTextCommandMenu = () => {
       activityId: string;
       activityObjectNameSingular: string;
     }) => {
-      store.set(viewableRichTextComponentStateV2.atom, {
+      store.set(viewableRichTextComponentState.atom, {
         activityId,
         activityObjectNameSingular,
       });

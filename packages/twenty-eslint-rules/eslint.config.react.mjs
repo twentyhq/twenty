@@ -128,7 +128,7 @@ export default [
       'react-hooks/exhaustive-deps': [
         'warn',
         {
-          additionalHooks: 'useRecoilCallback',
+          additionalHooks: '',
         },
       ],
       // Lingui - detect untranslated strings
@@ -411,15 +411,6 @@ export default [
             // Navigation
             'useNavigationSection',
 
-            // Recoil
-            'atom',
-            'atomFamily',
-            'selector',
-            'selectorFamily',
-            'useSetRecoilState',
-            'useRecoilState',
-            'useRecoilValue',
-
             // GraphQL operations
             'gql',
             'useQuery',
@@ -578,8 +569,7 @@ export default [
       'twenty/no-state-useref': 'error',
       'twenty/component-props-naming': 'error',
       'twenty/explicit-boolean-predicates-in-if': 'error',
-      'twenty/use-getLoadable-and-getValue-to-get-atoms': 'error',
-      'twenty/useRecoilCallback-has-dependency-array': 'error',
+
       'twenty/no-navigate-prefer-link': 'error',
     },
   },

@@ -1,4 +1,4 @@
-import { isSidePanelAnimatingStateV2 } from '@/command-menu/states/isSidePanelAnimatingStateV2';
+import { isSidePanelAnimatingState } from '@/command-menu/states/isSidePanelAnimatingState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
@@ -99,19 +99,22 @@ export const GraphWidgetBarChart = ({
     graphWidgetHoveredSliceIndexComponentState,
   );
 
+  // eslint-disable-next-line twenty/matching-state-variable
   const hoveredSliceIndexValue = useAtomComponentStateValue(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
+  // eslint-disable-next-line twenty/matching-state-variable
   const draggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
+  // eslint-disable-next-line twenty/matching-state-variable
   const resizingWidgetId = useAtomComponentStateValue(
     pageLayoutResizingWidgetIdComponentState,
   );
 
-  const isSidePanelAnimating = useAtomStateValue(isSidePanelAnimatingStateV2);
+  const isSidePanelAnimating = useAtomStateValue(isSidePanelAnimatingState);
 
   const isLayoutAnimating =
     isSidePanelAnimating || draggingWidgetId === id || resizingWidgetId === id;

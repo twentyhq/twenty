@@ -11,7 +11,7 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { useStore } from 'jotai';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -44,7 +44,7 @@ export const useOpenRelationFromManyFieldInput = () => {
 
       const fieldValue =
         (store.get(
-          recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
+          recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
         ) as FieldRelationValue<FieldRelationFromManyValue>) ?? [];
 
       const objectMetadataItems = store.get(objectMetadataItemsState.atom);

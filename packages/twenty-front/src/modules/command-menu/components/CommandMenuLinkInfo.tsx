@@ -9,7 +9,7 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { TitleInput } from '@/ui/input/components/TitleInput';
@@ -19,13 +19,14 @@ export const CommandMenuLinkInfo = () => {
   const theme = useTheme();
   const { t } = useLingui();
   const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
+  // eslint-disable-next-line twenty/matching-state-variable
   const [shouldFocusTitleInput, setShouldFocusTitleInput] =
     useAtomComponentState(
       commandMenuShouldFocusTitleInputComponentState,
       commandMenuPageInfo.instanceId,
     );
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
-    selectedNavigationMenuItemInEditModeStateV2,
+    selectedNavigationMenuItemInEditModeState,
   );
   const items = useWorkspaceSectionItems();
   const { updateLinkInDraft } = useUpdateLinkInDraft();

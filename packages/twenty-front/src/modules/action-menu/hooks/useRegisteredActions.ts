@@ -4,11 +4,9 @@ import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,19 +22,14 @@ export const useRegisteredActions = (
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const contextStoreCurrentViewType = useAtomComponentStateValue(
     contextStoreCurrentViewTypeComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
-
-  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
 
   const isFullTabWidgetInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
-    recordIndexId,
   );
 
   const viewType = getActionViewType(

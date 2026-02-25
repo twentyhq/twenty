@@ -24,11 +24,7 @@ const currentUser = {
 } as CurrentUser;
 
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
-  createElement(
-    JotaiProvider,
-    { store: jotaiStore },
-    children,
-  );
+  createElement(JotaiProvider, { store: jotaiStore }, children);
 
 const renderHooks = () => {
   const { result } = renderHook(

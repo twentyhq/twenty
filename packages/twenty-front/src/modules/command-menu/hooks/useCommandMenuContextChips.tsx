@@ -5,7 +5,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { CommandMenuPages } from 'twenty-shared/types';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifiersSelector';
-import { recordStoreRecordsSelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelectorV2';
+import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
@@ -54,7 +54,7 @@ export const useCommandMenuContextChips = () => {
       allowRequestsToTwentyIcons,
     },
   );
-  const records = useAtomFamilySelectorValue(recordStoreRecordsSelectorV2, {
+  const records = useAtomFamilySelectorValue(recordStoreRecordsSelector, {
     recordIds: allRecordIds,
   });
 

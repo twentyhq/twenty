@@ -8,7 +8,7 @@ import {
   DEFAULT_SUGGESTED_PROMPTS,
   type SuggestedPrompt,
 } from '@/ai/components/suggested-prompts/default-suggested-prompts';
-import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledContainer = styled.div`
@@ -43,7 +43,7 @@ export const AIChatSuggestedPrompts = ({
   editor,
 }: AIChatSuggestedPromptsProps) => {
   const { t: resolveMessage } = useLingui();
-  const setAgentChatInput = useSetAtomState(agentChatInputStateV2);
+  const setAgentChatInput = useSetAtomState(agentChatInputState);
 
   const handleClick = (prompt: SuggestedPrompt) => {
     const picked = pickRandom(prompt.prefillPrompts);

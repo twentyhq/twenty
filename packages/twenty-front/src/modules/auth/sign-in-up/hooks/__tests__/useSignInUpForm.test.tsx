@@ -24,9 +24,7 @@ const TestWrapper = ({
   );
   return (
     <MemoryRouter initialEntries={[initialEntry]}>
-      <JotaiProvider store={jotaiStore}>
-        {children}
-      </JotaiProvider>
+      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
     </MemoryRouter>
   );
 };

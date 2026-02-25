@@ -1,11 +1,11 @@
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
-import { agentChatSelectedFilesStateV2 } from '@/ai/states/agentChatSelectedFilesStateV2';
-import { agentChatUploadedFilesStateV2 } from '@/ai/states/agentChatUploadedFilesStateV2';
-import { agentChatUsageStateV2 } from '@/ai/states/agentChatUsageStateV2';
-import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
+import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 
-import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -22,26 +22,22 @@ import { cookieStorage } from '~/utils/cookie-storage';
 
 export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const setTokenPair = useSetAtomState(tokenPairState);
-  const setAgentChatUsage = useSetAtomState(agentChatUsageStateV2);
+  const setAgentChatUsage = useSetAtomState(agentChatUsageState);
 
   const { getBrowsingContext } = useGetBrowsingContext();
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
   );
 
-  const agentChatSelectedFiles = useAtomStateValue(
-    agentChatSelectedFilesStateV2,
-  );
+  const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesState);
 
-  const currentAIChatThread = useAtomStateValue(currentAIChatThreadStateV2);
+  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
 
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useAtomState(
-    agentChatUploadedFilesStateV2,
+    agentChatUploadedFilesState,
   );
 
-  const [agentChatInput, setAgentChatInput] = useAtomState(
-    agentChatInputStateV2,
-  );
+  const [agentChatInput, setAgentChatInput] = useAtomState(agentChatInputState);
 
   const retryFetchWithRenewedToken = async (
     input: RequestInfo | URL,

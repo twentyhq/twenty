@@ -4,16 +4,20 @@ alwaysApply: false
 ---
 # React State Management
 
-## Recoil Patterns
+## Jotai Patterns
 ```typescript
-// ✅ Atoms for primitive state
-export const currentUserState = atom<User | null>({
+// ✅ Atoms for primitive state (use createAtomState for keyed state with optional persistence)
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+
+export const currentUserState = createAtomState<User | null>({
   key: 'currentUserState',
-  default: null,
+  defaultValue: null,
 });
 
-// ✅ Selectors for derived state
-export const userDisplayNameSelector = selector({
+// ✅ Derived atoms for computed state (use createAtomSelector)
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
+
+export const userDisplayNameSelector = createAtomSelector({
   key: 'userDisplayNameSelector',
   get: ({ get }) => {
     const user = get(currentUserState);
@@ -21,12 +25,29 @@ export const userDisplayNameSelector = selector({
   },
 });
 
-// ✅ Atom families for dynamic atoms
-export const userByIdState = atomFamily<User | null, string>({
+// ✅ Atom factory pattern for dynamic atoms (use createAtomFamilyState)
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
+
+export const userByIdState = createAtomFamilyState<User | null, string>({
   key: 'userByIdState',
-  default: null,
+  defaultValue: null,
 });
 ```
+
+## Jotai Hooks
+```typescript
+// useAtomState - read and write (like useRecoilState)
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+// useAtomStateValue - read only (like useRecoilValue)
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+// useSetAtomState - write only (like useSetRecoilState)
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+```
+
+## Provider
+Jotai works without a Provider by default (unlike Recoil's RecoilRoot). For scoped stores or testing, use `Provider` from `jotai`.
 
 ## Local State Guidelines
 ```typescript
@@ -74,7 +95,7 @@ const increment = useCallback(() => {
 ```
 
 ## Performance Tips
-- Use atom families for dynamic data collections
-- Implement proper selector caching
-- Avoid heavy computations in selectors
+- Use atom factory pattern (createAtomFamilyState) for dynamic data collections
+- Derived atoms (createAtomSelector) are automatically memoized by Jotai
+- Avoid heavy computations in derived atoms
 - Batch state updates when possible

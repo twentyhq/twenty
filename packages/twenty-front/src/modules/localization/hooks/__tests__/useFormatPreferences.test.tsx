@@ -77,11 +77,7 @@ const mockInitialPreferences = {
 const createWrapper =
   () =>
   ({ children }: { children: ReactNode }) => {
-    return (
-      <JotaiProvider store={jotaiStore}>
-        {children}
-      </JotaiProvider>
-    );
+    return <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>;
   };
 
 describe('useFormatPreferences', () => {

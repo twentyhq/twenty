@@ -7,8 +7,8 @@ import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsR
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
-import { recordStoreIdentifierFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -31,6 +31,7 @@ export const CommandMenuRecordInfo = ({
 }: {
   commandMenuPageInstanceId: string;
 }) => {
+  // eslint-disable-next-line twenty/matching-state-variable
   const viewableRecordNameSingular = useAtomComponentStateValue(
     viewableRecordNameSingularComponentState,
     commandMenuPageInstanceId,
@@ -39,6 +40,7 @@ export const CommandMenuRecordInfo = ({
     allowRequestsToTwentyIconsState,
   );
 
+  // eslint-disable-next-line twenty/matching-state-variable
   const viewableRecordId = useAtomComponentStateValue(
     viewableRecordIdComponentState,
     commandMenuPageInstanceId,
@@ -50,7 +52,7 @@ export const CommandMenuRecordInfo = ({
   );
 
   const recordCreatedAt = useAtomFamilySelectorValue(
-    recordStoreFamilySelectorV2,
+    recordStoreFamilySelector,
     {
       recordId: objectRecordId,
       fieldName: 'createdAt',
@@ -62,7 +64,7 @@ export const CommandMenuRecordInfo = ({
   );
 
   const recordIdentifier = useAtomFamilySelectorValue(
-    recordStoreIdentifierFamilySelectorV2,
+    recordStoreIdentifierFamilySelector,
     {
       recordId: objectRecordId,
       allowRequestsToTwentyIcons,

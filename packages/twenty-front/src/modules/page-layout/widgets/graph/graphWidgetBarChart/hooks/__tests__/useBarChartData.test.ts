@@ -242,7 +242,10 @@ describe('useBarChartData', () => {
   });
 
   it('should handle hidden ids that do not exist in keys', () => {
-    mockUseAtomComponentStateValue.mockReturnValue(['nonexistent', 'alsoNotReal']);
+    mockUseAtomComponentStateValue.mockReturnValue([
+      'nonexistent',
+      'alsoNotReal',
+    ]);
 
     const { result } = renderHook(() =>
       useBarChartData({

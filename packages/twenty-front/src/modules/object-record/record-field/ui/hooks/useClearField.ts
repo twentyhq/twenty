@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react';
 import { useStore } from 'jotai';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -56,7 +56,7 @@ export const useClearField = () => {
     });
 
     store.set(
-      recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
+      recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
       emptyFieldValue,
     );
 
@@ -71,7 +71,7 @@ export const useClearField = () => {
 
     if (isManyToOneRelation) {
       store.set(
-        recordStoreFamilySelectorV2.selectorFamily({
+        recordStoreFamilySelector.selectorFamily({
           recordId,
           fieldName: updateFieldName,
         }),

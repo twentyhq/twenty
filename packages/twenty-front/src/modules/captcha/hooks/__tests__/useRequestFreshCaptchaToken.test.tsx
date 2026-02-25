@@ -12,9 +12,7 @@ import { type Captcha, CaptchaDriverType } from '~/generated-metadata/graphql';
 jest.mock('@/captcha/utils/isCaptchaRequiredForPath');
 
 const createWrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    {children}
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 describe('useRequestFreshCaptchaToken', () => {

@@ -5,7 +5,7 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidgetDisplay } from '@/page-layout/widgets/field/components/FieldWidgetDisplay';
@@ -62,7 +62,7 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     resolvedFieldMetadataId ?? '',
   );
 
-  const record = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
+  const record = useAtomFamilySelectorValue(recordStoreFamilySelector, {
     recordId: targetRecord.id,
     fieldName: fieldMetadataItem?.name ?? '',
   });

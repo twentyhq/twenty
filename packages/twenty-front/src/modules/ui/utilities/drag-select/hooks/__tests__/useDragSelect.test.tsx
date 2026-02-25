@@ -6,9 +6,7 @@ import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    {children}
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 describe('useDragSelect', () => {

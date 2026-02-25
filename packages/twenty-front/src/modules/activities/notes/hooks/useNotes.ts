@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 
 import { useActivities } from '@/activities/hooks/useActivities';
-import { currentNotesQueryVariablesStateV2 } from '@/activities/notes/states/currentNotesQueryVariablesStateV2';
+import { currentNotesQueryVariablesState } from '@/activities/notes/states/currentNotesQueryVariablesState';
 import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline-activities/constants/FindManyTimelineActivitiesOrderBy';
 import { type Note } from '@/activities/types/Note';
 import { type RecordGqlOperationVariables } from 'twenty-shared/types';
@@ -34,7 +34,7 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
   });
 
   const [currentNotesQueryVariables, setCurrentNotesQueryVariables] =
-    useAtomState(currentNotesQueryVariablesStateV2);
+    useAtomState(currentNotesQueryVariablesState);
 
   // TODO: fix useEffect, remove with better pattern
   useEffect(() => {

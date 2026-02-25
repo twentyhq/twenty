@@ -1,5 +1,5 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -9,7 +9,7 @@ import { v4 } from 'uuid';
 
 export const useOpenAskAIPageInCommandMenu = () => {
   const { navigateCommandMenu } = useCommandMenu();
-  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedStateV2);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
 
   const openAskAIPage = useCallback(
     ({

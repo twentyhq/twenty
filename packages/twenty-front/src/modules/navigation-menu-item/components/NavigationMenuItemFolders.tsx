@@ -4,7 +4,7 @@ import { IconFolder } from 'twenty-ui/display';
 import { CurrentWorkspaceMemberNavigationMenuItems } from '@/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems';
 import { useCreateNavigationMenuItemFolder } from '@/navigation-menu-item/hooks/useCreateNavigationMenuItemFolder';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/hooks/useNavigationMenuItemsByFolder';
-import { isNavigationMenuItemFolderCreatingStateV2 } from '@/navigation-menu-item/states/isNavigationMenuItemFolderCreatingStateV2';
+import { isNavigationMenuItemFolderCreatingState } from '@/navigation-menu-item/states/isNavigationMenuItemFolderCreatingState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
@@ -25,7 +25,7 @@ export const NavigationMenuItemFolders = ({
   const [
     isNavigationMenuItemFolderCreating,
     setIsNavigationMenuItemFolderCreating,
-  ] = useAtomState(isNavigationMenuItemFolderCreatingStateV2);
+  ] = useAtomState(isNavigationMenuItemFolderCreatingState);
 
   const handleNavigationMenuItemFolderNameChange = (value: string) => {
     setNewFolderName(value);

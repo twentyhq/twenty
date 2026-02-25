@@ -8,7 +8,7 @@ import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistor
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconList, IconSearch } from 'twenty-ui/display';
@@ -112,7 +112,7 @@ describe('useCommandMenuHistory', () => {
       instanceId: '',
       Icon: undefined,
     });
-    expect(jotaiStore.get(isCommandMenuOpenedStateV2.atom)).toBe(false);
+    expect(jotaiStore.get(isCommandMenuOpenedState.atom)).toBe(false);
   });
 
   it('should navigate to a page in history', () => {
