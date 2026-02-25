@@ -211,6 +211,112 @@ describe('GoogleApisServiceAvailabilityService', () => {
       });
     });
 
+    it('should return messaging unavailable when Google returns generic precondition check failed error', async () => {
+      mockTwentyConfigService.get.mockImplementation((key) => {
+        if (key === 'AUTH_GOOGLE_CLIENT_ID') return 'client-id';
+        if (key === 'AUTH_GOOGLE_CLIENT_SECRET') return 'client-secret';
+        if (key === 'MESSAGING_PROVIDER_GMAIL_ENABLED') return true;
+        if (key === 'CALENDAR_PROVIDER_GOOGLE_ENABLED') return true;
+
+        return undefined;
+      });
+
+      const preconditionCheckFailedError = {
+        response: {
+          status: 400,
+          data: {
+            error: {
+              code: 400,
+              message: 'Precondition check failed.',
+              errors: [
+                {
+                  message: 'Precondition check failed.',
+                  domain: 'global',
+                  reason: 'failedPrecondition',
+                },
+              ],
+              status: 'FAILED_PRECONDITION',
+            },
+          },
+        },
+      };
+
+      const mockGmailClient = {
+        users: {
+          getProfile: jest.fn().mockRejectedValue(preconditionCheckFailedError),
+        },
+      };
+
+      const mockCalendarClient = {
+        events: {
+          list: jest.fn().mockResolvedValue({ data: {} }),
+        },
+      };
+
+      (google.gmail as jest.Mock).mockReturnValue(mockGmailClient);
+      (google.calendar as jest.Mock).mockReturnValue(mockCalendarClient);
+
+      const result = await service.checkServicesAvailability('access-token');
+
+      expect(result).toEqual({
+        isMessagingAvailable: false,
+        isCalendarAvailable: true,
+      });
+    });
+
+    it('should return Calendar unavailable when Google returns generic precondition check failed error', async () => {
+      mockTwentyConfigService.get.mockImplementation((key) => {
+        if (key === 'AUTH_GOOGLE_CLIENT_ID') return 'client-id';
+        if (key === 'AUTH_GOOGLE_CLIENT_SECRET') return 'client-secret';
+        if (key === 'MESSAGING_PROVIDER_GMAIL_ENABLED') return true;
+        if (key === 'CALENDAR_PROVIDER_GOOGLE_ENABLED') return true;
+
+        return undefined;
+      });
+
+      const preconditionCheckFailedError = {
+        response: {
+          status: 400,
+          data: {
+            error: {
+              code: 400,
+              message: 'Precondition check failed.',
+              errors: [
+                {
+                  message: 'Precondition check failed.',
+                  domain: 'global',
+                  reason: 'failedPrecondition',
+                },
+              ],
+              status: 'FAILED_PRECONDITION',
+            },
+          },
+        },
+      };
+
+      const mockGmailClient = {
+        users: {
+          getProfile: jest.fn().mockResolvedValue({ data: {} }),
+        },
+      };
+
+      const mockCalendarClient = {
+        events: {
+          list: jest.fn().mockRejectedValue(preconditionCheckFailedError),
+        },
+      };
+
+      (google.gmail as jest.Mock).mockReturnValue(mockGmailClient);
+      (google.calendar as jest.Mock).mockReturnValue(mockCalendarClient);
+
+      const result = await service.checkServicesAvailability('access-token');
+
+      expect(result).toEqual({
+        isMessagingAvailable: true,
+        isCalendarAvailable: false,
+      });
+    });
+
     it('should throw error for non-service-availability related errors', async () => {
       mockTwentyConfigService.get.mockImplementation((key) => {
         if (key === 'AUTH_GOOGLE_CLIENT_ID') return 'client-id';

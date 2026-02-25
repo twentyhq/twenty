@@ -19,5 +19,6 @@ export class ViewFieldGroupException extends CustomException<ViewFieldGroupExcep
 export enum ViewFieldGroupExceptionCode {
   VIEW_FIELD_GROUP_NOT_FOUND = 'VIEW_FIELD_GROUP_NOT_FOUND',
   VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
+  FIELDS_WIDGET_NOT_FOUND = 'FIELDS_WIDGET_NOT_FOUND',
   INVALID_VIEW_FIELD_GROUP_DATA = 'INVALID_VIEW_FIELD_GROUP_DATA',
 }

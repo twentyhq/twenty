@@ -44,12 +44,12 @@ Burada Proje, "bir" tarafındadır. Farklı nesnelerden birden çok kayıt aynı
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **İçe/Dışa Aktarma sınırlaması**: Birden fazla nesne türüne işaret eden ilişkiler (ör. Notlar → Kişiler/Şirketler/Fırsatlar) CSV içe aktarma veya dışa aktarmada **henüz desteklenmiyor**.
+**İçe/Dışa Aktarma sınırlaması**: Birden fazla nesne türüne işaret eden ilişkiler (ör. Notlar → Kişiler/Şirketler/Fırsatlar) CSV içe aktarma veya dışa aktarmada **henüz desteklenmiyor**.
 
-  * **İçe aktarma**: Her iki tarafta da tek bir nesne türüne işaret eden bire-çok ilişkiler içe aktarılabilir
-  * **Dışa aktarma**: Birden fazla nesne türüne işaret eden ilişkilere ait sütunlar şu anda boş bırakılır
+* **İçe aktarma**: Her iki tarafta da tek bir nesne türüne işaret eden bire-çok ilişkiler içe aktarılabilir
+* **Dışa aktarma**: Birden fazla nesne türüne işaret eden ilişkilere ait sütunlar şu anda boş bırakılır
 
-  Bu özellik yol haritamızda.
+Bu özellik yol haritamızda.
 </Warning>
 
 ### Bugün Neler Desteklenmiyor
@@ -137,12 +137,12 @@ Eğer mevcut değilse:
 ## İçe Aktarma Sırası Kuralı
 
 <Warning>
-  **Her zaman önce "bir" tarafı içe aktarın!**
+**Her zaman önce "bir" tarafı içe aktarın!**
 
-  1. Önce **Şirketler** (bağımlılık yok)
-  2. İkinci olarak **Kişiler** (Şirketlere bağlı)
-  3. Üçüncü olarak **Fırsatlar** (Şirketlere/Kişilere bağlı)
-  4. **Özel nesneler** (bağımlılıklarına uyarak)
+1. Önce **Şirketler** (bağımlılık yok)
+2. İkinci olarak **Kişiler** (Şirketlere bağlı)
+3. Üçüncü olarak **Fırsatlar** (Şirketlere/Kişilere bağlı)
+4. **Özel nesneler** (bağımlılıklarına uyarak)
 
-  Ona referans verebilmeden önce ana kayıt mevcut olmalıdır.
+Ona referans verebilmeden önce ana kayıt mevcut olmalıdır.
 </Warning>

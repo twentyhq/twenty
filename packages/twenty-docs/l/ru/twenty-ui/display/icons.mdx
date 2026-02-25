@@ -14,35 +14,44 @@ image: /images/user-guide/objects/objects.png
 Мы используем иконки Tabler для React во всем приложении.
 
 <Tabs>
-  <Tab title="Установка">
-    <br />
 
-    ```
-    yarn add @tabler/icons-react
-    ```
-  </Tab>
+<Tab title="Установка">
+<br />
 
-  <Tab title="Свойства">
-    Вы можете импортировать каждый значок как компонент. Вот пример:
+```
+yarn add @tabler/icons-react
+```
 
-    <br />
+</Tab>
 
-    ```jsx
-    import { IconArrowLeft } from "@tabler/icons-react";
+<Tab title="Свойства">
 
-    export const MyComponent = () => {
-      return <IconArrowLeft color="red" size={48} />;
-    };
-    ```
-  </Tab>
+Вы можете импортировать каждый значок как компонент. Вот пример:
+<br />
 
-  <Tab title="Свойства">
-    | Свойства | Тип    | Описание                          | По умолчанию |
-    | -------- | ------ | --------------------------------- | ------------ |
-    | размер   | число  | Высота и ширина иконки в пикселях | 24           |
-    | цвет     | строка | Цвет иконок                       | currentColor |
-    | обводка  | число  | Ширина обводки иконки в пикселях  | 2            |
-  </Tab>
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Свойства">
+
+
+| Свойства | Тип    | Описание                          | По умолчанию |
+| -------- | ------ | --------------------------------- | ------------ |
+| размер   | число  | Высота и ширина иконки в пикселях | 24           |
+| цвет     | строка | Цвет иконок                       | currentColor |
+| обводка  | число  | Ширина обводки иконки в пикселях  | 2            |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Пользовательские иконки
@@ -54,20 +63,29 @@ image: /images/user-guide/objects/objects.png
 Отображает значок адресной книги.
 
 <Tabs>
-  <Tab title="Использование">
-    ```jsx
-    import { IconAddressBook } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
-      return <IconAddressBook size={24} stroke={2} />;
-    };
-    ```
-  </Tab>
+<Tab title="Использование">
 
-  <Tab title="Свойства">
-    | Свойства | Тип   | Описание                          | По умолчанию |
-    | -------- | ----- | --------------------------------- | ------------ |
-    | размер   | число | Высота и ширина иконки в пикселях | 24           |
-    | обводка  | число | Ширина обводки иконки в пикселях  | 2            |
-  </Tab>
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Свойства">
+
+
+| Свойства | Тип   | Описание                          | По умолчанию |
+| -------- | ----- | --------------------------------- | ------------ |
+| размер   | число | Высота и ширина иконки в пикселях | 24           |
+| обводка  | число | Ширина обводки иконки в пикселях  | 2            |
+
+
+
+</Tab>
+
 </Tabs>

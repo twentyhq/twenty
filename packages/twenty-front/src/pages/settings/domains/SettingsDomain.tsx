@@ -13,8 +13,8 @@ import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -35,7 +35,7 @@ export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
   const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
   const { t } = useLingui();
-  const isCloudflareIntegrationEnabled = useRecoilValueV2(
+  const isCloudflareIntegrationEnabled = useAtomStateValue(
     isCloudflareIntegrationEnabledState,
   );
 
@@ -51,7 +51,7 @@ export const SettingsDomain = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
 

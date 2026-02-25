@@ -10,43 +10,52 @@ image: /images/user-guide/github/github-header.png
 Rozbalovací výběr ikon, který uživatelům umožňuje vybrat ikonu ze seznamu.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { RecoilRoot } from "recoil";
-    import React, { useState } from "react";
-    import { IconPicker } from "@/ui/input/components/IconPicker";
 
-    export const MyComponent = () => {
+<Tab title="Použití">
 
-       const [selectedIcon, setSelectedIcon] = useState("");
-       const handleIconChange = ({ iconKey, Icon }) => {
-         console.log("Selected Icon:", iconKey);
-         setSelectedIcon(iconKey);
-       };
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
 
-      return (
-        <RecoilRoot>
-          <IconPicker
-            disabled={false}
-            onChange={handleIconChange}
-            selectedIconKey={selectedIcon}
-            variant="primary"
-          />
-        </RecoilRoot>
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti      | Typ                | Popis                                                                                                         |
-    | --------------- | ------------------ | ------------------------------------------------------------------------------------------------------------- |
-    | neaktivní       | booleovská hodnota | Deaktivuje výběr ikon, pokud je nastavena hodnota `true`                                                      |
-    | onChange        | funkce             | Vyvolá se funkce zpětného volání, když uživatel vybere ikonu. Přijímá objekt s vlastnostmi `iconKey` a `Icon` |
-    | selectedIconKey | textový řetězec    | Klíč výchozí vybrané ikony                                                                                    |
-    | onClickOutside  | funkce             | Funkce zpětného volání, vyvolaná, když uživatel klikne mimo rozbalovací nabídku.                              |
-    | onClose         | funkce             | Funkce zpětného volání, vyvolaná, když je rozbalovací nabídka zavřena.                                        |
-    | onOpen          | funkce             | Funkce zpětného volání, vyvolaná, když je rozbalovací nabídka otevřena.                                       |
-    | varianta        | řetězec            | Vizuální stylová varianta klikatelné ikony. Možnosti zahrnují: "primární", "sekundární" a "terciární"         |
-  </Tab>
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti      | Typ                | Popis                                                                                                         |
+| --------------- | ------------------ | ------------------------------------------------------------------------------------------------------------- |
+| neaktivní       | booleovská hodnota | Deaktivuje výběr ikon, pokud je nastavena hodnota `true`                                                      |
+| onChange        | funkce             | Vyvolá se funkce zpětného volání, když uživatel vybere ikonu. Přijímá objekt s vlastnostmi `iconKey` a `Icon` |
+| selectedIconKey | textový řetězec    | Klíč výchozí vybrané ikony                                                                                    |
+| onClickOutside  | funkce             | Funkce zpětného volání, vyvolaná, když uživatel klikne mimo rozbalovací nabídku.                              |
+| onClose         | funkce             | Funkce zpětného volání, vyvolaná, když je rozbalovací nabídka zavřena.                                        |
+| onOpen          | funkce             | Funkce zpětného volání, vyvolaná, když je rozbalovací nabídka otevřena.                                       |
+| varianta        | řetězec            | Vizuální stylová varianta klikatelné ikony. Možnosti zahrnují: "primární", "sekundární" a "terciární"         |
+
+
+
+
+</Tab>
 </Tabs>

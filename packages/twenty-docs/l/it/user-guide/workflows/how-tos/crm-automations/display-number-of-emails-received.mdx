@@ -30,7 +30,7 @@ Prima di configurare questo flusso di lavoro, crea un campo personalizzato sull'
 3. Scegli **Message Participants** (disponibile sotto Oggetti avanzati)
 
 <Note>
-  Un Message Participant è una combinazione di un ID messaggio e di un ID persona, che crea un record univoco per ogni messaggio. Questo è più semplice da tracciare rispetto ai Messaggi direttamente perché possiamo accedere al campo `handle`, che contiene l'indirizzo email del mittente (o del destinatario).
+Un Message Participant è una combinazione di un ID messaggio e di un ID persona, che crea un record univoco per ogni messaggio. Questo è più semplice da tracciare rispetto ai Messaggi direttamente perché possiamo accedere al campo `handle`, che contiene l'indirizzo email del mittente (o del destinatario).
 </Note>
 
 ### Passaggio 2: Filtra per ruolo
@@ -50,7 +50,7 @@ Questo garantisce che tu conteggi solo i messaggi inviati da questa persona, non
 In questo modo si trovano tutti i messaggi provenienti da questo indirizzo email per ottenere il conteggio totale.
 
 <Note>
-  L'azione Search Records è limitata a restituire al massimo 200 record. Tuttavia, poiché stai usando solo il valore `totalCount` (non i singoli record), questo passaggio restituirà il numero totale di email inviate da questa persona.
+L'azione Search Records è limitata a restituire al massimo 200 record. Tuttavia, poiché stai usando solo il valore `totalCount` (non i singoli record), questo passaggio restituirà il numero totale di email inviate da questa persona.
 </Note>
 
 ### Passaggio 4: Aggiorna il record Persona con un'azione Create or Update Record
@@ -58,7 +58,7 @@ In questo modo si trovano tutti i messaggi provenienti da questo indirizzo email
 1. Aggiungi un'azione **Create or Update Record**
 
 <Warning>
-  Usa **Upsert Record** invece di **Update Record** qui. Questo ti permette di identificare la persona tramite il suo indirizzo email (il campo `handle`) invece di richiedere un ID record da un passaggio precedente.
+Usa **Upsert Record** invece di **Update Record** qui. Questo ti permette di identificare la persona tramite il suo indirizzo email (il campo `handle`) invece di richiedere un ID record da un passaggio precedente.
 </Warning>
 
 2. Seleziona **People** come oggetto

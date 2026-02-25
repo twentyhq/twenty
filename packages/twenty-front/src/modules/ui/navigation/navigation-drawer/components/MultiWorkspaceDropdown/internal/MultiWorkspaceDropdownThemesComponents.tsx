@@ -2,9 +2,9 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { multiWorkspaceDropdownStateV2 } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownStateV2';
+import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { IconCheck, IconChevronLeft } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -14,8 +14,8 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
 
   const { setColorScheme, colorScheme, colorSchemeList } = useColorScheme();
 
-  const setMultiWorkspaceDropdownState = useSetRecoilStateV2(
-    multiWorkspaceDropdownStateV2,
+  const setMultiWorkspaceDropdownState = useSetAtomState(
+    multiWorkspaceDropdownState,
   );
 
   return (

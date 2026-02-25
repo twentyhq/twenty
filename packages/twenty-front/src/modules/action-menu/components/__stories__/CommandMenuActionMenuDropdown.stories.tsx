@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { RecoilRoot } from 'recoil';
+import { Provider as JotaiProvider } from 'jotai';
 import * as test from 'storybook/test';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
@@ -7,10 +7,14 @@ import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandM
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { createMockActionMenuActions } from '@/action-menu/mock/action-menu-actions.mock';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 const deleteMock = test.fn();
 const addToFavoritesMock = test.fn();
 const exportMock = test.fn();
@@ -20,47 +24,43 @@ const meta: Meta<typeof CommandMenuActionMenuDropdown> = {
   component: CommandMenuActionMenuDropdown,
   decorators: [
     (Story) => (
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(
-            contextStoreTargetedRecordsRuleComponentState.atomFamily({
-              instanceId: 'story-action-menu',
-            }),
-            {
+      <JotaiProvider store={jotaiStore}>
+        <ContextStoreComponentInstanceContext.Provider
+          value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+        >
+          <JestContextStoreSetter
+            contextStoreTargetedRecordsRule={{
               mode: 'selection',
               selectedRecordIds: ['1'],
-            },
-          );
-          set(
-            contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-              instanceId: 'story-action-menu',
-            }),
-            1,
-          );
-        }}
-      >
-        <ActionMenuComponentInstanceContext.Provider
-          value={{ instanceId: 'story-action-menu' }}
-        >
-          <ActionMenuContext.Provider
-            value={{
-              isInRightDrawer: true,
-              displayType: 'dropdownItem',
-              actionMenuType: 'command-menu-show-page-action-menu-dropdown',
-              actions: createMockActionMenuActions({
-                deleteMock,
-                addToFavoritesMock,
-                exportMock,
-              }),
             }}
+            contextStoreNumberOfSelectedRecords={1}
           >
-            <Story />
-          </ActionMenuContext.Provider>
-        </ActionMenuComponentInstanceContext.Provider>
-      </RecoilRoot>
+            <ActionMenuComponentInstanceContext.Provider
+              value={{ instanceId: 'story-action-menu' }}
+            >
+              <ActionMenuContext.Provider
+                value={{
+                  isInRightDrawer: true,
+                  displayType: 'dropdownItem',
+                  actionMenuType: 'command-menu-show-page-action-menu-dropdown',
+                  actions: createMockActionMenuActions({
+                    deleteMock,
+                    addToFavoritesMock,
+                    exportMock,
+                  }),
+                }}
+              >
+                <Story />
+              </ActionMenuContext.Provider>
+            </ActionMenuComponentInstanceContext.Provider>
+          </JestContextStoreSetter>
+        </ContextStoreComponentInstanceContext.Provider>
+      </JotaiProvider>
     ),
     ComponentDecorator,
     ContextStoreDecorator,
+    ObjectMetadataItemsDecorator,
+    SnackBarDecorator,
     RouterDecorator,
   ],
   args: {

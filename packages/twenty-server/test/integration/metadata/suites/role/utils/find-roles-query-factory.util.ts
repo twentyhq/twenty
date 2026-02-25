@@ -5,6 +5,7 @@ const DEFAULT_ROLE_GQL_FIELDS = `
   label
   description
   icon
+  universalIdentifier
   isEditable
   canUpdateAllSettings
   canAccessAllTools

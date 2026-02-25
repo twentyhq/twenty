@@ -24,8 +24,8 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
@@ -43,7 +43,7 @@ import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnable
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
@@ -115,7 +115,7 @@ export const PageLayoutTabList = ({
 
   const navigate = useNavigate();
 
-  const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
+  const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
     componentInstanceId,
   );
@@ -134,12 +134,16 @@ export const PageLayoutTabList = ({
     hasAddButton: isDefined(onAddTab),
   });
 
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+  );
+
   const dropdownId = `tab-overflow-${componentInstanceId}`;
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
   const { toggleClickOutside } = useClickOutsideListener(dropdownId);
 
-  const setIsTabDragging = useSetRecoilComponentState(
+  const setIsTabDragging = useSetAtomComponentState(
     isPageLayoutTabDraggingComponentState,
     componentInstanceId,
   );
@@ -174,8 +178,9 @@ export const PageLayoutTabList = ({
     closeDropdown(dropdownId);
   }, [closeDropdown, dropdownId]);
 
-  const setPageLayoutTabListCurrentDragDroppableId = useSetRecoilComponentState(
+  const setPageLayoutTabListCurrentDragDroppableId = useSetAtomComponentState(
     pageLayoutTabListCurrentDragDroppableIdComponentState,
+    pageLayoutId,
   );
 
   const handleDragUpdate: OnDragUpdateResponder = (update) => {
@@ -214,17 +219,15 @@ export const PageLayoutTabList = ({
     [onReorder, setIsTabDragging, toggleClickOutside, openDropdown, dropdownId],
   );
 
-  const isPageLayoutInEditMode = useRecoilComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
+    pageLayoutId,
   );
-  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
-    PageLayoutComponentInstanceContext,
-  );
-  const tabSettingsOpenTabId = useRecoilComponentValue(
+  const tabSettingsOpenTabId = useAtomComponentStateValue(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
-  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+  const setTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );

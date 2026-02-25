@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {

@@ -10,42 +10,49 @@ image: /images/user-guide/what-is-twenty/20.png
 Umožňuje uživatelům vybrat hodnotu z nabídky předdefinovaných možností.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { RecoilRoot } from 'recoil';
-    import { IconTwentyStar } from 'twenty-ui/display';
+<Tab title="Použití">
 
-    import { Select } from '@/ui/input/components/Select';
+```jsx
+import { RecoilRoot } from 'recoil';
+import { IconTwentyStar } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
+import { Select } from '@/ui/input/components/Select';
 
-      return (
-        <RecoilRoot>
-          <Select
-            className
-            disabled={false}
-            label="Vyberte možnost"
-            options={[
-              { value: 'option1', label: 'Možnost A', Icon: IconTwentyStar },
-              { value: 'option2', label: 'Možnost B', Icon: IconTwentyStar },
-            ]}
-            value="option1"
-          />
-        </RecoilRoot>
-      );
-    };
+export const MyComponent = () => {
 
-    ```
-  </Tab>
+  return (
+    <RecoilRoot>
+      <Select
+        className
+        disabled={false}
+        label="Vyberte možnost"
+        options={[
+          { value: 'option1', label: 'Možnost A', Icon: IconTwentyStar },
+          { value: 'option2', label: 'Možnost B', Icon: IconTwentyStar },
+        ]}
+        value="option1"
+      />
+    </RecoilRoot>
+  );
+};
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti | Typ                | Popis                                                                                                                                                                                    |
-    | ---------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | className  | řetězec            | Volitelná CSS třída pro dodatečné stylování.                                                                                                                                             |
-    | neaktivní  | booleovská hodnota | Pokud je nastaveno na `true`, zakáže interakci uživatele s komponentou.                                                                                                                  |
-    | štítek     | textový řetězec    | Štítek popisující účel komponenty `Vybrat`.                                                                                                                                              |
-    | onChange   | funkce             | Funkce volaná při změně vybraných hodnot.                                                                                                                                                |
-    | možnosti   | pole               | Představuje možnosti dostupné pro komponentu `Selected`. Je to pole objektů, kde každý objekt má `value` (jedinečný identifikátor), `label` (jedinečný identifikátor) a volitelný `Icon` |
-    | hodnota    | řetězec            | Reprezentuje aktuálně vybranou hodnotu. Měla by odpovídat jedné z `hodnot` v poli `možnosti`.                                                                                            |
-  </Tab>
+```
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti | Typ                | Popis                                                                                                                                                                                    |
+| ---------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className  | řetězec            | Volitelná CSS třída pro dodatečné stylování.                                                                                                                                             |
+| neaktivní  | booleovská hodnota | Pokud je nastaveno na `true`, zakáže interakci uživatele s komponentou.                                                                                                                  |
+| štítek     | textový řetězec    | Štítek popisující účel komponenty `Vybrat`.                                                                                                                                              |
+| onChange   | funkce             | Funkce volaná při změně vybraných hodnot.                                                                                                                                                |
+| možnosti   | pole               | Představuje možnosti dostupné pro komponentu `Selected`. Je to pole objektů, kde každý objekt má `value` (jedinečný identifikátor), `label` (jedinečný identifikátor) a volitelný `Icon` |
+| hodnota    | řetězec            | Reprezentuje aktuálně vybranou hodnotu. Měla by odpovídat jedné z `hodnot` v poli `možnosti`.                                                                                            |
+
+
+
+
+</Tab>
 </Tabs>

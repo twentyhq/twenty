@@ -7,154 +7,137 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useCopyContextStoreStates = () => {
-  const copyContextStoreStates = useRecoilCallback(
-    ({ snapshot, set }) =>
-      ({
-        instanceIdToCopyFrom,
-        instanceIdToCopyTo,
-      }: {
-        instanceIdToCopyFrom: string;
-        instanceIdToCopyTo: string;
-      }) => {
-        const contextStoreCurrentObjectMetadataItemId = snapshot
-          .getLoadable(
-            contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-              instanceId: instanceIdToCopyFrom,
-            }),
-          )
-          .getValue();
+  const store = useStore();
+  const copyContextStoreStates = useCallback(
+    ({
+      instanceIdToCopyFrom,
+      instanceIdToCopyTo,
+    }: {
+      instanceIdToCopyFrom: string;
+      instanceIdToCopyTo: string;
+    }) => {
+      const contextStoreCurrentObjectMetadataItemId = store.get(
+        contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
+          instanceId: instanceIdToCopyFrom,
+        }),
+      );
 
-        set(
-          contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-            instanceId: instanceIdToCopyTo,
-          }),
-          contextStoreCurrentObjectMetadataItemId,
-        );
+      store.set(
+        contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
+          instanceId: instanceIdToCopyTo,
+        }),
+        contextStoreCurrentObjectMetadataItemId,
+      );
 
-        const contextStoreTargetedRecordsRule = snapshot
-          .getLoadable(
-            contextStoreTargetedRecordsRuleComponentState.atomFamily({
-              instanceId: instanceIdToCopyFrom,
-            }),
-          )
-          .getValue();
+      const contextStoreTargetedRecordsRule = store.get(
+        contextStoreTargetedRecordsRuleComponentState.atomFamily({
+          instanceId: instanceIdToCopyFrom,
+        }),
+      );
 
-        set(
-          contextStoreTargetedRecordsRuleComponentState.atomFamily({
-            instanceId: instanceIdToCopyTo,
-          }),
-          contextStoreTargetedRecordsRule,
-        );
+      store.set(
+        contextStoreTargetedRecordsRuleComponentState.atomFamily({
+          instanceId: instanceIdToCopyTo,
+        }),
+        contextStoreTargetedRecordsRule,
+      );
 
-        const contextStoreNumberOfSelectedRecords = snapshot
-          .getLoadable(
-            contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-              instanceId: instanceIdToCopyFrom,
-            }),
-          )
-          .getValue();
+      const contextStoreNumberOfSelectedRecords = store.get(
+        contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+          instanceId: instanceIdToCopyFrom,
+        }),
+      );
 
-        set(
-          contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-            instanceId: instanceIdToCopyTo,
-          }),
-          contextStoreNumberOfSelectedRecords,
-        );
+      store.set(
+        contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+          instanceId: instanceIdToCopyTo,
+        }),
+        contextStoreNumberOfSelectedRecords,
+      );
 
-        const contextStoreFilters = snapshot
-          .getLoadable(
-            contextStoreFiltersComponentState.atomFamily({
-              instanceId: instanceIdToCopyFrom,
-            }),
-          )
-          .getValue();
+      const contextStoreFilters = store.get(
+        contextStoreFiltersComponentState.atomFamily({
+          instanceId: instanceIdToCopyFrom,
+        }),
+      );
 
-        set(
-          contextStoreFiltersComponentState.atomFamily({
-            instanceId: instanceIdToCopyTo,
-          }),
-          contextStoreFilters,
-        );
+      store.set(
+        contextStoreFiltersComponentState.atomFamily({
+          instanceId: instanceIdToCopyTo,
+        }),
+        contextStoreFilters,
+      );
 
-        const contextStoreFilterGroups = snapshot
-          .getLoadable(
-            contextStoreFilterGroupsComponentState.atomFamily({
-              instanceId: instanceIdToCopyFrom,
-            }),
-          )
-          .getValue();
+      const contextStoreFilterGroups = store.get(
+        contextStoreFilterGroupsComponentState.atomFamily({
+          instanceId: instanceIdToCopyFrom,
+        }),
+      );
 
-        set(
-          contextStoreFilterGroupsComponentState.atomFamily({
-            instanceId: instanceIdToCopyTo,
-          }),
-          contextStoreFilterGroups,
-        );
+      store.set(
+        contextStoreFilterGroupsComponentState.atomFamily({
+          instanceId: instanceIdToCopyTo,
+        }),
+        contextStoreFilterGroups,
+      );
 
-        const contextStoreAnyFieldFilterValue = snapshot
-          .getLoadable(
-            contextStoreAnyFieldFilterValueComponentState.atomFamily({
-              instanceId: instanceIdToCopyFrom,
-            }),
-          )
-          .getValue();
+      const contextStoreAnyFieldFilterValue = store.get(
+        contextStoreAnyFieldFilterValueComponentState.atomFamily({
+          instanceId: instanceIdToCopyFrom,
+        }),
+      );
 
-        set(
-          contextStoreAnyFieldFilterValueComponentState.atomFamily({
-            instanceId: instanceIdToCopyTo,
-          }),
-          contextStoreAnyFieldFilterValue,
-        );
+      store.set(
+        contextStoreAnyFieldFilterValueComponentState.atomFamily({
+          instanceId: instanceIdToCopyTo,
+        }),
+        contextStoreAnyFieldFilterValue,
+      );
 
-        const contextStoreCurrentViewId = snapshot
-          .getLoadable(
-            contextStoreCurrentViewIdComponentState.atomFamily({
-              instanceId: instanceIdToCopyFrom,
-            }),
-          )
-          .getValue();
+      const contextStoreCurrentViewId = store.get(
+        contextStoreCurrentViewIdComponentState.atomFamily({
+          instanceId: instanceIdToCopyFrom,
+        }),
+      );
 
-        set(
-          contextStoreCurrentViewIdComponentState.atomFamily({
-            instanceId: instanceIdToCopyTo,
-          }),
-          contextStoreCurrentViewId,
-        );
+      store.set(
+        contextStoreCurrentViewIdComponentState.atomFamily({
+          instanceId: instanceIdToCopyTo,
+        }),
+        contextStoreCurrentViewId,
+      );
 
-        const contextStoreCurrentViewType = snapshot
-          .getLoadable(
-            contextStoreCurrentViewTypeComponentState.atomFamily({
-              instanceId: instanceIdToCopyFrom,
-            }),
-          )
-          .getValue();
+      const contextStoreCurrentViewType = store.get(
+        contextStoreCurrentViewTypeComponentState.atomFamily({
+          instanceId: instanceIdToCopyFrom,
+        }),
+      );
 
-        set(
-          contextStoreCurrentViewTypeComponentState.atomFamily({
-            instanceId: instanceIdToCopyTo,
-          }),
-          contextStoreCurrentViewType,
-        );
+      store.set(
+        contextStoreCurrentViewTypeComponentState.atomFamily({
+          instanceId: instanceIdToCopyTo,
+        }),
+        contextStoreCurrentViewType,
+      );
 
-        const contextStoreIsFullTabWidgetInEditMode = snapshot
-          .getLoadable(
-            contextStoreIsPageInEditModeComponentState.atomFamily({
-              instanceId: instanceIdToCopyFrom,
-            }),
-          )
-          .getValue();
+      const contextStoreIsFullTabWidgetInEditMode = store.get(
+        contextStoreIsPageInEditModeComponentState.atomFamily({
+          instanceId: instanceIdToCopyFrom,
+        }),
+      );
 
-        set(
-          contextStoreIsPageInEditModeComponentState.atomFamily({
-            instanceId: instanceIdToCopyTo,
-          }),
-          contextStoreIsFullTabWidgetInEditMode,
-        );
-      },
-    [],
+      store.set(
+        contextStoreIsPageInEditModeComponentState.atomFamily({
+          instanceId: instanceIdToCopyTo,
+        }),
+        contextStoreIsFullTabWidgetInEditMode,
+      );
+    },
+    [store],
   );
 
   return { copyContextStoreStates };

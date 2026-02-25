@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { useIMask } from 'react-imask';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
@@ -150,7 +150,7 @@ export const DateTimePickerHeader = ({
   const { timeFormat } = useDateTimeFormat();
   const { formatTime, parseTime, isHour12 } = useTimeInput(timeFormat);
 
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
   const { closeDropdown: closeMonthSelect } = useCloseDropdown();

@@ -10,7 +10,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconChevronLeft, IconEye, IconEyeOff } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelectTag } from 'twenty-ui/navigation';
 
@@ -39,7 +39,7 @@ export const ConfigVariableOptionsDropdownContent = ({
 }: ConfigVariableOptionsDropdownContentProps) => {
   const theme = useTheme();
 
-  const isConfigVariablesInDbEnabled = useRecoilValueV2(
+  const isConfigVariablesInDbEnabled = useAtomStateValue(
     isConfigVariablesInDbEnabledState,
   );
 

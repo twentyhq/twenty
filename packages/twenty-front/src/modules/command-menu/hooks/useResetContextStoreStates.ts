@@ -5,19 +5,21 @@ import { contextStoreFilterGroupsComponentState } from '@/context-store/states/c
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useResetContextStoreStates = () => {
-  const resetContextStoreStates = useRecoilCallback(({ set }) => {
-    return (instanceId: string) => {
-      set(
+  const store = useStore();
+  const resetContextStoreStates = useCallback(
+    (instanceId: string) => {
+      store.set(
         contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
           instanceId,
         }),
         undefined,
       );
 
-      set(
+      store.set(
         contextStoreTargetedRecordsRuleComponentState.atomFamily({
           instanceId,
         }),
@@ -27,42 +29,43 @@ export const useResetContextStoreStates = () => {
         },
       );
 
-      set(
+      store.set(
         contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
           instanceId,
         }),
         0,
       );
 
-      set(
+      store.set(
         contextStoreFiltersComponentState.atomFamily({
           instanceId,
         }),
         [],
       );
 
-      set(
+      store.set(
         contextStoreFilterGroupsComponentState.atomFamily({
           instanceId,
         }),
         [],
       );
 
-      set(
+      store.set(
         contextStoreAnyFieldFilterValueComponentState.atomFamily({
           instanceId,
         }),
         '',
       );
 
-      set(
+      store.set(
         contextStoreCurrentViewIdComponentState.atomFamily({
           instanceId,
         }),
         undefined,
       );
-    };
-  }, []);
+    },
+    [store],
+  );
 
   return { resetContextStoreStates };
 };

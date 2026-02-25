@@ -51,9 +51,9 @@ Il genitore (lato "uno") deve esistere in Twenty prima di potervi fare riferimen
 4. **Attività/Note** (collegate a uno qualsiasi dei precedenti)
 
 <Warning>
-  **Se il record genitore non esiste, l'importazione fallirà.**
+**Se il record genitore non esiste, l'importazione fallirà.**
 
-  Verifica sempre che le Aziende siano importate prima di importare le Persone con riferimenti all'Azienda.
+Verifica sempre che le Aziende siano importate prima di importare le Persone con riferimenti all'Azienda.
 </Warning>
 
 ## Passaggio 3: Annota l'identificatore univoco del genitore
@@ -117,9 +117,9 @@ La colonna `companyDomain` fa riferimento al dominio dell'Azienda.
 | ID             | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **Il formato del dominio è importante!**
+**Il formato del dominio è importante!**
 
-  Usa `https://domain.com` (non solo `domain.com`). Questo corrisponde a come Twenty archivia i domini delle Aziende e previene errori di corrispondenza.
+Usa `https://domain.com` (non solo `domain.com`). Questo corrisponde a come Twenty archivia i domini delle Aziende e previene errori di corrispondenza.
 </Warning>
 
 ### Regole importanti
@@ -178,7 +178,6 @@ Review proposal,jane@yourcompany.com
 <AccordionGroup>
   <Accordion title="Cosa succede se il mio record genitore non ha un dominio o un'email?">
     Hai due opzioni:
-
     1. Usa l'`id` di Twenty (esporta i record genitore per ottenere i loro ID)
     2. Crea un campo univoco personalizzato nel tuo modello dati per archiviare un ID esterno dal sistema precedente
   </Accordion>
@@ -197,7 +196,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="Cosa succede se un record genitore non esiste?">
     L'importazione mostrerà un errore per quella riga. Puoi:
-
     * Importa prima il record genitore, poi ripeti l'importazione
     * Correggi il valore di riferimento
     * Rimuovi la riga dall'importazione
@@ -205,7 +203,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="Perché la mia relazione non si collega correttamente?">
     Cause comuni:
-
     * Formato errato (usa `https://domain.com` per i domini)
     * Discrepanza tra maiuscole e minuscole (controlla l'ortografia esatta)
     * Il genitore non esiste (importa prima i genitori)
@@ -214,9 +211,9 @@ Review proposal,jane@yourcompany.com
 </AccordionGroup>
 
 <Warning>
-  **Ricorda: i record eliminati in modo non definitivo contano ai fini dell'unicità.**
+**Ricorda: i record eliminati in modo non definitivo contano ai fini dell'unicità.**
 
-  Se ricevi errori "not found" ma il record sembra esistere, controlla Menu comandi → Visualizza record eliminati. Il genitore potrebbe essere stato eliminato in modo non definitivo.
+Se ricevi errori "not found" ma il record sembra esistere, controlla Menu comandi → Visualizza record eliminati. Il genitore potrebbe essere stato eliminato in modo non definitivo.
 </Warning>
 
 ## Risoluzione dei problemi

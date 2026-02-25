@@ -38,7 +38,7 @@ const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
 const DateFieldValueGater = () => {
   const { fieldValue } = useDateTimeField();
 
-  return fieldValue && <DateTimeFieldInput />;
+  return fieldValue ? <DateTimeFieldInput /> : null;
 };
 
 type DateFieldInputWithContextProps = {

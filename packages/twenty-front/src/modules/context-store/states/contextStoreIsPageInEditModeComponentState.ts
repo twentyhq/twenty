@@ -1,8 +1,8 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const contextStoreIsPageInEditModeComponentState =
-  createComponentState<boolean>({
+  createAtomComponentState<boolean>({
     key: 'contextStoreIsPageInEditModeComponentState',
     defaultValue: false,
     componentInstanceContext: ContextStoreComponentInstanceContext,

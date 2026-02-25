@@ -12,30 +12,33 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useContext, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useStore } from 'jotai';
 
 export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem,
 }: {
   objectMetadataItem?: ObjectMetadataItem;
 }): ShouldBeRegisteredFunctionParams => {
+  const store = useStore();
   const { sortedFavorites: favorites } = useFavorites();
   const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
@@ -71,7 +74,8 @@ export const useShouldActionBeRegisteredParams = ({
   ]);
 
   const selectedRecord =
-    useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
+    useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '') ||
+    undefined;
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem?.id ?? '',
@@ -83,19 +87,22 @@ export const useShouldActionBeRegisteredParams = ({
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const hasAnySoftDeleteFilterOnView = useRecoilComponentValue(
+  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
+
+  const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
+    recordIndexId,
   );
 
   const isShowPage =
-    useRecoilComponentValue(contextStoreCurrentViewTypeComponentState) ===
+    useAtomComponentStateValue(contextStoreCurrentViewTypeComponentState) ===
     ContextStoreViewType.ShowPage;
 
-  const numberOfSelectedRecords = useRecoilComponentValue(
+  const numberOfSelectedRecords = useAtomComponentStateValue(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const contextStoreCurrentViewType = useRecoilComponentValue(
+  const contextStoreCurrentViewType = useAtomComponentStateValue(
     contextStoreCurrentViewTypeComponentState,
   );
 
@@ -108,31 +115,31 @@ export const useShouldActionBeRegisteredParams = ({
 
   const getObjectReadPermission = useCallback(
     (objectMetadataNameSingular: string) => {
-      return jotaiStore.get(
+      return store.get(
         objectPermissionsFamilySelector.selectorFamily({
           objectNameSingular: objectMetadataNameSingular,
         }),
       ).canRead;
     },
-    [],
+    [store],
   );
 
   const getObjectWritePermission = useCallback(
     (objectMetadataNameSingular: string) => {
-      return jotaiStore.get(
+      return store.get(
         objectPermissionsFamilySelector.selectorFamily({
           objectNameSingular: objectMetadataNameSingular,
         }),
       ).canUpdate;
     },
-    [],
+    [store],
   );
 
-  const forceRegisteredActionsByKey = useRecoilValue(
+  const forceRegisteredActionsByKey = useAtomStateValue(
     forceRegisteredActionsByKeyState,
   );
 
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const isFeatureFlagEnabled = (featureFlagKey: FeatureFlagKey) => {
     const featureFlag = currentWorkspace?.featureFlags?.find(

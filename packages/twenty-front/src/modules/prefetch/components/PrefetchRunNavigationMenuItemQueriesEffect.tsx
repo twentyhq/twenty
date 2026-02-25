@@ -4,10 +4,9 @@ import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedF
 import { prefetchNavigationMenuItemsState } from '@/prefetch/states/prefetchNavigationMenuItemsState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,24 +17,26 @@ import {
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useStore } from 'jotai';
 
 export const PrefetchRunNavigationMenuItemQueriesEffect = () => {
+  const store = useStore();
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
 
   const showAuthModal = useShowAuthModal();
   const isSettingsPage = useIsSettingsPage();
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isWorkspaceActive =
     currentWorkspace?.activationStatus === WorkspaceActivationStatus.ACTIVE;
 
-  const setIsPrefetchNavigationMenuItemsLoaded = useSetFamilyRecoilStateV2(
+  const setIsPrefetchNavigationMenuItemsLoaded = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllNavigationMenuItems,
   );
 
-  const setNavigationMenuItemsState = useSetRecoilStateV2(
+  const setNavigationMenuItemsState = useSetAtomState(
     prefetchNavigationMenuItemsState,
   );
 
@@ -50,14 +51,14 @@ export const PrefetchRunNavigationMenuItemQueriesEffect = () => {
 
   const setPrefetchNavigationMenuItemsStateIfChanged = useCallback(
     (navigationMenuItems: NavigationMenuItem[]) => {
-      const existingNavigationMenuItems = jotaiStore.get(
+      const existingNavigationMenuItems = store.get(
         prefetchNavigationMenuItemsState.atom,
       );
       if (!isDeeplyEqual(existingNavigationMenuItems, navigationMenuItems)) {
         setNavigationMenuItemsState(navigationMenuItems);
       }
     },
-    [setNavigationMenuItemsState],
+    [setNavigationMenuItemsState, store],
   );
 
   useEffect(() => {

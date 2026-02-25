@@ -1,12 +1,12 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export type ScrollMeasurement = {
   scrollToTop: number;
   timestamp: number;
 };
 
-export const lastScrollMeasurementsComponentState = createComponentState<
+export const lastScrollMeasurementsComponentState = createAtomComponentState<
   ScrollMeasurement[]
 >({
   key: 'lastScrollMeasurementsComponentState',

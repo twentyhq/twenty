@@ -1,8 +1,8 @@
 import { type AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const lastAuthenticatedMethodState =
-  createStateV2<AuthenticatedMethod | null>({
+  createAtomState<AuthenticatedMethod | null>({
     key: 'lastAuthenticatedMethodState',
     defaultValue: null,
     useLocalStorage: true,

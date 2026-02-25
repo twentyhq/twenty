@@ -1,6 +1,6 @@
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -68,21 +68,21 @@ export const WorkflowEditActionIfElseBody = ({
   const { updateWorkflowVersionPosition } = useTidyUpWorkflowVersion();
   const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
   const { deleteStepsOutputSchema } = useStepsOutputSchema();
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
-  const currentStepFilters = useRecoilComponentValue(
+  const currentStepFilters = useAtomComponentStateValue(
     currentStepFiltersComponentState,
   );
-  const currentStepFilterGroups = useRecoilComponentValue(
+  const currentStepFilterGroups = useAtomComponentStateValue(
     currentStepFilterGroupsComponentState,
   );
-  const setCurrentStepFilters = useSetRecoilComponentState(
+  const setCurrentStepFilters = useSetAtomComponentState(
     currentStepFiltersComponentState,
   );
-  const setCurrentStepFilterGroups = useSetRecoilComponentState(
+  const setCurrentStepFilterGroups = useSetAtomComponentState(
     currentStepFilterGroupsComponentState,
   );
 

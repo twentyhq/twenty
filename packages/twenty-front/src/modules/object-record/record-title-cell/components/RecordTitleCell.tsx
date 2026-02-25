@@ -22,7 +22,6 @@ import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useR
 import { RecordTitleCellComponentInstanceContext } from '@/object-record/record-title-cell/states/contexts/RecordTitleCellComponentInstanceContext';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useRecoilCallback } from 'recoil';
 
 type RecordTitleCellProps = {
   loading?: boolean;
@@ -68,15 +67,14 @@ export const RecordTitleCell = ({
     closeCell();
   };
 
-  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
-    () =>
-      ({ newValue, skipPersist }) => {
-        if (skipPersist !== true) {
-          persistFieldFromFieldInputContext(newValue);
-        }
+  const handleClickOutside: FieldInputClickOutsideEvent = useCallback(
+    ({ newValue, skipPersist }) => {
+      if (skipPersist !== true) {
+        persistFieldFromFieldInputContext(newValue);
+      }
 
-        closeCell();
-      },
+      closeCell();
+    },
     [closeCell, persistFieldFromFieldInputContext],
   );
 

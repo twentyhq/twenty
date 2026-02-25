@@ -4,7 +4,7 @@ description: 以代码的形式构建并管理 Twenty 自定义项。
 ---
 
 <Warning>
-  应用目前处于 Alpha 测试阶段。 该功能可用，但仍在演进中。
+应用目前处于 Alpha 测试阶段。 该功能可用，但仍在演进中。
 </Warning>
 
 ## 什么是应用？
@@ -28,18 +28,11 @@ description: 以代码的形式构建并管理 Twenty 自定义项。
 使用官方脚手架创建一个新应用，然后进行身份验证并开始开发：
 
 ```bash filename="Terminal"
-# Scaffold a new app (includes all examples by default)
+# 创建一个新应用脚手架（默认包含所有示例）
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# If you don't use yarn@4
-corepack enable
-yarn install
-
-# Authenticate using your API key (you'll be prompted)
-yarn twenty auth:login
-
-# Start dev mode: automatically syncs local changes to your workspace
+# 启动开发模式：会将本地更改自动同步到你的工作区
 yarn twenty app:dev
 ```
 
@@ -154,7 +147,7 @@ With `--minimal`, only the core files are created (`application-config.ts`, `rol
 | `defineSkill()`              | AI agent skill definitions       |
 
 <Note>
-  **文件命名是灵活的。** 实体检测基于 AST — SDK 会扫描你的源文件以查找 `export default define<Entity>({...})` 模式。 你可以按照自己的喜好组织文件和文件夹。 按实体类型分组（例如 `logic-functions/`、`roles/`）只是代码组织的一种约定，并非必需。
+**文件命名是灵活的。** 实体检测基于 AST — SDK 会扫描你的源文件以查找 `export default define<Entity>({...})` 模式。 你可以按照自己的喜好组织文件和文件夹。 按实体类型分组（例如 `logic-functions/`、`roles/`）只是代码组织的一种约定，并非必需。
 </Note>
 
 已检测实体的示例：
@@ -312,11 +305,11 @@ export default defineObject({
 * 你可以使用 `yarn twenty entity:add` 脚手架创建新对象，它会引导你完成命名、字段和关系。
 
 <Note>
-  **基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加标准字段
-  例如 `id`、`name`、`createdAt`、`updatedAt`、`createdBy`、`updatedBy` 和 `deletedAt`。
-  你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
-  你可以通过在你的 `fields` 数组中定义一个同名字段来覆盖默认字段，
-  但不建议这样做。
+**基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加标准字段
+例如 `id`、`name`、`createdAt`、`updatedAt`、`createdBy`、`updatedBy` 和 `deletedAt`。
+你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
+你可以通过在你的 `fields` 数组中定义一个同名字段来覆盖默认字段，
+但不建议这样做。
 </Note>
 
 ### 应用配置（application-config.ts）
@@ -550,27 +543,25 @@ yarn twenty function:execute --postInstall
 ### 路由触发器负载
 
 <Warning>
-  **破坏性变更（v1.16，2026 年 1 月）：** 路由触发器的负载格式已更改。 在 v1.16 之前，查询参数、路径参数和请求体会直接作为负载发送。 从 v1.16 开始，它们被嵌套在结构化的 `RoutePayload` 对象中。
+**破坏性变更（v1.16，2026 年 1 月）：** 路由触发器的负载格式已更改。 在 v1.16 之前，查询参数、路径参数和请求体会直接作为负载发送。 从 v1.16 开始，它们被嵌套在结构化的 `RoutePayload` 对象中。
 
-  **v1.16 之前：**
+**v1.16 之前：**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
 
-  ```typescript
-  const handler = async (params) => {
-    const { param1, param2 } = params; // Direct access
-  };
-  ```
+**v1.16 之后：**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
 
-  **v1.16 之后：**
-
-  ```typescript
-  const handler = async (event: RoutePayload) => {
-    const { param1, param2 } = event.body; // Access via .body
-    const { queryParam } = event.queryStringParameters;
-    const { id } = event.pathParameters;
-  };
-  ```
-
-  **迁移现有函数：** 将处理程序更新为从 `event.body`、`event.queryStringParameters` 或 `event.pathParameters` 解构，而不是直接从参数对象解构。
+**迁移现有函数：** 将处理程序更新为从 `event.body`、`event.queryStringParameters` 或 `event.pathParameters` 解构，而不是直接从参数对象解构。
 </Warning>
 
 当路由触发器调用你的逻辑函数时，它会接收一个遵循 AWS HTTP API v2 格式的 `RoutePayload` 对象。 从 `twenty-sdk` 导入该类型：
@@ -706,7 +697,7 @@ export default defineLogicFunction({
 * 你可以将 `isTool` 与触发器结合使用——一个函数既可以作为工具（由 AI 代理调用），也可以同时由事件（cron、数据库事件、路由）触发。
 
 <Note>
-  **写一个好的 `description`。** AI 代理会依赖该函数的 `description` 字段来决定何时使用该工具。 明确说明该工具的作用以及应在何时调用。
+**写一个好的 `description`。** AI 代理会依赖该函数的 `description` 字段来决定何时使用该工具。 明确说明该工具的作用以及应在何时调用。
 </Note>
 
 ### 前端组件

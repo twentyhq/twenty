@@ -10,14 +10,13 @@ Os fluxos de trabalho sempre começam com um único gatilho que define quando a 
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Objetos avançados são suportados!** Além dos objetos padrão de CRM (Pessoas, Empresas, Oportunidades), você também pode acionar fluxos de trabalho e executar ações em:
+**Objetos avançados são suportados!** Além dos objetos padrão de CRM (Pessoas, Empresas, Oportunidades), você também pode acionar fluxos de trabalho e executar ações em:
+* Membros do Workspace
+* Eventos de Calendário
+* Mensagens (E-mails)
+* Tarefas, Notas e muitos outros objetos do sistema
 
-  * Membros do Workspace
-  * Eventos de Calendário
-  * Mensagens (E-mails)
-  * Tarefas, Notas e muitos outros objetos do sistema
-
-  Isso possibilita automações poderosas, como notificar membros da equipe quando eventos de calendário são criados ou processar automaticamente e-mails recebidos.
+Isso possibilita automações poderosas, como notificar membros da equipe quando eventos de calendário são criados ou processar automaticamente e-mails recebidos.
 </Tip>
 
 ## Registro é Criado
@@ -27,9 +26,9 @@ Inicia o fluxo de trabalho quando um novo registro é criado em um objeto seleci
 **Configuração**: Selecione o tipo de objeto para monitorar novos registros.
 
 <Note>
-  * Este gatilho é ótimo para registros criados por CSV, sincronização de caixa de correio e calendário, API.
-  * **Não é recomendado para registros criados manualmente**: com este gatilho, os fluxos de trabalho começam assim que o registro é criado. Como o Twenty UI oferece salvamento automático em tempo real (não há um modo de edição e depois uma validação para salvar registros), o fluxo de trabalho será acionado antes que o usuário preencha todos os campos.
-    Para acionar este fluxo de trabalho em registros criados manualmente, recomenda-se usar o gatilho `Record is created or updated`.
+* Este gatilho é ótimo para registros criados por CSV, sincronização de caixa de correio e calendário, API.
+* **Não é recomendado para registros criados manualmente**: com este gatilho, os fluxos de trabalho começam assim que o registro é criado. Como o Twenty UI oferece salvamento automático em tempo real (não há um modo de edição e depois uma validação para salvar registros), o fluxo de trabalho será acionado antes que o usuário preencha todos os campos.
+  Para acionar este fluxo de trabalho em registros criados manualmente, recomenda-se usar o gatilho `Record is created or updated`.
 </Note>
 
 ## Registro é Atualizado
@@ -82,7 +81,7 @@ Escolha como o fluxo de trabalho deve lidar com a seleção de registros:
 * **Em Massa**: O(s) registro(s) selecionado(s) será(ão) passado(s) para o seu fluxo de trabalho. Está configurado para um determinado objeto. Vários registros podem ser selecionados antes de acionar o fluxo de trabalho. O fluxo de trabalho será executado uma vez, fornecendo a lista completa de registros como entrada. Isso significa que o fluxo de trabalho precisa conter uma [ação de iterador](/l/pt/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
-  Isto é mais avançado e é melhor para pessoas que desejam otimizar o número de execuções de fluxo de trabalho.
+Isto é mais avançado e é melhor para pessoas que desejam otimizar o número de execuções de fluxo de trabalho.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
@@ -108,7 +107,7 @@ Inicia o fluxo de trabalho em uma base recorrente que você define.
 * Insira um valor ou utilize expressões cron personalizadas para agendamentos avançados
 
 <Note>
-  **Fuso horário**: Fluxos de trabalho agendados são executados em **UTC**. Ao definir horários para agendamentos diários, converta seu horário local para UTC.
+**Fuso horário**: Fluxos de trabalho agendados são executados em **UTC**. Ao definir horários para agendamentos diários, converta seu horário local para UTC.
 </Note>
 
 ## Gatilho Externo: Webhook

@@ -12,40 +12,49 @@ image: /images/user-guide/what-is-twenty/20.png
 Стилизованный компонент ссылки для отображения контактной информации.
 
 <Tabs>
-  <Tab title="Использование">
-    ```jsx
-    import { BrowserRouter as Router } from 'react-router-dom';
+<Tab title="Использование">
 
-    import { ContactLink } from 'twenty-ui/navigation';
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
 
-    export const MyComponent = () => {
-      const handleLinkClick = (event) => {
-        console.log('Contact link clicked!', event);
-      };
+import { ContactLink } from 'twenty-ui/navigation';
 
-      return (
-        <Router>
-          <ContactLink
-            className
-            href="mailto:example@example.com"
-            onClick={handleLinkClick}
-          >
-            example@example.com
-          </ContactLink>
-        </Router>
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
 
-  <Tab title="Свойства">
-    | Свойства  | Тип               | Описание                                                  |
-    | --------- | ----------------- | --------------------------------------------------------- |
-    | className | строка            | Необязательное имя для дополнительной стилизации          |
-    | href      | строка            | Целевой URL или путь для ссылки                           |
-    | onClick   | функция           | Функция обратного вызова, выполняемая при клике по ссылке |
-    | children  | `React.ReactNode` | Содержимое, отображаемое внутри ссылки                    |
-  </Tab>
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};
+```
+
+
+</Tab>
+<Tab title="Свойства">
+
+
+| Свойства  | Тип               | Описание                                                  |
+| --------- | ----------------- | --------------------------------------------------------- |
+| className | строка            | Необязательное имя для дополнительной стилизации          |
+| href      | строка            | Целевой URL или путь для ссылки                           |
+| onClick   | функция           | Функция обратного вызова, выполняемая при клике по ссылке |
+| children  | `React.ReactNode` | Содержимое, отображаемое внутри ссылки                    |
+
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Неоформленная ссылка
@@ -53,36 +62,44 @@ image: /images/user-guide/what-is-twenty/20.png
 Стилизованный компонент для отображения ссылок.
 
 <Tabs>
-  <Tab title="Использование">
-    ```jsx
-    import { RawLink } from "/navigation";
-    import { BrowserRouter as Router } from "react-router-dom";
+<Tab title="Использование">
 
-    export const MyComponent = () => {
-      const handleLinkClick = (event) => {
-        console.log("Contact link clicked!", event);
-      };
+```jsx
+import { RawLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
 
-      return (
-        <Router>
-          <RawLink className href="/contact" onClick={handleLinkClick}>
-            Contact Us
-          </RawLink>
-        </Router>
-      );
-    };
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
 
-    ```
-  </Tab>
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
 
-  <Tab title="Свойства">
-    | Свойства  | Тип               | Описание                                                  |
-    | --------- | ----------------- | --------------------------------------------------------- |
-    | className | строка            | Необязательное имя для дополнительной стилизации          |
-    | href      | строка            | Целевой URL или путь для ссылки                           |
-    | onClick   | функция           | Функция обратного вызова, выполняемая при клике по ссылке |
-    | children  | `React.ReactNode` | Содержимое, отображаемое внутри ссылки                    |
-  </Tab>
+```
+
+
+</Tab>
+<Tab title="Свойства">
+
+
+| Свойства  | Тип               | Описание                                                  |
+| --------- | ----------------- | --------------------------------------------------------- |
+| className | строка            | Необязательное имя для дополнительной стилизации          |
+| href      | строка            | Целевой URL или путь для ссылки                           |
+| onClick   | функция           | Функция обратного вызова, выполняемая при клике по ссылке |
+| children  | `React.ReactNode` | Содержимое, отображаемое внутри ссылки                    |
+
+
+
+
+</Tab>
 </Tabs>
 
 ## Скруглённая ссылка
@@ -90,34 +107,41 @@ image: /images/user-guide/what-is-twenty/20.png
 Округло-стилизованная ссылка с компонентом Chip для ссылок.
 
 <Tabs>
-  <Tab title="Использование">
-    ```jsx
-    import { RoundedLink } from "/navigation";
-    import { BrowserRouter as Router } from "react-router-dom";
+<Tab title="Использование">
 
-    export const MyComponent = () => {
-      const handleLinkClick = (event) => {
-        console.log("Contact link clicked!", event);
-      };
+```jsx
+import { RoundedLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
 
-      return (
-        <Router>
-          <RoundedLink href="/contact" onClick={handleLinkClick}>
-            Contact Us
-          </RoundedLink>
-        </Router>
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
 
-  <Tab title="Свойства">
-    | Свойства | Тип               | Описание                                                  |
-    | -------- | ----------------- | --------------------------------------------------------- |
-    | href     | строка            | Целевой URL или путь для ссылки                           |
-    | children | `React.ReactNode` | Содержимое, отображаемое внутри ссылки                    |
-    | onClick  | функция           | Функция обратного вызова, выполняемая при клике по ссылке |
-  </Tab>
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Свойства">
+
+
+| Свойства | Тип               | Описание                                                  |
+| -------- | ----------------- | --------------------------------------------------------- |
+| href     | строка            | Целевой URL или путь для ссылки                           |
+| children | `React.ReactNode` | Содержимое, отображаемое внутри ссылки                    |
+| onClick  | функция           | Функция обратного вызова, выполняемая при клике по ссылке |
+
+
+
+</Tab>
 </Tabs>
 
 ## Ссылка на социальные сети
@@ -125,30 +149,37 @@ image: /images/user-guide/what-is-twenty/20.png
 Стилизованные социальные ссылки, с поддержкой различных типов, таких как URL, LinkedIn и X (или Twitter).
 
 <Tabs>
-  <Tab title="Использование">
-    ```jsx
-    import { SocialLink } from "twenty-ui/navigation";
-    import { BrowserRouter as Router } from "react-router-dom";
+<Tab title="Использование">
 
-    export const MyComponent = () => {
-      return (
-        <Router>
-          <SocialLink
-            type="twitter"
-            href="https://twitter.com/twentycrm"
-          ></SocialLink>
-        </Router>
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { SocialLink } from "twenty-ui/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
 
-  <Tab title="Свойства">
-    | Свойства | Тип               | Описание                                                              |
-    | -------- | ----------------- | --------------------------------------------------------------------- |
-    | href     | строка            | Целевой URL или путь для ссылки                                       |
-    | children | `React.ReactNode` | Содержимое, отображаемое внутри ссылки                                |
-    | тип      | строка            | Тип социальных ссылок. Опции включают: `url`, `LinkedIn`, и `Twitter` |
-    | onClick  | функция           | Функция обратного вызова, выполняемая при клике по ссылке             |
-  </Tab>
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Свойства">
+
+
+| Свойства | Тип               | Описание                                                              |
+| -------- | ----------------- | --------------------------------------------------------------------- |
+| href     | строка            | Целевой URL или путь для ссылки                                       |
+| children | `React.ReactNode` | Содержимое, отображаемое внутри ссылки                                |
+| тип      | строка            | Тип социальных ссылок. Опции включают: `url`, `LinkedIn`, и `Twitter` |
+| onClick  | функция           | Функция обратного вызова, выполняемая при клике по ссылке             |
+
+
+
+
+</Tab>
 </Tabs>

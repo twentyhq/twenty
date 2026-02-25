@@ -1,9 +1,9 @@
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
-export const fieldsWidgetGroupsDraftComponentState = createComponentState<
+export const fieldsWidgetGroupsDraftComponentState = createAtomComponentState<
   Record<string, FieldsWidgetGroup[]>
 >({
   key: 'fieldsWidgetGroupsDraftComponentState',

@@ -1,5 +1,4 @@
 import { renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
 
 import { useSystemColorScheme } from '@/ui/theme/hooks/useSystemColorScheme';
 
@@ -19,9 +18,7 @@ Object.defineProperty(window, 'matchMedia', {
 
 describe('useSystemColorScheme', () => {
   it('should update color scheme', async () => {
-    const { result } = renderHook(() => useSystemColorScheme(), {
-      wrapper: RecoilRoot,
-    });
+    const { result } = renderHook(() => useSystemColorScheme());
 
     expect(result.current).toBe('Light');
   });

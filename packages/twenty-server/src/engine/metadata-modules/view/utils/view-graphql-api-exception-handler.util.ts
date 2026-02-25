@@ -87,6 +87,8 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
         throw new NotFoundError(error.message);
       case ViewFieldGroupExceptionCode.VIEW_NOT_FOUND:
         throw new NotFoundError(error.message);
+      case ViewFieldGroupExceptionCode.FIELDS_WIDGET_NOT_FOUND:
+        throw new NotFoundError(error.message);
       case ViewFieldGroupExceptionCode.INVALID_VIEW_FIELD_GROUP_DATA:
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,

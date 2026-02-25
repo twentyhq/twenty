@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const profilingSessionRunsState = atom<string[]>({
+export const profilingSessionRunsState = createAtomState<string[]>({
   key: 'profilingSessionRunsState',
-  default: [],
+  defaultValue: [],
 });

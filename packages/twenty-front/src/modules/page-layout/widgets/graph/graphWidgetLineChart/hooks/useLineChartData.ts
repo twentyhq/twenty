@@ -5,7 +5,7 @@ import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type LineSeries } from '@nivo/line';
 import { useMemo } from 'react';
 
@@ -22,7 +22,7 @@ export const useLineChartData = ({
   id,
   colorMode,
 }: UseLineChartDataProps) => {
-  const hiddenLegendIds = useRecoilComponentValue(
+  const hiddenLegendIds = useAtomComponentStateValue(
     graphWidgetHiddenLegendIdsComponentState,
   );
 

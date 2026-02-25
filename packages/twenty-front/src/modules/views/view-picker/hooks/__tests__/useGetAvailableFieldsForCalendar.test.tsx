@@ -7,7 +7,6 @@ import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const mockObjectMetadataId = 'test-object-id';
@@ -24,26 +23,21 @@ const createMockObjectMetadataItem = (fields: any[]) => ({
 const createWrapper = (objectMetadataItems: any[]) => {
   return ({ children }: { children: ReactNode }) => {
     jotaiStore.set(objectMetadataItemsState.atom, objectMetadataItems);
+    jotaiStore.set(
+      viewObjectMetadataIdComponentState.atomFamily({
+        instanceId: mockViewInstanceId,
+      }),
+      mockObjectMetadataId,
+    );
     return (
       <JotaiProvider store={jotaiStore}>
-        <RecoilRoot
-          initializeState={(snapshot) => {
-            snapshot.set(
-              viewObjectMetadataIdComponentState.atomFamily({
-                instanceId: mockViewInstanceId,
-              }),
-              mockObjectMetadataId,
-            );
-          }}
-        >
-          <MemoryRouter>
-            <ViewComponentInstanceContext.Provider
-              value={{ instanceId: mockViewInstanceId }}
-            >
-              {children}
-            </ViewComponentInstanceContext.Provider>
-          </MemoryRouter>
-        </RecoilRoot>
+        <MemoryRouter>
+          <ViewComponentInstanceContext.Provider
+            value={{ instanceId: mockViewInstanceId }}
+          >
+            {children}
+          </ViewComponentInstanceContext.Provider>
+        </MemoryRouter>
       </JotaiProvider>
     );
   };

@@ -356,9 +356,27 @@ export class ApiService {
         message: `Successfully synced application: ${manifest.application.displayName}`,
       };
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const graphqlErrors = error.response.data?.errors;
+
+        if (Array.isArray(graphqlErrors) && graphqlErrors.length > 0) {
+          return {
+            success: false,
+            error: graphqlErrors[0]?.message || error.message,
+          };
+        }
+
+        return {
+          success: false,
+          error:
+            error.response.data?.message ||
+            `HTTP ${error.response.status}: ${error.message}`,
+        };
+      }
+
       return {
         success: false,
-        error,
+        error: error instanceof Error ? error.message : error,
       };
     }
   }
@@ -602,7 +620,7 @@ export class ApiService {
     const twentyConfig = await this.configService.getConfig();
 
     const wsClient = createClient({
-      url: twentyConfig.apiUrl + '/graphql',
+      url: twentyConfig.apiUrl + '/metadata',
       headers: {
         Authorization: `Bearer ${twentyConfig.apiKey}`,
         'Content-Type': 'application/json',

@@ -11,10 +11,10 @@ import {
 } from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
 import { getCronTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSettings';
 import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { isNumber } from '@sniptt/guards';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -48,7 +48,7 @@ export const WorkflowEditTriggerCronForm = ({
 }: WorkflowEditTriggerCronFormProps) => {
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
-  const dateLocale = useRecoilValue(dateLocaleState);
+  const dateLocale = useAtomStateValue(dateLocaleState);
 
   const customDescription = getTriggerScheduleDescription(
     trigger,

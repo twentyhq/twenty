@@ -10,42 +10,49 @@ image: /images/user-guide/what-is-twenty/20.png
 Permette agli utenti di scegliere un valore da un elenco di opzioni predefinite.
 
 <Tabs>
-  <Tab title="Utilizzo">
-    ```jsx
-    import { RecoilRoot } from 'recoil';
-    import { IconTwentyStar } from 'twenty-ui/display';
+<Tab title="Utilizzo">
 
-    import { Select } from '@/ui/input/components/Select';
+```jsx
+import { RecoilRoot } from 'recoil';
+import { IconTwentyStar } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
+import { Select } from '@/ui/input/components/Select';
 
-      return (
-        <RecoilRoot>
-          <Select
-            className
-            disabled={false}
-            label="Seleziona un'opzione"
-            options={[
-              { value: 'option1', label: 'Opzione A', Icon: IconTwentyStar },
-              { value: 'option2', label: 'Opzione B', Icon: IconTwentyStar },
-            ]}
-            value="option1"
-          />
-        </RecoilRoot>
-      );
-    };
+export const MyComponent = () => {
 
-    ```
-  </Tab>
+  return (
+    <RecoilRoot>
+      <Select
+        className
+        disabled={false}
+        label="Seleziona un'opzione"
+        options={[
+          { value: 'option1', label: 'Opzione A', Icon: IconTwentyStar },
+          { value: 'option2', label: 'Opzione B', Icon: IconTwentyStar },
+        ]}
+        value="option1"
+      />
+    </RecoilRoot>
+  );
+};
 
-  <Tab title="Props">
-    | Props        | Tipo     | Descrizione                                                                                                                                                                                                   |
-    | ------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | nomeClasse   | string   | Classe CSS opzionale per uno stile aggiuntivo                                                                                                                                                                 |
-    | disabilitato | booleano | Quando impostato su `true`, disabilita l'interazione dell'utente con il componente                                                                                                                            |
-    | etichetta    | stringa  | L'etichetta per descrivere lo scopo del componente `Select`                                                                                                                                                   |
-    | onChange     | funzione | La funzione chiamata quando i valori selezionati cambiano                                                                                                                                                     |
-    | opzioni      | array    | Rappresenta le opzioni disponibili per il componente `Selected`. È un array di oggetti in cui ogni oggetto ha un `value` (l'identificatore univoco), `label` (l'identificatore univoco) e un `Icon` opzionale |
-    | valore       | stringa  | Rappresenta il valore attualmente selezionato. Dovrebbe corrispondere a una delle proprietà `value` nell'array `options`                                                                                      |
-  </Tab>
+```
+
+</Tab>
+<Tab title="Props">
+
+
+| Props        | Tipo     | Descrizione                                                                                                                                                                                                   |
+| ------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nomeClasse   | string   | Classe CSS opzionale per uno stile aggiuntivo                                                                                                                                                                 |
+| disabilitato | booleano | Quando impostato su `true`, disabilita l'interazione dell'utente con il componente                                                                                                                            |
+| etichetta    | stringa  | L'etichetta per descrivere lo scopo del componente `Select`                                                                                                                                                   |
+| onChange     | funzione | La funzione chiamata quando i valori selezionati cambiano                                                                                                                                                     |
+| opzioni      | array    | Rappresenta le opzioni disponibili per il componente `Selected`. È un array di oggetti in cui ogni oggetto ha un `value` (l'identificatore univoco), `label` (l'identificatore univoco) e un `Icon` opzionale |
+| valore       | stringa  | Rappresenta il valore attualmente selezionato. Dovrebbe corrispondere a una delle proprietà `value` nell'array `options`                                                                                      |
+
+
+
+
+</Tab>
 </Tabs>

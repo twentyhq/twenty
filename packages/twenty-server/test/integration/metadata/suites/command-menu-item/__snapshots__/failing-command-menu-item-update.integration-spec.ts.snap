@@ -22,7 +22,7 @@ exports[`CommandMenuItem update should fail when updating with empty id 1`] = `
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -72,7 +72,7 @@ exports[`CommandMenuItem update should fail when updating with invalid id (not a
     "userFriendlyMessage": "An error occurred.",
     "value": "not-a-valid-uuid",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;

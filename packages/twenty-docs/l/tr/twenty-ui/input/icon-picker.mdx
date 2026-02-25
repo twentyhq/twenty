@@ -10,43 +10,52 @@ image: /images/user-guide/github/github-header.png
 Kullanıcıların bir listeden simge seçmesine olanak tanıyan bir açılır menü tabanlı simge seçici.
 
 <Tabs>
-  <Tab title="Kullanım">
-    ```jsx
-    import { RecoilRoot } from "recoil";
-    import React, { useState } from "react";
-    import { IconPicker } from "@/ui/input/components/IconPicker";
 
-    export const MyComponent = () => {
+<Tab title="Kullanım">
 
-       const [selectedIcon, setSelectedIcon] = useState("");
-       const handleIconChange = ({ iconKey, Icon }) => {
-         console.log("Selected Icon:", iconKey);
-         setSelectedIcon(iconKey);
-       };
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
 
-      return (
-        <RecoilRoot>
-          <IconPicker
-            disabled={false}
-            onChange={handleIconChange}
-            selectedIconKey={selectedIcon}
-            variant="primary"
-          />
-        </RecoilRoot>
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
 
-  <Tab title="Özellikler">
-    | Özellikler      | Tür       | Açıklama                                                                                                           |
-    | --------------- | --------- | ------------------------------------------------------------------------------------------------------------------ |
-    | devre dışı      | boolean   | `true` ayarlandığında simge seçiciyi devre dışı bırakır.                                                           |
-    | onChange        | function  | Kullanıcı bir simge seçtiğinde tetiklenen geri çağırma işlevi. `iconKey` ve `Icon` özellikleri olan bir nesne alır |
-    | selectedIconKey | dize      | Başlangıçta seçilen simgenin anahtarı                                                                              |
-    | onClickOutside  | function  | Kullanıcı açılır menünün dışına tıkladığında tetiklenen geri çağırma işlevi                                        |
-    | onClose         | fonksiyon | Açılır menü kapatıldığında tetiklenen geri çağırma işlevi                                                          |
-    | onOpen          | fonksiyon | Açılır menü açıldığında tetiklenen geri çağırma işlevi                                                             |
-    | variant         | dize      | Tıklanabilir simgenin görsel stil varyantı. Seçenekler şunları içerir: `primary`, `secondary` ve `tertiary`        |
-  </Tab>
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+
+</Tab>
+<Tab title="Özellikler">
+
+
+| Özellikler      | Tür       | Açıklama                                                                                                           |
+| --------------- | --------- | ------------------------------------------------------------------------------------------------------------------ |
+| devre dışı      | boolean   | `true` ayarlandığında simge seçiciyi devre dışı bırakır.                                                           |
+| onChange        | function  | Kullanıcı bir simge seçtiğinde tetiklenen geri çağırma işlevi. `iconKey` ve `Icon` özellikleri olan bir nesne alır |
+| selectedIconKey | dize      | Başlangıçta seçilen simgenin anahtarı                                                                              |
+| onClickOutside  | function  | Kullanıcı açılır menünün dışına tıkladığında tetiklenen geri çağırma işlevi                                        |
+| onClose         | fonksiyon | Açılır menü kapatıldığında tetiklenen geri çağırma işlevi                                                          |
+| onOpen          | fonksiyon | Açılır menü açıldığında tetiklenen geri çağırma işlevi                                                             |
+| variant         | dize      | Tıklanabilir simgenin görsel stil varyantı. Seçenekler şunları içerir: `primary`, `secondary` ve `tertiary`        |
+
+
+
+
+</Tab>
 </Tabs>

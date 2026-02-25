@@ -10,9 +10,9 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 动作定义触发后将发生的事件。 你可以将多个操作串联在一起，以构建复杂的自动化流程。
 
 <Tip>
-  * 使用变量选择器（点击`(x+)`图标）浏览来自先前步骤的可用数据
-  * 将鼠标悬停在任意输入字段上即可查看变量来自哪个步骤——当相同字段（例如，ID）存在于多个先前步骤时，这很有帮助
-  * 为每个操作指定一个具有描述性的名称，以便于维护
+* 使用变量选择器（点击`(x+)`图标）浏览来自先前步骤的可用数据
+* 将鼠标悬停在任意输入字段上即可查看变量来自哪个步骤——当相同字段（例如，ID）存在于多个先前步骤时，这很有帮助
+* 为每个操作指定一个具有描述性的名称，以便于维护
 </Tip>
 
 ## 记录操作
@@ -71,7 +71,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 **输出**：返回可在后续步骤中使用的匹配记录。
 
 <Note>
-  **限制**：Search Records 最多返回 **200 条记录**。 如果需要处理更多，请添加特定筛选器以减少结果，或使用计划的工作流分批处理。
+**限制**：Search Records 最多返回 **200 条记录**。 如果需要处理更多，请添加特定筛选器以减少结果，或使用计划的工作流分批处理。
 </Note>
 
 **最佳实践**：在 Search Records 之后使用[分支](/l/zh/user-guide/workflows/capabilities/workflow-branches)来处理"找到"与"未找到"场景。
@@ -89,7 +89,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 * 填写字段值。 别忘了至少填充一个唯一标识符。
 
 <Note>
-  **仅添加一个唯一标识符时，匹配通常效果更好。** 例如，下面的截图将基于其域名匹配公司。 不一定需要 ID。
+**仅添加一个唯一标识符时，匹配通常效果更好。** 例如，下面的截图将基于其域名匹配公司。 不一定需要 ID。
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
@@ -116,8 +116,8 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 * 定义要对循环中每个记录执行的动作.
 
 <Note>
-  - 你可以在迭代器中添加多个操作。
-  - 在迭代器中使用分支时，确保每个分支的最后一步连接回迭代器以闭合循环。
+- 你可以在迭代器中添加多个操作。
+- 在迭代器中使用分支时，确保每个分支的最后一步连接回迭代器以闭合循环。
 </Note>
 
 * 访问 `Current Item` 字段：要使用当前正在处理的记录中的字段，点击 **Iterator** 步骤，然后选择 **Current item**。 将显示该记录可用字段的列表，并可选择用于后续操作。
@@ -135,8 +135,8 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 * 配置哪些记录应通过到后续步骤
 
 <Note>
-  1. **输出**：筛选器节点不返回数据——它们充当闸门。 如果满足条件，工作流将继续。 否则，工作流会在该分支停止。
-  2. `IS` 运算符可用于数值字段。 其作用等同于 `EQUAL`。
+1. **输出**：筛选器节点不返回数据——它们充当闸门。 如果满足条件，工作流将继续。 否则，工作流会在该分支停止。
+2. `IS` 运算符可用于数值字段。 其作用等同于 `EQUAL`。
 </Note>
 
 ### 延迟
@@ -167,7 +167,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 * 将操作安排在工作时间内
 
 <Note>
-  计划日期不能早于当前时间。 如果使用了前一步的日期字段且该日期已过去，工作流将失败。
+计划日期不能早于当前时间。 如果使用了前一步的日期字段且该日期已过去，工作流将失败。
 </Note>
 
 **限制与点数**：
@@ -190,7 +190,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 * 选择发件邮箱账户
 
 <Note>
-  你只能从与自己 Twenty 账户同步的邮箱发送邮件。 从其他团队成员的邮箱发送（例如账户所有者的邮箱）已在规划中。
+你只能从与自己 Twenty 账户同步的邮箱发送邮件。 从其他团队成员的邮箱发送（例如账户所有者的邮箱）已在规划中。
 </Note>
 
 对于以下所有步骤，你可以引用前面步骤中的变量以实现个性化。
@@ -198,14 +198,14 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 * 输入收件人电子邮件地址.
 
 <Note>
-  目前只能指定一个收件人。
+目前只能指定一个收件人。
 </Note>
 
 * 设置主题行。
 * 撰写消息内容. 你可以设置链接格式、创建编号列表、项目符号列表、添加附件。
 
 <Note>
-  目前无法添加 HTML 签名。
+目前无法添加 HTML 签名。
 </Note>
 
 ### 表单
@@ -213,7 +213,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 在工作流执行期间提示表单以收集用户输入。 随后可在后续步骤中使用这些响应，根据输入创建记录、发送电子邮件或执行其他任何操作。
 
 <Warning>
-  **表单当前仅设计用于手动触发。** 对于具有其他触发器（记录创建、更新等）的工作流，表单仅可通过工作流运行界面访问，这不是预期的用户体验。 将于 2026 年发布通知中心，以适当支持自动化工作流中的表单。
+**表单当前仅设计用于手动触发。** 对于具有其他触发器（记录创建、更新等）的工作流，表单仅可通过工作流运行界面访问，这不是预期的用户体验。 将于 2026 年发布通知中心，以适当支持自动化工作流中的表单。
 </Warning>
 
 **配置**：
@@ -234,7 +234,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 * 在侧边面板中填写显示的表单并点击 `Submit`。
 
 <Note>
-  这些字段无法设为必填。
+这些字段无法设为必填。
 </Note>
 
 <VimeoEmbed videoId="1147277989" title="视频演示" />
@@ -256,15 +256,15 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 * 直接在步骤中测试代码
 
 <Note>
-  如果需要在代码中使用外部 API 密钥，必须将其直接输入到函数主体中。 你无法在其他位置配置 API 密钥并在逻辑函数中引用它们。
+如果需要在代码中使用外部 API 密钥，必须将其直接输入到函数主体中。 你无法在其他位置配置 API 密钥并在逻辑函数中引用它们。
 </Note>
 
 <Tip>
-  **处理数组？** 来自外部系统或前序步骤的数组可能以字符串形式传入。 解决方案请参见 [如何在 Code 操作中处理数组](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)。
+**处理数组？** 来自外部系统或前序步骤的数组可能以字符串形式传入。 解决方案请参见 [如何在 Code 操作中处理数组](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)。
 </Tip>
 
 <Tip>
-  点击代码编辑器右上角的方形图标以全屏显示——这很有用，因为默认编辑器宽度有限。
+点击代码编辑器右上角的方形图标以全屏显示——这很有用，因为默认编辑器宽度有限。
 </Tip>
 
 ### HTTP请求
@@ -303,9 +303,9 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 **输出**：AI 代理的响应可用于后续步骤。 如果代理具有结构化的输出模式，响应将遵循该格式。
 
 <Note>
-  AI 代理操作会根据所用 AI 模型消耗工作流点数。 详见 [工作流点数](/l/zh/user-guide/workflows/capabilities/workflow-credits)。
+AI 代理操作会根据所用 AI 模型消耗工作流点数。 详见 [工作流点数](/l/zh/user-guide/workflows/capabilities/workflow-credits)。
 </Note>
 
 <Note>
-  AI 代理遵循基于角色的权限。 你可以在 **设置 → 角色** 下为代理分配特定角色，以控制其可访问的数据。 详见 [权限](/l/zh/user-guide/permissions-access/capabilities/permissions)。
+AI 代理遵循基于角色的权限。 你可以在 **设置 → 角色** 下为代理分配特定角色，以控制其可访问的数据。 详见 [权限](/l/zh/user-guide/permissions-access/capabilities/permissions)。
 </Note>

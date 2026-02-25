@@ -6,38 +6,36 @@ import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailab
 
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useMemo } from 'react';
 
 export const useColumnDefinitionsFromObjectMetadata = (
   objectMetadataItem: ObjectMetadataItem,
 ) => {
-  const activeFieldMetadataItems = objectMetadataItem.readableFields.filter(
-    (field) =>
-      field.isActive &&
-      // Allow label identifier field (e.g. id for junction tables) even if it's a hidden system field
-      (!isHiddenSystemField(field) ||
-        field.id === objectMetadataItem.labelIdentifierFieldMetadataId),
-  );
-
-  const filterableFieldMetadataItems = useFamilySelectorValueV2(
+  const filterableFieldMetadataItems = useAtomFamilySelectorValue(
     availableFieldMetadataItemsForFilterFamilySelector,
     {
       objectMetadataItemId: objectMetadataItem.id,
     },
   );
 
-  const sortableFieldMetadataItems = useFamilySelectorValueV2(
+  const sortableFieldMetadataItems = useAtomFamilySelectorValue(
     availableFieldMetadataItemsForSortFamilySelector,
     {
       objectMetadataItemId: objectMetadataItem.id,
     },
   );
 
-  const restrictedFieldMetadataIds: string[] = [];
+  const columnDefinitions: ColumnDefinition<FieldMetadata>[] = useMemo(() => {
+    const activeFieldMetadataItems = objectMetadataItem.readableFields.filter(
+      (field) =>
+        field.isActive &&
+        (!isHiddenSystemField(field) ||
+          field.id === objectMetadataItem.labelIdentifierFieldMetadataId),
+    );
 
-  const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
-    activeFieldMetadataItems
+    return activeFieldMetadataItems
       .map((field, index) =>
         formatFieldMetadataItemAsColumnDefinition({
           position: index,
@@ -47,6 +45,7 @@ export const useColumnDefinitionsFromObjectMetadata = (
       )
       .filter(filterAvailableTableColumns)
       .filter((column) => {
+        const restrictedFieldMetadataIds: string[] = [];
         return !restrictedFieldMetadataIds.includes(column.fieldMetadataId);
       })
       .map((column) => {
@@ -65,6 +64,11 @@ export const useColumnDefinitionsFromObjectMetadata = (
           isSortable: existsInSortDefinitions,
         };
       });
+  }, [
+    filterableFieldMetadataItems,
+    sortableFieldMetadataItems,
+    objectMetadataItem,
+  ]);
 
   return {
     columnDefinitions,

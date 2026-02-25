@@ -5,8 +5,8 @@ import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-r
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import styled from '@emotion/styled';
 import {
   autoUpdate,
@@ -42,12 +42,12 @@ export const RecordInlineCellEditMode = ({
     RecordFieldComponentInstanceContext,
   );
 
-  const setFieldInputLayoutDirection = useSetRecoilComponentState(
+  const setFieldInputLayoutDirection = useSetAtomComponentState(
     recordFieldInputLayoutDirectionComponentState,
     recordFieldComponentInstanceId,
   );
 
-  const setFieldInputLayoutDirectionLoading = useSetRecoilComponentState(
+  const setFieldInputLayoutDirectionLoading = useSetAtomComponentState(
     recordFieldInputLayoutDirectionLoadingComponentState,
     recordFieldComponentInstanceId,
   );
@@ -63,7 +63,7 @@ export const RecordInlineCellEditMode = ({
     },
   };
 
-  const isFieldInError = useRecoilComponentValue(
+  const isFieldInError = useAtomComponentStateValue(
     recordFieldInputIsFieldInErrorComponentState,
   );
 

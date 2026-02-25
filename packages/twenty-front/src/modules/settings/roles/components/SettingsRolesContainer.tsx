@@ -6,21 +6,18 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsRoleDefaultRole } from '@/settings/roles/components/SettingsRolesDefaultRole';
 
 import { SettingsRolesList } from '@/settings/roles/components/SettingsRolesList';
-import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
-import { settingsRolesIsLoadingStateV2 } from '@/settings/roles/states/settingsRolesIsLoadingStateV2';
+import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
+import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { H3Title } from 'twenty-ui/display';
 
 export const SettingsRolesContainer = () => {
   const { t } = useLingui();
 
-  const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
-  const settingsRolesIsLoading = useRecoilValueV2(
-    settingsRolesIsLoadingStateV2,
-  );
+  const settingsAllRoles = useSettingsAllRoles();
+  const settingsRolesIsLoading = useAtomStateValue(settingsRolesIsLoadingState);
 
   if (settingsRolesIsLoading && !settingsAllRoles) {
     return null;

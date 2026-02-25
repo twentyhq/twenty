@@ -1,15 +1,14 @@
 import { act, renderHook } from '@testing-library/react';
 import { createElement } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -26,11 +25,7 @@ import {
 } from '~/testing/mock-data/users';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
-  createElement(
-    JotaiProvider,
-    { store: jotaiStore },
-    createElement(RecoilRoot, null, children),
-  );
+  createElement(JotaiProvider, { store: jotaiStore }, children);
 
 const renderHooks = (
   onboardingStatus: OnboardingStatus,
@@ -40,11 +35,11 @@ const renderHooks = (
 ) => {
   const { result } = renderHook(
     () => {
-      const [currentUser, setCurrentUser] = useRecoilStateV2(currentUserState);
-      const setCurrentUserWorkspace = useSetRecoilStateV2(
+      const [currentUser, setCurrentUser] = useAtomState(currentUserState);
+      const setCurrentUserWorkspace = useSetAtomState(
         currentUserWorkspaceState,
       );
-      const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
+      const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
       const setNextOnboardingStatus = useSetNextOnboardingStatus();
       return {
         currentUser,

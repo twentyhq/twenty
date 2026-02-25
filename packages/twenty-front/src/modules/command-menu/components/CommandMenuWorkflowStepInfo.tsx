@@ -5,7 +5,7 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
@@ -19,8 +19,8 @@ import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -35,11 +35,11 @@ export const CommandMenuWorkflowStepInfo = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
 
-  const commandMenuPage = useRecoilValue(commandMenuPageState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
 
   const workflowId = useCommandMenuWorkflowIdOrThrow();
 
-  const workflowStepId = useRecoilComponentValue(
+  const workflowStepId = useAtomComponentStateValue(
     commandMenuWorkflowStepIdComponentState,
     commandMenuPageInstanceId,
   );

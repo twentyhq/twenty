@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/ui/hooks/useRecordFieldInput';
 import { type FieldJsonValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -8,7 +7,8 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { usePrecomputedJsonDraftValue } from '@/object-record/record-field/ui/meta-types/hooks/usePrecomputedJsonDraftValue';
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isFieldRawJson';
@@ -24,16 +24,14 @@ export const useJsonField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldJsonValue>(
-    recordStoreFamilySelector({
-      recordId,
-      fieldName: fieldName,
-    }),
+  const [fieldValue, setFieldValue] = useAtomFamilySelectorState(
+    recordStoreFamilySelector,
+    { recordId, fieldName },
   );
 
   const { setDraftValue } = useRecordFieldInput<FieldJsonValue>();
 
-  const draftValue = useRecoilComponentValue(
+  const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 

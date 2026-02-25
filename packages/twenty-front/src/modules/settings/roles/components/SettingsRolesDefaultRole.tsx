@@ -5,7 +5,7 @@ import {
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconUserPin, useIcons } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
@@ -24,7 +24,7 @@ export const SettingsRoleDefaultRole = ({
 }: SettingsRoleDefaultRoleProps) => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
 

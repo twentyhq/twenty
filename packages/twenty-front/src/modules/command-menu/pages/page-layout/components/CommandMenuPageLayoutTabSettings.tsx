@@ -11,8 +11,8 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -26,12 +26,12 @@ export const CommandMenuPageLayoutTabSettings = () => {
   const { closeCommandMenu } = useCommandMenu();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
-  const draft = useRecoilComponentValue(
+  const draft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const [openTabId, setOpenTabId] = useRecoilComponentState(
+  const [openTabId, setOpenTabId] = useAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );

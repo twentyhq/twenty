@@ -40,7 +40,7 @@ describe('Agent update should fail', () => {
       input: {
         label: globalTestContext.existingAgentLabelForDuplicate,
         prompt: 'Existing agent for duplicate test',
-        modelId: 'gpt-4o',
+        modelId: 'gpt-4.1',
       },
     });
 
@@ -55,7 +55,7 @@ describe('Agent update should fail', () => {
         description: 'Original description',
         icon: 'IconRobot',
         prompt: 'Original prompt',
-        modelId: 'gpt-4o',
+        modelId: 'gpt-4.1',
       },
     });
 

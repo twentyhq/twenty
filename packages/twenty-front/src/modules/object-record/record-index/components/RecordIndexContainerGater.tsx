@@ -18,8 +18,9 @@ import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-sel
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import styled from '@emotion/styled';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { NotFound } from '~/pages/not-found/NotFound';
+import { useStore } from 'jotai';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -28,21 +29,17 @@ const StyledIndexContainer = styled.div`
 `;
 
 export const RecordIndexContainerGater = () => {
+  const store = useStore();
   const { recordIndexId, objectMetadataItem } =
     useRecordIndexIdFromCurrentContextStore();
 
-  const handleIndexRecordsLoaded = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        // TODO: find a better way to reset this state ?
-        set(lastShowPageRecordIdState, null);
-      },
-    [],
-  );
+  const handleIndexRecordsLoaded = useCallback(() => {
+    // TODO: find a better way to reset this state ?
+    store.set(lastShowPageRecordIdState.atom, null);
+  }, [store]);
 
   const { indexIdentifierUrl } = useHandleIndexIdentifierClick({
     objectMetadataItem,
-    recordIndexId,
   });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
