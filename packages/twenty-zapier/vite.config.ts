@@ -35,6 +35,7 @@ export default defineConfig(() => {
       }),
     ],
     build: {
+      emptyOutDir: false,
       outDir: 'lib',
       lib: { entry: 'src/index.ts', name: 'twenty-zapier' },
       rollupOptions: {

@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'src/types/FieldMetadataType';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   type InputField,
   type Node,
