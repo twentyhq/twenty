@@ -7,8 +7,8 @@ import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfo
 import { SubscriptionInfoRowContainer } from '@/billing/components/internal/SubscriptionInfoRowContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-  EnterprisePlanModal,
   ENTERPRISE_PLAN_MODAL_ID,
+  EnterprisePlanModal,
 } from '@/settings/enterprise/components/EnterprisePlanModal';
 import { SET_ENTERPRISE_KEY } from '@/settings/enterprise/graphql/mutations/setEnterpriseKey';
 import { ENTERPRISE_PORTAL_SESSION } from '@/settings/enterprise/graphql/queries/enterprisePortalSession';
@@ -21,10 +21,6 @@ import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-
-type SettingsEnterpriseProps = {
-  isAdminPanelTab?: boolean;
-};
 import {
   H2Title,
   IconCalendarRepeat,
@@ -36,6 +32,10 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+
+type SettingsEnterpriseProps = {
+  isAdminPanelTab?: boolean;
+};
 
 const StyledStatusDot = styled.div<{ isActive: boolean }>`
   background-color: ${({ isActive, theme }) =>
@@ -165,7 +165,7 @@ export const SettingsEnterprise = ({
         window.open(portalUrl, '_blank', 'noopener');
       } else {
         enqueueErrorSnackBar({
-          message: t`Could not open billing portal. Please try again.`,
+          message: t`Could not open billing portal. Please contact support.`,
         });
       }
     } catch {
@@ -198,8 +198,8 @@ export const SettingsEnterprise = ({
     }
   }, [fetchPortalSession, openModal, enqueueErrorSnackBar, t, returnUrlPath]);
 
-  const content = (
-    <SettingsPageContainer>
+  const innerContent = (
+    <>
       <EnterprisePlanModal />
       {isActive ? (
         <>
@@ -320,11 +320,11 @@ export const SettingsEnterprise = ({
           </Section>
         </>
       )}
-    </SettingsPageContainer>
+    </>
   );
 
   if (isAdminPanelTab) {
-    return content;
+    return innerContent;
   }
 
   return (
@@ -338,7 +338,7 @@ export const SettingsEnterprise = ({
         { children: <Trans>Enterprise</Trans> },
       ]}
     >
-      {content}
+      <SettingsPageContainer>{innerContent}</SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
 };

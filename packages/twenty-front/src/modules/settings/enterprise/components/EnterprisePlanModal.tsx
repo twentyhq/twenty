@@ -128,7 +128,7 @@ export const EnterprisePlanModal = () => {
         closeModal(ENTERPRISE_PLAN_MODAL_ID);
       } else {
         enqueueErrorSnackBar({
-          message: t`Could not open Stripe. Please try again.`,
+          message: t`Could not open Stripe. Please contact support.`,
         });
       }
     } catch {
