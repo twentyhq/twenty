@@ -11,6 +11,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
   const fields: FieldMetadataItem[] = [
     {
       id: '3',
+      universalIdentifier: '3',
       name: 'booleanField',
       label: 'Boolean Field',
       type: FieldMetadataType.BOOLEAN,
@@ -25,6 +26,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '4',
+      universalIdentifier: '4',
       name: 'numberField',
       label: 'Number Field',
       type: FieldMetadataType.NUMBER,
@@ -39,6 +41,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '5',
+      universalIdentifier: '5',
       name: 'multiSelectField',
       label: 'Multi-Select Field',
       type: FieldMetadataType.MULTI_SELECT,
@@ -76,6 +79,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '6',
+      universalIdentifier: '6',
       name: 'relationField',
       label: 'Relation Field',
       type: FieldMetadataType.RELATION,
@@ -93,6 +97,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '7',
+      universalIdentifier: '7',
       name: 'fullNameField',
       label: 'Full Name Field',
       type: FieldMetadataType.FULL_NAME,
@@ -107,6 +112,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '8',
+      universalIdentifier: '8',
       name: 'currencyField',
       label: 'Currency Field',
       type: FieldMetadataType.CURRENCY,
@@ -121,6 +127,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '9',
+      universalIdentifier: '9',
       name: 'addressField',
       label: 'Address Field',
       type: FieldMetadataType.ADDRESS,
@@ -135,6 +142,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '10',
+      universalIdentifier: '10',
       name: 'selectField',
       label: 'Select Field',
       type: FieldMetadataType.SELECT,
@@ -165,6 +173,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '11',
+      universalIdentifier: '11',
       name: 'arrayField',
       label: 'Array Field',
       type: FieldMetadataType.ARRAY,
@@ -179,6 +188,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '12',
+      universalIdentifier: '12',
       name: 'jsonField',
       label: 'JSON Field',
       type: FieldMetadataType.RAW_JSON,
@@ -193,6 +203,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '13',
+      universalIdentifier: '13',
       name: 'phoneField',
       label: 'Phone Field',
       type: FieldMetadataType.PHONES,
@@ -207,6 +218,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '14',
+      universalIdentifier: '14',
       name: 'linksField',
       label: 'Links Field',
       type: FieldMetadataType.LINKS,
@@ -221,6 +233,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '15',
+      universalIdentifier: '15',
       name: 'createdBy',
       label: 'Created by',
       type: FieldMetadataType.ACTOR,
@@ -235,6 +248,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '16',
+      universalIdentifier: '16',
       name: 'richTextField',
       label: 'Rich Text Field',
       type: FieldMetadataType.RICH_TEXT_V2,
@@ -249,6 +263,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '17',
+      universalIdentifier: '17',
       name: 'dateField',
       label: 'Date Field',
       type: FieldMetadataType.DATE,
@@ -263,6 +278,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '18',
+      universalIdentifier: '18',
       name: 'dateTimeField',
       label: 'Date Time Field',
       type: FieldMetadataType.DATE_TIME,
@@ -277,6 +293,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '19',
+      universalIdentifier: '19',
       name: 'ratingField',
       label: 'Rating Field',
       type: FieldMetadataType.RATING,
@@ -291,6 +308,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
     },
     {
       id: '20',
+      universalIdentifier: '20',
       name: 'emailField',
       label: 'Email Field',
       type: FieldMetadataType.EMAILS,

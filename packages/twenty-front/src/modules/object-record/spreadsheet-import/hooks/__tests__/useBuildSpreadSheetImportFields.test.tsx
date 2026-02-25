@@ -41,6 +41,7 @@ describe('useBuildSpreadSheetImportFields', () => {
     overrides: Partial<FieldMetadataItem> = {},
   ): FieldMetadataItem => ({
     id: 'test-field-id',
+    universalIdentifier: 'test-field-id',
     name: 'testField',
     label: 'Test Field',
     type: FieldMetadataType.TEXT,
@@ -59,6 +60,7 @@ describe('useBuildSpreadSheetImportFields', () => {
   ): ObjectMetadataItem =>
     ({
       id: 'test-object-id',
+      universalIdentifier: 'test-object-id',
       nameSingular: 'testObject',
       namePlural: 'testObjects',
       labelSingular: 'Test Object',

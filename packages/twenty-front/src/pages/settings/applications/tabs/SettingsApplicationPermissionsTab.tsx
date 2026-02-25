@@ -162,6 +162,7 @@ const buildFieldMetadataItemFromMarketplaceField = (
 
   return {
     id: field.universalIdentifier ?? uuidv4(),
+    universalIdentifier: field.universalIdentifier ?? uuidv4(),
     name: field.name,
     label: field.label,
     type: (field.type as FieldMetadataType) ?? FieldMetadataType.TEXT,
@@ -239,6 +240,7 @@ const buildobjectMetadataItemsFromMarketplaceApp = (
       const item: ObjectMetadataItem = {
         __typename: 'Object',
         id: universalId,
+        universalIdentifier: universalId,
         nameSingular: appObject.nameSingular,
         namePlural: appObject.namePlural,
         labelSingular: appObject.labelSingular,
