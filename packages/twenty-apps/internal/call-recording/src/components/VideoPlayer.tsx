@@ -1,7 +1,7 @@
-export const VideoPlayer = ({ src }: { src: string }) => {
+export const VideoPlayer = ({ src, extension }: { src: string, extension: string }) => {
   return (
     <video controls>
-      <source src={src} />
+      <source src={src} type={`video/${extension}`} />
     </video>
   );
 };
