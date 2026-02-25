@@ -14,15 +14,18 @@ export const IsAppMetadataReadyEffect = () => {
   const isLoggedIn = useIsLogged();
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const objectsEntry = useAtomFamilyStateValue(metadataStoreState, 'objects');
+  const objectMetadataItemsEntry = useAtomFamilyStateValue(
+    metadataStoreState,
+    'objectMetadataItems',
+  );
   const viewsEntry = useAtomFamilyStateValue(metadataStoreState, 'views');
   const setIsAppMetadataReady = useSetAtomState(isAppMetadataReadyState);
 
   useEffect(() => {
     const hasActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
 
-    const areObjectsLoaded = objectsEntry.status === 'loaded';
-    const areViewsLoaded = viewsEntry.status === 'loaded';
+    const areObjectsLoaded = objectMetadataItemsEntry.status === 'up-to-date';
+    const areViewsLoaded = viewsEntry.status === 'up-to-date';
 
     if (!areObjectsLoaded) {
       setIsAppMetadataReady(false);
@@ -38,7 +41,7 @@ export const IsAppMetadataReadyEffect = () => {
     isLoggedIn,
     currentUser,
     currentWorkspace,
-    objectsEntry.status,
+    objectMetadataItemsEntry.status,
     viewsEntry.status,
     setIsAppMetadataReady,
   ]);

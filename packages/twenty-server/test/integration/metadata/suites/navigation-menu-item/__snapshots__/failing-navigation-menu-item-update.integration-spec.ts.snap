@@ -22,7 +22,7 @@ exports[`NavigationMenuItem update should fail when updating with empty id 1`] =
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -37,7 +37,7 @@ exports[`NavigationMenuItem update should fail when updating with invalid folder
     "userFriendlyMessage": "An error occurred.",
     "value": "not-a-valid-uuid",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -52,7 +52,7 @@ exports[`NavigationMenuItem update should fail when updating with invalid id (no
     "userFriendlyMessage": "An error occurred.",
     "value": "not-a-valid-uuid",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -67,7 +67,7 @@ exports[`NavigationMenuItem update should fail when updating with missing id 1`]
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
