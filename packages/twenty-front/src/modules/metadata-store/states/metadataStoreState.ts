@@ -1,36 +1,39 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export type MetadataLoadStatus = 'empty' | 'draft_pending' | 'loaded';
+export type MetadataEntityStoreStatus =
+  | 'empty'
+  | 'draft-pending'
+  | 'up-to-date';
 
-export type MetadataKey =
-  | 'objects'
-  | 'views'
-  | 'pageLayouts'
-  | 'logicFunctions';
-
-export const ALL_METADATA_KEYS: MetadataKey[] = [
-  'objects',
+export const ALL_METADATA_ENTITY_KEYS = [
+  'objectMetadataItems',
+  'fieldMetadataItems',
   'views',
+  'viewFields',
+  'viewFilters',
+  'viewSorts',
   'pageLayouts',
   'logicFunctions',
-];
+] as const;
 
-export type MetadataLoadEntry = {
+export type MetadataEntityKey = (typeof ALL_METADATA_ENTITY_KEYS)[number];
+
+export type MetadataStoreItem = {
   current: object[];
   draft: object[];
-  status: MetadataLoadStatus;
+  status: MetadataEntityStoreStatus;
 };
 
-const METADATA_LOAD_ENTRY_DEFAULT: MetadataLoadEntry = {
+const METADATA_STORE_ITEM_INITIAL_VALUE: MetadataStoreItem = {
   current: [],
   draft: [],
   status: 'empty',
 };
 
 export const metadataStoreState = createAtomFamilyState<
-  MetadataLoadEntry,
-  MetadataKey
+  MetadataStoreItem,
+  MetadataEntityKey
 >({
   key: 'metadataStoreState',
-  defaultValue: METADATA_LOAD_ENTRY_DEFAULT,
+  defaultValue: METADATA_STORE_ITEM_INITIAL_VALUE,
 });
