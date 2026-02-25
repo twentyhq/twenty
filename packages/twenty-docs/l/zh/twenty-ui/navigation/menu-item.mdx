@@ -10,49 +10,57 @@ image: /images/user-guide/kanban-views/kanban.png
 一个多用途的菜单项，设计用于菜单或导航列表中。
 
 <Tabs>
-  <Tab title="**用法**">
-    ```jsx
-    import { IconBell } from "@tabler/icons-react";
-    import { IconAlertCircle } from "@tabler/icons-react";
-    import { MenuItem } from "twenty-ui/display";
+<Tab title="**用法**">
 
-    export const MyComponent = () => {
-      const handleMenuItemClick = (event) => {
-        console.log("Menu item clicked!", event);
-      };
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItem } from "twenty-ui/display";
 
-      const handleButtonClick = (event) => {
-        console.log("Icon button clicked!", event);
-      };
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
 
-      return (
-        <MenuItem
-          LeftIcon={IconBell}
-          accent="default"
-          text="Menu item text"
-          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
-          isTooltipOpen={true}
-          testId="menu-item-1"
-          onClick={handleMenuItemClick}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+  const handleButtonClick = (event) => {
+    console.log("Icon button clicked!", event);
+  };
 
-  <Tab title="属性">
-    | 属性            | 类型     | 描述                                                  |
-    | ------------- | ------ | --------------------------------------------------- |
-    | 左侧图标          | 图标组件   | 在菜单项文本之前显示的可选左图标                                    |
-    | 强调色           | string | 指定菜单项的点缀颜色。 选项包括：`default`、`danger` 和 `placeholder` |
-    | 文本            | 字符串    | 菜单项的文本内容                                            |
-    | 图标按钮          | 数组     | 表示与菜单项关联的额外图标按钮的对象数组                                |
-    | isTooltipOpen | 布尔值    | 控制与菜单项关联的工具提示的可见性                                   |
-    | 测试 ID         | 字符串    | 用于测试目的的数据测试 ID 属性                                   |
-    | onClick       | 函数     | 在点击菜单项时触发的回调函数                                      |
-    | 类名            | 字符串    | 用于额外样式的可选名称                                         |
-  </Tab>
+  return (
+    <MenuItem
+      LeftIcon={IconBell}
+      accent="default"
+      text="Menu item text"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={true}
+      testId="menu-item-1"
+      onClick={handleMenuItemClick}
+      className
+    />
+  );
+};
+```
+
+
+</Tab>
+<Tab title="属性">
+
+
+| 属性            | 类型     | 描述                                                  |
+| ------------- | ------ | --------------------------------------------------- |
+| 左侧图标          | 图标组件   | 在菜单项文本之前显示的可选左图标                                    |
+| 强调色           | string | 指定菜单项的点缀颜色。 选项包括：`default`、`danger` 和 `placeholder` |
+| 文本            | 字符串    | 菜单项的文本内容                                            |
+| 图标按钮          | 数组     | 表示与菜单项关联的额外图标按钮的对象数组                                |
+| isTooltipOpen | 布尔值    | 控制与菜单项关联的工具提示的可见性                                   |
+| 测试 ID         | 字符串    | 用于测试目的的数据测试 ID 属性                                   |
+| onClick       | 函数     | 在点击菜单项时触发的回调函数                                      |
+| 类名            | 字符串    | 用于额外样式的可选名称                                         |
+
+
+
+
+</Tab>
 </Tabs>
 
 ## 变体
@@ -64,42 +72,49 @@ image: /images/user-guide/kanban-views/kanban.png
 菜单中的命令样式菜单项，用于表示键盘快捷键。
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { IconBell } from "@tabler/icons-react";
-    import { MenuItemCommand } from "twenty-ui/display";
+<Tab title="用法">
 
-    export const MyComponent = () => {
-      const handleCommandClick = () => {
-        console.log("Command clicked!");
-      };
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemCommand } from "twenty-ui/display";
 
-      return (
-        <MenuItemCommand
-          LeftIcon={IconBell}
-          text="First Option"
-          firstHotKey="⌘"
-          secondHotKey="1"
-          isSelected={true}
-          onClick={handleCommandClick}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleCommandClick = () => {
+    console.log("Command clicked!");
+  };
 
-  <Tab title="属性">
-    | 属性           | 类型            | 描述                |
-    | ------------ | ------------- | ----------------- |
-    | LeftIcon     | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
-    | 文本           | 字符串           | 菜单项的文本内容          |
-    | firstHotKey  | 字符串           | 与命令关联的第一个键盘快捷键    |
-    | secondHotKey | 字符串           | 与命令关联的第二个键盘快捷键    |
-    | isSelected   | 布尔值           | 指示菜单项是否被选中或高亮     |
-    | onClick      | 功能            | 点击菜单项时触发的回调函数     |
-    | className    | 字符串           | 用于额外样式的可选名称       |
-  </Tab>
+  return (
+    <MenuItemCommand
+      LeftIcon={IconBell}
+      text="First Option"
+      firstHotKey="⌘"
+      secondHotKey="1"
+      isSelected={true}
+      onClick={handleCommandClick}
+      className
+    />
+  );
+};
+```
+
+
+</Tab>
+<Tab title="属性">
+
+
+| 属性           | 类型            | 描述                |
+| ------------ | ------------- | ----------------- |
+| LeftIcon     | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
+| 文本           | 字符串           | 菜单项的文本内容          |
+| firstHotKey  | 字符串           | 与命令关联的第一个键盘快捷键    |
+| secondHotKey | 字符串           | 与命令关联的第二个键盘快捷键    |
+| isSelected   | 布尔值           | 指示菜单项是否被选中或高亮     |
+| onClick      | 功能            | 点击菜单项时触发的回调函数     |
+| className    | 字符串           | 用于额外样式的可选名称       |
+
+
+
+</Tab>
 </Tabs>
 
 ### 可拖动的
@@ -107,45 +122,52 @@ image: /images/user-guide/kanban-views/kanban.png
 设计用于在菜单或列表中使用的可拖动菜单项组件，项目可以拖动，并且可以通过图标按钮执行其他操作。
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { IconBell } from "@tabler/icons-react";
-    import { IconAlertCircle } from "@tabler/icons-react";
-    import { MenuItemDraggable } from "twenty-ui/display";
+<Tab title="用法">
 
-    export const MyComponent = () => {
-      const handleMenuItemClick = (event) => {
-        console.log("Menu item clicked!", event);
-      };
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItemDraggable } from "twenty-ui/display";
 
-      return (
-        <MenuItemDraggable
-          LeftIcon={IconBell}
-          accent="default"
-          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
-          isTooltipOpen={false}
-          onClick={handleMenuItemClick}
-          text="Menu item draggable"
-          isDragDisabled={false}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
 
-  <Tab title="属性">
-    | 属性             | 类型            | 描述                                                 |
-    | -------------- | ------------- | -------------------------------------------------- |
-    | LeftIcon       | IconComponent | 菜单项中显示在文本前的可选左侧图标                                  |
-    | 强调色            | 字符串           | 菜单项的强调色。 可设置为 `default`, `placeholder`, 和 `danger` |
-    | iconButtons    | 数组            | 表示与菜单项关联的附加图标按钮的对象数组                               |
-    | isTooltipOpen  | 布尔值           | 控制与菜单项关联的工具提示的可见性                                  |
-    | onClick        | 功能            | 点击链接时触发的回调函数                                       |
-    | 文本             | 字符串           | 菜单项的文本内容                                           |
-    | isDragDisabled | 布尔值           | 指示是否禁用拖动                                           |
-    | className      | 字符串           | 用于额外样式的可选名称                                        |
-  </Tab>
+  return (
+    <MenuItemDraggable
+      LeftIcon={IconBell}
+      accent="default"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={false}
+      onClick={handleMenuItemClick}
+      text="Menu item draggable"
+      isDragDisabled={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="属性">
+
+
+| 属性             | 类型            | 描述                                                 |
+| -------------- | ------------- | -------------------------------------------------- |
+| LeftIcon       | IconComponent | 菜单项中显示在文本前的可选左侧图标                                  |
+| 强调色            | 字符串           | 菜单项的强调色。 可设置为 `default`, `placeholder`, 和 `danger` |
+| iconButtons    | 数组            | 表示与菜单项关联的附加图标按钮的对象数组                               |
+| isTooltipOpen  | 布尔值           | 控制与菜单项关联的工具提示的可见性                                  |
+| onClick        | 功能            | 点击链接时触发的回调函数                                       |
+| 文本             | 字符串           | 菜单项的文本内容                                           |
+| isDragDisabled | 布尔值           | 指示是否禁用拖动                                           |
+| className      | 字符串           | 用于额外样式的可选名称                                        |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### 多选
@@ -153,34 +175,41 @@ image: /images/user-guide/kanban-views/kanban.png
 提供通过关联选择框实现多选功能的方法。
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { IconBell } from "@tabler/icons-react";
-    import { MenuItemMultiSelect } from "twenty-ui/display";
+<Tab title="用法">
 
-    export const MyComponent = () => {
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemMultiSelect } from "twenty-ui/display";
 
-      return (
-        <MenuItemMultiSelect
-          LeftIcon={IconBell}
-          text="First Option"
-          selected={false}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
 
-  <Tab title="属性">
-    | 属性             | 类型            | 描述                |
-    | -------------- | ------------- | ----------------- |
-    | LeftIcon       | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
-    | 文本             | 字符串           | 菜单项的文本内容          |
-    | 已选择            | 布尔值           | 指示菜单项是否被选中（勾选）    |
-    | onSelectChange | 功能            | 选择框状态变化时触发的回调函数   |
-    | className      | 字符串           | 用于额外样式的可选名称       |
-  </Tab>
+  return (
+    <MenuItemMultiSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="属性">
+
+
+| 属性             | 类型            | 描述                |
+| -------------- | ------------- | ----------------- |
+| LeftIcon       | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
+| 文本             | 字符串           | 菜单项的文本内容          |
+| 已选择            | 布尔值           | 指示菜单项是否被选中（勾选）    |
+| onSelectChange | 功能            | 选择框状态变化时触发的回调函数   |
+| className      | 字符串           | 用于额外样式的可选名称       |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### 多选头像
@@ -188,35 +217,42 @@ image: /images/user-guide/kanban-views/kanban.png
 带有头像、多选功能的菜单项，具有选择框和文本内容。
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+<Tab title="用法">
 
-    export const MyComponent = () => {
-      const imageUrl =
-        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+```jsx
+import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
 
-      return (
-        <MenuItemMultiSelectAvatar
-          avatar={<img src={imageUrl} alt="Avatar" />}
-          text="First Option"
-          selected={false}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
 
-  <Tab title="属性">
-    | 属性             | 类型          | 描述              |
-    | -------------- | ----------- | --------------- |
-    | avatar         | `ReactNode` | 将在菜单项左侧显示的头像或图标 |
-    | 文本             | 字符串         | 菜单项的文本内容        |
-    | selected       | 布尔值         | 指示菜单项是否被选中（勾选）  |
-    | onSelectChange | 功能          | 选择框状态变化时触发的回调函数 |
-    | className      | 字符串         | 用于额外样式的可选名称     |
-  </Tab>
+  return (
+    <MenuItemMultiSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="属性">
+
+
+| 属性             | 类型          | 描述              |
+| -------------- | ----------- | --------------- |
+| avatar         | `ReactNode` | 将在菜单项左侧显示的头像或图标 |
+| 文本             | 字符串         | 菜单项的文本内容        |
+| selected       | 布尔值         | 指示菜单项是否被选中（勾选）  |
+| onSelectChange | 功能          | 选择框状态变化时触发的回调函数 |
+| className      | 字符串         | 用于额外样式的可选名称     |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### 导航
@@ -224,36 +260,43 @@ image: /images/user-guide/kanban-views/kanban.png
 带有可选左侧图标、文本内容和右箭头图标的菜单项。
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { IconBell } from "@tabler/icons-react";
-    import { MenuItemNavigate } from "twenty-ui/display";
+<Tab title="用法">
 
-    export const MyComponent = () => {
-      const handleNavigation = () => {
-        console.log("Navigate to another page");
-      };
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemNavigate } from "twenty-ui/display";
 
-      return (
-        <MenuItemNavigate
-          LeftIcon={IconBell}
-          text="First Option"
-          onClick={handleNavigation}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleNavigation = () => {
+    console.log("Navigate to another page");
+  };
 
-  <Tab title="属性">
-    | 属性        | 类型            | 描述                |
-    | --------- | ------------- | ----------------- |
-    | LeftIcon  | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
-    | 文本        | 字符串           | 菜单项的文本内容          |
-    | onClick   | 功能            | 点击菜单项时触发的回调函数     |
-    | className | 字符串           | 用于额外样式的可选名称       |
-  </Tab>
+  return (
+    <MenuItemNavigate
+      LeftIcon={IconBell}
+      text="First Option"
+      onClick={handleNavigation}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="属性">
+
+
+| 属性        | 类型            | 描述                |
+| --------- | ------------- | ----------------- |
+| LeftIcon  | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
+| 文本        | 字符串           | 菜单项的文本内容          |
+| onClick   | 功能            | 点击菜单项时触发的回调函数     |
+| className | 字符串           | 用于额外样式的可选名称       |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### 选择
@@ -261,42 +304,49 @@ image: /images/user-guide/kanban-views/kanban.png
 可选择的菜单项，具有可选的左侧内容（图标和文本）和用于选择状态的指示器（检查图标）。
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { IconBell } from "@tabler/icons-react";
-    import { MenuItemSelect } from "twenty-ui/display";
+<Tab title="用法">
 
-    export const MyComponent = () => {
-      const handleSelection = () => {
-        console.log("Menu item selected");
-      };
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemSelect } from "twenty-ui/display";
 
-      return (
-        <MenuItemSelect
-          LeftIcon={IconBell}
-          text="First Option"
-          selected={true}
-          disabled={false}
-          hovered={false}
-          onClick={handleSelection}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
 
-  <Tab title="属性">
-    | 属性       | 类型            | 描述                |
-    | -------- | ------------- | ----------------- |
-    | LeftIcon | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
-    | 文本       | 字符串           | 菜单项的文本内容          |
-    | selected | 布尔值           | 指示菜单项是否被选中（勾选）    |
-    | 禁用       | 布尔值           | 指示菜单项是否被禁用        |
-    | hovered  | 布尔值           | 指示菜单项当前是否被悬停      |
-    | onClick  | 功能            | 点击菜单项时触发的回调函数     |
-    | 类名       | 字符串           | 用于额外样式的可选名称       |
-  </Tab>
+  return (
+    <MenuItemSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="属性">
+
+
+| 属性       | 类型            | 描述                |
+| -------- | ------------- | ----------------- |
+| LeftIcon | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
+| 文本       | 字符串           | 菜单项的文本内容          |
+| selected | 布尔值           | 指示菜单项是否被选中（勾选）    |
+| 禁用       | 布尔值           | 指示菜单项是否被禁用        |
+| hovered  | 布尔值           | 指示菜单项当前是否被悬停      |
+| onClick  | 功能            | 点击菜单项时触发的回调函数     |
+| 类名       | 字符串           | 用于额外样式的可选名称       |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### 选择头像
@@ -304,47 +354,54 @@ image: /images/user-guide/kanban-views/kanban.png
 带有头像的可选择的菜单项，具有可选的左侧内容（头像和文本）和用于选择状态的指示器（检查图标）。
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { MenuItemSelectAvatar } from "twenty-ui/display";
+<Tab title="用法">
 
-    export const MyComponent = () => {
-      const imageUrl =
-        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+```jsx
+import { MenuItemSelectAvatar } from "twenty-ui/display";
 
-      const handleSelection = () => {
-        console.log("Menu item selected");
-      };
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
 
-      return (
-        <MenuItemSelectAvatar
-          avatar={<img src={imageUrl} alt="Avatar" />}
-          text="First Option"
-          selected={true}
-          disabled={false}
-          hovered={false}
-          testId="menu-item-test"
-          onClick={handleSelection}
-          className
-        />
-      );
-    };
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
 
-    ```
-  </Tab>
+  return (
+    <MenuItemSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      testId="menu-item-test"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
 
-  <Tab title="属性">
-    | 属性      | 类型          | 描述                   |
-    | ------- | ----------- | -------------------- |
-    | 头像      | `ReactNode` | 用于显示在菜单项左侧的头像或图标     |
-    | 文本      | 字符串         | 菜单项的文本内容             |
-    | 已选择     | 布尔值         | 表示菜单项是否被选中（已选）       |
-    | 禁用      | 布尔值         | 表示菜单项是否被禁用           |
-    | 悬停      | 布尔值         | 表示菜单项是否正被悬停          |
-    | 测试ID    | 字符串         | 用于测试目的的data-testid属性 |
-    | onClick | 功能          | 点击菜单项时触发的回调函数        |
-    | 类名      | 字符串         | 用于额外样式的可选名称          |
-  </Tab>
+```
+
+</Tab>
+<Tab title="属性">
+
+
+| 属性      | 类型          | 描述                   |
+| ------- | ----------- | -------------------- |
+| 头像      | `ReactNode` | 用于显示在菜单项左侧的头像或图标     |
+| 文本      | 字符串         | 菜单项的文本内容             |
+| 已选择     | 布尔值         | 表示菜单项是否被选中（已选）       |
+| 禁用      | 布尔值         | 表示菜单项是否被禁用           |
+| 悬停      | 布尔值         | 表示菜单项是否正被悬停          |
+| 测试ID    | 字符串         | 用于测试目的的data-testid属性 |
+| onClick | 功能          | 点击菜单项时触发的回调函数        |
+| 类名      | 字符串         | 用于额外样式的可选名称          |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### 选择颜色
@@ -352,41 +409,48 @@ image: /images/user-guide/kanban-views/kanban.png
 一个可选择的菜单项，带有颜色样本，用于需要用户从菜单中选择颜色的场景。
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { MenuItemSelectColor } from "twenty-ui/display";
+<Tab title="用法">
 
-    export const MyComponent = () => {
-      const handleSelection = () => {
-        console.log("Menu item selected");
-      };
+```jsx
+import { MenuItemSelectColor } from "twenty-ui/display";
 
-      return (
-        <MenuItemSelectColor
-          color="green"
-          selected={true}
-          disabled={false}
-          hovered={true}
-          variant="default"
-          onClick={handleSelection}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
 
-  <Tab title="属性">
-    | 属性      | 类型  | 描述                                                                        |
-    | ------- | --- | ------------------------------------------------------------------------- |
-    | 颜色      | 字符串 | 菜单项中作为样本显示的主题颜色。 选项包括：`绿色`，`绿松石`，`天蓝`，`蓝色`，`紫色`，`粉红色`，`红色`，`橙色`，`黄色`，`灰色` |
-    | 已选择     | 布尔值 | 表示菜单项是否被选中（已选）                                                            |
-    | 禁用      | 布尔值 | 表示菜单项是否被禁用                                                                |
-    | 悬停      | 布尔值 | 表示菜单项是否正被悬停                                                               |
-    | 变体      | 字符串 | 颜色样本的变体。 可以是`默认`或`管道`                                                     |
-    | onClick | 功能  | 点击菜单项时触发的回调函数                                                             |
-    | 类名      | 字符串 | 用于额外样式的可选名称                                                               |
-  </Tab>
+  return (
+    <MenuItemSelectColor
+      color="green"
+      selected={true}
+      disabled={false}
+      hovered={true}
+      variant="default"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="属性">
+
+
+| 属性      | 类型  | 描述                                                                        |
+| ------- | --- | ------------------------------------------------------------------------- |
+| 颜色      | 字符串 | 菜单项中作为样本显示的主题颜色。 选项包括：`绿色`，`绿松石`，`天蓝`，`蓝色`，`紫色`，`粉红色`，`红色`，`橙色`，`黄色`，`灰色` |
+| 已选择     | 布尔值 | 表示菜单项是否被选中（已选）                                                            |
+| 禁用      | 布尔值 | 表示菜单项是否被禁用                                                                |
+| 悬停      | 布尔值 | 表示菜单项是否正被悬停                                                               |
+| 变体      | 字符串 | 颜色样本的变体。 可以是`默认`或`管道`                                                     |
+| onClick | 功能  | 点击菜单项时触发的回调函数                                                             |
+| 类名      | 字符串 | 用于额外样式的可选名称                                                               |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### 切换
@@ -394,35 +458,42 @@ image: /images/user-guide/kanban-views/kanban.png
 一个菜单项，带有一个关联的开关，允许用户启用或禁用某个特定功能
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { IconBell } from '@tabler/icons-react';
+<Tab title="用法">
 
-    import { MenuItemToggle } from 'twenty-ui/display';
+```jsx
+import { IconBell } from '@tabler/icons-react';
 
-    export const MyComponent = () => {
+import { MenuItemToggle } from 'twenty-ui/display';
 
-      return (
-        <MenuItemToggle
-          LeftIcon={IconBell}
-          text="First Option"
-          toggled={true}
-          toggleSize="small"
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
 
-  <Tab title="属性">
-    | 属性     | 类型            | 描述                 |
-    | ------ | ------------- | ------------------ |
-    | 左侧图标   | IconComponent | 在菜单项文本前显示的可选左侧图标   |
-    | 文本     | 字符串           | 菜单项的文本内容           |
-    | 已切换    | 布尔值           | 表示开关按钮处于“开”还是“关”状态 |
-    | 切换状态变更 | 功能            | 开关状态改变时触发的回调函数     |
-    | 切换尺寸   | 字符串           | 开关的尺寸。 它可以是\       |
-    | 类名     | 字符串           | 用于额外样式的可选名称        |
-  </Tab>
+  return (
+    <MenuItemToggle
+      LeftIcon={IconBell}
+      text="First Option"
+      toggled={true}
+      toggleSize="small"
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="属性">
+
+
+| 属性     | 类型            | 描述                 |
+| ------ | ------------- | ------------------ |
+| 左侧图标   | IconComponent | 在菜单项文本前显示的可选左侧图标   |
+| 文本     | 字符串           | 菜单项的文本内容           |
+| 已切换    | 布尔值           | 表示开关按钮处于“开”还是“关”状态 |
+| 切换状态变更 | 功能            | 开关状态改变时触发的回调函数     |
+| 切换尺寸   | 字符串           | 开关的尺寸。 它可以是\       |
+| 类名     | 字符串           | 用于额外样式的可选名称        |
+
+
+
+
+</Tab>
 </Tabs>

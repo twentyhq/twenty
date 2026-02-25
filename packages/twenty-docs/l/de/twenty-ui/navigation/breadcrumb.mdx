@@ -10,32 +10,38 @@ image: /images/user-guide/fields/field.png
 Erstellt eine Navigationsleiste mit Brotkrumen.
 
 <Tabs>
-  <Tab title="&#x22;Verwendung&#x22;">
-    ```jsx
-    import { BrowserRouter } from "react-router-dom";
-    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+<Tab title="&#x22;Verwendung&#x22;">
 
-    export const MyComponent = () => {
-      const breadcrumbLinks = [
-        { children: "Home", href: "/" },
-        { children: "Category", href: "/category" },
-        { children: "Subcategory", href: "/category/subcategory" },
-        { children: "Current Page" },
-      ];
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
 
-      return (
-        <BrowserRouter>
-          <Breadcrumb className links={breadcrumbLinks} />
-        </BrowserRouter>
-        )
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
 
-  <Tab title="&#x22;Eigenschaften&#x22;">
-    | "Eigenschaften" | Typ          | Beschreibung                                                                                                                                                                                                                                               |
-    | --------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | Klassenname     | Zeichenkette | Optionaler Klassenname für zusätzliche Stilierung                                                                                                                                                                                                          |
-    | Links           | array        | Ein Array von Objekten, die jeweils einen Breadcrumb-Link darstellen. Jedes Objekt hat eine `children`-Eigenschaft (den textlichen Inhalt des Links) und eine optionale `href`-Eigenschaft (die URL, zu der navigiert wird, wenn der Link angeklickt wird) |
-  </Tab>
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="&#x22;Eigenschaften&#x22;">
+
+
+| "Eigenschaften" | Typ          | Beschreibung                                                                                                                                                                                                                                               |
+| --------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Klassenname     | Zeichenkette | Optionaler Klassenname für zusätzliche Stilierung                                                                                                                                                                                                          |
+| Links           | array        | Ein Array von Objekten, die jeweils einen Breadcrumb-Link darstellen. Jedes Objekt hat eine `children`-Eigenschaft (den textlichen Inhalt des Links) und eine optionale `href`-Eigenschaft (die URL, zu der navigiert wird, wenn der Link angeklickt wird) |
+
+
+
+</Tab>
 </Tabs>

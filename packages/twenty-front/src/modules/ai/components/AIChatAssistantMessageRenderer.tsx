@@ -8,7 +8,7 @@ import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isToolUIPart } from 'ai';
+import { isStaticToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 const StyledMessagePartsContainer = styled.div`
@@ -67,7 +67,7 @@ const MessagePartRenderer = ({
         />
       );
     default:
-      if (isToolUIPart(part)) {
+      if (isStaticToolUIPart(part) === true) {
         return <ToolStepRenderer toolPart={part} isStreaming={isStreaming} />;
       }
       return null;

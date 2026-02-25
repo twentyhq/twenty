@@ -4,7 +4,7 @@ description: Crie e gerencie personalizações do Twenty como código.
 ---
 
 <Warning>
-  Os aplicativos estão atualmente em testes alfa. O recurso é funcional, mas ainda está evoluindo.
+Os aplicativos estão atualmente em testes alfa. O recurso é funcional, mas ainda está evoluindo.
 </Warning>
 
 ## O que são aplicativos?
@@ -31,13 +31,6 @@ Crie um novo aplicativo usando o gerador oficial, depois autentique-se e comece 
 # Criar a estrutura de um novo app (inclui todos os exemplos por padrão)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
-
-# Se você não usa yarn@4
-corepack enable
-yarn install
-
-# Autentique-se usando sua chave de API (você será solicitado)
-yarn twenty auth:login
 
 # Iniciar modo de desenvolvimento: sincroniza automaticamente as alterações locais com seu workspace
 yarn twenty app:dev
@@ -154,7 +147,7 @@ O SDK detecta entidades analisando seus arquivos TypeScript em busca de chamadas
 | `defineSkill()`              | Definições de habilidades de agente de IA   |
 
 <Note>
-  **A nomeação de arquivos é flexível.** A detecção de entidades é baseada em AST — o SDK varre seus arquivos fonte em busca do padrão `export default define<Entity>({...})`. Você pode organizar seus arquivos e pastas como quiser. Agrupar por tipo de entidade (por exemplo, `logic-functions/`, `roles/`) é apenas uma convenção para organização do código, não um requisito.
+**A nomeação de arquivos é flexível.** A detecção de entidades é baseada em AST — o SDK varre seus arquivos fonte em busca do padrão `export default define<Entity>({...})`. Você pode organizar seus arquivos e pastas como quiser. Agrupar por tipo de entidade (por exemplo, `logic-functions/`, `roles/`) é apenas uma convenção para organização do código, não um requisito.
 </Note>
 
 Exemplo de uma entidade detectada:
@@ -312,11 +305,11 @@ Pontos-chave:
 * Você pode criar novos objetos usando `yarn twenty entity:add`, que orienta você sobre nomeação, campos e relacionamentos.
 
 <Note>
-  **Os campos base são criados automaticamente.** Quando você define um objeto personalizado, o Twenty adiciona automaticamente campos padrão
-  como `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`.
-  Você não precisa definir esses no seu array `fields` — adicione apenas seus campos personalizados.
-  Você pode substituir os campos padrão definindo um campo com o mesmo nome no seu array `fields`,
-  mas isso não é recomendado.
+**Os campos base são criados automaticamente.** Quando você define um objeto personalizado, o Twenty adiciona automaticamente campos padrão
+como `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`.
+Você não precisa definir esses no seu array `fields` — adicione apenas seus campos personalizados.
+Você pode substituir os campos padrão definindo um campo com o mesmo nome no seu array `fields`,
+mas isso não é recomendado.
 </Note>
 
 ### Configuração do aplicativo (application-config.ts)
@@ -550,27 +543,25 @@ Pontos-chave:
 ### Payload de gatilho de rota
 
 <Warning>
-  **Alteração incompatível (v1.16, janeiro de 2026):** O formato do payload de gatilho de rota mudou. Antes da v1.16, os parâmetros de consulta, parâmetros de caminho e corpo eram enviados diretamente como o payload. A partir da v1.16, eles ficam aninhados dentro de um objeto estruturado `RoutePayload`.
+**Alteração incompatível (v1.16, janeiro de 2026):** O formato do payload de gatilho de rota mudou. Antes da v1.16, os parâmetros de consulta, parâmetros de caminho e corpo eram enviados diretamente como o payload. A partir da v1.16, eles ficam aninhados dentro de um objeto estruturado `RoutePayload`.
 
-  **Antes da v1.16:**
+**Antes da v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
 
-  ```typescript
-  const handler = async (params) => {
-    const { param1, param2 } = params; // Direct access
-  };
-  ```
+**Depois da v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
 
-  **Depois da v1.16:**
-
-  ```typescript
-  const handler = async (event: RoutePayload) => {
-    const { param1, param2 } = event.body; // Access via .body
-    const { queryParam } = event.queryStringParameters;
-    const { id } = event.pathParameters;
-  };
-  ```
-
-  **Para migrar funções existentes:** Atualize seu handler para desestruturar de `event.body`, `event.queryStringParameters` ou `event.pathParameters` em vez de diretamente do objeto de parâmetros.
+**Para migrar funções existentes:** Atualize seu handler para desestruturar de `event.body`, `event.queryStringParameters` ou `event.pathParameters` em vez de diretamente do objeto de parâmetros.
 </Warning>
 
 Quando um gatilho de rota invoca sua função de lógica, ela recebe um objeto `RoutePayload` que segue o formato do AWS HTTP API v2. Importe o tipo de `twenty-sdk`:
@@ -706,7 +697,7 @@ Pontos-chave:
 * Você pode combinar `isTool` com gatilhos — uma função pode ser ao mesmo tempo uma ferramenta (chamável por agentes de IA) e acionada por eventos (cron, eventos de banco de dados, rotas) simultaneamente.
 
 <Note>
-  **Escreva uma boa `description`.** Os agentes de IA dependem do campo `description` da função para decidir quando usar a ferramenta. Seja específico sobre o que a ferramenta faz e quando ela deve ser chamada.
+**Escreva uma boa `description`.** Os agentes de IA dependem do campo `description` da função para decidir quando usar a ferramenta. Seja específico sobre o que a ferramenta faz e quando ela deve ser chamada.
 </Note>
 
 ### Componentes de front-end

@@ -10,9 +10,9 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 Le azioni definiscono cosa accade dopo l'attivazione di un trigger. Puoi concatenare più azioni per creare automazioni complesse.
 
 <Tip>
-  * Usa il selettore di variabili (fai clic sull'icona `(x+)`) per sfogliare i dati disponibili dai passaggi precedenti
-  * Passa il mouse su qualsiasi campo di input per vedere da quale passaggio proviene una variabile — utile quando lo stesso campo (ad es., ID) esiste in più passaggi precedenti
-  * Assegna a ogni azione un nome descrittivo per una manutenzione più semplice
+* Usa il selettore di variabili (fai clic sull'icona `(x+)`) per sfogliare i dati disponibili dai passaggi precedenti
+* Passa il mouse su qualsiasi campo di input per vedere da quale passaggio proviene una variabile — utile quando lo stesso campo (ad es., ID) esiste in più passaggi precedenti
+* Assegna a ogni azione un nome descrittivo per una manutenzione più semplice
 </Tip>
 
 ## Azioni sui record
@@ -71,7 +71,7 @@ Trova i record all'interno di un oggetto selezionato utilizzando condizioni di f
 **Output**: Restituisce i record corrispondenti utilizzabili in passaggi successivi.
 
 <Note>
-  **Limite**: Search Records restituisce un massimo di **200 record**. Se devi elaborarne di più, aggiungi filtri specifici per ridurre i risultati oppure usa workflow pianificati per elaborare a lotti.
+**Limite**: Search Records restituisce un massimo di **200 record**. Se devi elaborarne di più, aggiungi filtri specifici per ridurre i risultati oppure usa workflow pianificati per elaborare a lotti.
 </Note>
 
 **Migliore Pratica**: Usa [rami](/l/it/user-guide/workflows/capabilities/workflow-branches) dopo Search Records per gestire scenari "trovato" vs "non trovato".
@@ -89,7 +89,7 @@ Crea un nuovo record o aggiorna uno esistente in base ai criteri di corrisponden
 * Compila i valori dei campi. Non dimenticare di valorizzare almeno uno degli identificatori univoci.
 
 <Note>
-  **La corrispondenza di solito funziona ancora meglio aggiungendo un solo identificatore univoco.** Ad esempio, lo screenshot qui sotto abbinerà le aziende in base al loro dominio. L'ID non è necessariamente richiesto.
+**La corrispondenza di solito funziona ancora meglio aggiungendo un solo identificatore univoco.** Ad esempio, lo screenshot qui sotto abbinerà le aziende in base al loro dominio. L'ID non è necessariamente richiesto.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
@@ -116,8 +116,8 @@ Crea un nuovo record o aggiorna uno esistente in base ai criteri di corrisponden
 * Definisci le azioni da eseguire su ciascun record nel ciclo.
 
 <Note>
-  - Puoi aggiungere diverse azioni all'interno di un iteratore.
-  - Quando utilizzi diramazioni all'interno di un iteratore, assicurati che l'ultimo passaggio di ciascuna diramazione si ricolleghi all'iteratore per chiudere il ciclo.
+- Puoi aggiungere diverse azioni all'interno di un iteratore.
+- Quando utilizzi diramazioni all'interno di un iteratore, assicurati che l'ultimo passaggio di ciascuna diramazione si ricolleghi all'iteratore per chiudere il ciclo.
 </Note>
 
 * Accedi ai campi di `Current Item`: per utilizzare i campi del record attualmente in elaborazione, fai clic sul passaggio **Iterator**, quindi seleziona **Current item**. Verrà visualizzato l'elenco dei campi disponibili di quel record e potrai selezionarli per l'uso nelle azioni successive.
@@ -135,8 +135,8 @@ Filtra i record in base a condizioni specificate, consentendo il passaggio solo 
 * Configura quali record devono passare ai passaggi successivi
 
 <Note>
-  1. **Output**: I nodi filtro non restituiscono dati — agiscono come porte di accesso. Se le condizioni sono soddisfatte, il flusso di lavoro continua. In caso contrario, il flusso di lavoro si interrompe in quel ramo.
-  2. L'operatore `IS` può essere utilizzato con i campi numerici. Funziona come `EQUAL`.
+1. **Output**: I nodi filtro non restituiscono dati — agiscono come porte di accesso. Se le condizioni sono soddisfatte, il flusso di lavoro continua. In caso contrario, il flusso di lavoro si interrompe in quel ramo.
+2. L'operatore `IS` può essere utilizzato con i campi numerici. Funziona come `EQUAL`.
 </Note>
 
 ### Ritardo
@@ -167,7 +167,7 @@ Mette in pausa l'esecuzione del flusso di lavoro per una durata specificata o fi
 * Pianifica azioni per l'orario lavorativo
 
 <Note>
-  La data programmata non può essere nel passato. Se viene utilizzato un campo data di un passaggio precedente e la data è già passata, il flusso di lavoro non riuscirà.
+La data programmata non può essere nel passato. Se viene utilizzato un campo data di un passaggio precedente e la data è già passata, il flusso di lavoro non riuscirà.
 </Note>
 
 **Limiti e crediti**:
@@ -190,7 +190,7 @@ Non adatto a newsletter (che richiedono una formattazione più ricca) o a sequen
 * Seleziona l'account email del mittente
 
 <Note>
-  Puoi inviare email solo dalle caselle di posta sincronizzate con il tuo account Twenty. L'invio dalle caselle di posta di altri membri del team (ad es., l'email del proprietario dell'account) è nella roadmap.
+Puoi inviare email solo dalle caselle di posta sincronizzate con il tuo account Twenty. L'invio dalle caselle di posta di altri membri del team (ad es., l'email del proprietario dell'account) è nella roadmap.
 </Note>
 
 Per tutti i passaggi seguenti, puoi fare riferimento a variabili dei passaggi precedenti per la personalizzazione.
@@ -198,14 +198,14 @@ Per tutti i passaggi seguenti, puoi fare riferimento a variabili dei passaggi pr
 * Inserisci l'indirizzo email del destinatario.
 
 <Note>
-  Al momento è possibile un solo destinatario.
+Al momento è possibile un solo destinatario.
 </Note>
 
 * Imposta l'oggetto della email.
 * Componi il corpo del messaggio. Puoi formattare i link, creare elenchi numerati, elenchi puntati, aggiungere allegati.
 
 <Note>
-  Al momento non è possibile aggiungere firme HTML.
+Al momento non è possibile aggiungere firme HTML.
 </Note>
 
 ### Modulo
@@ -213,7 +213,7 @@ Per tutti i passaggi seguenti, puoi fare riferimento a variabili dei passaggi pr
 Visualizza un modulo durante l'esecuzione del flusso di lavoro per raccogliere l'input dell'utente. Le risposte possono quindi essere utilizzate nei passaggi successivi per creare record, inviare email o eseguire qualsiasi altra azione basata sull'input.
 
 <Warning>
-  **I moduli sono progettati solo per i trigger manuali**. Per i flussi di lavoro con altri trigger (Record Creato, Aggiornato, ecc.), i moduli sono accessibili solo tramite l'interfaccia di esecuzione del flusso di lavoro, il che non è l'esperienza utente prevista. Un centro notifiche sarà rilasciato nel 2026 per supportare correttamente i moduli nei flussi di lavoro automatizzati.
+**I moduli sono progettati solo per i trigger manuali**. Per i flussi di lavoro con altri trigger (Record Creato, Aggiornato, ecc.), i moduli sono accessibili solo tramite l'interfaccia di esecuzione del flusso di lavoro, il che non è l'esperienza utente prevista. Un centro notifiche sarà rilasciato nel 2026 per supportare correttamente i moduli nei flussi di lavoro automatizzati.
 </Warning>
 
 **Configurazione**:
@@ -234,7 +234,7 @@ Visualizza un modulo durante l'esecuzione del flusso di lavoro per raccogliere l
 * Compila il modulo visualizzato nel pannello laterale e fai clic su `Submit`.
 
 <Note>
-  I campi non possono essere resi obbligatori.
+I campi non possono essere resi obbligatori.
 </Note>
 
 <VimeoEmbed videoId="1147277989" title="Dimostrazione video" />
@@ -256,15 +256,15 @@ Esegue JavaScript personalizzato all'interno del tuo workflow.
 * Verifica il codice direttamente nel passaggio
 
 <Note>
-  Se devi utilizzare chiavi API esterne nel tuo codice, devi inserirle direttamente nel corpo della funzione. Non puoi configurare le chiavi API altrove e farvi riferimento nella funzione logica.
+Se devi utilizzare chiavi API esterne nel tuo codice, devi inserirle direttamente nel corpo della funzione. Non puoi configurare le chiavi API altrove e farvi riferimento nella funzione logica.
 </Note>
 
 <Tip>
-  **Lavori con gli array?** Gli array provenienti da sistemi esterni o da passaggi precedenti possono arrivare come stringhe. Vedi [Come gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) per la soluzione.
+**Lavori con gli array?** Gli array provenienti da sistemi esterni o da passaggi precedenti possono arrivare come stringhe. Vedi [Come gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) per la soluzione.
 </Tip>
 
 <Tip>
-  Fai clic sull'icona quadrata in alto a destra dell'editor di codice per visualizzarlo a schermo intero — utile poiché la larghezza predefinita dell'editor è limitata.
+Fai clic sull'icona quadrata in alto a destra dell'editor di codice per visualizzarlo a schermo intero — utile poiché la larghezza predefinita dell'editor è limitata.
 </Tip>
 
 ### Richiesta HTTP
@@ -303,9 +303,9 @@ Esegue un agente AI all'interno del tuo flusso di lavoro per svolgere attività 
 **Output**: La risposta dell'agente AI è disponibile per l'uso nei passaggi successivi. Se l'agente ha uno schema di output strutturato, la risposta seguirà tale formato.
 
 <Note>
-  Le azioni dell'agente AI consumano crediti del flusso di lavoro in base al modello AI utilizzato. Vedi [Crediti del flusso di lavoro](/l/it/user-guide/workflows/capabilities/workflow-credits) per i dettagli.
+Le azioni dell'agente AI consumano crediti del flusso di lavoro in base al modello AI utilizzato. Vedi [Crediti del flusso di lavoro](/l/it/user-guide/workflows/capabilities/workflow-credits) per i dettagli.
 </Note>
 
 <Note>
-  Gli agenti AI rispettano le autorizzazioni basate sui ruoli. Puoi assegnare ruoli specifici agli agenti in **Impostazioni → Ruoli** per controllare a quali dati possono accedere. Vedi [Autorizzazioni](/l/it/user-guide/permissions-access/capabilities/permissions) per i dettagli.
+Gli agenti AI rispettano le autorizzazioni basate sui ruoli. Puoi assegnare ruoli specifici agli agenti in **Impostazioni → Ruoli** per controllare a quali dati possono accedere. Vedi [Autorizzazioni](/l/it/user-guide/permissions-access/capabilities/permissions) per i dettagli.
 </Note>

@@ -523,6 +523,31 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatFrontComponentMaps)) {
+      const { from: fromFlatFrontComponentMaps, to: toFlatFrontComponentMaps } =
+        flatFrontComponentMaps;
+
+      const frontComponentResult =
+        await this.workspaceMigrationFrontComponentActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatFrontComponentMaps,
+            to: toFlatFrontComponentMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
+            workspaceId,
+          },
+        );
+
+      if (frontComponentResult.status === 'fail') {
+        orchestratorFailureReport.frontComponent.push(
+          ...frontComponentResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.frontComponent = frontComponentResult.actions;
+      }
+    }
+
     if (isDefined(flatCommandMenuItemMaps)) {
       const {
         from: fromFlatCommandMenuItemMaps,
@@ -655,31 +680,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
-    if (isDefined(flatFrontComponentMaps)) {
-      const { from: fromFlatFrontComponentMaps, to: toFlatFrontComponentMaps } =
-        flatFrontComponentMaps;
-
-      const frontComponentResult =
-        await this.workspaceMigrationFrontComponentActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatFrontComponentMaps,
-            to: toFlatFrontComponentMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (frontComponentResult.status === 'fail') {
-        orchestratorFailureReport.frontComponent.push(
-          ...frontComponentResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.frontComponent = frontComponentResult.actions;
-      }
-    }
-
     if (isDefined(flatWebhookMaps)) {
       const { from: fromFlatWebhookMaps, to: toFlatWebhookMaps } =
         flatWebhookMaps;
@@ -795,6 +795,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.skill.update,
           ///
 
+          // Front components
+          ...aggregatedOrchestratorActionsReport.frontComponent.delete,
+          ...aggregatedOrchestratorActionsReport.frontComponent.create,
+          ...aggregatedOrchestratorActionsReport.frontComponent.update,
+          ///
+
           // Command Menu Items
           ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
           ...aggregatedOrchestratorActionsReport.commandMenuItem.create,
@@ -841,12 +847,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
             .create,
           ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
             .update,
-          ///
-
-          // Front components
-          ...aggregatedOrchestratorActionsReport.frontComponent.delete,
-          ...aggregatedOrchestratorActionsReport.frontComponent.create,
-          ...aggregatedOrchestratorActionsReport.frontComponent.update,
           ///
 
           // Webhooks

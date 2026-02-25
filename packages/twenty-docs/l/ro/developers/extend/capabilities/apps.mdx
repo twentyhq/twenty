@@ -4,7 +4,7 @@ description: Construiți și gestionați personalizările Twenty sub formă de c
 ---
 
 <Warning>
-  Aplicațiile sunt în prezent în testare alfa. Caracteristica funcționează, dar este încă în dezvoltare.
+Aplicațiile sunt în prezent în testare alfa. Caracteristica funcționează, dar este încă în dezvoltare.
 </Warning>
 
 ## Ce sunt aplicațiile?
@@ -31,13 +31,6 @@ Creați o aplicație nouă folosind generatorul oficial, apoi autentificați-vă
 # Creează scheletul unei aplicații noi (include toate exemplele în mod implicit)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
-
-# Dacă nu folosești yarn@4
-corepack enable
-yarn install
-
-# Autentifică-te folosind cheia ta API (ți se va solicita)
-yarn twenty auth:login
 
 # Pornește modul de dezvoltare: sincronizează automat modificările locale cu spațiul tău de lucru
 yarn twenty app:dev
@@ -154,7 +147,7 @@ SDK-ul detectează entitățile analizând fișierele TypeScript pentru apeluri 
 | `defineSkill()`              | Definiții ale abilităților agentului AI        |
 
 <Note>
-  **Denumirea fișierelor este flexibilă.** Detectarea entităților se bazează pe AST — SDK-ul scanează fișierele sursă pentru tiparul `export default define<Entity>({...})`. Puteți organiza fișierele și folderele cum doriți. Gruparea după tipul de entitate (de exemplu, `logic-functions/`, `roles/`) este doar o convenție pentru organizarea codului, nu o cerință.
+**Denumirea fișierelor este flexibilă.** Detectarea entităților se bazează pe AST — SDK-ul scanează fișierele sursă pentru tiparul `export default define<Entity>({...})`. Puteți organiza fișierele și folderele cum doriți. Gruparea după tipul de entitate (de exemplu, `logic-functions/`, `roles/`) este doar o convenție pentru organizarea codului, nu o cerință.
 </Note>
 
 Exemplu de entitate detectată:
@@ -312,11 +305,11 @@ Puncte cheie:
 * Puteți genera obiecte noi folosind `yarn twenty entity:add`, care vă ghidează prin denumire, câmpuri și relații.
 
 <Note>
-  **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard
-  precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`.
-  Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
-  Puteți suprascrie câmpurile implicite definind un câmp cu același nume în tabloul `fields`,
-  dar acest lucru nu este recomandat.
+**Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard
+precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`.
+Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
+Puteți suprascrie câmpurile implicite definind un câmp cu același nume în tabloul `fields`,
+dar acest lucru nu este recomandat.
 </Note>
 
 ### Configurația aplicației (application-config.ts)
@@ -550,27 +543,25 @@ Puncte cheie:
 ### Payload-ul declanșatorului de rută
 
 <Warning>
-  **Modificare incompatibilă (v1.16, ianuarie 2026):** Formatul payload-ului declanșatorului de rută s-a schimbat. Înainte de v1.16, parametrii de interogare (query), parametrii de cale și corpul erau trimiși direct ca payload. Începând cu v1.16, acestea sunt incluse într-un obiect structurat `RoutePayload`.
+**Modificare incompatibilă (v1.16, ianuarie 2026):** Formatul payload-ului declanșatorului de rută s-a schimbat. Înainte de v1.16, parametrii de interogare (query), parametrii de cale și corpul erau trimiși direct ca payload. Începând cu v1.16, acestea sunt incluse într-un obiect structurat `RoutePayload`.
 
-  **Înainte de v1.16:**
+**Înainte de v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
 
-  ```typescript
-  const handler = async (params) => {
-    const { param1, param2 } = params; // Direct access
-  };
-  ```
+**După v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
 
-  **După v1.16:**
-
-  ```typescript
-  const handler = async (event: RoutePayload) => {
-    const { param1, param2 } = event.body; // Access via .body
-    const { queryParam } = event.queryStringParameters;
-    const { id } = event.pathParameters;
-  };
-  ```
-
-  **Pentru a migra funcțiile existente:** Actualizează handler-ul pentru a extrage câmpurile din `event.body`, `event.queryStringParameters` sau `event.pathParameters` în loc să le iei direct din obiectul params.
+**Pentru a migra funcțiile existente:** Actualizează handler-ul pentru a extrage câmpurile din `event.body`, `event.queryStringParameters` sau `event.pathParameters` în loc să le iei direct din obiectul params.
 </Warning>
 
 Când un declanșator de rută apelează funcția dvs. de logică, aceasta primește un obiect `RoutePayload` care urmează formatul AWS HTTP API v2. Importă tipul din `twenty-sdk`:
@@ -706,7 +697,7 @@ Puncte cheie:
 * Puteți combina `isTool` cu declanșatoare — o funcție poate fi atât un instrument (apelabilă de agenții AI), cât și declanșată de evenimente (cron, evenimente de bază de date, rute) în același timp.
 
 <Note>
-  **Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.
+**Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.
 </Note>
 
 ### Componente Front

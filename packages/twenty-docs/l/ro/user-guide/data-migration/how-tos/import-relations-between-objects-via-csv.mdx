@@ -51,9 +51,9 @@ Partea "unu" este **părintele**. Partea "mulți" este **copilul**.
 4. **Sarcini/Note** (legate de oricare dintre cele de mai sus)
 
 <Warning>
-  **Dacă înregistrarea părinte nu există, importul va eșua.**
+**Dacă înregistrarea părinte nu există, importul va eșua.**
 
-  Verificați întotdeauna că companiile au fost importate înainte de a importa persoane cu referințe la companie.
+Verificați întotdeauna că companiile au fost importate înainte de a importa persoane cu referințe la companie.
 </Warning>
 
 ## Pasul 3: Notați identificatorul unic al părintelui
@@ -117,9 +117,9 @@ Coloana `companyDomain` face referire la domeniul companiei.
 | ID            | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **Formatul domeniului contează!**
+**Formatul domeniului contează!**
 
-  Folosiți `https://domain.com` (nu doar `domain.com`). Acest lucru corespunde modului în care Twenty stochează domeniile companiilor și previne erorile de potrivire.
+Folosiți `https://domain.com` (nu doar `domain.com`). Acest lucru corespunde modului în care Twenty stochează domeniile companiilor și previne erorile de potrivire.
 </Warning>
 
 ### Reguli importante
@@ -178,7 +178,6 @@ Review proposal,jane@yourcompany.com
 <AccordionGroup>
   <Accordion title="Ce se întâmplă dacă înregistrarea mea părinte nu are un domeniu sau un email?">
     Aveți două opțiuni:
-
     1. Folosiți `id`-ul Twenty (exportați înregistrările părinte pentru a obține ID-urile lor)
     2. Creați un câmp unic personalizat în modelul dvs. de date pentru a stoca un ID extern din sistemul anterior
   </Accordion>
@@ -197,7 +196,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="Ce se întâmplă dacă o înregistrare părinte nu există?">
     Importul va afișa o eroare pentru acel rând. Puteți fie să:
-
     * Importați mai întâi înregistrarea părinte, apoi reimportați
     * Corectați valoarea de referință
     * Eliminați rândul din import
@@ -205,7 +203,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="De ce relația mea nu se leagă corect?">
     Cauze comune:
-
     * Format greșit (folosiți `https://domain.com` pentru domenii)
     * Nepotrivire de majuscule/minuscule (verificați ortografia exactă)
     * Părintele nu există (importați mai întâi părinții)
@@ -214,9 +211,9 @@ Review proposal,jane@yourcompany.com
 </AccordionGroup>
 
 <Warning>
-  **Rețineți: Înregistrările șterse logic se iau în calcul pentru unicitate.**
+**Rețineți: Înregistrările șterse logic se iau în calcul pentru unicitate.**
 
-  Dacă primiți erori „not found”, dar înregistrarea pare să existe, verificați Command Menu → See deleted records. Este posibil ca părintele să fi fost șters logic.
+Dacă primiți erori „not found”, dar înregistrarea pare să existe, verificați Command Menu → See deleted records. Este posibil ca părintele să fi fost șters logic.
 </Warning>
 
 ## Depanare

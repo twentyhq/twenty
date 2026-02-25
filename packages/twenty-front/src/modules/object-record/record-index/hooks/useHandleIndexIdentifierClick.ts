@@ -6,14 +6,11 @@ import { getAppPath } from 'twenty-shared/utils';
 
 export const useHandleIndexIdentifierClick = ({
   objectMetadataItem,
-  recordIndexId,
 }: {
-  recordIndexId: string;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const currentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
-    recordIndexId,
   );
 
   const indexIdentifierUrl = (recordId: string) => {
