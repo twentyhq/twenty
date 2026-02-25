@@ -20,7 +20,7 @@ export const SettingsAdminContent = () => {
 
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
   const canImpersonate = currentUser?.canImpersonate;
-  const isSelfHost = !billing?.isBillingEnabled;
+  const isBillingEnabled = billing?.isBillingEnabled;
   const tabs = [
     {
       id: SETTINGS_ADMIN_TABS.GENERAL,
@@ -46,7 +46,7 @@ export const SettingsAdminContent = () => {
       Icon: IconHeart,
       disabled: !canAccessFullAdminPanel,
     },
-    ...(isSelfHost
+    ...(!isBillingEnabled
       ? [
           {
             id: SETTINGS_ADMIN_TABS.ENTERPRISE,
