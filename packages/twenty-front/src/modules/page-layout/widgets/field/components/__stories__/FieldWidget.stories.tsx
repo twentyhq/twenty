@@ -12,7 +12,6 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import {
@@ -261,7 +260,6 @@ const mockCompanyRecord: ObjectRecord = {
 // Sets a record in both Jotai stores so field display hooks can read it
 const setRecordInStores = (recordId: string, record: ObjectRecord) => {
   jotaiStore.set(recordStoreFamilyState.atomFamily(recordId), record);
-  jotaiStore.set(recordStoreFamilyStateV2.atomFamily(recordId), record);
 };
 
 const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({

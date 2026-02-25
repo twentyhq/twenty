@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
@@ -15,13 +14,11 @@ const dropdownId = 'test-dropdown-id';
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot>
-        <DropdownComponentInstanceContext.Provider
-          value={{ instanceId: dropdownId }}
-        >
-          {children}
-        </DropdownComponentInstanceContext.Provider>
-      </RecoilRoot>
+      <DropdownComponentInstanceContext.Provider
+        value={{ instanceId: dropdownId }}
+      >
+        {children}
+      </DropdownComponentInstanceContext.Provider>
     </JotaiProvider>
   );
 };

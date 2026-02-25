@@ -29,7 +29,7 @@ export const useHandleToggleTrashColumnFilter = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
 
-  const isSoftDeleteFilterActiveComponentRecoilState =
+  const isSoftDeleteFilterActiveComponentAtom =
     useAtomComponentStateCallbackState(
       isSoftDeleteFilterActiveComponentState,
       viewBarId,
@@ -72,9 +72,9 @@ export const useHandleToggleTrashColumnFilter = ({
 
   const toggleSoftDeleteFilterState = useCallback(
     (currentState: boolean) => {
-      store.set(isSoftDeleteFilterActiveComponentRecoilState, currentState);
+      store.set(isSoftDeleteFilterActiveComponentAtom, currentState);
     },
-    [isSoftDeleteFilterActiveComponentRecoilState, store],
+    [isSoftDeleteFilterActiveComponentAtom, store],
   );
   return {
     handleToggleTrashColumnFilter,

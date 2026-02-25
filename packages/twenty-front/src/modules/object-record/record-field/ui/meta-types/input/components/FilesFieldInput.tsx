@@ -1,4 +1,4 @@
-import { isAttachmentPreviewEnabledStateV2 } from '@/client-config/states/isAttachmentPreviewEnabledStateV2';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useFilesField } from '@/object-record/record-field/ui/meta-types/hooks/useFilesField';
@@ -11,7 +11,7 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { filesSchema } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { filePreviewStateV2 } from '@/ui/field/display/states/filePreviewStateV2';
+import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -28,9 +28,9 @@ export const FilesFieldInput = () => {
   const { t } = useLingui();
   const [isUploading, setIsUploading] = useState(false);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const setFilePreview = useSetAtomState(filePreviewStateV2);
+  const setFilePreview = useSetAtomState(filePreviewState);
   const isAttachmentPreviewEnabled = useAtomStateValue(
-    isAttachmentPreviewEnabledStateV2,
+    isAttachmentPreviewEnabledState,
   );
 
   const { onEscape, onClickOutside, onEnter } = useContext(

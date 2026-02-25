@@ -1,16 +1,12 @@
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
-
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <RecoilRoot>{children}</RecoilRoot>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 describe('useReadCaptchaToken', () => {

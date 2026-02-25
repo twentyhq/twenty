@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { useRecordFieldInput } from '@/object-record/record-field/ui/hooks/useRecordFieldInput';
 import { type FieldJsonValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { usePrecomputedJsonDraftValue } from '@/object-record/record-field/ui/meta-types/hooks/usePrecomputedJsonDraftValue';
@@ -25,7 +25,7 @@ export const useJsonField = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useAtomFamilySelectorState(
-    recordStoreFamilySelectorV2,
+    recordStoreFamilySelector,
     { recordId, fieldName },
   );
 

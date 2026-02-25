@@ -1,5 +1,5 @@
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
-import { recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2';
+import { recordStoreMorphOneToManyValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { CustomError, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -11,7 +11,7 @@ export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
   morphRelations: FieldMetadataItemRelation[];
 }) => {
   const morphRelationObjectNameSingularWithValues = useAtomFamilySelectorValue(
-    recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2,
+    recordStoreMorphOneToManyValueWithObjectNameFamilySelector,
     { recordId, morphRelations },
   );
 

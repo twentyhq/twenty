@@ -1,18 +1,15 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>
-    <MemoryRouter
-      initialEntries={['/one', '/two', { pathname: '/three' }]}
-      initialIndex={1}
-    >
-      {children}
-    </MemoryRouter>
-  </RecoilRoot>
+  <MemoryRouter
+    initialEntries={['/one', '/two', { pathname: '/three' }]}
+    initialIndex={1}
+  >
+    {children}
+  </MemoryRouter>
 );
 
 const renderHooks = () => {

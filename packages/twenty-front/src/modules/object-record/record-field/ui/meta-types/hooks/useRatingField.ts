@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { type FieldRatingValue } from 'twenty-shared/types';
@@ -17,7 +17,7 @@ export const useRatingField = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useAtomFamilySelectorState(
-    recordStoreFamilySelectorV2,
+    recordStoreFamilySelector,
     { recordId, fieldName },
   );
 

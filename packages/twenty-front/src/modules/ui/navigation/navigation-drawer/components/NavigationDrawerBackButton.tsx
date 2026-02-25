@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationDrawerExpandedMemorizedStateV2 } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedStateV2';
+import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -53,7 +53,7 @@ export const NavigationDrawerBackButton = ({
     isNavigationDrawerExpandedState,
   );
   const navigationDrawerExpandedMemorized = useAtomStateValue(
-    navigationDrawerExpandedMemorizedStateV2,
+    navigationDrawerExpandedMemorizedState,
   );
 
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(

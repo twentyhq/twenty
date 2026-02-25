@@ -9,7 +9,7 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { commandMenuShouldFocusTitleInputComponentState } from '@/command-menu/states/commandMenuShouldFocusTitleInputComponentState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -37,7 +37,7 @@ export const useNavigateCommandMenu = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = store.get(isCommandMenuOpenedStateV2.atom);
+    const isCommandMenuOpened = store.get(isCommandMenuOpenedState.atom);
 
     const isCommandMenuClosing = store.get(isCommandMenuClosingState.atom);
 
@@ -65,7 +65,7 @@ export const useNavigateCommandMenu = () => {
       instanceIdToCopyTo: COMMAND_MENU_COMPONENT_INSTANCE_ID,
     });
 
-    store.set(isCommandMenuOpenedStateV2.atom, true);
+    store.set(isCommandMenuOpenedState.atom, true);
     store.set(hasUserSelectedCommandState.atom, false);
   }, [
     copyContextStoreStates,

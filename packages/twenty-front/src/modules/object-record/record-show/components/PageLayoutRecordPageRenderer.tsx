@@ -4,7 +4,7 @@ import { InformationBannerDeletedRecord } from '@/information-banner/components/
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -44,7 +44,7 @@ export const PageLayoutRecordPageRenderer = ({
   isInRightDrawer: boolean;
 }) => {
   const recordDeletedAt = useAtomFamilySelectorValue(
-    recordStoreFamilySelectorV2,
+    recordStoreFamilySelector,
     {
       recordId: targetRecordIdentifier.id,
       fieldName: 'deletedAt',

@@ -45,7 +45,6 @@ const ALLOWED_TAGS = [
   'AccordionGroup',
   'Router',
   'BrowserRouter',
-  'RecoilRoot',
 ];
 
 export const rule: Rule.RuleModule = {

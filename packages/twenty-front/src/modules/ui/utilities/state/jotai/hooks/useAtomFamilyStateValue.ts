@@ -1,9 +1,9 @@
 import { useAtomValue } from 'jotai';
 
-import { type FamilyStateV2 } from '@/ui/utilities/state/jotai/types/FamilyStateV2';
+import { type FamilyState } from '@/ui/utilities/state/jotai/types/FamilyState';
 
 export const useAtomFamilyStateValue = <ValueType, FamilyKey>(
-  familyState: FamilyStateV2<ValueType, FamilyKey>,
+  familyState: FamilyState<ValueType, FamilyKey>,
   familyKey: FamilyKey,
 ): ValueType => {
   return useAtomValue(familyState.atomFamily(familyKey));

@@ -13,7 +13,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountMessageChannelsTabListComponentId';
-import { settingsAccountsSelectedMessageChannelStateV2 } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelStateV2';
+import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -32,7 +32,7 @@ export const SettingsAccountsMessageChannelsContainer = () => {
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const setSelectedMessageChannel = useSetAtomState(
-    settingsAccountsSelectedMessageChannelStateV2,
+    settingsAccountsSelectedMessageChannelState,
   );
 
   const { records: accounts } = useFindManyRecords<ConnectedAccount>({

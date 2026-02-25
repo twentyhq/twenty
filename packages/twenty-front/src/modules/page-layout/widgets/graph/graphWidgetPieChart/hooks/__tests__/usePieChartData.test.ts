@@ -4,18 +4,18 @@ import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/Graph
 import { renderHook } from '@testing-library/react';
 import { type PieChartDataItem } from '~/generated-metadata/graphql';
 
-const mockUseRecoilComponentValue = jest.fn();
+const mockUseAtomComponentStateValue = jest.fn();
 jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
   () => ({
-    useAtomComponentStateValue: () => mockUseRecoilComponentValue(),
+    useAtomComponentStateValue: () => mockUseAtomComponentStateValue(),
   }),
 );
 
 describe('usePieChartData', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseRecoilComponentValue.mockReturnValue([]);
+    mockUseAtomComponentStateValue.mockReturnValue([]);
   });
 
   const mockColorRegistry: GraphColorRegistry = {
@@ -140,7 +140,7 @@ describe('usePieChartData', () => {
   });
 
   it('should filter enriched data based on hidden legend ids', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['item2']);
+    mockUseAtomComponentStateValue.mockReturnValue(['item2']);
 
     const { result } = renderHook(() =>
       usePieChartData({
@@ -158,7 +158,7 @@ describe('usePieChartData', () => {
   });
 
   it('should maintain colors after filtering', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['item1']);
+    mockUseAtomComponentStateValue.mockReturnValue(['item1']);
 
     const { result } = renderHook(() =>
       usePieChartData({
@@ -172,7 +172,7 @@ describe('usePieChartData', () => {
   });
 
   it('should keep all items in legend even when filtering', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['item1', 'item2']);
+    mockUseAtomComponentStateValue.mockReturnValue(['item1', 'item2']);
 
     const { result } = renderHook(() =>
       usePieChartData({
@@ -187,7 +187,7 @@ describe('usePieChartData', () => {
   });
 
   it('should preserve original percentages after filtering', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['item2']);
+    mockUseAtomComponentStateValue.mockReturnValue(['item2']);
 
     const { result } = renderHook(() =>
       usePieChartData({
@@ -203,7 +203,10 @@ describe('usePieChartData', () => {
   });
 
   it('should handle hidden ids that do not exist in data', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['nonexistent', 'alsoNotReal']);
+    mockUseAtomComponentStateValue.mockReturnValue([
+      'nonexistent',
+      'alsoNotReal',
+    ]);
 
     const { result } = renderHook(() =>
       usePieChartData({

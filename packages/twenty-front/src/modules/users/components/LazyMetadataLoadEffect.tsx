@@ -1,5 +1,5 @@
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { recordPageLayoutsState } from '@/page-layout/states/recordPageLayoutsState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';

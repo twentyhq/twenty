@@ -3,82 +3,82 @@ import { type Getter } from 'jotai';
 import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import {
   type ComponentFamilyStateKey,
-  type ComponentFamilyStateV2,
-} from '@/ui/utilities/state/jotai/types/ComponentFamilyStateV2';
-import { type ComponentFamilySelectorV2 } from '@/ui/utilities/state/jotai/types/ComponentFamilySelectorV2';
-import { type ComponentSelectorV2 } from '@/ui/utilities/state/jotai/types/ComponentSelectorV2';
-import { type ComponentStateV2 } from '@/ui/utilities/state/jotai/types/ComponentStateV2';
-import { type FamilySelectorV2 } from '@/ui/utilities/state/jotai/types/FamilySelectorV2';
-import { type FamilyStateV2 } from '@/ui/utilities/state/jotai/types/FamilyStateV2';
-import { type SelectorV2 } from '@/ui/utilities/state/jotai/types/SelectorV2';
-import { type StateV2 } from '@/ui/utilities/state/jotai/types/StateV2';
+  type ComponentFamilyState,
+} from '@/ui/utilities/state/jotai/types/ComponentFamilyState';
+import { type ComponentFamilySelector } from '@/ui/utilities/state/jotai/types/ComponentFamilySelector';
+import { type ComponentSelector } from '@/ui/utilities/state/jotai/types/ComponentSelector';
+import { type ComponentState } from '@/ui/utilities/state/jotai/types/ComponentState';
+import { type FamilySelector } from '@/ui/utilities/state/jotai/types/FamilySelector';
+import { type FamilyState } from '@/ui/utilities/state/jotai/types/FamilyState';
+import { type Selector } from '@/ui/utilities/state/jotai/types/Selector';
+import { type State } from '@/ui/utilities/state/jotai/types/State';
 
 export const buildGetHelper =
   (jotaiGet: Getter) =>
   <ValueType, FamilyKey = never>(
     stateOrFamily:
-      | StateV2<ValueType>
-      | SelectorV2<ValueType>
-      | FamilyStateV2<ValueType, FamilyKey>
-      | FamilySelectorV2<ValueType, FamilyKey>
-      | ComponentStateV2<ValueType>
-      | ComponentFamilyStateV2<ValueType, FamilyKey>
-      | ComponentSelectorV2<ValueType>
-      | ComponentFamilySelectorV2<ValueType, FamilyKey>,
+      | State<ValueType>
+      | Selector<ValueType>
+      | FamilyState<ValueType, FamilyKey>
+      | FamilySelector<ValueType, FamilyKey>
+      | ComponentState<ValueType>
+      | ComponentFamilyState<ValueType, FamilyKey>
+      | ComponentSelector<ValueType>
+      | ComponentFamilySelector<ValueType, FamilyKey>,
     keyOrFamilyKey?:
       | FamilyKey
       | ComponentStateKey
       | ComponentFamilyStateKey<FamilyKey>,
   ): ValueType => {
-    if (stateOrFamily.type === 'ComponentStateV2') {
+    if (stateOrFamily.type === 'ComponentState') {
       return jotaiGet(
-        (stateOrFamily as ComponentStateV2<ValueType>).atomFamily(
+        (stateOrFamily as ComponentState<ValueType>).atomFamily(
           keyOrFamilyKey as ComponentStateKey,
         ),
       );
     }
 
-    if (stateOrFamily.type === 'ComponentFamilyStateV2') {
+    if (stateOrFamily.type === 'ComponentFamilyState') {
       return jotaiGet(
         (
-          stateOrFamily as ComponentFamilyStateV2<ValueType, FamilyKey>
+          stateOrFamily as ComponentFamilyState<ValueType, FamilyKey>
         ).atomFamily(keyOrFamilyKey as ComponentFamilyStateKey<FamilyKey>),
       );
     }
 
-    if (stateOrFamily.type === 'ComponentSelectorV2') {
+    if (stateOrFamily.type === 'ComponentSelector') {
       return jotaiGet(
-        (stateOrFamily as ComponentSelectorV2<ValueType>).selectorFamily(
+        (stateOrFamily as ComponentSelector<ValueType>).selectorFamily(
           keyOrFamilyKey as ComponentStateKey,
         ),
       );
     }
 
-    if (stateOrFamily.type === 'ComponentFamilySelectorV2') {
+    if (stateOrFamily.type === 'ComponentFamilySelector') {
       return jotaiGet(
         (
-          stateOrFamily as ComponentFamilySelectorV2<ValueType, FamilyKey>
+          stateOrFamily as ComponentFamilySelector<ValueType, FamilyKey>
         ).selectorFamily(keyOrFamilyKey as ComponentFamilyStateKey<FamilyKey>),
       );
     }
 
-    if (stateOrFamily.type === 'FamilyStateV2') {
+    if (stateOrFamily.type === 'FamilyState') {
       return jotaiGet(
-        (stateOrFamily as FamilyStateV2<ValueType, FamilyKey>).atomFamily(
+        (stateOrFamily as FamilyState<ValueType, FamilyKey>).atomFamily(
           keyOrFamilyKey as FamilyKey,
         ),
       );
     }
 
-    if (stateOrFamily.type === 'FamilySelectorV2') {
+    if (stateOrFamily.type === 'FamilySelector') {
       return jotaiGet(
-        (
-          stateOrFamily as FamilySelectorV2<ValueType, FamilyKey>
-        ).selectorFamily(keyOrFamilyKey as FamilyKey),
+        (stateOrFamily as FamilySelector<ValueType, FamilyKey>).selectorFamily(
+          keyOrFamilyKey as FamilyKey,
+        ),
       );
     }
 
     return jotaiGet(
-      (stateOrFamily as StateV2<ValueType> | SelectorV2<ValueType>).atom,
+      (stateOrFamily as State<ValueType> | Selector<ValueType>).atom,
     );
   };

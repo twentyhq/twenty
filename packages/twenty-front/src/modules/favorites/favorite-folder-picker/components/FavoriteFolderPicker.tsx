@@ -4,7 +4,7 @@ import { FavoriteFolderPickerSearchInput } from '@/favorites/favorite-folder-pic
 import { useFavoriteFolderPicker } from '@/favorites/favorite-folder-picker/hooks/useFavoriteFolderPicker';
 import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder-picker/states/context/FavoriteFolderPickerInstanceContext';
 import { favoriteFolderSearchFilterComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFoldersSearchFilterComponentState';
-import { isFavoriteFolderCreatingStateV2 } from '@/favorites/states/isFavoriteFolderCreatingStateV2';
+import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -31,7 +31,7 @@ export const FavoriteFolderPicker = ({
   dropdownId,
 }: FavoriteFolderPickerProps) => {
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] = useAtomState(
-    isFavoriteFolderCreatingStateV2,
+    isFavoriteFolderCreatingState,
   );
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(

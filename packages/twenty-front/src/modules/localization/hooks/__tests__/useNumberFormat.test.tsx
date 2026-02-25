@@ -1,8 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
-
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -15,9 +13,7 @@ const mockUtilFormatNumber = utilFormatNumber as jest.MockedFunction<
 >;
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <RecoilRoot>{children}</RecoilRoot>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 describe('useNumberFormat', () => {

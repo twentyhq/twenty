@@ -1,5 +1,4 @@
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
@@ -31,7 +30,7 @@ export const useUpdateObjectViewOptions = () => {
     (openRecordIn: ViewOpenRecordInType, view: GraphQLView | undefined) => {
       if (!view) return;
       setRecordIndexOpenRecordIn(openRecordIn);
-      store.set(recordIndexOpenRecordInStateV2.atom, openRecordIn);
+      store.set(recordIndexOpenRecordInState.atom, openRecordIn);
       updateCurrentView({
         openRecordIn,
       });

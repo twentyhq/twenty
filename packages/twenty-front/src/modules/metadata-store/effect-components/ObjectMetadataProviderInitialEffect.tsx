@@ -1,6 +1,6 @@
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -37,7 +37,7 @@ export const ObjectMetadataProviderInitialEffect = () => {
       }
 
       const loadedItems = store.get(objectMetadataItemsState.atom);
-      updateDraft('objects', loadedItems);
+      updateDraft('objectMetadataItems', loadedItems);
       applyChanges();
       setIsInitialized(true);
     };

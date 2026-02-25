@@ -6,7 +6,7 @@ import { type IconComponent } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { AddToNavigationDragHandle } from '@/navigation-menu-item/components/AddToNavigationDragHandle';
-import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
+import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/types/add-to-navigation-drag-payload';
 
@@ -41,7 +41,7 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
   dragIndex,
 }: CommandMenuItemWithAddToNavigationDragProps) => {
   const { t } = useLingui();
-  const setRegistry = useSetAtomState(addToNavPayloadRegistryStateV2);
+  const setRegistry = useSetAtomState(addToNavPayloadRegistryState);
   const [isHovered, setIsHovered] = useState(false);
 
   const contextualDescription = isHovered

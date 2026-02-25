@@ -4,7 +4,7 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -33,7 +33,7 @@ export const useOpenRelationToOneFieldInput = () => {
         prefix,
       });
       const fieldValue = store.get(
-        recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
+        recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
       ) as FieldRelationValue<FieldRelationToOneValue>;
 
       if (isDefined(fieldValue)) {

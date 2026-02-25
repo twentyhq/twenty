@@ -1,7 +1,6 @@
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 
@@ -25,15 +24,13 @@ const mocks = [
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider mocks={mocks} addTypename={false}>
-      <SnackBarComponentInstanceContext.Provider
-        value={{ instanceId: 'snack-bar-manager' }}
-      >
-        {children}
-      </SnackBarComponentInstanceContext.Provider>
-    </MockedProvider>
-  </RecoilRoot>
+  <MockedProvider mocks={mocks} addTypename={false}>
+    <SnackBarComponentInstanceContext.Provider
+      value={{ instanceId: 'snack-bar-manager' }}
+    >
+      {children}
+    </SnackBarComponentInstanceContext.Provider>
+  </MockedProvider>
 );
 
 describe('useFindManyObjectMetadataItems', () => {

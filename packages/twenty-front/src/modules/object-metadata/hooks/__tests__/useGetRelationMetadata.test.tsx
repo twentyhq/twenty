@@ -2,7 +2,6 @@ import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -11,9 +10,7 @@ import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockO
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <RecoilRoot>
-      <MockedProvider addTypename={false}>{children}</MockedProvider>
-    </RecoilRoot>
+    <MockedProvider addTypename={false}>{children}</MockedProvider>
   </JotaiProvider>
 );
 

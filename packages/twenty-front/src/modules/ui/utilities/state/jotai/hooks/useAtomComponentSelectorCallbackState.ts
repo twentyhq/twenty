@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type ComponentSelectorV2 } from '@/ui/utilities/state/jotai/types/ComponentSelectorV2';
+import { type ComponentSelector } from '@/ui/utilities/state/jotai/types/ComponentSelector';
 
 export const useAtomComponentSelectorCallbackState = <StateType>(
-  componentSelector: ComponentSelectorV2<StateType>,
+  componentSelector: ComponentSelector<StateType>,
   instanceIdFromProps?: string,
-): ReturnType<ComponentSelectorV2<StateType>['selectorFamily']> => {
+): ReturnType<ComponentSelector<StateType>['selectorFamily']> => {
   const componentInstanceContext = globalComponentInstanceContextMap.get(
     componentSelector.key,
   );

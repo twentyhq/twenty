@@ -1,5 +1,5 @@
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
-import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
+import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/display';
 import { RoundedIconButton } from 'twenty-ui/input';
@@ -9,7 +9,7 @@ type SendMessageButtonProps = {
 };
 
 export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
-  const agentChatInput = useAtomStateValue(agentChatInputStateV2);
+  const agentChatInput = useAtomStateValue(agentChatInputState);
   const { handleStop, isLoading, isStreaming } = useAgentChatContextOrThrow();
 
   if (isStreaming) {

@@ -5,6 +5,7 @@ import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSettingsAllRoles = () => {
+  // eslint-disable-next-line twenty/matching-state-variable
   const roleIds = useAtomStateValue(settingsRoleIdsState);
   const store = useStore();
 

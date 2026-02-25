@@ -1,10 +1,10 @@
 import { useAtom } from 'jotai';
 
-import { type StateV2 } from '@/ui/utilities/state/jotai/types/StateV2';
-import { type WritableSelectorV2 } from '@/ui/utilities/state/jotai/types/WritableSelectorV2';
+import { type State } from '@/ui/utilities/state/jotai/types/State';
+import { type WritableSelector } from '@/ui/utilities/state/jotai/types/WritableSelector';
 
 export const useAtomState = <ValueType>(
-  state: StateV2<ValueType> | WritableSelectorV2<ValueType>,
+  state: State<ValueType> | WritableSelector<ValueType>,
 ): [
   ValueType,
   (value: ValueType | ((prev: ValueType) => ValueType)) => void,

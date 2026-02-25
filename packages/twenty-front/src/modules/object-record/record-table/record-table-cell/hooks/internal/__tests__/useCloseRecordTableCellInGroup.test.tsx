@@ -1,6 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -34,42 +33,38 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot>
-        <RecordComponentInstanceContextsWrapper
-          componentInstanceId={recordTableId}
-        >
-          <RecordTableComponentInstance recordTableId={recordTableId}>
-            <RecordTableContextProvider
-              recordTableId={recordTableId}
-              viewBarId="viewBarId"
-              objectNameSingular={CoreObjectNameSingular.Person}
+      <RecordComponentInstanceContextsWrapper
+        componentInstanceId={recordTableId}
+      >
+        <RecordTableComponentInstance recordTableId={recordTableId}>
+          <RecordTableContextProvider
+            recordTableId={recordTableId}
+            viewBarId="viewBarId"
+            objectNameSingular={CoreObjectNameSingular.Person}
+          >
+            <FieldContext.Provider
+              value={{
+                fieldDefinition: textfieldDefinition,
+                recordId: 'recordId',
+                isLabelIdentifier: false,
+                isRecordFieldReadOnly: false,
+              }}
             >
-              <FieldContext.Provider
-                value={{
-                  fieldDefinition: textfieldDefinition,
-                  recordId: 'recordId',
-                  isLabelIdentifier: false,
-                  isRecordFieldReadOnly: false,
-                }}
-              >
-                <RecordTableRowContextProvider
-                  value={recordTableRowContextValue}
+              <RecordTableRowContextProvider value={recordTableRowContextValue}>
+                <RecordTableRowDraggableContextProvider
+                  value={recordTableRowDraggableContextValue}
                 >
-                  <RecordTableRowDraggableContextProvider
-                    value={recordTableRowDraggableContextValue}
+                  <RecordTableCellContext.Provider
+                    value={{ ...recordTableCellContextValue }}
                   >
-                    <RecordTableCellContext.Provider
-                      value={{ ...recordTableCellContextValue }}
-                    >
-                      {children}
-                    </RecordTableCellContext.Provider>
-                  </RecordTableRowDraggableContextProvider>
-                </RecordTableRowContextProvider>
-              </FieldContext.Provider>
-            </RecordTableContextProvider>
-          </RecordTableComponentInstance>
-        </RecordComponentInstanceContextsWrapper>
-      </RecoilRoot>
+                    {children}
+                  </RecordTableCellContext.Provider>
+                </RecordTableRowDraggableContextProvider>
+              </RecordTableRowContextProvider>
+            </FieldContext.Provider>
+          </RecordTableContextProvider>
+        </RecordTableComponentInstance>
+      </RecordComponentInstanceContextsWrapper>
     </JotaiProvider>
   );
 };

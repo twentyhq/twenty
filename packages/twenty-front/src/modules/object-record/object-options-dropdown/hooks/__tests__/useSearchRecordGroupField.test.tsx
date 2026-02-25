@@ -6,7 +6,6 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
-import { RecoilRoot } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const INSTANCE_ID = 'myViewInstanceId';
@@ -25,15 +24,13 @@ describe('useSearchRecordGroupField', () => {
     renderHook(() => useSearchRecordGroupField(), {
       wrapper: ({ children }) => (
         <JotaiProvider store={jotaiStore}>
-          <RecoilRoot>
-            <RecordIndexContextProvider value={contextValue}>
-              <ViewComponentInstanceContext.Provider
-                value={{ instanceId: INSTANCE_ID }}
-              >
-                {children}
-              </ViewComponentInstanceContext.Provider>
-            </RecordIndexContextProvider>
-          </RecoilRoot>
+          <RecordIndexContextProvider value={contextValue}>
+            <ViewComponentInstanceContext.Provider
+              value={{ instanceId: INSTANCE_ID }}
+            >
+              {children}
+            </ViewComponentInstanceContext.Provider>
+          </RecordIndexContextProvider>
         </JotaiProvider>
       ),
     });

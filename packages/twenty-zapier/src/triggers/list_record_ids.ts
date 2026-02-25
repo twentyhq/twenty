@@ -1,4 +1,4 @@
-import { performList } from '../utils/triggers/triggers.utils';
+import { performList } from 'src/utils/triggers/triggers.utils';
 
 export const listRecordIdsKey = 'list_record_ids';
 

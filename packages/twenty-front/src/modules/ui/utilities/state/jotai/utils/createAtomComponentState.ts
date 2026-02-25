@@ -3,7 +3,7 @@ import { atom } from 'jotai';
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type ComponentStateV2 } from '@/ui/utilities/state/jotai/types/ComponentStateV2';
+import { type ComponentState } from '@/ui/utilities/state/jotai/types/ComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const createAtomComponentState = <ValueType>({
@@ -14,20 +14,20 @@ export const createAtomComponentState = <ValueType>({
   key: string;
   defaultValue: ValueType;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-}): ComponentStateV2<ValueType> => {
+}): ComponentState<ValueType> => {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
 
   const atomCache = new Map<
     string,
-    ReturnType<ComponentStateV2<ValueType>['atomFamily']>
+    ReturnType<ComponentState<ValueType>['atomFamily']>
   >();
 
   const familyFunction = ({
     instanceId,
   }: ComponentStateKey): ReturnType<
-    ComponentStateV2<ValueType>['atomFamily']
+    ComponentState<ValueType>['atomFamily']
   > => {
     const existing = atomCache.get(instanceId);
 
@@ -43,7 +43,7 @@ export const createAtomComponentState = <ValueType>({
   };
 
   return {
-    type: 'ComponentStateV2',
+    type: 'ComponentState',
     key,
     atomFamily: familyFunction,
   };

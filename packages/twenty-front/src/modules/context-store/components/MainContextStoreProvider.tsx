@@ -1,5 +1,5 @@
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -76,7 +76,7 @@ export const MainContextStoreProvider = () => {
   const shouldComputeContextStore =
     (isRecordIndexPage || isRecordShowPage || isSettingsPage) &&
     !showAuthModal &&
-    viewsEntry.status === 'loaded';
+    viewsEntry.status === 'up-to-date';
 
   if (!shouldComputeContextStore) {
     return null;
