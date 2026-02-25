@@ -347,6 +347,50 @@ async function createDesktopSdkUpload() {
   }
 }
 
+// Poll Recall for the audio URL then call the Twenty end-recording logic function.
+// Recall may need time to process the upload after progress hits 100%.
+async function endCallRecordingWithRetry(windowId, maxAttempts = 10, delayMs = 5000) {
+  try {
+    const meetingsData = await fileOperationManager.readMeetingsData();
+    const meeting = meetingsData.pastMeetings.find(
+      (meetingItem) => meetingItem.recallUploadId === windowId
+        || meetingItem.recordingId === windowId,
+    );
+
+    if (!meeting?.twentyRecordId || !meeting?.recallRecordingId) {
+      console.log('[Twenty] No Twenty record or Recall recording ID found, skipping end-recording');
+      return;
+    }
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const recallResponse = await axios.get(
+          `http://localhost:13373/recording/${meeting.recallRecordingId}`,
+          { timeout: 15000 },
+        );
+
+        const audioUrl = recallResponse.data?.video_url || null;
+
+        if (audioUrl) {
+          await twentyClient.endCallRecording(meeting.twentyRecordId, audioUrl);
+          return;
+        }
+      } catch (error) {
+        console.error(`[Twenty] Attempt ${attempt}/${maxAttempts} — error fetching recording:`, error.message);
+      }
+
+      if (attempt < maxAttempts) {
+        console.log(`[Twenty] Audio URL not ready, retrying in ${delayMs / 1000}s (${attempt}/${maxAttempts})`);
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+    }
+
+    console.error('[Twenty] Audio URL never became available, giving up');
+  } catch (error) {
+    console.error('Failed to end callRecording in Twenty:', error.message);
+  }
+}
+
 // Initialize the Recall.ai SDK
 function initSDK() {
   console.log("Initializing Recall.ai SDK");
@@ -369,6 +413,8 @@ function initSDK() {
   });
 
   RecallAiSdk.addEventListener('log', (evt) => {
+    if (evt.level === 'debug') return;
+
     const prefix = `[SDK ${evt.level}] [${evt.subsystem}/${evt.category}]`;
     if (evt.level === 'error') {
       console.error(prefix, evt.message);
@@ -503,20 +549,6 @@ function initSDK() {
       windowId: evt.window.id
     });
 
-    // End the call recording in Twenty CRM before cleaning up tracking
-    if (evt.window?.id && global.activeMeetingIds?.[evt.window.id]?.twentyRecordId) {
-      const twentyRecordId = global.activeMeetingIds[evt.window.id].twentyRecordId;
-
-      if (twentyClient.isConfigured()) {
-        try {
-          await twentyClient.endCallRecording(twentyRecordId);
-          console.log('Ended callRecording in Twenty:', twentyRecordId);
-        } catch (error) {
-          console.error('Failed to end callRecording in Twenty:', error.message);
-        }
-      }
-    }
-
     // Clean up the global tracking when a meeting ends
     if (evt.window && evt.window.id && global.activeMeetingIds && global.activeMeetingIds[evt.window.id]) {
       console.log(`Cleaning up meeting tracking for: ${evt.window.id}`);
@@ -607,10 +639,12 @@ function initSDK() {
     //   progress
     // });
 
-    // Update the note with upload progress if needed
     if (progress === 100) {
       console.log(`Upload completed for recording: ${window.id}`);
-      // Could update the note here with upload completion status
+
+      if (twentyClient.isConfigured()) {
+        endCallRecordingWithRetry(window.id);
+      }
     }
   });
 

@@ -8,6 +8,10 @@ function getApiUrl() {
   return process.env.TWENTY_API_URL;
 }
 
+function getWorkspaceSubdomain() {
+  return process.env.TWENTY_WORKSPACE_SUBDOMAIN;
+}
+
 function getApiKey() {
   return process.env.TWENTY_API_KEY;
 }
@@ -74,24 +78,35 @@ async function createCallRecording(name) {
   }
 }
 
-async function endCallRecording(recordId) {
-  const endedAt = new Date().toISOString();
-
+async function endCallRecording(callRecordingId, audioUrl) {
   console.log(
-    `${LOG_PREFIX} Ending callRecording ${recordId} at ${endedAt}`,
+    `${LOG_PREFIX} Ending callRecording ${callRecordingId} — audioUrl=${audioUrl}`,
   );
 
-  const client = getClient();
-
   try {
-    const response = await client.patch(`/callRecordings/${recordId}`, {
-      endedAt,
-    });
-    const record = response.data?.data?.updateCallRecording;
+    const apiUrl = new URL(getApiUrl());
+    const subdomain = getWorkspaceSubdomain();
+    const host = subdomain
+      ? `${subdomain}.${apiUrl.hostname}:${apiUrl.port}`
+      : apiUrl.host;
 
-    console.log(`${LOG_PREFIX} callRecording ended — id=${record?.id}`);
+    const response = await axios.post(
+      `${getApiUrl()}/s/end-recording`,
+      { callRecordingId, audioUrl },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Host: host,
+        },
+        timeout: 30000,
+      },
+    );
 
-    return record;
+    console.log(
+      `${LOG_PREFIX} callRecording ended — id=${callRecordingId}`,
+    );
+
+    return response.data;
   } catch (error) {
     logError('endCallRecording', error);
     throw error;
