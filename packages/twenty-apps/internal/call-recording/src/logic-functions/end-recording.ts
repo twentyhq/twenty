@@ -2,6 +2,7 @@ import {
   RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER,
   TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/objects/call-recording';
+import { summarizeTranscript } from 'src/utils/summarize-transcript';
 import { defineLogicFunction } from 'twenty-sdk';
 import Twenty from 'twenty-sdk/generated';
 import { z } from 'zod';
@@ -153,13 +154,38 @@ const handler = async (event: any) => {
       endedAt: true,
     },
   });
+
+  if (transcriptData?.transcript?.markdown) {
+    try {
+      const summaryMarkdown = await summarizeTranscript(
+        transcriptData.transcript.markdown,
+      );
+
+      if (summaryMarkdown) {
+        // TODO: remove `as any` after running `yarn twenty app:dev` to regenerate the typed client
+        await client.mutation({
+          updateCallRecording: {
+            __args: {
+              id: callRecording.id,
+              data: {
+                summary: { blocknote: null, markdown: summaryMarkdown },
+              } as any,
+            },
+            id: true,
+          },
+        });
+      }
+    } catch {
+      // AI summarization is best-effort; don't fail the end-recording flow
+    }
+  }
 };
 
 export default defineLogicFunction({
   universalIdentifier: '471353f6-5933-417b-8062-9ad0fc44cd7f',
   name: 'end-recording',
   description: 'Endpoint to end a call recording',
-  timeoutSeconds: 30,
+  timeoutSeconds: 60,
   handler,
   httpRouteTriggerSettings: {
     path: '/end-recording',

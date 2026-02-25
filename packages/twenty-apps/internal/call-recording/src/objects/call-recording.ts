@@ -21,6 +21,9 @@ export const TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER =
 export const TRANSCRIPT_FIELD_UNIVERSAL_IDENTIFIER =
   'a1d4e7c3-5b28-4f96-8e3a-0c7d9f2b6a15';
 
+export const SUMMARY_FIELD_UNIVERSAL_IDENTIFIER =
+  '55eb083f-0b68-4f5c-bcd7-c853ad77ba11';
+
 export default defineObject({
   universalIdentifier: CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
   nameSingular: 'callRecording',
@@ -80,6 +83,14 @@ export default defineObject({
       label: 'Transcript',
       description: 'Human-readable transcript of the call',
       icon: 'IconMessage',
+    },
+    {
+      universalIdentifier: SUMMARY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT_V2,
+      name: 'summary',
+      label: 'Summary',
+      description: 'AI-generated summary of the call',
+      icon: 'IconSparkles',
     },
   ],
 });
