@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type MessageAttachmentWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-attachment.workspace-entity';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -223,6 +224,41 @@ export class MessagingMessageService {
           messageChannelMessageAssociationsToCreate,
           transactionManager,
         );
+
+        const messageAttachmentRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageAttachmentWorkspaceEntity>(
+            workspaceId,
+            'messageAttachment',
+          );
+
+        const messageAttachmentsToCreate: Partial<MessageAttachmentWorkspaceEntity>[] =
+          [];
+
+        for (const message of messages) {
+          const accumulator = messageAccumulatorMap.get(message.externalId);
+
+          if (!isDefined(accumulator?.messageToCreate)) {
+            continue;
+          }
+
+          for (const attachment of message.attachments) {
+            messageAttachmentsToCreate.push({
+              id: v4(),
+              name: attachment.filename,
+              mimeType: attachment.mimeType ?? null,
+              size: attachment.size ?? null,
+              externalIdentifier: attachment.externalIdentifier ?? null,
+              messageId: accumulator.messageToCreate.id,
+            });
+          }
+        }
+
+        if (messageAttachmentsToCreate.length > 0) {
+          await messageAttachmentRepository.insert(
+            messageAttachmentsToCreate,
+            transactionManager,
+          );
+        }
 
         const messageExternalIdsAndIdsMap = new Map<string, string>();
         const messageExternalIdToMessageChannelMessageAssociationIdMap =

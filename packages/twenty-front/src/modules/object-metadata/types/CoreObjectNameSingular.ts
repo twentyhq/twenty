@@ -14,6 +14,7 @@ export enum CoreObjectNameSingular {
   Favorite = 'favorite',
   FavoriteFolder = 'favoriteFolder',
   Message = 'message',
+  MessageAttachment = 'messageAttachment',
   MessageChannel = 'messageChannel',
   MessageParticipant = 'messageParticipant',
   MessageFolder = 'messageFolder',

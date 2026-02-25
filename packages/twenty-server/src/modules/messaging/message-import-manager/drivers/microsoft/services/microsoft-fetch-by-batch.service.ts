@@ -37,7 +37,7 @@ export class MicrosoftFetchByBatchService {
       const batchRequests = batchMessageIds.map((messageId, index) => ({
         id: (index + 1).toString(),
         method: 'GET',
-        url: `/me/messages/${messageId}`,
+        url: `/me/messages/${messageId}?$expand=attachments($select=id,name,contentType,size)`,
         headers: {
           'Content-Type': 'application/json',
           Prefer: 'outlook.body-content-type="text"',

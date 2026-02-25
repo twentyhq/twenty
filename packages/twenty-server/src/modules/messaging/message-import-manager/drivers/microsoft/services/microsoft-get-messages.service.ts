@@ -150,7 +150,19 @@ export class MicrosoftGetMessagesService {
             )
           : MessageDirection.INCOMING,
         participants,
-        attachments: [],
+        attachments: (response.attachments ?? []).map(
+          (attachment: {
+            id?: string;
+            name?: string;
+            contentType?: string;
+            size?: number;
+          }) => ({
+            filename: attachment.name || 'unnamed-attachment',
+            mimeType: attachment.contentType,
+            size: attachment.size,
+            externalIdentifier: attachment.id,
+          }),
+        ),
         messageFolderExternalIds: response.parentFolderId
           ? [response.parentFolderId]
           : [],

@@ -243,8 +243,14 @@ export class ImapGetMessagesService {
   }
 
   private extractAttachments(parsed: ParsedMail) {
-    return (parsed.attachments || []).map((attachment) => ({
+    return (parsed.attachments || []).map((attachment, index) => ({
       filename: attachment.filename || 'unnamed-attachment',
+      mimeType: attachment.mimeType,
+      size:
+        typeof attachment.content === 'string'
+          ? attachment.content.length
+          : attachment.content?.byteLength,
+      externalIdentifier: attachment.contentId || `index:${index}`,
     }));
   }
 }

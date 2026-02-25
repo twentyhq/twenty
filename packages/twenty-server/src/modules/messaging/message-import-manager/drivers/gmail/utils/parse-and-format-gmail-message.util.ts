@@ -83,7 +83,12 @@ export const parseAndFormatGmailMessage = (
     direction: computeMessageDirection(from || '', connectedAccount),
     participants,
     text: sanitizeString(textWithoutReplyQuotations),
-    attachments,
+    attachments: attachments.map((attachment) => ({
+      filename: attachment.filename,
+      mimeType: attachment.mimeType,
+      size: attachment.size,
+      externalIdentifier: attachment.id,
+    })),
     messageFolderExternalIds: labelIds,
     labelIds,
   };

@@ -42,5 +42,11 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
       person: true,
       workspaceMember: true,
     },
+    messageAttachments: {
+      id: true,
+      name: true,
+      mimeType: true,
+      size: true,
+    },
   },
 });

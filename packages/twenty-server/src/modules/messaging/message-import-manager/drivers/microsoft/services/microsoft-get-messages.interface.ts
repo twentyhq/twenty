@@ -41,6 +41,12 @@ export interface MicrosoftGraphBatchResponse {
           address?: string;
         };
       };
+      attachments?: Array<{
+        id?: string;
+        name?: string;
+        contentType?: string;
+        size?: number;
+      }>;
     };
   }[];
 }

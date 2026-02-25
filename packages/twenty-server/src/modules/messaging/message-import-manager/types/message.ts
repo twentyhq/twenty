@@ -9,6 +9,7 @@ export type Message = Omit<
   | 'deletedAt'
   | 'messageChannelMessageAssociations'
   | 'messageParticipants'
+  | 'messageAttachments'
   | 'messageThread'
   | 'messageThreadId'
   | 'messageFolders'
@@ -16,6 +17,9 @@ export type Message = Omit<
 > & {
   attachments: {
     filename: string;
+    mimeType?: string;
+    size?: number;
+    externalIdentifier?: string;
   }[];
   externalId: string;
   messageThreadExternalId: string;

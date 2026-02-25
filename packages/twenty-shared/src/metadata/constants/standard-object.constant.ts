@@ -1153,6 +1153,53 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  messageAttachment: {
+    universalIdentifier: 'b1c2d3e4-f5a6-4b7c-8d9e-0f1a2b3c4d5e',
+    fields: {
+      id: { universalIdentifier: 'c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f' },
+      createdAt: {
+        universalIdentifier: 'd1e2f3a4-b5c6-4d7e-8f9a-1b2c3d4e5f6a',
+      },
+      updatedAt: {
+        universalIdentifier: 'e1f2a3b4-c5d6-4e7f-8a9b-2c3d4e5f6a7b',
+      },
+      deletedAt: {
+        universalIdentifier: 'f1a2b3c4-d5e6-4f7a-8b9c-3d4e5f6a7b8c',
+      },
+      name: {
+        universalIdentifier: 'a2b3c4d5-e6f7-4a8b-9c0d-4e5f6a7b8c9d',
+      },
+      mimeType: {
+        universalIdentifier: 'b2c3d4e5-f6a7-4b8c-9d0e-5f6a7b8c9d0e',
+      },
+      size: {
+        universalIdentifier: 'c2d3e4f5-a6b7-4c8d-9e0f-6a7b8c9d0e1f',
+      },
+      externalIdentifier: {
+        universalIdentifier: 'd2e3f4a5-b6c7-4d8e-9f0a-7b8c9d0e1f2a',
+      },
+      message: {
+        universalIdentifier: 'e2f3a4b5-c6d7-4e8f-9a0b-8c9d0e1f2a3b',
+      },
+      createdBy: {
+        universalIdentifier: 'f2a3b4c5-d6e7-4f8a-9b0c-9d0e1f2a3b4c',
+      },
+      updatedBy: {
+        universalIdentifier: 'a3b4c5d6-e7f8-4a9b-8c0d-0e1f2a3b4c5d',
+      },
+      position: {
+        universalIdentifier: 'b3c4d5e6-f7a8-4b9c-8d0e-1f2a3b4c5d6e',
+      },
+      searchVector: {
+        universalIdentifier: 'c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f',
+      },
+    },
+    indexes: {
+      messageIdIndex: {
+        universalIdentifier: 'd3e4f5a6-b7c8-4d9e-8f0a-3b4c5d6e7f8a',
+      },
+    },
+  },
   messageThread: {
     universalIdentifier: '20202020-849a-4c3e-84f5-a25a7d802271',
     fields: {
@@ -1244,6 +1291,9 @@ export const STANDARD_OBJECTS = {
       },
       searchVector: {
         universalIdentifier: '529b6008-4a12-4d48-bbc3-26a3f199bafd',
+      },
+      messageAttachments: {
+        universalIdentifier: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d',
       },
     },
     indexes: {

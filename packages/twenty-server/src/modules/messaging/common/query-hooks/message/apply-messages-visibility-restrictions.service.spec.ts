@@ -22,6 +22,7 @@ const createMockMessage = (
   messageThread: null,
   messageChannelMessageAssociations: [],
   messageParticipants: [],
+  messageAttachments: [],
   deletedAt: null,
   createdAt: '2024-03-20T09:00:00Z',
   updatedAt: '2024-03-20T09:00:00Z',

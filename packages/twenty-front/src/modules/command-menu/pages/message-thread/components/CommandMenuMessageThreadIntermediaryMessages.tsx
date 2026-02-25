@@ -30,6 +30,7 @@ export const CommandMenuMessageThreadIntermediaryMessages = ({
         participants={message.messageParticipants}
         body={message.text}
         sentAt={message.receivedAt}
+        attachments={message.messageAttachments}
       />
     ))
   ) : (

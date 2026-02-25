@@ -1,11 +1,13 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
+import { EmailMessageAttachments } from '@/activities/emails/components/EmailMessageAttachments';
 import { EmailThreadMessageBody } from '@/activities/emails/components/EmailThreadMessageBody';
 import { EmailThreadMessageBodyPreview } from '@/activities/emails/components/EmailThreadMessageBodyPreview';
 import { EmailThreadMessageReceivers } from '@/activities/emails/components/EmailThreadMessageReceivers';
 import { EmailThreadMessageSender } from '@/activities/emails/components/EmailThreadMessageSender';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
+import { type EmailThreadMessageAttachment } from '@/activities/emails/types/EmailThreadMessage';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { MessageParticipantRole } from 'twenty-shared/types';
@@ -36,6 +38,7 @@ type EmailThreadMessageProps = {
   sentAt: string;
   sender: EmailThreadMessageParticipant;
   participants: EmailThreadMessageParticipant[];
+  attachments?: EmailThreadMessageAttachment[];
   isExpanded?: boolean;
 };
 
@@ -44,6 +47,7 @@ export const EmailThreadMessage = ({
   sentAt,
   sender,
   participants,
+  attachments,
   isExpanded = false,
 }: EmailThreadMessageProps) => {
   const [isOpen, setIsOpen] = useState(isExpanded);
@@ -74,7 +78,12 @@ export const EmailThreadMessage = ({
             visibility={MessageChannelVisibility.METADATA}
           />
         ) : isOpen ? (
-          <EmailThreadMessageBody body={body} isDisplayed />
+          <>
+            <EmailThreadMessageBody body={body} isDisplayed />
+            {attachments && attachments.length > 0 && (
+              <EmailMessageAttachments attachments={attachments} />
+            )}
+          </>
         ) : (
           <EmailThreadMessageBodyPreview body={body} />
         )}

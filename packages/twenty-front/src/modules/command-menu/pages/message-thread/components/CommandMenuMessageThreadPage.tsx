@@ -145,6 +145,7 @@ export const CommandMenuMessageThreadPage = () => {
                 participants={message.messageParticipants}
                 body={message.text}
                 sentAt={message.receivedAt}
+                attachments={message.messageAttachments}
               />
             ))}
             <CommandMenuMessageThreadIntermediaryMessages
@@ -156,6 +157,7 @@ export const CommandMenuMessageThreadPage = () => {
               participants={lastMessage.messageParticipants}
               body={lastMessage.text}
               sentAt={lastMessage.receivedAt}
+              attachments={lastMessage.messageAttachments}
               isExpanded
             />
             <CustomResolverFetchMoreLoader
