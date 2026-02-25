@@ -579,7 +579,12 @@ var types_default = {
     558,
     574,
     575,
-    576
+    576,
+    595,
+    625,
+    626,
+    627,
+    629
   ],
   "types": {
     "TimelineCalendarEventParticipant": {
@@ -3152,6 +3157,201 @@ var types_default = {
           "orderByForRecords": [
             591,
             "[WorkspaceMemberOrderByInput]"
+          ],
+          "viewId": [
+            2
+          ],
+          "limit": [
+            10
+          ],
+          "offsetForRecords": [
+            10
+          ]
+        }
+      ],
+      "cloudUsers2": [
+        598,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            605
+          ],
+          "orderBy": [
+            607,
+            "[CloudUser2OrderByInput]"
+          ]
+        }
+      ],
+      "cloudUser2": [
+        596,
+        {
+          "filter": [
+            605,
+            "CloudUser2FilterInput!"
+          ]
+        }
+      ],
+      "cloudUsers2GroupBy": [
+        599,
+        {
+          "groupBy": [
+            610,
+            "[CloudUser2GroupByInput!]!"
+          ],
+          "filter": [
+            605
+          ],
+          "orderBy": [
+            608,
+            "[CloudUser2OrderByWithGroupByInput]"
+          ],
+          "orderByForRecords": [
+            607,
+            "[CloudUser2OrderByInput]"
+          ],
+          "viewId": [
+            2
+          ],
+          "limit": [
+            10
+          ],
+          "offsetForRecords": [
+            10
+          ]
+        }
+      ],
+      "cloudUserWorkspaces2": [
+        613,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            620
+          ],
+          "orderBy": [
+            621,
+            "[CloudUserWorkspace2OrderByInput]"
+          ]
+        }
+      ],
+      "cloudUserWorkspace2": [
+        611,
+        {
+          "filter": [
+            620,
+            "CloudUserWorkspace2FilterInput!"
+          ]
+        }
+      ],
+      "cloudUserWorkspaces2GroupBy": [
+        614,
+        {
+          "groupBy": [
+            624,
+            "[CloudUserWorkspace2GroupByInput!]!"
+          ],
+          "filter": [
+            620
+          ],
+          "orderBy": [
+            622,
+            "[CloudUserWorkspace2OrderByWithGroupByInput]"
+          ],
+          "orderByForRecords": [
+            621,
+            "[CloudUserWorkspace2OrderByInput]"
+          ],
+          "viewId": [
+            2
+          ],
+          "limit": [
+            10
+          ],
+          "offsetForRecords": [
+            10
+          ]
+        }
+      ],
+      "cloudWorkspaces2": [
+        631,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            638
+          ],
+          "orderBy": [
+            643,
+            "[CloudWorkspace2OrderByInput]"
+          ]
+        }
+      ],
+      "cloudWorkspace2": [
+        628,
+        {
+          "filter": [
+            638,
+            "CloudWorkspace2FilterInput!"
+          ]
+        }
+      ],
+      "cloudWorkspaces2GroupBy": [
+        632,
+        {
+          "groupBy": [
+            646,
+            "[CloudWorkspace2GroupByInput!]!"
+          ],
+          "filter": [
+            638
+          ],
+          "orderBy": [
+            644,
+            "[CloudWorkspace2OrderByWithGroupByInput]"
+          ],
+          "orderByForRecords": [
+            643,
+            "[CloudWorkspace2OrderByInput]"
           ],
           "viewId": [
             2
@@ -6568,6 +6768,318 @@ var types_default = {
           ]
         }
       ],
+      "createCloudUsers2": [
+        596,
+        {
+          "data": [
+            603,
+            "[CloudUser2CreateInput!]!"
+          ],
+          "upsert": [
+            6
+          ]
+        }
+      ],
+      "createCloudUser2": [
+        596,
+        {
+          "data": [
+            603,
+            "CloudUser2CreateInput!"
+          ],
+          "upsert": [
+            6
+          ]
+        }
+      ],
+      "updateCloudUser2": [
+        596,
+        {
+          "id": [
+            2,
+            "UUID!"
+          ],
+          "data": [
+            604,
+            "CloudUser2UpdateInput!"
+          ]
+        }
+      ],
+      "deleteCloudUser2": [
+        596,
+        {
+          "id": [
+            2,
+            "UUID!"
+          ]
+        }
+      ],
+      "updateCloudUsers2": [
+        596,
+        {
+          "data": [
+            604,
+            "CloudUser2UpdateInput!"
+          ],
+          "filter": [
+            605,
+            "CloudUser2FilterInput!"
+          ]
+        }
+      ],
+      "deleteCloudUsers2": [
+        596,
+        {
+          "filter": [
+            605,
+            "CloudUser2FilterInput!"
+          ]
+        }
+      ],
+      "destroyCloudUser2": [
+        596,
+        {
+          "id": [
+            2,
+            "UUID!"
+          ]
+        }
+      ],
+      "destroyCloudUsers2": [
+        596,
+        {
+          "filter": [
+            605,
+            "CloudUser2FilterInput!"
+          ]
+        }
+      ],
+      "restoreCloudUser2": [
+        596,
+        {
+          "id": [
+            2,
+            "UUID!"
+          ]
+        }
+      ],
+      "restoreCloudUsers2": [
+        596,
+        {
+          "filter": [
+            605,
+            "CloudUser2FilterInput!"
+          ]
+        }
+      ],
+      "createCloudUserWorkspaces2": [
+        611,
+        {
+          "data": [
+            618,
+            "[CloudUserWorkspace2CreateInput!]!"
+          ],
+          "upsert": [
+            6
+          ]
+        }
+      ],
+      "createCloudUserWorkspace2": [
+        611,
+        {
+          "data": [
+            618,
+            "CloudUserWorkspace2CreateInput!"
+          ],
+          "upsert": [
+            6
+          ]
+        }
+      ],
+      "updateCloudUserWorkspace2": [
+        611,
+        {
+          "id": [
+            2,
+            "UUID!"
+          ],
+          "data": [
+            619,
+            "CloudUserWorkspace2UpdateInput!"
+          ]
+        }
+      ],
+      "deleteCloudUserWorkspace2": [
+        611,
+        {
+          "id": [
+            2,
+            "UUID!"
+          ]
+        }
+      ],
+      "updateCloudUserWorkspaces2": [
+        611,
+        {
+          "data": [
+            619,
+            "CloudUserWorkspace2UpdateInput!"
+          ],
+          "filter": [
+            620,
+            "CloudUserWorkspace2FilterInput!"
+          ]
+        }
+      ],
+      "deleteCloudUserWorkspaces2": [
+        611,
+        {
+          "filter": [
+            620,
+            "CloudUserWorkspace2FilterInput!"
+          ]
+        }
+      ],
+      "destroyCloudUserWorkspace2": [
+        611,
+        {
+          "id": [
+            2,
+            "UUID!"
+          ]
+        }
+      ],
+      "destroyCloudUserWorkspaces2": [
+        611,
+        {
+          "filter": [
+            620,
+            "CloudUserWorkspace2FilterInput!"
+          ]
+        }
+      ],
+      "restoreCloudUserWorkspace2": [
+        611,
+        {
+          "id": [
+            2,
+            "UUID!"
+          ]
+        }
+      ],
+      "restoreCloudUserWorkspaces2": [
+        611,
+        {
+          "filter": [
+            620,
+            "CloudUserWorkspace2FilterInput!"
+          ]
+        }
+      ],
+      "createCloudWorkspaces2": [
+        628,
+        {
+          "data": [
+            636,
+            "[CloudWorkspace2CreateInput!]!"
+          ],
+          "upsert": [
+            6
+          ]
+        }
+      ],
+      "createCloudWorkspace2": [
+        628,
+        {
+          "data": [
+            636,
+            "CloudWorkspace2CreateInput!"
+          ],
+          "upsert": [
+            6
+          ]
+        }
+      ],
+      "updateCloudWorkspace2": [
+        628,
+        {
+          "id": [
+            2,
+            "UUID!"
+          ],
+          "data": [
+            637,
+            "CloudWorkspace2UpdateInput!"
+          ]
+        }
+      ],
+      "deleteCloudWorkspace2": [
+        628,
+        {
+          "id": [
+            2,
+            "UUID!"
+          ]
+        }
+      ],
+      "updateCloudWorkspaces2": [
+        628,
+        {
+          "data": [
+            637,
+            "CloudWorkspace2UpdateInput!"
+          ],
+          "filter": [
+            638,
+            "CloudWorkspace2FilterInput!"
+          ]
+        }
+      ],
+      "deleteCloudWorkspaces2": [
+        628,
+        {
+          "filter": [
+            638,
+            "CloudWorkspace2FilterInput!"
+          ]
+        }
+      ],
+      "destroyCloudWorkspace2": [
+        628,
+        {
+          "id": [
+            2,
+            "UUID!"
+          ]
+        }
+      ],
+      "destroyCloudWorkspaces2": [
+        628,
+        {
+          "filter": [
+            638,
+            "CloudWorkspace2FilterInput!"
+          ]
+        }
+      ],
+      "restoreCloudWorkspace2": [
+        628,
+        {
+          "id": [
+            2,
+            "UUID!"
+          ]
+        }
+      ],
+      "restoreCloudWorkspaces2": [
+        628,
+        {
+          "filter": [
+            638,
+            "CloudWorkspace2FilterInput!"
+          ]
+        }
+      ],
       "__typename": [
         1
       ]
@@ -7686,6 +8198,15 @@ var types_default = {
       "targetWorkflowId": [
         22
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
       "targetTask": [
         469
       ],
@@ -7706,6 +8227,15 @@ var types_default = {
       ],
       "targetWorkflow": [
         513
+      ],
+      "targetCloudUser2": [
+        596
+      ],
+      "targetCloudUserWorkspace2": [
+        611
+      ],
+      "targetCloudWorkspace2": [
+        628
       ],
       "__typename": [
         1
@@ -8049,6 +8579,51 @@ var types_default = {
       "percentageNotEmptyTargetWorkflow": [
         13
       ],
+      "countUniqueValuesTargetCloudUser2": [
+        10
+      ],
+      "countEmptyTargetCloudUser2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUser2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUser2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUser2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudWorkspace2": [
+        13
+      ],
       "edges": [
         116
       ],
@@ -8384,6 +8959,51 @@ var types_default = {
       "percentageNotEmptyTargetWorkflow": [
         13
       ],
+      "countUniqueValuesTargetCloudUser2": [
+        10
+      ],
+      "countEmptyTargetCloudUser2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUser2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUser2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUser2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudWorkspace2": [
+        13
+      ],
       "edges": [
         116
       ],
@@ -8503,6 +9123,24 @@ var types_default = {
       "targetWorkflow": [
         517
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUser2": [
+        600
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2": [
+        615
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2": [
+        633
+      ],
       "__typename": [
         1
       ]
@@ -8597,6 +9235,24 @@ var types_default = {
       "targetWorkflow": [
         517
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUser2": [
+        600
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2": [
+        615
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2": [
+        633
+      ],
       "__typename": [
         1
       ]
@@ -8657,6 +9313,15 @@ var types_default = {
         33
       ],
       "targetWorkflowId": [
+        33
+      ],
+      "targetCloudUser2Id": [
+        33
+      ],
+      "targetCloudUserWorkspace2Id": [
+        33
+      ],
+      "targetCloudWorkspace2Id": [
         33
       ],
       "and": [
@@ -8811,6 +9476,24 @@ var types_default = {
       "targetWorkflow": [
         524
       ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        607
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        621
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        643
+      ],
       "__typename": [
         1
       ]
@@ -8896,6 +9579,24 @@ var types_default = {
       ],
       "targetWorkflow": [
         525
+      ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        608
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        622
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        644
       ],
       "__typename": [
         1
@@ -9145,6 +9846,24 @@ var types_default = {
       "targetWorkflow": [
         524
       ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        607
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        621
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        643
+      ],
       "__typename": [
         1
       ]
@@ -9206,6 +9925,15 @@ var types_default = {
       ],
       "targetWorkflow": [
         527
+      ],
+      "targetCloudUser2": [
+        610
+      ],
+      "targetCloudUserWorkspace2": [
+        624
+      ],
+      "targetCloudWorkspace2": [
+        646
       ],
       "__typename": [
         1
@@ -19519,6 +20247,15 @@ var types_default = {
       "favoriteFolderId": [
         22
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
       "company": [
         217
       ],
@@ -19551,6 +20288,15 @@ var types_default = {
       ],
       "favoriteFolder": [
         275
+      ],
+      "targetCloudUser2": [
+        596
+      ],
+      "targetCloudUserWorkspace2": [
+        611
+      ],
+      "targetCloudWorkspace2": [
+        628
       ],
       "__typename": [
         1
@@ -20025,6 +20771,24 @@ var types_default = {
       "favoriteFolder": [
         279
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUser2": [
+        600
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2": [
+        615
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2": [
+        633
+      ],
       "__typename": [
         1
       ]
@@ -20123,6 +20887,24 @@ var types_default = {
       "favoriteFolder": [
         279
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUser2": [
+        600
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2": [
+        615
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2": [
+        633
+      ],
       "__typename": [
         1
       ]
@@ -20186,6 +20968,15 @@ var types_default = {
         33
       ],
       "favoriteFolderId": [
+        33
+      ],
+      "targetCloudUser2Id": [
+        33
+      ],
+      "targetCloudUserWorkspace2Id": [
+        33
+      ],
+      "targetCloudWorkspace2Id": [
         33
       ],
       "and": [
@@ -20295,6 +21086,24 @@ var types_default = {
       "favoriteFolder": [
         285
       ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        607
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        621
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        643
+      ],
       "__typename": [
         1
       ]
@@ -20395,6 +21204,24 @@ var types_default = {
       ],
       "favoriteFolder": [
         286
+      ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        608
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        622
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        644
       ],
       "__typename": [
         1
@@ -20623,6 +21450,24 @@ var types_default = {
       "favoriteFolder": [
         285
       ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        607
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        621
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        643
+      ],
       "__typename": [
         1
       ]
@@ -20687,6 +21532,15 @@ var types_default = {
       ],
       "favoriteFolder": [
         288
+      ],
+      "targetCloudUser2": [
+        610
+      ],
+      "targetCloudUserWorkspace2": [
+        624
+      ],
+      "targetCloudWorkspace2": [
+        646
       ],
       "__typename": [
         1
@@ -30884,6 +31738,15 @@ var types_default = {
       "targetOpportunityId": [
         22
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
       "targetCompany": [
         217
       ],
@@ -30895,6 +31758,15 @@ var types_default = {
       ],
       "targetOpportunity": [
         438
+      ],
+      "targetCloudUser2": [
+        596
+      ],
+      "targetCloudUserWorkspace2": [
+        611
+      ],
+      "targetCloudWorkspace2": [
+        628
       ],
       "__typename": [
         1
@@ -31098,6 +31970,51 @@ var types_default = {
       "percentageNotEmptyTargetOpportunity": [
         13
       ],
+      "countUniqueValuesTargetCloudUser2": [
+        10
+      ],
+      "countEmptyTargetCloudUser2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUser2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUser2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUser2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudWorkspace2": [
+        13
+      ],
       "edges": [
         424
       ],
@@ -31295,6 +32212,51 @@ var types_default = {
       "percentageNotEmptyTargetOpportunity": [
         13
       ],
+      "countUniqueValuesTargetCloudUser2": [
+        10
+      ],
+      "countEmptyTargetCloudUser2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUser2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUser2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUser2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudWorkspace2": [
+        13
+      ],
       "edges": [
         424
       ],
@@ -31384,6 +32346,24 @@ var types_default = {
       "targetOpportunity": [
         442
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUser2": [
+        600
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2": [
+        615
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2": [
+        633
+      ],
       "__typename": [
         1
       ]
@@ -31437,6 +32417,24 @@ var types_default = {
       "targetOpportunity": [
         442
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUser2": [
+        600
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2": [
+        615
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2": [
+        633
+      ],
       "__typename": [
         1
       ]
@@ -31476,6 +32474,15 @@ var types_default = {
         33
       ],
       "targetOpportunityId": [
+        33
+      ],
+      "targetCloudUser2Id": [
+        33
+      ],
+      "targetCloudUserWorkspace2Id": [
+        33
+      ],
+      "targetCloudWorkspace2Id": [
         33
       ],
       "and": [
@@ -31540,6 +32547,24 @@ var types_default = {
       "targetOpportunity": [
         449
       ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        607
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        621
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        643
+      ],
       "__typename": [
         1
       ]
@@ -31595,6 +32620,24 @@ var types_default = {
       ],
       "targetOpportunity": [
         450
+      ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        608
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        622
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        644
       ],
       "__typename": [
         1
@@ -31766,6 +32809,24 @@ var types_default = {
       "targetOpportunity": [
         449
       ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        607
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        621
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        643
+      ],
       "__typename": [
         1
       ]
@@ -31806,6 +32867,15 @@ var types_default = {
       ],
       "targetOpportunity": [
         452
+      ],
+      "targetCloudUser2": [
+        610
+      ],
+      "targetCloudUserWorkspace2": [
+        624
+      ],
+      "targetCloudWorkspace2": [
+        646
       ],
       "__typename": [
         1
@@ -35888,6 +36958,15 @@ var types_default = {
       "taskId": [
         22
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
       "targetCompany": [
         217
       ],
@@ -35899,6 +36978,15 @@ var types_default = {
       ],
       "task": [
         469
+      ],
+      "targetCloudUser2": [
+        596
+      ],
+      "targetCloudUserWorkspace2": [
+        611
+      ],
+      "targetCloudWorkspace2": [
+        628
       ],
       "__typename": [
         1
@@ -36102,6 +37190,51 @@ var types_default = {
       "percentageNotEmptyTargetPerson": [
         13
       ],
+      "countUniqueValuesTargetCloudUser2": [
+        10
+      ],
+      "countEmptyTargetCloudUser2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUser2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUser2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUser2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudWorkspace2": [
+        13
+      ],
       "edges": [
         485
       ],
@@ -36299,6 +37432,51 @@ var types_default = {
       "percentageNotEmptyTargetPerson": [
         13
       ],
+      "countUniqueValuesTargetCloudUser2": [
+        10
+      ],
+      "countEmptyTargetCloudUser2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUser2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUser2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUser2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudWorkspace2": [
+        13
+      ],
       "edges": [
         485
       ],
@@ -36388,6 +37566,24 @@ var types_default = {
       "task": [
         473
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUser2": [
+        600
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2": [
+        615
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2": [
+        633
+      ],
       "__typename": [
         1
       ]
@@ -36441,6 +37637,24 @@ var types_default = {
       "task": [
         473
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUser2": [
+        600
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2": [
+        615
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2": [
+        633
+      ],
       "__typename": [
         1
       ]
@@ -36480,6 +37694,15 @@ var types_default = {
         33
       ],
       "taskId": [
+        33
+      ],
+      "targetCloudUser2Id": [
+        33
+      ],
+      "targetCloudUserWorkspace2Id": [
+        33
+      ],
+      "targetCloudWorkspace2Id": [
         33
       ],
       "and": [
@@ -36544,6 +37767,24 @@ var types_default = {
       "task": [
         480
       ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        607
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        621
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        643
+      ],
       "__typename": [
         1
       ]
@@ -36599,6 +37840,24 @@ var types_default = {
       ],
       "task": [
         481
+      ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        608
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        622
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        644
       ],
       "__typename": [
         1
@@ -36770,6 +38029,24 @@ var types_default = {
       "task": [
         480
       ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        607
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        621
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        643
+      ],
       "__typename": [
         1
       ]
@@ -36810,6 +38087,15 @@ var types_default = {
       ],
       "task": [
         483
+      ],
+      "targetCloudUser2": [
+        610
+      ],
+      "targetCloudUserWorkspace2": [
+        624
+      ],
+      "targetCloudWorkspace2": [
+        646
       ],
       "__typename": [
         1
@@ -36888,6 +38174,15 @@ var types_default = {
       "targetWorkflowRunId": [
         22
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
       "targetCompany": [
         217
       ],
@@ -36917,6 +38212,15 @@ var types_default = {
       ],
       "targetWorkflowRun": [
         21
+      ],
+      "targetCloudUser2": [
+        596
+      ],
+      "targetCloudUserWorkspace2": [
+        611
+      ],
+      "targetCloudWorkspace2": [
+        628
       ],
       "__typename": [
         1
@@ -37306,6 +38610,51 @@ var types_default = {
       "percentageNotEmptyTargetWorkflowRun": [
         13
       ],
+      "countUniqueValuesTargetCloudUser2": [
+        10
+      ],
+      "countEmptyTargetCloudUser2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUser2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUser2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUser2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudWorkspace2": [
+        13
+      ],
       "edges": [
         499
       ],
@@ -37689,6 +39038,51 @@ var types_default = {
       "percentageNotEmptyTargetWorkflowRun": [
         13
       ],
+      "countUniqueValuesTargetCloudUser2": [
+        10
+      ],
+      "countEmptyTargetCloudUser2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUser2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUser2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUser2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudUserWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudUserWorkspace2": [
+        13
+      ],
+      "countUniqueValuesTargetCloudWorkspace2": [
+        10
+      ],
+      "countEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "countNotEmptyTargetCloudWorkspace2": [
+        10
+      ],
+      "percentageEmptyTargetCloudWorkspace2": [
+        13
+      ],
+      "percentageNotEmptyTargetCloudWorkspace2": [
+        13
+      ],
       "edges": [
         499
       ],
@@ -37832,6 +39226,24 @@ var types_default = {
       "targetWorkflowRun": [
         547
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUser2": [
+        600
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2": [
+        615
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2": [
+        633
+      ],
       "__typename": [
         1
       ]
@@ -37939,6 +39351,24 @@ var types_default = {
       "targetWorkflowRun": [
         547
       ],
+      "targetCloudUser2Id": [
+        22
+      ],
+      "targetCloudUser2": [
+        600
+      ],
+      "targetCloudUserWorkspace2Id": [
+        22
+      ],
+      "targetCloudUserWorkspace2": [
+        615
+      ],
+      "targetCloudWorkspace2Id": [
+        22
+      ],
+      "targetCloudWorkspace2": [
+        633
+      ],
       "__typename": [
         1
       ]
@@ -38014,6 +39444,15 @@ var types_default = {
         33
       ],
       "targetWorkflowRunId": [
+        33
+      ],
+      "targetCloudUser2Id": [
+        33
+      ],
+      "targetCloudUserWorkspace2Id": [
+        33
+      ],
+      "targetCloudWorkspace2Id": [
         33
       ],
       "and": [
@@ -38132,6 +39571,24 @@ var types_default = {
       "targetWorkflowRun": [
         554
       ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        607
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        621
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        643
+      ],
       "__typename": [
         1
       ]
@@ -38241,6 +39698,24 @@ var types_default = {
       ],
       "targetWorkflowRun": [
         555
+      ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        608
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        622
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        644
       ],
       "__typename": [
         1
@@ -38544,6 +40019,24 @@ var types_default = {
       "targetWorkflowRun": [
         554
       ],
+      "targetCloudUser2Id": [
+        59
+      ],
+      "targetCloudUser2": [
+        607
+      ],
+      "targetCloudUserWorkspace2Id": [
+        59
+      ],
+      "targetCloudUserWorkspace2": [
+        621
+      ],
+      "targetCloudWorkspace2Id": [
+        59
+      ],
+      "targetCloudWorkspace2": [
+        643
+      ],
       "__typename": [
         1
       ]
@@ -38620,6 +40113,15 @@ var types_default = {
       ],
       "targetWorkflowRun": [
         557
+      ],
+      "targetCloudUser2": [
+        610
+      ],
+      "targetCloudUserWorkspace2": [
+        624
+      ],
+      "targetCloudWorkspace2": [
+        646
       ],
       "__typename": [
         1
@@ -44876,6 +46378,7815 @@ var types_default = {
       ],
       "updatedBy": [
         88
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2ActivityStatusEnum": {},
+    "CloudUser2": {
+      "id": [
+        2
+      ],
+      "activityStatus": [
+        595
+      ],
+      "avgDailyPageviewsLast30d": [
+        13
+      ],
+      "dataLastUpdatedAt": [
+        7
+      ],
+      "daysSinceLastActivity": [
+        13
+      ],
+      "email": [
+        89
+      ],
+      "fullName": [
+        69
+      ],
+      "isActiveL24h": [
+        6
+      ],
+      "isActiveL30d": [
+        6
+      ],
+      "isActiveL7d": [
+        6
+      ],
+      "isTwenty": [
+        6
+      ],
+      "lastActivityDate": [
+        7
+      ],
+      "pageViewsL24h": [
+        13
+      ],
+      "pageViewsL30d": [
+        13
+      ],
+      "pageViewsL7d": [
+        13
+      ],
+      "updatedBy": [
+        82
+      ],
+      "userTenure": [
+        13
+      ],
+      "workspaceCount": [
+        13
+      ],
+      "name": [
+        1
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        82
+      ],
+      "position": [
+        114
+      ],
+      "searchVector": [
+        115
+      ],
+      "timelineActivities": [
+        500,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            507
+          ],
+          "orderBy": [
+            508,
+            "[TimelineActivityOrderByInput]"
+          ]
+        }
+      ],
+      "favorites": [
+        263,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            270
+          ],
+          "orderBy": [
+            271,
+            "[FavoriteOrderByInput]"
+          ]
+        }
+      ],
+      "attachments": [
+        118,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            128
+          ],
+          "orderBy": [
+            132,
+            "[AttachmentOrderByInput]"
+          ]
+        }
+      ],
+      "noteTargets": [
+        425,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            432
+          ],
+          "orderBy": [
+            433,
+            "[NoteTargetOrderByInput]"
+          ]
+        }
+      ],
+      "taskTargets": [
+        486,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            493
+          ],
+          "orderBy": [
+            494,
+            "[TaskTargetOrderByInput]"
+          ]
+        }
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2Edge": {
+      "node": [
+        596
+      ],
+      "cursor": [
+        117
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2Connection": {
+      "totalCount": [
+        10
+      ],
+      "countUniqueValuesId": [
+        10
+      ],
+      "countEmptyId": [
+        10
+      ],
+      "countNotEmptyId": [
+        10
+      ],
+      "percentageEmptyId": [
+        13
+      ],
+      "percentageNotEmptyId": [
+        13
+      ],
+      "countUniqueValuesActivityStatus": [
+        10
+      ],
+      "countEmptyActivityStatus": [
+        10
+      ],
+      "countNotEmptyActivityStatus": [
+        10
+      ],
+      "percentageEmptyActivityStatus": [
+        13
+      ],
+      "percentageNotEmptyActivityStatus": [
+        13
+      ],
+      "countUniqueValuesAvgDailyPageviewsLast30d": [
+        10
+      ],
+      "countEmptyAvgDailyPageviewsLast30d": [
+        10
+      ],
+      "countNotEmptyAvgDailyPageviewsLast30d": [
+        10
+      ],
+      "percentageEmptyAvgDailyPageviewsLast30d": [
+        13
+      ],
+      "percentageNotEmptyAvgDailyPageviewsLast30d": [
+        13
+      ],
+      "minAvgDailyPageviewsLast30d": [
+        13
+      ],
+      "maxAvgDailyPageviewsLast30d": [
+        13
+      ],
+      "avgAvgDailyPageviewsLast30d": [
+        13
+      ],
+      "sumAvgDailyPageviewsLast30d": [
+        13
+      ],
+      "countUniqueValuesDataLastUpdatedAt": [
+        10
+      ],
+      "countEmptyDataLastUpdatedAt": [
+        10
+      ],
+      "countNotEmptyDataLastUpdatedAt": [
+        10
+      ],
+      "percentageEmptyDataLastUpdatedAt": [
+        13
+      ],
+      "percentageNotEmptyDataLastUpdatedAt": [
+        13
+      ],
+      "minDataLastUpdatedAt": [
+        7
+      ],
+      "maxDataLastUpdatedAt": [
+        7
+      ],
+      "countUniqueValuesDaysSinceLastActivity": [
+        10
+      ],
+      "countEmptyDaysSinceLastActivity": [
+        10
+      ],
+      "countNotEmptyDaysSinceLastActivity": [
+        10
+      ],
+      "percentageEmptyDaysSinceLastActivity": [
+        13
+      ],
+      "percentageNotEmptyDaysSinceLastActivity": [
+        13
+      ],
+      "minDaysSinceLastActivity": [
+        13
+      ],
+      "maxDaysSinceLastActivity": [
+        13
+      ],
+      "avgDaysSinceLastActivity": [
+        13
+      ],
+      "sumDaysSinceLastActivity": [
+        13
+      ],
+      "countUniqueValuesEmail": [
+        10
+      ],
+      "countEmptyEmail": [
+        10
+      ],
+      "countNotEmptyEmail": [
+        10
+      ],
+      "percentageEmptyEmail": [
+        13
+      ],
+      "percentageNotEmptyEmail": [
+        13
+      ],
+      "countUniqueValuesFullName": [
+        10
+      ],
+      "countEmptyFullName": [
+        10
+      ],
+      "countNotEmptyFullName": [
+        10
+      ],
+      "percentageEmptyFullName": [
+        13
+      ],
+      "percentageNotEmptyFullName": [
+        13
+      ],
+      "countUniqueValuesIsActiveL24h": [
+        10
+      ],
+      "countEmptyIsActiveL24h": [
+        10
+      ],
+      "countNotEmptyIsActiveL24h": [
+        10
+      ],
+      "percentageEmptyIsActiveL24h": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL24h": [
+        13
+      ],
+      "countTrueIsActiveL24h": [
+        10
+      ],
+      "countFalseIsActiveL24h": [
+        10
+      ],
+      "countUniqueValuesIsActiveL30d": [
+        10
+      ],
+      "countEmptyIsActiveL30d": [
+        10
+      ],
+      "countNotEmptyIsActiveL30d": [
+        10
+      ],
+      "percentageEmptyIsActiveL30d": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL30d": [
+        13
+      ],
+      "countTrueIsActiveL30d": [
+        10
+      ],
+      "countFalseIsActiveL30d": [
+        10
+      ],
+      "countUniqueValuesIsActiveL7d": [
+        10
+      ],
+      "countEmptyIsActiveL7d": [
+        10
+      ],
+      "countNotEmptyIsActiveL7d": [
+        10
+      ],
+      "percentageEmptyIsActiveL7d": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL7d": [
+        13
+      ],
+      "countTrueIsActiveL7d": [
+        10
+      ],
+      "countFalseIsActiveL7d": [
+        10
+      ],
+      "countUniqueValuesIsTwenty": [
+        10
+      ],
+      "countEmptyIsTwenty": [
+        10
+      ],
+      "countNotEmptyIsTwenty": [
+        10
+      ],
+      "percentageEmptyIsTwenty": [
+        13
+      ],
+      "percentageNotEmptyIsTwenty": [
+        13
+      ],
+      "countTrueIsTwenty": [
+        10
+      ],
+      "countFalseIsTwenty": [
+        10
+      ],
+      "countUniqueValuesLastActivityDate": [
+        10
+      ],
+      "countEmptyLastActivityDate": [
+        10
+      ],
+      "countNotEmptyLastActivityDate": [
+        10
+      ],
+      "percentageEmptyLastActivityDate": [
+        13
+      ],
+      "percentageNotEmptyLastActivityDate": [
+        13
+      ],
+      "minLastActivityDate": [
+        7
+      ],
+      "maxLastActivityDate": [
+        7
+      ],
+      "countUniqueValuesPageViewsL24h": [
+        10
+      ],
+      "countEmptyPageViewsL24h": [
+        10
+      ],
+      "countNotEmptyPageViewsL24h": [
+        10
+      ],
+      "percentageEmptyPageViewsL24h": [
+        13
+      ],
+      "percentageNotEmptyPageViewsL24h": [
+        13
+      ],
+      "minPageViewsL24h": [
+        13
+      ],
+      "maxPageViewsL24h": [
+        13
+      ],
+      "avgPageViewsL24h": [
+        13
+      ],
+      "sumPageViewsL24h": [
+        13
+      ],
+      "countUniqueValuesPageViewsL30d": [
+        10
+      ],
+      "countEmptyPageViewsL30d": [
+        10
+      ],
+      "countNotEmptyPageViewsL30d": [
+        10
+      ],
+      "percentageEmptyPageViewsL30d": [
+        13
+      ],
+      "percentageNotEmptyPageViewsL30d": [
+        13
+      ],
+      "minPageViewsL30d": [
+        13
+      ],
+      "maxPageViewsL30d": [
+        13
+      ],
+      "avgPageViewsL30d": [
+        13
+      ],
+      "sumPageViewsL30d": [
+        13
+      ],
+      "countUniqueValuesPageViewsL7d": [
+        10
+      ],
+      "countEmptyPageViewsL7d": [
+        10
+      ],
+      "countNotEmptyPageViewsL7d": [
+        10
+      ],
+      "percentageEmptyPageViewsL7d": [
+        13
+      ],
+      "percentageNotEmptyPageViewsL7d": [
+        13
+      ],
+      "minPageViewsL7d": [
+        13
+      ],
+      "maxPageViewsL7d": [
+        13
+      ],
+      "avgPageViewsL7d": [
+        13
+      ],
+      "sumPageViewsL7d": [
+        13
+      ],
+      "countUniqueValuesUpdatedBy": [
+        10
+      ],
+      "countEmptyUpdatedBy": [
+        10
+      ],
+      "countNotEmptyUpdatedBy": [
+        10
+      ],
+      "percentageEmptyUpdatedBy": [
+        13
+      ],
+      "percentageNotEmptyUpdatedBy": [
+        13
+      ],
+      "countUniqueValuesUserTenure": [
+        10
+      ],
+      "countEmptyUserTenure": [
+        10
+      ],
+      "countNotEmptyUserTenure": [
+        10
+      ],
+      "percentageEmptyUserTenure": [
+        13
+      ],
+      "percentageNotEmptyUserTenure": [
+        13
+      ],
+      "minUserTenure": [
+        13
+      ],
+      "maxUserTenure": [
+        13
+      ],
+      "avgUserTenure": [
+        13
+      ],
+      "sumUserTenure": [
+        13
+      ],
+      "countUniqueValuesWorkspaceCount": [
+        10
+      ],
+      "countEmptyWorkspaceCount": [
+        10
+      ],
+      "countNotEmptyWorkspaceCount": [
+        10
+      ],
+      "percentageEmptyWorkspaceCount": [
+        13
+      ],
+      "percentageNotEmptyWorkspaceCount": [
+        13
+      ],
+      "minWorkspaceCount": [
+        13
+      ],
+      "maxWorkspaceCount": [
+        13
+      ],
+      "avgWorkspaceCount": [
+        13
+      ],
+      "sumWorkspaceCount": [
+        13
+      ],
+      "countUniqueValuesName": [
+        10
+      ],
+      "countEmptyName": [
+        10
+      ],
+      "countNotEmptyName": [
+        10
+      ],
+      "percentageEmptyName": [
+        13
+      ],
+      "percentageNotEmptyName": [
+        13
+      ],
+      "countUniqueValuesCreatedAt": [
+        10
+      ],
+      "countEmptyCreatedAt": [
+        10
+      ],
+      "countNotEmptyCreatedAt": [
+        10
+      ],
+      "percentageEmptyCreatedAt": [
+        13
+      ],
+      "percentageNotEmptyCreatedAt": [
+        13
+      ],
+      "minCreatedAt": [
+        7
+      ],
+      "maxCreatedAt": [
+        7
+      ],
+      "countUniqueValuesUpdatedAt": [
+        10
+      ],
+      "countEmptyUpdatedAt": [
+        10
+      ],
+      "countNotEmptyUpdatedAt": [
+        10
+      ],
+      "percentageEmptyUpdatedAt": [
+        13
+      ],
+      "percentageNotEmptyUpdatedAt": [
+        13
+      ],
+      "minUpdatedAt": [
+        7
+      ],
+      "maxUpdatedAt": [
+        7
+      ],
+      "countUniqueValuesDeletedAt": [
+        10
+      ],
+      "countEmptyDeletedAt": [
+        10
+      ],
+      "countNotEmptyDeletedAt": [
+        10
+      ],
+      "percentageEmptyDeletedAt": [
+        13
+      ],
+      "percentageNotEmptyDeletedAt": [
+        13
+      ],
+      "minDeletedAt": [
+        7
+      ],
+      "maxDeletedAt": [
+        7
+      ],
+      "countUniqueValuesCreatedBy": [
+        10
+      ],
+      "countEmptyCreatedBy": [
+        10
+      ],
+      "countNotEmptyCreatedBy": [
+        10
+      ],
+      "percentageEmptyCreatedBy": [
+        13
+      ],
+      "percentageNotEmptyCreatedBy": [
+        13
+      ],
+      "countUniqueValuesPosition": [
+        10
+      ],
+      "countEmptyPosition": [
+        10
+      ],
+      "countNotEmptyPosition": [
+        10
+      ],
+      "percentageEmptyPosition": [
+        13
+      ],
+      "percentageNotEmptyPosition": [
+        13
+      ],
+      "countUniqueValuesSearchVector": [
+        10
+      ],
+      "countEmptySearchVector": [
+        10
+      ],
+      "countNotEmptySearchVector": [
+        10
+      ],
+      "percentageEmptySearchVector": [
+        13
+      ],
+      "percentageNotEmptySearchVector": [
+        13
+      ],
+      "edges": [
+        597
+      ],
+      "pageInfo": [
+        119
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2GroupByConnection": {
+      "totalCount": [
+        10
+      ],
+      "countUniqueValuesId": [
+        10
+      ],
+      "countEmptyId": [
+        10
+      ],
+      "countNotEmptyId": [
+        10
+      ],
+      "percentageEmptyId": [
+        13
+      ],
+      "percentageNotEmptyId": [
+        13
+      ],
+      "countUniqueValuesActivityStatus": [
+        10
+      ],
+      "countEmptyActivityStatus": [
+        10
+      ],
+      "countNotEmptyActivityStatus": [
+        10
+      ],
+      "percentageEmptyActivityStatus": [
+        13
+      ],
+      "percentageNotEmptyActivityStatus": [
+        13
+      ],
+      "countUniqueValuesAvgDailyPageviewsLast30d": [
+        10
+      ],
+      "countEmptyAvgDailyPageviewsLast30d": [
+        10
+      ],
+      "countNotEmptyAvgDailyPageviewsLast30d": [
+        10
+      ],
+      "percentageEmptyAvgDailyPageviewsLast30d": [
+        13
+      ],
+      "percentageNotEmptyAvgDailyPageviewsLast30d": [
+        13
+      ],
+      "minAvgDailyPageviewsLast30d": [
+        13
+      ],
+      "maxAvgDailyPageviewsLast30d": [
+        13
+      ],
+      "avgAvgDailyPageviewsLast30d": [
+        13
+      ],
+      "sumAvgDailyPageviewsLast30d": [
+        13
+      ],
+      "countUniqueValuesDataLastUpdatedAt": [
+        10
+      ],
+      "countEmptyDataLastUpdatedAt": [
+        10
+      ],
+      "countNotEmptyDataLastUpdatedAt": [
+        10
+      ],
+      "percentageEmptyDataLastUpdatedAt": [
+        13
+      ],
+      "percentageNotEmptyDataLastUpdatedAt": [
+        13
+      ],
+      "minDataLastUpdatedAt": [
+        7
+      ],
+      "maxDataLastUpdatedAt": [
+        7
+      ],
+      "countUniqueValuesDaysSinceLastActivity": [
+        10
+      ],
+      "countEmptyDaysSinceLastActivity": [
+        10
+      ],
+      "countNotEmptyDaysSinceLastActivity": [
+        10
+      ],
+      "percentageEmptyDaysSinceLastActivity": [
+        13
+      ],
+      "percentageNotEmptyDaysSinceLastActivity": [
+        13
+      ],
+      "minDaysSinceLastActivity": [
+        13
+      ],
+      "maxDaysSinceLastActivity": [
+        13
+      ],
+      "avgDaysSinceLastActivity": [
+        13
+      ],
+      "sumDaysSinceLastActivity": [
+        13
+      ],
+      "countUniqueValuesEmail": [
+        10
+      ],
+      "countEmptyEmail": [
+        10
+      ],
+      "countNotEmptyEmail": [
+        10
+      ],
+      "percentageEmptyEmail": [
+        13
+      ],
+      "percentageNotEmptyEmail": [
+        13
+      ],
+      "countUniqueValuesFullName": [
+        10
+      ],
+      "countEmptyFullName": [
+        10
+      ],
+      "countNotEmptyFullName": [
+        10
+      ],
+      "percentageEmptyFullName": [
+        13
+      ],
+      "percentageNotEmptyFullName": [
+        13
+      ],
+      "countUniqueValuesIsActiveL24h": [
+        10
+      ],
+      "countEmptyIsActiveL24h": [
+        10
+      ],
+      "countNotEmptyIsActiveL24h": [
+        10
+      ],
+      "percentageEmptyIsActiveL24h": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL24h": [
+        13
+      ],
+      "countTrueIsActiveL24h": [
+        10
+      ],
+      "countFalseIsActiveL24h": [
+        10
+      ],
+      "countUniqueValuesIsActiveL30d": [
+        10
+      ],
+      "countEmptyIsActiveL30d": [
+        10
+      ],
+      "countNotEmptyIsActiveL30d": [
+        10
+      ],
+      "percentageEmptyIsActiveL30d": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL30d": [
+        13
+      ],
+      "countTrueIsActiveL30d": [
+        10
+      ],
+      "countFalseIsActiveL30d": [
+        10
+      ],
+      "countUniqueValuesIsActiveL7d": [
+        10
+      ],
+      "countEmptyIsActiveL7d": [
+        10
+      ],
+      "countNotEmptyIsActiveL7d": [
+        10
+      ],
+      "percentageEmptyIsActiveL7d": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL7d": [
+        13
+      ],
+      "countTrueIsActiveL7d": [
+        10
+      ],
+      "countFalseIsActiveL7d": [
+        10
+      ],
+      "countUniqueValuesIsTwenty": [
+        10
+      ],
+      "countEmptyIsTwenty": [
+        10
+      ],
+      "countNotEmptyIsTwenty": [
+        10
+      ],
+      "percentageEmptyIsTwenty": [
+        13
+      ],
+      "percentageNotEmptyIsTwenty": [
+        13
+      ],
+      "countTrueIsTwenty": [
+        10
+      ],
+      "countFalseIsTwenty": [
+        10
+      ],
+      "countUniqueValuesLastActivityDate": [
+        10
+      ],
+      "countEmptyLastActivityDate": [
+        10
+      ],
+      "countNotEmptyLastActivityDate": [
+        10
+      ],
+      "percentageEmptyLastActivityDate": [
+        13
+      ],
+      "percentageNotEmptyLastActivityDate": [
+        13
+      ],
+      "minLastActivityDate": [
+        7
+      ],
+      "maxLastActivityDate": [
+        7
+      ],
+      "countUniqueValuesPageViewsL24h": [
+        10
+      ],
+      "countEmptyPageViewsL24h": [
+        10
+      ],
+      "countNotEmptyPageViewsL24h": [
+        10
+      ],
+      "percentageEmptyPageViewsL24h": [
+        13
+      ],
+      "percentageNotEmptyPageViewsL24h": [
+        13
+      ],
+      "minPageViewsL24h": [
+        13
+      ],
+      "maxPageViewsL24h": [
+        13
+      ],
+      "avgPageViewsL24h": [
+        13
+      ],
+      "sumPageViewsL24h": [
+        13
+      ],
+      "countUniqueValuesPageViewsL30d": [
+        10
+      ],
+      "countEmptyPageViewsL30d": [
+        10
+      ],
+      "countNotEmptyPageViewsL30d": [
+        10
+      ],
+      "percentageEmptyPageViewsL30d": [
+        13
+      ],
+      "percentageNotEmptyPageViewsL30d": [
+        13
+      ],
+      "minPageViewsL30d": [
+        13
+      ],
+      "maxPageViewsL30d": [
+        13
+      ],
+      "avgPageViewsL30d": [
+        13
+      ],
+      "sumPageViewsL30d": [
+        13
+      ],
+      "countUniqueValuesPageViewsL7d": [
+        10
+      ],
+      "countEmptyPageViewsL7d": [
+        10
+      ],
+      "countNotEmptyPageViewsL7d": [
+        10
+      ],
+      "percentageEmptyPageViewsL7d": [
+        13
+      ],
+      "percentageNotEmptyPageViewsL7d": [
+        13
+      ],
+      "minPageViewsL7d": [
+        13
+      ],
+      "maxPageViewsL7d": [
+        13
+      ],
+      "avgPageViewsL7d": [
+        13
+      ],
+      "sumPageViewsL7d": [
+        13
+      ],
+      "countUniqueValuesUpdatedBy": [
+        10
+      ],
+      "countEmptyUpdatedBy": [
+        10
+      ],
+      "countNotEmptyUpdatedBy": [
+        10
+      ],
+      "percentageEmptyUpdatedBy": [
+        13
+      ],
+      "percentageNotEmptyUpdatedBy": [
+        13
+      ],
+      "countUniqueValuesUserTenure": [
+        10
+      ],
+      "countEmptyUserTenure": [
+        10
+      ],
+      "countNotEmptyUserTenure": [
+        10
+      ],
+      "percentageEmptyUserTenure": [
+        13
+      ],
+      "percentageNotEmptyUserTenure": [
+        13
+      ],
+      "minUserTenure": [
+        13
+      ],
+      "maxUserTenure": [
+        13
+      ],
+      "avgUserTenure": [
+        13
+      ],
+      "sumUserTenure": [
+        13
+      ],
+      "countUniqueValuesWorkspaceCount": [
+        10
+      ],
+      "countEmptyWorkspaceCount": [
+        10
+      ],
+      "countNotEmptyWorkspaceCount": [
+        10
+      ],
+      "percentageEmptyWorkspaceCount": [
+        13
+      ],
+      "percentageNotEmptyWorkspaceCount": [
+        13
+      ],
+      "minWorkspaceCount": [
+        13
+      ],
+      "maxWorkspaceCount": [
+        13
+      ],
+      "avgWorkspaceCount": [
+        13
+      ],
+      "sumWorkspaceCount": [
+        13
+      ],
+      "countUniqueValuesName": [
+        10
+      ],
+      "countEmptyName": [
+        10
+      ],
+      "countNotEmptyName": [
+        10
+      ],
+      "percentageEmptyName": [
+        13
+      ],
+      "percentageNotEmptyName": [
+        13
+      ],
+      "countUniqueValuesCreatedAt": [
+        10
+      ],
+      "countEmptyCreatedAt": [
+        10
+      ],
+      "countNotEmptyCreatedAt": [
+        10
+      ],
+      "percentageEmptyCreatedAt": [
+        13
+      ],
+      "percentageNotEmptyCreatedAt": [
+        13
+      ],
+      "minCreatedAt": [
+        7
+      ],
+      "maxCreatedAt": [
+        7
+      ],
+      "countUniqueValuesUpdatedAt": [
+        10
+      ],
+      "countEmptyUpdatedAt": [
+        10
+      ],
+      "countNotEmptyUpdatedAt": [
+        10
+      ],
+      "percentageEmptyUpdatedAt": [
+        13
+      ],
+      "percentageNotEmptyUpdatedAt": [
+        13
+      ],
+      "minUpdatedAt": [
+        7
+      ],
+      "maxUpdatedAt": [
+        7
+      ],
+      "countUniqueValuesDeletedAt": [
+        10
+      ],
+      "countEmptyDeletedAt": [
+        10
+      ],
+      "countNotEmptyDeletedAt": [
+        10
+      ],
+      "percentageEmptyDeletedAt": [
+        13
+      ],
+      "percentageNotEmptyDeletedAt": [
+        13
+      ],
+      "minDeletedAt": [
+        7
+      ],
+      "maxDeletedAt": [
+        7
+      ],
+      "countUniqueValuesCreatedBy": [
+        10
+      ],
+      "countEmptyCreatedBy": [
+        10
+      ],
+      "countNotEmptyCreatedBy": [
+        10
+      ],
+      "percentageEmptyCreatedBy": [
+        13
+      ],
+      "percentageNotEmptyCreatedBy": [
+        13
+      ],
+      "countUniqueValuesPosition": [
+        10
+      ],
+      "countEmptyPosition": [
+        10
+      ],
+      "countNotEmptyPosition": [
+        10
+      ],
+      "percentageEmptyPosition": [
+        13
+      ],
+      "percentageNotEmptyPosition": [
+        13
+      ],
+      "countUniqueValuesSearchVector": [
+        10
+      ],
+      "countEmptySearchVector": [
+        10
+      ],
+      "countNotEmptySearchVector": [
+        10
+      ],
+      "percentageEmptySearchVector": [
+        13
+      ],
+      "percentageNotEmptySearchVector": [
+        13
+      ],
+      "edges": [
+        597
+      ],
+      "pageInfo": [
+        119
+      ],
+      "groupByDimensionValues": [
+        25
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2RelationInput": {
+      "connect": [
+        601
+      ],
+      "disconnect": [
+        6
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2ConnectInput": {
+      "where": [
+        602
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2WhereUniqueInput": {
+      "id": [
+        22
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2CreateInput": {
+      "id": [
+        22
+      ],
+      "activityStatus": [
+        595
+      ],
+      "avgDailyPageviewsLast30d": [
+        13
+      ],
+      "dataLastUpdatedAt": [
+        7
+      ],
+      "daysSinceLastActivity": [
+        13
+      ],
+      "email": [
+        90
+      ],
+      "fullName": [
+        70
+      ],
+      "isActiveL24h": [
+        6
+      ],
+      "isActiveL30d": [
+        6
+      ],
+      "isActiveL7d": [
+        6
+      ],
+      "isTwenty": [
+        6
+      ],
+      "lastActivityDate": [
+        7
+      ],
+      "pageViewsL24h": [
+        13
+      ],
+      "pageViewsL30d": [
+        13
+      ],
+      "pageViewsL7d": [
+        13
+      ],
+      "updatedBy": [
+        83
+      ],
+      "userTenure": [
+        13
+      ],
+      "workspaceCount": [
+        13
+      ],
+      "name": [
+        1
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        83
+      ],
+      "position": [
+        114
+      ],
+      "searchVector": [
+        115
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2UpdateInput": {
+      "id": [
+        22
+      ],
+      "activityStatus": [
+        595
+      ],
+      "avgDailyPageviewsLast30d": [
+        13
+      ],
+      "dataLastUpdatedAt": [
+        7
+      ],
+      "daysSinceLastActivity": [
+        13
+      ],
+      "email": [
+        91
+      ],
+      "fullName": [
+        71
+      ],
+      "isActiveL24h": [
+        6
+      ],
+      "isActiveL30d": [
+        6
+      ],
+      "isActiveL7d": [
+        6
+      ],
+      "isTwenty": [
+        6
+      ],
+      "lastActivityDate": [
+        7
+      ],
+      "pageViewsL24h": [
+        13
+      ],
+      "pageViewsL30d": [
+        13
+      ],
+      "pageViewsL7d": [
+        13
+      ],
+      "updatedBy": [
+        84
+      ],
+      "userTenure": [
+        13
+      ],
+      "workspaceCount": [
+        13
+      ],
+      "name": [
+        1
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        84
+      ],
+      "position": [
+        114
+      ],
+      "searchVector": [
+        115
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2FilterInput": {
+      "id": [
+        33
+      ],
+      "activityStatus": [
+        606
+      ],
+      "avgDailyPageviewsLast30d": [
+        130
+      ],
+      "dataLastUpdatedAt": [
+        7
+      ],
+      "daysSinceLastActivity": [
+        130
+      ],
+      "email": [
+        92
+      ],
+      "fullName": [
+        72
+      ],
+      "isActiveL24h": [
+        179
+      ],
+      "isActiveL30d": [
+        179
+      ],
+      "isActiveL7d": [
+        179
+      ],
+      "isTwenty": [
+        179
+      ],
+      "lastActivityDate": [
+        7
+      ],
+      "pageViewsL24h": [
+        130
+      ],
+      "pageViewsL30d": [
+        130
+      ],
+      "pageViewsL7d": [
+        130
+      ],
+      "updatedBy": [
+        85
+      ],
+      "userTenure": [
+        130
+      ],
+      "workspaceCount": [
+        130
+      ],
+      "name": [
+        56
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        85
+      ],
+      "position": [
+        130
+      ],
+      "searchVector": [
+        131
+      ],
+      "and": [
+        605
+      ],
+      "or": [
+        605
+      ],
+      "not": [
+        605
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2ActivityStatusEnumFilter": {
+      "eq": [
+        595
+      ],
+      "neq": [
+        595
+      ],
+      "in": [
+        595
+      ],
+      "containsAny": [
+        595
+      ],
+      "is": [
+        34
+      ],
+      "isEmptyArray": [
+        6
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2OrderByInput": {
+      "id": [
+        59
+      ],
+      "activityStatus": [
+        59
+      ],
+      "avgDailyPageviewsLast30d": [
+        59
+      ],
+      "dataLastUpdatedAt": [
+        59
+      ],
+      "daysSinceLastActivity": [
+        59
+      ],
+      "email": [
+        93
+      ],
+      "fullName": [
+        73
+      ],
+      "isActiveL24h": [
+        59
+      ],
+      "isActiveL30d": [
+        59
+      ],
+      "isActiveL7d": [
+        59
+      ],
+      "isTwenty": [
+        59
+      ],
+      "lastActivityDate": [
+        59
+      ],
+      "pageViewsL24h": [
+        59
+      ],
+      "pageViewsL30d": [
+        59
+      ],
+      "pageViewsL7d": [
+        59
+      ],
+      "updatedBy": [
+        87
+      ],
+      "userTenure": [
+        59
+      ],
+      "workspaceCount": [
+        59
+      ],
+      "name": [
+        59
+      ],
+      "createdAt": [
+        59
+      ],
+      "updatedAt": [
+        59
+      ],
+      "deletedAt": [
+        59
+      ],
+      "createdBy": [
+        87
+      ],
+      "position": [
+        59
+      ],
+      "searchVector": [
+        59
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2OrderByWithGroupByInput": {
+      "aggregate": [
+        609
+      ],
+      "id": [
+        59
+      ],
+      "activityStatus": [
+        59
+      ],
+      "avgDailyPageviewsLast30d": [
+        59
+      ],
+      "dataLastUpdatedAt": [
+        110
+      ],
+      "daysSinceLastActivity": [
+        59
+      ],
+      "email": [
+        93
+      ],
+      "fullName": [
+        73
+      ],
+      "isActiveL24h": [
+        59
+      ],
+      "isActiveL30d": [
+        59
+      ],
+      "isActiveL7d": [
+        59
+      ],
+      "isTwenty": [
+        59
+      ],
+      "lastActivityDate": [
+        110
+      ],
+      "pageViewsL24h": [
+        59
+      ],
+      "pageViewsL30d": [
+        59
+      ],
+      "pageViewsL7d": [
+        59
+      ],
+      "updatedBy": [
+        87
+      ],
+      "userTenure": [
+        59
+      ],
+      "workspaceCount": [
+        59
+      ],
+      "name": [
+        59
+      ],
+      "createdAt": [
+        110
+      ],
+      "updatedAt": [
+        110
+      ],
+      "deletedAt": [
+        110
+      ],
+      "createdBy": [
+        87
+      ],
+      "position": [
+        59
+      ],
+      "searchVector": [
+        59
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2OrderByWithGroupByAggregateInput": {
+      "totalCount": [
+        59
+      ],
+      "countUniqueValuesId": [
+        59
+      ],
+      "countEmptyId": [
+        59
+      ],
+      "countNotEmptyId": [
+        59
+      ],
+      "percentageEmptyId": [
+        59
+      ],
+      "percentageNotEmptyId": [
+        59
+      ],
+      "countUniqueValuesActivityStatus": [
+        59
+      ],
+      "countEmptyActivityStatus": [
+        59
+      ],
+      "countNotEmptyActivityStatus": [
+        59
+      ],
+      "percentageEmptyActivityStatus": [
+        59
+      ],
+      "percentageNotEmptyActivityStatus": [
+        59
+      ],
+      "countUniqueValuesAvgDailyPageviewsLast30d": [
+        59
+      ],
+      "countEmptyAvgDailyPageviewsLast30d": [
+        59
+      ],
+      "countNotEmptyAvgDailyPageviewsLast30d": [
+        59
+      ],
+      "percentageEmptyAvgDailyPageviewsLast30d": [
+        59
+      ],
+      "percentageNotEmptyAvgDailyPageviewsLast30d": [
+        59
+      ],
+      "minAvgDailyPageviewsLast30d": [
+        59
+      ],
+      "maxAvgDailyPageviewsLast30d": [
+        59
+      ],
+      "avgAvgDailyPageviewsLast30d": [
+        59
+      ],
+      "sumAvgDailyPageviewsLast30d": [
+        59
+      ],
+      "countUniqueValuesDataLastUpdatedAt": [
+        59
+      ],
+      "countEmptyDataLastUpdatedAt": [
+        59
+      ],
+      "countNotEmptyDataLastUpdatedAt": [
+        59
+      ],
+      "percentageEmptyDataLastUpdatedAt": [
+        59
+      ],
+      "percentageNotEmptyDataLastUpdatedAt": [
+        59
+      ],
+      "minDataLastUpdatedAt": [
+        59
+      ],
+      "maxDataLastUpdatedAt": [
+        59
+      ],
+      "countUniqueValuesDaysSinceLastActivity": [
+        59
+      ],
+      "countEmptyDaysSinceLastActivity": [
+        59
+      ],
+      "countNotEmptyDaysSinceLastActivity": [
+        59
+      ],
+      "percentageEmptyDaysSinceLastActivity": [
+        59
+      ],
+      "percentageNotEmptyDaysSinceLastActivity": [
+        59
+      ],
+      "minDaysSinceLastActivity": [
+        59
+      ],
+      "maxDaysSinceLastActivity": [
+        59
+      ],
+      "avgDaysSinceLastActivity": [
+        59
+      ],
+      "sumDaysSinceLastActivity": [
+        59
+      ],
+      "countUniqueValuesEmail": [
+        59
+      ],
+      "countEmptyEmail": [
+        59
+      ],
+      "countNotEmptyEmail": [
+        59
+      ],
+      "percentageEmptyEmail": [
+        59
+      ],
+      "percentageNotEmptyEmail": [
+        59
+      ],
+      "countUniqueValuesFullName": [
+        59
+      ],
+      "countEmptyFullName": [
+        59
+      ],
+      "countNotEmptyFullName": [
+        59
+      ],
+      "percentageEmptyFullName": [
+        59
+      ],
+      "percentageNotEmptyFullName": [
+        59
+      ],
+      "countUniqueValuesIsActiveL24h": [
+        59
+      ],
+      "countEmptyIsActiveL24h": [
+        59
+      ],
+      "countNotEmptyIsActiveL24h": [
+        59
+      ],
+      "percentageEmptyIsActiveL24h": [
+        59
+      ],
+      "percentageNotEmptyIsActiveL24h": [
+        59
+      ],
+      "countTrueIsActiveL24h": [
+        59
+      ],
+      "countFalseIsActiveL24h": [
+        59
+      ],
+      "countUniqueValuesIsActiveL30d": [
+        59
+      ],
+      "countEmptyIsActiveL30d": [
+        59
+      ],
+      "countNotEmptyIsActiveL30d": [
+        59
+      ],
+      "percentageEmptyIsActiveL30d": [
+        59
+      ],
+      "percentageNotEmptyIsActiveL30d": [
+        59
+      ],
+      "countTrueIsActiveL30d": [
+        59
+      ],
+      "countFalseIsActiveL30d": [
+        59
+      ],
+      "countUniqueValuesIsActiveL7d": [
+        59
+      ],
+      "countEmptyIsActiveL7d": [
+        59
+      ],
+      "countNotEmptyIsActiveL7d": [
+        59
+      ],
+      "percentageEmptyIsActiveL7d": [
+        59
+      ],
+      "percentageNotEmptyIsActiveL7d": [
+        59
+      ],
+      "countTrueIsActiveL7d": [
+        59
+      ],
+      "countFalseIsActiveL7d": [
+        59
+      ],
+      "countUniqueValuesIsTwenty": [
+        59
+      ],
+      "countEmptyIsTwenty": [
+        59
+      ],
+      "countNotEmptyIsTwenty": [
+        59
+      ],
+      "percentageEmptyIsTwenty": [
+        59
+      ],
+      "percentageNotEmptyIsTwenty": [
+        59
+      ],
+      "countTrueIsTwenty": [
+        59
+      ],
+      "countFalseIsTwenty": [
+        59
+      ],
+      "countUniqueValuesLastActivityDate": [
+        59
+      ],
+      "countEmptyLastActivityDate": [
+        59
+      ],
+      "countNotEmptyLastActivityDate": [
+        59
+      ],
+      "percentageEmptyLastActivityDate": [
+        59
+      ],
+      "percentageNotEmptyLastActivityDate": [
+        59
+      ],
+      "minLastActivityDate": [
+        59
+      ],
+      "maxLastActivityDate": [
+        59
+      ],
+      "countUniqueValuesPageViewsL24h": [
+        59
+      ],
+      "countEmptyPageViewsL24h": [
+        59
+      ],
+      "countNotEmptyPageViewsL24h": [
+        59
+      ],
+      "percentageEmptyPageViewsL24h": [
+        59
+      ],
+      "percentageNotEmptyPageViewsL24h": [
+        59
+      ],
+      "minPageViewsL24h": [
+        59
+      ],
+      "maxPageViewsL24h": [
+        59
+      ],
+      "avgPageViewsL24h": [
+        59
+      ],
+      "sumPageViewsL24h": [
+        59
+      ],
+      "countUniqueValuesPageViewsL30d": [
+        59
+      ],
+      "countEmptyPageViewsL30d": [
+        59
+      ],
+      "countNotEmptyPageViewsL30d": [
+        59
+      ],
+      "percentageEmptyPageViewsL30d": [
+        59
+      ],
+      "percentageNotEmptyPageViewsL30d": [
+        59
+      ],
+      "minPageViewsL30d": [
+        59
+      ],
+      "maxPageViewsL30d": [
+        59
+      ],
+      "avgPageViewsL30d": [
+        59
+      ],
+      "sumPageViewsL30d": [
+        59
+      ],
+      "countUniqueValuesPageViewsL7d": [
+        59
+      ],
+      "countEmptyPageViewsL7d": [
+        59
+      ],
+      "countNotEmptyPageViewsL7d": [
+        59
+      ],
+      "percentageEmptyPageViewsL7d": [
+        59
+      ],
+      "percentageNotEmptyPageViewsL7d": [
+        59
+      ],
+      "minPageViewsL7d": [
+        59
+      ],
+      "maxPageViewsL7d": [
+        59
+      ],
+      "avgPageViewsL7d": [
+        59
+      ],
+      "sumPageViewsL7d": [
+        59
+      ],
+      "countUniqueValuesUpdatedBy": [
+        59
+      ],
+      "countEmptyUpdatedBy": [
+        59
+      ],
+      "countNotEmptyUpdatedBy": [
+        59
+      ],
+      "percentageEmptyUpdatedBy": [
+        59
+      ],
+      "percentageNotEmptyUpdatedBy": [
+        59
+      ],
+      "countUniqueValuesUserTenure": [
+        59
+      ],
+      "countEmptyUserTenure": [
+        59
+      ],
+      "countNotEmptyUserTenure": [
+        59
+      ],
+      "percentageEmptyUserTenure": [
+        59
+      ],
+      "percentageNotEmptyUserTenure": [
+        59
+      ],
+      "minUserTenure": [
+        59
+      ],
+      "maxUserTenure": [
+        59
+      ],
+      "avgUserTenure": [
+        59
+      ],
+      "sumUserTenure": [
+        59
+      ],
+      "countUniqueValuesWorkspaceCount": [
+        59
+      ],
+      "countEmptyWorkspaceCount": [
+        59
+      ],
+      "countNotEmptyWorkspaceCount": [
+        59
+      ],
+      "percentageEmptyWorkspaceCount": [
+        59
+      ],
+      "percentageNotEmptyWorkspaceCount": [
+        59
+      ],
+      "minWorkspaceCount": [
+        59
+      ],
+      "maxWorkspaceCount": [
+        59
+      ],
+      "avgWorkspaceCount": [
+        59
+      ],
+      "sumWorkspaceCount": [
+        59
+      ],
+      "countUniqueValuesName": [
+        59
+      ],
+      "countEmptyName": [
+        59
+      ],
+      "countNotEmptyName": [
+        59
+      ],
+      "percentageEmptyName": [
+        59
+      ],
+      "percentageNotEmptyName": [
+        59
+      ],
+      "countUniqueValuesCreatedAt": [
+        59
+      ],
+      "countEmptyCreatedAt": [
+        59
+      ],
+      "countNotEmptyCreatedAt": [
+        59
+      ],
+      "percentageEmptyCreatedAt": [
+        59
+      ],
+      "percentageNotEmptyCreatedAt": [
+        59
+      ],
+      "minCreatedAt": [
+        59
+      ],
+      "maxCreatedAt": [
+        59
+      ],
+      "countUniqueValuesUpdatedAt": [
+        59
+      ],
+      "countEmptyUpdatedAt": [
+        59
+      ],
+      "countNotEmptyUpdatedAt": [
+        59
+      ],
+      "percentageEmptyUpdatedAt": [
+        59
+      ],
+      "percentageNotEmptyUpdatedAt": [
+        59
+      ],
+      "minUpdatedAt": [
+        59
+      ],
+      "maxUpdatedAt": [
+        59
+      ],
+      "countUniqueValuesDeletedAt": [
+        59
+      ],
+      "countEmptyDeletedAt": [
+        59
+      ],
+      "countNotEmptyDeletedAt": [
+        59
+      ],
+      "percentageEmptyDeletedAt": [
+        59
+      ],
+      "percentageNotEmptyDeletedAt": [
+        59
+      ],
+      "minDeletedAt": [
+        59
+      ],
+      "maxDeletedAt": [
+        59
+      ],
+      "countUniqueValuesCreatedBy": [
+        59
+      ],
+      "countEmptyCreatedBy": [
+        59
+      ],
+      "countNotEmptyCreatedBy": [
+        59
+      ],
+      "percentageEmptyCreatedBy": [
+        59
+      ],
+      "percentageNotEmptyCreatedBy": [
+        59
+      ],
+      "countUniqueValuesPosition": [
+        59
+      ],
+      "countEmptyPosition": [
+        59
+      ],
+      "countNotEmptyPosition": [
+        59
+      ],
+      "percentageEmptyPosition": [
+        59
+      ],
+      "percentageNotEmptyPosition": [
+        59
+      ],
+      "countUniqueValuesSearchVector": [
+        59
+      ],
+      "countEmptySearchVector": [
+        59
+      ],
+      "countNotEmptySearchVector": [
+        59
+      ],
+      "percentageEmptySearchVector": [
+        59
+      ],
+      "percentageNotEmptySearchVector": [
+        59
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUser2GroupByInput": {
+      "id": [
+        6
+      ],
+      "activityStatus": [
+        6
+      ],
+      "avgDailyPageviewsLast30d": [
+        6
+      ],
+      "dataLastUpdatedAt": [
+        109
+      ],
+      "daysSinceLastActivity": [
+        6
+      ],
+      "email": [
+        94
+      ],
+      "fullName": [
+        74
+      ],
+      "isActiveL24h": [
+        6
+      ],
+      "isActiveL30d": [
+        6
+      ],
+      "isActiveL7d": [
+        6
+      ],
+      "isTwenty": [
+        6
+      ],
+      "lastActivityDate": [
+        109
+      ],
+      "pageViewsL24h": [
+        6
+      ],
+      "pageViewsL30d": [
+        6
+      ],
+      "pageViewsL7d": [
+        6
+      ],
+      "updatedBy": [
+        88
+      ],
+      "userTenure": [
+        6
+      ],
+      "workspaceCount": [
+        6
+      ],
+      "name": [
+        6
+      ],
+      "createdAt": [
+        109
+      ],
+      "updatedAt": [
+        109
+      ],
+      "deletedAt": [
+        109
+      ],
+      "createdBy": [
+        88
+      ],
+      "position": [
+        6
+      ],
+      "searchVector": [
+        6
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2": {
+      "twentyUserIdentifier": [
+        1
+      ],
+      "twentyWorkspaceIdentifier": [
+        1
+      ],
+      "idOfTheUserWorkspace": [
+        1
+      ],
+      "updatedBy": [
+        82
+      ],
+      "id": [
+        2
+      ],
+      "name": [
+        1
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        82
+      ],
+      "position": [
+        114
+      ],
+      "searchVector": [
+        115
+      ],
+      "timelineActivities": [
+        500,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            507
+          ],
+          "orderBy": [
+            508,
+            "[TimelineActivityOrderByInput]"
+          ]
+        }
+      ],
+      "favorites": [
+        263,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            270
+          ],
+          "orderBy": [
+            271,
+            "[FavoriteOrderByInput]"
+          ]
+        }
+      ],
+      "attachments": [
+        118,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            128
+          ],
+          "orderBy": [
+            132,
+            "[AttachmentOrderByInput]"
+          ]
+        }
+      ],
+      "noteTargets": [
+        425,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            432
+          ],
+          "orderBy": [
+            433,
+            "[NoteTargetOrderByInput]"
+          ]
+        }
+      ],
+      "taskTargets": [
+        486,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            493
+          ],
+          "orderBy": [
+            494,
+            "[TaskTargetOrderByInput]"
+          ]
+        }
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2Edge": {
+      "node": [
+        611
+      ],
+      "cursor": [
+        117
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2Connection": {
+      "totalCount": [
+        10
+      ],
+      "countUniqueValuesTwentyUserIdentifier": [
+        10
+      ],
+      "countEmptyTwentyUserIdentifier": [
+        10
+      ],
+      "countNotEmptyTwentyUserIdentifier": [
+        10
+      ],
+      "percentageEmptyTwentyUserIdentifier": [
+        13
+      ],
+      "percentageNotEmptyTwentyUserIdentifier": [
+        13
+      ],
+      "countUniqueValuesTwentyWorkspaceIdentifier": [
+        10
+      ],
+      "countEmptyTwentyWorkspaceIdentifier": [
+        10
+      ],
+      "countNotEmptyTwentyWorkspaceIdentifier": [
+        10
+      ],
+      "percentageEmptyTwentyWorkspaceIdentifier": [
+        13
+      ],
+      "percentageNotEmptyTwentyWorkspaceIdentifier": [
+        13
+      ],
+      "countUniqueValuesIdOfTheUserWorkspace": [
+        10
+      ],
+      "countEmptyIdOfTheUserWorkspace": [
+        10
+      ],
+      "countNotEmptyIdOfTheUserWorkspace": [
+        10
+      ],
+      "percentageEmptyIdOfTheUserWorkspace": [
+        13
+      ],
+      "percentageNotEmptyIdOfTheUserWorkspace": [
+        13
+      ],
+      "countUniqueValuesUpdatedBy": [
+        10
+      ],
+      "countEmptyUpdatedBy": [
+        10
+      ],
+      "countNotEmptyUpdatedBy": [
+        10
+      ],
+      "percentageEmptyUpdatedBy": [
+        13
+      ],
+      "percentageNotEmptyUpdatedBy": [
+        13
+      ],
+      "countUniqueValuesId": [
+        10
+      ],
+      "countEmptyId": [
+        10
+      ],
+      "countNotEmptyId": [
+        10
+      ],
+      "percentageEmptyId": [
+        13
+      ],
+      "percentageNotEmptyId": [
+        13
+      ],
+      "countUniqueValuesName": [
+        10
+      ],
+      "countEmptyName": [
+        10
+      ],
+      "countNotEmptyName": [
+        10
+      ],
+      "percentageEmptyName": [
+        13
+      ],
+      "percentageNotEmptyName": [
+        13
+      ],
+      "countUniqueValuesCreatedAt": [
+        10
+      ],
+      "countEmptyCreatedAt": [
+        10
+      ],
+      "countNotEmptyCreatedAt": [
+        10
+      ],
+      "percentageEmptyCreatedAt": [
+        13
+      ],
+      "percentageNotEmptyCreatedAt": [
+        13
+      ],
+      "minCreatedAt": [
+        7
+      ],
+      "maxCreatedAt": [
+        7
+      ],
+      "countUniqueValuesUpdatedAt": [
+        10
+      ],
+      "countEmptyUpdatedAt": [
+        10
+      ],
+      "countNotEmptyUpdatedAt": [
+        10
+      ],
+      "percentageEmptyUpdatedAt": [
+        13
+      ],
+      "percentageNotEmptyUpdatedAt": [
+        13
+      ],
+      "minUpdatedAt": [
+        7
+      ],
+      "maxUpdatedAt": [
+        7
+      ],
+      "countUniqueValuesDeletedAt": [
+        10
+      ],
+      "countEmptyDeletedAt": [
+        10
+      ],
+      "countNotEmptyDeletedAt": [
+        10
+      ],
+      "percentageEmptyDeletedAt": [
+        13
+      ],
+      "percentageNotEmptyDeletedAt": [
+        13
+      ],
+      "minDeletedAt": [
+        7
+      ],
+      "maxDeletedAt": [
+        7
+      ],
+      "countUniqueValuesCreatedBy": [
+        10
+      ],
+      "countEmptyCreatedBy": [
+        10
+      ],
+      "countNotEmptyCreatedBy": [
+        10
+      ],
+      "percentageEmptyCreatedBy": [
+        13
+      ],
+      "percentageNotEmptyCreatedBy": [
+        13
+      ],
+      "countUniqueValuesPosition": [
+        10
+      ],
+      "countEmptyPosition": [
+        10
+      ],
+      "countNotEmptyPosition": [
+        10
+      ],
+      "percentageEmptyPosition": [
+        13
+      ],
+      "percentageNotEmptyPosition": [
+        13
+      ],
+      "countUniqueValuesSearchVector": [
+        10
+      ],
+      "countEmptySearchVector": [
+        10
+      ],
+      "countNotEmptySearchVector": [
+        10
+      ],
+      "percentageEmptySearchVector": [
+        13
+      ],
+      "percentageNotEmptySearchVector": [
+        13
+      ],
+      "edges": [
+        612
+      ],
+      "pageInfo": [
+        119
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2GroupByConnection": {
+      "totalCount": [
+        10
+      ],
+      "countUniqueValuesTwentyUserIdentifier": [
+        10
+      ],
+      "countEmptyTwentyUserIdentifier": [
+        10
+      ],
+      "countNotEmptyTwentyUserIdentifier": [
+        10
+      ],
+      "percentageEmptyTwentyUserIdentifier": [
+        13
+      ],
+      "percentageNotEmptyTwentyUserIdentifier": [
+        13
+      ],
+      "countUniqueValuesTwentyWorkspaceIdentifier": [
+        10
+      ],
+      "countEmptyTwentyWorkspaceIdentifier": [
+        10
+      ],
+      "countNotEmptyTwentyWorkspaceIdentifier": [
+        10
+      ],
+      "percentageEmptyTwentyWorkspaceIdentifier": [
+        13
+      ],
+      "percentageNotEmptyTwentyWorkspaceIdentifier": [
+        13
+      ],
+      "countUniqueValuesIdOfTheUserWorkspace": [
+        10
+      ],
+      "countEmptyIdOfTheUserWorkspace": [
+        10
+      ],
+      "countNotEmptyIdOfTheUserWorkspace": [
+        10
+      ],
+      "percentageEmptyIdOfTheUserWorkspace": [
+        13
+      ],
+      "percentageNotEmptyIdOfTheUserWorkspace": [
+        13
+      ],
+      "countUniqueValuesUpdatedBy": [
+        10
+      ],
+      "countEmptyUpdatedBy": [
+        10
+      ],
+      "countNotEmptyUpdatedBy": [
+        10
+      ],
+      "percentageEmptyUpdatedBy": [
+        13
+      ],
+      "percentageNotEmptyUpdatedBy": [
+        13
+      ],
+      "countUniqueValuesId": [
+        10
+      ],
+      "countEmptyId": [
+        10
+      ],
+      "countNotEmptyId": [
+        10
+      ],
+      "percentageEmptyId": [
+        13
+      ],
+      "percentageNotEmptyId": [
+        13
+      ],
+      "countUniqueValuesName": [
+        10
+      ],
+      "countEmptyName": [
+        10
+      ],
+      "countNotEmptyName": [
+        10
+      ],
+      "percentageEmptyName": [
+        13
+      ],
+      "percentageNotEmptyName": [
+        13
+      ],
+      "countUniqueValuesCreatedAt": [
+        10
+      ],
+      "countEmptyCreatedAt": [
+        10
+      ],
+      "countNotEmptyCreatedAt": [
+        10
+      ],
+      "percentageEmptyCreatedAt": [
+        13
+      ],
+      "percentageNotEmptyCreatedAt": [
+        13
+      ],
+      "minCreatedAt": [
+        7
+      ],
+      "maxCreatedAt": [
+        7
+      ],
+      "countUniqueValuesUpdatedAt": [
+        10
+      ],
+      "countEmptyUpdatedAt": [
+        10
+      ],
+      "countNotEmptyUpdatedAt": [
+        10
+      ],
+      "percentageEmptyUpdatedAt": [
+        13
+      ],
+      "percentageNotEmptyUpdatedAt": [
+        13
+      ],
+      "minUpdatedAt": [
+        7
+      ],
+      "maxUpdatedAt": [
+        7
+      ],
+      "countUniqueValuesDeletedAt": [
+        10
+      ],
+      "countEmptyDeletedAt": [
+        10
+      ],
+      "countNotEmptyDeletedAt": [
+        10
+      ],
+      "percentageEmptyDeletedAt": [
+        13
+      ],
+      "percentageNotEmptyDeletedAt": [
+        13
+      ],
+      "minDeletedAt": [
+        7
+      ],
+      "maxDeletedAt": [
+        7
+      ],
+      "countUniqueValuesCreatedBy": [
+        10
+      ],
+      "countEmptyCreatedBy": [
+        10
+      ],
+      "countNotEmptyCreatedBy": [
+        10
+      ],
+      "percentageEmptyCreatedBy": [
+        13
+      ],
+      "percentageNotEmptyCreatedBy": [
+        13
+      ],
+      "countUniqueValuesPosition": [
+        10
+      ],
+      "countEmptyPosition": [
+        10
+      ],
+      "countNotEmptyPosition": [
+        10
+      ],
+      "percentageEmptyPosition": [
+        13
+      ],
+      "percentageNotEmptyPosition": [
+        13
+      ],
+      "countUniqueValuesSearchVector": [
+        10
+      ],
+      "countEmptySearchVector": [
+        10
+      ],
+      "countNotEmptySearchVector": [
+        10
+      ],
+      "percentageEmptySearchVector": [
+        13
+      ],
+      "percentageNotEmptySearchVector": [
+        13
+      ],
+      "edges": [
+        612
+      ],
+      "pageInfo": [
+        119
+      ],
+      "groupByDimensionValues": [
+        25
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2RelationInput": {
+      "connect": [
+        616
+      ],
+      "disconnect": [
+        6
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2ConnectInput": {
+      "where": [
+        617
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2WhereUniqueInput": {
+      "id": [
+        22
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2CreateInput": {
+      "twentyUserIdentifier": [
+        1
+      ],
+      "twentyWorkspaceIdentifier": [
+        1
+      ],
+      "idOfTheUserWorkspace": [
+        1
+      ],
+      "updatedBy": [
+        83
+      ],
+      "id": [
+        22
+      ],
+      "name": [
+        1
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        83
+      ],
+      "position": [
+        114
+      ],
+      "searchVector": [
+        115
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2UpdateInput": {
+      "twentyUserIdentifier": [
+        1
+      ],
+      "twentyWorkspaceIdentifier": [
+        1
+      ],
+      "idOfTheUserWorkspace": [
+        1
+      ],
+      "updatedBy": [
+        84
+      ],
+      "id": [
+        22
+      ],
+      "name": [
+        1
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        84
+      ],
+      "position": [
+        114
+      ],
+      "searchVector": [
+        115
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2FilterInput": {
+      "twentyUserIdentifier": [
+        56
+      ],
+      "twentyWorkspaceIdentifier": [
+        56
+      ],
+      "idOfTheUserWorkspace": [
+        56
+      ],
+      "updatedBy": [
+        85
+      ],
+      "id": [
+        33
+      ],
+      "name": [
+        56
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        85
+      ],
+      "position": [
+        130
+      ],
+      "searchVector": [
+        131
+      ],
+      "and": [
+        620
+      ],
+      "or": [
+        620
+      ],
+      "not": [
+        620
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2OrderByInput": {
+      "twentyUserIdentifier": [
+        59
+      ],
+      "twentyWorkspaceIdentifier": [
+        59
+      ],
+      "idOfTheUserWorkspace": [
+        59
+      ],
+      "updatedBy": [
+        87
+      ],
+      "id": [
+        59
+      ],
+      "name": [
+        59
+      ],
+      "createdAt": [
+        59
+      ],
+      "updatedAt": [
+        59
+      ],
+      "deletedAt": [
+        59
+      ],
+      "createdBy": [
+        87
+      ],
+      "position": [
+        59
+      ],
+      "searchVector": [
+        59
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2OrderByWithGroupByInput": {
+      "aggregate": [
+        623
+      ],
+      "twentyUserIdentifier": [
+        59
+      ],
+      "twentyWorkspaceIdentifier": [
+        59
+      ],
+      "idOfTheUserWorkspace": [
+        59
+      ],
+      "updatedBy": [
+        87
+      ],
+      "id": [
+        59
+      ],
+      "name": [
+        59
+      ],
+      "createdAt": [
+        110
+      ],
+      "updatedAt": [
+        110
+      ],
+      "deletedAt": [
+        110
+      ],
+      "createdBy": [
+        87
+      ],
+      "position": [
+        59
+      ],
+      "searchVector": [
+        59
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2OrderByWithGroupByAggregateInput": {
+      "totalCount": [
+        59
+      ],
+      "countUniqueValuesTwentyUserIdentifier": [
+        59
+      ],
+      "countEmptyTwentyUserIdentifier": [
+        59
+      ],
+      "countNotEmptyTwentyUserIdentifier": [
+        59
+      ],
+      "percentageEmptyTwentyUserIdentifier": [
+        59
+      ],
+      "percentageNotEmptyTwentyUserIdentifier": [
+        59
+      ],
+      "countUniqueValuesTwentyWorkspaceIdentifier": [
+        59
+      ],
+      "countEmptyTwentyWorkspaceIdentifier": [
+        59
+      ],
+      "countNotEmptyTwentyWorkspaceIdentifier": [
+        59
+      ],
+      "percentageEmptyTwentyWorkspaceIdentifier": [
+        59
+      ],
+      "percentageNotEmptyTwentyWorkspaceIdentifier": [
+        59
+      ],
+      "countUniqueValuesIdOfTheUserWorkspace": [
+        59
+      ],
+      "countEmptyIdOfTheUserWorkspace": [
+        59
+      ],
+      "countNotEmptyIdOfTheUserWorkspace": [
+        59
+      ],
+      "percentageEmptyIdOfTheUserWorkspace": [
+        59
+      ],
+      "percentageNotEmptyIdOfTheUserWorkspace": [
+        59
+      ],
+      "countUniqueValuesUpdatedBy": [
+        59
+      ],
+      "countEmptyUpdatedBy": [
+        59
+      ],
+      "countNotEmptyUpdatedBy": [
+        59
+      ],
+      "percentageEmptyUpdatedBy": [
+        59
+      ],
+      "percentageNotEmptyUpdatedBy": [
+        59
+      ],
+      "countUniqueValuesId": [
+        59
+      ],
+      "countEmptyId": [
+        59
+      ],
+      "countNotEmptyId": [
+        59
+      ],
+      "percentageEmptyId": [
+        59
+      ],
+      "percentageNotEmptyId": [
+        59
+      ],
+      "countUniqueValuesName": [
+        59
+      ],
+      "countEmptyName": [
+        59
+      ],
+      "countNotEmptyName": [
+        59
+      ],
+      "percentageEmptyName": [
+        59
+      ],
+      "percentageNotEmptyName": [
+        59
+      ],
+      "countUniqueValuesCreatedAt": [
+        59
+      ],
+      "countEmptyCreatedAt": [
+        59
+      ],
+      "countNotEmptyCreatedAt": [
+        59
+      ],
+      "percentageEmptyCreatedAt": [
+        59
+      ],
+      "percentageNotEmptyCreatedAt": [
+        59
+      ],
+      "minCreatedAt": [
+        59
+      ],
+      "maxCreatedAt": [
+        59
+      ],
+      "countUniqueValuesUpdatedAt": [
+        59
+      ],
+      "countEmptyUpdatedAt": [
+        59
+      ],
+      "countNotEmptyUpdatedAt": [
+        59
+      ],
+      "percentageEmptyUpdatedAt": [
+        59
+      ],
+      "percentageNotEmptyUpdatedAt": [
+        59
+      ],
+      "minUpdatedAt": [
+        59
+      ],
+      "maxUpdatedAt": [
+        59
+      ],
+      "countUniqueValuesDeletedAt": [
+        59
+      ],
+      "countEmptyDeletedAt": [
+        59
+      ],
+      "countNotEmptyDeletedAt": [
+        59
+      ],
+      "percentageEmptyDeletedAt": [
+        59
+      ],
+      "percentageNotEmptyDeletedAt": [
+        59
+      ],
+      "minDeletedAt": [
+        59
+      ],
+      "maxDeletedAt": [
+        59
+      ],
+      "countUniqueValuesCreatedBy": [
+        59
+      ],
+      "countEmptyCreatedBy": [
+        59
+      ],
+      "countNotEmptyCreatedBy": [
+        59
+      ],
+      "percentageEmptyCreatedBy": [
+        59
+      ],
+      "percentageNotEmptyCreatedBy": [
+        59
+      ],
+      "countUniqueValuesPosition": [
+        59
+      ],
+      "countEmptyPosition": [
+        59
+      ],
+      "countNotEmptyPosition": [
+        59
+      ],
+      "percentageEmptyPosition": [
+        59
+      ],
+      "percentageNotEmptyPosition": [
+        59
+      ],
+      "countUniqueValuesSearchVector": [
+        59
+      ],
+      "countEmptySearchVector": [
+        59
+      ],
+      "countNotEmptySearchVector": [
+        59
+      ],
+      "percentageEmptySearchVector": [
+        59
+      ],
+      "percentageNotEmptySearchVector": [
+        59
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudUserWorkspace2GroupByInput": {
+      "twentyUserIdentifier": [
+        6
+      ],
+      "twentyWorkspaceIdentifier": [
+        6
+      ],
+      "idOfTheUserWorkspace": [
+        6
+      ],
+      "updatedBy": [
+        88
+      ],
+      "id": [
+        6
+      ],
+      "name": [
+        6
+      ],
+      "createdAt": [
+        109
+      ],
+      "updatedAt": [
+        109
+      ],
+      "deletedAt": [
+        109
+      ],
+      "createdBy": [
+        88
+      ],
+      "position": [
+        6
+      ],
+      "searchVector": [
+        6
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2ActivationStatusEnum": {},
+    "CloudWorkspace2SubscriptionStatusEnum": {},
+    "CloudWorkspace2PaymentFrequencyEnum": {},
+    "CloudWorkspace2": {
+      "customDomain": [
+        52
+      ],
+      "workspaceBusinessDomain": [
+        52
+      ],
+      "companyLinkedin": [
+        52
+      ],
+      "dataLastUpdatedAt": [
+        629
+      ],
+      "lastPageViewDate": [
+        629
+      ],
+      "totalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "activeUsersL30D": [
+        13
+      ],
+      "activeUsersL7D": [
+        13
+      ],
+      "activeUsersL24H": [
+        13
+      ],
+      "workspaceTenure": [
+        13
+      ],
+      "pageViewsL30D": [
+        13
+      ],
+      "pageViewsL7D": [
+        13
+      ],
+      "pageViewsL24H": [
+        13
+      ],
+      "totalWorkspaceUsers": [
+        13
+      ],
+      "numberOfEventsL30D": [
+        13
+      ],
+      "numberOfEventsTotal": [
+        13
+      ],
+      "alexaRank": [
+        13
+      ],
+      "employees": [
+        13
+      ],
+      "isActiveL7D": [
+        6
+      ],
+      "isActiveL24H": [
+        6
+      ],
+      "isActiveL30D": [
+        6
+      ],
+      "isEnriched": [
+        6
+      ],
+      "industry": [
+        1
+      ],
+      "companyFoundedYear": [
+        1
+      ],
+      "description": [
+        1
+      ],
+      "latestFundingStage": [
+        1
+      ],
+      "companyName": [
+        1
+      ],
+      "subDomain": [
+        1
+      ],
+      "annualRevenue": [
+        61
+      ],
+      "mrr": [
+        61
+      ],
+      "potentialArr": [
+        61
+      ],
+      "arr": [
+        61
+      ],
+      "totalFunding": [
+        61
+      ],
+      "activationStatus": [
+        625
+      ],
+      "subscriptionStatus": [
+        626
+      ],
+      "paymentFrequency": [
+        627
+      ],
+      "nextRenewalDate": [
+        7
+      ],
+      "creatorEmail": [
+        89
+      ],
+      "tags": [
+        1
+      ],
+      "updatedBy": [
+        82
+      ],
+      "id": [
+        2
+      ],
+      "name": [
+        1
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        82
+      ],
+      "position": [
+        114
+      ],
+      "searchVector": [
+        115
+      ],
+      "timelineActivities": [
+        500,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            507
+          ],
+          "orderBy": [
+            508,
+            "[TimelineActivityOrderByInput]"
+          ]
+        }
+      ],
+      "favorites": [
+        263,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            270
+          ],
+          "orderBy": [
+            271,
+            "[FavoriteOrderByInput]"
+          ]
+        }
+      ],
+      "attachments": [
+        118,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            128
+          ],
+          "orderBy": [
+            132,
+            "[AttachmentOrderByInput]"
+          ]
+        }
+      ],
+      "noteTargets": [
+        425,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            432
+          ],
+          "orderBy": [
+            433,
+            "[NoteTargetOrderByInput]"
+          ]
+        }
+      ],
+      "taskTargets": [
+        486,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            493
+          ],
+          "orderBy": [
+            494,
+            "[TaskTargetOrderByInput]"
+          ]
+        }
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "Date": {},
+    "CloudWorkspace2Edge": {
+      "node": [
+        628
+      ],
+      "cursor": [
+        117
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2Connection": {
+      "totalCount": [
+        10
+      ],
+      "countUniqueValuesCustomDomain": [
+        10
+      ],
+      "countEmptyCustomDomain": [
+        10
+      ],
+      "countNotEmptyCustomDomain": [
+        10
+      ],
+      "percentageEmptyCustomDomain": [
+        13
+      ],
+      "percentageNotEmptyCustomDomain": [
+        13
+      ],
+      "countUniqueValuesWorkspaceBusinessDomain": [
+        10
+      ],
+      "countEmptyWorkspaceBusinessDomain": [
+        10
+      ],
+      "countNotEmptyWorkspaceBusinessDomain": [
+        10
+      ],
+      "percentageEmptyWorkspaceBusinessDomain": [
+        13
+      ],
+      "percentageNotEmptyWorkspaceBusinessDomain": [
+        13
+      ],
+      "countUniqueValuesCompanyLinkedin": [
+        10
+      ],
+      "countEmptyCompanyLinkedin": [
+        10
+      ],
+      "countNotEmptyCompanyLinkedin": [
+        10
+      ],
+      "percentageEmptyCompanyLinkedin": [
+        13
+      ],
+      "percentageNotEmptyCompanyLinkedin": [
+        13
+      ],
+      "countUniqueValuesDataLastUpdatedAt": [
+        10
+      ],
+      "countEmptyDataLastUpdatedAt": [
+        10
+      ],
+      "countNotEmptyDataLastUpdatedAt": [
+        10
+      ],
+      "percentageEmptyDataLastUpdatedAt": [
+        13
+      ],
+      "percentageNotEmptyDataLastUpdatedAt": [
+        13
+      ],
+      "minDataLastUpdatedAt": [
+        7
+      ],
+      "maxDataLastUpdatedAt": [
+        7
+      ],
+      "countUniqueValuesLastPageViewDate": [
+        10
+      ],
+      "countEmptyLastPageViewDate": [
+        10
+      ],
+      "countNotEmptyLastPageViewDate": [
+        10
+      ],
+      "percentageEmptyLastPageViewDate": [
+        13
+      ],
+      "percentageNotEmptyLastPageViewDate": [
+        13
+      ],
+      "minLastPageViewDate": [
+        7
+      ],
+      "maxLastPageViewDate": [
+        7
+      ],
+      "countUniqueValuesTotalEverActiveWorkspaceUsers": [
+        10
+      ],
+      "countEmptyTotalEverActiveWorkspaceUsers": [
+        10
+      ],
+      "countNotEmptyTotalEverActiveWorkspaceUsers": [
+        10
+      ],
+      "percentageEmptyTotalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "percentageNotEmptyTotalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "minTotalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "maxTotalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "avgTotalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "sumTotalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "countUniqueValuesActiveUsersL30D": [
+        10
+      ],
+      "countEmptyActiveUsersL30D": [
+        10
+      ],
+      "countNotEmptyActiveUsersL30D": [
+        10
+      ],
+      "percentageEmptyActiveUsersL30D": [
+        13
+      ],
+      "percentageNotEmptyActiveUsersL30D": [
+        13
+      ],
+      "minActiveUsersL30D": [
+        13
+      ],
+      "maxActiveUsersL30D": [
+        13
+      ],
+      "avgActiveUsersL30D": [
+        13
+      ],
+      "sumActiveUsersL30D": [
+        13
+      ],
+      "countUniqueValuesActiveUsersL7D": [
+        10
+      ],
+      "countEmptyActiveUsersL7D": [
+        10
+      ],
+      "countNotEmptyActiveUsersL7D": [
+        10
+      ],
+      "percentageEmptyActiveUsersL7D": [
+        13
+      ],
+      "percentageNotEmptyActiveUsersL7D": [
+        13
+      ],
+      "minActiveUsersL7D": [
+        13
+      ],
+      "maxActiveUsersL7D": [
+        13
+      ],
+      "avgActiveUsersL7D": [
+        13
+      ],
+      "sumActiveUsersL7D": [
+        13
+      ],
+      "countUniqueValuesActiveUsersL24H": [
+        10
+      ],
+      "countEmptyActiveUsersL24H": [
+        10
+      ],
+      "countNotEmptyActiveUsersL24H": [
+        10
+      ],
+      "percentageEmptyActiveUsersL24H": [
+        13
+      ],
+      "percentageNotEmptyActiveUsersL24H": [
+        13
+      ],
+      "minActiveUsersL24H": [
+        13
+      ],
+      "maxActiveUsersL24H": [
+        13
+      ],
+      "avgActiveUsersL24H": [
+        13
+      ],
+      "sumActiveUsersL24H": [
+        13
+      ],
+      "countUniqueValuesWorkspaceTenure": [
+        10
+      ],
+      "countEmptyWorkspaceTenure": [
+        10
+      ],
+      "countNotEmptyWorkspaceTenure": [
+        10
+      ],
+      "percentageEmptyWorkspaceTenure": [
+        13
+      ],
+      "percentageNotEmptyWorkspaceTenure": [
+        13
+      ],
+      "minWorkspaceTenure": [
+        13
+      ],
+      "maxWorkspaceTenure": [
+        13
+      ],
+      "avgWorkspaceTenure": [
+        13
+      ],
+      "sumWorkspaceTenure": [
+        13
+      ],
+      "countUniqueValuesPageViewsL30D": [
+        10
+      ],
+      "countEmptyPageViewsL30D": [
+        10
+      ],
+      "countNotEmptyPageViewsL30D": [
+        10
+      ],
+      "percentageEmptyPageViewsL30D": [
+        13
+      ],
+      "percentageNotEmptyPageViewsL30D": [
+        13
+      ],
+      "minPageViewsL30D": [
+        13
+      ],
+      "maxPageViewsL30D": [
+        13
+      ],
+      "avgPageViewsL30D": [
+        13
+      ],
+      "sumPageViewsL30D": [
+        13
+      ],
+      "countUniqueValuesPageViewsL7D": [
+        10
+      ],
+      "countEmptyPageViewsL7D": [
+        10
+      ],
+      "countNotEmptyPageViewsL7D": [
+        10
+      ],
+      "percentageEmptyPageViewsL7D": [
+        13
+      ],
+      "percentageNotEmptyPageViewsL7D": [
+        13
+      ],
+      "minPageViewsL7D": [
+        13
+      ],
+      "maxPageViewsL7D": [
+        13
+      ],
+      "avgPageViewsL7D": [
+        13
+      ],
+      "sumPageViewsL7D": [
+        13
+      ],
+      "countUniqueValuesPageViewsL24H": [
+        10
+      ],
+      "countEmptyPageViewsL24H": [
+        10
+      ],
+      "countNotEmptyPageViewsL24H": [
+        10
+      ],
+      "percentageEmptyPageViewsL24H": [
+        13
+      ],
+      "percentageNotEmptyPageViewsL24H": [
+        13
+      ],
+      "minPageViewsL24H": [
+        13
+      ],
+      "maxPageViewsL24H": [
+        13
+      ],
+      "avgPageViewsL24H": [
+        13
+      ],
+      "sumPageViewsL24H": [
+        13
+      ],
+      "countUniqueValuesTotalWorkspaceUsers": [
+        10
+      ],
+      "countEmptyTotalWorkspaceUsers": [
+        10
+      ],
+      "countNotEmptyTotalWorkspaceUsers": [
+        10
+      ],
+      "percentageEmptyTotalWorkspaceUsers": [
+        13
+      ],
+      "percentageNotEmptyTotalWorkspaceUsers": [
+        13
+      ],
+      "minTotalWorkspaceUsers": [
+        13
+      ],
+      "maxTotalWorkspaceUsers": [
+        13
+      ],
+      "avgTotalWorkspaceUsers": [
+        13
+      ],
+      "sumTotalWorkspaceUsers": [
+        13
+      ],
+      "countUniqueValuesNumberOfEventsL30D": [
+        10
+      ],
+      "countEmptyNumberOfEventsL30D": [
+        10
+      ],
+      "countNotEmptyNumberOfEventsL30D": [
+        10
+      ],
+      "percentageEmptyNumberOfEventsL30D": [
+        13
+      ],
+      "percentageNotEmptyNumberOfEventsL30D": [
+        13
+      ],
+      "minNumberOfEventsL30D": [
+        13
+      ],
+      "maxNumberOfEventsL30D": [
+        13
+      ],
+      "avgNumberOfEventsL30D": [
+        13
+      ],
+      "sumNumberOfEventsL30D": [
+        13
+      ],
+      "countUniqueValuesNumberOfEventsTotal": [
+        10
+      ],
+      "countEmptyNumberOfEventsTotal": [
+        10
+      ],
+      "countNotEmptyNumberOfEventsTotal": [
+        10
+      ],
+      "percentageEmptyNumberOfEventsTotal": [
+        13
+      ],
+      "percentageNotEmptyNumberOfEventsTotal": [
+        13
+      ],
+      "minNumberOfEventsTotal": [
+        13
+      ],
+      "maxNumberOfEventsTotal": [
+        13
+      ],
+      "avgNumberOfEventsTotal": [
+        13
+      ],
+      "sumNumberOfEventsTotal": [
+        13
+      ],
+      "countUniqueValuesAlexaRank": [
+        10
+      ],
+      "countEmptyAlexaRank": [
+        10
+      ],
+      "countNotEmptyAlexaRank": [
+        10
+      ],
+      "percentageEmptyAlexaRank": [
+        13
+      ],
+      "percentageNotEmptyAlexaRank": [
+        13
+      ],
+      "minAlexaRank": [
+        13
+      ],
+      "maxAlexaRank": [
+        13
+      ],
+      "avgAlexaRank": [
+        13
+      ],
+      "sumAlexaRank": [
+        13
+      ],
+      "countUniqueValuesEmployees": [
+        10
+      ],
+      "countEmptyEmployees": [
+        10
+      ],
+      "countNotEmptyEmployees": [
+        10
+      ],
+      "percentageEmptyEmployees": [
+        13
+      ],
+      "percentageNotEmptyEmployees": [
+        13
+      ],
+      "minEmployees": [
+        13
+      ],
+      "maxEmployees": [
+        13
+      ],
+      "avgEmployees": [
+        13
+      ],
+      "sumEmployees": [
+        13
+      ],
+      "countUniqueValuesIsActiveL7D": [
+        10
+      ],
+      "countEmptyIsActiveL7D": [
+        10
+      ],
+      "countNotEmptyIsActiveL7D": [
+        10
+      ],
+      "percentageEmptyIsActiveL7D": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL7D": [
+        13
+      ],
+      "countTrueIsActiveL7D": [
+        10
+      ],
+      "countFalseIsActiveL7D": [
+        10
+      ],
+      "countUniqueValuesIsActiveL24H": [
+        10
+      ],
+      "countEmptyIsActiveL24H": [
+        10
+      ],
+      "countNotEmptyIsActiveL24H": [
+        10
+      ],
+      "percentageEmptyIsActiveL24H": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL24H": [
+        13
+      ],
+      "countTrueIsActiveL24H": [
+        10
+      ],
+      "countFalseIsActiveL24H": [
+        10
+      ],
+      "countUniqueValuesIsActiveL30D": [
+        10
+      ],
+      "countEmptyIsActiveL30D": [
+        10
+      ],
+      "countNotEmptyIsActiveL30D": [
+        10
+      ],
+      "percentageEmptyIsActiveL30D": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL30D": [
+        13
+      ],
+      "countTrueIsActiveL30D": [
+        10
+      ],
+      "countFalseIsActiveL30D": [
+        10
+      ],
+      "countUniqueValuesIsEnriched": [
+        10
+      ],
+      "countEmptyIsEnriched": [
+        10
+      ],
+      "countNotEmptyIsEnriched": [
+        10
+      ],
+      "percentageEmptyIsEnriched": [
+        13
+      ],
+      "percentageNotEmptyIsEnriched": [
+        13
+      ],
+      "countTrueIsEnriched": [
+        10
+      ],
+      "countFalseIsEnriched": [
+        10
+      ],
+      "countUniqueValuesIndustry": [
+        10
+      ],
+      "countEmptyIndustry": [
+        10
+      ],
+      "countNotEmptyIndustry": [
+        10
+      ],
+      "percentageEmptyIndustry": [
+        13
+      ],
+      "percentageNotEmptyIndustry": [
+        13
+      ],
+      "countUniqueValuesCompanyFoundedYear": [
+        10
+      ],
+      "countEmptyCompanyFoundedYear": [
+        10
+      ],
+      "countNotEmptyCompanyFoundedYear": [
+        10
+      ],
+      "percentageEmptyCompanyFoundedYear": [
+        13
+      ],
+      "percentageNotEmptyCompanyFoundedYear": [
+        13
+      ],
+      "countUniqueValuesDescription": [
+        10
+      ],
+      "countEmptyDescription": [
+        10
+      ],
+      "countNotEmptyDescription": [
+        10
+      ],
+      "percentageEmptyDescription": [
+        13
+      ],
+      "percentageNotEmptyDescription": [
+        13
+      ],
+      "countUniqueValuesLatestFundingStage": [
+        10
+      ],
+      "countEmptyLatestFundingStage": [
+        10
+      ],
+      "countNotEmptyLatestFundingStage": [
+        10
+      ],
+      "percentageEmptyLatestFundingStage": [
+        13
+      ],
+      "percentageNotEmptyLatestFundingStage": [
+        13
+      ],
+      "countUniqueValuesCompanyName": [
+        10
+      ],
+      "countEmptyCompanyName": [
+        10
+      ],
+      "countNotEmptyCompanyName": [
+        10
+      ],
+      "percentageEmptyCompanyName": [
+        13
+      ],
+      "percentageNotEmptyCompanyName": [
+        13
+      ],
+      "countUniqueValuesSubDomain": [
+        10
+      ],
+      "countEmptySubDomain": [
+        10
+      ],
+      "countNotEmptySubDomain": [
+        10
+      ],
+      "percentageEmptySubDomain": [
+        13
+      ],
+      "percentageNotEmptySubDomain": [
+        13
+      ],
+      "countUniqueValuesAnnualRevenue": [
+        10
+      ],
+      "countEmptyAnnualRevenue": [
+        10
+      ],
+      "countNotEmptyAnnualRevenue": [
+        10
+      ],
+      "percentageEmptyAnnualRevenue": [
+        13
+      ],
+      "percentageNotEmptyAnnualRevenue": [
+        13
+      ],
+      "minAnnualRevenueAmountMicros": [
+        13
+      ],
+      "maxAnnualRevenueAmountMicros": [
+        13
+      ],
+      "sumAnnualRevenueAmountMicros": [
+        13
+      ],
+      "avgAnnualRevenueAmountMicros": [
+        13
+      ],
+      "countUniqueValuesMrr": [
+        10
+      ],
+      "countEmptyMrr": [
+        10
+      ],
+      "countNotEmptyMrr": [
+        10
+      ],
+      "percentageEmptyMrr": [
+        13
+      ],
+      "percentageNotEmptyMrr": [
+        13
+      ],
+      "minMrrAmountMicros": [
+        13
+      ],
+      "maxMrrAmountMicros": [
+        13
+      ],
+      "sumMrrAmountMicros": [
+        13
+      ],
+      "avgMrrAmountMicros": [
+        13
+      ],
+      "countUniqueValuesPotentialArr": [
+        10
+      ],
+      "countEmptyPotentialArr": [
+        10
+      ],
+      "countNotEmptyPotentialArr": [
+        10
+      ],
+      "percentageEmptyPotentialArr": [
+        13
+      ],
+      "percentageNotEmptyPotentialArr": [
+        13
+      ],
+      "minPotentialArrAmountMicros": [
+        13
+      ],
+      "maxPotentialArrAmountMicros": [
+        13
+      ],
+      "sumPotentialArrAmountMicros": [
+        13
+      ],
+      "avgPotentialArrAmountMicros": [
+        13
+      ],
+      "countUniqueValuesArr": [
+        10
+      ],
+      "countEmptyArr": [
+        10
+      ],
+      "countNotEmptyArr": [
+        10
+      ],
+      "percentageEmptyArr": [
+        13
+      ],
+      "percentageNotEmptyArr": [
+        13
+      ],
+      "minArrAmountMicros": [
+        13
+      ],
+      "maxArrAmountMicros": [
+        13
+      ],
+      "sumArrAmountMicros": [
+        13
+      ],
+      "avgArrAmountMicros": [
+        13
+      ],
+      "countUniqueValuesTotalFunding": [
+        10
+      ],
+      "countEmptyTotalFunding": [
+        10
+      ],
+      "countNotEmptyTotalFunding": [
+        10
+      ],
+      "percentageEmptyTotalFunding": [
+        13
+      ],
+      "percentageNotEmptyTotalFunding": [
+        13
+      ],
+      "minTotalFundingAmountMicros": [
+        13
+      ],
+      "maxTotalFundingAmountMicros": [
+        13
+      ],
+      "sumTotalFundingAmountMicros": [
+        13
+      ],
+      "avgTotalFundingAmountMicros": [
+        13
+      ],
+      "countUniqueValuesActivationStatus": [
+        10
+      ],
+      "countEmptyActivationStatus": [
+        10
+      ],
+      "countNotEmptyActivationStatus": [
+        10
+      ],
+      "percentageEmptyActivationStatus": [
+        13
+      ],
+      "percentageNotEmptyActivationStatus": [
+        13
+      ],
+      "countUniqueValuesSubscriptionStatus": [
+        10
+      ],
+      "countEmptySubscriptionStatus": [
+        10
+      ],
+      "countNotEmptySubscriptionStatus": [
+        10
+      ],
+      "percentageEmptySubscriptionStatus": [
+        13
+      ],
+      "percentageNotEmptySubscriptionStatus": [
+        13
+      ],
+      "countUniqueValuesPaymentFrequency": [
+        10
+      ],
+      "countEmptyPaymentFrequency": [
+        10
+      ],
+      "countNotEmptyPaymentFrequency": [
+        10
+      ],
+      "percentageEmptyPaymentFrequency": [
+        13
+      ],
+      "percentageNotEmptyPaymentFrequency": [
+        13
+      ],
+      "countUniqueValuesNextRenewalDate": [
+        10
+      ],
+      "countEmptyNextRenewalDate": [
+        10
+      ],
+      "countNotEmptyNextRenewalDate": [
+        10
+      ],
+      "percentageEmptyNextRenewalDate": [
+        13
+      ],
+      "percentageNotEmptyNextRenewalDate": [
+        13
+      ],
+      "minNextRenewalDate": [
+        7
+      ],
+      "maxNextRenewalDate": [
+        7
+      ],
+      "countUniqueValuesCreatorEmail": [
+        10
+      ],
+      "countEmptyCreatorEmail": [
+        10
+      ],
+      "countNotEmptyCreatorEmail": [
+        10
+      ],
+      "percentageEmptyCreatorEmail": [
+        13
+      ],
+      "percentageNotEmptyCreatorEmail": [
+        13
+      ],
+      "countUniqueValuesTags": [
+        10
+      ],
+      "countEmptyTags": [
+        10
+      ],
+      "countNotEmptyTags": [
+        10
+      ],
+      "percentageEmptyTags": [
+        13
+      ],
+      "percentageNotEmptyTags": [
+        13
+      ],
+      "countUniqueValuesUpdatedBy": [
+        10
+      ],
+      "countEmptyUpdatedBy": [
+        10
+      ],
+      "countNotEmptyUpdatedBy": [
+        10
+      ],
+      "percentageEmptyUpdatedBy": [
+        13
+      ],
+      "percentageNotEmptyUpdatedBy": [
+        13
+      ],
+      "countUniqueValuesId": [
+        10
+      ],
+      "countEmptyId": [
+        10
+      ],
+      "countNotEmptyId": [
+        10
+      ],
+      "percentageEmptyId": [
+        13
+      ],
+      "percentageNotEmptyId": [
+        13
+      ],
+      "countUniqueValuesName": [
+        10
+      ],
+      "countEmptyName": [
+        10
+      ],
+      "countNotEmptyName": [
+        10
+      ],
+      "percentageEmptyName": [
+        13
+      ],
+      "percentageNotEmptyName": [
+        13
+      ],
+      "countUniqueValuesCreatedAt": [
+        10
+      ],
+      "countEmptyCreatedAt": [
+        10
+      ],
+      "countNotEmptyCreatedAt": [
+        10
+      ],
+      "percentageEmptyCreatedAt": [
+        13
+      ],
+      "percentageNotEmptyCreatedAt": [
+        13
+      ],
+      "minCreatedAt": [
+        7
+      ],
+      "maxCreatedAt": [
+        7
+      ],
+      "countUniqueValuesUpdatedAt": [
+        10
+      ],
+      "countEmptyUpdatedAt": [
+        10
+      ],
+      "countNotEmptyUpdatedAt": [
+        10
+      ],
+      "percentageEmptyUpdatedAt": [
+        13
+      ],
+      "percentageNotEmptyUpdatedAt": [
+        13
+      ],
+      "minUpdatedAt": [
+        7
+      ],
+      "maxUpdatedAt": [
+        7
+      ],
+      "countUniqueValuesDeletedAt": [
+        10
+      ],
+      "countEmptyDeletedAt": [
+        10
+      ],
+      "countNotEmptyDeletedAt": [
+        10
+      ],
+      "percentageEmptyDeletedAt": [
+        13
+      ],
+      "percentageNotEmptyDeletedAt": [
+        13
+      ],
+      "minDeletedAt": [
+        7
+      ],
+      "maxDeletedAt": [
+        7
+      ],
+      "countUniqueValuesCreatedBy": [
+        10
+      ],
+      "countEmptyCreatedBy": [
+        10
+      ],
+      "countNotEmptyCreatedBy": [
+        10
+      ],
+      "percentageEmptyCreatedBy": [
+        13
+      ],
+      "percentageNotEmptyCreatedBy": [
+        13
+      ],
+      "countUniqueValuesPosition": [
+        10
+      ],
+      "countEmptyPosition": [
+        10
+      ],
+      "countNotEmptyPosition": [
+        10
+      ],
+      "percentageEmptyPosition": [
+        13
+      ],
+      "percentageNotEmptyPosition": [
+        13
+      ],
+      "countUniqueValuesSearchVector": [
+        10
+      ],
+      "countEmptySearchVector": [
+        10
+      ],
+      "countNotEmptySearchVector": [
+        10
+      ],
+      "percentageEmptySearchVector": [
+        13
+      ],
+      "percentageNotEmptySearchVector": [
+        13
+      ],
+      "edges": [
+        630
+      ],
+      "pageInfo": [
+        119
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2GroupByConnection": {
+      "totalCount": [
+        10
+      ],
+      "countUniqueValuesCustomDomain": [
+        10
+      ],
+      "countEmptyCustomDomain": [
+        10
+      ],
+      "countNotEmptyCustomDomain": [
+        10
+      ],
+      "percentageEmptyCustomDomain": [
+        13
+      ],
+      "percentageNotEmptyCustomDomain": [
+        13
+      ],
+      "countUniqueValuesWorkspaceBusinessDomain": [
+        10
+      ],
+      "countEmptyWorkspaceBusinessDomain": [
+        10
+      ],
+      "countNotEmptyWorkspaceBusinessDomain": [
+        10
+      ],
+      "percentageEmptyWorkspaceBusinessDomain": [
+        13
+      ],
+      "percentageNotEmptyWorkspaceBusinessDomain": [
+        13
+      ],
+      "countUniqueValuesCompanyLinkedin": [
+        10
+      ],
+      "countEmptyCompanyLinkedin": [
+        10
+      ],
+      "countNotEmptyCompanyLinkedin": [
+        10
+      ],
+      "percentageEmptyCompanyLinkedin": [
+        13
+      ],
+      "percentageNotEmptyCompanyLinkedin": [
+        13
+      ],
+      "countUniqueValuesDataLastUpdatedAt": [
+        10
+      ],
+      "countEmptyDataLastUpdatedAt": [
+        10
+      ],
+      "countNotEmptyDataLastUpdatedAt": [
+        10
+      ],
+      "percentageEmptyDataLastUpdatedAt": [
+        13
+      ],
+      "percentageNotEmptyDataLastUpdatedAt": [
+        13
+      ],
+      "minDataLastUpdatedAt": [
+        7
+      ],
+      "maxDataLastUpdatedAt": [
+        7
+      ],
+      "countUniqueValuesLastPageViewDate": [
+        10
+      ],
+      "countEmptyLastPageViewDate": [
+        10
+      ],
+      "countNotEmptyLastPageViewDate": [
+        10
+      ],
+      "percentageEmptyLastPageViewDate": [
+        13
+      ],
+      "percentageNotEmptyLastPageViewDate": [
+        13
+      ],
+      "minLastPageViewDate": [
+        7
+      ],
+      "maxLastPageViewDate": [
+        7
+      ],
+      "countUniqueValuesTotalEverActiveWorkspaceUsers": [
+        10
+      ],
+      "countEmptyTotalEverActiveWorkspaceUsers": [
+        10
+      ],
+      "countNotEmptyTotalEverActiveWorkspaceUsers": [
+        10
+      ],
+      "percentageEmptyTotalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "percentageNotEmptyTotalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "minTotalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "maxTotalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "avgTotalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "sumTotalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "countUniqueValuesActiveUsersL30D": [
+        10
+      ],
+      "countEmptyActiveUsersL30D": [
+        10
+      ],
+      "countNotEmptyActiveUsersL30D": [
+        10
+      ],
+      "percentageEmptyActiveUsersL30D": [
+        13
+      ],
+      "percentageNotEmptyActiveUsersL30D": [
+        13
+      ],
+      "minActiveUsersL30D": [
+        13
+      ],
+      "maxActiveUsersL30D": [
+        13
+      ],
+      "avgActiveUsersL30D": [
+        13
+      ],
+      "sumActiveUsersL30D": [
+        13
+      ],
+      "countUniqueValuesActiveUsersL7D": [
+        10
+      ],
+      "countEmptyActiveUsersL7D": [
+        10
+      ],
+      "countNotEmptyActiveUsersL7D": [
+        10
+      ],
+      "percentageEmptyActiveUsersL7D": [
+        13
+      ],
+      "percentageNotEmptyActiveUsersL7D": [
+        13
+      ],
+      "minActiveUsersL7D": [
+        13
+      ],
+      "maxActiveUsersL7D": [
+        13
+      ],
+      "avgActiveUsersL7D": [
+        13
+      ],
+      "sumActiveUsersL7D": [
+        13
+      ],
+      "countUniqueValuesActiveUsersL24H": [
+        10
+      ],
+      "countEmptyActiveUsersL24H": [
+        10
+      ],
+      "countNotEmptyActiveUsersL24H": [
+        10
+      ],
+      "percentageEmptyActiveUsersL24H": [
+        13
+      ],
+      "percentageNotEmptyActiveUsersL24H": [
+        13
+      ],
+      "minActiveUsersL24H": [
+        13
+      ],
+      "maxActiveUsersL24H": [
+        13
+      ],
+      "avgActiveUsersL24H": [
+        13
+      ],
+      "sumActiveUsersL24H": [
+        13
+      ],
+      "countUniqueValuesWorkspaceTenure": [
+        10
+      ],
+      "countEmptyWorkspaceTenure": [
+        10
+      ],
+      "countNotEmptyWorkspaceTenure": [
+        10
+      ],
+      "percentageEmptyWorkspaceTenure": [
+        13
+      ],
+      "percentageNotEmptyWorkspaceTenure": [
+        13
+      ],
+      "minWorkspaceTenure": [
+        13
+      ],
+      "maxWorkspaceTenure": [
+        13
+      ],
+      "avgWorkspaceTenure": [
+        13
+      ],
+      "sumWorkspaceTenure": [
+        13
+      ],
+      "countUniqueValuesPageViewsL30D": [
+        10
+      ],
+      "countEmptyPageViewsL30D": [
+        10
+      ],
+      "countNotEmptyPageViewsL30D": [
+        10
+      ],
+      "percentageEmptyPageViewsL30D": [
+        13
+      ],
+      "percentageNotEmptyPageViewsL30D": [
+        13
+      ],
+      "minPageViewsL30D": [
+        13
+      ],
+      "maxPageViewsL30D": [
+        13
+      ],
+      "avgPageViewsL30D": [
+        13
+      ],
+      "sumPageViewsL30D": [
+        13
+      ],
+      "countUniqueValuesPageViewsL7D": [
+        10
+      ],
+      "countEmptyPageViewsL7D": [
+        10
+      ],
+      "countNotEmptyPageViewsL7D": [
+        10
+      ],
+      "percentageEmptyPageViewsL7D": [
+        13
+      ],
+      "percentageNotEmptyPageViewsL7D": [
+        13
+      ],
+      "minPageViewsL7D": [
+        13
+      ],
+      "maxPageViewsL7D": [
+        13
+      ],
+      "avgPageViewsL7D": [
+        13
+      ],
+      "sumPageViewsL7D": [
+        13
+      ],
+      "countUniqueValuesPageViewsL24H": [
+        10
+      ],
+      "countEmptyPageViewsL24H": [
+        10
+      ],
+      "countNotEmptyPageViewsL24H": [
+        10
+      ],
+      "percentageEmptyPageViewsL24H": [
+        13
+      ],
+      "percentageNotEmptyPageViewsL24H": [
+        13
+      ],
+      "minPageViewsL24H": [
+        13
+      ],
+      "maxPageViewsL24H": [
+        13
+      ],
+      "avgPageViewsL24H": [
+        13
+      ],
+      "sumPageViewsL24H": [
+        13
+      ],
+      "countUniqueValuesTotalWorkspaceUsers": [
+        10
+      ],
+      "countEmptyTotalWorkspaceUsers": [
+        10
+      ],
+      "countNotEmptyTotalWorkspaceUsers": [
+        10
+      ],
+      "percentageEmptyTotalWorkspaceUsers": [
+        13
+      ],
+      "percentageNotEmptyTotalWorkspaceUsers": [
+        13
+      ],
+      "minTotalWorkspaceUsers": [
+        13
+      ],
+      "maxTotalWorkspaceUsers": [
+        13
+      ],
+      "avgTotalWorkspaceUsers": [
+        13
+      ],
+      "sumTotalWorkspaceUsers": [
+        13
+      ],
+      "countUniqueValuesNumberOfEventsL30D": [
+        10
+      ],
+      "countEmptyNumberOfEventsL30D": [
+        10
+      ],
+      "countNotEmptyNumberOfEventsL30D": [
+        10
+      ],
+      "percentageEmptyNumberOfEventsL30D": [
+        13
+      ],
+      "percentageNotEmptyNumberOfEventsL30D": [
+        13
+      ],
+      "minNumberOfEventsL30D": [
+        13
+      ],
+      "maxNumberOfEventsL30D": [
+        13
+      ],
+      "avgNumberOfEventsL30D": [
+        13
+      ],
+      "sumNumberOfEventsL30D": [
+        13
+      ],
+      "countUniqueValuesNumberOfEventsTotal": [
+        10
+      ],
+      "countEmptyNumberOfEventsTotal": [
+        10
+      ],
+      "countNotEmptyNumberOfEventsTotal": [
+        10
+      ],
+      "percentageEmptyNumberOfEventsTotal": [
+        13
+      ],
+      "percentageNotEmptyNumberOfEventsTotal": [
+        13
+      ],
+      "minNumberOfEventsTotal": [
+        13
+      ],
+      "maxNumberOfEventsTotal": [
+        13
+      ],
+      "avgNumberOfEventsTotal": [
+        13
+      ],
+      "sumNumberOfEventsTotal": [
+        13
+      ],
+      "countUniqueValuesAlexaRank": [
+        10
+      ],
+      "countEmptyAlexaRank": [
+        10
+      ],
+      "countNotEmptyAlexaRank": [
+        10
+      ],
+      "percentageEmptyAlexaRank": [
+        13
+      ],
+      "percentageNotEmptyAlexaRank": [
+        13
+      ],
+      "minAlexaRank": [
+        13
+      ],
+      "maxAlexaRank": [
+        13
+      ],
+      "avgAlexaRank": [
+        13
+      ],
+      "sumAlexaRank": [
+        13
+      ],
+      "countUniqueValuesEmployees": [
+        10
+      ],
+      "countEmptyEmployees": [
+        10
+      ],
+      "countNotEmptyEmployees": [
+        10
+      ],
+      "percentageEmptyEmployees": [
+        13
+      ],
+      "percentageNotEmptyEmployees": [
+        13
+      ],
+      "minEmployees": [
+        13
+      ],
+      "maxEmployees": [
+        13
+      ],
+      "avgEmployees": [
+        13
+      ],
+      "sumEmployees": [
+        13
+      ],
+      "countUniqueValuesIsActiveL7D": [
+        10
+      ],
+      "countEmptyIsActiveL7D": [
+        10
+      ],
+      "countNotEmptyIsActiveL7D": [
+        10
+      ],
+      "percentageEmptyIsActiveL7D": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL7D": [
+        13
+      ],
+      "countTrueIsActiveL7D": [
+        10
+      ],
+      "countFalseIsActiveL7D": [
+        10
+      ],
+      "countUniqueValuesIsActiveL24H": [
+        10
+      ],
+      "countEmptyIsActiveL24H": [
+        10
+      ],
+      "countNotEmptyIsActiveL24H": [
+        10
+      ],
+      "percentageEmptyIsActiveL24H": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL24H": [
+        13
+      ],
+      "countTrueIsActiveL24H": [
+        10
+      ],
+      "countFalseIsActiveL24H": [
+        10
+      ],
+      "countUniqueValuesIsActiveL30D": [
+        10
+      ],
+      "countEmptyIsActiveL30D": [
+        10
+      ],
+      "countNotEmptyIsActiveL30D": [
+        10
+      ],
+      "percentageEmptyIsActiveL30D": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL30D": [
+        13
+      ],
+      "countTrueIsActiveL30D": [
+        10
+      ],
+      "countFalseIsActiveL30D": [
+        10
+      ],
+      "countUniqueValuesIsEnriched": [
+        10
+      ],
+      "countEmptyIsEnriched": [
+        10
+      ],
+      "countNotEmptyIsEnriched": [
+        10
+      ],
+      "percentageEmptyIsEnriched": [
+        13
+      ],
+      "percentageNotEmptyIsEnriched": [
+        13
+      ],
+      "countTrueIsEnriched": [
+        10
+      ],
+      "countFalseIsEnriched": [
+        10
+      ],
+      "countUniqueValuesIndustry": [
+        10
+      ],
+      "countEmptyIndustry": [
+        10
+      ],
+      "countNotEmptyIndustry": [
+        10
+      ],
+      "percentageEmptyIndustry": [
+        13
+      ],
+      "percentageNotEmptyIndustry": [
+        13
+      ],
+      "countUniqueValuesCompanyFoundedYear": [
+        10
+      ],
+      "countEmptyCompanyFoundedYear": [
+        10
+      ],
+      "countNotEmptyCompanyFoundedYear": [
+        10
+      ],
+      "percentageEmptyCompanyFoundedYear": [
+        13
+      ],
+      "percentageNotEmptyCompanyFoundedYear": [
+        13
+      ],
+      "countUniqueValuesDescription": [
+        10
+      ],
+      "countEmptyDescription": [
+        10
+      ],
+      "countNotEmptyDescription": [
+        10
+      ],
+      "percentageEmptyDescription": [
+        13
+      ],
+      "percentageNotEmptyDescription": [
+        13
+      ],
+      "countUniqueValuesLatestFundingStage": [
+        10
+      ],
+      "countEmptyLatestFundingStage": [
+        10
+      ],
+      "countNotEmptyLatestFundingStage": [
+        10
+      ],
+      "percentageEmptyLatestFundingStage": [
+        13
+      ],
+      "percentageNotEmptyLatestFundingStage": [
+        13
+      ],
+      "countUniqueValuesCompanyName": [
+        10
+      ],
+      "countEmptyCompanyName": [
+        10
+      ],
+      "countNotEmptyCompanyName": [
+        10
+      ],
+      "percentageEmptyCompanyName": [
+        13
+      ],
+      "percentageNotEmptyCompanyName": [
+        13
+      ],
+      "countUniqueValuesSubDomain": [
+        10
+      ],
+      "countEmptySubDomain": [
+        10
+      ],
+      "countNotEmptySubDomain": [
+        10
+      ],
+      "percentageEmptySubDomain": [
+        13
+      ],
+      "percentageNotEmptySubDomain": [
+        13
+      ],
+      "countUniqueValuesAnnualRevenue": [
+        10
+      ],
+      "countEmptyAnnualRevenue": [
+        10
+      ],
+      "countNotEmptyAnnualRevenue": [
+        10
+      ],
+      "percentageEmptyAnnualRevenue": [
+        13
+      ],
+      "percentageNotEmptyAnnualRevenue": [
+        13
+      ],
+      "minAnnualRevenueAmountMicros": [
+        13
+      ],
+      "maxAnnualRevenueAmountMicros": [
+        13
+      ],
+      "sumAnnualRevenueAmountMicros": [
+        13
+      ],
+      "avgAnnualRevenueAmountMicros": [
+        13
+      ],
+      "countUniqueValuesMrr": [
+        10
+      ],
+      "countEmptyMrr": [
+        10
+      ],
+      "countNotEmptyMrr": [
+        10
+      ],
+      "percentageEmptyMrr": [
+        13
+      ],
+      "percentageNotEmptyMrr": [
+        13
+      ],
+      "minMrrAmountMicros": [
+        13
+      ],
+      "maxMrrAmountMicros": [
+        13
+      ],
+      "sumMrrAmountMicros": [
+        13
+      ],
+      "avgMrrAmountMicros": [
+        13
+      ],
+      "countUniqueValuesPotentialArr": [
+        10
+      ],
+      "countEmptyPotentialArr": [
+        10
+      ],
+      "countNotEmptyPotentialArr": [
+        10
+      ],
+      "percentageEmptyPotentialArr": [
+        13
+      ],
+      "percentageNotEmptyPotentialArr": [
+        13
+      ],
+      "minPotentialArrAmountMicros": [
+        13
+      ],
+      "maxPotentialArrAmountMicros": [
+        13
+      ],
+      "sumPotentialArrAmountMicros": [
+        13
+      ],
+      "avgPotentialArrAmountMicros": [
+        13
+      ],
+      "countUniqueValuesArr": [
+        10
+      ],
+      "countEmptyArr": [
+        10
+      ],
+      "countNotEmptyArr": [
+        10
+      ],
+      "percentageEmptyArr": [
+        13
+      ],
+      "percentageNotEmptyArr": [
+        13
+      ],
+      "minArrAmountMicros": [
+        13
+      ],
+      "maxArrAmountMicros": [
+        13
+      ],
+      "sumArrAmountMicros": [
+        13
+      ],
+      "avgArrAmountMicros": [
+        13
+      ],
+      "countUniqueValuesTotalFunding": [
+        10
+      ],
+      "countEmptyTotalFunding": [
+        10
+      ],
+      "countNotEmptyTotalFunding": [
+        10
+      ],
+      "percentageEmptyTotalFunding": [
+        13
+      ],
+      "percentageNotEmptyTotalFunding": [
+        13
+      ],
+      "minTotalFundingAmountMicros": [
+        13
+      ],
+      "maxTotalFundingAmountMicros": [
+        13
+      ],
+      "sumTotalFundingAmountMicros": [
+        13
+      ],
+      "avgTotalFundingAmountMicros": [
+        13
+      ],
+      "countUniqueValuesActivationStatus": [
+        10
+      ],
+      "countEmptyActivationStatus": [
+        10
+      ],
+      "countNotEmptyActivationStatus": [
+        10
+      ],
+      "percentageEmptyActivationStatus": [
+        13
+      ],
+      "percentageNotEmptyActivationStatus": [
+        13
+      ],
+      "countUniqueValuesSubscriptionStatus": [
+        10
+      ],
+      "countEmptySubscriptionStatus": [
+        10
+      ],
+      "countNotEmptySubscriptionStatus": [
+        10
+      ],
+      "percentageEmptySubscriptionStatus": [
+        13
+      ],
+      "percentageNotEmptySubscriptionStatus": [
+        13
+      ],
+      "countUniqueValuesPaymentFrequency": [
+        10
+      ],
+      "countEmptyPaymentFrequency": [
+        10
+      ],
+      "countNotEmptyPaymentFrequency": [
+        10
+      ],
+      "percentageEmptyPaymentFrequency": [
+        13
+      ],
+      "percentageNotEmptyPaymentFrequency": [
+        13
+      ],
+      "countUniqueValuesNextRenewalDate": [
+        10
+      ],
+      "countEmptyNextRenewalDate": [
+        10
+      ],
+      "countNotEmptyNextRenewalDate": [
+        10
+      ],
+      "percentageEmptyNextRenewalDate": [
+        13
+      ],
+      "percentageNotEmptyNextRenewalDate": [
+        13
+      ],
+      "minNextRenewalDate": [
+        7
+      ],
+      "maxNextRenewalDate": [
+        7
+      ],
+      "countUniqueValuesCreatorEmail": [
+        10
+      ],
+      "countEmptyCreatorEmail": [
+        10
+      ],
+      "countNotEmptyCreatorEmail": [
+        10
+      ],
+      "percentageEmptyCreatorEmail": [
+        13
+      ],
+      "percentageNotEmptyCreatorEmail": [
+        13
+      ],
+      "countUniqueValuesTags": [
+        10
+      ],
+      "countEmptyTags": [
+        10
+      ],
+      "countNotEmptyTags": [
+        10
+      ],
+      "percentageEmptyTags": [
+        13
+      ],
+      "percentageNotEmptyTags": [
+        13
+      ],
+      "countUniqueValuesUpdatedBy": [
+        10
+      ],
+      "countEmptyUpdatedBy": [
+        10
+      ],
+      "countNotEmptyUpdatedBy": [
+        10
+      ],
+      "percentageEmptyUpdatedBy": [
+        13
+      ],
+      "percentageNotEmptyUpdatedBy": [
+        13
+      ],
+      "countUniqueValuesId": [
+        10
+      ],
+      "countEmptyId": [
+        10
+      ],
+      "countNotEmptyId": [
+        10
+      ],
+      "percentageEmptyId": [
+        13
+      ],
+      "percentageNotEmptyId": [
+        13
+      ],
+      "countUniqueValuesName": [
+        10
+      ],
+      "countEmptyName": [
+        10
+      ],
+      "countNotEmptyName": [
+        10
+      ],
+      "percentageEmptyName": [
+        13
+      ],
+      "percentageNotEmptyName": [
+        13
+      ],
+      "countUniqueValuesCreatedAt": [
+        10
+      ],
+      "countEmptyCreatedAt": [
+        10
+      ],
+      "countNotEmptyCreatedAt": [
+        10
+      ],
+      "percentageEmptyCreatedAt": [
+        13
+      ],
+      "percentageNotEmptyCreatedAt": [
+        13
+      ],
+      "minCreatedAt": [
+        7
+      ],
+      "maxCreatedAt": [
+        7
+      ],
+      "countUniqueValuesUpdatedAt": [
+        10
+      ],
+      "countEmptyUpdatedAt": [
+        10
+      ],
+      "countNotEmptyUpdatedAt": [
+        10
+      ],
+      "percentageEmptyUpdatedAt": [
+        13
+      ],
+      "percentageNotEmptyUpdatedAt": [
+        13
+      ],
+      "minUpdatedAt": [
+        7
+      ],
+      "maxUpdatedAt": [
+        7
+      ],
+      "countUniqueValuesDeletedAt": [
+        10
+      ],
+      "countEmptyDeletedAt": [
+        10
+      ],
+      "countNotEmptyDeletedAt": [
+        10
+      ],
+      "percentageEmptyDeletedAt": [
+        13
+      ],
+      "percentageNotEmptyDeletedAt": [
+        13
+      ],
+      "minDeletedAt": [
+        7
+      ],
+      "maxDeletedAt": [
+        7
+      ],
+      "countUniqueValuesCreatedBy": [
+        10
+      ],
+      "countEmptyCreatedBy": [
+        10
+      ],
+      "countNotEmptyCreatedBy": [
+        10
+      ],
+      "percentageEmptyCreatedBy": [
+        13
+      ],
+      "percentageNotEmptyCreatedBy": [
+        13
+      ],
+      "countUniqueValuesPosition": [
+        10
+      ],
+      "countEmptyPosition": [
+        10
+      ],
+      "countNotEmptyPosition": [
+        10
+      ],
+      "percentageEmptyPosition": [
+        13
+      ],
+      "percentageNotEmptyPosition": [
+        13
+      ],
+      "countUniqueValuesSearchVector": [
+        10
+      ],
+      "countEmptySearchVector": [
+        10
+      ],
+      "countNotEmptySearchVector": [
+        10
+      ],
+      "percentageEmptySearchVector": [
+        13
+      ],
+      "percentageNotEmptySearchVector": [
+        13
+      ],
+      "edges": [
+        630
+      ],
+      "pageInfo": [
+        119
+      ],
+      "groupByDimensionValues": [
+        25
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2RelationInput": {
+      "connect": [
+        634
+      ],
+      "disconnect": [
+        6
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2ConnectInput": {
+      "where": [
+        635
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2WhereUniqueInput": {
+      "id": [
+        22
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2CreateInput": {
+      "customDomain": [
+        53
+      ],
+      "workspaceBusinessDomain": [
+        53
+      ],
+      "companyLinkedin": [
+        53
+      ],
+      "dataLastUpdatedAt": [
+        629
+      ],
+      "lastPageViewDate": [
+        629
+      ],
+      "totalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "activeUsersL30D": [
+        13
+      ],
+      "activeUsersL7D": [
+        13
+      ],
+      "activeUsersL24H": [
+        13
+      ],
+      "workspaceTenure": [
+        13
+      ],
+      "pageViewsL30D": [
+        13
+      ],
+      "pageViewsL7D": [
+        13
+      ],
+      "pageViewsL24H": [
+        13
+      ],
+      "totalWorkspaceUsers": [
+        13
+      ],
+      "numberOfEventsL30D": [
+        13
+      ],
+      "numberOfEventsTotal": [
+        13
+      ],
+      "alexaRank": [
+        13
+      ],
+      "employees": [
+        13
+      ],
+      "isActiveL7D": [
+        6
+      ],
+      "isActiveL24H": [
+        6
+      ],
+      "isActiveL30D": [
+        6
+      ],
+      "isEnriched": [
+        6
+      ],
+      "industry": [
+        1
+      ],
+      "companyFoundedYear": [
+        1
+      ],
+      "description": [
+        1
+      ],
+      "latestFundingStage": [
+        1
+      ],
+      "companyName": [
+        1
+      ],
+      "subDomain": [
+        1
+      ],
+      "annualRevenue": [
+        63
+      ],
+      "mrr": [
+        63
+      ],
+      "potentialArr": [
+        63
+      ],
+      "arr": [
+        63
+      ],
+      "totalFunding": [
+        63
+      ],
+      "activationStatus": [
+        625
+      ],
+      "subscriptionStatus": [
+        626
+      ],
+      "paymentFrequency": [
+        627
+      ],
+      "nextRenewalDate": [
+        7
+      ],
+      "creatorEmail": [
+        90
+      ],
+      "tags": [
+        1
+      ],
+      "updatedBy": [
+        83
+      ],
+      "id": [
+        22
+      ],
+      "name": [
+        1
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        83
+      ],
+      "position": [
+        114
+      ],
+      "searchVector": [
+        115
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2UpdateInput": {
+      "customDomain": [
+        54
+      ],
+      "workspaceBusinessDomain": [
+        54
+      ],
+      "companyLinkedin": [
+        54
+      ],
+      "dataLastUpdatedAt": [
+        629
+      ],
+      "lastPageViewDate": [
+        629
+      ],
+      "totalEverActiveWorkspaceUsers": [
+        13
+      ],
+      "activeUsersL30D": [
+        13
+      ],
+      "activeUsersL7D": [
+        13
+      ],
+      "activeUsersL24H": [
+        13
+      ],
+      "workspaceTenure": [
+        13
+      ],
+      "pageViewsL30D": [
+        13
+      ],
+      "pageViewsL7D": [
+        13
+      ],
+      "pageViewsL24H": [
+        13
+      ],
+      "totalWorkspaceUsers": [
+        13
+      ],
+      "numberOfEventsL30D": [
+        13
+      ],
+      "numberOfEventsTotal": [
+        13
+      ],
+      "alexaRank": [
+        13
+      ],
+      "employees": [
+        13
+      ],
+      "isActiveL7D": [
+        6
+      ],
+      "isActiveL24H": [
+        6
+      ],
+      "isActiveL30D": [
+        6
+      ],
+      "isEnriched": [
+        6
+      ],
+      "industry": [
+        1
+      ],
+      "companyFoundedYear": [
+        1
+      ],
+      "description": [
+        1
+      ],
+      "latestFundingStage": [
+        1
+      ],
+      "companyName": [
+        1
+      ],
+      "subDomain": [
+        1
+      ],
+      "annualRevenue": [
+        64
+      ],
+      "mrr": [
+        64
+      ],
+      "potentialArr": [
+        64
+      ],
+      "arr": [
+        64
+      ],
+      "totalFunding": [
+        64
+      ],
+      "activationStatus": [
+        625
+      ],
+      "subscriptionStatus": [
+        626
+      ],
+      "paymentFrequency": [
+        627
+      ],
+      "nextRenewalDate": [
+        7
+      ],
+      "creatorEmail": [
+        91
+      ],
+      "tags": [
+        1
+      ],
+      "updatedBy": [
+        84
+      ],
+      "id": [
+        22
+      ],
+      "name": [
+        1
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        84
+      ],
+      "position": [
+        114
+      ],
+      "searchVector": [
+        115
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2FilterInput": {
+      "customDomain": [
+        55
+      ],
+      "workspaceBusinessDomain": [
+        55
+      ],
+      "companyLinkedin": [
+        55
+      ],
+      "dataLastUpdatedAt": [
+        639
+      ],
+      "lastPageViewDate": [
+        639
+      ],
+      "totalEverActiveWorkspaceUsers": [
+        130
+      ],
+      "activeUsersL30D": [
+        130
+      ],
+      "activeUsersL7D": [
+        130
+      ],
+      "activeUsersL24H": [
+        130
+      ],
+      "workspaceTenure": [
+        130
+      ],
+      "pageViewsL30D": [
+        130
+      ],
+      "pageViewsL7D": [
+        130
+      ],
+      "pageViewsL24H": [
+        130
+      ],
+      "totalWorkspaceUsers": [
+        130
+      ],
+      "numberOfEventsL30D": [
+        130
+      ],
+      "numberOfEventsTotal": [
+        130
+      ],
+      "alexaRank": [
+        130
+      ],
+      "employees": [
+        130
+      ],
+      "isActiveL7D": [
+        179
+      ],
+      "isActiveL24H": [
+        179
+      ],
+      "isActiveL30D": [
+        179
+      ],
+      "isEnriched": [
+        179
+      ],
+      "industry": [
+        56
+      ],
+      "companyFoundedYear": [
+        56
+      ],
+      "description": [
+        56
+      ],
+      "latestFundingStage": [
+        56
+      ],
+      "companyName": [
+        56
+      ],
+      "subDomain": [
+        56
+      ],
+      "annualRevenue": [
+        65
+      ],
+      "mrr": [
+        65
+      ],
+      "potentialArr": [
+        65
+      ],
+      "arr": [
+        65
+      ],
+      "totalFunding": [
+        65
+      ],
+      "activationStatus": [
+        640
+      ],
+      "subscriptionStatus": [
+        641
+      ],
+      "paymentFrequency": [
+        642
+      ],
+      "nextRenewalDate": [
+        7
+      ],
+      "creatorEmail": [
+        92
+      ],
+      "tags": [
+        242
+      ],
+      "updatedBy": [
+        85
+      ],
+      "id": [
+        33
+      ],
+      "name": [
+        56
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        85
+      ],
+      "position": [
+        130
+      ],
+      "searchVector": [
+        131
+      ],
+      "and": [
+        638
+      ],
+      "or": [
+        638
+      ],
+      "not": [
+        638
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "DateFilter": {
+      "eq": [
+        629
+      ],
+      "gt": [
+        629
+      ],
+      "gte": [
+        629
+      ],
+      "in": [
+        629
+      ],
+      "lt": [
+        629
+      ],
+      "lte": [
+        629
+      ],
+      "neq": [
+        629
+      ],
+      "is": [
+        34
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2ActivationStatusEnumFilter": {
+      "eq": [
+        625
+      ],
+      "neq": [
+        625
+      ],
+      "in": [
+        625
+      ],
+      "containsAny": [
+        625
+      ],
+      "is": [
+        34
+      ],
+      "isEmptyArray": [
+        6
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2SubscriptionStatusEnumFilter": {
+      "eq": [
+        626
+      ],
+      "neq": [
+        626
+      ],
+      "in": [
+        626
+      ],
+      "containsAny": [
+        626
+      ],
+      "is": [
+        34
+      ],
+      "isEmptyArray": [
+        6
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2PaymentFrequencyEnumFilter": {
+      "eq": [
+        627
+      ],
+      "neq": [
+        627
+      ],
+      "in": [
+        627
+      ],
+      "containsAny": [
+        627
+      ],
+      "is": [
+        34
+      ],
+      "isEmptyArray": [
+        6
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2OrderByInput": {
+      "customDomain": [
+        58
+      ],
+      "workspaceBusinessDomain": [
+        58
+      ],
+      "companyLinkedin": [
+        58
+      ],
+      "dataLastUpdatedAt": [
+        59
+      ],
+      "lastPageViewDate": [
+        59
+      ],
+      "totalEverActiveWorkspaceUsers": [
+        59
+      ],
+      "activeUsersL30D": [
+        59
+      ],
+      "activeUsersL7D": [
+        59
+      ],
+      "activeUsersL24H": [
+        59
+      ],
+      "workspaceTenure": [
+        59
+      ],
+      "pageViewsL30D": [
+        59
+      ],
+      "pageViewsL7D": [
+        59
+      ],
+      "pageViewsL24H": [
+        59
+      ],
+      "totalWorkspaceUsers": [
+        59
+      ],
+      "numberOfEventsL30D": [
+        59
+      ],
+      "numberOfEventsTotal": [
+        59
+      ],
+      "alexaRank": [
+        59
+      ],
+      "employees": [
+        59
+      ],
+      "isActiveL7D": [
+        59
+      ],
+      "isActiveL24H": [
+        59
+      ],
+      "isActiveL30D": [
+        59
+      ],
+      "isEnriched": [
+        59
+      ],
+      "industry": [
+        59
+      ],
+      "companyFoundedYear": [
+        59
+      ],
+      "description": [
+        59
+      ],
+      "latestFundingStage": [
+        59
+      ],
+      "companyName": [
+        59
+      ],
+      "subDomain": [
+        59
+      ],
+      "annualRevenue": [
+        67
+      ],
+      "mrr": [
+        67
+      ],
+      "potentialArr": [
+        67
+      ],
+      "arr": [
+        67
+      ],
+      "totalFunding": [
+        67
+      ],
+      "activationStatus": [
+        59
+      ],
+      "subscriptionStatus": [
+        59
+      ],
+      "paymentFrequency": [
+        59
+      ],
+      "nextRenewalDate": [
+        59
+      ],
+      "creatorEmail": [
+        93
+      ],
+      "tags": [
+        59
+      ],
+      "updatedBy": [
+        87
+      ],
+      "id": [
+        59
+      ],
+      "name": [
+        59
+      ],
+      "createdAt": [
+        59
+      ],
+      "updatedAt": [
+        59
+      ],
+      "deletedAt": [
+        59
+      ],
+      "createdBy": [
+        87
+      ],
+      "position": [
+        59
+      ],
+      "searchVector": [
+        59
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2OrderByWithGroupByInput": {
+      "aggregate": [
+        645
+      ],
+      "customDomain": [
+        58
+      ],
+      "workspaceBusinessDomain": [
+        58
+      ],
+      "companyLinkedin": [
+        58
+      ],
+      "dataLastUpdatedAt": [
+        110
+      ],
+      "lastPageViewDate": [
+        110
+      ],
+      "totalEverActiveWorkspaceUsers": [
+        59
+      ],
+      "activeUsersL30D": [
+        59
+      ],
+      "activeUsersL7D": [
+        59
+      ],
+      "activeUsersL24H": [
+        59
+      ],
+      "workspaceTenure": [
+        59
+      ],
+      "pageViewsL30D": [
+        59
+      ],
+      "pageViewsL7D": [
+        59
+      ],
+      "pageViewsL24H": [
+        59
+      ],
+      "totalWorkspaceUsers": [
+        59
+      ],
+      "numberOfEventsL30D": [
+        59
+      ],
+      "numberOfEventsTotal": [
+        59
+      ],
+      "alexaRank": [
+        59
+      ],
+      "employees": [
+        59
+      ],
+      "isActiveL7D": [
+        59
+      ],
+      "isActiveL24H": [
+        59
+      ],
+      "isActiveL30D": [
+        59
+      ],
+      "isEnriched": [
+        59
+      ],
+      "industry": [
+        59
+      ],
+      "companyFoundedYear": [
+        59
+      ],
+      "description": [
+        59
+      ],
+      "latestFundingStage": [
+        59
+      ],
+      "companyName": [
+        59
+      ],
+      "subDomain": [
+        59
+      ],
+      "annualRevenue": [
+        67
+      ],
+      "mrr": [
+        67
+      ],
+      "potentialArr": [
+        67
+      ],
+      "arr": [
+        67
+      ],
+      "totalFunding": [
+        67
+      ],
+      "activationStatus": [
+        59
+      ],
+      "subscriptionStatus": [
+        59
+      ],
+      "paymentFrequency": [
+        59
+      ],
+      "nextRenewalDate": [
+        110
+      ],
+      "creatorEmail": [
+        93
+      ],
+      "tags": [
+        59
+      ],
+      "updatedBy": [
+        87
+      ],
+      "id": [
+        59
+      ],
+      "name": [
+        59
+      ],
+      "createdAt": [
+        110
+      ],
+      "updatedAt": [
+        110
+      ],
+      "deletedAt": [
+        110
+      ],
+      "createdBy": [
+        87
+      ],
+      "position": [
+        59
+      ],
+      "searchVector": [
+        59
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2OrderByWithGroupByAggregateInput": {
+      "totalCount": [
+        59
+      ],
+      "countUniqueValuesCustomDomain": [
+        59
+      ],
+      "countEmptyCustomDomain": [
+        59
+      ],
+      "countNotEmptyCustomDomain": [
+        59
+      ],
+      "percentageEmptyCustomDomain": [
+        59
+      ],
+      "percentageNotEmptyCustomDomain": [
+        59
+      ],
+      "countUniqueValuesWorkspaceBusinessDomain": [
+        59
+      ],
+      "countEmptyWorkspaceBusinessDomain": [
+        59
+      ],
+      "countNotEmptyWorkspaceBusinessDomain": [
+        59
+      ],
+      "percentageEmptyWorkspaceBusinessDomain": [
+        59
+      ],
+      "percentageNotEmptyWorkspaceBusinessDomain": [
+        59
+      ],
+      "countUniqueValuesCompanyLinkedin": [
+        59
+      ],
+      "countEmptyCompanyLinkedin": [
+        59
+      ],
+      "countNotEmptyCompanyLinkedin": [
+        59
+      ],
+      "percentageEmptyCompanyLinkedin": [
+        59
+      ],
+      "percentageNotEmptyCompanyLinkedin": [
+        59
+      ],
+      "countUniqueValuesDataLastUpdatedAt": [
+        59
+      ],
+      "countEmptyDataLastUpdatedAt": [
+        59
+      ],
+      "countNotEmptyDataLastUpdatedAt": [
+        59
+      ],
+      "percentageEmptyDataLastUpdatedAt": [
+        59
+      ],
+      "percentageNotEmptyDataLastUpdatedAt": [
+        59
+      ],
+      "minDataLastUpdatedAt": [
+        59
+      ],
+      "maxDataLastUpdatedAt": [
+        59
+      ],
+      "countUniqueValuesLastPageViewDate": [
+        59
+      ],
+      "countEmptyLastPageViewDate": [
+        59
+      ],
+      "countNotEmptyLastPageViewDate": [
+        59
+      ],
+      "percentageEmptyLastPageViewDate": [
+        59
+      ],
+      "percentageNotEmptyLastPageViewDate": [
+        59
+      ],
+      "minLastPageViewDate": [
+        59
+      ],
+      "maxLastPageViewDate": [
+        59
+      ],
+      "countUniqueValuesTotalEverActiveWorkspaceUsers": [
+        59
+      ],
+      "countEmptyTotalEverActiveWorkspaceUsers": [
+        59
+      ],
+      "countNotEmptyTotalEverActiveWorkspaceUsers": [
+        59
+      ],
+      "percentageEmptyTotalEverActiveWorkspaceUsers": [
+        59
+      ],
+      "percentageNotEmptyTotalEverActiveWorkspaceUsers": [
+        59
+      ],
+      "minTotalEverActiveWorkspaceUsers": [
+        59
+      ],
+      "maxTotalEverActiveWorkspaceUsers": [
+        59
+      ],
+      "avgTotalEverActiveWorkspaceUsers": [
+        59
+      ],
+      "sumTotalEverActiveWorkspaceUsers": [
+        59
+      ],
+      "countUniqueValuesActiveUsersL30D": [
+        59
+      ],
+      "countEmptyActiveUsersL30D": [
+        59
+      ],
+      "countNotEmptyActiveUsersL30D": [
+        59
+      ],
+      "percentageEmptyActiveUsersL30D": [
+        59
+      ],
+      "percentageNotEmptyActiveUsersL30D": [
+        59
+      ],
+      "minActiveUsersL30D": [
+        59
+      ],
+      "maxActiveUsersL30D": [
+        59
+      ],
+      "avgActiveUsersL30D": [
+        59
+      ],
+      "sumActiveUsersL30D": [
+        59
+      ],
+      "countUniqueValuesActiveUsersL7D": [
+        59
+      ],
+      "countEmptyActiveUsersL7D": [
+        59
+      ],
+      "countNotEmptyActiveUsersL7D": [
+        59
+      ],
+      "percentageEmptyActiveUsersL7D": [
+        59
+      ],
+      "percentageNotEmptyActiveUsersL7D": [
+        59
+      ],
+      "minActiveUsersL7D": [
+        59
+      ],
+      "maxActiveUsersL7D": [
+        59
+      ],
+      "avgActiveUsersL7D": [
+        59
+      ],
+      "sumActiveUsersL7D": [
+        59
+      ],
+      "countUniqueValuesActiveUsersL24H": [
+        59
+      ],
+      "countEmptyActiveUsersL24H": [
+        59
+      ],
+      "countNotEmptyActiveUsersL24H": [
+        59
+      ],
+      "percentageEmptyActiveUsersL24H": [
+        59
+      ],
+      "percentageNotEmptyActiveUsersL24H": [
+        59
+      ],
+      "minActiveUsersL24H": [
+        59
+      ],
+      "maxActiveUsersL24H": [
+        59
+      ],
+      "avgActiveUsersL24H": [
+        59
+      ],
+      "sumActiveUsersL24H": [
+        59
+      ],
+      "countUniqueValuesWorkspaceTenure": [
+        59
+      ],
+      "countEmptyWorkspaceTenure": [
+        59
+      ],
+      "countNotEmptyWorkspaceTenure": [
+        59
+      ],
+      "percentageEmptyWorkspaceTenure": [
+        59
+      ],
+      "percentageNotEmptyWorkspaceTenure": [
+        59
+      ],
+      "minWorkspaceTenure": [
+        59
+      ],
+      "maxWorkspaceTenure": [
+        59
+      ],
+      "avgWorkspaceTenure": [
+        59
+      ],
+      "sumWorkspaceTenure": [
+        59
+      ],
+      "countUniqueValuesPageViewsL30D": [
+        59
+      ],
+      "countEmptyPageViewsL30D": [
+        59
+      ],
+      "countNotEmptyPageViewsL30D": [
+        59
+      ],
+      "percentageEmptyPageViewsL30D": [
+        59
+      ],
+      "percentageNotEmptyPageViewsL30D": [
+        59
+      ],
+      "minPageViewsL30D": [
+        59
+      ],
+      "maxPageViewsL30D": [
+        59
+      ],
+      "avgPageViewsL30D": [
+        59
+      ],
+      "sumPageViewsL30D": [
+        59
+      ],
+      "countUniqueValuesPageViewsL7D": [
+        59
+      ],
+      "countEmptyPageViewsL7D": [
+        59
+      ],
+      "countNotEmptyPageViewsL7D": [
+        59
+      ],
+      "percentageEmptyPageViewsL7D": [
+        59
+      ],
+      "percentageNotEmptyPageViewsL7D": [
+        59
+      ],
+      "minPageViewsL7D": [
+        59
+      ],
+      "maxPageViewsL7D": [
+        59
+      ],
+      "avgPageViewsL7D": [
+        59
+      ],
+      "sumPageViewsL7D": [
+        59
+      ],
+      "countUniqueValuesPageViewsL24H": [
+        59
+      ],
+      "countEmptyPageViewsL24H": [
+        59
+      ],
+      "countNotEmptyPageViewsL24H": [
+        59
+      ],
+      "percentageEmptyPageViewsL24H": [
+        59
+      ],
+      "percentageNotEmptyPageViewsL24H": [
+        59
+      ],
+      "minPageViewsL24H": [
+        59
+      ],
+      "maxPageViewsL24H": [
+        59
+      ],
+      "avgPageViewsL24H": [
+        59
+      ],
+      "sumPageViewsL24H": [
+        59
+      ],
+      "countUniqueValuesTotalWorkspaceUsers": [
+        59
+      ],
+      "countEmptyTotalWorkspaceUsers": [
+        59
+      ],
+      "countNotEmptyTotalWorkspaceUsers": [
+        59
+      ],
+      "percentageEmptyTotalWorkspaceUsers": [
+        59
+      ],
+      "percentageNotEmptyTotalWorkspaceUsers": [
+        59
+      ],
+      "minTotalWorkspaceUsers": [
+        59
+      ],
+      "maxTotalWorkspaceUsers": [
+        59
+      ],
+      "avgTotalWorkspaceUsers": [
+        59
+      ],
+      "sumTotalWorkspaceUsers": [
+        59
+      ],
+      "countUniqueValuesNumberOfEventsL30D": [
+        59
+      ],
+      "countEmptyNumberOfEventsL30D": [
+        59
+      ],
+      "countNotEmptyNumberOfEventsL30D": [
+        59
+      ],
+      "percentageEmptyNumberOfEventsL30D": [
+        59
+      ],
+      "percentageNotEmptyNumberOfEventsL30D": [
+        59
+      ],
+      "minNumberOfEventsL30D": [
+        59
+      ],
+      "maxNumberOfEventsL30D": [
+        59
+      ],
+      "avgNumberOfEventsL30D": [
+        59
+      ],
+      "sumNumberOfEventsL30D": [
+        59
+      ],
+      "countUniqueValuesNumberOfEventsTotal": [
+        59
+      ],
+      "countEmptyNumberOfEventsTotal": [
+        59
+      ],
+      "countNotEmptyNumberOfEventsTotal": [
+        59
+      ],
+      "percentageEmptyNumberOfEventsTotal": [
+        59
+      ],
+      "percentageNotEmptyNumberOfEventsTotal": [
+        59
+      ],
+      "minNumberOfEventsTotal": [
+        59
+      ],
+      "maxNumberOfEventsTotal": [
+        59
+      ],
+      "avgNumberOfEventsTotal": [
+        59
+      ],
+      "sumNumberOfEventsTotal": [
+        59
+      ],
+      "countUniqueValuesAlexaRank": [
+        59
+      ],
+      "countEmptyAlexaRank": [
+        59
+      ],
+      "countNotEmptyAlexaRank": [
+        59
+      ],
+      "percentageEmptyAlexaRank": [
+        59
+      ],
+      "percentageNotEmptyAlexaRank": [
+        59
+      ],
+      "minAlexaRank": [
+        59
+      ],
+      "maxAlexaRank": [
+        59
+      ],
+      "avgAlexaRank": [
+        59
+      ],
+      "sumAlexaRank": [
+        59
+      ],
+      "countUniqueValuesEmployees": [
+        59
+      ],
+      "countEmptyEmployees": [
+        59
+      ],
+      "countNotEmptyEmployees": [
+        59
+      ],
+      "percentageEmptyEmployees": [
+        59
+      ],
+      "percentageNotEmptyEmployees": [
+        59
+      ],
+      "minEmployees": [
+        59
+      ],
+      "maxEmployees": [
+        59
+      ],
+      "avgEmployees": [
+        59
+      ],
+      "sumEmployees": [
+        59
+      ],
+      "countUniqueValuesIsActiveL7D": [
+        59
+      ],
+      "countEmptyIsActiveL7D": [
+        59
+      ],
+      "countNotEmptyIsActiveL7D": [
+        59
+      ],
+      "percentageEmptyIsActiveL7D": [
+        59
+      ],
+      "percentageNotEmptyIsActiveL7D": [
+        59
+      ],
+      "countTrueIsActiveL7D": [
+        59
+      ],
+      "countFalseIsActiveL7D": [
+        59
+      ],
+      "countUniqueValuesIsActiveL24H": [
+        59
+      ],
+      "countEmptyIsActiveL24H": [
+        59
+      ],
+      "countNotEmptyIsActiveL24H": [
+        59
+      ],
+      "percentageEmptyIsActiveL24H": [
+        59
+      ],
+      "percentageNotEmptyIsActiveL24H": [
+        59
+      ],
+      "countTrueIsActiveL24H": [
+        59
+      ],
+      "countFalseIsActiveL24H": [
+        59
+      ],
+      "countUniqueValuesIsActiveL30D": [
+        59
+      ],
+      "countEmptyIsActiveL30D": [
+        59
+      ],
+      "countNotEmptyIsActiveL30D": [
+        59
+      ],
+      "percentageEmptyIsActiveL30D": [
+        59
+      ],
+      "percentageNotEmptyIsActiveL30D": [
+        59
+      ],
+      "countTrueIsActiveL30D": [
+        59
+      ],
+      "countFalseIsActiveL30D": [
+        59
+      ],
+      "countUniqueValuesIsEnriched": [
+        59
+      ],
+      "countEmptyIsEnriched": [
+        59
+      ],
+      "countNotEmptyIsEnriched": [
+        59
+      ],
+      "percentageEmptyIsEnriched": [
+        59
+      ],
+      "percentageNotEmptyIsEnriched": [
+        59
+      ],
+      "countTrueIsEnriched": [
+        59
+      ],
+      "countFalseIsEnriched": [
+        59
+      ],
+      "countUniqueValuesIndustry": [
+        59
+      ],
+      "countEmptyIndustry": [
+        59
+      ],
+      "countNotEmptyIndustry": [
+        59
+      ],
+      "percentageEmptyIndustry": [
+        59
+      ],
+      "percentageNotEmptyIndustry": [
+        59
+      ],
+      "countUniqueValuesCompanyFoundedYear": [
+        59
+      ],
+      "countEmptyCompanyFoundedYear": [
+        59
+      ],
+      "countNotEmptyCompanyFoundedYear": [
+        59
+      ],
+      "percentageEmptyCompanyFoundedYear": [
+        59
+      ],
+      "percentageNotEmptyCompanyFoundedYear": [
+        59
+      ],
+      "countUniqueValuesDescription": [
+        59
+      ],
+      "countEmptyDescription": [
+        59
+      ],
+      "countNotEmptyDescription": [
+        59
+      ],
+      "percentageEmptyDescription": [
+        59
+      ],
+      "percentageNotEmptyDescription": [
+        59
+      ],
+      "countUniqueValuesLatestFundingStage": [
+        59
+      ],
+      "countEmptyLatestFundingStage": [
+        59
+      ],
+      "countNotEmptyLatestFundingStage": [
+        59
+      ],
+      "percentageEmptyLatestFundingStage": [
+        59
+      ],
+      "percentageNotEmptyLatestFundingStage": [
+        59
+      ],
+      "countUniqueValuesCompanyName": [
+        59
+      ],
+      "countEmptyCompanyName": [
+        59
+      ],
+      "countNotEmptyCompanyName": [
+        59
+      ],
+      "percentageEmptyCompanyName": [
+        59
+      ],
+      "percentageNotEmptyCompanyName": [
+        59
+      ],
+      "countUniqueValuesSubDomain": [
+        59
+      ],
+      "countEmptySubDomain": [
+        59
+      ],
+      "countNotEmptySubDomain": [
+        59
+      ],
+      "percentageEmptySubDomain": [
+        59
+      ],
+      "percentageNotEmptySubDomain": [
+        59
+      ],
+      "countUniqueValuesAnnualRevenue": [
+        59
+      ],
+      "countEmptyAnnualRevenue": [
+        59
+      ],
+      "countNotEmptyAnnualRevenue": [
+        59
+      ],
+      "percentageEmptyAnnualRevenue": [
+        59
+      ],
+      "percentageNotEmptyAnnualRevenue": [
+        59
+      ],
+      "minAnnualRevenueAmountMicros": [
+        59
+      ],
+      "maxAnnualRevenueAmountMicros": [
+        59
+      ],
+      "sumAnnualRevenueAmountMicros": [
+        59
+      ],
+      "avgAnnualRevenueAmountMicros": [
+        59
+      ],
+      "countUniqueValuesMrr": [
+        59
+      ],
+      "countEmptyMrr": [
+        59
+      ],
+      "countNotEmptyMrr": [
+        59
+      ],
+      "percentageEmptyMrr": [
+        59
+      ],
+      "percentageNotEmptyMrr": [
+        59
+      ],
+      "minMrrAmountMicros": [
+        59
+      ],
+      "maxMrrAmountMicros": [
+        59
+      ],
+      "sumMrrAmountMicros": [
+        59
+      ],
+      "avgMrrAmountMicros": [
+        59
+      ],
+      "countUniqueValuesPotentialArr": [
+        59
+      ],
+      "countEmptyPotentialArr": [
+        59
+      ],
+      "countNotEmptyPotentialArr": [
+        59
+      ],
+      "percentageEmptyPotentialArr": [
+        59
+      ],
+      "percentageNotEmptyPotentialArr": [
+        59
+      ],
+      "minPotentialArrAmountMicros": [
+        59
+      ],
+      "maxPotentialArrAmountMicros": [
+        59
+      ],
+      "sumPotentialArrAmountMicros": [
+        59
+      ],
+      "avgPotentialArrAmountMicros": [
+        59
+      ],
+      "countUniqueValuesArr": [
+        59
+      ],
+      "countEmptyArr": [
+        59
+      ],
+      "countNotEmptyArr": [
+        59
+      ],
+      "percentageEmptyArr": [
+        59
+      ],
+      "percentageNotEmptyArr": [
+        59
+      ],
+      "minArrAmountMicros": [
+        59
+      ],
+      "maxArrAmountMicros": [
+        59
+      ],
+      "sumArrAmountMicros": [
+        59
+      ],
+      "avgArrAmountMicros": [
+        59
+      ],
+      "countUniqueValuesTotalFunding": [
+        59
+      ],
+      "countEmptyTotalFunding": [
+        59
+      ],
+      "countNotEmptyTotalFunding": [
+        59
+      ],
+      "percentageEmptyTotalFunding": [
+        59
+      ],
+      "percentageNotEmptyTotalFunding": [
+        59
+      ],
+      "minTotalFundingAmountMicros": [
+        59
+      ],
+      "maxTotalFundingAmountMicros": [
+        59
+      ],
+      "sumTotalFundingAmountMicros": [
+        59
+      ],
+      "avgTotalFundingAmountMicros": [
+        59
+      ],
+      "countUniqueValuesActivationStatus": [
+        59
+      ],
+      "countEmptyActivationStatus": [
+        59
+      ],
+      "countNotEmptyActivationStatus": [
+        59
+      ],
+      "percentageEmptyActivationStatus": [
+        59
+      ],
+      "percentageNotEmptyActivationStatus": [
+        59
+      ],
+      "countUniqueValuesSubscriptionStatus": [
+        59
+      ],
+      "countEmptySubscriptionStatus": [
+        59
+      ],
+      "countNotEmptySubscriptionStatus": [
+        59
+      ],
+      "percentageEmptySubscriptionStatus": [
+        59
+      ],
+      "percentageNotEmptySubscriptionStatus": [
+        59
+      ],
+      "countUniqueValuesPaymentFrequency": [
+        59
+      ],
+      "countEmptyPaymentFrequency": [
+        59
+      ],
+      "countNotEmptyPaymentFrequency": [
+        59
+      ],
+      "percentageEmptyPaymentFrequency": [
+        59
+      ],
+      "percentageNotEmptyPaymentFrequency": [
+        59
+      ],
+      "countUniqueValuesNextRenewalDate": [
+        59
+      ],
+      "countEmptyNextRenewalDate": [
+        59
+      ],
+      "countNotEmptyNextRenewalDate": [
+        59
+      ],
+      "percentageEmptyNextRenewalDate": [
+        59
+      ],
+      "percentageNotEmptyNextRenewalDate": [
+        59
+      ],
+      "minNextRenewalDate": [
+        59
+      ],
+      "maxNextRenewalDate": [
+        59
+      ],
+      "countUniqueValuesCreatorEmail": [
+        59
+      ],
+      "countEmptyCreatorEmail": [
+        59
+      ],
+      "countNotEmptyCreatorEmail": [
+        59
+      ],
+      "percentageEmptyCreatorEmail": [
+        59
+      ],
+      "percentageNotEmptyCreatorEmail": [
+        59
+      ],
+      "countUniqueValuesTags": [
+        59
+      ],
+      "countEmptyTags": [
+        59
+      ],
+      "countNotEmptyTags": [
+        59
+      ],
+      "percentageEmptyTags": [
+        59
+      ],
+      "percentageNotEmptyTags": [
+        59
+      ],
+      "countUniqueValuesUpdatedBy": [
+        59
+      ],
+      "countEmptyUpdatedBy": [
+        59
+      ],
+      "countNotEmptyUpdatedBy": [
+        59
+      ],
+      "percentageEmptyUpdatedBy": [
+        59
+      ],
+      "percentageNotEmptyUpdatedBy": [
+        59
+      ],
+      "countUniqueValuesId": [
+        59
+      ],
+      "countEmptyId": [
+        59
+      ],
+      "countNotEmptyId": [
+        59
+      ],
+      "percentageEmptyId": [
+        59
+      ],
+      "percentageNotEmptyId": [
+        59
+      ],
+      "countUniqueValuesName": [
+        59
+      ],
+      "countEmptyName": [
+        59
+      ],
+      "countNotEmptyName": [
+        59
+      ],
+      "percentageEmptyName": [
+        59
+      ],
+      "percentageNotEmptyName": [
+        59
+      ],
+      "countUniqueValuesCreatedAt": [
+        59
+      ],
+      "countEmptyCreatedAt": [
+        59
+      ],
+      "countNotEmptyCreatedAt": [
+        59
+      ],
+      "percentageEmptyCreatedAt": [
+        59
+      ],
+      "percentageNotEmptyCreatedAt": [
+        59
+      ],
+      "minCreatedAt": [
+        59
+      ],
+      "maxCreatedAt": [
+        59
+      ],
+      "countUniqueValuesUpdatedAt": [
+        59
+      ],
+      "countEmptyUpdatedAt": [
+        59
+      ],
+      "countNotEmptyUpdatedAt": [
+        59
+      ],
+      "percentageEmptyUpdatedAt": [
+        59
+      ],
+      "percentageNotEmptyUpdatedAt": [
+        59
+      ],
+      "minUpdatedAt": [
+        59
+      ],
+      "maxUpdatedAt": [
+        59
+      ],
+      "countUniqueValuesDeletedAt": [
+        59
+      ],
+      "countEmptyDeletedAt": [
+        59
+      ],
+      "countNotEmptyDeletedAt": [
+        59
+      ],
+      "percentageEmptyDeletedAt": [
+        59
+      ],
+      "percentageNotEmptyDeletedAt": [
+        59
+      ],
+      "minDeletedAt": [
+        59
+      ],
+      "maxDeletedAt": [
+        59
+      ],
+      "countUniqueValuesCreatedBy": [
+        59
+      ],
+      "countEmptyCreatedBy": [
+        59
+      ],
+      "countNotEmptyCreatedBy": [
+        59
+      ],
+      "percentageEmptyCreatedBy": [
+        59
+      ],
+      "percentageNotEmptyCreatedBy": [
+        59
+      ],
+      "countUniqueValuesPosition": [
+        59
+      ],
+      "countEmptyPosition": [
+        59
+      ],
+      "countNotEmptyPosition": [
+        59
+      ],
+      "percentageEmptyPosition": [
+        59
+      ],
+      "percentageNotEmptyPosition": [
+        59
+      ],
+      "countUniqueValuesSearchVector": [
+        59
+      ],
+      "countEmptySearchVector": [
+        59
+      ],
+      "countNotEmptySearchVector": [
+        59
+      ],
+      "percentageEmptySearchVector": [
+        59
+      ],
+      "percentageNotEmptySearchVector": [
+        59
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "CloudWorkspace2GroupByInput": {
+      "customDomain": [
+        60
+      ],
+      "workspaceBusinessDomain": [
+        60
+      ],
+      "companyLinkedin": [
+        60
+      ],
+      "dataLastUpdatedAt": [
+        109
+      ],
+      "lastPageViewDate": [
+        109
+      ],
+      "totalEverActiveWorkspaceUsers": [
+        6
+      ],
+      "activeUsersL30D": [
+        6
+      ],
+      "activeUsersL7D": [
+        6
+      ],
+      "activeUsersL24H": [
+        6
+      ],
+      "workspaceTenure": [
+        6
+      ],
+      "pageViewsL30D": [
+        6
+      ],
+      "pageViewsL7D": [
+        6
+      ],
+      "pageViewsL24H": [
+        6
+      ],
+      "totalWorkspaceUsers": [
+        6
+      ],
+      "numberOfEventsL30D": [
+        6
+      ],
+      "numberOfEventsTotal": [
+        6
+      ],
+      "alexaRank": [
+        6
+      ],
+      "employees": [
+        6
+      ],
+      "isActiveL7D": [
+        6
+      ],
+      "isActiveL24H": [
+        6
+      ],
+      "isActiveL30D": [
+        6
+      ],
+      "isEnriched": [
+        6
+      ],
+      "industry": [
+        6
+      ],
+      "companyFoundedYear": [
+        6
+      ],
+      "description": [
+        6
+      ],
+      "latestFundingStage": [
+        6
+      ],
+      "companyName": [
+        6
+      ],
+      "subDomain": [
+        6
+      ],
+      "annualRevenue": [
+        68
+      ],
+      "mrr": [
+        68
+      ],
+      "potentialArr": [
+        68
+      ],
+      "arr": [
+        68
+      ],
+      "totalFunding": [
+        68
+      ],
+      "activationStatus": [
+        6
+      ],
+      "subscriptionStatus": [
+        6
+      ],
+      "paymentFrequency": [
+        6
+      ],
+      "nextRenewalDate": [
+        109
+      ],
+      "creatorEmail": [
+        94
+      ],
+      "tags": [
+        6
+      ],
+      "updatedBy": [
+        88
+      ],
+      "id": [
+        6
+      ],
+      "name": [
+        6
+      ],
+      "createdAt": [
+        109
+      ],
+      "updatedAt": [
+        109
+      ],
+      "deletedAt": [
+        109
+      ],
+      "createdBy": [
+        88
+      ],
+      "position": [
+        6
+      ],
+      "searchVector": [
+        6
       ],
       "__typename": [
         1
@@ -58724,7 +68035,12 @@ function date4(params) {
 config(en_default());
 
 // src/logic-functions/create-users.ts
-var client = new Twenty();
+var client = new Twenty({
+  url: "https://twentyfortwenty.twenty.com",
+  headers: {
+    Authorization: `Bearer ${"lol"}`
+  }
+});
 var applicationConfigSchema = external_exports.object({
   CLICKHOUSE_DATABASE: external_exports.string().nonempty(),
   CLICKHOUSE_URL: external_exports.url(),
