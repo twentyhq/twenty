@@ -1,8 +1,14 @@
 import { defineLogicFunction } from 'twenty-sdk';
 import Twenty from 'twenty-sdk/generated';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-const client = new Twenty();
+const client = new Twenty({
+  url: 'https://twentyfortwenty.twenty.com',
+  headers: {
+    Authorization: `Bearer ${'lol'}`,
+  }
+});
 
 const applicationConfigSchema = z.object({
   CLICKHOUSE_DATABASE: z.string().nonempty(),
@@ -81,8 +87,10 @@ const fetchUsersFromClickHouse = async (): Promise<{
       *
     FROM
       ${clickHouseDatabase}.user
-    LIMIT
-      20
+    WHERE
+      lastActivityDate >= now() - INTERVAL 500 MINUTE
+        AND
+      lastActivityDate <= now()
     FORMAT
       JSONEachRow;
   `;
@@ -148,12 +156,29 @@ const fetchAllPeopleFromTwentyByEmail = async (emails: string[]) => {
 };
 
 const handler = async (): Promise<{ message: string }> => {
+  const now = new Date();
+
   try {
     const { users } = await fetchUsersFromClickHouse();
 
     const emails = users.map((user) => user.email);
 
     const people = await fetchAllPeopleFromTwentyByEmail(emails);
+
+    for (const user of users) {
+      const matchingPerson = people.find(
+        (person) =>
+          isDefined(person.emails?.primaryEmail) &&
+          person.emails.primaryEmail.toLowerCase() === user.email.toLowerCase(),
+      );
+
+      if (isDefined(matchingPerson)) {
+        // update cloud user
+      } else {
+        // create people
+        // create or update cloud user
+      }
+    }
 
     return {
       message: `Successfully fetched ${users.length} users from ClickHouse`,

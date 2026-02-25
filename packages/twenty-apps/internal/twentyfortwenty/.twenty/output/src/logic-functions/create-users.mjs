@@ -44952,6 +44952,9 @@ var Twenty = class {
   }
 };
 
+// src/logic-functions/create-users.ts
+import { isDefined } from "twenty-shared/utils";
+
 // node_modules/zod/v4/classic/external.js
 var external_exports = {};
 __export(external_exports, {
@@ -58790,8 +58793,10 @@ var fetchUsersFromClickHouse = async () => {
       *
     FROM
       ${clickHouseDatabase}.user
-    LIMIT
-      20
+    WHERE
+      lastActivityDate >= now() - INTERVAL 500 MINUTE
+        AND
+      lastActivityDate <= now()
     FORMAT
       JSONEachRow;
   `;
@@ -58839,10 +58844,19 @@ var fetchAllPeopleFromTwentyByEmail = async (emails) => {
   return allPeople.people?.edges.map((edge) => edge.node) ?? [];
 };
 var handler = async () => {
+  const now = /* @__PURE__ */ new Date();
   try {
     const { users } = await fetchUsersFromClickHouse();
     const emails = users.map((user) => user.email);
     const people = await fetchAllPeopleFromTwentyByEmail(emails);
+    for (const user of users) {
+      const matchingPerson = people.find(
+        (person) => isDefined(person.emails?.primaryEmail) && person.emails.primaryEmail.toLowerCase() === user.email.toLowerCase()
+      );
+      if (isDefined(matchingPerson)) {
+      } else {
+      }
+    }
     return {
       message: `Successfully fetched ${users.length} users from ClickHouse`
     };
