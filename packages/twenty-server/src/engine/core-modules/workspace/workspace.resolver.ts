@@ -63,10 +63,10 @@ import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { SelfHostGuard } from 'src/engine/guards/self-host.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -218,7 +218,7 @@ export class WorkspaceResolver {
   async billingSubscriptions(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<BillingSubscriptionEntity[] | undefined> {
-    if (this.twentyConfigService.isSelfHost()) {
+    if (!this.twentyConfigService.isBillingEnabled()) {
       return [];
     }
 
@@ -288,7 +288,7 @@ export class WorkspaceResolver {
   async currentBillingSubscription(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<BillingSubscriptionEntity | undefined> {
-    if (this.twentyConfigService.isSelfHost()) {
+    if (!this.twentyConfigService.isBillingEnabled()) {
       return;
     }
 
@@ -330,6 +330,11 @@ export class WorkspaceResolver {
   @ResolveField(() => Boolean)
   hasValidEnterpriseKey(): boolean {
     return this.enterpriseKeyService.isValid();
+  }
+
+  @ResolveField(() => Boolean)
+  hasActivatedAndValidEnterpriseKey(): boolean {
+    return this.enterpriseKeyService.isActivatedAndValid();
   }
 
   @ResolveField(() => WorkspaceUrlsDTO)
@@ -470,7 +475,7 @@ export class WorkspaceResolver {
   @Query(() => String, { nullable: true })
   @UseGuards(
     WorkspaceAuthGuard,
-    SelfHostGuard,
+    BillingDisabledGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async enterprisePortalSession(
@@ -482,17 +487,23 @@ export class WorkspaceResolver {
   @Query(() => String, { nullable: true })
   @UseGuards(
     WorkspaceAuthGuard,
-    SelfHostGuard,
+    BillingDisabledGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
-  async enterpriseCheckoutSession(): Promise<string | null> {
-    return this.enterpriseKeyService.getCheckoutUrl();
+  async enterpriseCheckoutSession(
+    @Args('billingInterval', { nullable: true }) billingInterval?: string,
+  ): Promise<string | null> {
+    const interval = billingInterval === 'yearly' ? 'yearly' : 'monthly';
+    const seatCount =
+      await this.userWorkspaceService.getActiveUserWorkspaceCountTotal();
+
+    return this.enterpriseKeyService.getCheckoutUrl(interval, seatCount);
   }
 
   @Query(() => EnterpriseSubscriptionStatusDTO, { nullable: true })
   @UseGuards(
     WorkspaceAuthGuard,
-    SelfHostGuard,
+    BillingDisabledGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async enterpriseSubscriptionStatus(): Promise<EnterpriseSubscriptionStatusDTO | null> {
@@ -502,7 +513,7 @@ export class WorkspaceResolver {
   @Mutation(() => EnterpriseLicenseInfoDTO)
   @UseGuards(
     WorkspaceAuthGuard,
-    SelfHostGuard,
+    BillingDisabledGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async setEnterpriseKey(
@@ -511,7 +522,12 @@ export class WorkspaceResolver {
     try {
       await this.twentyConfigService.set('ENTERPRISE_KEY', enterpriseKey);
 
-      await this.enterpriseKeyService.validateAndRefresh();
+      await this.enterpriseKeyService.refreshValidityToken();
+
+      const seatCount =
+        await this.userWorkspaceService.getActiveUserWorkspaceCountTotal();
+
+      await this.enterpriseKeyService.reportSeats(seatCount);
 
       return this.enterpriseKeyService.getLicenseInfo();
     } catch (error) {

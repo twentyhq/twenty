@@ -11,7 +11,7 @@ const ACTIVE_SUBSCRIPTION_STATUSES = ['active', 'trialing'];
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { enterpriseKey, returnUrl } = body;
+    const { enterpriseKey, returnUrl, billingInterval } = body;
 
     if (!enterpriseKey || typeof enterpriseKey !== 'string') {
       return new Response(
@@ -51,7 +51,8 @@ export async function POST(request: Request) {
       return Response.json({ url: session.url });
     }
 
-    const priceId = getEnterprisePriceId();
+    const interval = billingInterval === 'yearly' ? 'yearly' : 'monthly';
+    const priceId = getEnterprisePriceId(interval);
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
       customer: customerId,
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
       success_url: `${frontendUrl}/enterprise/activate?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: fullReturnUrl,
       subscription_data: {
+        trial_period_days: 30,
         metadata: { source: 'enterprise-self-hosted-resubscribe' },
       },
     });

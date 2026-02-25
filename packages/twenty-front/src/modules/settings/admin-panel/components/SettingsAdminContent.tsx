@@ -1,17 +1,25 @@
 import { currentUserState } from '@/auth/states/currentUserState';
+import { billingState } from '@/client-config/states/billingState';
 import { SettingsAdminTabContent } from '@/settings/admin-panel/components/SettingsAdminTabContent';
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
 import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminTabsId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { IconHeart, IconSettings2, IconVariable } from 'twenty-ui/display';
+import {
+  IconHeart,
+  IconKey,
+  IconSettings2,
+  IconVariable,
+} from 'twenty-ui/display';
 
 export const SettingsAdminContent = () => {
   const currentUser = useRecoilValue(currentUserState);
+  const billing = useRecoilValue(billingState);
 
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
   const canImpersonate = currentUser?.canImpersonate;
+  const isSelfHost = !billing?.isBillingEnabled;
   const tabs = [
     {
       id: SETTINGS_ADMIN_TABS.GENERAL,
@@ -31,6 +39,16 @@ export const SettingsAdminContent = () => {
       Icon: IconHeart,
       disabled: !canAccessFullAdminPanel,
     },
+    ...(isSelfHost
+      ? [
+          {
+            id: SETTINGS_ADMIN_TABS.ENTERPRISE,
+            title: t`Enterprise`,
+            Icon: IconKey,
+            disabled: !canAccessFullAdminPanel && !canImpersonate,
+          },
+        ]
+      : []),
   ];
 
   return (

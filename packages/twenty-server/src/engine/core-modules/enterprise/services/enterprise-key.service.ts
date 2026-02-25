@@ -70,12 +70,22 @@ export class EnterpriseKeyService implements OnModuleInit {
   }
 
   isValid(): boolean {
-    // On cloud, enterprise features are managed by the billing system
-    if (!this.twentyConfigService.isSelfHost()) {
+    const isActivatedAndValid = this.isActivatedAndValid();
+
+    if (isActivatedAndValid === true) {
       return true;
     }
 
-    // Re-read from config cache to pick up DB changes (refreshed every 15s)
+    // Backward compatibility: if no validity token exists but ENTERPRISE_KEY
+    // is set as a plain string (not a JWT), allow it with a deprecation warning
+    return this.checkLegacyKey();
+  }
+
+  isActivatedAndValid(): boolean {
+    if (this.twentyConfigService.isBillingEnabled()) {
+      return true;
+    }
+
     this.refreshValidityPayload();
 
     if (isDefined(this.cachedValidityPayload)) {
@@ -84,9 +94,7 @@ export class EnterpriseKeyService implements OnModuleInit {
       return this.cachedValidityPayload.exp > now;
     }
 
-    // Backward compatibility: if no validity token exists but ENTERPRISE_KEY
-    // is set as a plain string (not a JWT), allow it with a deprecation warning
-    return this.checkLegacyKey();
+    return false;
   }
 
   private checkLegacyKey(): boolean {
@@ -111,7 +119,7 @@ export class EnterpriseKeyService implements OnModuleInit {
   }
 
   getLicenseInfo(): EnterpriseLicenseInfo {
-    if (!this.twentyConfigService.isSelfHost()) {
+    if (this.twentyConfigService.isBillingEnabled()) {
       return {
         isValid: true,
         licensee: null,
@@ -148,15 +156,25 @@ export class EnterpriseKeyService implements OnModuleInit {
     };
   }
 
-  async validateAndRefresh(): Promise<boolean> {
-    if (!this.twentyConfigService.isSelfHost()) {
+  async refreshValidityToken(): Promise<boolean> {
+    if (this.twentyConfigService.isBillingEnabled()) {
       return true;
     }
 
     const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
 
     if (!enterpriseKey) {
-      this.logger.warn('No ENTERPRISE_KEY configured, skipping validation');
+      this.logger.warn('No ENTERPRISE_KEY configured, skipping refresh');
+
+      return false;
+    }
+
+    this.refreshKeyPayload();
+
+    if (!isDefined(this.cachedKeyPayload)) {
+      this.logger.warn(
+        'ENTERPRISE_KEY is not a valid signed JWT, skipping refresh',
+      );
 
       return false;
     }
@@ -175,7 +193,7 @@ export class EnterpriseKeyService implements OnModuleInit {
         const errorData = await response.json().catch(() => ({}));
 
         this.logger.warn(
-          `Enterprise validation failed with status ${response.status}: ${errorData.error ?? 'Unknown error'}`,
+          `Enterprise refresh failed with status ${response.status}: ${errorData.error ?? 'Unknown error'}`,
         );
 
         return false;
@@ -184,9 +202,7 @@ export class EnterpriseKeyService implements OnModuleInit {
       const data = await response.json();
 
       if (!data.validityToken) {
-        this.logger.warn(
-          'Enterprise validation response missing validityToken',
-        );
+        this.logger.warn('Enterprise refresh response missing validityToken');
 
         return false;
       }
@@ -198,12 +214,12 @@ export class EnterpriseKeyService implements OnModuleInit {
 
       this.refreshValidityPayload();
 
-      this.logger.log('Enterprise key validated successfully');
+      this.logger.log('Enterprise validity token refreshed successfully');
 
       return true;
     } catch (error) {
       this.logger.warn(
-        `Enterprise validation failed: ${error instanceof Error ? error.message : 'Network error'}. Current validity token will continue to work until expiration.`,
+        `Enterprise refresh failed: ${error instanceof Error ? error.message : 'Network error'}. Current validity token will continue to work until expiration.`,
       );
 
       return false;
@@ -211,7 +227,7 @@ export class EnterpriseKeyService implements OnModuleInit {
   }
 
   async reportSeats(seatCount: number): Promise<boolean> {
-    if (!this.twentyConfigService.isSelfHost()) {
+    if (this.twentyConfigService.isBillingEnabled()) {
       return false;
     }
 
@@ -264,7 +280,7 @@ export class EnterpriseKeyService implements OnModuleInit {
     currentPeriodEnd: Date | null;
     isCancellationScheduled: boolean;
   } | null> {
-    if (!this.twentyConfigService.isSelfHost()) {
+    if (this.twentyConfigService.isBillingEnabled()) {
       return null;
     }
 
@@ -317,7 +333,7 @@ export class EnterpriseKeyService implements OnModuleInit {
   }
 
   async getPortalUrl(returnUrl?: string): Promise<string | null> {
-    if (!this.twentyConfigService.isSelfHost()) {
+    if (this.twentyConfigService.isBillingEnabled()) {
       return null;
     }
 
@@ -371,8 +387,11 @@ export class EnterpriseKeyService implements OnModuleInit {
     }
   }
 
-  async getCheckoutUrl(): Promise<string | null> {
-    if (!this.twentyConfigService.isSelfHost()) {
+  async getCheckoutUrl(
+    billingInterval: 'monthly' | 'yearly' = 'monthly',
+    seatCount: number,
+  ): Promise<string | null> {
+    if (this.twentyConfigService.isBillingEnabled()) {
       return null;
     }
 
@@ -393,7 +412,7 @@ export class EnterpriseKeyService implements OnModuleInit {
       const response = await fetch(checkoutUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ billingInterval, seatCount }),
       });
 
       if (!response.ok) {

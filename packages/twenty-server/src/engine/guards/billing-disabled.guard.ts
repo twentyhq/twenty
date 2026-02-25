@@ -7,10 +7,11 @@ import {
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
-export class SelfHostGuard implements CanActivate {
+export class BillingDisabledGuard implements CanActivate {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   canActivate(_context: ExecutionContext): boolean {
-    return this.twentyConfigService.isSelfHost();
+    return !this.twentyConfigService.isBillingEnabled();
   }
 }
+

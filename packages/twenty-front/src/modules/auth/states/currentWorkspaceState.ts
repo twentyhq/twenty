@@ -27,6 +27,7 @@ export type CurrentWorkspace = Pick<
   | 'isPasswordAuthBypassEnabled'
   | 'isCustomDomainEnabled'
   | 'hasValidEnterpriseKey'
+  | 'hasActivatedAndValidEnterpriseKey'
   | 'subdomain'
   | 'customDomain'
   | 'workspaceUrls'

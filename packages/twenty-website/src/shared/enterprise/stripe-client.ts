@@ -16,11 +16,18 @@ export const getStripeClient = (): Stripe => {
   return stripeInstance;
 };
 
-export const getEnterprisePriceId = (): string => {
-  const priceId = process.env.STRIPE_ENTERPRISE_PRICE_ID;
+export const getEnterprisePriceId = (
+  billingInterval: 'monthly' | 'yearly' = 'monthly',
+): string => {
+  const envKey =
+    billingInterval === 'yearly'
+      ? 'STRIPE_ENTERPRISE_YEARLY_PRICE_ID'
+      : 'STRIPE_ENTERPRISE_MONTHLY_PRICE_ID';
+
+  const priceId = process.env[envKey];
 
   if (!priceId) {
-    throw new Error('STRIPE_ENTERPRISE_PRICE_ID is not configured');
+    throw new Error(`${envKey} is not configured`);
   }
 
   return priceId;

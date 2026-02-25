@@ -181,6 +181,7 @@ export const responseData = {
         activationStatus: 'active',
         isPublicInviteLinkEnabled: false,
         hasValidEnterpriseKey: false,
+        hasActivatedAndValidEnterpriseKey: false,
         isGoogleAuthEnabled: true,
         isMicrosoftAuthEnabled: false,
         isPasswordAuthEnabled: true,

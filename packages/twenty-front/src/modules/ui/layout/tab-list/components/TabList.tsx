@@ -1,11 +1,11 @@
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
+import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
-import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
-import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -21,6 +21,14 @@ const StyledContainer = styled.div`
   position: relative;
   user-select: none;
   width: 100%;
+`;
+
+const StyledTabContainer = styled.div`
+  display: flex;
+  gap: ${TAB_LIST_GAP}px;
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
 
   &::after {
     background-color: ${({ theme }) => theme.border.color.light};
@@ -31,14 +39,6 @@ const StyledContainer = styled.div`
     position: absolute;
     right: 0;
   }
-`;
-
-const StyledTabContainer = styled.div`
-  display: flex;
-  gap: ${TAB_LIST_GAP}px;
-  position: relative;
-  overflow: hidden;
-  max-width: 100%;
 `;
 
 export const TabList = ({

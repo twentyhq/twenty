@@ -143,7 +143,7 @@ export class CronRegisterAllCommand extends CommandRunner {
         },
       ];
 
-    if (this.twentyConfigService.isSelfHost()) {
+    if (!this.twentyConfigService.isBillingEnabled()) {
       commands.push({
         name: 'EnterpriseKeyValidation',
         command: this.enterpriseKeyValidationCronCommand,

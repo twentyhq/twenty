@@ -8,15 +8,13 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   try {
     const stripe = getStripeClient();
-    const priceId = getEnterprisePriceId();
-
     const body = await request.json();
+    const billingInterval = body.billingInterval === 'yearly' ? 'yearly' : 'monthly';
+    const priceId = getEnterprisePriceId(billingInterval);
     const successUrl =
       body.successUrl ??
       `${process.env.NEXT_PUBLIC_WEBSITE_URL}/enterprise/activate?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl =
-      body.cancelUrl ??
-      `${process.env.NEXT_PUBLIC_WEBSITE_URL}/enterprise`;
+
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
@@ -27,8 +25,8 @@ export async function POST(request: Request) {
         },
       ],
       success_url: successUrl,
-      cancel_url: cancelUrl,
       subscription_data: {
+        trial_period_days: 30,
         metadata: {
           source: 'enterprise-self-hosted',
         },
@@ -37,6 +35,7 @@ export async function POST(request: Request) {
 
     return Response.json({ url: session.url });
   } catch (error: unknown) {
+    console.error(error);
     const message =
       error instanceof Error ? error.message : 'Unknown error';
 

@@ -2,6 +2,7 @@ import { InformationBannerBillingSubscriptionPaused } from '@/information-banner
 import { InformationBannerEndTrialPeriod } from '@/information-banner/components/billing/InformationBannerEndTrialPeriod';
 import { InformationBannerFailPaymentInfo } from '@/information-banner/components/billing/InformationBannerFailPaymentInfo';
 import { InformationBannerNoBillingSubscription } from '@/information-banner/components/billing/InformationBannerNoBillingSubscription';
+import { InformationBannerLegacyEnterpriseKey } from '@/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey';
 import { InformationBannerReconnectAccountEmailAliases } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases';
 import { InformationBannerReconnectAccountInsufficientPermissions } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions';
 import { useIsSomeMeteredProductCapReached } from '@/workspace/hooks/useIsSomeMeteredProductCapReached';
@@ -43,6 +44,7 @@ export const InformationBannerWrapper = () => {
 
   return (
     <StyledInformationBannerWrapper>
+      <InformationBannerLegacyEnterpriseKey />
       <InformationBannerReconnectAccountInsufficientPermissions />
       <InformationBannerReconnectAccountEmailAliases />
       {displayBillingSubscriptionPausedBanner && (

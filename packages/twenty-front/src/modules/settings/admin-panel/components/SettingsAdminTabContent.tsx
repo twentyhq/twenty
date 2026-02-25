@@ -5,6 +5,14 @@ import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/Setting
 import { SettingsAdminHealthStatus } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatus';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { lazy, Suspense } from 'react';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+
+const SettingsEnterprise = lazy(() =>
+  import('~/pages/settings/enterprise/SettingsEnterprise').then((module) => ({
+    default: module.SettingsEnterprise,
+  })),
+);
 
 export const SettingsAdminTabContent = () => {
   const activeTabId = useRecoilComponentValue(
@@ -19,6 +27,12 @@ export const SettingsAdminTabContent = () => {
       return <SettingsAdminConfigVariables />;
     case SETTINGS_ADMIN_TABS.HEALTH_STATUS:
       return <SettingsAdminHealthStatus />;
+    case SETTINGS_ADMIN_TABS.ENTERPRISE:
+      return (
+        <Suspense fallback={<SettingsSkeletonLoader />}>
+          <SettingsEnterprise isAdminPanelTab />
+        </Suspense>
+      );
     default:
       return null;
   }

@@ -30,7 +30,7 @@ import { WorkspaceService } from 'src/engine/core-modules/workspace/services/wor
 import { workspaceAutoResolverOpts } from 'src/engine/core-modules/workspace/workspace.auto-resolver-opts';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceGaugeService } from 'src/engine/core-modules/workspace/workspace-gauge.service';
-import { SelfHostGuard } from 'src/engine/guards/self-host.guard';
+import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -91,7 +91,7 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
     WorkspaceResolver,
     WorkspaceService,
     WorkspaceGaugeService,
-    SelfHostGuard,
+    BillingDisabledGuard,
     CheckCustomDomainValidRecordsCronCommand,
     CheckCustomDomainValidRecordsCronJob,
   ],

@@ -1,10 +1,11 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { type QueryRunner, IsNull, Not, type Repository } from 'typeorm';
 import { FileFolder } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
@@ -17,6 +18,7 @@ import {
 import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { EnterpriseKeyService } from 'src/engine/core-modules/enterprise/services/enterprise-key.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -40,6 +42,8 @@ import { assert } from 'src/utils/assert';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
+  private readonly logger = new Logger(UserWorkspaceService.name);
+
   constructor(
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -56,6 +60,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly onboardingService: OnboardingService,
+    private readonly enterpriseKeyService: EnterpriseKeyService,
   ) {
     super(userWorkspaceRepository);
   }
@@ -506,5 +511,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         ),
       ),
     };
+  }
+
+  public async getActiveUserWorkspaceCountTotal(): Promise<number> {
+    const count = await this.userWorkspaceRepository.count({
+      where: { deletedAt: IsNull() },
+    });
+
+    return Math.max(1, count);
   }
 }

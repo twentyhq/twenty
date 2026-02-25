@@ -55,6 +55,7 @@ export enum SettingsPath {
   EventLogs = 'security/event-logs',
 
   AdminPanel = 'admin-panel',
+  AdminPanelEnterprise = 'admin-panel#enterprise',
   AdminPanelHealthStatus = 'admin-panel#health-status',
   AdminPanelIndicatorHealthStatus = 'admin-panel/health-status/:indicatorId',
   AdminPanelQueueDetail = 'admin-panel/health-status/queue/:queueName',
