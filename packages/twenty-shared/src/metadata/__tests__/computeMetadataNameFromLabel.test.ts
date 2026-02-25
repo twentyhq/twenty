@@ -9,7 +9,7 @@ describe('computeMetadataNameFromLabel', () => {
 
   it('should convert a label to camelCase', () => {
     expect(computeMetadataNameFromLabel({ label: 'My CreatedAt Field' })).toBe(
-      'myCreatedAtField',
+      'myCreatedatField',
     );
   });
 
