@@ -4,6 +4,7 @@ import {
 } from 'src/objects/call-recording';
 import { defineLogicFunction } from 'twenty-sdk';
 import Twenty from 'twenty-sdk/generated';
+import { z } from 'zod';
 
 interface EndRecordingBody {
   callRecordingId: string;
@@ -12,6 +13,31 @@ interface EndRecordingBody {
 }
 
 type UploadedFileRef = { fileId: string; label: string };
+
+const transcriptEntrySchema = z.object({
+  participant: z.object({
+    name: z.string().nullable(),
+  }),
+  words: z.array(
+    z.object({
+      text: z.string(),
+    }),
+  ),
+});
+
+const transcriptSchema = z.array(transcriptEntrySchema);
+
+const transcriptToMarkdown = (
+  entries: z.infer<typeof transcriptSchema>,
+): string =>
+  entries
+    .map((entry) => {
+      const speaker = entry.participant?.name ?? 'Unknown';
+      const text = entry.words.map((word) => word.text).join(' ');
+
+      return `**${speaker}:** ${text}`;
+    })
+    .join('\n\n');
 
 const downloadFile = async (
   url: string,
@@ -37,10 +63,13 @@ const downloadFile = async (
   };
 };
 
-const uploadTranscriptFile = async (
+const processTranscript = async (
   client: InstanceType<typeof Twenty>,
   transcriptUrl: string | undefined,
-): Promise<UploadedFileRef[] | undefined> => {
+): Promise<{
+  transcriptFile?: UploadedFileRef[];
+  transcript?: { blocknote: null; markdown: string };
+} | undefined> => {
   if (!transcriptUrl) {
     return undefined;
   }
@@ -54,7 +83,14 @@ const uploadTranscriptFile = async (
     TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
   );
 
-  return [{ fileId: uploadedTranscript.id, label: fileName }];
+  const rawJson = JSON.parse(buffer.toString('utf-8'));
+  const entries = transcriptSchema.parse(rawJson);
+  const markdown = transcriptToMarkdown(entries);
+
+  return {
+    transcriptFile: [{ fileId: uploadedTranscript.id, label: fileName }],
+    transcript: { blocknote: null, markdown },
+  };
 };
 
 const handler = async (event: any) => {
@@ -98,7 +134,7 @@ const handler = async (event: any) => {
     RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER,
   );
 
-  const transcriptFile = await uploadTranscriptFile(
+  const transcriptData = await processTranscript(
     client,
     body.transcriptUrl,
   );
@@ -110,7 +146,7 @@ const handler = async (event: any) => {
         data: {
           endedAt: new Date().toISOString(),
           recordingFile: [{ fileId: uploadedRecording.id, label: fileName }],
-          ...(transcriptFile && { transcriptFile }),
+          ...transcriptData,
         },
       },
       id: true,

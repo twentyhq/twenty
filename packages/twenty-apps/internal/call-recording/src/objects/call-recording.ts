@@ -18,6 +18,9 @@ export const RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER =
 export const TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER =
   'b2a3c8e1-7f94-4d5b-a6e2-9c1d0f3e8b47';
 
+export const TRANSCRIPT_FIELD_UNIVERSAL_IDENTIFIER =
+  'a1d4e7c3-5b28-4f96-8e3a-0c7d9f2b6a15';
+
 export default defineObject({
   universalIdentifier: CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
   nameSingular: 'callRecording',
@@ -69,6 +72,14 @@ export default defineObject({
       description: 'The transcript file of the call recording',
       icon: 'IconFileText',
       universalSettings: { maxNumberOfValues: 1 },
+    },
+    {
+      universalIdentifier: TRANSCRIPT_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT_V2,
+      name: 'transcript',
+      label: 'Transcript',
+      description: 'Human-readable transcript of the call',
+      icon: 'IconMessage',
     },
   ],
 });
