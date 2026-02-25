@@ -370,9 +370,14 @@ async function endCallRecordingWithRetry(windowId, maxAttempts = 10, delayMs = 5
         );
 
         const audioUrl = recallResponse.data?.video_url || null;
+        const transcriptUrl = recallResponse.data?.transcript_url || null;
 
         if (audioUrl) {
-          await twentyClient.endCallRecording(meeting.twentyRecordId, audioUrl);
+          await twentyClient.endCallRecording({
+            callRecordingId: meeting.twentyRecordId,
+            audioUrl,
+            transcriptUrl,
+          });
           return;
         }
       } catch (error) {

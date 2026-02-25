@@ -1,11 +1,17 @@
-import { RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
+import {
+  RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+  TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+} from 'src/objects/call-recording';
 import { defineLogicFunction } from 'twenty-sdk';
 import Twenty from 'twenty-sdk/generated';
 
 interface EndRecordingBody {
   callRecordingId: string;
   audioUrl: string;
+  transcriptUrl?: string;
 }
+
+type UploadedFileRef = { fileId: string; label: string };
 
 const downloadFile = async (
   url: string,
@@ -29,6 +35,26 @@ const downloadFile = async (
     contentType,
     fileName,
   };
+};
+
+const uploadTranscriptFile = async (
+  client: InstanceType<typeof Twenty>,
+  transcriptUrl: string | undefined,
+): Promise<UploadedFileRef[] | undefined> => {
+  if (!transcriptUrl) {
+    return undefined;
+  }
+
+  const { buffer, contentType, fileName } = await downloadFile(transcriptUrl);
+
+  const uploadedTranscript = await client.uploadFile(
+    buffer,
+    fileName,
+    contentType,
+    TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+  );
+
+  return [{ fileId: uploadedTranscript.id, label: fileName }];
 };
 
 const handler = async (event: any) => {
@@ -65,11 +91,16 @@ const handler = async (event: any) => {
 
   const { buffer, contentType, fileName } = await downloadFile(body.audioUrl);
 
-  const uploadedFile = await client.uploadFile(
+  const uploadedRecording = await client.uploadFile(
     buffer,
     fileName,
     contentType,
     RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+  );
+
+  const transcriptFile = await uploadTranscriptFile(
+    client,
+    body.transcriptUrl,
   );
 
   await client.mutation({
@@ -78,7 +109,8 @@ const handler = async (event: any) => {
         id: callRecording.id,
         data: {
           endedAt: new Date().toISOString(),
-          recordingFile: [{ fileId: uploadedFile.id, label: fileName }],
+          recordingFile: [{ fileId: uploadedRecording.id, label: fileName }],
+          ...(transcriptFile && { transcriptFile }),
         },
       },
       id: true,

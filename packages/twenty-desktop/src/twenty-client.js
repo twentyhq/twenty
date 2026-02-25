@@ -78,9 +78,9 @@ async function createCallRecording(name) {
   }
 }
 
-async function endCallRecording(callRecordingId, audioUrl) {
+async function endCallRecording({ callRecordingId, audioUrl, transcriptUrl }) {
   console.log(
-    `${LOG_PREFIX} Ending callRecording ${callRecordingId} — audioUrl=${audioUrl}`,
+    `${LOG_PREFIX} Ending callRecording ${callRecordingId} — audioUrl=${audioUrl} transcriptUrl=${transcriptUrl || 'none'}`,
   );
 
   try {
@@ -92,7 +92,7 @@ async function endCallRecording(callRecordingId, audioUrl) {
 
     const response = await axios.post(
       `${getApiUrl()}/s/end-recording`,
-      { callRecordingId, audioUrl },
+      { callRecordingId, audioUrl, transcriptUrl },
       {
         headers: {
           'Content-Type': 'application/json',
