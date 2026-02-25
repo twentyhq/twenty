@@ -47,7 +47,7 @@ export const mockedSpreadsheetOptions: SpreadsheetImportDialogOptions = {
 };
 
 describe('useSpreadsheetImport', () => {
-  it('should set isOpen to true, and update the options in the Recoil state', async () => {
+  it('should set isOpen to true, and update the options in state', async () => {
     const { result } = renderHook(
       () => ({
         useSpreadsheetImport: useOpenSpreadsheetImportDialog(),

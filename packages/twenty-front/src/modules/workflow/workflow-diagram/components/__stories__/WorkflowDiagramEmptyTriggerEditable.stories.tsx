@@ -6,7 +6,6 @@ import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram
 import '@xyflow/react/dist/style.css';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
-import { RecoilRoot } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
@@ -50,13 +49,11 @@ export const Default: Story = {
   decorators: [
     (Story) => (
       <div style={{ position: 'relative' }}>
-        <RecoilRoot>
-          <WorkflowVisualizerComponentInstanceContext.Provider
-            value={{ instanceId: 'workflow-visualizer-instance-id' }}
-          >
-            <Story />
-          </WorkflowVisualizerComponentInstanceContext.Provider>
-        </RecoilRoot>
+        <WorkflowVisualizerComponentInstanceContext.Provider
+          value={{ instanceId: 'workflow-visualizer-instance-id' }}
+        >
+          <Story />
+        </WorkflowVisualizerComponentInstanceContext.Provider>
       </div>
     ),
     ReactflowDecorator,
@@ -71,15 +68,13 @@ export const Selected: Story = {
   decorators: [
     (Story) => (
       <div style={{ position: 'relative' }}>
-        <RecoilRoot>
-          <WorkflowVisualizerComponentInstanceContext.Provider
-            value={{ instanceId: 'workflow-visualizer-instance-id' }}
-          >
-            <JotaiInitializer selectedNodeId="trigger-node">
-              <Story />
-            </JotaiInitializer>
-          </WorkflowVisualizerComponentInstanceContext.Provider>
-        </RecoilRoot>
+        <WorkflowVisualizerComponentInstanceContext.Provider
+          value={{ instanceId: 'workflow-visualizer-instance-id' }}
+        >
+          <JotaiInitializer selectedNodeId="trigger-node">
+            <Story />
+          </JotaiInitializer>
+        </WorkflowVisualizerComponentInstanceContext.Provider>
       </div>
     ),
     ReactflowDecorator,

@@ -1,6 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -80,7 +79,7 @@ const createWrapper =
   ({ children }: { children: ReactNode }) => {
     return (
       <JotaiProvider store={jotaiStore}>
-        <RecoilRoot>{children}</RecoilRoot>
+        {children}
       </JotaiProvider>
     );
   };

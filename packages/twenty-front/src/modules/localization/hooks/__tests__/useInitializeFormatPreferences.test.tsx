@@ -1,6 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
@@ -15,9 +14,7 @@ const mockGetFormatPreferencesFromWorkspaceMember =
     typeof getFormatPreferencesFromWorkspaceMember
   >;
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
-);
+const Wrapper = ({ children }: { children: ReactNode }) => <>{children}</>;
 
 describe('useInitializeFormatPreferences', () => {
   beforeEach(() => {

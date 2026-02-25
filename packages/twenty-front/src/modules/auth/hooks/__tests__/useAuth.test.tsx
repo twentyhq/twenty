@@ -9,7 +9,6 @@ import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { type ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 
 import {
   email,
@@ -75,15 +74,13 @@ jest.mock('@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain', () => ({
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={Object.values(mocks)} addTypename={false}>
-    <RecoilRoot>
-      <MemoryRouter>
-        <SnackBarComponentInstanceContext.Provider
-          value={{ instanceId: 'test-instance-id' }}
-        >
-          {children}
-        </SnackBarComponentInstanceContext.Provider>
-      </MemoryRouter>
-    </RecoilRoot>
+    <MemoryRouter>
+      <SnackBarComponentInstanceContext.Provider
+        value={{ instanceId: 'test-instance-id' }}
+      >
+        {children}
+      </SnackBarComponentInstanceContext.Provider>
+    </MemoryRouter>
   </MockedProvider>
 );
 

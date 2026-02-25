@@ -1,11 +1,11 @@
 import { ApolloError, useApolloClient } from '@apollo/client';
 import { type GraphQLFormattedError } from 'graphql';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import {
   FindOneFrontComponentDocument,
   type FindOneFrontComponentQuery,
@@ -35,103 +35,100 @@ export const useRequestApplicationTokenRefresh = ({
   frontComponentId,
 }: UseRequestApplicationTokenRefreshArgs) => {
   const apolloClient = useApolloClient();
+  const store = useStore();
 
-  const applicationTokenPairCallbackState = useRecoilComponentCallbackState(
+  const applicationTokenPairAtom = useAtomComponentStateCallbackState(
     frontComponentApplicationTokenPairComponentState,
     frontComponentId,
   );
 
-  const requestAccessTokenRefresh = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async (): Promise<string> => {
-        const refetchFrontComponentForNewTokenPair =
-          async (): Promise<string> => {
-            const result = await apolloClient.query<
-              FindOneFrontComponentQuery,
-              FindOneFrontComponentQueryVariables
-            >({
-              query: FindOneFrontComponentDocument,
-              variables: { id: frontComponentId },
-              fetchPolicy: 'network-only',
-            });
-
-            const newTokenPair =
-              result.data?.frontComponent?.applicationTokenPair;
-
-            if (!isDefined(newTokenPair)) {
-              throw new Error('Failed to refetch application token pair');
-            }
-
-            set(applicationTokenPairCallbackState, newTokenPair);
-
-            return newTokenPair.applicationAccessToken.token;
-          };
-
-        const applicationTokenPair = getSnapshotValue(
-          snapshot,
-          applicationTokenPairCallbackState,
-        );
-
-        if (!isDefined(applicationTokenPair)) {
-          throw new Error(
-            'Application token pair must be initialized before requesting a refresh. Ensure the front component has loaded its token pair before invoking refresh.',
-          );
-        }
-
-        // First try renewing via the refresh token (fast path).
-        // If the refresh token itself is expired, fall back to refetching
-        // the front component which issues a fresh token pair server-side.
-        try {
-          const renewResult = await apolloClient.mutate<
-            RenewApplicationTokenMutation,
-            RenewApplicationTokenMutationVariables
+  const requestAccessTokenRefresh = useCallback(
+    async (): Promise<string> => {
+      const refetchFrontComponentForNewTokenPair =
+        async (): Promise<string> => {
+          const result = await apolloClient.query<
+            FindOneFrontComponentQuery,
+            FindOneFrontComponentQueryVariables
           >({
-            mutation: RenewApplicationTokenDocument,
-            variables: {
-              applicationRefreshToken:
-                applicationTokenPair.applicationRefreshToken.token,
-            },
+            query: FindOneFrontComponentDocument,
+            variables: { id: frontComponentId },
+            fetchPolicy: 'network-only',
           });
 
-          if (isNonEmptyArray(renewResult.errors)) {
-            if (
-              hasApplicationRefreshTokenInvalidOrExpiredSubCode(
-                renewResult.errors,
-              )
-            ) {
-              return await refetchFrontComponentForNewTokenPair();
-            }
+          const newTokenPair =
+            result.data?.frontComponent?.applicationTokenPair;
 
-            const errorMessage = renewResult.errors
-              .map((error) => error.message)
-              .join(', ');
-
-            throw new Error(`Token renewal failed: ${errorMessage}`);
+          if (!isDefined(newTokenPair)) {
+            throw new Error('Failed to refetch application token pair');
           }
 
-          const renewedTokenPair = renewResult.data?.renewApplicationToken;
+          store.set(applicationTokenPairAtom, newTokenPair);
 
-          if (!isDefined(renewedTokenPair)) {
-            throw new Error('Failed to renew application token');
-          }
+          return newTokenPair.applicationAccessToken.token;
+        };
 
-          set(applicationTokenPairCallbackState, renewedTokenPair);
+      const applicationTokenPair = store.get(applicationTokenPairAtom);
 
-          return renewedTokenPair.applicationAccessToken.token;
-        } catch (error) {
+      if (!isDefined(applicationTokenPair)) {
+        throw new Error(
+          'Application token pair must be initialized before requesting a refresh. Ensure the front component has loaded its token pair before invoking refresh.',
+        );
+      }
+
+      // First try renewing via the refresh token (fast path).
+      // If the refresh token itself is expired, fall back to refetching
+      // the front component which issues a fresh token pair server-side.
+      try {
+        const renewResult = await apolloClient.mutate<
+          RenewApplicationTokenMutation,
+          RenewApplicationTokenMutationVariables
+        >({
+          mutation: RenewApplicationTokenDocument,
+          variables: {
+            applicationRefreshToken:
+              applicationTokenPair.applicationRefreshToken.token,
+          },
+        });
+
+        if (isNonEmptyArray(renewResult.errors)) {
           if (
-            error instanceof ApolloError &&
             hasApplicationRefreshTokenInvalidOrExpiredSubCode(
-              error.graphQLErrors,
+              renewResult.errors,
             )
           ) {
             return await refetchFrontComponentForNewTokenPair();
           }
 
-          throw error;
+          const errorMessage = renewResult.errors
+            .map((error) => error.message)
+            .join(', ');
+
+          throw new Error(`Token renewal failed: ${errorMessage}`);
         }
-      },
-    [apolloClient, applicationTokenPairCallbackState, frontComponentId],
+
+        const renewedTokenPair = renewResult.data?.renewApplicationToken;
+
+        if (!isDefined(renewedTokenPair)) {
+          throw new Error('Failed to renew application token');
+        }
+
+        store.set(applicationTokenPairAtom, renewedTokenPair);
+
+        return renewedTokenPair.applicationAccessToken.token;
+      } catch (error) {
+        if (
+          error instanceof ApolloError &&
+          hasApplicationRefreshTokenInvalidOrExpiredSubCode(
+            error.graphQLErrors,
+          )
+        ) {
+          return await refetchFrontComponentForNewTokenPair();
+        }
+
+        throw error;
+      }
+    },
+    [apolloClient, applicationTokenPairAtom, frontComponentId, store],
   );
 
   return { requestAccessTokenRefresh };

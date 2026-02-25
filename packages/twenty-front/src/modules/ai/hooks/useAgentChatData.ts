@@ -9,7 +9,7 @@ import { isCreatingChatThreadStateV2 } from '@/ai/states/isCreatingChatThreadSta
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { type SetterOrUpdater } from 'recoil';
+import { type SetStateAction } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type AgentChatThread,
@@ -20,7 +20,9 @@ import {
 
 const setUsageFromThread = (
   thread: AgentChatThread,
-  setAgentChatUsage: SetterOrUpdater<AgentChatUsageState | null>,
+  setAgentChatUsage: (
+    update: SetStateAction<AgentChatUsageState | null>,
+  ) => void,
 ) => {
   const hasUsageData =
     (thread.conversationSize ?? 0) > 0 && isDefined(thread.contextWindowTokens);

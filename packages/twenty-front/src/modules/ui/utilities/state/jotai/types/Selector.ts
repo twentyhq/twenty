@@ -1,7 +1,7 @@
 import { type Atom } from 'jotai';
 
-export type SelectorV2<ValueType> = {
-  type: 'SelectorV2';
+export type Selector<ValueType> = {
+  type: 'Selector';
   key: string;
   atom: Atom<ValueType>;
 };

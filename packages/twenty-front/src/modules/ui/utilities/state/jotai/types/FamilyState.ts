@@ -6,8 +6,8 @@ type JotaiWritableAtom<ValueType> = WritableAtom<
   void
 >;
 
-export type FamilyStateV2<ValueType, FamilyKey> = {
-  type: 'FamilyStateV2';
+export type FamilyState<ValueType, FamilyKey> = {
+  type: 'FamilyState';
   key: string;
   atomFamily: (key: FamilyKey) => JotaiWritableAtom<ValueType>;
 } & ((key: FamilyKey) => JotaiWritableAtom<ValueType>);

@@ -1,6 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
 import { type ChangeEvent } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useSingleRecordPickerSearch } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerSearch';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
@@ -10,7 +9,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 const instanceId = 'instanceId';
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <SingleRecordPickerComponentInstanceContext.Provider value={{ instanceId }}>
-    <RecoilRoot>{children}</RecoilRoot>
+    {children}
   </SingleRecordPickerComponentInstanceContext.Provider>
 );
 

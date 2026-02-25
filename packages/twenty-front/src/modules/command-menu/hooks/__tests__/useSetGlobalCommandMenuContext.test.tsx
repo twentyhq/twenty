@@ -36,6 +36,15 @@ const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
 
 const peopleMock = getPeopleRecordConnectionMock();
 
+jotaiStore.set(
+  recordStoreFamilyState.atomFamily(peopleMock[0].id),
+  peopleMock[0],
+);
+jotaiStore.set(
+  recordStoreFamilyState.atomFamily(peopleMock[1].id),
+  peopleMock[1],
+);
+
 const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
   componentInstanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
@@ -48,16 +57,6 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   },
   contextStoreNumberOfSelectedRecords: 2,
   contextStoreCurrentViewType: ContextStoreViewType.Table,
-  onInitializeRecoilSnapshot: (_snapshot) => {
-    jotaiStore.set(
-      recordStoreFamilyState.atomFamily(peopleMock[0].id),
-      peopleMock[0],
-    );
-    jotaiStore.set(
-      recordStoreFamilyState.atomFamily(peopleMock[1].id),
-      peopleMock[1],
-    );
-  },
 });
 
 describe('useSetGlobalCommandMenuContext', () => {

@@ -1,7 +1,7 @@
 import { type Atom } from 'jotai';
 
-export type FamilySelectorV2<ValueType, FamilyKey> = {
-  type: 'FamilySelectorV2';
+export type FamilySelector<ValueType, FamilyKey> = {
+  type: 'FamilySelector';
   key: string;
   selectorFamily: (key: FamilyKey) => Atom<ValueType>;
 };

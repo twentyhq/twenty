@@ -118,7 +118,7 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     const { refetchedAgent } = await refetchAgentAndRoles();
 
-    // Update Recoil state with the refetched agent to ensure roleId is available
+    // Update state with the refetched agent to ensure roleId is available
     // Apollo's onCompleted is not called on refetch, so we need to update manually
     if (isDefined(refetchedAgent)) {
       setWorkflowAiAgentActionAgent(refetchedAgent);

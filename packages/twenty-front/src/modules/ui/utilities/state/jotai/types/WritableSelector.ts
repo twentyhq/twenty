@@ -1,7 +1,7 @@
 import { type WritableAtom } from 'jotai';
 
-export type WritableSelectorV2<ValueType> = {
-  type: 'WritableSelectorV2';
+export type WritableSelector<ValueType> = {
+  type: 'WritableSelector';
   key: string;
   atom: WritableAtom<
     ValueType,

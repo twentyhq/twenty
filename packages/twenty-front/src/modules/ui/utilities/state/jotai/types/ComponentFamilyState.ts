@@ -12,8 +12,8 @@ export type ComponentFamilyStateKey<FamilyKey> = ComponentStateKey & {
   familyKey: FamilyKey;
 };
 
-export type ComponentFamilyStateV2<ValueType, FamilyKey> = {
-  type: 'ComponentFamilyStateV2';
+export type ComponentFamilyState<ValueType, FamilyKey> = {
+  type: 'ComponentFamilyState';
   key: string;
   atomFamily: (
     key: ComponentFamilyStateKey<FamilyKey>,

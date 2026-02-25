@@ -19,9 +19,6 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
   componentInstanceId: 'instanceId',
   contextStoreCurrentObjectMetadataNameSingular: 'company',
-  onInitializeRecoilSnapshot: () => {
-    // Recoil state initialization removed - using Jotai instead
-  },
 });
 
 describe('useColumnDefinitionsFromObjectMetadata', () => {

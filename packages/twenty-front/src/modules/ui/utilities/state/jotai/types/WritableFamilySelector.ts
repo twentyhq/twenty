@@ -1,7 +1,7 @@
 import { type WritableAtom } from 'jotai';
 
-export type WritableFamilySelectorV2<ValueType, FamilyKey> = {
-  type: 'WritableFamilySelectorV2';
+export type WritableFamilySelector<ValueType, FamilyKey> = {
+  type: 'WritableFamilySelector';
   key: string;
   selectorFamily: (
     key: FamilyKey,

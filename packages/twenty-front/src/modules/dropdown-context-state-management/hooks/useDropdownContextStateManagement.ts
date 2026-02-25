@@ -6,7 +6,7 @@ import { type Context, useCallback, useContext } from 'react';
 
 /**
  *
- * @deprecated This hook is deprecated because it uses context instead of recoil and synchronous hooks like we do in the application
+ * @deprecated This hook is deprecated because it uses context instead of jotai and synchronous hooks like we do in the application
  *
  * TODO: refactor this generic way to handle multiple pages in a dropdown with state management and specific code paths in a dedicated module, instead of using context with generic union types.
  */

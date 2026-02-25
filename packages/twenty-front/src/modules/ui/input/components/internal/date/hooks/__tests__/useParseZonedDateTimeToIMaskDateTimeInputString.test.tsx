@@ -1,6 +1,5 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 import { Temporal } from 'temporal-polyfill';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
@@ -32,9 +31,7 @@ describe('useParseZonedDateTimeToIMaskDateTimeInputString', () => {
         calendarStartDay: CalendarStartDay.MONDAY,
       });
       return (
-        <JotaiProvider store={jotaiStore}>
-          <RecoilRoot>{children}</RecoilRoot>
-        </JotaiProvider>
+        <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
       );
     };
 

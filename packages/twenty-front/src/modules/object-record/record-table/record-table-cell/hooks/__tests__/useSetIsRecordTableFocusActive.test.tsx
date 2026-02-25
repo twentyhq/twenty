@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { useAtomValue } from 'jotai';
 import React, { act } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { useSetIsRecordTableCellFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableCellFocusActive';
@@ -20,11 +19,9 @@ const mockGetElementById = jest.spyOn(document, 'getElementById');
 const instanceId = { instanceId: 'test-table-id' };
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>
-    <RecordTableComponentInstance recordTableId="test-table-id">
-      {children}
-    </RecordTableComponentInstance>
-  </RecoilRoot>
+  <RecordTableComponentInstance recordTableId="test-table-id">
+    {children}
+  </RecordTableComponentInstance>
 );
 
 const renderHooks = () => {

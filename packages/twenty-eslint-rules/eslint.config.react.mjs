@@ -246,7 +246,7 @@ export default [
             'componentInstanceId',
             'hotkeyScope',
             'dropdownId',
-            'recoilScopeId',
+
             'modalId',
             'dialogId',
             'itemId',

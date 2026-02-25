@@ -9,7 +9,6 @@ import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/con
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 
 const meta: Meta<typeof SelectSheetStep> = {
   title: 'Modules/SpreadsheetImport/SelectSheetStep',
@@ -27,9 +26,7 @@ const meta: Meta<typeof SelectSheetStep> = {
       );
       return (
         <JotaiProvider store={jotaiStore}>
-          <RecoilRoot>
-            <Story />
-          </RecoilRoot>
+          <Story />
         </JotaiProvider>
       );
     },

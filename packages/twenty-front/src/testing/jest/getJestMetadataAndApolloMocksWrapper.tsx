@@ -1,7 +1,6 @@
 import { MockedProvider, type MockedResponse } from '@apollo/client/testing';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { RecoilRoot, type MutableSnapshot } from 'recoil';
 
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 
@@ -17,7 +16,6 @@ import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataI
 export const getJestMetadataAndApolloMocksWrapper = ({
   apolloMocks,
   cache,
-  onInitializeRecoilSnapshot,
   onInitializeJotaiStore,
   objectMetadataItems,
 }: {
@@ -25,7 +23,6 @@ export const getJestMetadataAndApolloMocksWrapper = ({
   apolloMocks?:
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
-  onInitializeRecoilSnapshot?: (snapshot: MutableSnapshot) => void;
   onInitializeJotaiStore?: (store: typeof jotaiStore) => void;
   objectMetadataItems?: ObjectMetadataItem[];
 }) => {
@@ -33,29 +30,27 @@ export const getJestMetadataAndApolloMocksWrapper = ({
 
   return ({ children }: { children: ReactNode }) => (
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot initializeState={onInitializeRecoilSnapshot}>
-        <SnackBarComponentInstanceContext.Provider
-          value={{ instanceId: 'snack-bar-manager' }}
-        >
-          <MockedProvider mocks={apolloMocks} addTypename={false} cache={cache}>
-            <RecordComponentInstanceContextsWrapper componentInstanceId="instanceId">
-              <ViewComponentInstanceContext.Provider
-                value={{ instanceId: 'instanceId' }}
+      <SnackBarComponentInstanceContext.Provider
+        value={{ instanceId: 'snack-bar-manager' }}
+      >
+        <MockedProvider mocks={apolloMocks} addTypename={false} cache={cache}>
+          <RecordComponentInstanceContextsWrapper componentInstanceId="instanceId">
+            <ViewComponentInstanceContext.Provider
+              value={{ instanceId: 'instanceId' }}
+            >
+              <JestObjectMetadataItemSetter
+                objectMetadataItems={objectMetadataItems}
               >
-                <JestObjectMetadataItemSetter
-                  objectMetadataItems={objectMetadataItems}
+                <ContextStoreComponentInstanceContext.Provider
+                  value={{ instanceId: 'instanceId' }}
                 >
-                  <ContextStoreComponentInstanceContext.Provider
-                    value={{ instanceId: 'instanceId' }}
-                  >
-                    <JestContextStoreSetter>{children}</JestContextStoreSetter>
-                  </ContextStoreComponentInstanceContext.Provider>
-                </JestObjectMetadataItemSetter>
-              </ViewComponentInstanceContext.Provider>
-            </RecordComponentInstanceContextsWrapper>
-          </MockedProvider>
-        </SnackBarComponentInstanceContext.Provider>
-      </RecoilRoot>
+                  <JestContextStoreSetter>{children}</JestContextStoreSetter>
+                </ContextStoreComponentInstanceContext.Provider>
+              </JestObjectMetadataItemSetter>
+            </ViewComponentInstanceContext.Provider>
+          </RecordComponentInstanceContextsWrapper>
+        </MockedProvider>
+      </SnackBarComponentInstanceContext.Provider>
     </JotaiProvider>
   );
 };

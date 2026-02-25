@@ -8,8 +8,8 @@ type JotaiWritableAtom<ValueType> = WritableAtom<
   void
 >;
 
-export type ComponentStateV2<ValueType> = {
-  type: 'ComponentStateV2';
+export type ComponentState<ValueType> = {
+  type: 'ComponentState';
   key: string;
   atomFamily: (key: ComponentStateKey) => JotaiWritableAtom<ValueType>;
 };

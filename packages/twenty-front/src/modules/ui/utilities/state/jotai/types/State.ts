@@ -1,7 +1,7 @@
 import { type WritableAtom } from 'jotai';
 
-export type StateV2<ValueType> = {
-  type: 'StateV2';
+export type State<ValueType> = {
+  type: 'State';
   key: string;
   atom: WritableAtom<
     ValueType,

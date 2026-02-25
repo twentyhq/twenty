@@ -45,7 +45,7 @@ export const NameField = ({
   const debouncedUpdate = useCallback(
     useDebouncedCallback(async (name: string) => {
       if (isEmpty(name)) return;
-      // update local recoil state when workspace name is updated
+      // update local state when workspace name is updated
       setCurrentWorkspace((currentValue) => {
         if (currentValue === null) {
           return null;

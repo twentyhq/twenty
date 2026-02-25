@@ -1,6 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -34,9 +33,8 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot>
-        <RecordTableComponentInstance recordTableId={recordTableId}>
-          <RecordTableContextProvider
+      <RecordTableComponentInstance recordTableId={recordTableId}>
+        <RecordTableContextProvider
             recordTableId={recordTableId}
             viewBarId="viewBarId"
             objectNameSingular={CoreObjectNameSingular.Person}
@@ -70,7 +68,6 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
             </RecordComponentInstanceContextsWrapper>
           </RecordTableContextProvider>
         </RecordTableComponentInstance>
-      </RecoilRoot>
     </JotaiProvider>
   );
 };

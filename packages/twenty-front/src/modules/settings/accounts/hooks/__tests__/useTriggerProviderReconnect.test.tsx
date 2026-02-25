@@ -4,7 +4,6 @@ import {
 } from '~/generated/graphql';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
@@ -22,9 +21,7 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: jest.fn().mockImplementation(() => mockNavigate),
 }));
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
-);
+const Wrapper = ({ children }: { children: ReactNode }) => <>{children}</>;
 
 describe('useTriggerProviderReconnect', () => {
   beforeEach(() => {

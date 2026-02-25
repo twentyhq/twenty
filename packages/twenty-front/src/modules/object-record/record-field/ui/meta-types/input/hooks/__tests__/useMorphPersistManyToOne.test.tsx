@@ -1,6 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useMorphPersistManyToOne } from '@/object-record/record-field/ui/meta-types/input/hooks/useMorphPersistManyToOne';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
@@ -91,7 +90,7 @@ const mockMorphFieldDefinition = {
 } as FieldDefinition<FieldMorphRelationMetadata>;
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
+  <>{children}</>
 );
 
 describe('useMorphPersistManyToOne', () => {

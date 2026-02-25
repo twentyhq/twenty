@@ -1,6 +1,5 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -26,9 +25,7 @@ describe('useUserTimezone', () => {
 
   it('should return system timezone when currentWorkspaceMember is null', () => {
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <JotaiProvider store={jotaiStore}>
-        <RecoilRoot>{children}</RecoilRoot>
-      </JotaiProvider>
+      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
     );
 
     const { result } = renderHook(() => useUserTimezone(), {
@@ -61,9 +58,7 @@ describe('useUserTimezone', () => {
     }: {
       children: React.ReactNode;
     }) => (
-      <JotaiProvider store={jotaiStore}>
-        <RecoilRoot>{children}</RecoilRoot>
-      </JotaiProvider>
+      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
     );
 
     const { result } = renderHook(() => useUserTimezone(), {
@@ -98,9 +93,7 @@ describe('useUserTimezone', () => {
     }: {
       children: React.ReactNode;
     }) => (
-      <JotaiProvider store={jotaiStore}>
-        <RecoilRoot>{children}</RecoilRoot>
-      </JotaiProvider>
+      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
     );
 
     const { result } = renderHook(() => useUserTimezone(), {
