@@ -4,8 +4,8 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
-import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -42,10 +42,10 @@ export const useCommandMenu = () => {
     emitSidePanelOpenEvent();
     closeAnyOpenDropdown();
     const isNavigationMenuInEditMode = store.get(
-      isNavigationMenuInEditModeStateV2.atom,
+      isNavigationMenuInEditModeState.atom,
     );
     const selectedNavigationItemId = store.get(
-      selectedNavigationMenuItemInEditModeStateV2.atom,
+      selectedNavigationMenuItemInEditModeState.atom,
     );
     if (isNavigationMenuInEditMode && isDefined(selectedNavigationItemId)) {
       navigateCommandMenu({
