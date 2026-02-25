@@ -130,7 +130,6 @@ export class MessageFolderUpdateManyPreQueryHook
           );
 
           payload.data.pendingSyncAction = pendingSyncAction;
-          payload.filter.id.in = [...foldersPendingActions.keys()];
         }
 
         return payload;
