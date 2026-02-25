@@ -40,7 +40,7 @@ export const sortNavigationMenuItems = (
             return null;
           }
 
-          const namePlural = objectMetadataItem?.namePlural;
+          const namePlural = objectMetadataItem.namePlural;
 
           const isIndexView = view.key === ViewKey.Index;
           const labelIdentifier =
