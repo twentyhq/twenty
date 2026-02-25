@@ -404,7 +404,6 @@ export default class Twenty {
     const processEnvironment = getProcessEnvironment();
 
     processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] = token;
-    processEnvironment[API_KEY_ENV_KEY] = token;
   }
 }
 
