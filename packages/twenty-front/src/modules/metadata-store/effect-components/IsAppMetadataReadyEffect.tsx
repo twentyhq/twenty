@@ -14,7 +14,10 @@ export const IsAppMetadataReadyEffect = () => {
   const isLoggedIn = useIsLogged();
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const metadataStore = useAtomFamilyStateValue(metadataStoreState, 'objectMetadataItems');
+  const metadataStore = useAtomFamilyStateValue(
+    metadataStoreState,
+    'objectMetadataItems',
+  );
   // eslint-disable-next-line twenty/matching-state-variable
   const metadataStoreViews = useAtomFamilyStateValue(
     metadataStoreState,

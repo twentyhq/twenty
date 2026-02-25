@@ -7,8 +7,10 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const useSearchRecordGroupField = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const [objectOptionsDropdownSearchInput, setObjectOptionsDropdownSearchInput] =
-    useAtomComponentState(objectOptionsDropdownSearchInputComponentState);
+  const [
+    objectOptionsDropdownSearchInput,
+    setObjectOptionsDropdownSearchInput,
+  ] = useAtomComponentState(objectOptionsDropdownSearchInputComponentState);
 
   const filteredRecordGroupFieldMetadataItems = useMemo(() => {
     const searchInputLowerCase =
