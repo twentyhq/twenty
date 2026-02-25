@@ -795,6 +795,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.skill.update,
           ///
 
+          // Front components
+          ...aggregatedOrchestratorActionsReport.frontComponent.delete,
+          ...aggregatedOrchestratorActionsReport.frontComponent.create,
+          ...aggregatedOrchestratorActionsReport.frontComponent.update,
+          ///
+
           // Command Menu Items
           ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
           ...aggregatedOrchestratorActionsReport.commandMenuItem.create,
@@ -841,12 +847,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
             .create,
           ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate
             .update,
-          ///
-
-          // Front components
-          ...aggregatedOrchestratorActionsReport.frontComponent.delete,
-          ...aggregatedOrchestratorActionsReport.frontComponent.create,
-          ...aggregatedOrchestratorActionsReport.frontComponent.update,
           ///
 
           // Webhooks
