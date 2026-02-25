@@ -52,7 +52,7 @@ const StyledLoaderContainer = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
 type EmailThreadMessageBodyProps = {
@@ -68,27 +68,27 @@ export const EmailThreadMessageBody = ({
   messageId,
   canShowHtmlPreview = false,
 }: EmailThreadMessageBodyProps) => {
-  const [showHtml, setShowHtml] = useState(false);
+  const [showPlainText, setShowPlainText] = useState(false);
 
-  const { html, isLoading, error, fetchHtmlPreview, clearPreview } =
-    useEmailHtmlPreview(messageId ?? '');
+  const shouldFetchHtml = canShowHtmlPreview && isDisplayed && !showPlainText;
 
-  const handleViewOriginal = async () => {
-    await fetchHtmlPreview();
-    setShowHtml(true);
-  };
+  const { html, isLoading, error } = useEmailHtmlPreview(
+    messageId ?? '',
+    !shouldFetchHtml,
+  );
 
-  const handleShowPlainText = () => {
-    setShowHtml(false);
-    clearPreview();
-  };
+  const showingHtml = shouldFetchHtml && html !== null;
 
   return (
     <AnimatedEaseInOut isOpen={isDisplayed} duration="fast">
-      {showHtml && html ? (
+      {isLoading && shouldFetchHtml ? (
+        <StyledLoaderContainer>
+          <Loader />
+        </StyledLoaderContainer>
+      ) : showingHtml ? (
         <>
           <EmailThreadMessageHtmlPreview html={html} />
-          <StyledToggleLink onClick={handleShowPlainText}>
+          <StyledToggleLink onClick={() => setShowPlainText(true)}>
             <Trans>Show plain text</Trans>
           </StyledToggleLink>
         </>
@@ -102,20 +102,11 @@ export const EmailThreadMessageBody = ({
           >
             {body}
           </Linkify>
-          {canShowHtmlPreview && messageId && (
-            <>
-              {isLoading ? (
-                <StyledLoaderContainer>
-                  <Loader />
-                </StyledLoaderContainer>
-              ) : error ? (
-                <StyledErrorText>{error}</StyledErrorText>
-              ) : (
-                <StyledToggleLink onClick={handleViewOriginal}>
-                  <Trans>View original</Trans>
-                </StyledToggleLink>
-              )}
-            </>
+          {error !== null && <StyledErrorText>{error}</StyledErrorText>}
+          {canShowHtmlPreview && showPlainText && (
+            <StyledToggleLink onClick={() => setShowPlainText(false)}>
+              <Trans>View original</Trans>
+            </StyledToggleLink>
           )}
         </StyledThreadMessageBody>
       )}

@@ -1,9 +1,8 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useState } from 'react';
 
 import { getMessageHtmlPreviewBatch } from '@/activities/emails/graphql/queries/getMessageHtmlPreviewBatch';
-import { emailHtmlPreviewCacheState } from '@/activities/emails/states/emailHtmlPreviewCacheState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useStore } from 'jotai';
+import { getMessageHtmlPreview } from '@/activities/emails/graphql/queries/getMessageHtmlPreview';
 
 type MessageHtmlPreview = {
   messageId: string;
@@ -12,22 +11,29 @@ type MessageHtmlPreview = {
 
 export const usePrefetchEmailHtml = () => {
   const apolloCoreClient = useApolloCoreClient();
-  const store = useStore();
-  const prefetchedThreadIdsRef = useRef(new Set<string>());
+  const [prefetchedThreadIds, setPrefetchedThreadIds] = useState(
+    () => new Set<string>(),
+  );
 
   const prefetchThreadsHtml = useCallback(
     async (messageThreadIds: string[]) => {
       const newThreadIds = messageThreadIds.filter(
-        (id) => !prefetchedThreadIdsRef.current.has(id),
+        (id) => !prefetchedThreadIds.has(id),
       );
 
       if (newThreadIds.length === 0) {
         return;
       }
 
-      for (const id of newThreadIds) {
-        prefetchedThreadIdsRef.current.add(id);
-      }
+      setPrefetchedThreadIds((prev) => {
+        const next = new Set(prev);
+
+        for (const id of newThreadIds) {
+          next.add(id);
+        }
+
+        return next;
+      });
 
       try {
         const { data } = await apolloCoreClient.query({
@@ -39,19 +45,26 @@ export const usePrefetchEmailHtml = () => {
         const previews: MessageHtmlPreview[] =
           data?.getMessageHtmlPreviewBatch?.previews ?? [];
 
+        // Write each preview into Apollo's cache as individual query results
+        // so useQuery(getMessageHtmlPreview) picks them up via cache-first
         for (const preview of previews) {
-          if (preview.html) {
-            store.set(
-              emailHtmlPreviewCacheState.atomFamily(preview.messageId),
-              preview.html,
-            );
-          }
+          apolloCoreClient.writeQuery({
+            query: getMessageHtmlPreview,
+            variables: { messageId: preview.messageId },
+            data: {
+              getMessageHtmlPreview: {
+                __typename: 'MessageHtmlPreview',
+                messageId: preview.messageId,
+                html: preview.html,
+              },
+            },
+          });
         }
       } catch {
         // Prefetch failures are non-critical — user can still fetch on demand
       }
     },
-    [apolloCoreClient, store],
+    [apolloCoreClient, prefetchedThreadIds],
   );
 
   return { prefetchThreadsHtml };
