@@ -2,6 +2,7 @@ export { setFrontComponentExecutionContext } from './context/frontComponentConte
 export { closeSidePanel } from './functions/closeSidePanel';
 export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
+export { openAskAIWithPrompt } from './functions/openAskAIWithPrompt';
 export { openSidePanelPage } from './functions/openSidePanelPage';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';

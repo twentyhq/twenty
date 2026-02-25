@@ -78,6 +78,7 @@ export {
   getFrontComponentActionErrorDedupeKey,
   closeSidePanel,
   navigate,
+  openAskAIWithPrompt,
   openSidePanelPage,
   unmountFrontComponent,
   useFrontComponentExecutionContext,

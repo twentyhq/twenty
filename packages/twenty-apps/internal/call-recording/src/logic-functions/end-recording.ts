@@ -54,8 +54,7 @@ const downloadFile = async (
     throw new Error(`Failed to download file from ${url}: ${response.status}`);
   }
 
-  const contentType =
-    response.headers.get('content-type') ?? 'audio/mpeg';
+  const contentType = response.headers.get('content-type') ?? 'audio/mpeg';
 
   const urlPath = new URL(url).pathname;
   const fileName = urlPath.split('/').pop() ?? 'recording.mp4';
@@ -72,10 +71,13 @@ const downloadFile = async (
 const processTranscript = async (
   client: InstanceType<typeof Twenty>,
   transcriptUrl: string | undefined,
-): Promise<{
-  transcriptFile?: UploadedFileRef[];
-  transcript?: { blocknote: null; markdown: string };
-} | undefined> => {
+): Promise<
+  | {
+      transcriptFile?: UploadedFileRef[];
+      transcript?: { blocknote: null; markdown: string };
+    }
+  | undefined
+> => {
   if (!transcriptUrl) {
     return undefined;
   }
@@ -140,26 +142,28 @@ const handler = async (event: any) => {
     RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER,
   );
 
-  const transcriptData = await processTranscript(
-    client,
-    body.transcriptUrl,
-  );
+  const transcriptData = await processTranscript(client, body.transcriptUrl);
 
   const callName = body.participants?.length
-    ? `Call ${body.participants.map((participant) => participant.name).join(' / ')}`
+    ? `Call ${body.participants
+        .map((participant) => participant.name)
+        .join(' / ')}`
     : undefined;
+  const updateData: Record<string, unknown> = {
+    status: 'ENDED',
+    endedAt: new Date().toISOString(),
+    recordingFile: [{ fileId: uploadedRecording.id, label: fileName }],
+    ...transcriptData,
+    ...(callName ? { name: callName } : {}),
+  };
+
+  delete updateData.createdAt;
 
   await client.mutation({
     updateCallRecording: {
       __args: {
         id: callRecording.id,
-        data: {
-          status: 'ENDED',
-          endedAt: new Date().toISOString(),
-          recordingFile: [{ fileId: uploadedRecording.id, label: fileName }],
-          ...transcriptData,
-          ...(callName ? { name: callName } : {}),
-        },
+        data: updateData,
       },
       id: true,
       endedAt: true,
