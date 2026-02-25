@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should match snapshot 1`] = `
 {
@@ -90,6 +90,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "cronTriggerSettings",
       "databaseEventTriggerSettings",
       "httpRouteTriggerSettings",
+      "builtHandlerPath",
     ],
     "propertiesToStringify": [
       "toolInputSchema",
