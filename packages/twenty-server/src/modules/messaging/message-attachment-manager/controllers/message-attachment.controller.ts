@@ -12,11 +12,12 @@ import { Response } from 'express';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { MessagingAttachmentDownloadService } from 'src/modules/messaging/message-attachment-manager/services/messaging-attachment-download.service';
 
 @Controller('message-attachments')
-@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
+@UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
 export class MessageAttachmentController {
   constructor(
     private readonly messagingAttachmentDownloadService: MessagingAttachmentDownloadService,
