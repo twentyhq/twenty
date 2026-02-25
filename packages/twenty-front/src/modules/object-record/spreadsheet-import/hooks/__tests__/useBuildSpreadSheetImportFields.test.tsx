@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
@@ -16,9 +15,7 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot>
-        <JestObjectMetadataItemSetter>{children}</JestObjectMetadataItemSetter>
-      </RecoilRoot>
+      <JestObjectMetadataItemSetter>{children}</JestObjectMetadataItemSetter>
     </JotaiProvider>
   );
 };
@@ -44,6 +41,7 @@ describe('useBuildSpreadSheetImportFields', () => {
     overrides: Partial<FieldMetadataItem> = {},
   ): FieldMetadataItem => ({
     id: 'test-field-id',
+    universalIdentifier: 'test-field-id',
     name: 'testField',
     label: 'Test Field',
     type: FieldMetadataType.TEXT,
@@ -62,6 +60,7 @@ describe('useBuildSpreadSheetImportFields', () => {
   ): ObjectMetadataItem =>
     ({
       id: 'test-object-id',
+      universalIdentifier: 'test-object-id',
       nameSingular: 'testObject',
       namePlural: 'testObjects',
       labelSingular: 'Test Object',
@@ -381,13 +380,11 @@ describe('useBuildSpreadSheetImportFields', () => {
 
     const RelationTestWrapper = ({ children }: { children: ReactNode }) => (
       <JotaiProvider store={jotaiStore}>
-        <RecoilRoot>
-          <JestObjectMetadataItemSetter
-            objectMetadataItems={[targetObjectMetadata]}
-          >
-            {children}
-          </JestObjectMetadataItemSetter>
-        </RecoilRoot>
+        <JestObjectMetadataItemSetter
+          objectMetadataItems={[targetObjectMetadata]}
+        >
+          {children}
+        </JestObjectMetadataItemSetter>
       </JotaiProvider>
     );
 

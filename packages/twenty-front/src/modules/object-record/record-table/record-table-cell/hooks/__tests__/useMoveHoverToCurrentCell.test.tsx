@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider, useAtomValue } from 'jotai';
 import { act } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -18,21 +17,17 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <RecoilRoot>
-      <RecordTableComponentInstance recordTableId="test-record-table-instance-id">
-        <RecordTableRowContextProvider value={recordTableRowContextValue}>
-          <RecordTableRowDraggableContextProvider
-            value={recordTableRowDraggableContextValue}
-          >
-            <RecordTableCellContext.Provider
-              value={recordTableCellContextValue}
-            >
-              {children}
-            </RecordTableCellContext.Provider>
-          </RecordTableRowDraggableContextProvider>
-        </RecordTableRowContextProvider>
-      </RecordTableComponentInstance>
-    </RecoilRoot>
+    <RecordTableComponentInstance recordTableId="test-record-table-instance-id">
+      <RecordTableRowContextProvider value={recordTableRowContextValue}>
+        <RecordTableRowDraggableContextProvider
+          value={recordTableRowDraggableContextValue}
+        >
+          <RecordTableCellContext.Provider value={recordTableCellContextValue}>
+            {children}
+          </RecordTableCellContext.Provider>
+        </RecordTableRowDraggableContextProvider>
+      </RecordTableRowContextProvider>
+    </RecordTableComponentInstance>
   </JotaiProvider>
 );
 

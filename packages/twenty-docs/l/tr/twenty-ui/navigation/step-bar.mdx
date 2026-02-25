@@ -10,25 +10,33 @@ image: /images/user-guide/api/api.png
 Numaralandırılmış adımlar dizisi boyunca ilerlemeyi gösterir, aktif adımı vurgular. Her biri `Step` bileşeni tarafından temsil edilen adımlara sahip bir kapsayıcı oluşturur.
 
 <Tabs>
-  <Tab title="Kullanım">
-    ```jsx
-    import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+<Tab title="Kullanım">
 
-    export const MyComponent = () => {
-      return (
-        <StepBar activeStep={2}>
-          <StepBar.Step>Step 1</StepBar.Step>
-          <StepBar.Step>Step 2</StepBar.Step>
-          <StepBar.Step>Step 3</StepBar.Step>
-        </StepBar>
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
 
-  <Tab title="Özellikler">
-    | Özellikler | Tür  | Açıklama                                                                                      |
-    | ---------- | ---- | --------------------------------------------------------------------------------------------- |
-    | activeStep | sayı | Şu anda aktif adımın indeksidir. Hangi adımın görsel olarak vurgulanması gerektiğini belirler |
-  </Tab>
+export const MyComponent = () => {
+  return (
+    <StepBar activeStep={2}>
+      <StepBar.Step>Step 1</StepBar.Step>
+      <StepBar.Step>Step 2</StepBar.Step>
+      <StepBar.Step>Step 3</StepBar.Step>
+    </StepBar>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Özellikler">
+
+
+| Özellikler | Tür  | Açıklama                                                                                      |
+| ---------- | ---- | --------------------------------------------------------------------------------------------- |
+| activeStep | sayı | Şu anda aktif adımın indeksidir. Hangi adımın görsel olarak vurgulanması gerektiğini belirler |
+
+
+
+
+</Tab>
 </Tabs>

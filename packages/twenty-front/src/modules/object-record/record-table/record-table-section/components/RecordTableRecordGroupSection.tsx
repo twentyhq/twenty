@@ -123,7 +123,7 @@ export const RecordTableRecordGroupSection = () => {
 
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const recordGroup = useAtomFamilyStateValue(
+  const recordGroupDefinition = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
     currentRecordGroupId,
   );
@@ -131,7 +131,7 @@ export const RecordTableRecordGroupSection = () => {
   const recordIndexAggregateDisplayValueForGroupValue =
     useAtomComponentFamilyStateValue(
       recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
-      { groupValue: recordGroup?.value ?? '' },
+      { groupValue: recordGroupDefinition?.value ?? '' },
     );
 
   const recordIndexAggregateDisplayLabel = useAtomComponentStateValue(
@@ -187,7 +187,7 @@ export const RecordTableRecordGroupSection = () => {
     return null;
   }
 
-  if (!isDefined(recordGroup)) {
+  if (!isDefined(recordGroupDefinition)) {
     return null;
   }
 
@@ -209,16 +209,16 @@ export const RecordTableRecordGroupSection = () => {
       >
         <StyledTag
           variant={
-            recordGroup.type !== RecordGroupDefinitionType.NoValue
+            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
               ? 'solid'
               : 'outline'
           }
           color={
-            recordGroup.type !== RecordGroupDefinitionType.NoValue
-              ? recordGroup.color
+            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
+              ? recordGroupDefinition.color
               : 'transparent'
           }
-          text={recordGroup.title}
+          text={recordGroupDefinition.title}
           weight="medium"
         />
         <RecordBoardColumnHeaderAggregateDropdown

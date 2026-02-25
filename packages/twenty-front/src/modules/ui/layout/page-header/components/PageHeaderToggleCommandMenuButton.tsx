@@ -1,7 +1,7 @@
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT_MOBILE } from '@/command-menu/constants/CommandMenuSearchBarHeightMobile';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
-import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -122,9 +122,9 @@ const AnimatedIcon = ({
 
 export const PageHeaderToggleCommandMenuButton = () => {
   const { toggleCommandMenu } = useCommandMenu();
-  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedStateV2);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
   const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeStateV2,
+    isNavigationMenuInEditModeState,
   );
 
   const isMobile = useIsMobile();

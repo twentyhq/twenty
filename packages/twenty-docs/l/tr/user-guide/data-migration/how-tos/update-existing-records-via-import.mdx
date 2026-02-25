@@ -25,11 +25,11 @@ Var olan bir kayıtla eşleşen bir **benzersiz tanımlayıcı** içeren bir dos
 | Dosyanızda eksik              | Yeni bir kayıt **oluştur** (otomatik oluşturulan ID ile) |
 
 <Warning>
-  **Çoklu Seçim alanları birleştirilmez, üzerine yazılır.**
+**Çoklu Seçim alanları birleştirilmez, üzerine yazılır.**
 
-  Bir kayıtta `Option A` ve `Option B` seçiliyse ve siz `["Option C"]` içe aktarırsanız, içe aktarmadan sonra kayıtta yalnızca `Option C` bulunur. İçe aktarma önceki tüm seçimlerin yerini alır—onlara ekleme yapmaz.
+Bir kayıtta `Option A` ve `Option B` seçiliyse ve siz `["Option C"]` içe aktarırsanız, içe aktarmadan sonra kayıtta yalnızca `Option C` bulunur. İçe aktarma önceki tüm seçimlerin yerini alır—onlara ekleme yapmaz.
 
-  Mevcut değerleri korumak için, hepsini içe aktarımınıza dahil edin: `["Option A","Option B","Option C"]`
+Mevcut değerleri korumak için, hepsini içe aktarımınıza dahil edin: `["Option A","Option B","Option C"]`
 </Warning>
 
 ## Adım 1: Mevcut Verilerinizi Dışa Aktarın
@@ -80,9 +80,9 @@ id,email,firstName,lastName,jobTitle
 ```
 
 <Warning>
-  **Benzersiz tanımlayıcı değerlerini değiştirmeyin.**
+**Benzersiz tanımlayıcı değerlerini değiştirmeyin.**
 
-  `john@acme.com` adresini `john.smith@acme.com` olarak değiştirirseniz, Twenty mevcut kaydı güncellemek yerine yeni bir kayıt oluşturur.
+`john@acme.com` adresini `john.smith@acme.com` olarak değiştirirseniz, Twenty mevcut kaydı güncellemek yerine yeni bir kayıt oluşturur.
 </Warning>
 
 ## Adım 3: Güncellenen Dosyayı İçe Aktarın

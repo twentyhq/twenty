@@ -41,7 +41,7 @@ export const FieldWidgetDisplay = ({
 }: FieldWidgetDisplayProps) => {
   const widget = useCurrentWidget();
 
-  const [isHovered, setIsHovered] = useAtomComponentState(
+  const [fieldWidgetHover, setFieldWidgetHover] = useAtomComponentState(
     fieldWidgetHoverComponentState,
   );
 
@@ -63,8 +63,8 @@ export const FieldWidgetDisplay = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const handleMouseEnter = () => setIsHovered(true);
-  const handleMouseLeave = () => setIsHovered(false);
+  const handleMouseEnter = () => setFieldWidgetHover(true);
+  const handleMouseLeave = () => setFieldWidgetHover(false);
 
   return (
     <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
@@ -116,7 +116,7 @@ export const FieldWidgetDisplay = ({
             fieldMetadataItem={fieldMetadataItem}
             recordId={recordId}
             instanceId={instanceId}
-            isHovered={isHovered}
+            isHovered={fieldWidgetHover}
             onMouseLeave={handleMouseLeave}
           />
           <FieldWidgetCellEditModePortal

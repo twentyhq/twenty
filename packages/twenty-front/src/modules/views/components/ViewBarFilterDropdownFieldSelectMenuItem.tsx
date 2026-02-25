@@ -17,7 +17,7 @@ export const ViewBarFilterDropdownFieldSelectMenuItem = ({
 }: ViewBarFilterDropdownFieldSelectMenuItemProps) => {
   const { resetSelectedItem } = useSelectableList(FILTER_FIELD_LIST_ID);
 
-  const isSelectedItem = useAtomComponentFamilyStateValue(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     fieldMetadataItemToSelect.id,
   );
@@ -43,7 +43,7 @@ export const ViewBarFilterDropdownFieldSelectMenuItem = ({
       onEnter={handleClick}
     >
       <MenuItem
-        focused={isSelectedItem}
+        focused={isSelectedItemId}
         onClick={handleClick}
         LeftIcon={Icon}
         text={fieldMetadataItemToSelect.label}

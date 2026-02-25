@@ -7,7 +7,7 @@ import {
   commandMenuWidthState,
 } from '@/command-menu/states/commandMenuWidthState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ModalContainerContext } from '@/ui/layout/modal/contexts/ModalContainerContext';
 import { ResizablePanelGap } from '@/ui/layout/resizable-panel/components/ResizablePanelGap';
@@ -56,7 +56,7 @@ const StyledModalContainer = styled.div`
 const GAP_WIDTH = 8;
 
 export const CommandMenuSidePanelForDesktop = () => {
-  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedStateV2);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
   const isCommandMenuClosing = useAtomStateValue(isCommandMenuClosingState);
   const [commandMenuWidth, setCommandMenuWidth] = useAtomState(
     commandMenuWidthState,

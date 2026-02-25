@@ -7,7 +7,7 @@ import { SettingsRoleDefaultRole } from '@/settings/roles/components/SettingsRol
 
 import { SettingsRolesList } from '@/settings/roles/components/SettingsRolesList';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
-import { settingsRolesIsLoadingStateV2 } from '@/settings/roles/states/settingsRolesIsLoadingStateV2';
+import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -17,9 +17,7 @@ export const SettingsRolesContainer = () => {
   const { t } = useLingui();
 
   const settingsAllRoles = useSettingsAllRoles();
-  const settingsRolesIsLoading = useAtomStateValue(
-    settingsRolesIsLoadingStateV2,
-  );
+  const settingsRolesIsLoading = useAtomStateValue(settingsRolesIsLoadingState);
 
   if (settingsRolesIsLoading && !settingsAllRoles) {
     return null;

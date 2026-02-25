@@ -73,18 +73,19 @@ export const RecordBoardCard = () => {
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const [isCardExpanded, setIsCardExpanded] = useAtomComponentState(
-    recordBoardCardIsExpandedComponentState,
-    `record-board-card-${recordId}`,
-  );
+  const [recordBoardCardIsExpanded, setRecordBoardCardIsExpanded] =
+    useAtomComponentState(
+      recordBoardCardIsExpandedComponentState,
+      `record-board-card-${recordId}`,
+    );
 
-  const [isCurrentCardSelected, setIsCurrentCardSelected] =
+  const [isRecordBoardCardSelected, setIsRecordBoardCardSelected] =
     useAtomComponentFamilyState(
       isRecordBoardCardSelectedComponentFamilyState,
       recordId,
     );
 
-  const isCurrentCardFocused = useAtomComponentFamilyStateValue(
+  const isRecordBoardCardFocused = useAtomComponentFamilyStateValue(
     isRecordBoardCardFocusedComponentFamilyState,
     {
       rowIndex,
@@ -92,7 +93,7 @@ export const RecordBoardCard = () => {
     },
   );
 
-  const isCurrentCardActive = useAtomComponentFamilyStateValue(
+  const isRecordBoardCardActive = useAtomComponentFamilyStateValue(
     isRecordBoardCardActiveComponentFamilyState,
     {
       rowIndex,
@@ -105,7 +106,7 @@ export const RecordBoardCard = () => {
   const actionMenuDropdownId =
     getActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
-  const setActionMenuDropdownPosition = useSetAtomComponentState(
+  const setRecordIndexActionMenuDropdownPosition = useSetAtomComponentState(
     recordIndexActionMenuDropdownPositionComponentState,
     actionMenuDropdownId,
   );
@@ -118,8 +119,8 @@ export const RecordBoardCard = () => {
 
   const handleContextMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
-    setIsCurrentCardSelected(true);
-    setActionMenuDropdownPosition({
+    setIsRecordBoardCardSelected(true);
+    setRecordIndexActionMenuDropdownPosition({
       x: event.clientX,
       y: event.clientY,
     });
@@ -139,8 +140,8 @@ export const RecordBoardCard = () => {
   };
 
   const onMouseLeaveBoard = useDebouncedCallback(() => {
-    if (isCompactModeActive && isCardExpanded) {
-      setIsCardExpanded(false);
+    if (isCompactModeActive && recordBoardCardIsExpanded) {
+      setRecordBoardCardIsExpanded(false);
     }
   }, 800);
 
@@ -165,9 +166,9 @@ export const RecordBoardCard = () => {
           >
             {isRecordIdPrimaryDragMultiple && <RecordBoardCardMultiDragStack />}
             <RecordCard
-              data-selected={isCurrentCardSelected}
-              data-focused={isCurrentCardFocused}
-              data-active={isCurrentCardActive}
+              data-selected={isRecordBoardCardSelected}
+              data-focused={isRecordBoardCardFocused}
+              data-active={isRecordBoardCardActive}
               onMouseLeave={onMouseLeaveBoard}
               onClick={handleCardClick}
               isPrimaryMultiDrag={isRecordIdPrimaryDragMultiple}
@@ -176,7 +177,7 @@ export const RecordBoardCard = () => {
             >
               <RecordBoardCardHeader />
               <AnimatedEaseInOut
-                isOpen={isCardExpanded || !isCompactModeActive}
+                isOpen={recordBoardCardIsExpanded || !isCompactModeActive}
                 initial={false}
               >
                 <RecordBoardCardBody />

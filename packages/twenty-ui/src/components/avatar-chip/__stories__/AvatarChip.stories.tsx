@@ -1,12 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconBuildingSkyscraper, IconUser } from '@ui/display';
-import { ComponentDecorator, RecoilRootDecorator } from '@ui/testing';
+import { ComponentDecorator, JotaiRootDecorator } from '@ui/testing';
 import { AvatarChip } from '../AvatarChip';
 
 const meta: Meta<typeof AvatarChip> = {
   title: 'UI/Components/AvatarChip',
   component: AvatarChip,
-  decorators: [ComponentDecorator, RecoilRootDecorator],
+  decorators: [ComponentDecorator, JotaiRootDecorator],
 };
 
 export default meta;

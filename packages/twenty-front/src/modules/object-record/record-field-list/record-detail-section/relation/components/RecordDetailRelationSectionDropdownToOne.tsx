@@ -12,7 +12,7 @@ import { singleRecordPickerSearchFilterComponentState } from '@/object-record/re
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -80,7 +80,7 @@ export const RecordDetailRelationSectionDropdownToOne = ({
     );
   }
 
-  const fieldValue = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
+  const fieldValue = useAtomFamilySelectorValue(recordStoreFamilySelector, {
     recordId,
     fieldName,
   }) as ({ id: string } & Record<string, unknown>) | ObjectRecord[] | null;

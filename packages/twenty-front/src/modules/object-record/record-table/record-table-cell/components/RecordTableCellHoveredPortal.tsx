@@ -12,7 +12,7 @@ import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/r
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellHoveredPortal = () => {
-  const hoverPosition = useAtomComponentStateValue(
+  const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 
@@ -28,12 +28,12 @@ export const RecordTableCellHoveredPortal = () => {
     hasRecordGroupsComponentSelector,
   );
 
-  if (!isDefined(hoverPosition)) {
+  if (!isDefined(recordTableHoverPosition)) {
     return null;
   }
 
-  const isOnFirstScrollableColumn = hoverPosition.column === 1;
-  const isOnLabelIdentifierStickyColumn = hoverPosition.column === 0;
+  const isOnFirstScrollableColumn = recordTableHoverPosition.column === 1;
+  const isOnLabelIdentifierStickyColumn = recordTableHoverPosition.column === 0;
 
   const zIndexForHoveredPortalOnFirstScrollableColumnWithoutGroups =
     isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
@@ -130,7 +130,7 @@ export const RecordTableCellHoveredPortal = () => {
     : zIndexForHoveredPortalWithoutGroups;
 
   return (
-    <RecordTableCellPortalWrapper position={hoverPosition}>
+    <RecordTableCellPortalWrapper position={recordTableHoverPosition}>
       <RecordTableCellPortalRootContainer zIndex={zIndex}>
         <RecordTableCellHoveredPortalContent />
       </RecordTableCellPortalRootContainer>

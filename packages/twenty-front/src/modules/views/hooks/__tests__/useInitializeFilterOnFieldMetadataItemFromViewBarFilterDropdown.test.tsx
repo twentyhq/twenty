@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -53,17 +52,15 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
   );
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot>
-        <ObjectFilterDropdownComponentInstanceContext.Provider
+      <ObjectFilterDropdownComponentInstanceContext.Provider
+        value={{ instanceId: 'test' }}
+      >
+        <RecordFiltersComponentInstanceContext.Provider
           value={{ instanceId: 'test' }}
         >
-          <RecordFiltersComponentInstanceContext.Provider
-            value={{ instanceId: 'test' }}
-          >
-            {children}
-          </RecordFiltersComponentInstanceContext.Provider>
-        </ObjectFilterDropdownComponentInstanceContext.Provider>
-      </RecoilRoot>
+          {children}
+        </RecordFiltersComponentInstanceContext.Provider>
+      </ObjectFilterDropdownComponentInstanceContext.Provider>
     </JotaiProvider>
   );
 };

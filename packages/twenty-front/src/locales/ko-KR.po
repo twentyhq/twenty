@@ -14360,10 +14360,10 @@ msgstr "워크스페이스 보기에 관리 권한 필요"
 msgid "Workspaces"
 msgstr "워크스페이스"
 
-#. js-lingui-id: F7iCiM
+#. js-lingui-id: QPsQMb
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
-msgid "Would you like to remove {recordGroupSort} group sorting?"
-msgstr "{recordGroupSort} 그룹 정렬을 제거하시겠습니까?"
+msgid "Would you like to remove {recordIndexRecordGroupSort} group sorting?"
+msgstr ""
 
 #. js-lingui-id: 5iSD9O
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx

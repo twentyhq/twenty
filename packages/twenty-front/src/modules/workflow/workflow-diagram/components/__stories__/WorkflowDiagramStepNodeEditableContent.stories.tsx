@@ -7,7 +7,6 @@ import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diag
 import '@xyflow/react/dist/style.css';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
-import { RecoilRoot } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
@@ -176,17 +175,15 @@ export const Catalog: CatalogStory<
     (Story, { args }) => {
       return (
         <div>
-          <RecoilRoot>
-            <WorkflowVisualizerComponentInstanceContext.Provider
-              value={{ instanceId: 'workflow-visualizer-instance-id' }}
+          <WorkflowVisualizerComponentInstanceContext.Provider
+            value={{ instanceId: 'workflow-visualizer-instance-id' }}
+          >
+            <JotaiInitializer
+              selectedNodeId={args.selected ? args.id : undefined}
             >
-              <JotaiInitializer
-                selectedNodeId={args.selected ? args.id : undefined}
-              >
-                <Story />
-              </JotaiInitializer>
-            </WorkflowVisualizerComponentInstanceContext.Provider>
-          </RecoilRoot>
+              <Story />
+            </JotaiInitializer>
+          </WorkflowVisualizerComponentInstanceContext.Provider>
         </div>
       );
     },

@@ -1,10 +1,10 @@
 import { atom } from 'jotai';
 
 import {
-  type SelectorGetterV2,
-  type SelectorSetterV2,
-} from '@/ui/utilities/state/jotai/types/SelectorCallbacksV2';
-import { type WritableSelectorV2 } from '@/ui/utilities/state/jotai/types/WritableSelectorV2';
+  type SelectorGetter,
+  type SelectorSetter,
+} from '@/ui/utilities/state/jotai/types/SelectorCallbacks';
+import { type WritableSelector } from '@/ui/utilities/state/jotai/types/WritableSelector';
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
 import { buildSetHelper } from '@/ui/utilities/state/jotai/utils/buildSetHelper';
 
@@ -14,9 +14,9 @@ export const createAtomWritableSelector = <ValueType>({
   set,
 }: {
   key: string;
-  get: (callbacks: SelectorGetterV2) => ValueType;
-  set: (callbacks: SelectorSetterV2, newValue: ValueType) => void;
-}): WritableSelectorV2<ValueType> => {
+  get: (callbacks: SelectorGetter) => ValueType;
+  set: (callbacks: SelectorSetter, newValue: ValueType) => void;
+}): WritableSelector<ValueType> => {
   const derivedAtom = atom(
     (jotaiGet) => {
       const getHelper = buildGetHelper(jotaiGet);
@@ -45,7 +45,7 @@ export const createAtomWritableSelector = <ValueType>({
   derivedAtom.debugLabel = key;
 
   return {
-    type: 'WritableSelectorV2',
+    type: 'WritableSelector',
     key,
     atom: derivedAtom,
   };

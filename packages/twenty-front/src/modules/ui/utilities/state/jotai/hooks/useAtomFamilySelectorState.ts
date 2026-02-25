@@ -1,9 +1,9 @@
 import { useAtom } from 'jotai';
 
-import { type WritableFamilySelectorV2 } from '@/ui/utilities/state/jotai/types/WritableFamilySelectorV2';
+import { type WritableFamilySelector } from '@/ui/utilities/state/jotai/types/WritableFamilySelector';
 
 export const useAtomFamilySelectorState = <ValueType, FamilyKey>(
-  familySelector: WritableFamilySelectorV2<ValueType, FamilyKey>,
+  familySelector: WritableFamilySelector<ValueType, FamilyKey>,
   familyKey: FamilyKey,
 ): [
   ValueType,

@@ -1,5 +1,5 @@
-import { agentChatSelectedFilesStateV2 } from '@/ai/states/agentChatSelectedFilesStateV2';
-import { agentChatUploadedFilesStateV2 } from '@/ai/states/agentChatUploadedFilesStateV2';
+import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useApolloClient } from '@apollo/client';
@@ -18,10 +18,10 @@ export const useAIChatFileUpload = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useAtomState(
-    agentChatSelectedFilesStateV2,
+    agentChatSelectedFilesState,
   );
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useAtomState(
-    agentChatUploadedFilesStateV2,
+    agentChatUploadedFilesState,
   );
 
   const sendFile = async (file: File): Promise<FileUIPart | null> => {

@@ -9,7 +9,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { workflowAiAgentActionAgentStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentStateV2';
+import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -45,7 +45,7 @@ export const WorkflowStepFooter = ({
   const { deleteStep } = useDeleteStep();
   const navigateSettings = useNavigateSettings();
   const workflowAiAgentActionAgent = useAtomStateValue(
-    workflowAiAgentActionAgentStateV2,
+    workflowAiAgentActionAgentState,
   );
   const shouldPinDeleteButton =
     !isDefined(additionalActions) || additionalActions.length === 0;

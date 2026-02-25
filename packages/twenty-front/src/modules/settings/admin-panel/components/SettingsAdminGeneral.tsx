@@ -1,6 +1,6 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
-import { userLookupResultStateV2 } from '@/settings/admin-panel/states/userLookupResultStateV2';
+import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -47,7 +47,7 @@ export const SettingsAdminGeneral = () => {
     SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
   );
   const [userLookupResult, setUserLookupResult] = useAtomState(
-    userLookupResultStateV2,
+    userLookupResultState,
   );
   const [isUserLookupLoading, setIsUserLookupLoading] = useState(false);
 

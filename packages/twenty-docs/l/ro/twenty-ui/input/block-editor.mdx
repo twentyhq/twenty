@@ -10,22 +10,28 @@ image: /images/user-guide/api/api.png
 Folosește un editor de texte îmbogățit, bazat pe blocuri, de la [BlockNote](https://www.blocknotejs.org/) pentru a permite utilizatorilor să editeze și să vizualizeze blocuri de conținut.
 
 <Tabs>
-  <Tab title="Utilizare">
-    ```jsx
-    import { useBlockNote } from "@blocknote/react";
-    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+<Tab title="Utilizare">
 
-    export const MyComponent = () => {
-      const BlockNoteEditor = useBlockNote();
+```jsx
+import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
 
-      return <BlockEditor editor={BlockNoteEditor} />;
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
 
-  <Tab title="Proprietăți">
-    | Proprietăți | Tip               | Descriere                                       |
-    | ----------- | ----------------- | ----------------------------------------------- |
-    | editor      | `BlockNoteEditor` | Instanța sau configurarea editorului de blocuri |
-  </Tab>
+  return <BlockEditor editor={BlockNoteEditor} />;
+};
+```
+
+</Tab>
+<Tab title="Proprietăți">
+
+
+| Proprietăți | Tip               | Descriere                                       |
+| ----------- | ----------------- | ----------------------------------------------- |
+| editor      | `BlockNoteEditor` | Instanța sau configurarea editorului de blocuri |
+
+
+
+</Tab>
 </Tabs>

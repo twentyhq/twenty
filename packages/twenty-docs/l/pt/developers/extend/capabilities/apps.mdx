@@ -4,7 +4,7 @@ description: Crie e gerencie personalizações do Twenty como código.
 ---
 
 <Warning>
-  Os aplicativos estão atualmente em testes alfa. O recurso é funcional, mas ainda está evoluindo.
+Os aplicativos estão atualmente em testes alfa. O recurso é funcional, mas ainda está evoluindo.
 </Warning>
 
 ## O que são aplicativos?
@@ -31,13 +31,6 @@ Crie um novo aplicativo usando o gerador oficial, depois autentique-se e comece 
 # Criar a estrutura de um novo app (inclui todos os exemplos por padrão)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
-
-# Se você não usa yarn@4
-corepack enable
-yarn install
-
-# Autentique-se usando sua chave de API (você será solicitado)
-yarn twenty auth:login
 
 # Iniciar modo de desenvolvimento: sincroniza automaticamente as alterações locais com seu workspace
 yarn twenty app:dev
@@ -154,7 +147,7 @@ O SDK detecta entidades analisando seus arquivos TypeScript em busca de chamadas
 | `defineSkill()`              | Definições de habilidades de agente de IA   |
 
 <Note>
-  **A nomeação de arquivos é flexível.** A detecção de entidades é baseada em AST — o SDK varre seus arquivos fonte em busca do padrão `export default define<Entity>({...})`. Você pode organizar seus arquivos e pastas como quiser. Agrupar por tipo de entidade (por exemplo, `logic-functions/`, `roles/`) é apenas uma convenção para organização do código, não um requisito.
+**A nomeação de arquivos é flexível.** A detecção de entidades é baseada em AST — o SDK varre seus arquivos fonte em busca do padrão `export default define<Entity>({...})`. Você pode organizar seus arquivos e pastas como quiser. Agrupar por tipo de entidade (por exemplo, `logic-functions/`, `roles/`) é apenas uma convenção para organização do código, não um requisito.
 </Note>
 
 Exemplo de uma entidade detectada:
@@ -172,7 +165,7 @@ export default defineObject({
 
 Comandos posteriores adicionarão mais arquivos e pastas:
 
-* `yarn twenty app:dev` vai gerar automaticamente um cliente de API tipado em `node_modules/twenty-sdk/generated` (cliente Twenty tipado + tipos do espaço de trabalho).
+* `yarn twenty app:dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
 * `yarn twenty entity:add` adicionará arquivos de definição de entidade em `src/` para seus objetos, funções, componentes de front-end, papéis e habilidades personalizados, entre outros.
 
 ## Autenticação
@@ -312,11 +305,11 @@ Pontos-chave:
 * Você pode criar novos objetos usando `yarn twenty entity:add`, que orienta você sobre nomeação, campos e relacionamentos.
 
 <Note>
-  **Os campos base são criados automaticamente.** Quando você define um objeto personalizado, o Twenty adiciona automaticamente campos padrão
-  como `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`.
-  Você não precisa definir esses no seu array `fields` — adicione apenas seus campos personalizados.
-  Você pode substituir os campos padrão definindo um campo com o mesmo nome no seu array `fields`,
-  mas isso não é recomendado.
+**Os campos base são criados automaticamente.** Quando você define um objeto personalizado, o Twenty adiciona automaticamente campos padrão
+como `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`.
+Você não precisa definir esses no seu array `fields` — adicione apenas seus campos personalizados.
+Você pode substituir os campos padrão definindo um campo com o mesmo nome no seu array `fields`,
+mas isso não é recomendado.
 </Note>
 
 ### Configuração do aplicativo (application-config.ts)
@@ -433,10 +426,10 @@ Cada arquivo de função usa `defineLogicFunction()` para exportar uma configura
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '~/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/generated';
 
 const handler = async (params: RoutePayload) => {
-  const client = new Twenty(); // generated typed client
+  const client = new CoreApiClient();
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
@@ -550,27 +543,25 @@ Pontos-chave:
 ### Payload de gatilho de rota
 
 <Warning>
-  **Alteração incompatível (v1.16, janeiro de 2026):** O formato do payload de gatilho de rota mudou. Antes da v1.16, os parâmetros de consulta, parâmetros de caminho e corpo eram enviados diretamente como o payload. A partir da v1.16, eles ficam aninhados dentro de um objeto estruturado `RoutePayload`.
+**Alteração incompatível (v1.16, janeiro de 2026):** O formato do payload de gatilho de rota mudou. Antes da v1.16, os parâmetros de consulta, parâmetros de caminho e corpo eram enviados diretamente como o payload. A partir da v1.16, eles ficam aninhados dentro de um objeto estruturado `RoutePayload`.
 
-  **Antes da v1.16:**
+**Antes da v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
 
-  ```typescript
-  const handler = async (params) => {
-    const { param1, param2 } = params; // Direct access
-  };
-  ```
+**Depois da v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
 
-  **Depois da v1.16:**
-
-  ```typescript
-  const handler = async (event: RoutePayload) => {
-    const { param1, param2 } = event.body; // Access via .body
-    const { queryParam } = event.queryStringParameters;
-    const { id } = event.pathParameters;
-  };
-  ```
-
-  **Para migrar funções existentes:** Atualize seu handler para desestruturar de `event.body`, `event.queryStringParameters` ou `event.pathParameters` em vez de diretamente do objeto de parâmetros.
+**Para migrar funções existentes:** Atualize seu handler para desestruturar de `event.body`, `event.queryStringParameters` ou `event.pathParameters` em vez de diretamente do objeto de parâmetros.
 </Warning>
 
 Quando um gatilho de rota invoca sua função de lógica, ela recebe um objeto `RoutePayload` que segue o formato do AWS HTTP API v2. Importe o tipo de `twenty-sdk`:
@@ -653,10 +644,10 @@ Para marcar uma função lógica como ferramenta, defina `isTool: true` e forne�
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import Twenty from '~/generated';
+import { CoreApiClient } from 'twenty-sdk/generated';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
-  const client = new Twenty();
+  const client = new CoreApiClient();
 
   const result = await client.mutation({
     createTask: {
@@ -706,7 +697,7 @@ Pontos-chave:
 * Você pode combinar `isTool` com gatilhos — uma função pode ser ao mesmo tempo uma ferramenta (chamável por agentes de IA) e acionada por eventos (cron, eventos de banco de dados, rotas) simultaneamente.
 
 <Note>
-  **Escreva uma boa `description`.** Os agentes de IA dependem do campo `description` da função para decidir quando usar a ferramenta. Seja específico sobre o que a ferramenta faz e quando ela deve ser chamada.
+**Escreva uma boa `description`.** Os agentes de IA dependem do campo `description` da função para decidir quando usar a ferramenta. Seja específico sobre o que a ferramenta faz e quando ela deve ser chamada.
 </Note>
 
 ### Componentes de front-end
@@ -714,7 +705,7 @@ Pontos-chave:
 Componentes de front-end permitem criar componentes React personalizados que são renderizados na UI do Twenty. Use `defineFrontComponent()` para definir componentes com validação integrada:
 
 ```typescript
-// src/my-widget.front-component.tsx
+// src/front-components/my-widget.tsx
 import { defineFrontComponent } from 'twenty-sdk';
 
 const MyWidget = () => {
@@ -737,14 +728,13 @@ export default defineFrontComponent({
 Pontos-chave:
 
 * Componentes de front-end são componentes React que renderizam em contextos isolados dentro do Twenty.
-* Use o sufixo de arquivo `*.front-component.tsx` para detecção automática.
 * O campo `component` faz referência ao seu componente React.
 * Os componentes são compilados e sincronizados automaticamente durante `yarn twenty app:dev`.
 
 Você pode criar novos componentes de front-end de duas formas:
 
 * **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar um novo componente de front-end.
-* **Manual**: Crie um novo arquivo `*.front-component.tsx` e use `defineFrontComponent()`.
+* **Manual**: Create a new `.tsx` file and use `defineFrontComponent()`, following the same pattern.
 
 ### Habilidades
 
@@ -781,18 +771,24 @@ Você pode criar novas habilidades de duas formas:
 * **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar uma nova habilidade.
 * **Manual**: Crie um novo arquivo e use `defineSkill()`, seguindo o mesmo padrão.
 
-### Cliente tipado gerado
+### Generated typed clients
 
-O cliente tipado é gerado automaticamente pelo `yarn twenty app:dev` e armazenado em `node_modules/twenty-sdk/generated` com base no esquema do seu espaço de trabalho. Use-o em suas funções:
+Two typed clients are auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/generated` based on your workspace schema:
+
+* **`CoreApiClient`** — queries the `/graphql` endpoint for workspace data
+* **`MetadataApiClient`** — queries the `/metadata` endpoint for workspace configuration and file uploads
 
 ```typescript
-import Twenty from '~/generated';
+import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
 
-const client = new Twenty();
+const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
+
+const metadataClient = new MetadataApiClient();
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-O cliente é regenerado automaticamente pelo `yarn twenty app:dev` sempre que seus objetos ou campos forem alterados.
+Both clients are re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
 
 #### Credenciais em tempo de execução em funções de lógica
 
@@ -809,17 +805,17 @@ Notas:
 
 #### Carregamento de ficheiros
 
-O cliente `Twenty` gerado inclui um método `uploadFile` para anexar ficheiros a campos do tipo ficheiro nos objetos do seu espaço de trabalho. Como os clientes GraphQL padrão não suportam nativamente o carregamento de ficheiros multipart, o cliente fornece este método dedicado que implementa, nos bastidores, a [especificação de pedidos multipart do GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+The generated `MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. Como os clientes GraphQL padrão não suportam nativamente o carregamento de ficheiros multipart, o cliente fornece este método dedicado que implementa, nos bastidores, a [especificação de pedidos multipart do GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 ```typescript
-import Twenty from '~/generated';
+import { MetadataApiClient } from 'twenty-sdk/generated';
 import * as fs from 'fs';
 
-const client = new Twenty();
+const metadataClient = new MetadataApiClient();
 
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
-const uploadedFile = await client.uploadFile(
+const uploadedFile = await metadataClient.uploadFile(
   fileBuffer,                                         // file contents as a Buffer
   'invoice.pdf',                                      // filename
   'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
@@ -850,7 +846,7 @@ uploadFile(
 
 Pontos-chave:
 
-* O método envia o arquivo para o **endpoint de metadados** (não para o endpoint GraphQL principal), onde a mutação de upload é resolvida.
+* The `uploadFile` method is available on `MetadataApiClient` because the upload mutation is resolved by the `/metadata` endpoint.
 * Ele usa o `universalIdentifier` do campo (não o ID específico do espaço de trabalho), de modo que seu código de upload funcione em qualquer espaço de trabalho onde seu app esteja instalado — consistente com a forma como os apps referenciam campos em qualquer outro lugar.
 * A `url` retornada é um URL assinado que você pode usar para acessar o arquivo enviado.
 

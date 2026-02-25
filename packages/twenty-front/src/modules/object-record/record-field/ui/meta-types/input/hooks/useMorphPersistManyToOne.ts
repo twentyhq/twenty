@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
@@ -81,7 +81,7 @@ export const useMorphPersistManyToOne = ({
       });
 
       const currentValue: unknown = store.get(
-        recordStoreFamilySelectorV2.selectorFamily({
+        recordStoreFamilySelector.selectorFamily({
           recordId,
           fieldName: computedFieldName,
         }),

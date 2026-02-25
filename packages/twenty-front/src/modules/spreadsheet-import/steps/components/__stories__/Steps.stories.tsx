@@ -16,7 +16,7 @@ const meta: Meta<typeof SpreadsheetImportStepperContainer> = {
     ContextStoreDecorator,
   ],
   parameters: {
-    initialRecoilState: {
+    initialState: {
       [stepBarInternalState.key]: { activeStep: 0 },
     },
   },

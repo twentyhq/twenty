@@ -1,12 +1,10 @@
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
-import { settingsRolesIsLoadingStateV2 } from '@/settings/roles/states/settingsRolesIsLoadingStateV2';
+import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useWorkspaceMemberRoles = (workspaceMemberId: string) => {
   const settingsAllRoles = useSettingsAllRoles();
-  const settingsRolesIsLoading = useAtomStateValue(
-    settingsRolesIsLoadingStateV2,
-  );
+  const settingsRolesIsLoading = useAtomStateValue(settingsRolesIsLoadingState);
 
   const roles = workspaceMemberId
     ? settingsAllRoles.filter((role) =>

@@ -30,7 +30,7 @@ Um eine Rolle zu löschen:
 4. Klicken Sie im Modal auf **Bestätigen**
 
 <Note>
-  Wenn eine Rolle gelöscht wird, wird jedes ihr zugewiesene Mitglied des Arbeitsbereichs automatisch der Standardrolle zugewiesen. Alle außer der **Admin**-Rolle können gelöscht werden. Es muss immer mindestens ein Mitglied der **Admin**-Rolle zugewiesen sein.
+Wenn eine Rolle gelöscht wird, wird jedes ihr zugewiesene Mitglied des Arbeitsbereichs automatisch der Standardrolle zugewiesen. Alle außer der **Admin**-Rolle können gelöscht werden. Es muss immer mindestens ein Mitglied der **Admin**-Rolle zugewiesen sein.
 </Note>
 
 ## Rollen an Mitglieder zuweisen
@@ -58,7 +58,7 @@ Um eine Rolle zu löschen:
 4. Neue Arbeitsbereichsmitglieder werden beim Beitritt dieser Rolle zugewiesen
 
 <Note>
-  Sie können Rollen nur vorhandenen Mitgliedern des Arbeitsbereichs zuweisen. Um neue Mitglieder einzuladen, verwenden Sie die [Mitgliederverwaltung](/l/de/user-guide/settings/capabilities/member-management).
+Sie können Rollen nur vorhandenen Mitgliedern des Arbeitsbereichs zuweisen. Um neue Mitglieder einzuladen, verwenden Sie die [Mitgliederverwaltung](/l/de/user-guide/settings/capabilities/member-management).
 </Note>
 
 ## Berechtigungen anpassen
@@ -83,7 +83,7 @@ Konfigurieren Sie zunächst die Basisberechtigungen, die standardmäßig für **
 Auswählen oder abwählen, je nachdem, welches Standardverhalten für diese Rolle gelten soll.
 
 <Note>
-  **Beispiel — Praktikantenrolle**: Ein Praktikant sollte standardmäßig alle Objekte sehen können, sie jedoch nicht bearbeiten. Aktivieren Sie „Datensätze bei allen Objekten ansehen“, lassen Sie „Datensätze bei allen Objekten bearbeiten“ deaktiviert.
+**Beispiel — Praktikantenrolle**: Ein Praktikant sollte standardmäßig alle Objekte sehen können, sie jedoch nicht bearbeiten. Aktivieren Sie „Datensätze bei allen Objekten ansehen“, lassen Sie „Datensätze bei allen Objekten bearbeiten“ deaktiviert.
 </Note>
 
 #### Ausnahmen auf Objektebene hinzufügen
@@ -146,7 +146,7 @@ Steuern Sie den Zugriff auf die Einstellungen des Arbeitsbereichs auf zwei Arten
 * Oder aktivieren Sie bestimmte Berechtigungen (z.B. API-Schlüsselgenerierung, Arbeitsbereich-Präferenzen, Rollenzuweisung, Datenmodellkonfiguration, Sicherheitseinstellungen und Workflow-Management)
 
 <Note>
-  **Aktuelle Einschränkung**: Für das manuelle Auslösen von Workflows ist derzeit Zugriff auf die Workflow-Verwaltung erforderlich. Dieses Verhalten kann sich in zukünftigen Versionen ändern.
+**Aktuelle Einschränkung**: Für das manuelle Auslösen von Workflows ist derzeit Zugriff auf die Workflow-Verwaltung erforderlich. Dieses Verhalten kann sich in zukünftigen Versionen ändern.
 </Note>
 
 ### Arbeitsbereichs-Aktionsberechtigungen
@@ -179,7 +179,7 @@ Neben Mitgliedern des Arbeitsbereichs können Rollen auch **API-Schlüsseln** un
 Der API-Schlüssel erbt nun alle von dieser Rolle definierten Berechtigungen. Alle mit diesem Schlüssel ausgeführten API-Aufrufe werden entsprechend eingeschränkt.
 
 <Note>
-  API-Schlüssel ohne zugewiesene Rolle verwenden Standardberechtigungen. Weisen Sie Produktions-API-Schlüsseln zur höheren Sicherheit stets eine spezifische Rolle zu.
+API-Schlüssel ohne zugewiesene Rolle verwenden Standardberechtigungen. Weisen Sie Produktions-API-Schlüsseln zur höheren Sicherheit stets eine spezifische Rolle zu.
 </Note>
 
 ### Einem KI-Agenten eine Rolle zuweisen
@@ -194,5 +194,5 @@ Der API-Schlüssel erbt nun alle von dieser Rolle definierten Berechtigungen. Al
 Der KI-Agent kann nur auf Daten zugreifen und Aktionen ausführen, die seine zugewiesene Rolle erlaubt.
 
 <Note>
-  Für KI-Agenten, die innerhalb von Workflows laufen, stellt dies sicher, dass der Agent nicht auf Daten außerhalb seines vorgesehenen Umfangs zugreifen oder diese ändern kann — selbst wenn der Workflow über weitergehende Berechtigungen verfügt.
+Für KI-Agenten, die innerhalb von Workflows laufen, stellt dies sicher, dass der Agent nicht auf Daten außerhalb seines vorgesehenen Umfangs zugreifen oder diese ändern kann — selbst wenn der Workflow über weitergehende Berechtigungen verfügt.
 </Note>

@@ -1,9 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode, act } from 'react';
-import { RecoilRoot } from 'recoil';
 
-import { isKeyboardShortcutMenuOpenedStateV2 } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedStateV2';
+import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
@@ -28,16 +27,14 @@ jest.mock(
 );
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <RecoilRoot>{children}</RecoilRoot>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 const renderHookConfig = () => {
   const { result } = renderHook(
     () => {
       const isKeyboardShortcutMenuOpened = useAtomStateValue(
-        isKeyboardShortcutMenuOpenedStateV2,
+        isKeyboardShortcutMenuOpenedState,
       );
       return {
         ...useKeyboardShortcutMenu(),

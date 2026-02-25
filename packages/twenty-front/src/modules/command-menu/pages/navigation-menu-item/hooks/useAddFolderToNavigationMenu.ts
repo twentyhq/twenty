@@ -5,9 +5,9 @@ import { IconFolder } from 'twenty-ui/display';
 import { useAddFolderToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddFolderToNavigationMenuDraft';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
-import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -16,18 +16,18 @@ export const useAddFolderToNavigationMenu = () => {
   const { addFolderToDraft } = useAddFolderToNavigationMenuDraft();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
   const navigationMenuItemsDraft = useAtomStateValue(
-    navigationMenuItemsDraftStateV2,
+    navigationMenuItemsDraftState,
   );
   const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
-    selectedNavigationMenuItemInEditModeStateV2,
+    selectedNavigationMenuItemInEditModeState,
   );
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
   const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextStateV2,
+    addMenuItemInsertionContextState,
   );
   const setAddMenuItemInsertionContext = useSetAtomState(
-    addMenuItemInsertionContextStateV2,
+    addMenuItemInsertionContextState,
   );
 
   const currentDraft = isDefined(navigationMenuItemsDraft)

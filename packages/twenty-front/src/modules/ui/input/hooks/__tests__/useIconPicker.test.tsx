@@ -1,15 +1,12 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useIconPicker } from '@/ui/input/hooks/useIconPicker';
 import { Icon123, IconApps } from 'twenty-ui/display';
 
 describe('useIconPicker', () => {
   it('should return correct iconPickerState', async () => {
-    const { result } = renderHook(() => useIconPicker(), {
-      wrapper: RecoilRoot,
-    });
+    const { result } = renderHook(() => useIconPicker());
 
     const { Icon, iconKey, setIconPicker } = result.current;
 
@@ -19,9 +16,7 @@ describe('useIconPicker', () => {
   });
 
   it('should update the icon', async () => {
-    const { result } = renderHook(() => useIconPicker(), {
-      wrapper: RecoilRoot,
-    });
+    const { result } = renderHook(() => useIconPicker());
 
     const { Icon, iconKey, setIconPicker } = result.current;
 

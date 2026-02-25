@@ -6,7 +6,7 @@ import { recordFieldInputDraftValueComponentState } from '@/object-record/record
 import { type FieldFullNameValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -23,13 +23,13 @@ export const useFullNameField = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useAtomFamilySelectorState(
-    recordStoreFamilySelectorV2,
+    recordStoreFamilySelector,
     { recordId, fieldName },
   );
 
   const { setDraftValue } = useRecordFieldInput<FieldFullNameValue>();
 
-  const draftValue = useAtomComponentStateValue(
+  const recordFieldInputDraftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
@@ -37,7 +37,7 @@ export const useFullNameField = () => {
     fieldDefinition,
     fieldValue,
     setFieldValue,
-    draftValue,
+    draftValue: recordFieldInputDraftValue,
     setDraftValue,
   };
 };

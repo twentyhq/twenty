@@ -11,7 +11,7 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useStore } from 'jotai';
@@ -66,7 +66,7 @@ export const useGetBrowsingContext = () => {
       };
 
       const pageLayoutId = store.get(
-        recordStoreFamilySelectorV2.selectorFamily({
+        recordStoreFamilySelector.selectorFamily({
           recordId: targetedRecordsRule.selectedRecordIds[0],
           fieldName: 'pageLayoutId',
         }),

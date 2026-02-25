@@ -10,9 +10,9 @@ import { ProgressBar } from 'twenty-ui/feedback';
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
 import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
 import {
-  agentChatUsageStateV2,
+  agentChatUsageState,
   type AgentChatLastMessageUsage,
-} from '@/ai/states/agentChatUsageStateV2';
+} from '@/ai/states/agentChatUsageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
@@ -114,7 +114,7 @@ export const AIChatContextUsageButton = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
-  const agentChatUsage = useAtomStateValue(agentChatUsageStateV2);
+  const agentChatUsage = useAtomStateValue(agentChatUsageState);
 
   if (!agentChatUsage) {
     return (

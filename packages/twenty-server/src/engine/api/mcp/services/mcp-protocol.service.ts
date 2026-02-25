@@ -158,7 +158,7 @@ export class McpProtocolService {
           preloadedTools,
           MCP_EXCLUDED_TOOLS,
         ),
-        inputSchema: zodSchema(executeToolInputSchema),
+        inputSchema: executeToolInputSchema,
       },
       [LOAD_SKILL_TOOL_NAME]: {
         ...createLoadSkillTool((names) =>

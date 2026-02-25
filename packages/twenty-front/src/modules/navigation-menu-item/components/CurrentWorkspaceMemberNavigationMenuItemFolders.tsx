@@ -8,7 +8,7 @@ import { NavigationMenuItemFolders } from '@/navigation-menu-item/components/Nav
 import { NavigationMenuItemSkeletonLoader } from '@/navigation-menu-item/components/NavigationMenuItemSkeletonLoader';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/hooks/useNavigationMenuItemsByFolder';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
-import { isNavigationMenuItemFolderCreatingStateV2 } from '@/navigation-menu-item/states/isNavigationMenuItemFolderCreatingStateV2';
+import { isNavigationMenuItemFolderCreatingState } from '@/navigation-menu-item/states/isNavigationMenuItemFolderCreatingState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -27,7 +27,7 @@ export const CurrentWorkspaceMemberNavigationMenuItemFolders = () => {
   const [
     isNavigationMenuItemFolderCreating,
     setIsNavigationMenuItemFolderCreating,
-  ] = useAtomState(isNavigationMenuItemFolderCreatingStateV2);
+  ] = useAtomState(isNavigationMenuItemFolderCreatingState);
 
   const loading = useIsPrefetchLoading();
 

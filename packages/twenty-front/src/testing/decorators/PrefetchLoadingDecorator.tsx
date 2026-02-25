@@ -10,12 +10,13 @@ export const PrefetchLoadingDecorator: Decorator = (Story, context) => {
 
   const prefetchLoadingSetDelay = parameters.prefetchLoadingSetDelay ?? 0;
 
-  const setAreFavoritesFoldersPrefetched = useSetAtomFamilyState(
+  const setPrefetchIsLoaded = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavoritesFolders,
   );
 
-  const setAreFavoritesPrefetched = useSetAtomFamilyState(
+  // eslint-disable-next-line twenty/matching-state-variable
+  const setPrefetchIsLoadedFavorites = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavorites,
   );
@@ -30,14 +31,14 @@ export const PrefetchLoadingDecorator: Decorator = (Story, context) => {
     setIsInitialized(true);
 
     setTimeout(() => {
-      setAreFavoritesPrefetched(false);
-      setAreFavoritesFoldersPrefetched(false);
+      setPrefetchIsLoadedFavorites(false);
+      setPrefetchIsLoaded(false);
     }, prefetchLoadingSetDelay);
   }, [
     isInitialized,
     prefetchLoadingSetDelay,
-    setAreFavoritesFoldersPrefetched,
-    setAreFavoritesPrefetched,
+    setPrefetchIsLoaded,
+    setPrefetchIsLoadedFavorites,
   ]);
 
   return <Story />;

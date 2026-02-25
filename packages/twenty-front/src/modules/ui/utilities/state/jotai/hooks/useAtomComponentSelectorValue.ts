@@ -2,10 +2,10 @@ import { useAtomValue } from 'jotai';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type ComponentSelectorV2 } from '@/ui/utilities/state/jotai/types/ComponentSelectorV2';
+import { type ComponentSelector } from '@/ui/utilities/state/jotai/types/ComponentSelector';
 
 export const useAtomComponentSelectorValue = <StateType>(
-  componentSelector: ComponentSelectorV2<StateType>,
+  componentSelector: ComponentSelector<StateType>,
   instanceIdFromProps?: string,
 ): StateType => {
   const componentInstanceContext = globalComponentInstanceContextMap.get(

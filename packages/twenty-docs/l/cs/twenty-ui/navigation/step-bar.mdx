@@ -10,25 +10,33 @@ image: /images/user-guide/api/api.png
 Zobrazuje postup přes sekvenci číslovaných kroků zvýrazněním aktuálního kroku. Vykreslí kontejner s kroky, z nichž každý je reprezentován komponentou `Step`.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
-      return (
-        <StepBar activeStep={2}>
-          <StepBar.Step>Step 1</StepBar.Step>
-          <StepBar.Step>Step 2</StepBar.Step>
-          <StepBar.Step>Step 3</StepBar.Step>
-        </StepBar>
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti | Typ   | Popis                                                                                |
-    | ---------- | ----- | ------------------------------------------------------------------------------------ |
-    | activeStep | číslo | Index aktuálně aktivního kroku. To určuje, který krok by měl být vizuálně zvýrazněn. |
-  </Tab>
+export const MyComponent = () => {
+  return (
+    <StepBar activeStep={2}>
+      <StepBar.Step>Step 1</StepBar.Step>
+      <StepBar.Step>Step 2</StepBar.Step>
+      <StepBar.Step>Step 3</StepBar.Step>
+    </StepBar>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti | Typ   | Popis                                                                                |
+| ---------- | ----- | ------------------------------------------------------------------------------------ |
+| activeStep | číslo | Index aktuálně aktivního kroku. To určuje, který krok by měl být vizuálně zvýrazněn. |
+
+
+
+
+</Tab>
 </Tabs>

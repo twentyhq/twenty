@@ -64,7 +64,7 @@ const setupMockUseParams = (objectNamePlural?: string) => {
 };
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue');
-const setupMockRecoil = (
+const setupMockState = (
   objectNamePlural?: string,
   verifyEmailRedirectPath?: string,
   calendarBookingPageId?: string | null,
@@ -340,7 +340,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
       setupMockIsWorkspaceActivationStatusEqualsTo(isWorkspaceSuspended);
       setupMockIsLogged(isLoggedIn);
       setupMockUseParams(objectNamePluralFromParams);
-      setupMockRecoil(objectNamePluralFromMetadata, verifyEmailRedirectPath);
+      setupMockState(objectNamePluralFromMetadata, verifyEmailRedirectPath);
 
       expect(usePageChangeEffectNavigateLocation()).toEqual(res);
     },

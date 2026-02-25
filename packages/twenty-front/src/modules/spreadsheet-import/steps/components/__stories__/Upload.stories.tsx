@@ -9,7 +9,6 @@ import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/con
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -32,9 +31,7 @@ const meta: Meta<typeof UploadStep> = {
       );
       return (
         <JotaiProvider store={jotaiStore}>
-          <RecoilRoot>
-            <Story />
-          </RecoilRoot>
+          <Story />
         </JotaiProvider>
       );
     },

@@ -1,10 +1,10 @@
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useSelectedNavigationMenuItemEditItem = () => {
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
-    selectedNavigationMenuItemInEditModeStateV2,
+    selectedNavigationMenuItemInEditModeState,
   );
   const items = useWorkspaceSectionItems();
 

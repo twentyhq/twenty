@@ -31,13 +31,14 @@ export const SignInBackgroundMockContainer = () => {
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
-  const objectMetadataItemId = useAtomComponentStateValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const objectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
+    (objectMetadataItem) =>
+      objectMetadataItem.id === contextStoreCurrentObjectMetadataItemId,
   );
 
   const {

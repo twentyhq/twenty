@@ -12,29 +12,29 @@ Acest ghid vă arată cum să importați contactele (Persoane) în Twenty. **Imp
 ### Listă de verificare a condițiilor prealabile
 
 <Check>
-  Fișierul este în format CSV, XLSX sau XLS
+Fișierul este în format CSV, XLSX sau XLS
 </Check>
 
 <Check>
-  Fișierul are mai puțin de 10.000 de înregistrări
+Fișierul are mai puțin de 10.000 de înregistrări
 </Check>
 
 <Check>
-  Nicio adresă de e-mail duplicată în fișier
+Nicio adresă de e-mail duplicată în fișier
 </Check>
 
 <Check>
-  **Companiile importate mai întâi** (dacă legați Persoane de Companii)
+**Companiile importate mai întâi** (dacă legați Persoane de Companii)
 </Check>
 
 <Check>
-  Toate câmpurile personalizate există în **Setări → Model de date**
+Toate câmpurile personalizate există în **Setări → Model de date**
 </Check>
 
 <Warning>
-  **Importați Companiile înaintea Persoanelor**
+**Importați Companiile înaintea Persoanelor**
 
-  Dacă doriți să legați Persoane de Companii, importați mai întâi Companiile. Compania trebuie să existe înainte de a o putea referi.
+Dacă doriți să legați Persoane de Companii, importați mai întâi Companiile. Compania trebuie să existe înainte de a o putea referi.
 </Warning>
 
 ## Pasul 1: Pregătiți datele de contact
@@ -81,7 +81,7 @@ Adăugați o coloană cu identificatorul unic al Companiei:
 | `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **Folosiți formatul URL de domeniu** (`https://acme.com`), nu eticheta. Acest lucru corespunde modului în care Companiile sunt stocate în Twenty.
+**Folosiți formatul URL de domeniu** (`https://acme.com`), nu eticheta. Acest lucru corespunde modului în care Companiile sunt stocate în Twenty.
 </Note>
 
 ### Exemplu de structură CSV
@@ -93,7 +93,7 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **Sfat profesional:** Faceți clic pe **Download sample file** în timpul importului sau exportați câteva Persoane existente pentru a vedea denumirile exacte ale coloanelor pe care le așteaptă Twenty.
+**Sfat profesional:** Faceți clic pe **Download sample file** în timpul importului sau exportați câteva Persoane existente pentru a vedea denumirile exacte ale coloanelor pe care le așteaptă Twenty.
 </Note>
 
 ## Pasul 2: Accesați funcția de import
@@ -145,9 +145,9 @@ Când mapați coloana companiei:
 3. Twenty va lega fiecare Persoană de Compania corespunzătoare
 
 <Warning>
-  **Mapați un singur identificator unic pentru relații.**
+**Mapați un singur identificator unic pentru relații.**
 
-  Nu mapați atât `companyId`, cât și `companyDomain`. Alegeți una — de preferat domeniul, deoarece este ușor de citit de către oameni.
+Nu mapați atât `companyId`, cât și `companyDomain`. Alegeți una — de preferat domeniul, deoarece este ușor de citit de către oameni.
 </Warning>
 
 ## Pasul 5: Mapați valorile câmpurilor Select
@@ -159,7 +159,7 @@ Dacă aveți câmpuri Select sau Multi-Select (cum ar fi Sursa leadului):
 3. Sau creați opțiuni noi, dacă este necesar
 
 <Note>
-  Opțiunile Select folosesc **nume API**, nu etichete de afișare. Accesați **Setări → Model de date** → activați **Mod avansat** pentru a vedea numele API.
+Opțiunile Select folosesc **nume API**, nu etichete de afișare. Accesați **Setări → Model de date** → activați **Mod avansat** pentru a vedea numele API.
 </Note>
 
 ## Pasul 6: Revizuiți și remediați erorile

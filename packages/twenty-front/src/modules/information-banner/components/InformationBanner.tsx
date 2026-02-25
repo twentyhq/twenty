@@ -51,7 +51,7 @@ export const InformationBanner = ({
   onClose?: () => void;
   componentInstanceId: string;
 }) => {
-  const informationBannerIsOpenComponent = useAtomComponentStateValue(
+  const informationBannerIsOpen = useAtomComponentStateValue(
     informationBannerIsOpenComponentState,
     componentInstanceId,
   );
@@ -62,7 +62,7 @@ export const InformationBanner = ({
         instanceId: componentInstanceId,
       }}
     >
-      {informationBannerIsOpenComponent && (
+      {informationBannerIsOpen && (
         <Banner variant={variant}>
           <StyledContent hasCloseButton={!!onClose}>
             <StyledText>{message}</StyledText>

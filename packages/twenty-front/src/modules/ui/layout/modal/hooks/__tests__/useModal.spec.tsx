@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode, act } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
@@ -13,9 +12,7 @@ const createTestWrapper = () => {
   const store = createStore();
 
   const TestWrapper = ({ children }: { children: ReactNode }) => (
-    <RecoilRoot>
-      <Provider store={store}>{children}</Provider>
-    </RecoilRoot>
+    <Provider store={store}>{children}</Provider>
   );
 
   return TestWrapper;

@@ -25,12 +25,12 @@ export const RecordTableHeaderFirstScrollableCell = () => {
   const { objectMetadataItem, visibleRecordFields } =
     useRecordTableContextOrThrow();
 
-  const isFirstRowActive = useAtomComponentFamilyStateValue(
+  const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useAtomComponentFamilyStateValue(
+  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );
@@ -44,12 +44,13 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     ),
   )[0] as RecordField | undefined;
 
-  const isRowFocusActive = useAtomComponentStateValue(
+  const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
   );
 
   const isFirstRowActiveOrFocused =
-    isFirstRowActive || (isFirstRowFocused && isRowFocusActive);
+    isRecordTableRowActive ||
+    (isRecordTableRowFocused && isRecordTableRowFocusActive);
 
   const isRecordTableScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,
@@ -89,18 +90,16 @@ export const RecordTableHeaderFirstScrollableCell = () => {
 
   const zIndex = hasRecordGroups ? zIndexWithGroups : zIndexWithoutGroups;
 
-  const isScrolledVertically = useAtomComponentStateValue(
-    isRecordTableScrolledVerticallyComponentState,
-  );
-
   const shouldDisplayBorderBottom =
-    hasRecordGroups || !isFirstRowActiveOrFocused || isScrolledVertically;
+    hasRecordGroups ||
+    !isFirstRowActiveOrFocused ||
+    isRecordTableScrolledVertically;
 
-  const resizedFieldMetadataItemId = useAtomComponentStateValue(
+  const resizedFieldMetadataId = useAtomComponentStateValue(
     resizedFieldMetadataIdComponentState,
   );
 
-  const isResizingAnyColumn = isDefined(resizedFieldMetadataItemId);
+  const isResizingAnyColumn = isDefined(resizedFieldMetadataId);
 
   if (!recordField) {
     return <></>;

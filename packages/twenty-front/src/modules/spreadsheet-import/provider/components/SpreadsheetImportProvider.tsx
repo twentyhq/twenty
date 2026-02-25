@@ -39,7 +39,7 @@ export const SpreadsheetImportProvider = (
     spreadsheetImportDialogState,
   );
 
-  const setMatchColumnsState = useSetAtomState(matchColumnsState);
+  const setMatchColumns = useSetAtomState(matchColumnsState);
 
   const { closeModal } = useModal();
 
@@ -53,7 +53,7 @@ export const SpreadsheetImportProvider = (
 
     closeModal(SPREADSHEET_IMPORT_MODAL_ID);
 
-    setMatchColumnsState([]);
+    setMatchColumns([]);
   };
 
   return (

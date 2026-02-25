@@ -2,16 +2,14 @@ import { useCallback } from 'react';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type ComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/types/ComponentFamilyStateV2';
+import { type ComponentFamilyState } from '@/ui/utilities/state/jotai/types/ComponentFamilyState';
 
 export const useAtomComponentFamilyStateCallbackState = <StateType, FamilyKey>(
-  componentFamilyState: ComponentFamilyStateV2<StateType, FamilyKey>,
+  componentFamilyState: ComponentFamilyState<StateType, FamilyKey>,
   instanceIdFromProps?: string,
 ): ((
   familyKey: FamilyKey,
-) => ReturnType<
-  ComponentFamilyStateV2<StateType, FamilyKey>['atomFamily']
->) => {
+) => ReturnType<ComponentFamilyState<StateType, FamilyKey>['atomFamily']>) => {
   const componentInstanceContext = globalComponentInstanceContextMap.get(
     componentFamilyState.key,
   );

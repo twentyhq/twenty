@@ -32,7 +32,7 @@ export const RecordTableRecordGroupBodyEffect = () => {
   const { records, loading, hasNextPage } =
     useRecordIndexTableQuery(objectNameSingular);
 
-  const setHasRecordFetchedAllRecordsComponents =
+  const setRecordIndexHasFetchedAllRecordsByGroup =
     useSetAtomComponentFamilyState(
       recordIndexHasFetchedAllRecordsByGroupComponentState,
       recordGroupId,
@@ -49,14 +49,14 @@ export const RecordTableRecordGroupBodyEffect = () => {
         currentRecordGroupId: recordGroupId,
       });
       setIsRecordTableInitialLoading(false);
-      setHasRecordFetchedAllRecordsComponents(!hasNextPage);
+      setRecordIndexHasFetchedAllRecordsByGroup(!hasNextPage);
     }
   }, [
     hasNextPage,
     loading,
     records,
     recordGroupId,
-    setHasRecordFetchedAllRecordsComponents,
+    setRecordIndexHasFetchedAllRecordsByGroup,
     setIsRecordTableInitialLoading,
     setRecordTableData,
   ]);

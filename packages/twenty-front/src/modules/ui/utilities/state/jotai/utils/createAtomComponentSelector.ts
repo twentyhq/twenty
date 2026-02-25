@@ -3,8 +3,8 @@ import { atom, type Atom } from 'jotai';
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type ComponentSelectorV2 } from '@/ui/utilities/state/jotai/types/ComponentSelectorV2';
-import { type SelectorGetterV2 } from '@/ui/utilities/state/jotai/types/SelectorCallbacksV2';
+import { type ComponentSelector } from '@/ui/utilities/state/jotai/types/ComponentSelector';
+import { type SelectorGetter } from '@/ui/utilities/state/jotai/types/SelectorCallbacks';
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,9 +14,9 @@ export const createAtomComponentSelector = <ValueType>({
   componentInstanceContext,
 }: {
   key: string;
-  get: (key: ComponentStateKey) => (callbacks: SelectorGetterV2) => ValueType;
+  get: (key: ComponentStateKey) => (callbacks: SelectorGetter) => ValueType;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-}): ComponentSelectorV2<ValueType> => {
+}): ComponentSelector<ValueType> => {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
@@ -47,7 +47,7 @@ export const createAtomComponentSelector = <ValueType>({
   };
 
   return {
-    type: 'ComponentSelectorV2',
+    type: 'ComponentSelector',
     key,
     selectorFamily,
   };

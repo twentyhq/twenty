@@ -8,9 +8,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const SeeWorkflowWorkflowRunSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
-  const workflowRun = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  if (!isDefined(workflowRun) || !isDefined(workflowRun?.workflow?.id)) {
+  if (!isDefined(recordStore) || !isDefined(recordStore?.workflow?.id)) {
     return null;
   }
 
@@ -19,7 +19,7 @@ export const SeeWorkflowWorkflowRunSingleRecordAction = () => {
       to={AppPath.RecordShowPage}
       params={{
         objectNameSingular: CoreObjectNameSingular.Workflow,
-        objectRecordId: workflowRun.workflow.id,
+        objectRecordId: recordStore.workflow.id,
       }}
     />
   );
