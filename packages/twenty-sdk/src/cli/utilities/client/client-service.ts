@@ -92,6 +92,31 @@ export class ClientService {
     await fs.move(tempPath, outputPath);
   }
 
+  async ensureGeneratedClientStub({
+    appPath,
+  }: {
+    appPath: string;
+  }): Promise<void> {
+    const outputPath = this.resolveGeneratedPath(appPath);
+
+    if (await fs.pathExists(join(outputPath, 'index.ts'))) {
+      return;
+    }
+
+    await fs.ensureDir(join(outputPath, 'core'));
+    await fs.ensureDir(join(outputPath, 'metadata'));
+
+    await fs.writeFile(
+      join(outputPath, 'core', 'index.ts'),
+      'export class CoreApiClient {}\n',
+    );
+    await fs.writeFile(
+      join(outputPath, 'metadata', 'index.ts'),
+      'export class MetadataApiClient {}\n',
+    );
+    await this.writeBarrelIndex(outputPath);
+  }
+
   private resolveGeneratedPath(appPath: string): string {
     return join(appPath, 'node_modules', 'twenty-sdk', GENERATED_DIR);
   }
