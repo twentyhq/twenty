@@ -146,7 +146,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
           isNullable: boolean;
           universalForeignKey: string;
         } | null)[]) {
-
           if (!isDefined(relation)) {
             continue;
           }
@@ -157,9 +156,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
           const referencedUniversalIdentifier =
             flatEntity[universalForeignKey as keyof typeof flatEntity];
 
-          if (
-            !isDefined(referencedUniversalIdentifier)
-          ) {
+          if (!isDefined(referencedUniversalIdentifier)) {
             continue;
           }
 
