@@ -1,0 +1,37 @@
+// Field metadata identifiers for cloudUser2 object
+// These constants are used by both the object definition and views
+
+export const CLOUD_USER_2_ACTIVITY_STATUS_FIELD_ID =
+  '56e3d6ce-d57e-4ded-830f-958eb18d4d36';
+export const CLOUD_USER_2_AVG_DAILY_PAGEVIEWS_LAST_30D_FIELD_ID =
+  '1f7062c1-0e96-4599-a59c-6d7427794bb1';
+export const CLOUD_USER_2_DATA_LAST_UPDATED_AT_FIELD_ID =
+  'e134ce6b-5ab0-4e9c-ba32-36d0851aca21';
+export const CLOUD_USER_2_DAYS_SINCE_LAST_ACTIVITY_FIELD_ID =
+  'f305d341-7b12-4939-9299-e5e1b6d1591e';
+export const CLOUD_USER_2_EMAIL_FIELD_ID =
+  'ee110a77-34d7-4c8b-bc10-8560b9e2333a';
+export const CLOUD_USER_2_FULL_NAME_FIELD_ID =
+  '3c9540be-6e42-40f2-8598-973117bbe105';
+export const CLOUD_USER_2_IS_ACTIVE_L24H_FIELD_ID =
+  'efaa6e54-8019-454c-a556-2e340f0b156d';
+export const CLOUD_USER_2_IS_ACTIVE_L30D_FIELD_ID =
+  '86a07ca4-420e-4c82-82f8-8f8dfbfc2dc4';
+export const CLOUD_USER_2_IS_ACTIVE_L7D_FIELD_ID =
+  '87bf8c09-1863-4c65-811f-6fb54a87238e';
+export const CLOUD_USER_2_IS_TWENTY_FIELD_ID =
+  'f6dcd9f3-3f7e-4aea-84a5-41282a68910d';
+export const CLOUD_USER_2_LAST_ACTIVITY_DATE_FIELD_ID =
+  '643ab4a2-b6f2-4d11-9173-6859884b8781';
+export const CLOUD_USER_2_PAGE_VIEWS_L24H_FIELD_ID =
+  '294e95cb-13b3-4163-95f8-e4f31837cb47';
+export const CLOUD_USER_2_PAGE_VIEWS_L30D_FIELD_ID =
+  '8dacb4f1-b4ef-42d6-a917-17c78d6273a7';
+export const CLOUD_USER_2_PAGE_VIEWS_L7D_FIELD_ID =
+  'c7741332-d9b6-42ed-84e2-8afa184b58f3';
+export const CLOUD_USER_2_UPDATED_BY_FIELD_ID =
+  '639c9a30-2926-44c3-ab44-100dbda91c64';
+export const CLOUD_USER_2_USER_TENURE_FIELD_ID =
+  '0cc9ca63-c06f-4422-9325-5e99f98d05ed';
+export const CLOUD_USER_2_WORKSPACE_COUNT_FIELD_ID =
+  '5af6ae62-b741-471b-90bb-7fb6678fc8c9';

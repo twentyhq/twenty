@@ -1,7 +1,53 @@
 import { defineObject, FieldType } from 'twenty-sdk';
 
+import {
+  CLOUD_WORKSPACE_2_ACTIVATION_STATUS_FIELD_ID,
+  CLOUD_WORKSPACE_2_ACTIVE_USERS_L24H_FIELD_ID,
+  CLOUD_WORKSPACE_2_ACTIVE_USERS_L30D_FIELD_ID,
+  CLOUD_WORKSPACE_2_ACTIVE_USERS_L7D_FIELD_ID,
+  CLOUD_WORKSPACE_2_ALEXA_RANK_FIELD_ID,
+  CLOUD_WORKSPACE_2_ANNUAL_REVENUE_FIELD_ID,
+  CLOUD_WORKSPACE_2_ARR_FIELD_ID,
+  CLOUD_WORKSPACE_2_COMPANY_FOUNDED_YEAR_FIELD_ID,
+  CLOUD_WORKSPACE_2_COMPANY_LINKEDIN_FIELD_ID,
+  CLOUD_WORKSPACE_2_COMPANY_NAME_FIELD_ID,
+  CLOUD_WORKSPACE_2_CREATOR_EMAIL_FIELD_ID,
+  CLOUD_WORKSPACE_2_CUSTOM_DOMAIN_FIELD_ID,
+  CLOUD_WORKSPACE_2_DATA_LAST_UPDATED_AT_FIELD_ID,
+  CLOUD_WORKSPACE_2_DESCRIPTION_FIELD_ID,
+  CLOUD_WORKSPACE_2_EMPLOYEES_FIELD_ID,
+  CLOUD_WORKSPACE_2_INDUSTRY_FIELD_ID,
+  CLOUD_WORKSPACE_2_IS_ACTIVE_L24H_FIELD_ID,
+  CLOUD_WORKSPACE_2_IS_ACTIVE_L30D_FIELD_ID,
+  CLOUD_WORKSPACE_2_IS_ACTIVE_L7D_FIELD_ID,
+  CLOUD_WORKSPACE_2_IS_ENRICHED_FIELD_ID,
+  CLOUD_WORKSPACE_2_LAST_PAGE_VIEW_DATE_FIELD_ID,
+  CLOUD_WORKSPACE_2_LATEST_FUNDING_STAGE_FIELD_ID,
+  CLOUD_WORKSPACE_2_MRR_FIELD_ID,
+  CLOUD_WORKSPACE_2_NEXT_RENEWAL_DATE_FIELD_ID,
+  CLOUD_WORKSPACE_2_NUMBER_OF_EVENTS_L30D_FIELD_ID,
+  CLOUD_WORKSPACE_2_NUMBER_OF_EVENTS_TOTAL_FIELD_ID,
+  CLOUD_WORKSPACE_2_PAGE_VIEWS_L24H_FIELD_ID,
+  CLOUD_WORKSPACE_2_PAGE_VIEWS_L30D_FIELD_ID,
+  CLOUD_WORKSPACE_2_PAGE_VIEWS_L7D_FIELD_ID,
+  CLOUD_WORKSPACE_2_PAYMENT_FREQUENCY_FIELD_ID,
+  CLOUD_WORKSPACE_2_POTENTIAL_ARR_FIELD_ID,
+  CLOUD_WORKSPACE_2_SUB_DOMAIN_FIELD_ID,
+  CLOUD_WORKSPACE_2_SUBSCRIPTION_STATUS_FIELD_ID,
+  CLOUD_WORKSPACE_2_TAGS_FIELD_ID,
+  CLOUD_WORKSPACE_2_TOTAL_EVER_ACTIVE_WORKSPACE_USERS_FIELD_ID,
+  CLOUD_WORKSPACE_2_TOTAL_FUNDING_FIELD_ID,
+  CLOUD_WORKSPACE_2_TOTAL_WORKSPACE_USERS_FIELD_ID,
+  CLOUD_WORKSPACE_2_UPDATED_BY_FIELD_ID,
+  CLOUD_WORKSPACE_2_WORKSPACE_BUSINESS_DOMAIN_FIELD_ID,
+  CLOUD_WORKSPACE_2_WORKSPACE_TENURE_FIELD_ID,
+} from 'src/fields/cloud-workspace-2-field-ids';
+
+export const CLOUD_WORKSPACE_2_UNIVERSAL_IDENTIFIER =
+  '77376ed3-19c1-4859-bde5-90f19ad02113';
+
 export default defineObject({
-  universalIdentifier: '77376ed3-19c1-4859-bde5-90f19ad02113',
+  universalIdentifier: CLOUD_WORKSPACE_2_UNIVERSAL_IDENTIFIER,
   nameSingular: 'cloudWorkspace2',
   namePlural: 'cloudWorkspaces2',
   labelSingular: 'Cloud workspace 2',
@@ -9,7 +55,7 @@ export default defineObject({
   icon: 'IconBox',
   fields: [
     {
-      universalIdentifier: 'c30799d5-adc0-49be-82a1-6d41b5aa9e82',
+      universalIdentifier: CLOUD_WORKSPACE_2_CUSTOM_DOMAIN_FIELD_ID,
       type: FieldType.LINKS,
       name: 'customDomain',
       label: 'Custom domain',
@@ -19,7 +65,7 @@ export default defineObject({
 
     },
     {
-      universalIdentifier: 'bfa2f91d-1c6c-48de-bb11-ac2a1e2545a9',
+      universalIdentifier: CLOUD_WORKSPACE_2_WORKSPACE_BUSINESS_DOMAIN_FIELD_ID,
       type: FieldType.LINKS,
       name: 'workspaceBusinessDomain',
       label: 'Workspace Business Domain',
@@ -28,7 +74,7 @@ export default defineObject({
 
     },
     {
-      universalIdentifier: 'f9f2ef3a-8235-4d21-9a45-d29cc2124456',
+      universalIdentifier: CLOUD_WORKSPACE_2_COMPANY_LINKEDIN_FIELD_ID,
       type: FieldType.LINKS,
       name: 'companyLinkedin',
       label: 'Company LinkedIn',
@@ -38,7 +84,7 @@ export default defineObject({
     },
 
     {
-      universalIdentifier: 'fbeaab89-77e0-4e13-97ed-caeb757a38c7',
+      universalIdentifier: CLOUD_WORKSPACE_2_DATA_LAST_UPDATED_AT_FIELD_ID,
       type: FieldType.DATE,
       name: 'dataLastUpdatedAt',
       label: 'Data last updated at',
@@ -48,7 +94,7 @@ export default defineObject({
       defaultValue: null,
     },
     {
-      universalIdentifier: '7d3d4ba3-5af2-4248-afc7-7f4ce7c82805',
+      universalIdentifier: CLOUD_WORKSPACE_2_LAST_PAGE_VIEW_DATE_FIELD_ID,
       type: FieldType.DATE,
       name: 'lastPageViewDate',
       label: 'Last Page View Date',
@@ -58,7 +104,7 @@ export default defineObject({
     },
 
     {
-      universalIdentifier: '56e99339-dcc4-4950-ae64-1b6ae326af2c',
+      universalIdentifier: CLOUD_WORKSPACE_2_TOTAL_EVER_ACTIVE_WORKSPACE_USERS_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'totalEverActiveWorkspaceUsers',
       label: 'Total ever active workspace users',
@@ -71,7 +117,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: 'e9c703e6-9ffc-497d-9755-018724ac8d66',
+      universalIdentifier: CLOUD_WORKSPACE_2_ACTIVE_USERS_L30D_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'activeUsersL30D',
       label: 'Active Users L30D',
@@ -84,7 +130,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: '81d8f622-2366-481f-b0e8-b14fb7efa4d5',
+      universalIdentifier: CLOUD_WORKSPACE_2_ACTIVE_USERS_L7D_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'activeUsersL7D',
       label: 'Active Users L7D',
@@ -97,7 +143,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: '3e53d606-1afa-4d49-be62-52f4bb1cb49e',
+      universalIdentifier: CLOUD_WORKSPACE_2_ACTIVE_USERS_L24H_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'activeUsersL24H',
       label: 'Active Users L24H',
@@ -110,7 +156,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: '3fdd272c-73dd-432e-99c7-782f237a7cd8',
+      universalIdentifier: CLOUD_WORKSPACE_2_WORKSPACE_TENURE_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'workspaceTenure',
       label: 'Workspace tenure',
@@ -124,7 +170,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: '1931f3cd-a984-41e3-b8f5-510f67b508e6',
+      universalIdentifier: CLOUD_WORKSPACE_2_PAGE_VIEWS_L30D_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'pageViewsL30D',
       label: 'Page Views L30D',
@@ -137,7 +183,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: '1f6a0ef6-3faf-4157-88a7-f624b7655c6b',
+      universalIdentifier: CLOUD_WORKSPACE_2_PAGE_VIEWS_L7D_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'pageViewsL7D',
       label: 'Page Views L7D',
@@ -150,7 +196,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: 'ab0f46aa-9fef-40c6-a229-6ed4e05867d4',
+      universalIdentifier: CLOUD_WORKSPACE_2_PAGE_VIEWS_L24H_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'pageViewsL24H',
       label: 'Page Views L24H',
@@ -163,7 +209,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: '38095859-2efb-4f40-86a1-aa883fd88e3d',
+      universalIdentifier: CLOUD_WORKSPACE_2_TOTAL_WORKSPACE_USERS_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'totalWorkspaceUsers',
       label: 'Total workspace users',
@@ -176,7 +222,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: '4ebd8329-a18c-4606-9ee0-f32fb1c4aa6f',
+      universalIdentifier: CLOUD_WORKSPACE_2_NUMBER_OF_EVENTS_L30D_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'numberOfEventsL30D',
       label: 'Number of events L30D',
@@ -189,7 +235,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: '754f137f-b759-47da-8b57-7de71ad34d37',
+      universalIdentifier: CLOUD_WORKSPACE_2_NUMBER_OF_EVENTS_TOTAL_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'numberOfEventsTotal',
       label: 'Number of events total',
@@ -202,7 +248,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: '1627e6b8-e87a-4048-b954-8d2fe09b67c8',
+      universalIdentifier: CLOUD_WORKSPACE_2_ALEXA_RANK_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'alexaRank',
       label: 'Alexa Rank',
@@ -215,7 +261,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: '1d8bb210-b50d-4b38-a611-d78ba865cbae',
+      universalIdentifier: CLOUD_WORKSPACE_2_EMPLOYEES_FIELD_ID,
       type: FieldType.NUMBER,
       name: 'employees',
       label: 'Employees',
@@ -229,7 +275,7 @@ export default defineObject({
     },
 
     {
-      universalIdentifier: '42879662-d4fc-4806-bcfb-fdb586827491',
+      universalIdentifier: CLOUD_WORKSPACE_2_IS_ACTIVE_L7D_FIELD_ID,
       type: FieldType.BOOLEAN,
       name: 'isActiveL7D',
       label: 'Is Active L7D',
@@ -238,7 +284,7 @@ export default defineObject({
       defaultValue: false,
     },
     {
-      universalIdentifier: '44b2c12f-aedd-459a-848a-ade9fc4620b7',
+      universalIdentifier: CLOUD_WORKSPACE_2_IS_ACTIVE_L24H_FIELD_ID,
       type: FieldType.BOOLEAN,
       name: 'isActiveL24H',
       label: 'Is Active L24H',
@@ -247,7 +293,7 @@ export default defineObject({
       defaultValue: true,
     },
     {
-      universalIdentifier: 'cac2d3e0-c2ee-4e22-bd96-4fa051a36f73',
+      universalIdentifier: CLOUD_WORKSPACE_2_IS_ACTIVE_L30D_FIELD_ID,
       type: FieldType.BOOLEAN,
       name: 'isActiveL30D',
       label: 'Is Active L30D',
@@ -256,7 +302,7 @@ export default defineObject({
       defaultValue: false,
     },
     {
-      universalIdentifier: '45cbddfa-54cc-4d94-88d2-db7a7a550414',
+      universalIdentifier: CLOUD_WORKSPACE_2_IS_ENRICHED_FIELD_ID,
       type: FieldType.BOOLEAN,
       name: 'isEnriched',
       label: 'Is Enriched',
@@ -266,7 +312,7 @@ export default defineObject({
     },
 
     {
-      universalIdentifier: 'a6686308-dfcf-4abb-be0f-e8f48cc579d9',
+      universalIdentifier: CLOUD_WORKSPACE_2_INDUSTRY_FIELD_ID,
       type: FieldType.TEXT,
       name: 'industry',
       label: 'Industry',
@@ -275,7 +321,7 @@ export default defineObject({
       defaultValue: null,
     },
     {
-      universalIdentifier: '0432af7e-7575-486e-a022-f4a625a8ac14',
+      universalIdentifier: CLOUD_WORKSPACE_2_COMPANY_FOUNDED_YEAR_FIELD_ID,
       type: FieldType.TEXT,
       name: 'companyFoundedYear',
       label: 'Company Founded Year',
@@ -284,7 +330,7 @@ export default defineObject({
       defaultValue: null,
     },
     {
-      universalIdentifier: '40854f41-4175-4b14-9567-c6bfb3f5d441',
+      universalIdentifier: CLOUD_WORKSPACE_2_DESCRIPTION_FIELD_ID,
       type: FieldType.TEXT,
       name: 'description',
       label: 'Description',
@@ -293,7 +339,7 @@ export default defineObject({
       defaultValue: null,
     },
     {
-      universalIdentifier: '44aba339-be2e-4364-a894-cf730081c8a6',
+      universalIdentifier: CLOUD_WORKSPACE_2_LATEST_FUNDING_STAGE_FIELD_ID,
       type: FieldType.TEXT,
       name: 'latestFundingStage',
       label: 'Latest Funding Stage',
@@ -302,7 +348,7 @@ export default defineObject({
       defaultValue: null,
     },
     {
-      universalIdentifier: 'f11ddfc2-3356-453a-a6e1-494b6c6b12f6',
+      universalIdentifier: CLOUD_WORKSPACE_2_COMPANY_NAME_FIELD_ID,
       type: FieldType.TEXT,
       name: 'companyName',
       label: 'Company Name',
@@ -311,7 +357,7 @@ export default defineObject({
       defaultValue: null,
     },
     {
-      universalIdentifier: '8fb18f52-44e9-4288-87c1-9650222efb05',
+      universalIdentifier: CLOUD_WORKSPACE_2_SUB_DOMAIN_FIELD_ID,
       type: FieldType.TEXT,
       name: 'subDomain',
       label: 'Sub domain',
@@ -323,7 +369,7 @@ export default defineObject({
     },
 
     {
-      universalIdentifier: '8f5dfc54-213b-43b2-a502-631f0f3240d1',
+      universalIdentifier: CLOUD_WORKSPACE_2_ANNUAL_REVENUE_FIELD_ID,
       type: FieldType.CURRENCY,
       name: 'annualRevenue',
       label: 'Annual Revenue',
@@ -332,7 +378,7 @@ export default defineObject({
 
     },
     {
-      universalIdentifier: '67125b6c-ff41-459f-8153-a338ed11c4f0',
+      universalIdentifier: CLOUD_WORKSPACE_2_MRR_FIELD_ID,
       type: FieldType.CURRENCY,
       name: 'mrr',
       label: 'MRR',
@@ -341,7 +387,7 @@ export default defineObject({
 
     },
     {
-      universalIdentifier: '0c38b297-0e9d-47cc-8f8f-a0e5402413ce',
+      universalIdentifier: CLOUD_WORKSPACE_2_POTENTIAL_ARR_FIELD_ID,
       type: FieldType.CURRENCY,
       name: 'potentialArr',
       label: 'Potential ARR',
@@ -350,7 +396,7 @@ export default defineObject({
 
     },
     {
-      universalIdentifier: 'f932f94b-c48b-4ef3-9eea-0c8dad370d89',
+      universalIdentifier: CLOUD_WORKSPACE_2_ARR_FIELD_ID,
       type: FieldType.CURRENCY,
       name: 'arr',
       label: 'ARR',
@@ -359,7 +405,7 @@ export default defineObject({
 
     },
     {
-      universalIdentifier: 'ae5da0c9-e9ac-401b-ad48-c37a31c6ecd1',
+      universalIdentifier: CLOUD_WORKSPACE_2_TOTAL_FUNDING_FIELD_ID,
       type: FieldType.CURRENCY,
       name: 'totalFunding',
       label: 'Total Funding',
@@ -369,7 +415,7 @@ export default defineObject({
     },
 
     {
-      universalIdentifier: 'ef44daa9-d272-4680-a19c-caf2bac32b70',
+      universalIdentifier: CLOUD_WORKSPACE_2_ACTIVATION_STATUS_FIELD_ID,
       type: FieldType.SELECT,
       name: 'activationStatus',
       label: 'Activation Status',
@@ -415,7 +461,7 @@ export default defineObject({
       ],
     },
     {
-      universalIdentifier: 'a88e8cab-333f-44a3-980e-f2cc22871aee',
+      universalIdentifier: CLOUD_WORKSPACE_2_SUBSCRIPTION_STATUS_FIELD_ID,
       type: FieldType.SELECT,
       name: 'subscriptionStatus',
       label: 'Subscription Status',
@@ -461,7 +507,7 @@ export default defineObject({
       ],
     },
     {
-      universalIdentifier: 'fccc73da-2b6e-434b-921b-e3bcbab1c56c',
+      universalIdentifier: CLOUD_WORKSPACE_2_PAYMENT_FREQUENCY_FIELD_ID,
       type: FieldType.SELECT,
       name: 'paymentFrequency',
       label: 'Payment Frequency',
@@ -501,7 +547,7 @@ export default defineObject({
     },
 
     {
-      universalIdentifier: '488b38b4-971e-4c33-b60d-7e7934911579',
+      universalIdentifier: CLOUD_WORKSPACE_2_NEXT_RENEWAL_DATE_FIELD_ID,
       type: FieldType.DATE_TIME,
       name: 'nextRenewalDate',
       label: 'Next Renewal Date',
@@ -511,7 +557,7 @@ export default defineObject({
     },
 
     {
-      universalIdentifier: '3815b992-a919-4c52-8629-b4b5f89a6060',
+      universalIdentifier: CLOUD_WORKSPACE_2_CREATOR_EMAIL_FIELD_ID,
       type: FieldType.EMAILS,
       name: 'creatorEmail',
       label: 'Creator Email',
@@ -521,7 +567,7 @@ export default defineObject({
     },
 
     {
-      universalIdentifier: '0f41485f-4868-4bd6-8d76-709a6b7a54e3',
+      universalIdentifier: CLOUD_WORKSPACE_2_TAGS_FIELD_ID,
       type: FieldType.ARRAY,
       name: 'tags',
       label: 'Tags',
@@ -531,7 +577,7 @@ export default defineObject({
     },
 
     {
-      universalIdentifier: '252cdff1-facb-4f66-8608-6138a585d099',
+      universalIdentifier: CLOUD_WORKSPACE_2_UPDATED_BY_FIELD_ID,
       type: FieldType.ACTOR,
       name: 'updatedBy',
       label: 'Updated by',

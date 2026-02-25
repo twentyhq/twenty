@@ -1,7 +1,17 @@
 import { defineObject, FieldType } from 'twenty-sdk';
 
+import {
+  CLOUD_USER_WORKSPACE_2_ID_OF_THE_USER_WORKSPACE_FIELD_ID,
+  CLOUD_USER_WORKSPACE_2_TWENTY_USER_IDENTIFIER_FIELD_ID,
+  CLOUD_USER_WORKSPACE_2_TWENTY_WORKSPACE_IDENTIFIER_FIELD_ID,
+  CLOUD_USER_WORKSPACE_2_UPDATED_BY_FIELD_ID,
+} from 'src/fields/cloud-user-workspace-2-field-ids';
+
+export const CLOUD_USER_WORKSPACE_2_UNIVERSAL_IDENTIFIER =
+  '14d6e1f4-c513-4766-9210-bc5dc8294e51';
+
 export default defineObject({
-  universalIdentifier: '14d6e1f4-c513-4766-9210-bc5dc8294e51',
+  universalIdentifier: CLOUD_USER_WORKSPACE_2_UNIVERSAL_IDENTIFIER,
   nameSingular: 'cloudUserWorkspace2',
   namePlural: 'cloudUserWorkspaces2',
   labelSingular: 'Cloud user workspace 2',
@@ -9,7 +19,7 @@ export default defineObject({
   icon: 'IconBox',
   fields: [
     {
-      universalIdentifier: 'b3c7e2a1-4d5f-4a8b-9c1e-2f3a4b5c6d7e',
+      universalIdentifier: CLOUD_USER_WORKSPACE_2_TWENTY_USER_IDENTIFIER_FIELD_ID,
       type: FieldType.TEXT,
       name: 'twentyUserIdentifier',
       label: 'Twenty User Identifier',
@@ -21,7 +31,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: 'c4d8f3b2-5e6a-4b9c-ad2f-3a4b5c6d7e8f',
+      universalIdentifier: CLOUD_USER_WORKSPACE_2_TWENTY_WORKSPACE_IDENTIFIER_FIELD_ID,
       type: FieldType.TEXT,
       name: 'twentyWorkspaceIdentifier',
       label: 'Twenty Workspace Identifier',
@@ -33,7 +43,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: 'd5e9a4c3-6f7b-4cad-be3a-4b5c6d7e8f9a',
+      universalIdentifier: CLOUD_USER_WORKSPACE_2_ID_OF_THE_USER_WORKSPACE_FIELD_ID,
       type: FieldType.TEXT,
       name: 'idOfTheUserWorkspace',
       label: 'Id of the user workspace',
@@ -45,7 +55,7 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: 'e6fab5d4-7a8c-4dbe-cf4b-5c6d7e8f9a0b',
+      universalIdentifier: CLOUD_USER_WORKSPACE_2_UPDATED_BY_FIELD_ID,
       type: FieldType.ACTOR,
       name: 'updatedBy',
       label: 'Updated by',
