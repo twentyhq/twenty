@@ -17,10 +17,7 @@ const StyledIframe = styled.iframe`
 
 const MAX_IFRAME_HEIGHT = 600;
 
-// Force a light background so email HTML is always readable,
-// regardless of the app's dark/light mode.
-// These colors are injected into the iframe's srcDoc as raw CSS,
-// so they cannot use Emotion theme variables.
+// TODO: Check Gmail in dev tools and see how they do it based on the app's dark/light mode.
 // eslint-disable-next-line twenty/no-hardcoded-colors
 const STYLE_RESET = `
 <style>
@@ -76,6 +73,7 @@ export const EmailThreadMessageHtmlPreview = ({
 
   return (
     <StyledIframeContainer>
+      {/* TODO: Research more on spec + see Gmail approach for additional sandboxing features   */}
       <StyledIframe
         ref={iframeRef}
         srcDoc={wrappedHtml}
