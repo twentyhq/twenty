@@ -205,8 +205,8 @@ describe('useWorkflowCommandMenu', () => {
 
     act(() => {
       result.current.openWorkflowViewStepInCommandMenu({
-        commandMenuWorkflowId: 'test-workflow-id',
-        commandMenuWorkflowVersionId: 'test-workflow-version-id',
+        workflowId: 'test-workflow-id',
+        workflowVersionId: 'test-workflow-version-id',
         icon: IconSettingsAutomation,
         title: 'View Step',
       });

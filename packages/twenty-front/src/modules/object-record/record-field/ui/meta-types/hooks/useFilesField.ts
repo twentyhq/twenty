@@ -26,14 +26,14 @@ export const useFilesField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldFilesValue[]>();
 
-  const recordFieldInputDraftValue = useAtomComponentStateValue(
+  const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
   return {
     fieldDefinition,
     fieldValue,
-    recordFieldInputDraftValue,
+    draftValue,
     setDraftValue,
     setFieldValue,
   };

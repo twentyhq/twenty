@@ -328,7 +328,7 @@ export const RelationOneToManyFieldInput = () => {
       onCreate={canCreateNew ? handleCreateNew : undefined}
       objectMetadataItemIdForCreate={objectMetadataItemIdForCreate}
       onClickOutside={handleSubmit}
-      recordFieldInputLayoutDirection={
+      layoutDirection={
         recordFieldInputLayoutDirection === 'downward'
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'

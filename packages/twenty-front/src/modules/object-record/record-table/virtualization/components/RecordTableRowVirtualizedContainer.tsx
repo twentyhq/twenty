@@ -56,7 +56,7 @@ export const RecordTableRowVirtualizedContainer = ({
         <RecordTableRowVirtualizedDebugRowHelper virtualIndex={virtualIndex} />
       )}
       <RecordTableRowVirtualizedRouterLevel1
-        realIndexByVirtualIndex={realIndexByVirtualIndex}
+        realIndex={realIndexByVirtualIndex}
       />
     </StyledVirtualizedRowContainer>
   );

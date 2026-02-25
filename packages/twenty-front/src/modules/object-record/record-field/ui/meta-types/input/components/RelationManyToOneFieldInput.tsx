@@ -121,7 +121,7 @@ export const RelationManyToOneFieldInput = () => {
         fieldDefinition.metadata.relationObjectMetadataNameSingular,
       ]}
       recordPickerInstanceId={instanceId}
-      recordFieldInputLayoutDirection={
+      layoutDirection={
         recordFieldInputLayoutDirection === 'downward'
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'

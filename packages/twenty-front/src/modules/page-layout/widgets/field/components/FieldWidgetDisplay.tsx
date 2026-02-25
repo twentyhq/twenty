@@ -116,7 +116,7 @@ export const FieldWidgetDisplay = ({
             fieldMetadataItem={fieldMetadataItem}
             recordId={recordId}
             instanceId={instanceId}
-            fieldWidgetHover={fieldWidgetHover}
+            isHovered={fieldWidgetHover}
             onMouseLeave={handleMouseLeave}
           />
           <FieldWidgetCellEditModePortal

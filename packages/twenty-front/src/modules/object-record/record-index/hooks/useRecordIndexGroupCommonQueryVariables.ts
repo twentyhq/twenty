@@ -81,7 +81,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
   );
 
   const recordGroupOptionsFilter = computeRecordGroupOptionsFilter({
-    recordIndexGroupFieldMetadataItem,
+    recordGroupFieldMetadata: recordIndexGroupFieldMetadataItem,
     recordGroupValues,
   });
 

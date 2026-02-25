@@ -127,7 +127,7 @@ export const WorkflowRunDiagramStepNode = ({
     setWorkflowSelectedNode(id);
 
     openWorkflowRunViewStepInCommandMenu({
-      workflowVisualizerWorkflowId,
+      workflowId: workflowVisualizerWorkflowId,
       workflowRunId,
       title: data.name,
       icon: getIcon(getWorkflowNodeIconKey(data)),

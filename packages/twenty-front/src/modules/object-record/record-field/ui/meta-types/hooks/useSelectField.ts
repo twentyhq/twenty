@@ -29,7 +29,7 @@ export const useSelectField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldSelectValue>();
 
-  const recordFieldInputDraftValue = useAtomComponentStateValue(
+  const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
@@ -37,7 +37,7 @@ export const useSelectField = () => {
     recordId,
     fieldDefinition,
     fieldValue: fieldSelectValue,
-    recordFieldInputDraftValue,
+    draftValue,
     setDraftValue,
     setFieldValue,
   };

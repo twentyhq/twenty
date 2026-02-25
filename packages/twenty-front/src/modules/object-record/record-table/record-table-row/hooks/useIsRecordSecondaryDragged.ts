@@ -3,12 +3,12 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { type Nullable } from 'twenty-shared/types';
 
 export const useIsTableRowSecondaryDragged = (recordId: Nullable<string>) => {
-  const isRecordIdSecondaryDragMultiple = useAtomComponentFamilyStateValue(
+  const isSecondaryDragged = useAtomComponentFamilyStateValue(
     isRecordIdSecondaryDragMultipleComponentFamilyState,
     { recordId: recordId ?? '' },
   );
 
   return {
-    isRecordIdSecondaryDragMultiple,
+    isSecondaryDragged,
   };
 };

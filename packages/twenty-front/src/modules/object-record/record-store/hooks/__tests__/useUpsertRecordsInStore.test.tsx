@@ -2,10 +2,10 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { recordStoreFamilyState } from '@/object-recordStore/recordStore-store/states/recordStoreFamilyState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useUpsertRecordsInStore } from '@/object-recordStore/recordStore-store/hooks/useUpsertRecordsInStore';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
@@ -13,7 +13,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useUpsertRecordsInStore', () => {
   it('should insert a new recordStore when no current recordStore exists', () => {
-    const recordId = 'test-recordStore-1';
+    const recordId = 'test-record-1';
 
     const { result } = renderHook(
       () => {
@@ -52,7 +52,7 @@ describe('useUpsertRecordsInStore', () => {
   });
 
   it('should merge filtered partial recordStore with existing recordStore', () => {
-    const recordId = 'test-recordStore-2';
+    const recordId = 'test-record-2';
 
     const { result } = renderHook(
       () => {
@@ -113,7 +113,7 @@ describe('useUpsertRecordsInStore', () => {
   });
 
   it('should not update when filtered values are deeply equal', () => {
-    const recordId = 'test-recordStore-3';
+    const recordId = 'test-record-3';
 
     const { result } = renderHook(
       () => {

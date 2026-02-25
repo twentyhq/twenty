@@ -1,17 +1,17 @@
-import { RecordBoardContext } from '@/object-recordStore/recordStore-board/contexts/RecordBoardContext';
-import { useRecordBoardSelection } from '@/object-recordStore/recordStore-board/hooks/useRecordBoardSelection';
-import { RecordBoardCardContext } from '@/object-recordStore/recordStore-board/recordStore-board-card/contexts/RecordBoardCardContext';
-import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-recordStore/recordStore-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
+import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 
-import { RecordChip } from '@/object-recordStore/components/RecordChip';
-import { useActiveRecordBoardCard } from '@/object-recordStore/recordStore-board/hooks/useActiveRecordBoardCard';
-import { useFocusedRecordBoardCard } from '@/object-recordStore/recordStore-board/hooks/useFocusedRecordBoardCard';
-import { StopPropagationContainer } from '@/object-recordStore/recordStore-board/recordStore-board-card/components/StopPropagationContainer';
-import { recordBoardCardIsExpandedComponentState } from '@/object-recordStore/recordStore-board/recordStore-board-card/states/recordBoardCardIsExpandedComponentState';
-import { RecordCardHeaderContainer } from '@/object-recordStore/recordStore-card/components/RecordCardHeaderContainer';
-import { useOpenRecordFromIndexView } from '@/object-recordStore/recordStore-index/hooks/useOpenRecordFromIndexView';
-import { recordIndexOpenRecordInState } from '@/object-recordStore/recordStore-index/states/recordIndexOpenRecordInState';
-import { recordStoreFamilyState } from '@/object-recordStore/recordStore-store/states/recordStoreFamilyState';
+import { RecordChip } from '@/object-record/components/RecordChip';
+import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
+import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
+import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState';
+import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
+import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -86,7 +86,7 @@ export const RecordBoardCardHeader = () => {
           {isDefined(recordStore) && (
             <RecordChip
               objectNameSingular={objectMetadataItem.nameSingular}
-              recordStore={recordStore}
+              record={recordStore}
               variant={ChipVariant.Transparent}
               onClick={() => {
                 activateBoardCard({ rowIndex, columnIndex });

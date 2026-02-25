@@ -68,7 +68,7 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
             data-selectable-id={recordId}
             onClick={onClick}
             isFirstRowOfGroup={true}
-            isRecordTableScrolledVertically={isRecordTableScrolledVertically}
+            isScrolledVertically={isRecordTableScrolledVertically}
           >
             <RecordTableRowDraggableContextProvider
               value={{

@@ -26,14 +26,14 @@ export const useNumberField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldNumberValue>();
 
-  const recordFieldInputDraftValue = useAtomComponentStateValue(
+  const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
   return {
     fieldDefinition,
     fieldValue,
-    recordFieldInputDraftValue,
+    draftValue,
     setDraftValue,
     setFieldValue,
   };

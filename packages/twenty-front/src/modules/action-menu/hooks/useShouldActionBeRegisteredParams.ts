@@ -159,7 +159,7 @@ export const useShouldActionBeRegisteredParams = ({
     isShowPage,
     isSelectAll,
     selectedRecord,
-    contextStoreNumberOfSelectedRecords,
+    numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
     viewType: viewType ?? undefined,
     getTargetObjectReadPermission: getObjectReadPermission,
     getTargetObjectWritePermission: getObjectWritePermission,

@@ -30,7 +30,6 @@ const SETTER_HOOKS = [
 
 const ALL_HOOKS = [...VALUE_HOOKS, ...STATE_HOOKS, ...SETTER_HOOKS];
 
-// Longest suffixes first to avoid partial matches
 const SUFFIX_PATTERN =
   /(ComponentFamilyState|ComponentState|ScopedFamilyState|FamilyState|ScopedState|ScopedSelector|Selector|State)$/;
 
@@ -127,7 +126,6 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
           return;
         }
 
-        // STATE_HOOKS: [value, setter] pattern
         if (isIdentifier(node.id)) {
           const actualVariableName = node.id.name;
 

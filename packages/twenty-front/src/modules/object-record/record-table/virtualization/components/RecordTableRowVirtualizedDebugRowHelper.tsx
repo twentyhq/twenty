@@ -1,12 +1,12 @@
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
-import { recordStoreFamilyState } from '@/object-recordStore/recordStore-store/states/recordStoreFamilyState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-recordStore/recordStore-table/constants/RecordTableRowHeight';
-import { useRecordTableContextOrThrow } from '@/object-recordStore/recordStore-table/contexts/RecordTableContext';
-import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-recordStore/recordStore-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
-import { realIndexByVirtualIndexComponentFamilyState } from '@/object-recordStore/recordStore-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
-import { recordIdByRealIndexComponentFamilySelector } from '@/object-recordStore/recordStore-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
+import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
+import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';

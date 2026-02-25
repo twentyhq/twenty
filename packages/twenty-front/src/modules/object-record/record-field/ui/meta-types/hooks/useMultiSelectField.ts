@@ -34,7 +34,7 @@ export const useMultiSelectField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldMultiSelectValue>();
 
-  const recordFieldInputDraftValue = useAtomComponentStateValue(
+  const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
@@ -42,7 +42,7 @@ export const useMultiSelectField = () => {
     recordId,
     fieldDefinition,
     fieldValues: fieldMultiSelectValues,
-    recordFieldInputDraftValue,
+    draftValue,
     setDraftValue,
     setFieldValue,
   };

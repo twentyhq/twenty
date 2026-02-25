@@ -145,11 +145,11 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
               </SelectableListItem>
               <SelectableListItem
                 itemId="Sort"
-                onEnter={() => onContentChange('recordIndexRecordGroupSort')}
+                onEnter={() => onContentChange('recordGroupSort')}
               >
                 <MenuItem
                   focused={selectedItemId === 'Sort'}
-                  onClick={() => onContentChange('recordIndexRecordGroupSort')}
+                  onClick={() => onContentChange('recordGroupSort')}
                   LeftIcon={IconSortDescending}
                   text={t`Sort`}
                   contextualText={recordIndexRecordGroupSort}

@@ -36,7 +36,7 @@ export const MorphRelationOneToManyFieldInput = () => {
         updateMorphRelationOneToMany(morphItem);
       }}
       onClickOutside={handleSubmit}
-      recordFieldInputLayoutDirection={
+      layoutDirection={
         recordFieldInputLayoutDirection === 'downward'
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'

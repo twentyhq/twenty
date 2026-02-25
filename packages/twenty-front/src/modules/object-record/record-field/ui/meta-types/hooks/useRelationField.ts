@@ -30,11 +30,11 @@ export const useRelationField = <T extends ObjectRecord | ObjectRecord[]>() => {
     { recordId, fieldName },
   ) as [FieldRelationValue<T>, (value: FieldRelationValue<T>) => void];
 
-  const recordFieldInputDraftValue = useAtomComponentStateValue(
+  const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
-  const initialSearchValue = recordFieldInputDraftValue;
+  const initialSearchValue = draftValue;
 
   return {
     fieldDefinition,

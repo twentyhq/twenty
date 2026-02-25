@@ -65,9 +65,9 @@ export const CommandMenuPageLayoutInfoContent = ({
 
   const headerInfo = usePageLayoutHeaderInfo({
     commandMenuPage,
-    pageLayoutDraft,
+    draftPageLayout: pageLayoutDraft,
     pageLayoutEditingWidgetId,
-    pageLayoutTabSettingsOpenTabId,
+    openTabId: pageLayoutTabSettingsOpenTabId,
     editedTitle,
   });
 
