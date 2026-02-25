@@ -62,6 +62,10 @@ export const repairToolCall = async ({
       experimental_telemetry: AI_TELEMETRY_CONFIG,
     });
 
+    if (repairedInput == null) {
+      return null;
+    }
+
     return {
       type: 'tool-call',
       toolCallId: toolCall.toolCallId,

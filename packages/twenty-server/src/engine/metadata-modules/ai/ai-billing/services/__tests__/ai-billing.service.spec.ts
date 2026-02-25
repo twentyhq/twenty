@@ -192,7 +192,6 @@ describe('AIBillingService', () => {
         },
       });
 
-      // Same as reasoning-tokens test: reasoning from new shape
       expect(costInDollars).toBeCloseTo(0.0075);
     });
 
@@ -211,7 +210,6 @@ describe('AIBillingService', () => {
         },
       });
 
-      // Same as cached test: cached from new shape
       expect(costInDollars).toBeCloseTo(0.00675);
     });
 

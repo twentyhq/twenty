@@ -232,6 +232,13 @@ export class AgentAsyncExecutorService {
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
+      if (structuredResult.output == null) {
+        throw new AgentException(
+          'Failed to generate structured output from execution results',
+          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        );
+      }
+
       return {
         result: structuredResult.output as object,
         usage: mergeLanguageModelUsage(
