@@ -38,6 +38,7 @@ jest.mock('@/object-metadata/hooks/useUpdateOneFieldMetadataItem', () => ({
 
 const fieldMetadataItem: FieldMetadataItem = {
   id: FIELD_METADATA_ID,
+  universalIdentifier: FIELD_METADATA_ID,
   createdAt: '',
   label: 'label',
   name: 'name',
@@ -48,6 +49,7 @@ const fieldMetadataItem: FieldMetadataItem = {
 
 const fieldRelationMetadataItem: FieldMetadataItem = {
   id: FIELD_RELATION_METADATA_ID,
+  universalIdentifier: FIELD_RELATION_METADATA_ID,
   createdAt: '',
   label: 'label',
   name: 'name',

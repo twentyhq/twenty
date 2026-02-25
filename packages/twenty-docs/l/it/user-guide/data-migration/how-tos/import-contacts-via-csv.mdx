@@ -12,29 +12,29 @@ Questa guida ti accompagna nell'importazione dei tuoi contatti (Persone) in Twen
 ### Lista di controllo dei prerequisiti
 
 <Check>
-  Il file è in formato CSV, XLSX o XLS
+Il file è in formato CSV, XLSX o XLS
 </Check>
 
 <Check>
-  Il file contiene meno di 10.000 record
+Il file contiene meno di 10.000 record
 </Check>
 
 <Check>
-  Nessun indirizzo email duplicato nel file
+Nessun indirizzo email duplicato nel file
 </Check>
 
 <Check>
-  **Aziende importate per prime** (se colleghi Persone ad Aziende)
+**Aziende importate per prime** (se colleghi Persone ad Aziende)
 </Check>
 
 <Check>
-  Tutti i campi personalizzati esistono in **Impostazioni → Modello dati**
+Tutti i campi personalizzati esistono in **Impostazioni → Modello dati**
 </Check>
 
 <Warning>
-  **Importa le Aziende prima delle Persone**
+**Importa le Aziende prima delle Persone**
 
-  Se vuoi collegare le Persone alle Aziende, importa prima le Aziende. L'Azienda deve esistere prima di potervi fare riferimento.
+Se vuoi collegare le Persone alle Aziende, importa prima le Aziende. L'Azienda deve esistere prima di potervi fare riferimento.
 </Warning>
 
 ## Passo 1: Prepara i tuoi dati di contatto
@@ -81,7 +81,7 @@ Aggiungi una colonna con l'identificatore univoco dell'Azienda:
 | `companyId`     | UUID        | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **Usa il formato URL del dominio** (`https://acme.com`), non l'etichetta. Questo corrisponde al modo in cui le Aziende sono memorizzate in Twenty.
+**Usa il formato URL del dominio** (`https://acme.com`), non l'etichetta. Questo corrisponde al modo in cui le Aziende sono memorizzate in Twenty.
 </Note>
 
 ### Esempio di struttura CSV
@@ -93,7 +93,7 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **Suggerimento avanzato:** Fai clic su **Scarica file di esempio** durante l'importazione oppure esporta alcune Persone esistenti per vedere i nomi di colonna esatti che Twenty si aspetta.
+**Suggerimento avanzato:** Fai clic su **Scarica file di esempio** durante l'importazione oppure esporta alcune Persone esistenti per vedere i nomi di colonna esatti che Twenty si aspetta.
 </Note>
 
 ## Passo 2: Accedi alla funzione di importazione
@@ -145,9 +145,9 @@ Quando mappi la colonna dell'azienda:
 3. Twenty collegherà ogni Persona all'Azienda corrispondente
 
 <Warning>
-  **Mappa un solo identificatore univoco per le relazioni.**
+**Mappa un solo identificatore univoco per le relazioni.**
 
-  Non mappare sia `companyId` che `companyDomain`. Scegline uno — preferibilmente il dominio, perché è facilmente leggibile.
+Non mappare sia `companyId` che `companyDomain`. Scegline uno — preferibilmente il dominio, perché è facilmente leggibile.
 </Warning>
 
 ## Passaggio 5: Mappa i valori dei campi Selezione
@@ -159,7 +159,7 @@ Se hai campi Selezione o Multiselezione (come Origine del lead):
 3. Oppure crea nuove opzioni se necessario
 
 <Note>
-  Le opzioni dei campi Selezione usano i **nomi API**, non le etichette visualizzate. Controlla **Impostazioni → Modello dati** → Abilita la **Modalità avanzata** per vedere i nomi API.
+Le opzioni dei campi Selezione usano i **nomi API**, non le etichette visualizzate. Controlla **Impostazioni → Modello dati** → Abilita la **Modalità avanzata** per vedere i nomi API.
 </Note>
 
 ## Passaggio 6: Rivedi e correggi gli errori

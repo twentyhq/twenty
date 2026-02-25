@@ -71,12 +71,12 @@ Un campo univoco (email, dominio) può:
 3. Twenty aggiornerà il record esistente invece di creare un duplicato
 
 <Note>
-  **Puoi aggiornare anche i campi univoci.**
+**Puoi aggiornare anche i campi univoci.**
 
-  * Se mantieni l'`id` ma cambi l'`email` → l'email verrà aggiornata
-  * Se mantieni l'`email` ma cambi l'`id` → l'id verrà aggiornato
+* Se mantieni l'`id` ma cambi l'`email` → l'email verrà aggiornata
+* Se mantieni l'`email` ma cambi l'`id` → l'id verrà aggiornato
 
-  Finché almeno un identificatore univoco corrisponde, Twenty aggiorna il record.
+Finché almeno un identificatore univoco corrisponde, Twenty aggiorna il record.
 </Note>
 
 ### Come prevenire questo errore
@@ -88,9 +88,9 @@ Prima di importare:
 3. Verifica se i record esistono già in Twenty
 
 <Warning>
-  **I record eliminati in modo non definitivo contano ai fini dell'unicità.**
+**I record eliminati in modo non definitivo contano ai fini dell'unicità.**
 
-  Controlla il menu Comandi → Visualizza i record eliminati. I record presenti lì impongono comunque l'unicità. Eliminali definitivamente oppure ripristinali e aggiornali.
+Controlla il menu Comandi → Visualizza i record eliminati. I record presenti lì impongono comunque l'unicità. Eliminali definitivamente oppure ripristinali e aggiornali.
 </Warning>
 
 Per maggiori dettagli: [Vincoli di unicità](/l/it/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -296,9 +296,9 @@ Stai tentando di collegarti a un record che non esiste in Twenty.
    * Verifica errori di battitura e differenze tra maiuscole/minuscole
 
 <Warning>
-  **L'importazione non riuscirà se viene fatto riferimento a un record inesistente.**
+**L'importazione non riuscirà se viene fatto riferimento a un record inesistente.**
 
-  Importa sempre gli oggetti genitore prima degli oggetti figlio.
+Importa sempre gli oggetti genitore prima degli oggetti figlio.
 </Warning>
 
 Per maggiori dettagli: [Importazione delle relazioni](/l/it/user-guide/data-migration/capabilities/import-relations)
@@ -372,9 +372,9 @@ Stai tentando di assegnare un record a un utente (Proprietario, Assegnatario) ma
 3. Usa la stessa email che hanno utilizzato per aderire a Twenty
 
 <Warning>
-  **Gli utenti devono accettare gli inviti prima di importare.**
+**Gli utenti devono accettare gli inviti prima di importare.**
 
-  Se un utente non ha accettato l'invito, i record che fanno riferimento a quell'utente avranno relazioni utente vuote.
+Se un utente non ha accettato l'invito, i record che fanno riferimento a quell'utente avranno relazioni utente vuote.
 </Warning>
 
 ---

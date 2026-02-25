@@ -6,7 +6,7 @@ import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext'
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFolder';
 import { useRenameFavoriteFolder } from '@/favorites/hooks/useRenameFavoriteFolder';
-import { openFavoriteFolderIdsStateV2 } from '@/favorites/states/openFavoriteFolderIdsStateV2';
+import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { getFavoriteSecondaryLabel } from '@/favorites/utils/getFavoriteSecondaryLabel';
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
@@ -23,7 +23,7 @@ import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/compone
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { currentFavoriteFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentFavoriteFolderIdStateV2';
+import { currentFavoriteFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentFavoriteFolderIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -65,10 +65,10 @@ export const CurrentWorkspaceMemberFavorites = ({
   const isMobile = useIsMobile();
 
   const [openFavoriteFolderIds, setOpenFavoriteFolderIds] = useAtomState(
-    openFavoriteFolderIdsStateV2,
+    openFavoriteFolderIdsState,
   );
 
-  const setCurrentFolderId = useSetAtomState(currentFavoriteFolderIdStateV2);
+  const setCurrentFolderId = useSetAtomState(currentFavoriteFolderIdState);
 
   const isOpen = openFavoriteFolderIds.includes(folder.folderId);
 

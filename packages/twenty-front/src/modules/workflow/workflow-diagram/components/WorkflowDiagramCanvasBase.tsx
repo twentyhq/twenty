@@ -1,6 +1,6 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { commandMenuWidthState } from '@/command-menu/states/commandMenuWidthState';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -257,7 +257,7 @@ export const WorkflowDiagramCanvasBase = ({
     return { nodes, edges };
   }, [currentWorkflowDiagram, workflowInsertStepIds]);
 
-  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedStateV2);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const handleEdgesChange = (

@@ -1,4 +1,4 @@
-import { isFavoriteFolderCreatingStateV2 } from '@/favorites/states/isFavoriteFolderCreatingStateV2';
+import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -17,7 +17,7 @@ export const FavoriteFolderPickerFooter = ({
 }) => {
   const { t } = useLingui();
   const [, setIsFavoriteFolderCreating] = useAtomState(
-    isFavoriteFolderCreatingStateV2,
+    isFavoriteFolderCreatingState,
   );
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,

@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { labPublicFeatureFlagsStateV2 } from '@/client-config/states/labPublicFeatureFlagsStateV2';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ export const useLabPublicFeatureFlags = () => {
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
-  const labPublicFeatureFlags = useAtomStateValue(labPublicFeatureFlagsStateV2);
+  const labPublicFeatureFlags = useAtomStateValue(labPublicFeatureFlagsState);
 
   const [updateLabPublicFeatureFlag] = useUpdateLabPublicFeatureFlagMutation({
     onCompleted: (data) => {

@@ -4,7 +4,7 @@ description: أنشئ وأدِر تخصيصات Twenty على هيئة كود.
 ---
 
 <Warning>
-  التطبيقات حاليًا في مرحلة الاختبار الألفا. الميزة تعمل لكنها لا تزال قيد التطور.
+التطبيقات حاليًا في مرحلة الاختبار الألفا. الميزة تعمل لكنها لا تزال قيد التطور.
 </Warning>
 
 ## ما هي التطبيقات؟
@@ -31,13 +31,6 @@ description: أنشئ وأدِر تخصيصات Twenty على هيئة كود.
 # إنشاء تطبيق جديد (يتضمن جميع الأمثلة افتراضيًا)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
-
-# إذا كنت لا تستخدم yarn@4
-corepack enable
-yarn install
-
-# قم بالمصادقة باستخدام مفتاح واجهة برمجة التطبيقات الخاص بك (سيُطلب منك ذلك)
-yarn twenty auth:login
 
 # ابدأ وضع التطوير: يُزامن التغييرات المحلية تلقائيًا مع مساحة العمل الخاصة بك
 yarn twenty app:dev
@@ -154,7 +147,7 @@ my-twenty-app/
 | `defineSkill()`              | تعريفات مهارات وكيل الذكاء الاصطناعي |
 
 <Note>
-  **تسمية الملفات مرنة.** يعتمد اكتشاف الكيانات على بنية الشجرة المجردة (AST) — إذ يقوم SDK بفحص ملفات المصدر لديك بحثًا عن النمط `export default define<Entity>({...})`. يمكنك تنظيم ملفاتك ومجلداتك كيفما تشاء. التجميع حسب نوع الكيان (مثلًا، `logic-functions/` و`roles/`) هو مجرد عرف لتنظيم الشيفرة، وليس مطلبًا إلزاميًا.
+**تسمية الملفات مرنة.** يعتمد اكتشاف الكيانات على بنية الشجرة المجردة (AST) — إذ يقوم SDK بفحص ملفات المصدر لديك بحثًا عن النمط `export default define<Entity>({...})`. يمكنك تنظيم ملفاتك ومجلداتك كيفما تشاء. التجميع حسب نوع الكيان (مثلًا، `logic-functions/` و`roles/`) هو مجرد عرف لتنظيم الشيفرة، وليس مطلبًا إلزاميًا.
 </Note>
 
 مثال على كيان تم اكتشافه:
@@ -312,11 +305,11 @@ export default defineObject({
 * يمكنك إنشاء كائنات جديدة باستخدام `yarn twenty entity:add`، والذي يرشدك خلال التسمية والحقول والعلاقات.
 
 <Note>
-  **يتم إنشاء الحقول الأساسية تلقائيًا.** عند تعريف كائن مخصص، يضيف Twenty تلقائيًا حقولًا قياسية
-  مثل `id` و`name` و`createdAt` و`updatedAt` و`createdBy` و`updatedBy` و`deletedAt`.
-  لا تحتاج إلى تعريف هذه في مصفوفة `fields` — أضف فقط حقولك المخصصة.
-  يمكنك تجاوز الحقول الافتراضية من خلال تعريف حقل بالاسم نفسه في مصفوفة `fields` الخاصة بك،
-  لكن هذا غير مستحسن.
+**يتم إنشاء الحقول الأساسية تلقائيًا.** عند تعريف كائن مخصص، يضيف Twenty تلقائيًا حقولًا قياسية
+مثل `id` و`name` و`createdAt` و`updatedAt` و`createdBy` و`updatedBy` و`deletedAt`.
+لا تحتاج إلى تعريف هذه في مصفوفة `fields` — أضف فقط حقولك المخصصة.
+يمكنك تجاوز الحقول الافتراضية من خلال تعريف حقل بالاسم نفسه في مصفوفة `fields` الخاصة بك،
+لكن هذا غير مستحسن.
 </Note>
 
 ### تكوين التطبيق (application-config.ts)
@@ -550,27 +543,25 @@ yarn twenty function:execute --postInstall
 ### حمولة مشغل المسار
 
 <Warning>
-  **تغيير غير متوافق (v1.16، يناير 2026):** لقد تغير تنسيق حمولة مشغل المسار. قبل v1.16، كانت معلمات الاستعلام، ومعلمات المسار، وجسم الطلب تُرسل مباشرةً كحمولة. بدءًا من v1.16، أصبحت متداخلة داخل كائن منظَّم `RoutePayload`.
+**تغيير غير متوافق (v1.16، يناير 2026):** لقد تغير تنسيق حمولة مشغل المسار. قبل v1.16، كانت معلمات الاستعلام، ومعلمات المسار، وجسم الطلب تُرسل مباشرةً كحمولة. بدءًا من v1.16، أصبحت متداخلة داخل كائن منظَّم `RoutePayload`.
 
-  **قبل v1.16:**
+**قبل v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
 
-  ```typescript
-  const handler = async (params) => {
-    const { param1, param2 } = params; // Direct access
-  };
-  ```
+**بعد v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
 
-  **بعد v1.16:**
-
-  ```typescript
-  const handler = async (event: RoutePayload) => {
-    const { param1, param2 } = event.body; // Access via .body
-    const { queryParam } = event.queryStringParameters;
-    const { id } = event.pathParameters;
-  };
-  ```
-
-  **لترحيل الدوال الحالية:** حدّث المعالج لديك لفكّ البنية من `event.body` أو `event.queryStringParameters` أو `event.pathParameters` بدلاً من القراءة مباشرةً من كائن params.
+**لترحيل الدوال الحالية:** حدّث المعالج لديك لفكّ البنية من `event.body` أو `event.queryStringParameters` أو `event.pathParameters` بدلاً من القراءة مباشرةً من كائن params.
 </Warning>
 
 عندما يستدعي مشغّل المسار وظيفتك المنطقية، يتلقى كائنًا من النوع `RoutePayload` يتبع تنسيق AWS HTTP API v2. استورد النوع من `twenty-sdk`:
@@ -706,7 +697,7 @@ export default defineLogicFunction({
 * يمكنك دمج `isTool` مع المشغِّلات — إذ يمكن للدالة أن تكون أداة (قابلة للاستدعاء من قِبل وكلاء الذكاء الاصطناعي) وأن تُشغَّل بواسطة أحداث (cron، وأحداث قاعدة البيانات، والمسارات) في الوقت نفسه.
 
 <Note>
-  **اكتب `description` جيدًا.** يعتمد وكلاء الذكاء الاصطناعي على حقل `description` الخاص بالدالة لتحديد وقت استخدام الأداة. كن محددًا بشأن ما تفعله الأداة ومتى ينبغي استدعاؤها.
+**اكتب `description` جيدًا.** يعتمد وكلاء الذكاء الاصطناعي على حقل `description` الخاص بالدالة لتحديد وقت استخدام الأداة. كن محددًا بشأن ما تفعله الأداة ومتى ينبغي استدعاؤها.
 </Note>
 
 ### المكوّنات الأمامية

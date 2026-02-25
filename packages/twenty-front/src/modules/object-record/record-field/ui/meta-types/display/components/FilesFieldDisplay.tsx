@@ -1,6 +1,6 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFilesFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useFilesFieldDisplay';
-import { filesFieldUploadStateV2 } from '@/object-record/record-field/ui/states/filesFieldUploadStateV2';
+import { filesFieldUploadState } from '@/object-record/record-field/ui/states/filesFieldUploadState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { FilesDisplay } from '@/ui/field/display/components/FilesDisplay';
 import { useContext } from 'react';
@@ -9,7 +9,7 @@ export const FilesFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
   const { fieldValue, disableChipClick } = useFilesFieldDisplay();
 
-  const uploadState = useAtomFamilyStateValue(filesFieldUploadStateV2, {
+  const uploadState = useAtomFamilyStateValue(filesFieldUploadState, {
     recordId,
     fieldName: fieldDefinition.metadata.fieldName,
   });

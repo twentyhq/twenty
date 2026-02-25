@@ -2,8 +2,6 @@ import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
-
 import {
   query,
   responseData,
@@ -37,11 +35,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
 
   return (
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot>
-        <MockedProvider mocks={mocks} addTypename={false}>
-          {children}
-        </MockedProvider>
-      </RecoilRoot>
+      <MockedProvider mocks={mocks} addTypename={false}>
+        {children}
+      </MockedProvider>
     </JotaiProvider>
   );
 };

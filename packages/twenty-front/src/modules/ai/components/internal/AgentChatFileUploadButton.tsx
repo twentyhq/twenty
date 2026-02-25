@@ -1,5 +1,5 @@
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
-import { agentChatSelectedFilesStateV2 } from '@/ai/states/agentChatSelectedFilesStateV2';
+import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -19,7 +19,7 @@ const StyledFileInput = styled.input`
 
 export const AgentChatFileUploadButton = () => {
   const setAgentChatSelectedFiles = useSetAtomState(
-    agentChatSelectedFilesStateV2,
+    agentChatSelectedFilesState,
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadFiles } = useAIChatFileUpload();

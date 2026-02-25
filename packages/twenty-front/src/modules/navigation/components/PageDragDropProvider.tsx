@@ -19,7 +19,7 @@ import { useHandleAddToNavigationDrop } from '@/navigation-menu-item/hooks/useHa
 import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleNavigationMenuItemDragAndDrop';
 import { useHandleWorkspaceNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleWorkspaceNavigationMenuItemDragAndDrop';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
-import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
+import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
 import { getDropTargetIdFromDestination } from '@/navigation-menu-item/utils/getDropTargetIdFromDestination';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
@@ -95,7 +95,7 @@ export const PageDragDropProvider = ({
 
         const payload =
           store
-            .get(addToNavPayloadRegistryStateV2.atom)
+            .get(addToNavPayloadRegistryState.atom)
             .get(update.draggableId) ?? null;
         const folderId = validateAndExtractWorkspaceFolderId(
           destination.droppableId,

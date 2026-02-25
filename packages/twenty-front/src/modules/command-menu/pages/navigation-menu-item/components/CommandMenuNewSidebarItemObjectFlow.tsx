@@ -8,7 +8,7 @@ import { getAvailableObjectMetadataForNewSidebarItem } from '@/command-menu/page
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddObjectToNavigationMenuDraft';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
-import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
+import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -35,10 +35,10 @@ export const CommandMenuNewSidebarItemObjectFlow = ({
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
   const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextStateV2,
+    addMenuItemInsertionContextState,
   );
   const setAddMenuItemInsertionContext = useSetAtomState(
-    addMenuItemInsertionContextStateV2,
+    addMenuItemInsertionContextState,
   );
   const { views, objectMetadataIdsWithIndexView } =
     useNavigationMenuObjectMetadataFromDraft(currentDraft);

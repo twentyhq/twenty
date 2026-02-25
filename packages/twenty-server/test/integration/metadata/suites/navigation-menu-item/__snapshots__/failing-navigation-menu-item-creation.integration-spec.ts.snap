@@ -10,7 +10,7 @@ exports[`NavigationMenuItem creation should fail when creating with empty target
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -25,7 +25,7 @@ exports[`NavigationMenuItem creation should fail when creating with empty target
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -40,7 +40,7 @@ exports[`NavigationMenuItem creation should fail when creating with invalid fold
     "userFriendlyMessage": "An error occurred.",
     "value": "not-a-valid-uuid",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -55,7 +55,7 @@ exports[`NavigationMenuItem creation should fail when creating with invalid targ
     "userFriendlyMessage": "An error occurred.",
     "value": "not-a-valid-uuid",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -70,7 +70,7 @@ exports[`NavigationMenuItem creation should fail when creating with invalid targ
     "userFriendlyMessage": "An error occurred.",
     "value": "not-a-valid-uuid",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -85,7 +85,7 @@ exports[`NavigationMenuItem creation should fail when creating with invalid user
     "userFriendlyMessage": "An error occurred.",
     "value": "not-a-valid-uuid",
   },
-  "message": "Invalid UUID",
+  "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
 }
 `;

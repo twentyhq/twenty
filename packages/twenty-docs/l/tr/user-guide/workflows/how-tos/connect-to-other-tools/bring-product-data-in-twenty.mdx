@@ -54,7 +54,7 @@ export const main = async () => {
 ```
 
 <Tip>
-  `updated_at >= last X minutes` ile filtreleyerek yalnızca yakın zamanda değişen kayıtları alın. Bu, eşitlemeyi verimli tutar.
+`updated_at >= last X minutes` ile filtreleyerek yalnızca yakın zamanda değişen kayıtları alın. Bu, eşitlemeyi verimli tutar.
 </Tip>
 
 ## Adım 3: Verileri Biçimlendirin (İsteğe Bağlı)
@@ -163,7 +163,7 @@ Yineleyici içinde bir **Kaydı Ekle/Güncelle** eylemi ekleyin:
 | **Fiyat**              | `{{iterator.item.price}}`                  |
 
 <Tip>
-  Oluşturma ve güncelleme için ayrı dallar oluşturmak yerine **Upsert** (güncelle veya oluştur) kullanın. Oluşturmak daha hızlı ve hata ayıklamak daha kolaydır.
+Oluşturma ve güncelleme için ayrı dallar oluşturmak yerine **Upsert** (güncelle veya oluştur) kullanın. Oluşturmak daha hızlı ve hata ayıklamak daha kolaydır.
 </Tip>
 
 ## Örnek Kullanım Durumları

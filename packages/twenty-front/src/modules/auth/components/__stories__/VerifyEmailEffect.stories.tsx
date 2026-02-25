@@ -1,7 +1,6 @@
 import { type VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 
 // Mock component that just renders the error state of VerifyEmailEffect directly
 // (since normal VerifyEmailEffect has async logic that's hard to test in Storybook)
@@ -23,9 +22,7 @@ const meta: Meta<typeof VerifyEmailEffectErrorState> = {
   decorators: [
     (Story) => (
       <div style={{ padding: '24px' }}>
-        <RecoilRoot>
-          <Story />
-        </RecoilRoot>
+        <Story />
       </div>
     ),
     SnackBarDecorator,
@@ -48,20 +45,18 @@ export const ErrorState: Story = {
 
 export const IntegratedExample: StoryObj<typeof VerifyEmailEffect> = {
   render: () => (
-    <RecoilRoot>
-      <MemoryRouter
-        initialEntries={[
-          '/verify-email?email=user@example.com&emailVerificationToken=invalid-token',
-        ]}
-      >
-        <Routes>
-          <Route
-            path="/verify-email"
-            element={<VerifyEmailEffectErrorState email="user@example.com" />}
-          />
-        </Routes>
-      </MemoryRouter>
-    </RecoilRoot>
+    <MemoryRouter
+      initialEntries={[
+        '/verify-email?email=user@example.com&emailVerificationToken=invalid-token',
+      ]}
+    >
+      <Routes>
+        <Route
+          path="/verify-email"
+          element={<VerifyEmailEffectErrorState email="user@example.com" />}
+        />
+      </Routes>
+    </MemoryRouter>
   ),
   parameters: {
     docs: {

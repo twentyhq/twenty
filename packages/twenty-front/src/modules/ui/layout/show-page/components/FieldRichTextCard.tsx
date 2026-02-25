@@ -1,6 +1,6 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useTheme } from '@emotion/react';
@@ -48,13 +48,10 @@ const LoadingSkeleton = () => {
 
 export const FieldRichTextCard = () => {
   const targetRecord = useTargetRecord();
-  const activityBodyV2 = useAtomFamilySelectorValue(
-    recordStoreFamilySelectorV2,
-    {
-      recordId: targetRecord.id,
-      fieldName: 'bodyV2',
-    },
-  );
+  const activityBodyV2 = useAtomFamilySelectorValue(recordStoreFamilySelector, {
+    recordId: targetRecord.id,
+    fieldName: 'bodyV2',
+  });
 
   const activityObjectNameSingular = targetRecord.targetObjectNameSingular as
     | CoreObjectNameSingular.Note

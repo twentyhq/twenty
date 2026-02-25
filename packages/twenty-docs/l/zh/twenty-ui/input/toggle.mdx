@@ -8,29 +8,35 @@ image: /images/user-guide/table-views/table.png
 </Frame>
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { Toggle } from "twenty-ui/input";
+<Tab title="用法">
 
-    export const MyComponent = () => {
-      return (
-        <Toggle
-        value = {true}
-        onChange = {()=>console.log('On Change event')}
-        color="green"
-        toggleSize = "medium"
-        />
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { Toggle } from "twenty-ui/input";
 
-  <Tab title="属性">
-    | 属性         | 类型       | 描述                                      | 默认           |
-    | ---------- | -------- | --------------------------------------- | ------------ |
-    | 值          | 布尔值      | 切换的当前状态                                 | `假`          |
-    | onChange   | function | 当切换状态变化时触发的回调函数                         |              |
-    | 颜色         | string   | Color of the toggle when it\            | s blue color |
-    | toggleSize | string   | 切换的尺寸，影响高度和宽度。 有两个选项：`small` 和 `medium` | medium       |
-  </Tab>
+export const MyComponent = () => {
+  return (
+    <Toggle
+    value = {true}
+    onChange = {()=>console.log('On Change event')}
+    color="green"
+    toggleSize = "medium"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="属性">
+
+
+| 属性         | 类型       | 描述                                      | 默认           |
+| ---------- | -------- | --------------------------------------- | ------------ |
+| 值          | 布尔值      | 切换的当前状态                                 | `假`          |
+| onChange   | function | 当切换状态变化时触发的回调函数                         |              |
+| 颜色         | string   | Color of the toggle when it\            | s blue color |
+| toggleSize | string   | 切换的尺寸，影响高度和宽度。 有两个选项：`small` 和 `medium` | medium       |
+
+
+
+</Tab>
 </Tabs>

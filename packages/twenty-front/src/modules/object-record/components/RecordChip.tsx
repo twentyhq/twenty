@@ -2,7 +2,7 @@ import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordIn
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
-import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -56,7 +56,7 @@ export const RecordChip = ({
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const recordIndexOpenRecordIn = useAtomStateValue(
-    recordIndexOpenRecordInStateV2,
+    recordIndexOpenRecordInState,
   );
   const canOpenInSidePanel = canOpenObjectInSidePanel(objectNameSingular);
 

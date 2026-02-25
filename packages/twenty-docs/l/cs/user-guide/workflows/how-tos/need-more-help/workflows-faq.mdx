@@ -4,6 +4,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
 ---
 
 <AccordionGroup>
+
   <Accordion title="Proč nemohu aktivovat pracovní postup?">
     Pravděpodobně jde o problém s oprávněními. K vytváření a aktivaci potřebujete přístup k pracovním postupům.
 
@@ -27,7 +28,6 @@ description: Často kladené otázky k pracovním postupům v Twenty.
   <Accordion title="Jaký je rozdíl mezi ručními spouštěči Single, Global a Bulk?">
     | Typ | Požadované záznamy | Běhy průběhu práce |
     | --- | ------------------ | ------------------ |
-
     \| **Global** | Žádné | Jednou, bez vstupu záznamu |
     \| **Single** | Jeden nebo více vybraných | Jednou na každý vybraný záznam |
     \| **Bulk** | Jeden nebo více vybraných | Jednou, se všemi záznamy jako pole |
@@ -61,7 +61,6 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     **Ano**, větve ve výchozím nastavení běží paralelně.
 
     Pokud chcete spustit pouze jednu větev:
-
     * Na začátek každé větve přidejte akci **Filter**
     * Nastavte opačné podmínky (např. Větev A: status = "Open", Větev B: status ≠ "Open")
 
@@ -72,7 +71,6 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     **Ano**. Po dokončení paralelních větví můžete přidat krok, na který se obě větve napojí.
 
     V editoru pracovního postupu:
-
     1. Dokončete akce ve větvích
     2. Přidejte nový krok za větve
     3. Přetáhněte spojení z konce každé větve do tohoto nového kroku
@@ -84,7 +82,6 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     **Search Records vrací maximálně 200 záznamů.**
 
     Pokud potřebujete zpracovat více:
-
     * Přidejte konkrétnější filtry pro zmenšení výsledků
     * Použijte plánované pracovní postupy ke zpracování po dávkách
     * Zvažte použití API pro hromadné operace
@@ -102,12 +99,10 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     Každá akce vytváří výstupní data, která lze použít v následujících krocích.
 
     **Jak odkazovat na data z předchozích kroků**:
-
     * Při konfiguraci pole použijte výběr proměnné
     * Nebo napište přímo `{{stepName.fieldName}}`
 
     **Příklady**:
-
     * Data spouštěče: `{{trigger.object.email}}`
     * Výsledky hledání: `{{searchRecords[0].name}}`
     * Výstup kódu: `{{code.calculatedValue}}`
@@ -123,7 +118,6 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     3. **Zvolená špatná proměnná**: Ujistěte se, že vybíráte samotné pole, ne jeden záznam
 
     **Správné nastavení**:
-
     1. Search Records (vrací pole)
     2. Filtr: length > 0
     3. Iterator: vyberte `{{searchRecords}}`
@@ -138,7 +132,6 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     Pokud váš kód tento limit překročí, akce selže s chybou vypršení časového limitu.
 
     **Tipy, jak se vyhnout vypršení časových limitů**:
-
     * Rozdělte velké operace na menší části pomocí Iteratoru
     * Vyhněte se náročným výpočtům; pro intenzivní zpracování použijte externí služby přes HTTP Request
     * Optimalizujte svůj kód pro zkrácení doby běhu
@@ -149,12 +142,10 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     Spuštění pracovních postupů zobrazují historii provádění a pomáhají s laděním problémů.
 
     **Přístup ke spuštěním**:
-
     * V editoru pracovního postupu → panel **Runs** vpravo
     * Nebo přejděte v postranním panelu do **Workflow Runs**
 
     **Porozumění spuštění**:
-
     * **Stav**: Running, Completed, Failed, Waiting
     * **Kroky**: Zobrazte, které kroky se provedly, a jejich výstup
     * **Chyby**: Klikněte na neúspěšné kroky a zobrazíte chybové zprávy
@@ -171,13 +162,11 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     Pokud tento limit překročíte, pracovní postupy jsou okamžitě označeny jako neúspěšné a v seznamu spuštění se nezobrazí podle očekávání.
 
     **Běžné scénáře, které tento limit překročí**:
-
     * Výběr více než 5 000 záznamů pomocí ručního spouštěče Single
     * Současné spuštění více pracovních postupů napříč vaším pracovním prostorem
     * Časté automatické spouštěče (např. Record Updated na vytíženém objektu)
 
     **Řešení**:
-
     * Použijte spouštěče **Bulk** místo Single pro zpracování mnoha záznamů v jednom spuštění
     * Rozložte velké dávkové operace v čase
     * Používejte filtry ke snížení frekvence spouštění
@@ -189,7 +178,6 @@ description: Často kladené otázky k pracovním postupům v Twenty.
 
     | Limit | Hodnota | Chování |
     | ----- | ------- | ------- |
-
     \| **Soft limit** | 100 spuštění/minuta | Spuštění se zařadí do fronty se stavem "Not Started" a jsou zpracovávána postupně |
     \| **Hard limit** | 5 000 spuštění/hodina | Spuštění okamžitě selžou |
 
@@ -198,7 +186,6 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     **Hard limit (5 000/hod)**: Týká se celého vašeho pracovního prostoru. Pokud všechny vaše pracovní postupy dohromady překročí 5 000 spuštění za hodinu, další spuštění okamžitě selžou.
 
     **Tipy, jak zůstat v rámci limitů**:
-
     * Pro velké dávky použijte spouštěče Bulk s Iterator místo spouštěčů Single
     * Kombinujte související automatizace do menšího počtu pracovních postupů
     * Používejte plánované pracovní postupy k rozložení zátěže v čase
@@ -208,13 +195,11 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     **Ne, v tuto chvíli není k dispozici automatická funkce opakování.**
 
     Pokud spuštění pracovního postupu selže, je potřeba:
-
     1. Zkontrolujte chybu v **Settings → Workflows → [Your Workflow] → Runs**
     2. Opravte problém (data, konfigurace nebo externí služba)
     3. Ručně znovu spusťte pracovní postup u dotčených záznamů
 
     **Tipy, jak snížit počet selhání**:
-
     * Přidejte uzly **Filter** pro ověření dat před akcemi
     * Použijte **Search Records** ke kontrole, zda existují související záznamy
     * Před hromadnými operacemi důkladně otestujte s několika záznamy
@@ -226,14 +211,12 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     **Ano, pokud se vaše pracovní postupy spouštějí vytvořením nebo aktualizací záznamu.**
 
     Při importu dat pomocí CSV může každý vytvořený nebo aktualizovaný záznam spustit pracovní postupy. Velký import (tisíce záznamů) může:
-
     * Dosáhnout limitu 5 000 spuštění/hodinu
     * Spotřebovat značné množství kreditů pracovních postupů
     * Odeslat neočekávané e-maily nebo oznámení
     * Vytvořit duplicitní úkoly nebo záznamy
 
     **Před hromadným importem**:
-
     1. Přejděte na **Nastavení → Pracovní postupy**
     2. Identifikujte pracovní postupy spouštěné objektem, který importujete
     3. **Deaktivujte** je dočasně
@@ -251,4 +234,5 @@ description: Často kladené otázky k pracovním postupům v Twenty.
 
     Tím se všechny uzly automaticky přeuspořádají do čistého, uspořádaného rozvržení.
   </Accordion>
+
 </AccordionGroup>

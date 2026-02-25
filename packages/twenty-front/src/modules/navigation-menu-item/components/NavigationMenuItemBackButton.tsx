@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconX } from 'twenty-ui/display';
 
-import { currentNavigationMenuItemFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdStateV2';
+import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledBackButton = styled.button`
@@ -37,7 +37,7 @@ export const NavigationMenuItemBackButton = ({
 }: NavigationMenuItemBackButtonProps) => {
   const theme = useTheme();
   const setCurrentFolderId = useSetAtomState(
-    currentNavigationMenuItemFolderIdStateV2,
+    currentNavigationMenuItemFolderIdState,
   );
 
   const handleClick = (e: React.MouseEvent) => {

@@ -30,7 +30,7 @@ Erstellen Sie vor der Einrichtung dieses Workflows ein benutzerdefiniertes Feld 
 3. Wählen Sie **Message Participants** (verfügbar unter Advanced objects)
 
 <Note>
-  Ein Message Participant ist eine Kombination aus einer Nachrichten-ID und einer Personen-ID und erzeugt einen eindeutigen Datensatz pro Nachricht. Dies ist einfacher nachzuverfolgen als die Nachrichten direkt, da wir auf das Feld `handle` zugreifen können, das die E-Mail-Adresse des Absenders (oder Empfängers) enthält.
+Ein Message Participant ist eine Kombination aus einer Nachrichten-ID und einer Personen-ID und erzeugt einen eindeutigen Datensatz pro Nachricht. Dies ist einfacher nachzuverfolgen als die Nachrichten direkt, da wir auf das Feld `handle` zugreifen können, das die E-Mail-Adresse des Absenders (oder Empfängers) enthält.
 </Note>
 
 ### Schritt 2: Nach Rolle filtern
@@ -50,7 +50,7 @@ So stellen Sie sicher, dass Sie nur Nachrichten zählen, die von dieser Person g
 Dadurch werden alle Nachrichten von dieser E-Mail-Adresse gefunden, um die Gesamtanzahl zu erhalten.
 
 <Note>
-  Die Aktion Datensätze suchen ist auf die Rückgabe von maximal 200 Datensätzen beschränkt. Da Sie jedoch nur den Wert `totalCount` verwenden (nicht die einzelnen Datensätze), liefert dieser Schritt die Gesamtanzahl der von dieser Person gesendeten E-Mails.
+Die Aktion Datensätze suchen ist auf die Rückgabe von maximal 200 Datensätzen beschränkt. Da Sie jedoch nur den Wert `totalCount` verwenden (nicht die einzelnen Datensätze), liefert dieser Schritt die Gesamtanzahl der von dieser Person gesendeten E-Mails.
 </Note>
 
 ### Schritt 4: Den Personendatensatz mit einer Create or Update Record-Aktion aktualisieren
@@ -58,7 +58,7 @@ Dadurch werden alle Nachrichten von dieser E-Mail-Adresse gefunden, um die Gesam
 1. Fügen Sie eine **Create or Update Record**-Aktion hinzu
 
 <Warning>
-  Verwenden Sie hier **Upsert Record** anstelle von **Update Record**. Dadurch können Sie die Person über ihre E-Mail-Adresse (das Feld `handle`) identifizieren, ohne eine Datensatz-ID aus einem vorherigen Schritt zu benötigen.
+Verwenden Sie hier **Upsert Record** anstelle von **Update Record**. Dadurch können Sie die Person über ihre E-Mail-Adresse (das Feld `handle`) identifizieren, ohne eine Datensatz-ID aus einem vorherigen Schritt zu benötigen.
 </Warning>
 
 2. Wählen Sie **People** als Objekt

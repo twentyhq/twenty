@@ -8,7 +8,7 @@ import {
 
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/hooks/useUpdateNavigationMenuItem';
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
@@ -26,7 +26,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
   const store = useStore();
 
   const saveDraft = useCallback(async () => {
-    const draft = store.get(navigationMenuItemsDraftStateV2.atom);
+    const draft = store.get(navigationMenuItemsDraftState.atom);
     const prefetch = store.get(prefetchNavigationMenuItemsState.atom);
 
     if (!draft) return;

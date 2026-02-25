@@ -1,5 +1,5 @@
 import { downloadFile } from '@/activities/files/utils/downloadFile';
-import { filePreviewStateV2 } from '@/ui/field/display/states/filePreviewStateV2';
+import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -72,7 +72,7 @@ const StyledLoadingText = styled.div`
 
 export const GlobalFilePreviewModal = (): JSX.Element | null => {
   const { t } = useLingui();
-  const [filePreview, setFilePreview] = useAtomState(filePreviewStateV2);
+  const [filePreview, setFilePreview] = useAtomState(filePreviewState);
   const { openModal, closeModal } = useModal();
 
   useEffect(() => {

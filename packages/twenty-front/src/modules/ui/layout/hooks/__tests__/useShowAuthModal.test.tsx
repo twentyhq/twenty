@@ -1,6 +1,5 @@
 import { renderHook } from '@testing-library/react';
 import * as reactRouterDom from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { AppPath } from 'twenty-shared/types';
@@ -23,14 +22,9 @@ const setupMockIsMatchingLocation = (pathname: string) => {
 };
 
 const getResult = () =>
-  renderHook(
-    () => {
-      return useShowAuthModal();
-    },
-    {
-      wrapper: RecoilRoot,
-    },
-  );
+  renderHook(() => {
+    return useShowAuthModal();
+  });
 
 const testCases = [
   { loc: AppPath.Verify, res: true },

@@ -28,7 +28,7 @@ import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -135,7 +135,7 @@ export const useOpenFieldInputEditMode = () => {
         )
       ) {
         const fieldValue = store.get(
-          recordStoreFamilySelectorV2.selectorFamily({
+          recordStoreFamilySelector.selectorFamily({
             recordId,
             fieldName: fieldDefinition.metadata.fieldName,
           }),

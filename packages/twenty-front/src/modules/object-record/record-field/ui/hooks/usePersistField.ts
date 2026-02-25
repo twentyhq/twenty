@@ -25,7 +25,7 @@ import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isF
 import { isFieldRawJsonValue } from '@/object-record/record-field/ui/types/guards/isFieldRawJsonValue';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldSelectValue';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
@@ -187,7 +187,7 @@ export const usePersistField = ({
         const fieldName = fieldDefinition.metadata.fieldName;
 
         const currentValue = store.get(
-          recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
+          recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
         ) as { id?: string } | null | undefined;
 
         if (fieldIsRelationManyToOne) {
@@ -255,7 +255,7 @@ export const usePersistField = ({
         });
 
         store.set(
-          recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
+          recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
           valueToPersist,
         );
       } else {

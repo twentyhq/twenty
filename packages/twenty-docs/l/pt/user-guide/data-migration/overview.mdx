@@ -44,16 +44,15 @@ Pode importar relações entre objetos utilizando a função de importação de 
 <Note>**Os registos eliminados contam para a unicidade.** Os registos eliminados logicamente (visíveis no Menu de Comandos → Ver registos eliminados) são incluídos nas verificações de unicidade. Se importar um registo com o mesmo valor único que um registo eliminado, o registo eliminado será restaurado.</Note>
 
 <Warning>
-  **A ordem de importação é importante!**
+**A ordem de importação é importante!**
 
-  Ao importar objetos relacionados, carregue os ficheiros por esta ordem:
+Ao importar objetos relacionados, carregue os ficheiros por esta ordem:
+1. **Empresas** primeiro (o lado "um" das relações)
+2. **Pessoas** em segundo (ligadas às empresas via companyId)
+3. **Oportunidades** em terceiro (ligadas a empresas/pessoas)
+4. **Objetos personalizados** com relações por último
 
-  1. **Empresas** primeiro (o lado "um" das relações)
-  2. **Pessoas** em segundo (ligadas às empresas via companyId)
-  3. **Oportunidades** em terceiro (ligadas a empresas/pessoas)
-  4. **Objetos personalizados** com relações por último
-
-  Porquê? O lado "um" de uma relação um-para-muitos tem de existir antes de o poder referenciar. Por exemplo, o registo da Empresa tem de existir antes de importar uma Pessoa com o ID dessa empresa.
+Porquê? O lado "um" de uma relação um-para-muitos tem de existir antes de o poder referenciar. Por exemplo, o registo da Empresa tem de existir antes de importar uma Pessoa com o ID dessa empresa.
 </Warning>
 
 Consulte [este artigo](/l/pt/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) para um guia passo a passo sobre como proceder.

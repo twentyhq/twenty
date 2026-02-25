@@ -2,9 +2,9 @@ import { atom, type Atom } from 'jotai';
 
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type ComponentFamilySelectorV2 } from '@/ui/utilities/state/jotai/types/ComponentFamilySelectorV2';
-import { type ComponentFamilyStateKey } from '@/ui/utilities/state/jotai/types/ComponentFamilyStateV2';
-import { type SelectorGetterV2 } from '@/ui/utilities/state/jotai/types/SelectorCallbacksV2';
+import { type ComponentFamilySelector } from '@/ui/utilities/state/jotai/types/ComponentFamilySelector';
+import { type ComponentFamilyStateKey } from '@/ui/utilities/state/jotai/types/ComponentFamilyState';
+import { type SelectorGetter } from '@/ui/utilities/state/jotai/types/SelectorCallbacks';
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,9 +16,9 @@ export const createAtomComponentFamilySelector = <ValueType, FamilyKey>({
   key: string;
   get: (
     key: ComponentFamilyStateKey<FamilyKey>,
-  ) => (callbacks: SelectorGetterV2) => ValueType;
+  ) => (callbacks: SelectorGetter) => ValueType;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-}): ComponentFamilySelectorV2<ValueType, FamilyKey> => {
+}): ComponentFamilySelector<ValueType, FamilyKey> => {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
@@ -54,7 +54,7 @@ export const createAtomComponentFamilySelector = <ValueType, FamilyKey>({
   };
 
   return {
-    type: 'ComponentFamilySelectorV2',
+    type: 'ComponentFamilySelector',
     key,
     selectorFamily,
   };

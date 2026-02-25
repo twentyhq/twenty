@@ -1,6 +1,6 @@
 import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
 import { useSortedFavorites } from '@/favorites/hooks/useSortedFavorites';
-import { openFavoriteFolderIdsStateV2 } from '@/favorites/states/openFavoriteFolderIdsStateV2';
+import { openFavoriteFolderIdsState } from '@/favorites/states/openFavoriteFolderIdsState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -13,9 +13,7 @@ export const useHandleFavoriteDragAndDrop = () => {
   const { favorites } = usePrefetchedFavoritesData();
   const { favoritesSorted } = useSortedFavorites();
   const { updateOneRecord } = useUpdateOneRecord();
-  const setOpenFavoriteFolderIds = useSetAtomState(
-    openFavoriteFolderIdsStateV2,
-  );
+  const setOpenFavoriteFolderIds = useSetAtomState(openFavoriteFolderIdsState);
 
   const openDestinationFolder = (folderId: string | null) => {
     if (!folderId) return;

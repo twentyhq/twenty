@@ -10,32 +10,38 @@ image: /images/user-guide/fields/field.png
 Отображает панель навигации с хлебными крошками.
 
 <Tabs>
-  <Tab title="Использование">
-    ```jsx
-    import { BrowserRouter } from "react-router-dom";
-    import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+<Tab title="Использование">
 
-    export const MyComponent = () => {
-      const breadcrumbLinks = [
-        { children: "Home", href: "/" },
-        { children: "Category", href: "/category" },
-        { children: "Subcategory", href: "/category/subcategory" },
-        { children: "Current Page" },
-      ];
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
 
-      return (
-        <BrowserRouter>
-          <Breadcrumb className links={breadcrumbLinks} />
-        </BrowserRouter>
-        )
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
 
-  <Tab title="Свойства">
-    | Свойства  | Тип    | Описание                                                                                                                                                                                                                          |
-    | --------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | className | строка | Дополнительное имя класса для дополнительной стилизации                                                                                                                                                                           |
-    | ссылки    | массив | Массив объектов, каждый из которых представляет собой ссылку-хлебную крошку. Каждый объект имеет свойство `children` (текстовое содержимое ссылки) и необязательное свойство `href` (URL-адрес для перехода по ссылке при щелчке) |
-  </Tab>
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="Свойства">
+
+
+| Свойства  | Тип    | Описание                                                                                                                                                                                                                          |
+| --------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className | строка | Дополнительное имя класса для дополнительной стилизации                                                                                                                                                                           |
+| ссылки    | массив | Массив объектов, каждый из которых представляет собой ссылку-хлебную крошку. Каждый объект имеет свойство `children` (текстовое содержимое ссылки) и необязательное свойство `href` (URL-адрес для перехода по ссылке при щелчке) |
+
+
+
+</Tab>
 </Tabs>

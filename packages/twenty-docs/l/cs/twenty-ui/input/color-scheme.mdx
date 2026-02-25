@@ -12,28 +12,36 @@ image: /images/user-guide/fields/field.png
 Zobrazuje různá barevná schémata a je speciálně přizpůsobená pro světlé a tmavé motivy.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { ColorSchemeCard } from "twenty-ui/display";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
-      return (
-          <ColorSchemeCard
-          variant="Dark"
-          selected={true}
-          />
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti       | Typ                                     | Popis                                                                          | Výchozí |
-    | ---------------- | --------------------------------------- | ------------------------------------------------------------------------------ | ------- |
-    | varianta         | řetězec                                 | Varianta barevného schématu. Možnosti zahrnují `Tmavý`, `Světlý` a `Systémový` | světlý  |
-    | vybráno          | booleovská hodnota                      | If `true`, displays a checkmark to indicate the selected color scheme          |         |
-    | další vlastnosti | `React.ComponentPropsWithoutRef<'div'>` | Standardní vlastnosti HTML `div` elementu                                      |         |
-  </Tab>
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti       | Typ                                     | Popis                                                                          | Výchozí |
+| ---------------- | --------------------------------------- | ------------------------------------------------------------------------------ | ------- |
+| varianta         | řetězec                                 | Varianta barevného schématu. Možnosti zahrnují `Tmavý`, `Světlý` a `Systémový` | světlý  |
+| vybráno          | booleovská hodnota                      | If `true`, displays a checkmark to indicate the selected color scheme          |         |
+| další vlastnosti | `React.ComponentPropsWithoutRef<'div'>` | Standardní vlastnosti HTML `div` elementu                                      |         |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Výběr barevného schématu
@@ -41,23 +49,31 @@ Zobrazuje různá barevná schémata a je speciálně přizpůsobená pro světl
 Umožňuje uživatelům vybrat různá barevná schémata.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { ColorSchemePicker } from "twenty-ui/display";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
-      return <ColorSchemePicker
-      value="Dark"
-      onChange
-      />;
-    };
-    ```
-  </Tab>
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti | Typ              | Popis                                                                                  |
-    | ---------- | ---------------- | -------------------------------------------------------------------------------------- |
-    | hodnota    | `Barevné schéma` | Aktuálně vybrané barevné schéma                                                        |
-    | onChange   | funkce           | Funkce zpětného volání, kterou chcete spustit při výběru barevného schématu uživatelem |
-  </Tab>
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti | Typ              | Popis                                                                                  |
+| ---------- | ---------------- | -------------------------------------------------------------------------------------- |
+| hodnota    | `Barevné schéma` | Aktuálně vybrané barevné schéma                                                        |
+| onChange   | funkce           | Funkce zpětného volání, kterou chcete spustit při výběru barevného schématu uživatelem |
+
+
+
+</Tab>
+
 </Tabs>

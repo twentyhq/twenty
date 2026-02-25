@@ -22,7 +22,6 @@ export const RestoreMultipleRecordsAction = () => {
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
-    recordIndexId,
   );
 
   if (!contextStoreCurrentViewId) {
@@ -39,22 +38,18 @@ export const RestoreMultipleRecordsAction = () => {
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
-    recordIndexId,
   );
 
   const contextStoreFilters = useAtomComponentStateValue(
     contextStoreFiltersComponentState,
-    recordIndexId,
   );
 
   const contextStoreFilterGroups = useAtomComponentStateValue(
     contextStoreFilterGroupsComponentState,
-    recordIndexId,
   );
 
   const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
     contextStoreAnyFieldFilterValueComponentState,
-    recordIndexId,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();

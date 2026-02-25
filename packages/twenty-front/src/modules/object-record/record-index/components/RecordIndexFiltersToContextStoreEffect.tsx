@@ -1,22 +1,31 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import {
+  contextStoreTargetedRecordsRuleComponentState,
+  type ContextStoreTargetedRecordsRule,
+} from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { atom, useStore } from 'jotai';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const RecordIndexFiltersToContextStoreEffect = () => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
+
+  const store = useStore();
 
   const recordIndexFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
@@ -28,92 +37,158 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     recordIndexId,
   );
 
-  const setContextStoreTargetedRecords = useSetAtomComponentState(
-    contextStoreTargetedRecordsRuleComponentState,
-    recordIndexId,
-  );
-
-  const hasUserSelectedAllRows = useAtomComponentStateValue(
-    hasUserSelectedAllRowsComponentState,
-    recordIndexId,
-  );
-
-  const selectedRowIds = useAtomComponentSelectorValue(
-    selectedRowIdsComponentSelector,
-    recordIndexId,
-  );
-  const unselectedRowIds = useAtomComponentSelectorValue(
-    unselectedRowIdsComponentSelector,
-    recordIndexId,
-  );
-
-  useEffect(() => {
-    if (hasUserSelectedAllRows) {
-      setContextStoreTargetedRecords({
-        mode: 'exclusion',
-        excludedRecordIds: unselectedRowIds,
-      });
-    } else {
-      setContextStoreTargetedRecords({
-        mode: 'selection',
-        selectedRecordIds: selectedRowIds,
-      });
-    }
-
-    return () => {
-      setContextStoreTargetedRecords({
-        mode: 'selection',
-        selectedRecordIds: [],
-      });
-    };
-  }, [
-    hasUserSelectedAllRows,
-    selectedRowIds,
-    setContextStoreTargetedRecords,
-    unselectedRowIds,
-  ]);
-
-  const setContextStoreFilters = useSetAtomComponentState(
-    contextStoreFiltersComponentState,
-    recordIndexId,
-  );
-
-  const setContextStoreFilterGroups = useSetAtomComponentState(
-    contextStoreFilterGroupsComponentState,
-    recordIndexId,
-  );
-
-  useEffect(() => {
-    setContextStoreFilters(recordIndexFilters);
-    setContextStoreFilterGroups(recordIndexFilterGroups);
-
-    return () => {
-      setContextStoreFilters([]);
-    };
-  }, [
-    recordIndexFilterGroups,
-    recordIndexFilters,
-    setContextStoreFilterGroups,
-    setContextStoreFilters,
-  ]);
-
-  const setContextStoreAnyFieldFilterValue = useSetAtomComponentState(
-    contextStoreAnyFieldFilterValueComponentState,
-    recordIndexId,
-  );
-
   const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
     recordIndexId,
   );
 
+  const hasUserSelectedAllRowsAtom = useAtomComponentStateCallbackState(
+    hasUserSelectedAllRowsComponentState,
+    recordIndexId,
+  );
+
+  const selectedRowIdsAtom = useAtomComponentSelectorCallbackState(
+    selectedRowIdsComponentSelector,
+    recordIndexId,
+  );
+
+  const unselectedRowIdsAtom = useAtomComponentSelectorCallbackState(
+    unselectedRowIdsComponentSelector,
+    recordIndexId,
+  );
+
+  const contextStoreTargetedRecordsRuleAtom =
+    useAtomComponentStateCallbackState(
+      contextStoreTargetedRecordsRuleComponentState,
+    );
+
+  const contextStoreFiltersAtom = useAtomComponentStateCallbackState(
+    contextStoreFiltersComponentState,
+  );
+
+  const contextStoreFilterGroupsAtom = useAtomComponentStateCallbackState(
+    contextStoreFilterGroupsComponentState,
+  );
+
+  const contextStoreAnyFieldFilterValueAtom =
+    useAtomComponentStateCallbackState(
+      contextStoreAnyFieldFilterValueComponentState,
+    );
+
+  const syncWriteAtom = useMemo(
+    () =>
+      atom(
+        null,
+        (
+          get,
+          set,
+          payload: {
+            filters: RecordFilter[];
+            filterGroups: RecordFilterGroup[];
+            anyFieldFilterValue: string;
+          },
+        ) => {
+          const hasUserSelectedAllRows = get(hasUserSelectedAllRowsAtom);
+          let newRule: ContextStoreTargetedRecordsRule;
+
+          if (hasUserSelectedAllRows) {
+            const unselectedRowIds = get(unselectedRowIdsAtom);
+            newRule = {
+              mode: 'exclusion',
+              excludedRecordIds: unselectedRowIds,
+            };
+          } else {
+            const selectedRowIds = get(selectedRowIdsAtom);
+            newRule = {
+              mode: 'selection',
+              selectedRecordIds: selectedRowIds,
+            };
+          }
+
+          const currentRule = get(contextStoreTargetedRecordsRuleAtom);
+          if (!isDeeplyEqual(currentRule, newRule)) {
+            set(contextStoreTargetedRecordsRuleAtom, newRule);
+          }
+
+          const currentFilters = get(contextStoreFiltersAtom);
+          if (!isDeeplyEqual(currentFilters, payload.filters)) {
+            set(contextStoreFiltersAtom, payload.filters);
+          }
+
+          const currentFilterGroups = get(contextStoreFilterGroupsAtom);
+          if (!isDeeplyEqual(currentFilterGroups, payload.filterGroups)) {
+            set(contextStoreFilterGroupsAtom, payload.filterGroups);
+          }
+
+          const currentAnyFieldFilter = get(
+            contextStoreAnyFieldFilterValueAtom,
+          );
+          if (currentAnyFieldFilter !== payload.anyFieldFilterValue) {
+            set(
+              contextStoreAnyFieldFilterValueAtom,
+              payload.anyFieldFilterValue,
+            );
+          }
+        },
+      ),
+    [
+      hasUserSelectedAllRowsAtom,
+      selectedRowIdsAtom,
+      unselectedRowIdsAtom,
+      contextStoreTargetedRecordsRuleAtom,
+      contextStoreFiltersAtom,
+      contextStoreFilterGroupsAtom,
+      contextStoreAnyFieldFilterValueAtom,
+    ],
+  );
+
+  const resetWriteAtom = useMemo(
+    () =>
+      atom(null, (get, set) => {
+        const currentRule = get(contextStoreTargetedRecordsRuleAtom);
+        const resetRule: ContextStoreTargetedRecordsRule = {
+          mode: 'selection',
+          selectedRecordIds: [],
+        };
+        if (!isDeeplyEqual(currentRule, resetRule)) {
+          set(contextStoreTargetedRecordsRuleAtom, resetRule);
+        }
+
+        const currentFilters = get(contextStoreFiltersAtom);
+        if (!isDeeplyEqual(currentFilters, [])) {
+          set(contextStoreFiltersAtom, []);
+        }
+
+        const currentAnyFieldFilter = get(contextStoreAnyFieldFilterValueAtom);
+        if (currentAnyFieldFilter !== '') {
+          set(contextStoreAnyFieldFilterValueAtom, '');
+        }
+      }),
+    [
+      contextStoreTargetedRecordsRuleAtom,
+      contextStoreFiltersAtom,
+      contextStoreAnyFieldFilterValueAtom,
+    ],
+  );
+
   useEffect(() => {
-    setContextStoreAnyFieldFilterValue(anyFieldFilterValue);
+    store.set(syncWriteAtom, {
+      filters: recordIndexFilters,
+      filterGroups: recordIndexFilterGroups,
+      anyFieldFilterValue,
+    });
 
     return () => {
-      setContextStoreAnyFieldFilterValue('');
+      store.set(resetWriteAtom);
     };
-  }, [anyFieldFilterValue, setContextStoreAnyFieldFilterValue]);
+  }, [
+    recordIndexFilters,
+    recordIndexFilterGroups,
+    anyFieldFilterValue,
+    store,
+    syncWriteAtom,
+    resetWriteAtom,
+  ]);
 
   return <></>;
 };

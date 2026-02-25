@@ -2,10 +2,10 @@ import { useAtomValue } from 'jotai';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type ComponentStateV2 } from '@/ui/utilities/state/jotai/types/ComponentStateV2';
+import { type ComponentState } from '@/ui/utilities/state/jotai/types/ComponentState';
 
 export const useAtomComponentStateValue = <StateType>(
-  componentState: ComponentStateV2<StateType>,
+  componentState: ComponentState<StateType>,
   instanceIdFromProps?: string,
 ): StateType => {
   const componentInstanceContext = globalComponentInstanceContextMap.get(

@@ -5,7 +5,6 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
-import { RecoilRoot } from 'recoil';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconArrowDown, IconDotsVertical } from 'twenty-ui/display';
 
@@ -25,9 +24,7 @@ const mockedNavigationStack = [
 ];
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <RecoilRoot>{children}</RecoilRoot>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 describe('useUpdateCommandMenuPageInfo', () => {

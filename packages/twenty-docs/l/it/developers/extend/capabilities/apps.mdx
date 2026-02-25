@@ -4,7 +4,7 @@ description: Crea e gestisci le personalizzazioni di Twenty come codice.
 ---
 
 <Warning>
-  Le app sono attualmente in fase alfa. La funzionalità è funzionante ma ancora in evoluzione.
+Le app sono attualmente in fase alfa. La funzionalità è funzionante ma ancora in evoluzione.
 </Warning>
 
 ## Cosa sono le app?
@@ -31,13 +31,6 @@ Crea una nuova app utilizzando lo scaffolder ufficiale, quindi autenticati e ini
 # Crea lo scaffold di una nuova app (include tutti gli esempi per impostazione predefinita)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
-
-# Se non usi yarn@4
-corepack enable
-yarn install
-
-# Autenticati usando la tua API key (ti verrà richiesto)
-yarn twenty auth:login
 
 # Avvia la modalità di sviluppo: sincronizza automaticamente le modifiche locali con il tuo workspace
 yarn twenty app:dev
@@ -154,7 +147,7 @@ L'SDK rileva le entità analizzando i tuoi file TypeScript alla ricerca di chiam
 | `defineSkill()`              | AI agent skill definitions                     |
 
 <Note>
-  **La denominazione dei file è flessibile.** Il rilevamento delle entità è basato sull'AST — l'SDK esegue la scansione dei file sorgente alla ricerca del pattern `export default define<Entity>({...})`. Puoi organizzare file e cartelle come preferisci. Raggruppare per tipo di entità (ad es., `logic-functions/`, `roles/`) è solo una convenzione per l'organizzazione del codice, non un requisito.
+**La denominazione dei file è flessibile.** Il rilevamento delle entità è basato sull'AST — l'SDK esegue la scansione dei file sorgente alla ricerca del pattern `export default define<Entity>({...})`. Puoi organizzare file e cartelle come preferisci. Raggruppare per tipo di entità (ad es., `logic-functions/`, `roles/`) è solo una convenzione per l'organizzazione del codice, non un requisito.
 </Note>
 
 Esempio di entità rilevata:
@@ -312,11 +305,11 @@ Punti chiave:
 * Puoi generare nuovi oggetti con `yarn twenty entity:add`, che ti guida nella denominazione, nei campi e nelle relazioni.
 
 <Note>
-  **I campi base vengono creati automaticamente.** Quando definisci un oggetto personalizzato, Twenty aggiunge automaticamente i campi standard
-  come `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`.
-  Non è necessario definirli nel tuo array `fields` — aggiungi solo i tuoi campi personalizzati.
-  Puoi sovrascrivere i campi predefiniti definendo un campo con lo stesso nome nel tuo array `fields`,
-  ma non è consigliato.
+**I campi base vengono creati automaticamente.** Quando definisci un oggetto personalizzato, Twenty aggiunge automaticamente i campi standard
+come `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`.
+Non è necessario definirli nel tuo array `fields` — aggiungi solo i tuoi campi personalizzati.
+Puoi sovrascrivere i campi predefiniti definendo un campo con lo stesso nome nel tuo array `fields`,
+ma non è consigliato.
 </Note>
 
 ### Configurazione dell'applicazione (application-config.ts)
@@ -550,27 +543,25 @@ Punti chiave:
 ### Payload del trigger di route
 
 <Warning>
-  **Modifica non retrocompatibile (v1.16, gennaio 2026):** Il formato del payload del trigger di route è cambiato. Prima della v1.16, i parametri di query, i parametri di percorso e il corpo venivano inviati direttamente come payload. A partire dalla v1.16, sono annidati all'interno di un oggetto `RoutePayload` strutturato.
+**Modifica non retrocompatibile (v1.16, gennaio 2026):** Il formato del payload del trigger di route è cambiato. Prima della v1.16, i parametri di query, i parametri di percorso e il corpo venivano inviati direttamente come payload. A partire dalla v1.16, sono annidati all'interno di un oggetto `RoutePayload` strutturato.
 
-  **Prima della v1.16:**
+**Prima della v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
 
-  ```typescript
-  const handler = async (params) => {
-    const { param1, param2 } = params; // Direct access
-  };
-  ```
+**Dopo la v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
 
-  **Dopo la v1.16:**
-
-  ```typescript
-  const handler = async (event: RoutePayload) => {
-    const { param1, param2 } = event.body; // Access via .body
-    const { queryParam } = event.queryStringParameters;
-    const { id } = event.pathParameters;
-  };
-  ```
-
-  **Per migrare le funzioni esistenti:** Aggiorna l'handler per estrarre i dati da `event.body`, `event.queryStringParameters` o `event.pathParameters` invece che direttamente dall'oggetto `params`.
+**Per migrare le funzioni esistenti:** Aggiorna l'handler per estrarre i dati da `event.body`, `event.queryStringParameters` o `event.pathParameters` invece che direttamente dall'oggetto `params`.
 </Warning>
 
 Quando un trigger di route invoca la tua funzione logica, questa riceve un oggetto `RoutePayload` che segue il formato AWS HTTP API v2. Importa il tipo da `twenty-sdk`:
@@ -706,7 +697,7 @@ Punti chiave:
 * È possibile combinare `isTool` con i trigger — una funzione può essere sia uno strumento (invocabile dagli agenti IA) sia attivata da eventi (cron, eventi del database, routes) contemporaneamente.
 
 <Note>
-  **Scrivi una buona `description`.** Gli agenti IA fanno affidamento sul campo `description` della funzione per decidere quando usare lo strumento. Sii specifico su cosa fa lo strumento e quando dovrebbe essere invocato.
+**Scrivi una buona `description`.** Gli agenti IA fanno affidamento sul campo `description` della funzione per decidere quando usare lo strumento. Sii specifico su cosa fa lo strumento e quando dovrebbe essere invocato.
 </Note>
 
 ### Componenti front-end

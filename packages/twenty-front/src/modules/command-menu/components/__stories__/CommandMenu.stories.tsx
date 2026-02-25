@@ -27,7 +27,7 @@ import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -86,7 +86,7 @@ const meta: Meta<typeof CommandMenu> = {
         currentUserWorkspaceState.atom,
         mockedUserData.currentUserWorkspace,
       );
-      jotaiStore.set(isCommandMenuOpenedStateV2.atom, true);
+      jotaiStore.set(isCommandMenuOpenedState.atom, true);
       jotaiStore.set(commandMenuNavigationStackState.atom, [
         {
           page: CommandMenuPages.Root,

@@ -21,7 +21,7 @@ const mockUseFilterValueDependencies = jest.mocked(useFilterValueDependencies);
 const mockUseContextStoreObjectMetadataItemOrThrow = jest.mocked(
   useContextStoreObjectMetadataItemOrThrow,
 );
-const mockUseRecoilComponentValueV2 = jest.mocked(useAtomComponentStateValue);
+const mockUseAtomComponentStateValue = jest.mocked(useAtomComponentStateValue);
 
 describe('useUpdateMultipleRecordsActions', () => {
   const mockIncrementalUpdateManyRecords = jest.fn();
@@ -45,7 +45,7 @@ describe('useUpdateMultipleRecordsActions', () => {
       filterValueDependencies: {},
     } as any);
 
-    mockUseRecoilComponentValueV2.mockReturnValue({});
+    mockUseAtomComponentStateValue.mockReturnValue({});
 
     mockComputeContextStoreFilters.mockReturnValue('mock-filter' as any);
   });

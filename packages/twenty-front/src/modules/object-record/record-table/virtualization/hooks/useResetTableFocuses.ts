@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
@@ -12,11 +14,15 @@ export const useResetTableFocuses = (recordTableId: string) => {
     recordTableId,
   );
 
-  const resetTableFocuses = () => {
+  const resetTableFocuses = useCallback(() => {
     unfocusRecordTableCell();
     unfocusRecordTableRow();
     setRecordTableHoverPosition(null);
-  };
+  }, [
+    unfocusRecordTableCell,
+    unfocusRecordTableRow,
+    setRecordTableHoverPosition,
+  ]);
 
   return {
     resetTableFocuses,

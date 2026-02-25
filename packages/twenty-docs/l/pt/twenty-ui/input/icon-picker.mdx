@@ -10,43 +10,52 @@ image: /images/user-guide/github/github-header.png
 Um seletor de ícones baseado em lista suspensa que permite aos usuários selecionar um ícone de uma lista.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { RecoilRoot } from "recoil";
-    import React, { useState } from "react";
-    import { IconPicker } from "@/ui/input/components/IconPicker";
 
-    export const MyComponent = () => {
+<Tab title="Uso">
 
-       const [selectedIcon, setSelectedIcon] = useState("");
-       const handleIconChange = ({ iconKey, Icon }) => {
-         console.log("Selected Icon:", iconKey);
-         setSelectedIcon(iconKey);
-       };
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
 
-      return (
-        <RecoilRoot>
-          <IconPicker
-            disabled={false}
-            onChange={handleIconChange}
-            selectedIconKey={selectedIcon}
-            variant="primary"
-          />
-        </RecoilRoot>
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
 
-  <Tab title="Propriedades">
-    | Propriedades    | Tipo     | Descrição                                                                                                                                |
-    | --------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-    | desativado      | booleano | Desativa o seletor de ícones se definido como `true`                                                                                     |
-    | onChange        | função   | A função de retorno de chamada acionada quando o usuário seleciona um ícone. Ele recebe um objeto com as propriedades `iconKey` e `Icon` |
-    | selectedIconKey | string   | A chave do ícone selecionado inicialmente                                                                                                |
-    | onClickOutside  | função   | Função de retorno de chamada acionada quando o usuário clica fora da lista suspensa                                                      |
-    | onClose         | função   | Função de retorno de chamada acionada quando a lista suspensa é fechada                                                                  |
-    | onOpen          | função   | Função de retorno de chamada acionada quando a lista suspensa é aberta                                                                   |
-    | variante        | string   | A variante de estilo visual do ícone clicável. As opções incluem: `primária`, `secundária` e `terciária`                                 |
-  </Tab>
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+
+</Tab>
+<Tab title="Propriedades">
+
+
+| Propriedades    | Tipo     | Descrição                                                                                                                                |
+| --------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| desativado      | booleano | Desativa o seletor de ícones se definido como `true`                                                                                     |
+| onChange        | função   | A função de retorno de chamada acionada quando o usuário seleciona um ícone. Ele recebe um objeto com as propriedades `iconKey` e `Icon` |
+| selectedIconKey | string   | A chave do ícone selecionado inicialmente                                                                                                |
+| onClickOutside  | função   | Função de retorno de chamada acionada quando o usuário clica fora da lista suspensa                                                      |
+| onClose         | função   | Função de retorno de chamada acionada quando a lista suspensa é fechada                                                                  |
+| onOpen          | função   | Função de retorno de chamada acionada quando a lista suspensa é aberta                                                                   |
+| variante        | string   | A variante de estilo visual do ícone clicável. As opções incluem: `primária`, `secundária` e `terciária`                                 |
+
+
+
+
+</Tab>
 </Tabs>

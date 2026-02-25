@@ -8,7 +8,7 @@ import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { settingsAccountsSelectedMessageChannelStateV2 } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelStateV2';
+import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -31,7 +31,7 @@ export const SettingsAccountsConfiguration = () => {
   const [startChannelSyncMutation, { loading: isSubmitting }] =
     useStartChannelSyncMutation();
   const setSelectedMessageChannel = useSetAtomState(
-    settingsAccountsSelectedMessageChannelStateV2,
+    settingsAccountsSelectedMessageChannelState,
   );
 
   const [currentStep, setCurrentStep] =
