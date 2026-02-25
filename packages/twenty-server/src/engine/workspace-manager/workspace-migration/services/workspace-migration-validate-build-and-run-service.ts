@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MetadataEventEmitter } from 'src/engine/metadata-event-emitter/metadata-event-emitter';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -68,6 +69,77 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     this.isDebugEnabled = logLevels.includes('debug');
   }
 
+  private computeAllInvolvedApplicationIds({
+    allFlatEntityOperationByMetadataName,
+    flatApplicationMaps,
+    applicationUniversalIdentifier,
+  }: Pick<
+    ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs,
+    'allFlatEntityOperationByMetadataName' | 'applicationUniversalIdentifier'
+  > & {
+    flatApplicationMaps: FlatApplicationCacheMaps;
+  }): string[] {
+    const applicationIds = new Set<string>();
+
+    const applicationId =
+      flatApplicationMaps.idByUniversalIdentifier[
+        applicationUniversalIdentifier
+      ];
+
+    const twentyStandardApplicationId =
+      flatApplicationMaps.idByUniversalIdentifier[
+        TWENTY_STANDARD_APPLICATION.universalIdentifier
+      ];
+
+    if (!isDefined(twentyStandardApplicationId) || !isDefined(applicationId)) {
+      throw new FlatEntityMapsException(
+        'Application to build and its dependent application not found',
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    applicationIds.add(applicationId);
+
+    const isBuildingTwentyStandardApplication =
+      applicationUniversalIdentifier ===
+      TWENTY_STANDARD_APPLICATION.universalIdentifier;
+
+    if (!isBuildingTwentyStandardApplication) {
+      applicationIds.add(twentyStandardApplicationId);
+    }
+
+    for (const metadataName of Object.keys(
+      allFlatEntityOperationByMetadataName,
+    ) as AllMetadataName[]) {
+      const flatEntityOperations =
+        allFlatEntityOperationByMetadataName[metadataName];
+
+      if (!isDefined(flatEntityOperations)) {
+        continue;
+      }
+
+      const { flatEntityToCreate, flatEntityToUpdate, flatEntityToDelete } =
+        flatEntityOperations;
+
+      for (const flatEntity of [
+        ...flatEntityToCreate,
+        ...flatEntityToUpdate,
+        ...flatEntityToDelete,
+      ]) {
+        const entityApplicationId =
+          flatApplicationMaps.idByUniversalIdentifier[
+            flatEntity.applicationUniversalIdentifier
+          ];
+
+        if (isDefined(entityApplicationId)) {
+          applicationIds.add(entityApplicationId);
+        }
+      }
+    }
+
+    return [...applicationIds];
+  }
+
   private async computeAllRelatedFlatEntityMaps({
     allFlatEntityOperationByMetadataName,
     workspaceId,
@@ -105,26 +177,11 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       {},
     );
 
-    const twentyStandardApplicationId =
-      flatApplicationMaps.idByUniversalIdentifier[
-        TWENTY_STANDARD_APPLICATION.universalIdentifier
-      ];
-
-    const applicationId =
-      flatApplicationMaps.idByUniversalIdentifier[
-        applicationUniversalIdentifier
-      ];
-
-    if (!isDefined(twentyStandardApplicationId) || !isDefined(applicationId)) {
-      throw new FlatEntityMapsException(
-        'Application to build and its dependent application not found',
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
-
-    const isBuildingTwentyStandardApplication =
-      applicationUniversalIdentifier ===
-      TWENTY_STANDARD_APPLICATION.universalIdentifier;
+    const applicationIds = this.computeAllInvolvedApplicationIds({
+      allFlatEntityOperationByMetadataName,
+      flatApplicationMaps,
+      applicationUniversalIdentifier,
+    });
 
     const dependencyAllFlatEntityMaps = allMetadataNameCacheToCompute.reduce(
       (allFlatEntityMaps, metadataName) => {
@@ -137,9 +194,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
             getSubFlatEntityMapsByApplicationIdsOrThrow<
               MetadataFlatEntity<typeof metadataName>
             >({
-              applicationIds: isBuildingTwentyStandardApplication
-                ? [applicationId]
-                : [applicationId, twentyStandardApplicationId],
+              applicationIds,
               flatEntityMaps:
                 allRelatedFlatEntityMaps[metadataFlatEntityMapsKey],
             }),
