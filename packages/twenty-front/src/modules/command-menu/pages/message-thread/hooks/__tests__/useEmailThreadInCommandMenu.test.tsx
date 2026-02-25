@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from '@testing-library/react';
 
 import { fetchAllThreadMessagesOperationSignatureFactory } from '@/activities/emails/graphql/operation-signatures/factories/fetchAllThreadMessagesOperationSignatureFactory';
+import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import gql from 'graphql-tag';
 import {
@@ -13,14 +13,12 @@ import {
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const messageMetadataItem = getMockObjectMetadataItemOrThrow('message');
-const messageParticipantMetadataItem = getMockObjectMetadataItemOrThrow(
-  'messageParticipant',
-);
+const messageParticipantMetadataItem =
+  getMockObjectMetadataItemOrThrow('messageParticipant');
 
 const messageOperationSignature =
   fetchAllThreadMessagesOperationSignatureFactory({
