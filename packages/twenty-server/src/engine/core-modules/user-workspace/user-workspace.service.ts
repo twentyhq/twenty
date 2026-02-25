@@ -457,17 +457,21 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
 
     if (!isDefined(pictureUrl) || pictureUrl === '') return;
 
-    const { files } = await this.fileUploadService.uploadImageFromUrl({
-      imageUrl: pictureUrl,
-      fileFolder: FileFolder.ProfilePicture,
-      workspaceId,
-    });
+    try {
+      const { files } = await this.fileUploadService.uploadImageFromUrl({
+        imageUrl: pictureUrl,
+        fileFolder: FileFolder.ProfilePicture,
+        workspaceId,
+      });
 
-    if (!files.length) {
-      throw new Error('Failed to upload avatar');
+      if (!files.length) {
+        return;
+      }
+
+      return files[0].path;
+    } catch {
+      return;
     }
-
-    return files[0].path;
   }
 
   private async computeDefaultAvatarUrlMigrated(
@@ -520,17 +524,21 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
 
     if (!isDefined(pictureUrl) || pictureUrl === '') return;
 
-    const savedFile =
-      await this.fileCorePictureService.uploadWorkspaceMemberProfilePictureFromUrl(
-        {
-          imageUrl: pictureUrl,
-          workspaceId,
-          applicationUniversalIdentifier,
-          queryRunner,
-        },
-      );
+    try {
+      const savedFile =
+        await this.fileCorePictureService.uploadWorkspaceMemberProfilePictureFromUrl(
+          {
+            imageUrl: pictureUrl,
+            workspaceId,
+            applicationUniversalIdentifier,
+            queryRunner,
+          },
+        );
 
-    return savedFile?.url;
+      return savedFile?.url;
+    } catch {
+      return;
+    }
   }
 
   castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {
