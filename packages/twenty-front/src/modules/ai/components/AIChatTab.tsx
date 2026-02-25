@@ -15,13 +15,16 @@ import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContext
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
-import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
-import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
+import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
+import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
+import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
+import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
@@ -139,17 +142,23 @@ const StyledReadOnlyModelButton = styled(LightButton)`
 export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const isMobile = useIsMobile();
-  const { isLoading, messages, isStreaming, error, handleSendMessage } =
-    useAgentChatContextOrThrow();
-  const hasMessages = messages.length > 0;
+
+  const agentChatMessageIds = useAtomComponentSelectorValue(
+    agentChatMessageIdsComponentSelector,
+  );
+
+  const hasMessages = agentChatMessageIds.length > 0;
 
   const { uploadFiles } = useAIChatFileUpload();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
 
-  const { editor, handleSendAndClear } = useAIChatEditor({
-    onSendMessage: handleSendMessage,
-  });
+  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
+  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
+
+  const { editor, handleSendAndClear } = useAIChatEditor();
+
+  const agentChatError = useAtomStateValue(agentChatErrorState);
 
   return (
     <StyledContainer
@@ -168,36 +177,39 @@ export const AIChatTab = () => {
             <StyledScrollWrapper
               componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}
             >
-              {messages.map((message, index) => {
-                const isLastMessage = index === messages.length - 1;
-                const isLastMessageStreaming = isStreaming && isLastMessage;
-                const isLastAssistantMessage =
-                  isLastMessage && message.role === AgentMessageRole.ASSISTANT;
-                const shouldShowError = error && isLastAssistantMessage;
+              {agentChatMessageIds.map((messageId, index) => {
+                const isLastMessage = index === agentChatMessageIds.length - 1;
+                const isLastMessageStreaming =
+                  agentChatIsStreaming && isLastMessage;
+                // const isLastAssistantMessage =
+                //   isLastMessage &&
+                //   lastMessage?.role === AgentMessageRole.ASSISTANT;
+                // const shouldShowError =
+                //   agentChatError && isLastAssistantMessage;
 
                 return (
                   <AIChatMessage
                     isLastMessageStreaming={isLastMessageStreaming}
-                    message={message}
-                    key={message.id}
-                    error={shouldShowError ? error : null}
+                    messageId={messageId}
+                    key={messageId}
+                    error={null}
                   />
                 );
               })}
-              {error &&
-                !isStreaming &&
-                messages.at(-1)?.role === AgentMessageRole.USER && (
-                  <AIChatStandaloneError error={error} />
-                )}
+              {/* {agentChatError &&
+                !agentChatIsStreaming &&
+                lastMessage?.role === AgentMessageRole.USER && (
+                  <AIChatStandaloneError error={agentChatError} />
+                )} */}
             </StyledScrollWrapper>
           )}
-          {!hasMessages && !error && !isLoading && (
+          {!hasMessages && !agentChatError && !agentChatIsLoading && (
             <AIChatEmptyState editor={editor} />
           )}
-          {!hasMessages && error && !isLoading && (
-            <AIChatStandaloneError error={error} />
+          {!hasMessages && agentChatError && !agentChatIsLoading && (
+            <AIChatStandaloneError error={agentChatError} />
           )}
-          {isLoading && !hasMessages && <AIChatSkeletonLoader />}
+          {agentChatIsLoading && !hasMessages && <AIChatSkeletonLoader />}
 
           <StyledInputArea isMobile={isMobile}>
             <AgentChatContextPreview />

@@ -1,4 +1,5 @@
-import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
+import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -46,7 +47,8 @@ type AIChatErrorMessageProps = {
 
 export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
   const theme = useTheme();
-  const { handleRetry, isStreaming } = useAgentChatContextOrThrow();
+
+  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
 
   return (
     <StyledErrorContainer>
@@ -63,8 +65,8 @@ export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
         variant="secondary"
         size="small"
         Icon={IconRefresh}
-        onClick={handleRetry}
-        disabled={isStreaming}
+        onClick={() => {}}
+        disabled={agentChatIsStreaming}
         title={t`Retry`}
       />
     </StyledErrorContainer>

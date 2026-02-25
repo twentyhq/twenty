@@ -1,5 +1,6 @@
-import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
-import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatInputIsEmptySelector } from '@/ai/states/agentChatInputIsEmptySelector';
+import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
+import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/display';
 import { RoundedIconButton } from 'twenty-ui/input';
@@ -9,15 +10,20 @@ type SendMessageButtonProps = {
 };
 
 export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
-  const agentChatInput = useAtomStateValue(agentChatInputState);
-  const { handleStop, isLoading, isStreaming } = useAgentChatContextOrThrow();
+  const agentChatInputIsEmpty = useAtomStateValue(
+    agentChatInputIsEmptySelector,
+  );
 
-  if (isStreaming) {
+  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
+
+  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
+
+  if (agentChatIsStreaming) {
     return (
       <RoundedIconButton
         Icon={IconPlayerStop}
         size="medium"
-        onClick={() => handleStop()}
+        onClick={() => {}}
       />
     );
   }
@@ -27,7 +33,7 @@ export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
       Icon={IconArrowUp}
       size="medium"
       onClick={onSend}
-      disabled={!agentChatInput || isLoading}
+      disabled={agentChatInputIsEmpty || agentChatIsLoading}
     />
   );
 };

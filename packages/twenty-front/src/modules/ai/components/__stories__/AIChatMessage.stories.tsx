@@ -1,10 +1,15 @@
 import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useEffect } from 'react';
 import { userEvent, within } from 'storybook/test';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
+
+import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
+import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
+import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
@@ -15,6 +20,39 @@ const StyledConversationContainer = styled.div`
   max-width: 700px;
   padding: 24px;
 `;
+
+const INSTANCE_ID = 'agentChatStoryInstance';
+
+const AgentChatMessageSetter = ({
+  message,
+  children,
+}: {
+  message: ExtendedUIMessage;
+  children: React.ReactNode;
+}) => {
+  const setMessage = useSetAtomComponentFamilyState(
+    agentChatMessageComponentFamilyState,
+    message.id,
+  );
+
+  useEffect(() => {
+    setMessage(message);
+  }, [message, setMessage]);
+
+  return <>{children}</>;
+};
+
+const AgentChatInstanceDecorator = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => (
+  <AgentChatComponentInstanceContext.Provider
+    value={{ instanceId: INSTANCE_ID }}
+  >
+    {children}
+  </AgentChatComponentInstanceContext.Provider>
+);
 
 // Mock messages for the conversation showcase
 const mockUserMessage: ExtendedUIMessage = {
@@ -238,70 +276,127 @@ type Story = StoryObj<typeof AIChatMessage>;
 // Conversation showcase - demonstrates a full AI chat flow
 export const ConversationWithCodeExecution: Story = {
   render: () => (
-    <StyledConversationContainer>
-      <AIChatMessage message={mockUserMessage} isLastMessageStreaming={false} />
-      <AIChatMessage
-        message={mockAssistantWithCodeExecution}
-        isLastMessageStreaming={false}
-      />
-    </StyledConversationContainer>
+    <AgentChatInstanceDecorator>
+      <StyledConversationContainer>
+        <AgentChatMessageSetter message={mockUserMessage}>
+          <AIChatMessage
+            messageId={mockUserMessage.id}
+            isLastMessageStreaming={false}
+          />
+        </AgentChatMessageSetter>
+        <AgentChatMessageSetter message={mockAssistantWithCodeExecution}>
+          <AIChatMessage
+            messageId={mockAssistantWithCodeExecution.id}
+            isLastMessageStreaming={false}
+          />
+        </AgentChatMessageSetter>
+      </StyledConversationContainer>
+    </AgentChatInstanceDecorator>
   ),
 };
 
 export const UserMessage: Story = {
-  args: {
-    message: mockUserMessage,
-    isLastMessageStreaming: false,
-  },
+  render: () => (
+    <AgentChatInstanceDecorator>
+      <AgentChatMessageSetter message={mockUserMessage}>
+        <AIChatMessage
+          messageId={mockUserMessage.id}
+          isLastMessageStreaming={false}
+        />
+      </AgentChatMessageSetter>
+    </AgentChatInstanceDecorator>
+  ),
 };
 
 export const AssistantTextResponse: Story = {
-  args: {
-    message: mockSimpleTextResponse,
-    isLastMessageStreaming: false,
-  },
+  render: () => (
+    <AgentChatInstanceDecorator>
+      <AgentChatMessageSetter message={mockSimpleTextResponse}>
+        <AIChatMessage
+          messageId={mockSimpleTextResponse.id}
+          isLastMessageStreaming={false}
+        />
+      </AgentChatMessageSetter>
+    </AgentChatInstanceDecorator>
+  ),
 };
 
 export const AssistantStreaming: Story = {
-  args: {
-    message: mockStreamingMessage,
-    isLastMessageStreaming: true,
-  },
+  render: () => (
+    <AgentChatInstanceDecorator>
+      <AgentChatMessageSetter message={mockStreamingMessage}>
+        <AIChatMessage
+          messageId={mockStreamingMessage.id}
+          isLastMessageStreaming={true}
+        />
+      </AgentChatMessageSetter>
+    </AgentChatInstanceDecorator>
+  ),
 };
 
 export const CodeExecutionRunning: Story = {
-  args: {
-    message: mockCodeExecutionRunning,
-    isLastMessageStreaming: false,
-  },
+  render: () => (
+    <AgentChatInstanceDecorator>
+      <AgentChatMessageSetter message={mockCodeExecutionRunning}>
+        <AIChatMessage
+          messageId={mockCodeExecutionRunning.id}
+          isLastMessageStreaming={false}
+        />
+      </AgentChatMessageSetter>
+    </AgentChatInstanceDecorator>
+  ),
 };
 
 export const CodeExecutionWithError: Story = {
-  args: {
-    message: mockCodeExecutionError,
-    isLastMessageStreaming: false,
-  },
+  render: () => (
+    <AgentChatInstanceDecorator>
+      <AgentChatMessageSetter message={mockCodeExecutionError}>
+        <AIChatMessage
+          messageId={mockCodeExecutionError.id}
+          isLastMessageStreaming={false}
+        />
+      </AgentChatMessageSetter>
+    </AgentChatInstanceDecorator>
+  ),
 };
 
 export const ThinkingStepsThinkingState: Story = {
-  args: {
-    message: mockThinkingStepsStreaming,
-    isLastMessageStreaming: true,
-  },
+  render: () => (
+    <AgentChatInstanceDecorator>
+      <AgentChatMessageSetter message={mockThinkingStepsStreaming}>
+        <AIChatMessage
+          messageId={mockThinkingStepsStreaming.id}
+          isLastMessageStreaming={true}
+        />
+      </AgentChatMessageSetter>
+    </AgentChatInstanceDecorator>
+  ),
 };
 
 export const ThinkingStepsDoneCollapsed: Story = {
-  args: {
-    message: mockThinkingStepsDone,
-    isLastMessageStreaming: false,
-  },
+  render: () => (
+    <AgentChatInstanceDecorator>
+      <AgentChatMessageSetter message={mockThinkingStepsDone}>
+        <AIChatMessage
+          messageId={mockThinkingStepsDone.id}
+          isLastMessageStreaming={false}
+        />
+      </AgentChatMessageSetter>
+    </AgentChatInstanceDecorator>
+  ),
 };
 
 export const ThinkingStepsDoneExpanded: Story = {
-  args: {
-    message: mockThinkingStepsDone,
-    isLastMessageStreaming: false,
-  },
+  render: () => (
+    <AgentChatInstanceDecorator>
+      <AgentChatMessageSetter message={mockThinkingStepsDone}>
+        <AIChatMessage
+          messageId={mockThinkingStepsDone.id}
+          isLastMessageStreaming={false}
+        />
+      </AgentChatMessageSetter>
+    </AgentChatInstanceDecorator>
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const summaryButton = await canvas.findByRole('button', {

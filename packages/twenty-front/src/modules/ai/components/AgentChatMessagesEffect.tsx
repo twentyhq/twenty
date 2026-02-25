@@ -1,6 +1,9 @@
 import { useAgentChatScrollToBottom } from '@/ai/hooks/useAgentChatScrollToBottom';
+import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
+import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
+import { agentChatMessagesComponentState } from '@/ai/states/agentChatMessagesComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { cloneDeep, type Prettify } from '@apollo/client/utilities';
@@ -15,17 +18,6 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-
-export const AgentChatComponentInstanceContext =
-  createComponentInstanceContext();
-
-export const agentChatMessagesComponentState = createAtomComponentState<
-  ExtendedUIMessage[]
->({
-  key: 'agentChatMessagesComponentState',
-  defaultValue: [],
-  componentInstanceContext: AgentChatComponentInstanceContext,
-});
 
 export const processedNavigationMessageIdsComponentState =
   createAtomComponentState<string[]>({
@@ -135,6 +127,11 @@ const useGetUpdatedAgentMessages = () => {
     agentChatMessagesComponentState,
   );
 
+  const agentChatMessageFamilyCallbackState =
+    useAtomComponentFamilyStateCallbackState(
+      agentChatMessageComponentFamilyState,
+    );
+
   const getUpdatedAgentMessages = useCallback(
     (updatedMessages: ExtendedUIMessage[]) => {
       let updatedMessagesToProcess: ExtendedUIMessage[] = [];
@@ -150,20 +147,34 @@ const useGetUpdatedAgentMessages = () => {
 
             if (isDefined(alreadyExistingMessage)) {
               if (!isDeeplyEqual(alreadyExistingMessage, updatedMessage)) {
+                const clonedMessage = cloneDeep(updatedMessage);
+
                 batchSet(agentChatMessagesCallbackState, [
                   ...existingAgentChatMessages.filter(
                     (msg) => msg.id !== updatedMessage.id,
                   ),
-                  cloneDeep(updatedMessage),
+                  clonedMessage,
                 ]);
+
+                batchSet(
+                  agentChatMessageFamilyCallbackState(updatedMessage.id),
+                  clonedMessage,
+                );
 
                 updatedMessagesToProcess.push(updatedMessage);
               }
             } else {
+              const clonedMessage = cloneDeep(updatedMessage);
+
               batchSet(agentChatMessagesCallbackState, [
                 ...existingAgentChatMessages,
-                cloneDeep(updatedMessage),
+                clonedMessage,
               ]);
+
+              batchSet(
+                agentChatMessageFamilyCallbackState(updatedMessage.id),
+                clonedMessage,
+              );
 
               updatedMessagesToProcess.push(updatedMessage);
             }
@@ -173,7 +184,11 @@ const useGetUpdatedAgentMessages = () => {
 
       return { updatedMessagesToProcess };
     },
-    [agentChatMessagesCallbackState, store],
+    [
+      agentChatMessagesCallbackState,
+      agentChatMessageFamilyCallbackState,
+      store,
+    ],
   );
 
   return {

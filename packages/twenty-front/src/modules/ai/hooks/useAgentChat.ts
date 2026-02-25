@@ -1,3 +1,4 @@
+import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
@@ -6,15 +7,16 @@ import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
+import { useCallback, useEffect } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -169,7 +171,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
   const isLoading = isStreaming || agentChatSelectedFiles.length > 0;
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (agentChatInput.trim() === '' || isLoading || !currentAIChatThread) {
       return;
     }
@@ -192,7 +194,28 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
       },
     );
     setAgentChatUploadedFiles([]);
-  };
+  }, [
+    agentChatInput,
+    isLoading,
+    currentAIChatThread,
+    setAgentChatInput,
+    getBrowsingContext,
+    sendMessage,
+    agentChatUploadedFiles,
+    setAgentChatUploadedFiles,
+  ]);
+
+  useEffect(() => {
+    const handler = () => {
+      handleSendMessage();
+    };
+
+    window.addEventListener(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME, handler);
+
+    return () => {
+      window.removeEventListener(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME, handler);
+    };
+  }, [handleSendMessage]);
 
   return {
     messages,

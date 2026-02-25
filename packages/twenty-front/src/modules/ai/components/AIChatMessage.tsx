@@ -5,9 +5,10 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
+import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
@@ -133,15 +134,24 @@ const StyledFilesContainer = styled.div`
 `;
 
 export const AIChatMessage = ({
-  message,
+  messageId,
   isLastMessageStreaming,
   error,
 }: {
-  message: ExtendedUIMessage;
+  messageId: string;
   isLastMessageStreaming: boolean;
   error?: Error | null;
 }) => {
+  const message = useAtomComponentFamilyStateValue(
+    agentChatMessageComponentFamilyState,
+    messageId,
+  );
+
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
+
+  if (!isDefined(message)) {
+    return null;
+  }
 
   const isUser = message.role === AgentMessageRole.USER;
   const showError =
