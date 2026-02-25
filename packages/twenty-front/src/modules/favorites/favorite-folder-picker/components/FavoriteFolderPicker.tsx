@@ -43,7 +43,6 @@ export const FavoriteFolderPicker = ({
     objectNameSingular,
   });
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const [favoriteFoldersSearchFilter] = useAtomComponentState(
     favoriteFolderSearchFilterComponentState,
   );

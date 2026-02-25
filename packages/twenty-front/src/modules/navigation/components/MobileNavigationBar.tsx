@@ -38,7 +38,6 @@ export const MobileNavigationBar = () => {
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const [, setContextStoreCurrentObjectMetadataItemId] = useAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,

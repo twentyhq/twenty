@@ -26,12 +26,10 @@ const StyledRightDrawerRecord = styled.div<{
 `;
 
 export const CommandMenuRecordPage = () => {
-  // eslint-disable-next-line twenty/matching-state-variable
   const viewableRecordNameSingular = useAtomComponentStateValue(
     viewableRecordNameSingularComponentState,
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const viewableRecordId = useAtomComponentStateValue(
     viewableRecordIdComponentState,
   );

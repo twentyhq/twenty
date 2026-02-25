@@ -30,7 +30,6 @@ export const useCurrencyField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldCurrencyValue>();
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const draftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );

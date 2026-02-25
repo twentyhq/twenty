@@ -86,7 +86,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const dropdownPlacement = useAtomComponentStateValue(
     dropdownPlacementComponentState,
     dropdownId,

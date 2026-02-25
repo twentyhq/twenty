@@ -194,7 +194,6 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
     />
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     modalId,

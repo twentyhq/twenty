@@ -160,7 +160,6 @@ export const CurrentWorkspaceMemberFavorites = ({
     />
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     modalId,

@@ -9,22 +9,17 @@ ruleTester.run(RULE_NAME, rule as any, {
       code: 'const variable = useAtomStateValue(variableState);',
     },
     {
-      code: 'const variable = useAtomComponentStateValue(variableState);',
-    },
-    {
       code: 'const [variable, setVariable] = useAtomState(variableState);',
     },
+    // Component/Family hooks are not checked by this rule
     {
-      code: 'const [variable, setVariable] = useAtomComponentState(variableState);',
+      code: 'const anything = useAtomComponentStateValue(variableComponentState);',
     },
     {
-      code: 'const [variable, setVariable] = useAtomComponentFamilyState(variableState);',
+      code: 'const anything = useAtomFamilyStateValue(variableFamilyState);',
     },
     {
-      code: 'const variable = useAtomFamilyStateValue(variableState);',
-    },
-    {
-      code: 'const variable = useAtomComponentFamilyStateValue(variableState);',
+      code: 'const [anything, setAnything] = useAtomComponentFamilyState(variableComponentFamilyState);',
     },
   ],
   invalid: [
@@ -35,18 +30,7 @@ ruleTester.run(RULE_NAME, rule as any, {
           messageId: 'invalidVariableName',
         },
       ],
-      output: 'const variable = useAtomStateValue(variableState);',
     },
-    {
-      code: 'const myValue = useAtomComponentStateValue(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-      ],
-      output: 'const variable = useAtomComponentStateValue(variableState);',
-    },
-
     {
       code: 'const [myValue, setMyValue] = useAtomState(variableState);',
       errors: [
@@ -57,7 +41,6 @@ ruleTester.run(RULE_NAME, rule as any, {
           messageId: 'invalidSetterName',
         },
       ],
-      output: 'const [variable, setVariable] = useAtomState(variableState);',
     },
     {
       code: 'const [myValue] = useAtomState(variableState);',
@@ -66,7 +49,6 @@ ruleTester.run(RULE_NAME, rule as any, {
           messageId: 'invalidVariableName',
         },
       ],
-      output: 'const [variable] = useAtomState(variableState);',
     },
     {
       code: 'const [, setMyValue] = useAtomState(variableState);',
@@ -75,72 +57,6 @@ ruleTester.run(RULE_NAME, rule as any, {
           messageId: 'invalidSetterName',
         },
       ],
-      output: 'const [, setVariable] = useAtomState(variableState);',
-    },
-
-    {
-      code: 'const [myValue, setMyValue] = useAtomComponentState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-        {
-          messageId: 'invalidSetterName',
-        },
-      ],
-      output:
-        'const [variable, setVariable] = useAtomComponentState(variableState);',
-    },
-    {
-      code: 'const [myValue] = useAtomComponentState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-      ],
-      output: 'const [variable] = useAtomComponentState(variableState);',
-    },
-    {
-      code: 'const [, setMyValue] = useAtomComponentState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidSetterName',
-        },
-      ],
-      output: 'const [, setVariable] = useAtomComponentState(variableState);',
-    },
-
-    {
-      code: 'const [myValue, setMyValue] = useAtomComponentFamilyState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-        {
-          messageId: 'invalidSetterName',
-        },
-      ],
-      output:
-        'const [variable, setVariable] = useAtomComponentFamilyState(variableState);',
-    },
-    {
-      code: 'const [myValue] = useAtomComponentFamilyState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-      ],
-      output: 'const [variable] = useAtomComponentFamilyState(variableState);',
-    },
-    {
-      code: 'const [, setMyValue] = useAtomComponentFamilyState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidSetterName',
-        },
-      ],
-      output:
-        'const [, setVariable] = useAtomComponentFamilyState(variableState);',
     },
   ],
 });

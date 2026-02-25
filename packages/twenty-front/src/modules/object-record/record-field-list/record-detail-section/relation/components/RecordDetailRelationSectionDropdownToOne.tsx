@@ -97,7 +97,6 @@ export const RecordDetailRelationSectionDropdownToOne = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const dropdownPlacement = useAtomComponentStateValue(
     dropdownPlacementComponentState,
     dropdownId,

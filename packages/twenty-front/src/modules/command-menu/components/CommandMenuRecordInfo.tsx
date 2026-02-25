@@ -31,7 +31,6 @@ export const CommandMenuRecordInfo = ({
 }: {
   commandMenuPageInstanceId: string;
 }) => {
-  // eslint-disable-next-line twenty/matching-state-variable
   const viewableRecordNameSingular = useAtomComponentStateValue(
     viewableRecordNameSingularComponentState,
     commandMenuPageInstanceId,
@@ -40,7 +39,6 @@ export const CommandMenuRecordInfo = ({
     allowRequestsToTwentyIconsState,
   );
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const viewableRecordId = useAtomComponentStateValue(
     viewableRecordIdComponentState,
     commandMenuPageInstanceId,

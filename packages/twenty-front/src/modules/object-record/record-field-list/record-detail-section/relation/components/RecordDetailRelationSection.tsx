@@ -101,7 +101,6 @@ export const RecordDetailRelationSection = ({
     instanceId: scopeInstanceId,
   });
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,

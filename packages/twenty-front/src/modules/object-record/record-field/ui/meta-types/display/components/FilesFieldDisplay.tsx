@@ -9,7 +9,6 @@ export const FilesFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
   const { fieldValue, disableChipClick } = useFilesFieldDisplay();
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const uploadState = useAtomFamilyStateValue(filesFieldUploadState, {
     recordId,
     fieldName: fieldDefinition.metadata.fieldName,

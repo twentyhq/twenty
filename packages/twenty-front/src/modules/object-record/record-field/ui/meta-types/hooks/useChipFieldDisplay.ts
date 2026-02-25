@@ -50,7 +50,6 @@ export const useChipFieldDisplay = () => {
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 
-  // eslint-disable-next-line twenty/matching-state-variable
   const recordValue = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   if (!isNonEmptyString(objectNameSingular)) {

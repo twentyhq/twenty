@@ -27,7 +27,6 @@ export const CommandMenuFolderInfo = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
-  // eslint-disable-next-line twenty/matching-state-variable
   const [shouldFocusTitleInput, setShouldFocusTitleInput] =
     useAtomComponentState(
       commandMenuShouldFocusTitleInputComponentState,
