@@ -21,7 +21,10 @@ import {
   MessageChannelSyncStage,
   MessageFolderImportPolicy,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import {
+  type MessageFolderWorkspaceEntity,
+  MessageFolderPendingSyncAction,
+} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 
 @WorkspaceQueryHook(`messageFolder.updateMany`)
 export class MessageFolderUpdateManyPreQueryHook
@@ -69,7 +72,10 @@ export class MessageFolderUpdateManyPreQueryHook
           relations: ['messageChannel'],
         });
 
-        let pendingSyncAction;
+        const foldersPendingActions = new Map<
+          string,
+          MessageFolderPendingSyncAction
+        >();
 
         for (const folder of messageFolders) {
           if (
@@ -96,15 +102,31 @@ export class MessageFolderUpdateManyPreQueryHook
             );
           }
 
-          pendingSyncAction = computePendingSyncActionForFolderUpdate(
+          const action = computePendingSyncActionForFolderUpdate(
             folder,
             payload.data.isSynced,
           );
+
+          foldersPendingActions.set(folder.id, action);
         }
 
-        if (isDefined(pendingSyncAction)) {
+        if (foldersPendingActions.size > 0) {
+          const uniqueActions = new Set(foldersPendingActions.values());
+
+          if (uniqueActions.size > 1) {
+            throw new WorkspaceQueryRunnerException(
+              'Cannot update multiple folders with different pending sync actions in a single operation',
+              WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+              {
+                userFriendlyMessage: msg`Cannot update folders with conflicting sync states in a single operation.`,
+              },
+            );
+          }
+
+          const [pendingSyncAction] = uniqueActions;
+
           this.logger.log(
-            `Setting pendingSyncAction to ${pendingSyncAction} for ${messageFolders.length} folders`,
+            `Setting pendingSyncAction to ${pendingSyncAction} for ${foldersPendingActions.size} folders`,
           );
 
           payload.data.pendingSyncAction = pendingSyncAction;
