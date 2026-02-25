@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MetadataEventEmitter } from 'src/engine/metadata-event-emitter/metadata-event-emitter';
+import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import {
   FlatEntityMapsException,
@@ -73,11 +74,13 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     allFlatEntityOperationByMetadataName,
     flatApplicationMaps,
     applicationUniversalIdentifier,
+    allRelatedFlatEntityMaps,
   }: Pick<
     ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs,
     'allFlatEntityOperationByMetadataName' | 'applicationUniversalIdentifier'
   > & {
     flatApplicationMaps: FlatApplicationCacheMaps;
+    allRelatedFlatEntityMaps: Partial<AllFlatEntityMaps>;
   }): string[] {
     const applicationIds = new Set<string>();
 
@@ -121,6 +124,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       const { flatEntityToCreate, flatEntityToUpdate, flatEntityToDelete } =
         flatEntityOperations;
 
+      const relations = ALL_MANY_TO_ONE_METADATA_RELATIONS[metadataName];
+
       for (const flatEntity of [
         ...flatEntityToCreate,
         ...flatEntityToUpdate,
@@ -133,6 +138,50 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
         if (isDefined(entityApplicationId)) {
           applicationIds.add(entityApplicationId);
+        }
+
+        for (const relation of Object.values(relations) as ({
+          foreignKey: string;
+          metadataName: AllMetadataName;
+          isNullable: boolean;
+          universalForeignKey: string;
+        } | null)[]) {
+
+          if (!isDefined(relation)) {
+            continue;
+          }
+
+          const { universalForeignKey, metadataName: targetMetadataName } =
+            relation;
+
+          const referencedUniversalIdentifier =
+            flatEntity[universalForeignKey as keyof typeof flatEntity];
+
+          if (
+            !isDefined(referencedUniversalIdentifier)
+          ) {
+            continue;
+          }
+
+          const targetFlatEntityMaps =
+            allRelatedFlatEntityMaps[
+              getMetadataFlatEntityMapsKey(
+                targetMetadataName as AllMetadataName,
+              )
+            ];
+
+          if (!isDefined(targetFlatEntityMaps)) {
+            continue;
+          }
+
+          const referencedEntity =
+            targetFlatEntityMaps.byUniversalIdentifier[
+              referencedUniversalIdentifier
+            ];
+
+          if (isDefined(referencedEntity)) {
+            applicationIds.add(referencedEntity.applicationId);
+          }
         }
       }
     }
@@ -181,6 +230,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       allFlatEntityOperationByMetadataName,
       flatApplicationMaps,
       applicationUniversalIdentifier,
+      allRelatedFlatEntityMaps,
     });
 
     const dependencyAllFlatEntityMaps = allMetadataNameCacheToCompute.reduce(
