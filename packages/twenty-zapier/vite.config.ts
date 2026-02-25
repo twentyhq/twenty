@@ -5,8 +5,6 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 import type { PackageJson } from 'type-fest';
 
-const entries = ['src/index.ts'];
-
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   if (!chunk.isEntry) {
     throw new Error(
@@ -42,7 +40,7 @@ export default defineConfig(() => {
     ],
     build: {
       outDir: 'lib',
-      lib: { entry: entries, name: 'twenty-zapier' },
+      lib: { entry: 'src/index.ts', name: 'twenty-zapier' },
       rollupOptions: {
         external: (id: string) => {
           if (/^node:/.test(id)) {
