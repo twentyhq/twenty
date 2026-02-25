@@ -1,11 +1,10 @@
-import path from 'path';
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
+
 import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 import type { PackageJson } from 'type-fest';
 
-const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
+const entryFileNames = (chunk: any, extension: 'cjs') => {
   if (!chunk.isEntry) {
     throw new Error(
       `Should never occurs, encountered a non entry chunk ${chunk.facadeModuleId}`,
@@ -27,8 +26,6 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
 };
 
 export default defineConfig(() => {
-  const tsConfigPath = path.resolve(__dirname, './tsconfig.json');
-
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-zapier',
@@ -36,7 +33,6 @@ export default defineConfig(() => {
       tsconfigPaths({
         root: __dirname,
       }),
-      dts({ entryRoot: './src', tsconfigPath: tsConfigPath }),
     ],
     build: {
       outDir: 'lib',
@@ -60,10 +56,6 @@ export default defineConfig(() => {
           return deps.some((dep) => id === dep || id.startsWith(dep + '/'));
         },
         output: [
-          {
-            format: 'es',
-            entryFileNames: (chunk) => entryFileNames(chunk, 'mjs'),
-          },
           {
             format: 'cjs',
             interop: 'auto',
