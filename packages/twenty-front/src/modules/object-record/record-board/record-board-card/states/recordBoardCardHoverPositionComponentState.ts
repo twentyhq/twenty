@@ -1,7 +1,7 @@
 import { RecordBoardCardComponentInstanceContext } from '@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const recordBoardCardHoverPositionComponentState = createComponentState<
+export const recordBoardCardHoverPositionComponentState = createAtomComponentState<
   number | null
 >({
   key: 'recordBoardCardHoverPositionComponentState',

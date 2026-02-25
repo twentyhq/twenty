@@ -1,6 +1,6 @@
 import { LINE_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartConstants';
 import { graphWidgetLineCrosshairXComponentState } from '@/page-layout/widgets/graph/graphWidgetLineChart/states/graphWidgetLineCrosshairXComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useTheme } from '@emotion/react';
 import { type LineSeries, type Point } from '@nivo/line';
 import { motion } from 'framer-motion';
@@ -41,7 +41,7 @@ export const CustomCrosshairLayer = ({
   onRectLeave,
 }: CustomCrosshairLayerProps) => {
   const theme = useTheme();
-  const crosshairX = useAtomComponentValue(
+  const crosshairX = useAtomComponentStateValue(
     graphWidgetLineCrosshairXComponentState,
   );
 

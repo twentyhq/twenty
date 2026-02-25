@@ -13,7 +13,7 @@ import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -35,7 +35,7 @@ export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
   const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
   const { t } = useLingui();
-  const isCloudflareIntegrationEnabled = useAtomValue(
+  const isCloudflareIntegrationEnabled = useAtomStateValue(
     isCloudflareIntegrationEnabledState,
   );
 

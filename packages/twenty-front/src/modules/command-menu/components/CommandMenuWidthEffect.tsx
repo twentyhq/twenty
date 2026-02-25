@@ -4,10 +4,10 @@ import {
   COMMAND_MENU_WIDTH_VAR,
   commandMenuWidthState,
 } from '@/command-menu/states/commandMenuWidthState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const CommandMenuWidthEffect = () => {
-  const commandMenuWidth = useAtomValue(commandMenuWidthState);
+  const commandMenuWidth = useAtomStateValue(commandMenuWidthState);
 
   useEffect(() => {
     document.documentElement.style.setProperty(

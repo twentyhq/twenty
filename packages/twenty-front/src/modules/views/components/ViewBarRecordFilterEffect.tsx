@@ -2,9 +2,9 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useMapViewFiltersToFilters } from '@/views/hooks/useMapViewFiltersToFilters';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
@@ -12,13 +12,13 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordFilterEffect = () => {
-  const currentViewId = useAtomComponentValue(
+  const currentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
   const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
 
-  const currentView = useFamilySelectorValue(coreViewFromViewIdFamilySelector, {
+  const currentView = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
     viewId: currentViewId ?? '',
   });
 

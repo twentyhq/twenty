@@ -6,7 +6,7 @@ import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksO
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCallback, useEffect, useState } from 'react';
 import {
   matchPath,
@@ -34,7 +34,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { PageFocusId } from '@/types/PageFocusId';
 import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useResetFocusStackToFocusItem';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { AppBasePath, AppPath, CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
@@ -66,12 +66,12 @@ export const PageChangeEffect = () => {
   const objectNamePlural =
     useParams().objectNamePlural ?? CoreObjectNamePlural.Person;
 
-  const contextStoreCurrentViewId = useAtomComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const contextStoreCurrentViewType = useAtomComponentValue(
+  const contextStoreCurrentViewType = useAtomComponentStateValue(
     contextStoreCurrentViewTypeComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
@@ -93,7 +93,7 @@ export const PageChangeEffect = () => {
   const { executeTasksOnAnyLocationChange } =
     useExecuteTasksOnAnyLocationChange();
 
-  const isAppEffectRedirectEnabled = useAtomValue(
+  const isAppEffectRedirectEnabled = useAtomStateValue(
     isAppEffectRedirectEnabledState,
   );
 
@@ -360,7 +360,7 @@ export const PageChangeEffect = () => {
   }, [eventTracker, location.pathname]);
 
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
-  const isCaptchaScriptLoaded = useAtomValue(isCaptchaScriptLoadedState);
+  const isCaptchaScriptLoaded = useAtomStateValue(isCaptchaScriptLoadedState);
 
   useEffect(() => {
     if (isCaptchaScriptLoaded && isCaptchaRequiredForPath(location.pathname)) {

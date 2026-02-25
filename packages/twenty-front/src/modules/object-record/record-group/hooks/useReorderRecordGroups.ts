@@ -6,7 +6,7 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { type ViewType } from '@/views/types/ViewType';
@@ -42,7 +42,7 @@ export const useReorderRecordGroups = ({
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
 
-  const groupFieldMetadata = useAtomComponentValue(
+  const groupFieldMetadata = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 

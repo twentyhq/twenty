@@ -26,7 +26,7 @@ import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/u
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
@@ -98,8 +98,8 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   );
   const iconColors = getNavigationMenuItemIconColors(theme);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
-  const coreViews = useAtomValue(coreViewsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const coreViews = useAtomStateValue(coreViewsState);
   const views = coreViews.map(convertCoreViewToView);
   const location = useLocation();
   const navigate = useNavigate();

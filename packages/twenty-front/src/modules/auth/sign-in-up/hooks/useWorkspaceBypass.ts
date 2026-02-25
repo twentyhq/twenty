@@ -3,11 +3,11 @@ import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceA
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { workspaceBypassModeState } from '@/workspace/states/workspaceBypassModeState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useWorkspaceBypass = () => {
-  const workspaceAuthProviders = useAtomValue(workspaceAuthProvidersState);
-  const workspaceAuthBypassProviders = useAtomValue(
+  const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
+  const workspaceAuthBypassProviders = useAtomStateValue(
     workspaceAuthBypassProvidersState,
   );
   const [workspaceBypassMode, setWorkspaceBypassMode] = useAtomState(

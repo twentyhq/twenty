@@ -1,9 +1,9 @@
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
-import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 
 export const hasAggregateOperationForViewFieldFamilySelector =
-  createFamilySelector<boolean, { viewFieldId: string }>({
+  createAtomFamilySelector<boolean, { viewFieldId: string }>({
     key: 'hasAggregateOperationForViewField',
     get:
       ({ viewFieldId }) =>

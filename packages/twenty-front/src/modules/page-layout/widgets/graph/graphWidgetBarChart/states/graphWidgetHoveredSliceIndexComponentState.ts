@@ -1,7 +1,7 @@
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const graphWidgetHoveredSliceIndexComponentState = createComponentState<
+export const graphWidgetHoveredSliceIndexComponentState = createAtomComponentState<
   string | null
 >({
   key: 'graphWidgetHoveredSliceIndexComponentState',

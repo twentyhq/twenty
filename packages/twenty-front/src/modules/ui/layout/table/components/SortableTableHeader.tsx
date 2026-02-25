@@ -2,8 +2,8 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import {
   IconArrowDown,
   IconArrowUp,
@@ -25,10 +25,10 @@ export const SortableTableHeader = ({
   initialSort?: TableSortValue;
   Icon?: IconComponent;
 }) => {
-  const sortedFieldByTable = useFamilyAtomValue(sortedFieldByTableFamilyState, {
+  const sortedFieldByTable = useAtomFamilyStateValue(sortedFieldByTableFamilyState, {
     tableId,
   });
-  const setSortedFieldByTable = useSetFamilyAtomState(
+  const setSortedFieldByTable = useSetAtomFamilyState(
     sortedFieldByTableFamilyState,
     { tableId },
   );

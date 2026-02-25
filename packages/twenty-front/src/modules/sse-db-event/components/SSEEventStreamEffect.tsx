@@ -7,7 +7,7 @@ import { isCreatingSseEventStreamState } from '@/sse-db-event/states/isCreatingS
 import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroyingEventStreamState';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
@@ -15,15 +15,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 export const SSEEventStreamEffect = () => {
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
-  const sseEventStreamId = useAtomValue(sseEventStreamIdState);
-  const isCreatingSseEventStream = useAtomValue(isCreatingSseEventStreamState);
-  const shouldDestroyEventStream = useAtomValue(shouldDestroyEventStreamState);
-  const isDestroyingEventStream = useAtomValue(isDestroyingEventStreamState);
+  const sseEventStreamId = useAtomStateValue(sseEventStreamIdState);
+  const isCreatingSseEventStream = useAtomStateValue(isCreatingSseEventStreamState);
+  const shouldDestroyEventStream = useAtomStateValue(shouldDestroyEventStreamState);
+  const isDestroyingEventStream = useAtomStateValue(isDestroyingEventStreamState);
 
   const isLoggedIn = useIsLogged();
-  const currentUser = useAtomValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
 
   const { triggerEventStreamCreation } = useTriggerEventStreamCreation();
   const { triggerEventStreamDestroy } = useTriggerEventStreamDestroy();

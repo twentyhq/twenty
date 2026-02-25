@@ -8,7 +8,7 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
@@ -27,7 +27,7 @@ export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
     rootLevelRecordFilterGroupComponentSelector,
   );
 
-  const availableFieldMetadataItemsForFilter = useFamilySelectorValue(
+  const availableFieldMetadataItemsForFilter = useAtomFamilySelectorValue(
     availableFieldMetadataItemsForFilterFamilySelector,
     {
       objectMetadataItemId: objectMetadataItem.id,

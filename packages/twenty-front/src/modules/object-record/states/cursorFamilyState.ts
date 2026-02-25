@@ -1,6 +1,6 @@
-import { createFamilyState } from '@/ui/utilities/state/jotai/utils/createFamilyState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const cursorFamilyState = createFamilyState<string, string | undefined>({
+export const cursorFamilyState = createAtomFamilyState<string, string | undefined>({
   key: 'cursorFamilyState',
   defaultValue: '',
 });

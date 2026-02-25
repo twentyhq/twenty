@@ -1,4 +1,4 @@
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
@@ -25,7 +25,7 @@ export const useSearchVariable = ({
 }): VariableSearchResult => {
   const workflowVersionId = useWorkflowVersionIdOrThrow();
   const flow = useFlowOrThrow();
-  const [stepOutputSchema] = useFamilySelectorValue(
+  const [stepOutputSchema] = useAtomFamilySelectorValue(
     stepsOutputSchemaFamilySelector,
     {
       workflowVersionId,

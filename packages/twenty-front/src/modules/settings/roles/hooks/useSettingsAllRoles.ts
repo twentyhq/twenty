@@ -1,11 +1,11 @@
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSettingsAllRoles = () => {
-  const roleIds = useAtomValue(settingsRoleIdsState);
+  const roleIds = useAtomStateValue(settingsRoleIdsState);
   const store = useStore();
 
   const roles = roleIds

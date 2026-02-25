@@ -1,6 +1,6 @@
-import { createFamilyState } from '@/ui/utilities/state/jotai/utils/createFamilyState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const isNavigationSectionOpenFamilyState = createFamilyState<
+export const isNavigationSectionOpenFamilyState = createAtomFamilyState<
   boolean,
   string
 >({

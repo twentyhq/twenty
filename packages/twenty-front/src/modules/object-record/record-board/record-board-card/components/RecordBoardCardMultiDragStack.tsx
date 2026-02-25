@@ -1,5 +1,5 @@
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 
 const StyledRecordBoardCardStackCard = styled.div<{ offset: number }>`
@@ -15,7 +15,7 @@ const StyledRecordBoardCardStackCard = styled.div<{ offset: number }>`
 `;
 
 export const RecordBoardCardMultiDragStack = () => {
-  const originalDragSelection = useAtomComponentValue(
+  const originalDragSelection = useAtomComponentStateValue(
     originalDragSelectionComponentState,
   );
 

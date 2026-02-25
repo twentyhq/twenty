@@ -7,8 +7,8 @@ import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { DatePicker } from '@/ui/input/components/internal/date/components/DatePicker';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { useContext } from 'react';
@@ -23,14 +23,14 @@ import { formatDateString } from '~/utils/string/formatDateString';
 
 export const ObjectFilterDropdownDateInput = () => {
   const { dateFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useAtomValue(dateLocaleState);
-  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
+  const dateLocale = useAtomStateValue(dateLocaleState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const selectedOperandInDropdown = useAtomComponentValue(
+  const selectedOperandInDropdown = useAtomComponentStateValue(
     selectedOperandInDropdownComponentState,
   );
 
-  const objectFilterDropdownCurrentRecordFilter = useAtomComponentValue(
+  const objectFilterDropdownCurrentRecordFilter = useAtomComponentStateValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 

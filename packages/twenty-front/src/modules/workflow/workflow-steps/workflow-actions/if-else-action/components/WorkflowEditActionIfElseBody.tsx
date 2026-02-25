@@ -1,5 +1,5 @@
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
@@ -68,15 +68,15 @@ export const WorkflowEditActionIfElseBody = ({
   const { updateWorkflowVersionPosition } = useTidyUpWorkflowVersion();
   const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
   const { deleteStepsOutputSchema } = useStepsOutputSchema();
-  const workflowVisualizerWorkflowId = useAtomComponentValue(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
-  const currentStepFilters = useAtomComponentValue(
+  const currentStepFilters = useAtomComponentStateValue(
     currentStepFiltersComponentState,
   );
-  const currentStepFilterGroups = useAtomComponentValue(
+  const currentStepFilterGroups = useAtomComponentStateValue(
     currentStepFilterGroupsComponentState,
   );
   const setCurrentStepFilters = useSetAtomComponentState(

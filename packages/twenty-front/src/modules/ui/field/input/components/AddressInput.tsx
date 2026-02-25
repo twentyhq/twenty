@@ -13,7 +13,7 @@ import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/count
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
@@ -236,7 +236,7 @@ export const AddressInput = ({
     onShiftTab: handleShiftTab,
   });
 
-  const activeDropdownFocusId = useAtomValue(activeDropdownFocusIdState);
+  const activeDropdownFocusId = useAtomStateValue(activeDropdownFocusIdState);
 
   useListenClickOutside({
     refs: [wrapperRef],

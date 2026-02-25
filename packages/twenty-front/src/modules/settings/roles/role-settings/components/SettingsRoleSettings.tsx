@@ -6,8 +6,8 @@ import { SettingsRoleSettingsDeleteRoleConfirmationModal } from '@/settings/role
 import { ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-settings/components/constants/RoleSettingsDeleteRoleConfirmationModalId';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -38,11 +38,11 @@ export const SettingsRoleSettings = ({
   isEditable,
   isCreateMode,
 }: SettingsRoleSettingsProps) => {
-  const settingsDraftRole = useFamilyAtomValue(
+  const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
   );
-  const setSettingsDraftRole = useSetFamilyAtomState(
+  const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
     roleId,
   );

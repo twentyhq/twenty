@@ -7,8 +7,8 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -27,7 +27,7 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -107,7 +107,7 @@ const InternalTableContextProviders = ({
 }) => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const currentRecordFields = useAtomComponentValue(
+  const currentRecordFields = useAtomComponentStateValue(
     currentRecordFieldsComponentState,
   );
 
@@ -145,7 +145,7 @@ const InternalTableContextProviders = ({
     ]),
   );
 
-  const labelIdentifierFieldMetadataItem = useFamilySelectorValue(
+  const labelIdentifierFieldMetadataItem = useAtomFamilySelectorValue(
     labelIdentifierFieldMetadataItemSelector,
     {
       objectMetadataItemId: objectMetadataItem.id,
@@ -206,7 +206,7 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
   const { recordTableObjectNameSingular: objectNameSingular } =
     context.parameters;
 
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>

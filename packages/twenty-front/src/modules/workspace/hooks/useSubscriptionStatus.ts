@@ -1,8 +1,8 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type SubscriptionStatus } from '~/generated-metadata/graphql';
 
 export const useSubscriptionStatus = (): SubscriptionStatus | undefined => {
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   return currentWorkspace?.currentBillingSubscription?.status;
 };

@@ -15,7 +15,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import isEmpty from 'lodash.isempty';
@@ -45,7 +45,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
 
   const { updateViewAggregate } = useUpdateViewAggregate();
 
-  const recordIndexGroupAggregateOperation = useAtomComponentValue(
+  const recordIndexGroupAggregateOperation = useAtomComponentStateValue(
     recordIndexGroupAggregateOperationComponentState,
   );
 

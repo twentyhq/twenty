@@ -1,6 +1,6 @@
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import styled from '@emotion/styled';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import '@graphiql/plugin-explorer/dist/style.css';
@@ -35,7 +35,7 @@ export const GraphQLPlayground = ({
   onError,
   schema,
 }: GraphQLPlaygroundProps) => {
-  const playgroundApiKey = useAtomValue(playgroundApiKeyState);
+  const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
   const baseUrl = REACT_APP_SERVER_BASE_URL + '/' + schemaToPath[schema];
 
   const { theme } = useContext(ThemeContext);

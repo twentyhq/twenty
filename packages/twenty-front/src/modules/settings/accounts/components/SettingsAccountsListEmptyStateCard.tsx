@@ -8,7 +8,7 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
@@ -26,18 +26,18 @@ export const SettingsAccountsListEmptyStateCard = () => {
   const { t } = useLingui();
   const theme = useTheme();
 
-  const isGoogleMessagingEnabled = useAtomValue(isGoogleMessagingEnabledState);
-  const isMicrosoftMessagingEnabled = useAtomValue(
+  const isGoogleMessagingEnabled = useAtomStateValue(isGoogleMessagingEnabledState);
+  const isMicrosoftMessagingEnabled = useAtomStateValue(
     isMicrosoftMessagingEnabledState,
   );
 
-  const isGoogleCalendarEnabled = useAtomValue(isGoogleCalendarEnabledState);
+  const isGoogleCalendarEnabled = useAtomStateValue(isGoogleCalendarEnabledState);
 
-  const isMicrosoftCalendarEnabled = useAtomValue(
+  const isMicrosoftCalendarEnabled = useAtomStateValue(
     isMicrosoftCalendarEnabledState,
   );
 
-  const isImapSmtpCaldavEnabled = useAtomValue(isImapSmtpCaldavEnabledState);
+  const isImapSmtpCaldavEnabled = useAtomStateValue(isImapSmtpCaldavEnabledState);
 
   return (
     <StyledCardsContainer>

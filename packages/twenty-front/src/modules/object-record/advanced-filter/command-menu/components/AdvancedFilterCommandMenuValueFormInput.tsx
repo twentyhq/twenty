@@ -20,7 +20,7 @@ import {
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
@@ -43,14 +43,14 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
     isWorkflowFindRecords,
   } = useContext(AdvancedFilterContext);
 
-  const currentRecordFilters = useAtomComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
   const dropdownInstanceId =
     getAdvancedFilterObjectFilterDropdownComponentInstanceId(recordFilterId);
 
-  const subFieldNameUsedInDropdown = useAtomComponentValue(
+  const subFieldNameUsedInDropdown = useAtomComponentStateValue(
     subFieldNameUsedInDropdownComponentState,
     dropdownInstanceId,
   );

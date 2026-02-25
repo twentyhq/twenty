@@ -3,12 +3,12 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const SeeDeletedRecordsNoSelectionRecordAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const currentViewId = useAtomComponentValue(
+  const currentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 

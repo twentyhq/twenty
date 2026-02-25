@@ -1,9 +1,9 @@
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const recordGroupPendingDragEndReorderStateV2 =
-  createState<Parameters<OnDragEndResponder> | null>({
+  createAtomState<Parameters<OnDragEndResponder> | null>({
     key: 'recordGroupPendingDragEndReorderStateV2',
     defaultValue: null,
   });

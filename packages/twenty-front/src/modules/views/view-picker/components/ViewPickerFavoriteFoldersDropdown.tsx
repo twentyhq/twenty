@@ -2,7 +2,7 @@ import { FavoriteFolderPicker } from '@/favorites/favorite-folder-picker/compone
 import { FavoriteFolderPickerEffect } from '@/favorites/favorite-folder-picker/components/FavoriteFolderPickerEffect';
 import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder-picker/states/context/FavoriteFolderPickerInstanceContext';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
@@ -12,7 +12,7 @@ export const ViewPickerFavoriteFoldersDropdown = () => {
     viewPickerReferenceViewIdComponentState,
   );
 
-  const view = useFamilySelectorValue(coreViewFromViewIdFamilySelector, {
+  const view = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
     viewId: viewPickerReferenceViewId ?? '',
   });
 

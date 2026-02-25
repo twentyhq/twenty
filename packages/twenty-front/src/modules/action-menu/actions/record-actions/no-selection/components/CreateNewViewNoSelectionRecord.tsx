@@ -3,7 +3,7 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -13,7 +13,7 @@ export const CreateNewViewNoSelectionRecord = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
   const { openDropdown } = useOpenDropdown();
 
-  const currentViewId = useAtomComponentValue(
+  const currentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 

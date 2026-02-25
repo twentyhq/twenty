@@ -12,7 +12,7 @@ import { useLingui } from '@lingui/react/macro';
 import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
 
@@ -26,7 +26,7 @@ export const SignInUpWithMicrosoft = ({
   const theme = useTheme();
   const { t } = useLingui();
 
-  const signInUpStep = useAtomValue(signInUpStepState);
+  const signInUpStep = useAtomStateValue(signInUpStepState);
   const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useAtomState(
     lastAuthenticatedMethodState,
   );

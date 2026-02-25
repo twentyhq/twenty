@@ -14,8 +14,8 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
@@ -69,9 +69,9 @@ export const RecordBoardCardHeader = () => {
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  const recordIndexOpenRecordIn = useAtomValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useAtomStateValue(recordIndexOpenRecordInState);
 
-  const record = useFamilyAtomValue(recordStoreFamilyState, recordId);
+  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const triggerEvent =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL

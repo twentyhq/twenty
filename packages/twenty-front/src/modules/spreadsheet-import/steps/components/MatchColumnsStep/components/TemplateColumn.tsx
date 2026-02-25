@@ -7,7 +7,7 @@ import { suggestedFieldsByColumnHeaderState } from '@/spreadsheet-import/steps/c
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { spreadsheetImportBuildFieldOptions } from '@/spreadsheet-import/utils/spreadsheetImportBuildFieldOptions';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { IconForbid } from 'twenty-ui/display';
 
@@ -37,7 +37,7 @@ export const TemplateColumn = ({
   onChange,
 }: TemplateColumnProps) => {
   const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
-  const suggestedFieldsByColumnHeader = useAtomValue(
+  const suggestedFieldsByColumnHeader = useAtomStateValue(
     suggestedFieldsByColumnHeaderState,
   );
 

@@ -12,7 +12,7 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 
@@ -20,7 +20,7 @@ const OBJECT_FILTER_DROPDOWN_INNER_SELECT_OPERAND_DROPDOWN_ID =
   'object-filter-dropdown-inner-select-operand-dropdown';
 
 export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
-  const selectedOperandInDropdown = useAtomComponentValue(
+  const selectedOperandInDropdown = useAtomComponentStateValue(
     selectedOperandInDropdownComponentState,
   );
 
@@ -28,7 +28,7 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const subFieldNameUsedInDropdown = useAtomComponentValue(
+  const subFieldNameUsedInDropdown = useAtomComponentStateValue(
     subFieldNameUsedInDropdownComponentState,
   );
 

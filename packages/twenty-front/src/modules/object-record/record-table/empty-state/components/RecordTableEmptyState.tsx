@@ -7,7 +7,7 @@ import { RecordTableEmptyStateReadOnly } from '@/object-record/record-table/empt
 import { RecordTableEmptyStateRemote } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote';
 import { RecordTableEmptyStateSoftDelete } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const RecordTableEmptyState = () => {
   const { recordTableId, objectNameSingular, objectMetadataItem } =
@@ -18,7 +18,7 @@ export const RecordTableEmptyState = () => {
 
   const isRemote = objectMetadataItem.isRemote;
 
-  const isSoftDeleteActive = useAtomComponentValue(
+  const isSoftDeleteActive = useAtomComponentStateValue(
     isSoftDeleteFilterActiveComponentState,
     recordTableId,
   );

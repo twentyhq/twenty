@@ -1,7 +1,7 @@
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const recordIndexOpenRecordInState = createState<ViewOpenRecordInType>({
+export const recordIndexOpenRecordInState = createAtomState<ViewOpenRecordInType>({
   key: 'recordIndexOpenRecordInState',
   defaultValue: ViewOpenRecordInType.SIDE_PANEL,
 });

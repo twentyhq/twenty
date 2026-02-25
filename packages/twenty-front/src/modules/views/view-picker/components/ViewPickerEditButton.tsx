@@ -1,4 +1,4 @@
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewType } from '@/views/types/ViewType';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
@@ -15,11 +15,11 @@ export const ViewPickerEditButton = () => {
     useGetAvailableFieldsToGroupRecordsBy();
 
   const { viewPickerMode } = useViewPickerMode();
-  const viewPickerType = useAtomComponentValue(viewPickerTypeComponentState);
-  const viewPickerIsPersisting = useAtomComponentValue(
+  const viewPickerType = useAtomComponentStateValue(viewPickerTypeComponentState);
+  const viewPickerIsPersisting = useAtomComponentStateValue(
     viewPickerIsPersistingComponentState,
   );
-  const viewPickerMainGroupByFieldMetadataId = useAtomComponentValue(
+  const viewPickerMainGroupByFieldMetadataId = useAtomComponentStateValue(
     viewPickerMainGroupByFieldMetadataIdComponentState,
   );
 

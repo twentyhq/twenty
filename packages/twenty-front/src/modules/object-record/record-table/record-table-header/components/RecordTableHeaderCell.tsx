@@ -11,9 +11,9 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -28,21 +28,21 @@ export const RecordTableHeaderCell = ({
 }: RecordTableHeaderCellProps) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const isFirstRowActive = useAtomComponentFamilyValue(
+  const isFirstRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useAtomComponentFamilyValue(
+  const isFirstRowFocused = useAtomComponentFamilyStateValue(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );
 
-  const isScrolledVertically = useAtomComponentValue(
+  const isScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const isRowFocusActive = useAtomComponentValue(
+  const isRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
   );
 
@@ -53,7 +53,7 @@ export const RecordTableHeaderCell = ({
     hasRecordGroupsComponentSelector,
   );
 
-  const resizedFieldMetadataItemId = useAtomComponentValue(
+  const resizedFieldMetadataItemId = useAtomComponentStateValue(
     resizedFieldMetadataIdComponentState,
   );
 

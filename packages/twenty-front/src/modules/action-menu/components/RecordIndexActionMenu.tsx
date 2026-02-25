@@ -3,11 +3,11 @@ import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIn
 import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordIndexActionMenu = () => {
-  const contextStoreCurrentObjectMetadataItemId = useAtomComponentValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

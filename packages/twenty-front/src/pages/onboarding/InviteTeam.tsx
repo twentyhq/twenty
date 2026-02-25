@@ -18,7 +18,7 @@ import {
   useFieldArray,
   useForm,
 } from 'react-hook-form';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, SeparatorLineText } from 'twenty-ui/display';
@@ -65,8 +65,8 @@ export const InviteTeam = () => {
   const { enqueueSuccessSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
-  const calendarBookingPageId = useAtomValue(calendarBookingPageIdState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
   const hasCalendarBooking = isDefined(calendarBookingPageId);
 
   const {

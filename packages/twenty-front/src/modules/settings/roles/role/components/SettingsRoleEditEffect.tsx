@@ -3,7 +3,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
@@ -19,7 +19,7 @@ export const SettingsRoleEditEffect = ({
 }: SettingsRoleEditEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const role = useFamilyAtomValue(settingsPersistedRoleFamilyState, roleId);
+  const role = useAtomFamilyStateValue(settingsPersistedRoleFamilyState, roleId);
   const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,

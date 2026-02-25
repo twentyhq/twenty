@@ -1,9 +1,9 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 
 export const useFilteredAvailableWorkspaces = () => {
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const searchAvailableWorkspaces = (
     searchValue: string,

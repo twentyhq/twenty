@@ -5,7 +5,7 @@ import { useDoObjectMetadataItemsExist } from '@/object-metadata/hooks/useDoObje
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type ObjectRecordFilterInput,
@@ -35,7 +35,7 @@ export const useObjectRecordSearchRecords = ({
   filter,
   fetchPolicy,
 }: UseSearchRecordsParams) => {
-  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const areDefined = useDoObjectMetadataItemsExist(objectNameSingulars);
 
   const { enqueueErrorSnackBar } = useSnackBar();

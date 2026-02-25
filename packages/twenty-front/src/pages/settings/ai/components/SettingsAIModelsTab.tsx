@@ -13,7 +13,7 @@ import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import {
   H2Title,
@@ -42,7 +42,7 @@ export const SettingsAIModelsTab = () => {
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const [searchQuery, setSearchQuery] = useState('');
-  const aiModels = useAtomValue(aiModelsState);
+  const aiModels = useAtomStateValue(aiModelsState);
 
   const {
     allModelsWithAvailability,

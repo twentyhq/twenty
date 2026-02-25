@@ -20,7 +20,7 @@ import { type RecordWithPosition } from '@/object-record/utils/computeNewPositio
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -44,7 +44,7 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
     recordIndexId,
   );
 
-  const currentRecordSorts = useAtomComponentValue(
+  const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
   );
 

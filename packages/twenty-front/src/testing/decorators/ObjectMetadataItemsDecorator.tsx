@@ -5,7 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -13,7 +13,7 @@ import { mockedUserData } from '~/testing/mock-data/users';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 export const ObjectMetadataItemsDecorator: Decorator = (Story) => {
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const setCurrentWorkspaceMember = useSetAtomState(
     currentWorkspaceMemberState,
   );

@@ -1,4 +1,4 @@
-import { createFamilyState } from '@/ui/utilities/state/jotai/utils/createFamilyState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
 export type MetadataLoadStatus = 'empty' | 'draft_pending' | 'loaded';
 
@@ -27,7 +27,7 @@ const METADATA_LOAD_ENTRY_DEFAULT: MetadataLoadEntry = {
   status: 'empty',
 };
 
-export const metadataStoreState = createFamilyState<
+export const metadataStoreState = createAtomFamilyState<
   MetadataLoadEntry,
   MetadataKey
 >({

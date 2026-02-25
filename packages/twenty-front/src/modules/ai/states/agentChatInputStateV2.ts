@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const agentChatInputStateV2 = createState<string>({
+export const agentChatInputStateV2 = createAtomState<string>({
   key: 'agentChatInputStateV2',
   defaultValue: '',
 });

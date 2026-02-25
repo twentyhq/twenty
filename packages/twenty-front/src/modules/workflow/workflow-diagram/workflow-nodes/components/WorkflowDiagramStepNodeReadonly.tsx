@@ -2,7 +2,7 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
@@ -35,10 +35,10 @@ export const WorkflowDiagramStepNodeReadonly = ({
 }) => {
   const { getIcon } = useIcons();
 
-  const workflowVisualizerWorkflowId = useAtomComponentValue(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const workflowVisualizerWorkflowVersionId = useAtomComponentValue(
+  const workflowVisualizerWorkflowVersionId = useAtomComponentStateValue(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
 

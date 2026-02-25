@@ -4,7 +4,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { useWorkflowAiAgentPermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { workflowAiAgentActionAgentStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentStateV2';
 import { workflowAiAgentPermissionsIsAddingPermissionStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionStateV2';
 import { workflowAiAgentPermissionsSelectedObjectIdStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdStateV2';
@@ -75,7 +75,7 @@ export const WorkflowAiAgentPermissionsTab = ({
   isAgentLoading,
   refetchAgent,
 }: WorkflowAiAgentPermissionsTabProps) => {
-  const workflowAiAgentActionAgent = useAtomValue(
+  const workflowAiAgentActionAgent = useAtomStateValue(
     workflowAiAgentActionAgentStateV2,
   );
 

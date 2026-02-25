@@ -11,7 +11,7 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { act } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
@@ -65,35 +65,35 @@ const renderHooks = () => {
         openWorkflowViewStepInCommandMenu,
       } = useWorkflowCommandMenu();
 
-      const _viewableRecordId = useAtomComponentValue(
+      const _viewableRecordId = useAtomComponentStateValue(
         viewableRecordIdComponentState,
         'mocked-uuid',
       );
-      const viewableRecordNameSingular = useAtomComponentValue(
+      const viewableRecordNameSingular = useAtomComponentStateValue(
         viewableRecordNameSingularComponentState,
         'mocked-uuid',
       );
-      const currentObjectMetadataItemId = useAtomComponentValue(
+      const currentObjectMetadataItemId = useAtomComponentStateValue(
         contextStoreCurrentObjectMetadataItemIdComponentState,
         'mocked-uuid',
       );
-      const targetedRecordsRule = useAtomComponentValue(
+      const targetedRecordsRule = useAtomComponentStateValue(
         contextStoreTargetedRecordsRuleComponentState,
         'mocked-uuid',
       );
-      const numberOfSelectedRecords = useAtomComponentValue(
+      const numberOfSelectedRecords = useAtomComponentStateValue(
         contextStoreNumberOfSelectedRecordsComponentState,
         'mocked-uuid',
       );
-      const currentViewType = useAtomComponentValue(
+      const currentViewType = useAtomComponentStateValue(
         contextStoreCurrentViewTypeComponentState,
         'mocked-uuid',
       );
-      const workflowId = useAtomComponentValue(
+      const workflowId = useAtomComponentStateValue(
         commandMenuWorkflowIdComponentState,
         'mocked-uuid',
       );
-      const workflowVersionId = useAtomComponentValue(
+      const workflowVersionId = useAtomComponentStateValue(
         commandMenuWorkflowVersionIdComponentState,
         'mocked-uuid',
       );

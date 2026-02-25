@@ -34,7 +34,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const RelationOneToManyFieldInput = () => {
@@ -158,7 +158,7 @@ export const RelationOneToManyFieldInput = () => {
       relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
-  const layoutDirection = useAtomComponentValue(
+  const layoutDirection = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 

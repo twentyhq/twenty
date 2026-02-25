@@ -12,7 +12,7 @@ import { type FieldFilesValue } from '@/object-record/record-field/ui/types/Fiel
 import { filesSchema } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { filePreviewStateV2 } from '@/ui/field/display/states/filePreviewStateV2';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
@@ -29,7 +29,7 @@ export const FilesFieldInput = () => {
   const [isUploading, setIsUploading] = useState(false);
   const { enqueueErrorSnackBar } = useSnackBar();
   const setFilePreview = useSetAtomState(filePreviewStateV2);
-  const isAttachmentPreviewEnabled = useAtomValue(
+  const isAttachmentPreviewEnabled = useAtomStateValue(
     isAttachmentPreviewEnabledStateV2,
   );
 

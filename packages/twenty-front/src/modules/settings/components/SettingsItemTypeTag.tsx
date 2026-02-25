@@ -3,7 +3,7 @@ import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Avatar } from 'twenty-ui/display';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type SettingsItemTypeTagProps = {
   item: {
@@ -27,7 +27,7 @@ export const SettingsItemTypeTag = ({
   item: { isCustom, isRemote, applicationId },
 }: SettingsItemTypeTagProps) => {
   const theme = useTheme();
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const itemTagInfo = getItemTagInfo({
     item: { isCustom, isRemote, applicationId },
     workspaceCustomApplicationId:

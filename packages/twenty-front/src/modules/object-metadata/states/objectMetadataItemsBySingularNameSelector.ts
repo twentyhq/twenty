@@ -1,9 +1,9 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 
-export const objectMetadataItemsBySingularNameSelector = createFamilySelector<
+export const objectMetadataItemsBySingularNameSelector = createAtomFamilySelector<
   ObjectMetadataItem[],
   string[]
 >({

@@ -6,7 +6,7 @@ import { useDraftNavigationMenuItemsWorkspaceFolders } from '@/navigation-menu-i
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/hooks/useNavigationMenuItemMoveRemove';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 
 type FolderOption = {
@@ -47,7 +47,7 @@ export const useFolderPickerSelectionData = ({
 }: UseFolderPickerSelectionDataParams) => {
   const { closeCommandMenu } = useCommandMenu();
   const { moveToFolder } = useNavigationMenuItemMoveRemove();
-  const selectedNavigationMenuItemInEditMode = useAtomValue(
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeStateV2,
   );
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();

@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -17,7 +17,7 @@ export const VerifyLoginTokenEffect = () => {
   const navigate = useNavigateApp();
   const { verifyLoginToken } = useVerifyLogin();
 
-  const { isSaved: clientConfigLoaded } = useAtomValue(
+  const { isSaved: clientConfigLoaded } = useAtomStateValue(
     clientConfigApiStatusState,
   );
 

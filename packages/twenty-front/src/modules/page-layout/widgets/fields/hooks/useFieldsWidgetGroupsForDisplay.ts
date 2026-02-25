@@ -3,7 +3,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { filterDraftGroupsForDisplay } from '@/page-layout/widgets/fields/utils/filterDraftGroupsForDisplay';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,11 +18,11 @@ export const useFieldsWidgetGroupsForDisplay = ({
   viewId,
   objectNameSingular,
 }: UseFieldsWidgetGroupsForDisplayParams) => {
-  const isPageLayoutInEditMode = useAtomComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
-  const allDraftGroups = useAtomComponentValue(
+  const allDraftGroups = useAtomComponentStateValue(
     fieldsWidgetGroupsDraftComponentState,
   );
 

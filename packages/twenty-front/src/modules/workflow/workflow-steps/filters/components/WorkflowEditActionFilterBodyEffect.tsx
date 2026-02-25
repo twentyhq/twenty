@@ -1,5 +1,5 @@
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
@@ -44,10 +44,10 @@ export const WorkflowEditActionFilterBodyEffect = ({
     { stepId },
   );
 
-  const currentStepFilters = useAtomComponentValue(
+  const currentStepFilters = useAtomComponentStateValue(
     currentStepFiltersComponentState,
   );
-  const currentStepFilterGroups = useAtomComponentValue(
+  const currentStepFilterGroups = useAtomComponentStateValue(
     currentStepFilterGroupsComponentState,
   );
 

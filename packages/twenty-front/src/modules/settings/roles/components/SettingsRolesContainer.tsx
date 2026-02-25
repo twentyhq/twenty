@@ -9,7 +9,7 @@ import { SettingsRolesList } from '@/settings/roles/components/SettingsRolesList
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { settingsRolesIsLoadingStateV2 } from '@/settings/roles/states/settingsRolesIsLoadingStateV2';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { H3Title } from 'twenty-ui/display';
 
@@ -17,7 +17,7 @@ export const SettingsRolesContainer = () => {
   const { t } = useLingui();
 
   const settingsAllRoles = useSettingsAllRoles();
-  const settingsRolesIsLoading = useAtomValue(settingsRolesIsLoadingStateV2);
+  const settingsRolesIsLoading = useAtomStateValue(settingsRolesIsLoadingStateV2);
 
   if (settingsRolesIsLoading && !settingsAllRoles) {
     return null;

@@ -7,7 +7,7 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useTheme } from '@emotion/react';
@@ -22,8 +22,8 @@ export const SignInUpWithSSO = () => {
   const theme = useTheme();
   const { t } = useLingui();
   const setSignInUpStep = useSetAtomState(signInUpStepState);
-  const workspaceAuthProviders = useAtomValue(workspaceAuthProvidersState);
-  const signInUpStep = useAtomValue(signInUpStepState);
+  const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
+  const signInUpStep = useAtomStateValue(signInUpStepState);
   const [lastAuthenticatedMethod, setLastAuthenticatedMethod] = useAtomState(
     lastAuthenticatedMethodState,
   );

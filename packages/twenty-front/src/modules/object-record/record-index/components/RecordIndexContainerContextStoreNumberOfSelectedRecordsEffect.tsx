@@ -10,7 +10,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect } from 'react';
 
@@ -20,7 +20,7 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       contextStoreNumberOfSelectedRecordsComponentState,
     );
 
-    const contextStoreTargetedRecordsRule = useAtomComponentValue(
+    const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
       contextStoreTargetedRecordsRuleComponentState,
     );
 
@@ -38,15 +38,15 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       objectMetadataItem?.nameSingular ?? '',
     );
 
-    const contextStoreFilters = useAtomComponentValue(
+    const contextStoreFilters = useAtomComponentStateValue(
       contextStoreFiltersComponentState,
     );
 
-    const contextStoreFilterGroups = useAtomComponentValue(
+    const contextStoreFilterGroups = useAtomComponentStateValue(
       contextStoreFilterGroupsComponentState,
     );
 
-    const contextStoreAnyFieldFilterValue = useAtomComponentValue(
+    const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
       contextStoreAnyFieldFilterValueComponentState,
     );
 

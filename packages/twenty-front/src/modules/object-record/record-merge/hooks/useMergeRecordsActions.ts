@@ -9,7 +9,7 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isMergeInProgressState } from '@/object-record/record-merge/states/mergeInProgressState';
 import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type UseMergeRecordsActionsProps = {
   objectNameSingular: string;
@@ -18,7 +18,7 @@ type UseMergeRecordsActionsProps = {
 export const useMergeRecordsActions = ({
   objectNameSingular,
 }: UseMergeRecordsActionsProps) => {
-  const mergeSettings = useAtomValue(mergeSettingsState);
+  const mergeSettings = useAtomStateValue(mergeSettingsState);
 
   const { selectedRecords } = useMergeRecordsSelectedRecords();
 

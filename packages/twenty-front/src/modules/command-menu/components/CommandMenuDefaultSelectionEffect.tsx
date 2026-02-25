@@ -2,8 +2,8 @@ import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/C
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,12 +16,12 @@ export const CommandMenuDefaultSelectionEffect = ({
     COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
   );
 
-  const selectedItemId = useAtomComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
   );
 
-  const hasUserSelectedCommand = useAtomValue(hasUserSelectedCommandState);
+  const hasUserSelectedCommand = useAtomStateValue(hasUserSelectedCommandState);
 
   useEffect(() => {
     if (

@@ -1,6 +1,6 @@
 import { type Decorator } from '@storybook/react-vite';
 
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ProfilerWrapper } from '~/testing/profiling/components/ProfilerWrapper';
 import { ProfilingQueueEffect } from '~/testing/profiling/components/ProfilingQueueEffect';
 import { ProfilingReporter } from '~/testing/profiling/components/ProfilingReporter';
@@ -14,10 +14,10 @@ export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
   const numberOfRuns = parameters.numberOfRuns ?? 2;
   const warmUpRounds = parameters.warmUpRounds ?? 5;
 
-  const currentProfilingRunIndex = useAtomValue(currentProfilingRunIndexState);
+  const currentProfilingRunIndex = useAtomStateValue(currentProfilingRunIndexState);
 
-  const profilingSessionStatus = useAtomValue(profilingSessionStatusState);
-  const profilingSessionRuns = useAtomValue(profilingSessionRunsState);
+  const profilingSessionStatus = useAtomStateValue(profilingSessionStatusState);
+  const profilingSessionRuns = useAtomStateValue(profilingSessionRunsState);
 
   const skip = profilingSessionRuns.length === 0;
 

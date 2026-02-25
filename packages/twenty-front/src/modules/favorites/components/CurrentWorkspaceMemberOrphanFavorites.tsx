@@ -8,7 +8,7 @@ import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatching
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -24,7 +24,7 @@ const StyledOrphanFavoritesContainer = styled.div`
 `;
 
 export const CurrentWorkspaceMemberOrphanFavorites = () => {
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
   const currentPath = useLocation().pathname;

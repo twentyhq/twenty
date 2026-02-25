@@ -1,7 +1,7 @@
-import { createFamilyState } from '@/ui/utilities/state/jotai/utils/createFamilyState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 
-export const recordGroupDefinitionFamilyState = createFamilyState<
+export const recordGroupDefinitionFamilyState = createAtomFamilyState<
   RecordGroupDefinition | undefined,
   RecordGroupDefinition['id']
 >({

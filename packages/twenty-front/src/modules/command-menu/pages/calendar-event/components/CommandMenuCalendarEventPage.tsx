@@ -7,12 +7,12 @@ import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graph
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const CommandMenuCalendarEventPage = () => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const viewableRecordId = useAtomComponentValue(
+  const viewableRecordId = useAtomComponentStateValue(
     viewableRecordIdComponentState,
   );
 

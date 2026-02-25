@@ -12,7 +12,7 @@ import { getFavoriteSecondaryLabel } from '@/favorites/utils/getFavoriteSecondar
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { type ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -26,7 +26,7 @@ import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/compo
 import { currentFavoriteFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentFavoriteFolderIdStateV2';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
@@ -51,7 +51,7 @@ export const CurrentWorkspaceMemberFavorites = ({
   isGroup,
 }: CurrentWorkspaceMemberFavoritesProps) => {
   const { t } = useLingui();
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
   const { isDragging } = useContext(FavoritesDragContext);
@@ -93,7 +93,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 
   const dropdownId = `favorite-folder-edit-${folder.folderId}`;
 
-  const isDropdownOpenComponent = useAtomComponentValue(
+  const isDropdownOpenComponent = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
@@ -160,7 +160,7 @@ export const CurrentWorkspaceMemberFavorites = ({
     />
   );
 
-  const isModalOpened = useAtomComponentValue(
+  const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     modalId,
   );

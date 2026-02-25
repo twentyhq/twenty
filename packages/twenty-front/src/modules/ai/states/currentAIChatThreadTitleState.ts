@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const currentAIChatThreadTitleState = createState<string | null>({
+export const currentAIChatThreadTitleState = createAtomState<string | null>({
   key: 'ai/currentAIChatThreadTitleState',
   defaultValue: null,
 });

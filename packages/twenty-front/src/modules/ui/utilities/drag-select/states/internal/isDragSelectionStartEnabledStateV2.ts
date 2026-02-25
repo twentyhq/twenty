@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const isDragSelectionStartEnabledStateV2 = createState<boolean>({
+export const isDragSelectionStartEnabledStateV2 = createAtomState<boolean>({
   key: 'drag-select/isDragSelectionStartEnabledStateV2',
   defaultValue: true,
 });

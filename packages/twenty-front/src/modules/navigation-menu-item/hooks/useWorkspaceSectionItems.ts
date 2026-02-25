@@ -10,7 +10,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { isDefined } from 'twenty-shared/utils';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useNavigationMenuItemsByFolder } from './useNavigationMenuItemsByFolder';
 import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
@@ -34,8 +34,8 @@ export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItemsByFolder } =
     useNavigationMenuItemsByFolder();
-  const coreViews = useAtomValue(coreViewsState);
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const coreViews = useAtomStateValue(coreViewsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const views = coreViews.map(convertCoreViewToView);
 

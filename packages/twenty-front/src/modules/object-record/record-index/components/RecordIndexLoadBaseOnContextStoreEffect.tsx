@@ -1,15 +1,15 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordIndexLoadBaseOnContextStoreEffect = () => {
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
-  const contextStoreCurrentViewId = useAtomComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -17,7 +17,7 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     undefined,
   );
 
-  const view = useFamilySelectorValue(coreViewFromViewIdFamilySelector, {
+  const view = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
     viewId: contextStoreCurrentViewId ?? '',
   });
 

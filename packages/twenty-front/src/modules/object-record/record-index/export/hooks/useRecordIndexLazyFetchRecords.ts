@@ -17,7 +17,7 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -59,7 +59,7 @@ export const useRecordIndexLazyFetchRecords = ({
     viewBarId: recordIndexId,
   });
 
-  const recordGroupFieldMetadata = useAtomComponentValue(
+  const recordGroupFieldMetadata = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
     recordIndexId,
   );
@@ -68,22 +68,22 @@ export const useRecordIndexLazyFetchRecords = ({
     (column) => column.metadata.fieldName === recordGroupFieldMetadata?.name,
   );
 
-  const contextStoreTargetedRecordsRule = useAtomComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
     recordIndexId,
   );
 
-  const contextStoreFilters = useAtomComponentValue(
+  const contextStoreFilters = useAtomComponentStateValue(
     contextStoreFiltersComponentState,
     recordIndexId,
   );
 
-  const contextStoreFilterGroups = useAtomComponentValue(
+  const contextStoreFilterGroups = useAtomComponentStateValue(
     contextStoreFilterGroupsComponentState,
     recordIndexId,
   );
 
-  const contextStoreAnyFieldFilterValue = useAtomComponentValue(
+  const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
     contextStoreAnyFieldFilterValueComponentState,
     recordIndexId,
   );

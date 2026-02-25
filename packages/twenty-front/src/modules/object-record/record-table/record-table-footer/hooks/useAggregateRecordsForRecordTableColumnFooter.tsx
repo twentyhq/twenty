@@ -14,9 +14,9 @@ import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/rec
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
@@ -35,15 +35,15 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
 
-  const currentRecordFilterGroups = useAtomComponentValue(
+  const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useAtomComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
-  const dateLocale = useAtomValue(dateLocaleState);
+  const dateLocale = useAtomStateValue(dateLocaleState);
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
@@ -66,7 +66,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   // see problem with view id not being set early enoughby Effect component in context store,
   // This happens here when switching from a view to another.
   const aggregateOperationForViewFieldWithProbableImpossibleValues =
-    useFamilyAtomValue(viewFieldAggregateOperationState, { viewFieldId });
+    useAtomFamilyStateValue(viewFieldAggregateOperationState, { viewFieldId });
 
   const isAggregateOperationImpossibleForDateField =
     isDefined(fieldMetadataItem) &&
@@ -96,7 +96,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
         }
       : {};
 
-  const anyFieldFilterValue = useAtomComponentValue(
+  const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
   );
 

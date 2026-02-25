@@ -1,5 +1,5 @@
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { type DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
 
 type DialogState = {
@@ -7,7 +7,7 @@ type DialogState = {
   queue: DialogOptions[];
 };
 
-export const dialogInternalComponentState = createComponentState<DialogState>({
+export const dialogInternalComponentState = createAtomComponentState<DialogState>({
   key: 'dialogInternalComponentState',
   defaultValue: {
     maxQueue: 2,

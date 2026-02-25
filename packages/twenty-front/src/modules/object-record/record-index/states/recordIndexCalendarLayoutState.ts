@@ -1,7 +1,7 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
-export const recordIndexCalendarLayoutState = createState<ViewCalendarLayout>({
+export const recordIndexCalendarLayoutState = createAtomState<ViewCalendarLayout>({
   key: 'recordIndexCalendarLayoutState',
   defaultValue: ViewCalendarLayout.MONTH,
 });

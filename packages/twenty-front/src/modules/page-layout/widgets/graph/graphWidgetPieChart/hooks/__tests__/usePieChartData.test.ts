@@ -5,8 +5,8 @@ import { renderHook } from '@testing-library/react';
 import { type PieChartDataItem } from '~/generated-metadata/graphql';
 
 const mockUseRecoilComponentValue = jest.fn();
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentValue', () => ({
-  useAtomComponentValue: () => mockUseRecoilComponentValue(),
+jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue', () => ({
+  useAtomComponentStateValue: () => mockUseRecoilComponentValue(),
 }));
 
 describe('usePieChartData', () => {

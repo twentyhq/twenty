@@ -1,5 +1,5 @@
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
@@ -11,7 +11,7 @@ const StyledPageTitle = styled.div`
 `;
 
 export const CommandMenuAskAIInfo = () => {
-  const currentAIChatThreadTitle = useAtomValue(currentAIChatThreadTitleState);
+  const currentAIChatThreadTitle = useAtomStateValue(currentAIChatThreadTitleState);
 
   return (
     <StyledPageTitle>

@@ -4,11 +4,11 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isUndefined } from '@sniptt/guards';
 
 export const RecordIndexPage = () => {
-  const contextStoreCurrentObjectMetadataItemId = useAtomComponentValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

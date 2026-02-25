@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
@@ -31,7 +31,7 @@ export const NameField = ({
   onNameUpdate,
 }: NameFieldProps) => {
   const { t } = useLingui();
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
   const [displayName, setDisplayName] = useState(

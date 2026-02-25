@@ -2,7 +2,7 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -37,7 +37,7 @@ export const ImportDataStep = ({
   recordsToImportCount,
 }: ImportDataStepProps) => {
   const { onClose } = useSpreadsheetImportInternal();
-  const spreadsheetImportCreatedRecordsProgress = useAtomValue(
+  const spreadsheetImportCreatedRecordsProgress = useAtomStateValue(
     spreadsheetImportCreatedRecordsProgressState,
   );
   const { formatNumber } = useNumberFormat();

@@ -4,17 +4,17 @@ import { recordCalendarCardHoverPositionComponentState } from '@/object-record/r
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordCalendarCardMetadataFromPosition = () => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
-  const hoverPosition = useAtomComponentValue(
+  const hoverPosition = useAtomComponentStateValue(
     recordCalendarCardHoverPositionComponentState,
   );
 
-  const editModePosition = useAtomComponentValue(
+  const editModePosition = useAtomComponentStateValue(
     recordCalendarCardEditModePositionComponentState,
   );
 

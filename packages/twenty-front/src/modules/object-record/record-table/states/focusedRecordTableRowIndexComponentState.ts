@@ -1,7 +1,7 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const focusedRecordTableRowIndexComponentState = createComponentState<
+export const focusedRecordTableRowIndexComponentState = createAtomComponentState<
   number | null
 >({
   key: 'focusedRecordTableRowIndexComponentState',

@@ -17,7 +17,7 @@ import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/ut
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
 import { type WorkflowRun } from '@/workflow/types/Workflow';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCallback } from 'react';
 import { useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
@@ -42,7 +42,7 @@ export const useRunWorkflowVersion = () => {
   const createOneRecordInCache = useCreateOneRecordInCache<WorkflowRun>({
     objectMetadataItem,
   });
-  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const [mutate] = useMutation<
     RunWorkflowVersionMutation,

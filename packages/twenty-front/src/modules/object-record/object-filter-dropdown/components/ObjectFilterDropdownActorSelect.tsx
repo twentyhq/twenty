@@ -8,7 +8,7 @@ import { MultipleSelectDropdown } from '@/object-record/select/components/Multip
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
 import { t } from '@lingui/core/macro';
 import {
@@ -37,7 +37,7 @@ export const ObjectFilterDropdownActorSelect = ({
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
 
-  const objectFilterDropdownSearchInput = useAtomComponentValue(
+  const objectFilterDropdownSearchInput = useAtomComponentStateValue(
     objectFilterDropdownSearchInputComponentState,
   );
 

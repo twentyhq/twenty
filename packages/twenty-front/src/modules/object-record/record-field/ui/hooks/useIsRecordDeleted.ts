@@ -1,6 +1,6 @@
 import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseIsRecordReadOnlyParams = {
@@ -10,7 +10,7 @@ type UseIsRecordReadOnlyParams = {
 export const useIsRecordDeleted = ({
   recordId,
 }: UseIsRecordReadOnlyParams): boolean => {
-  const recordDeletedAt = useFamilySelectorValue(recordStoreFamilySelectorV2, {
+  const recordDeletedAt = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
     recordId,
     fieldName: 'deletedAt',
   }) as ObjectRecord | null;

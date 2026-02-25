@@ -10,9 +10,9 @@ import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/compon
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 const StyledRightDrawerRecord = styled.div<{
   hasDeletedRecordBanner: boolean;
@@ -26,11 +26,11 @@ const StyledRightDrawerRecord = styled.div<{
 `;
 
 export const CommandMenuRecordPage = () => {
-  const viewableRecordNameSingular = useAtomComponentValue(
+  const viewableRecordNameSingular = useAtomComponentStateValue(
     viewableRecordNameSingularComponentState,
   );
 
-  const viewableRecordId = useAtomComponentValue(
+  const viewableRecordId = useAtomComponentStateValue(
     viewableRecordIdComponentState,
   );
 
@@ -47,7 +47,7 @@ export const CommandMenuRecordPage = () => {
     viewableRecordId,
   );
 
-  const recordDeletedAt = useFamilySelectorValue(recordStoreFamilySelectorV2, {
+  const recordDeletedAt = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
     recordId: objectRecordId,
     fieldName: 'deletedAt',
   });

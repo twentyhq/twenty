@@ -25,7 +25,7 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
@@ -88,7 +88,7 @@ export const PasswordReset = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
-  const workspacePublicData = useAtomValue(workspacePublicDataState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const setCurrentUser = useSetAtomState(currentUserState);
 
   const navigate = useNavigateApp();

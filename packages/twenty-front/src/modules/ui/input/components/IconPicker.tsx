@@ -16,12 +16,12 @@ import {
 } from '@/ui/input/states/iconPickerVisibleCountState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/display';
@@ -103,7 +103,7 @@ const IconPickerIcon = ({
   Icon,
   focusedIconKey,
 }: IconPickerIconProps) => {
-  const isSelectedItemId = useAtomComponentValue(
+  const isSelectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     iconKey,
   );
@@ -163,7 +163,7 @@ export const IconPicker = ({
   const store = useStore();
 
   const iconPickerVisibleCount =
-    useFamilyAtomValue(iconPickerVisibleCountState, dropdownId) ??
+    useAtomFamilyStateValue(iconPickerVisibleCountState, dropdownId) ??
     maxIconsVisible;
 
   const resetIconPickerVisibleCount = useCallback(() => {
@@ -252,7 +252,7 @@ export const IconPicker = ({
   const selectableListInstanceId = 'icon-list';
 
   const focusedIconKey =
-    useAtomComponentValue(
+    useAtomComponentStateValue(
       selectedItemIdComponentState,
       selectableListInstanceId,
     ) ?? undefined;

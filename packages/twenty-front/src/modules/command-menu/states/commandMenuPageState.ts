@@ -1,7 +1,7 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { CommandMenuPages } from 'twenty-shared/types';
 
-export const commandMenuPageState = createState<CommandMenuPages>({
+export const commandMenuPageState = createAtomState<CommandMenuPages>({
   key: 'command-menu/commandMenuPageState',
   defaultValue: CommandMenuPages.Root,
 });

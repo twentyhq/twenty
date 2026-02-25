@@ -8,7 +8,7 @@ import { lastContextStoreVirtualizedViewIdComponentState } from '@/object-record
 import { lastContextStoreVirtualizedVisibleRecordFieldsComponentState } from '@/object-record/record-table/virtualization/states/lastContextStoreVirtualizedVisibleRecordFieldsComponentState';
 import { lastRecordTableQueryIdentifierComponentState } from '@/object-record/record-table/virtualization/states/lastRecordTableQueryIdentifierComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -31,7 +31,7 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
     isInitializingVirtualTableDataLoadingComponentState,
   );
 
-  const isFetchingMoreRecords = useFamilyAtomValue(
+  const isFetchingMoreRecords = useAtomFamilyStateValue(
     isFetchingMoreRecordsFamilyState,
     recordTableId,
   );

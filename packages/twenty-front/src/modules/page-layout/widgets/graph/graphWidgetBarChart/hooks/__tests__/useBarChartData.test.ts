@@ -4,8 +4,8 @@ import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/Graph
 import { renderHook } from '@testing-library/react';
 
 const mockUseRecoilComponentValue = jest.fn();
-jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentValue', () => ({
-  useAtomComponentValue: () => mockUseRecoilComponentValue(),
+jest.mock('@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue', () => ({
+  useAtomComponentStateValue: () => mockUseRecoilComponentValue(),
 }));
 
 describe('useBarChartData', () => {

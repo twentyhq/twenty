@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { t } from '@lingui/core/macro';
@@ -41,7 +41,7 @@ export const useImapSmtpCaldavConnectionForm = ({
   connectedAccountId,
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
-  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const formMethods = useForm<ConnectionFormData>({
     mode: 'onSubmit',

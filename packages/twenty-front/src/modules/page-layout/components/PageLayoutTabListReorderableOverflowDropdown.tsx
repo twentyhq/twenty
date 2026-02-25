@@ -25,7 +25,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
@@ -73,7 +73,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
     PageLayoutComponentInstanceContext,
   );
 
-  const isPageLayoutInEditMode = useAtomComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
     pageLayoutId,
   );
@@ -81,7 +81,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   const shouldShowEditButton =
     isPageLayoutInEditMode && shouldEnableTabEditingFeatures(pageLayoutType);
 
-  const isTabDragging = useAtomComponentValue(
+  const isTabDragging = useAtomComponentStateValue(
     isPageLayoutTabDraggingComponentState,
     instanceId,
   );

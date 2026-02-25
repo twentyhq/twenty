@@ -7,8 +7,8 @@ import { useMatchingCommandMenuActions } from '@/command-menu/hooks/useMatchingC
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -20,7 +20,7 @@ export type ActionGroupConfig = {
 export const CommandMenu = () => {
   const { t } = useLingui();
 
-  const commandMenuSearch = useAtomValue(commandMenuSearchState);
+  const commandMenuSearch = useAtomStateValue(commandMenuSearchState);
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const {
@@ -39,12 +39,12 @@ export const CommandMenu = () => {
     commandMenuSearch,
   });
 
-  const previousContextStoreCurrentObjectMetadataItemId = useAtomComponentValue(
+  const previousContextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     'command-menu-previous',
   );
 
-  const objectMetadataItemId = useAtomComponentValue(
+  const objectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
   const currentObjectMetadataItem = objectMetadataItems.find(

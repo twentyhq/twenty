@@ -13,7 +13,7 @@ import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForS
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
 import {
   arrayOfUuidOrVariableSchema,
@@ -22,7 +22,7 @@ import {
 } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const EMPTY_FILTER_VALUE: string = JSON.stringify({
   isCurrentWorkspaceMemberSelected: false,
@@ -44,7 +44,7 @@ export const ObjectFilterDropdownRecordSelect = ({
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const allowRequestsToTwentyIcons = useAtomValue(
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
 
@@ -54,15 +54,15 @@ export const ObjectFilterDropdownRecordSelect = ({
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
 
-  const selectedOperandInDropdown = useAtomComponentValue(
+  const selectedOperandInDropdown = useAtomComponentStateValue(
     selectedOperandInDropdownComponentState,
   );
 
-  const objectFilterDropdownSearchInput = useAtomComponentValue(
+  const objectFilterDropdownSearchInput = useAtomComponentStateValue(
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const currentRecordFilters = useAtomComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 

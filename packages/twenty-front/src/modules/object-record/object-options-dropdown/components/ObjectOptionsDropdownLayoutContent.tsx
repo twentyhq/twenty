@@ -13,7 +13,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -21,7 +21,7 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -60,11 +60,11 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     [updateCurrentView],
   );
 
-  const recordIndexOpenRecordIn = useAtomValue(recordIndexOpenRecordInState);
-  const recordIndexCalendarLayout = useAtomValue(
+  const recordIndexOpenRecordIn = useAtomStateValue(recordIndexOpenRecordInState);
+  const recordIndexCalendarLayout = useAtomStateValue(
     recordIndexCalendarLayoutState,
   );
-  const recordGroupFieldMetadata = useAtomComponentValue(
+  const recordGroupFieldMetadata = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -124,7 +124,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ...(currentView?.type !== ViewType.Table ? ['Compact view'] : []),
   ];
 
-  const selectedItemId = useAtomComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );

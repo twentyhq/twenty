@@ -12,18 +12,18 @@ import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-tab
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export const RecordIndexFiltersToContextStoreEffect = () => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
-  const recordIndexFilters = useAtomComponentValue(
+  const recordIndexFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
     recordIndexId,
   );
 
-  const recordIndexFilterGroups = useAtomComponentValue(
+  const recordIndexFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
     recordIndexId,
   );
@@ -33,7 +33,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     recordIndexId,
   );
 
-  const hasUserSelectedAllRows = useAtomComponentValue(
+  const hasUserSelectedAllRows = useAtomComponentStateValue(
     hasUserSelectedAllRowsComponentState,
     recordIndexId,
   );
@@ -102,7 +102,7 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     recordIndexId,
   );
 
-  const anyFieldFilterValue = useAtomComponentValue(
+  const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
     recordIndexId,
   );

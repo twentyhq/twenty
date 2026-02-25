@@ -1,8 +1,8 @@
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useHasMultipleAuthMethods = () => {
-  const workspaceAuthProviders = useAtomValue(workspaceAuthProvidersState);
+  const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
 
   if (!workspaceAuthProviders) {
     return false;

@@ -7,7 +7,7 @@ import {
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import styled from '@emotion/styled';
 
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { Logo } from '@/auth/components/Logo';
@@ -83,16 +83,16 @@ const StandardContent = ({
 export const SignInUp = () => {
   const { t } = useLingui();
   const setSignInUpStep = useSetAtomState(signInUpStepState);
-  const clientConfigApiStatus = useAtomValue(clientConfigApiStatusState);
+  const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
-  const workspacePublicData = useAtomValue(workspacePublicDataState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { loading: getPublicWorkspaceDataLoading } =
     useGetPublicWorkspaceDataByDomain();
-  const isMultiWorkspaceEnabled = useAtomValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
   const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
     useWorkspaceFromInviteHash();
 

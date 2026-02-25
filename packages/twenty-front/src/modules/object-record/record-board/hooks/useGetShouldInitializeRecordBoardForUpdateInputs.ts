@@ -4,7 +4,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, mapById } from 'twenty-shared/utils';
 
@@ -15,15 +15,15 @@ export const useGetShouldInitializeRecordBoardForUpdateInputs = () => {
     objectMetadataItem,
   });
 
-  const currentRecordSorts = useAtomComponentValue(
+  const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
   );
 
-  const currentRecordFilters = useAtomComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
-  const recordIndexGroupFieldMetadataItem = useAtomComponentValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 

@@ -1,6 +1,6 @@
 import { RecordTableRowDiv } from '@/object-record/record-table/record-table-row/components/RecordTableRowDiv';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isActive } from '@tiptap/core';
 import { forwardRef, type ReactNode } from 'react';
 
@@ -33,7 +33,7 @@ export const RecordTableFirstRowOfGroup = forwardRef<
     },
     ref,
   ) => {
-    const isScrolledVertically = useAtomComponentValue(
+    const isScrolledVertically = useAtomComponentStateValue(
       isRecordTableScrolledVerticallyComponentState,
     );
 

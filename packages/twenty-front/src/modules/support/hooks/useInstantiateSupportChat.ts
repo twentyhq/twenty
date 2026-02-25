@@ -2,7 +2,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,9 +28,9 @@ const insertScript = ({
 };
 
 export const useInstantiateSupportChat = () => {
-  const currentUser = useAtomValue(currentUserState);
-  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
-  const supportChat = useAtomValue(supportChatState);
+  const currentUser = useAtomStateValue(currentUserState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const supportChat = useAtomStateValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
   const loading = useIsPrefetchLoading();
 

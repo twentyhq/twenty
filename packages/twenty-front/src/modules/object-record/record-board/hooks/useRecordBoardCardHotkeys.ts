@@ -9,7 +9,7 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
@@ -27,7 +27,7 @@ export const useRecordBoardCardHotkeys = (focusId: string) => {
   const { resetRecordBoardSelection } = useResetRecordBoardSelection();
   const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
-  const isRecordBoardCardSelected = useAtomComponentFamilyValue(
+  const isRecordBoardCardSelected = useAtomComponentFamilyStateValue(
     isRecordBoardCardSelectedComponentFamilyState,
     recordId,
   );

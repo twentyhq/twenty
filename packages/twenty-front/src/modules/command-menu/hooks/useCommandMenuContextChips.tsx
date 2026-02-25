@@ -11,8 +11,8 @@ import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledIconWrapper = styled.div`
   background: ${({ theme }) => theme.background.primary};
@@ -23,21 +23,21 @@ const StyledIconWrapper = styled.div`
 `;
 
 export const useCommandMenuContextChips = () => {
-  const commandMenuNavigationStack = useAtomValue(
+  const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );
 
-  const allowRequestsToTwentyIcons = useAtomValue(
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
 
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { navigateCommandMenuHistory } = useCommandMenuHistory();
 
   const theme = useTheme();
 
-  const commandMenuNavigationMorphItemsByPage = useAtomValue(
+  const commandMenuNavigationMorphItemsByPage = useAtomStateValue(
     commandMenuNavigationMorphItemsByPageState,
   );
 
@@ -47,14 +47,14 @@ export const useCommandMenuContextChips = () => {
     morphItems.map((morphItem) => morphItem.recordId),
   );
 
-  const recordIdentifiers = useFamilySelectorValue(
+  const recordIdentifiers = useAtomFamilySelectorValue(
     recordStoreIdentifiersFamilySelector,
     {
       recordIds: allRecordIds,
       allowRequestsToTwentyIcons,
     },
   );
-  const records = useFamilySelectorValue(recordStoreRecordsSelectorV2, {
+  const records = useAtomFamilySelectorValue(recordStoreRecordsSelectorV2, {
     recordIds: allRecordIds,
   });
 

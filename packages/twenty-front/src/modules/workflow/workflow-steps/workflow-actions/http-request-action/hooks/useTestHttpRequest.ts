@@ -4,8 +4,8 @@ import {
   type HttpRequestFormData,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { TEST_HTTP_REQUEST } from '@/workflow/workflow-steps/workflow-actions/http-request-action/graphql/mutations/testHttpRequest';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
 import { useMutation } from '@apollo/client';
 import { t } from '@lingui/core/macro';
@@ -44,11 +44,11 @@ const convertFlatVariablesToNestedContext = (flatVariables: {
 export const useTestHttpRequest = (actionId: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const [isTesting, setIsTesting] = useState(false);
-  const httpRequestTestData = useFamilyAtomValue(
+  const httpRequestTestData = useAtomFamilyStateValue(
     httpRequestTestDataFamilyState,
     actionId,
   );
-  const setHttpRequestTestData = useSetFamilyAtomState(
+  const setHttpRequestTestData = useSetAtomFamilyState(
     httpRequestTestDataFamilyState,
     actionId,
   );

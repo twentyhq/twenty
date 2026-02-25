@@ -5,8 +5,8 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/display';
 
@@ -15,12 +15,12 @@ export const RecordTableRecordGroupSectionAddNew = () => {
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
-  const recordGroup = useFamilyAtomValue(
+  const recordGroup = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
     currentRecordGroupId,
   );
 
-  const mainGroupByFieldMetadata = useAtomComponentValue(
+  const mainGroupByFieldMetadata = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 

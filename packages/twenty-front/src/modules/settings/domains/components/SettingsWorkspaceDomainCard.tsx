@@ -6,12 +6,12 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconWorld, Status } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SettingsWorkspaceDomainCard = () => {
   const { t } = useLingui();
-  const isMultiWorkspaceEnabled = useAtomValue(isMultiWorkspaceEnabledState);
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   if (!isMultiWorkspaceEnabled) {
     return null;

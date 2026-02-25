@@ -8,7 +8,7 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
@@ -42,7 +42,7 @@ export const useLoadCurrentUser = () => {
   const setWorkspaceAuthBypassProviders = useSetAtomState(
     workspaceAuthBypassProvidersState,
   );
-  const authProviders = useAtomValue(authProvidersState);
+  const authProviders = useAtomStateValue(authProvidersState);
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 

@@ -15,7 +15,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
@@ -70,11 +70,11 @@ export const MultipleRecordPickerMenuItems = ({
     [multipleRecordPickerPickableMorphItems, store],
   );
 
-  const multipleRecordPickerShouldShowInitialLoading = useAtomComponentValue(
+  const multipleRecordPickerShouldShowInitialLoading = useAtomComponentStateValue(
     multipleRecordPickerShouldShowInitialLoadingComponentState,
   );
 
-  const multipleRecordPickerShouldShowSkeleton = useAtomComponentValue(
+  const multipleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 

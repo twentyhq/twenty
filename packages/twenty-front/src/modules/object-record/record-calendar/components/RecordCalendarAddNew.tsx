@@ -6,7 +6,7 @@ import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type Temporal } from 'temporal-polyfill';
@@ -44,7 +44,7 @@ export const RecordCalendarAddNew = ({
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
-  const recordIndexCalendarFieldMetadataId = useAtomValue(
+  const recordIndexCalendarFieldMetadataId = useAtomStateValue(
     recordIndexCalendarFieldMetadataIdState,
   );
 

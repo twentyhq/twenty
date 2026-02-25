@@ -11,14 +11,14 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewKey } from '@/views/types/ViewKey';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
@@ -54,7 +54,7 @@ export const ObjectOptionsDropdownCustomView = ({
       }
     : null;
 
-  const recordGroupFieldMetadata = useAtomComponentValue(
+  const recordGroupFieldMetadata = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -66,7 +66,7 @@ export const ObjectOptionsDropdownCustomView = ({
 
   const isDefaultView = currentView?.key === ViewKey.Index;
 
-  const recordIndexCalendarLayout = useAtomValue(
+  const recordIndexCalendarLayout = useAtomStateValue(
     recordIndexCalendarLayoutState,
   );
 
@@ -105,7 +105,7 @@ export const ObjectOptionsDropdownCustomView = ({
     'Delete view',
   ];
 
-  const selectedItemId = useAtomComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );

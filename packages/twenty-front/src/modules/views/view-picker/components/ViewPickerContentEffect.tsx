@@ -3,9 +3,9 @@ import { useEffect } from 'react';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
@@ -52,20 +52,20 @@ export const ViewPickerContentEffect = () => {
     viewPickerTypeComponentState,
   );
 
-  const viewPickerReferenceViewId = useAtomComponentValue(
+  const viewPickerReferenceViewId = useAtomComponentStateValue(
     viewPickerReferenceViewIdComponentState,
   );
 
-  const viewPickerIsDirty = useAtomComponentValue(
+  const viewPickerIsDirty = useAtomComponentStateValue(
     viewPickerIsDirtyComponentState,
   );
 
-  const viewPickerIsPersisting = useAtomComponentValue(
+  const viewPickerIsPersisting = useAtomComponentStateValue(
     viewPickerIsPersistingComponentState,
   );
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
-  const viewsOnCurrentObject = useFamilySelectorValue(
+  const viewsOnCurrentObject = useAtomFamilySelectorValue(
     coreViewsFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );

@@ -11,8 +11,8 @@ import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useEffect } from 'react';
@@ -31,18 +31,18 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
   );
   const showAuthModal = useShowAuthModal();
   const isSettingsPage = useIsSettingsPage();
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isWorkspaceActive =
     currentWorkspace?.activationStatus === WorkspaceActivationStatus.ACTIVE;
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const setIsPrefetchFavoritesLoaded = useSetFamilyAtomState(
+  const setIsPrefetchFavoritesLoaded = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavorites,
   );
 
-  const setIsPrefetchFavoritesFoldersLoaded = useSetFamilyAtomState(
+  const setIsPrefetchFavoritesFoldersLoaded = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavoritesFolders,
   );

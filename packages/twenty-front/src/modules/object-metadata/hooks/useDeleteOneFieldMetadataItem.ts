@@ -8,7 +8,7 @@ import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/obje
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { ApolloError } from '@apollo/client';
@@ -32,7 +32,7 @@ export const useDeleteOneFieldMetadataItem = () => {
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const recordIndexGroupAggregateFieldMetadataItem = useAtomComponentValue(
+  const recordIndexGroupAggregateFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupAggregateFieldMetadataItemComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

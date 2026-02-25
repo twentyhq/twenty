@@ -1,6 +1,6 @@
 import { EXECUTE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/executeOneLogicFunction';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
@@ -38,11 +38,11 @@ export const useExecuteLogicFunction = ({
     { input: ExecuteOneLogicFunctionInput }
   >(EXECUTE_ONE_LOGIC_FUNCTION);
 
-  const logicFunctionTestData = useFamilyAtomValue(
+  const logicFunctionTestData = useAtomFamilyStateValue(
     logicFunctionTestDataFamilyState,
     logicFunctionId,
   );
-  const setLogicFunctionTestData = useSetFamilyAtomState(
+  const setLogicFunctionTestData = useSetAtomFamilyState(
     logicFunctionTestDataFamilyState,
     logicFunctionId,
   );

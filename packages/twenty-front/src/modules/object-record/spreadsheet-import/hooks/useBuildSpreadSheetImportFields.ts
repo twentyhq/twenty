@@ -14,7 +14,7 @@ import {
   type SpreadsheetImportField,
   type SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   assertUnreachable,
   getUniqueConstraintsFields,
@@ -25,7 +25,7 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const useBuildSpreadsheetImportFields = () => {
   const { getIcon } = useIcons();
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const buildSpreadsheetImportFields = (
     fieldMetadataItems: FieldMetadataItem[],

@@ -9,9 +9,9 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
@@ -39,18 +39,18 @@ export const SingleRecordPickerMenuItem = ({
   const selectableListComponentInstanceId =
     getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
-  const isSelectedByKeyboard = useAtomComponentFamilyValue(
+  const isSelectedByKeyboard = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     morphItem.recordId,
     selectableListComponentInstanceId,
   );
 
-  const searchRecord = useFamilyAtomValue(
+  const searchRecord = useAtomFamilyStateValue(
     searchRecordStoreFamilyState,
     morphItem.recordId,
   );
 
-  const searchableObjectMetadataItems = useAtomComponentValue(
+  const searchableObjectMetadataItems = useAtomComponentStateValue(
     singleRecordPickerSearchableObjectMetadataItemsComponentState,
     recordPickerComponentInstanceId,
   );

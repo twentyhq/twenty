@@ -8,7 +8,7 @@ import { calculateGridCellPosition } from '@/page-layout/utils/calculateGridCell
 import { calculateTotalGridRows } from '@/page-layout/utils/calculateTotalGridRows';
 import { generateCellId } from '@/page-layout/utils/generateCellId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 
@@ -48,19 +48,19 @@ const StyledGridCell = styled.div<{ isSelected?: boolean }>`
 `;
 
 export const PageLayoutGridOverlay = () => {
-  const pageLayoutCurrentBreakpoint = useAtomComponentValue(
+  const pageLayoutCurrentBreakpoint = useAtomComponentStateValue(
     pageLayoutCurrentBreakpointComponentState,
   );
 
-  const pageLayoutSelectedCells = useAtomComponentValue(
+  const pageLayoutSelectedCells = useAtomComponentStateValue(
     pageLayoutSelectedCellsComponentState,
   );
 
-  const pageLayoutCurrentLayouts = useAtomComponentValue(
+  const pageLayoutCurrentLayouts = useAtomComponentStateValue(
     pageLayoutCurrentLayoutsComponentState,
   );
 
-  const activeTabId = useAtomComponentValue(activeTabIdComponentState);
+  const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
 
   const { createWidgetFromClick } = useCreateWidgetFromClick();
 

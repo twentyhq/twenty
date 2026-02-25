@@ -5,7 +5,7 @@ import {
 } from '@/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
@@ -24,7 +24,7 @@ import { useIcons } from 'twenty-ui/display';
 
 export const CommandMenuWorkflowCreateStepContent = () => {
   const { getIcon } = useIcons();
-  const workflowVisualizerWorkflowId = useAtomComponentValue(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
 

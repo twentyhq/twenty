@@ -12,7 +12,7 @@ import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
@@ -20,7 +20,7 @@ export const RestoreMultipleRecordsAction = () => {
   const { recordIndexId, objectMetadataItem } =
     useRecordIndexIdFromCurrentContextStore();
 
-  const contextStoreCurrentViewId = useAtomComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
     recordIndexId,
   );
@@ -37,22 +37,22 @@ export const RestoreMultipleRecordsAction = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const contextStoreTargetedRecordsRule = useAtomComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
     recordIndexId,
   );
 
-  const contextStoreFilters = useAtomComponentValue(
+  const contextStoreFilters = useAtomComponentStateValue(
     contextStoreFiltersComponentState,
     recordIndexId,
   );
 
-  const contextStoreFilterGroups = useAtomComponentValue(
+  const contextStoreFilterGroups = useAtomComponentStateValue(
     contextStoreFilterGroupsComponentState,
     recordIndexId,
   );
 
-  const contextStoreAnyFieldFilterValue = useAtomComponentValue(
+  const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
     contextStoreAnyFieldFilterValueComponentState,
     recordIndexId,
   );

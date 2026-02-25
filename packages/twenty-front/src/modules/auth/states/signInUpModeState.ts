@@ -1,7 +1,7 @@
 import { SignInUpMode } from '@/auth/types/signInUpMode';
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const signInUpModeState = createState<SignInUpMode>({
+export const signInUpModeState = createAtomState<SignInUpMode>({
   key: 'signInUpModeState',
   defaultValue: SignInUpMode.SignIn,
 });

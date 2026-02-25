@@ -1,4 +1,4 @@
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 
@@ -43,7 +43,7 @@ export const EmailThreadHeader = ({
   subject,
   lastMessageSentAt,
 }: EmailThreadHeaderProps) => {
-  const { localeCatalog } = useAtomValue(dateLocaleState);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const lastMessageSentAtFormatted = beautifyPastDateRelativeToNow(
     lastMessageSentAt,
     localeCatalog,

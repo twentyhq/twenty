@@ -12,14 +12,14 @@ import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-
 import { RecordTableVirtualizedSSESubscribeEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedSSESubscribeEffect';
 import { RecordTableVirtualizedRowTreadmillEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedRowTreadmillEffect';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const RecordTableNoRecordGroupBody = () => {
   const recordTableHasRecords = useAtomComponentSelectorValue(
     recordIndexHasRecordsComponentSelector,
   );
 
-  const isRecordTableInitialLoading = useAtomComponentValue(
+  const isRecordTableInitialLoading = useAtomComponentStateValue(
     isRecordTableInitialLoadingComponentState,
   );
 

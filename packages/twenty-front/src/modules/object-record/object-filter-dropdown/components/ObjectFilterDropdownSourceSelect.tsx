@@ -8,7 +8,7 @@ import { type SelectableItem } from '@/object-record/select/types/SelectableItem
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,7 +21,7 @@ export const ObjectFilterDropdownSourceSelect = ({
 }: {
   dropdownId: string;
 }) => {
-  const objectFilterDropdownSearchInput = useAtomComponentValue(
+  const objectFilterDropdownSearchInput = useAtomComponentStateValue(
     objectFilterDropdownSearchInputComponentState,
   );
 
@@ -29,7 +29,7 @@ export const ObjectFilterDropdownSourceSelect = ({
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const objectFilterDropdownCurrentRecordFilter = useAtomComponentValue(
+  const objectFilterDropdownCurrentRecordFilter = useAtomComponentStateValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 

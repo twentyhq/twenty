@@ -14,7 +14,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUserLookupAdminPanelMutation } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
@@ -53,13 +53,13 @@ export const SettingsAdminGeneral = () => {
 
   const [userLookup] = useUserLookupAdminPanelMutation();
 
-  const currentUser = useAtomValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
 
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
 
   const canImpersonate = currentUser?.canImpersonate;
 
-  const canManageFeatureFlags = useAtomValue(canManageFeatureFlagsState);
+  const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
 
   const handleSearch = async () => {
     setActiveTabId('');

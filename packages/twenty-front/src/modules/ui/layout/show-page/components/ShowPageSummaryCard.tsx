@@ -11,7 +11,7 @@ import {
   type AvatarType,
   type IconComponent,
 } from 'twenty-ui/display';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { v4 as uuidV4 } from 'uuid';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
@@ -123,7 +123,7 @@ export const ShowPageSummaryCard = ({
   loading,
   isMobile = false,
 }: ShowPageSummaryCardProps) => {
-  const { localeCatalog } = useAtomValue(dateLocaleState);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date, localeCatalog) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';

@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const isAppMetadataReadyState = createState<boolean>({
+export const isAppMetadataReadyState = createAtomState<boolean>({
   key: 'isAppMetadataReadyState',
   defaultValue: false,
 });

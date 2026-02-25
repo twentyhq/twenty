@@ -14,7 +14,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -45,7 +45,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const sortedFieldByTable = useFamilyAtomValue(sortedFieldByTableFamilyState, {
+  const sortedFieldByTable = useAtomFamilyStateValue(sortedFieldByTableFamilyState, {
     tableId: SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID,
   });
 
@@ -66,7 +66,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
     ),
   );
 
-  const settingsDraftRole = useFamilyAtomValue(
+  const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
   );

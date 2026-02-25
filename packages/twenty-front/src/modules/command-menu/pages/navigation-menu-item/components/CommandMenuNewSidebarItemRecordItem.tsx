@@ -6,7 +6,7 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useAddRecordToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddRecordToNavigationMenuDraft';
 import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/types/add-to-navigation-drag-payload';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -32,7 +32,7 @@ export const CommandMenuNewSidebarItemRecordItem = ({
   const { closeCommandMenu } = useCommandMenu();
   const { addRecordToDraft } = useAddRecordToNavigationMenuDraft();
   const { currentDraft } = useDraftNavigationMenuItems();
-  const addMenuItemInsertionContext = useAtomValue(
+  const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextStateV2,
   );
   const setAddMenuItemInsertionContext = useSetAtomState(

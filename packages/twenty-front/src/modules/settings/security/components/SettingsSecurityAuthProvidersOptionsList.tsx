@@ -22,7 +22,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { Toggle2FA } from './Toggle2FA';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -34,8 +34,8 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { t } = useLingui();
 
   const { enqueueErrorSnackBar } = useSnackBar();
-  const SSOIdentitiesProviders = useAtomValue(SSOIdentitiesProvidersState);
-  const authProviders = useAtomValue(authProvidersState);
+  const SSOIdentitiesProviders = useAtomStateValue(SSOIdentitiesProvidersState);
+  const authProviders = useAtomStateValue(authProvidersState);
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,

@@ -15,10 +15,10 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
@@ -37,7 +37,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
   objectNameSingular,
   recordId,
 }: RecordShowRightDrawerOpenRecordButtonProps) => {
-  const record = useFamilyAtomValue(recordStoreFamilyState, recordId) as
+  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId) as
     | ObjectRecord
     | null
     | undefined;
@@ -52,7 +52,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     targetObjectId: recordId,
   });
 
-  const activeTabIdInRightDrawer = useAtomComponentValue(
+  const activeTabIdInRightDrawer = useAtomComponentStateValue(
     activeTabIdComponentState,
     tabListComponentId,
   );

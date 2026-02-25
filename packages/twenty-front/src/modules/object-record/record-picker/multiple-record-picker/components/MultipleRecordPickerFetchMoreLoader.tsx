@@ -13,7 +13,7 @@ import { multipleRecordPickerPaginationSelector } from '@/object-record/record-p
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -49,21 +49,21 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     componentInstanceId,
   );
 
-  const isLoading = useAtomComponentValue(
+  const isLoading = useAtomComponentStateValue(
     multipleRecordPickerIsLoadingComponentState,
     componentInstanceId,
   );
 
-  const searchFilter = useAtomComponentValue(
+  const searchFilter = useAtomComponentStateValue(
     multipleRecordPickerSearchFilterComponentState,
     componentInstanceId,
   );
 
-  const multipleRecordPickerShouldShowInitialLoading = useAtomComponentValue(
+  const multipleRecordPickerShouldShowInitialLoading = useAtomComponentStateValue(
     multipleRecordPickerShouldShowInitialLoadingComponentState,
   );
 
-  const multipleRecordPickerShouldShowSkeleton = useAtomComponentValue(
+  const multipleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 

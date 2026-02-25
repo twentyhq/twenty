@@ -1,5 +1,5 @@
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useObjectNamePluralFromSingular = ({
@@ -7,7 +7,7 @@ export const useObjectNamePluralFromSingular = ({
 }: {
   objectNameSingular: string;
 }) => {
-  const objectMetadataItem = useFamilySelectorValue(
+  const objectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
       objectName: objectNameSingular,

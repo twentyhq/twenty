@@ -2,9 +2,9 @@ import { jwtDecode } from 'jwt-decode';
 import { isDefined } from 'twenty-shared/utils';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { createSelector } from '@/ui/utilities/state/jotai/utils/createSelector';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const isImpersonatingState = createSelector<boolean>({
+export const isImpersonatingState = createAtomSelector<boolean>({
   key: 'isImpersonatingState',
   get: ({ get }) => {
     const tokenPair = get(tokenPairState);

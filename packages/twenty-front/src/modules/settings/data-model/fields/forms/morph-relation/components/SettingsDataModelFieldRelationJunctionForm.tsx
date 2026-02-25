@@ -10,7 +10,7 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { Select } from '@/ui/input/components/Select';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RelationType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
@@ -25,7 +25,7 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   const { watch, setValue } =
     useFormContext<SettingsDataModelFieldEditFormValues>();
 
-  const isAdvancedModeEnabled = useAtomValue(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   const { objectMetadataItem: sourceObjectMetadataItem } =
     useObjectMetadataItem({ objectNameSingular });

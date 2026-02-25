@@ -28,7 +28,7 @@ import {
 } from 'twenty-ui/display';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -124,13 +124,13 @@ const StyledActionLinkContainer = styled.div`
 `;
 
 export const SignInUpGlobalScopeForm = () => {
-  const authProviders = useAtomValue(authProvidersState);
-  const signInUpStep = useAtomValue(signInUpStepState);
+  const authProviders = useAtomStateValue(authProvidersState);
+  const signInUpStep = useAtomStateValue(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { signOut } = useAuth();
 
   const { createWorkspace } = useSignUpInNewWorkspace();
-  const availableWorkspaces = useAtomValue(availableWorkspacesState);
+  const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
   const theme = useTheme();
   const { t } = useLingui();
 

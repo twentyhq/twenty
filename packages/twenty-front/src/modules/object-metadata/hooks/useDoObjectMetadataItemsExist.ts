@@ -1,11 +1,11 @@
 import { objectMetadataItemsBySingularNameSelector } from '@/object-metadata/states/objectMetadataItemsBySingularNameSelector';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useDoObjectMetadataItemsExist = (
   objectNameSingulars: string[],
 ) => {
-  const objectMetadataItems = useFamilySelectorValue(
+  const objectMetadataItems = useAtomFamilySelectorValue(
     objectMetadataItemsBySingularNameSelector,
     objectNameSingulars,
   );

@@ -26,7 +26,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -71,11 +71,11 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection('Workspace');
-  const coreViews = useAtomValue(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsState);
   const views = coreViews.map(convertCoreViewToView);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { isDragging } = useContext(NavigationMenuItemDragContext);
   const { addToNavigationFallbackDestination } = useContext(
     NavigationDropTargetContext,

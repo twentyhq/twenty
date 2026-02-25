@@ -3,13 +3,13 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { t } from '@lingui/core/macro';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLogout } from 'twenty-ui/display';
 
 export const InformationBannerIsImpersonating = () => {
-  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
-  const isImpersonating = useAtomValue(isImpersonatingState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const isImpersonating = useAtomStateValue(isImpersonatingState);
 
   const { signOut } = useAuth();
 

@@ -30,7 +30,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledSearchInput = styled.input`
   background: transparent;
@@ -81,7 +81,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
       fieldMetadataItemUsedInDropdownComponentSelector,
     );
 
-    const currentRecordFilters = useAtomComponentValue(
+    const currentRecordFilters = useAtomComponentStateValue(
       currentRecordFiltersComponentState,
     );
 

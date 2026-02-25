@@ -5,7 +5,7 @@ import { recordTableFocusPositionComponentState } from '@/object-record/record-t
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
@@ -33,11 +33,11 @@ export const RecordTableCellFirstRowFirstColumn = ({
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
-  const hoverPosition = useAtomComponentValue(
+  const hoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 
-  const focusPosition = useAtomComponentValue(
+  const focusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
   );
 

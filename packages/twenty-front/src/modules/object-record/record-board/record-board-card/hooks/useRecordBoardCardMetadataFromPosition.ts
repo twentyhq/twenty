@@ -4,18 +4,18 @@ import { recordBoardCardHoverPositionComponentState } from '@/object-record/reco
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordBoardCardMetadataFromPosition = () => {
   const { objectMetadataItem } = useContext(RecordBoardContext);
 
-  const hoverPosition = useAtomComponentValue(
+  const hoverPosition = useAtomComponentStateValue(
     recordBoardCardHoverPositionComponentState,
   );
 
-  const editModePosition = useAtomComponentValue(
+  const editModePosition = useAtomComponentStateValue(
     recordBoardCardEditModePositionComponentState,
   );
 

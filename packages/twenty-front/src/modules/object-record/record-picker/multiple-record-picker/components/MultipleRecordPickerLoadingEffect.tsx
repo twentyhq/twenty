@@ -2,7 +2,7 @@ import { multipleRecordPickerIsFetchingMoreComponentState } from '@/object-recor
 import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
 import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
@@ -10,7 +10,7 @@ import { useDebouncedCallback } from 'use-debounce';
 export const MultipleRecordPickerLoadingEffect = () => {
   const [previousLoading, setPreviousLoading] = useState(false);
 
-  const loading = useAtomComponentValue(
+  const loading = useAtomComponentStateValue(
     multipleRecordPickerIsLoadingComponentState,
   );
 

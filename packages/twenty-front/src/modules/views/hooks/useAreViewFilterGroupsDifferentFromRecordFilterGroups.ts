@@ -1,5 +1,5 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewFilterGroupsToCreate } from '@/views/utils/getViewFilterGroupsToCreate';
 import { getViewFilterGroupsToDelete } from '@/views/utils/getViewFilterGroupsToDelete';
@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const useAreViewFilterGroupsDifferentFromRecordFilterGroups = () => {
   const { currentView } = useGetCurrentViewOnly();
 
-  const currentRecordFilterGroups = useAtomComponentValue(
+  const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
   );
 

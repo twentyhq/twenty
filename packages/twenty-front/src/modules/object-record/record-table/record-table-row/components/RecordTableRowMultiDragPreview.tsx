@@ -1,12 +1,12 @@
 import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowMultiDragCounterChip } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragCounterChip';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 
 export const RecordTableRowMultiDragPreview = () => {
   const { recordId } = useRecordTableRowContextOrThrow();
 
-  const isRecordIdPrimaryDragMultiple = useAtomComponentFamilyValue(
+  const isRecordIdPrimaryDragMultiple = useAtomComponentFamilyStateValue(
     isRecordIdPrimaryDragMultipleComponentFamilyState,
     { recordId },
   );

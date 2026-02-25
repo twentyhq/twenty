@@ -1,6 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
 import { type RecordGqlOperationVariables } from 'twenty-shared/types';
@@ -15,7 +15,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
 }) => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const upsertFindManyRecordsQueryInCache = <

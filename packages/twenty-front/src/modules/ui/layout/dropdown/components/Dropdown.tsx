@@ -13,7 +13,7 @@ import { dropdownYPositionComponentState } from '@/ui/layout/dropdown/states/int
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import styled from '@emotion/styled';
 import {
@@ -88,7 +88,7 @@ export const Dropdown = ({
   disableClickForClickableComponent = false,
   middlewareBoundaryPadding = {},
 }: DropdownProps) => {
-  const isDropdownOpen = useAtomComponentValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );

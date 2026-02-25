@@ -30,7 +30,7 @@ import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/util
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -44,7 +44,7 @@ import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/compo
 import { currentNavigationMenuItemFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdStateV2';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -66,7 +66,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
   const { t } = useLingui();
   const theme = useTheme();
   const iconColors = getNavigationMenuItemIconColors(theme);
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
@@ -123,7 +123,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
 
   const dropdownId = `navigation-menu-item-folder-edit-${folder.id}`;
 
-  const isDropdownOpenComponent = useAtomComponentValue(
+  const isDropdownOpenComponent = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
@@ -194,7 +194,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
     />
   );
 
-  const isModalOpened = useAtomComponentValue(
+  const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     modalId,
   );

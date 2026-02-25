@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const mountedHeadlessFrontComponentIdsState = createState<Set<string>>({
+export const mountedHeadlessFrontComponentIdsState = createAtomState<Set<string>>({
   key: 'mountedHeadlessFrontComponentIdsState',
   defaultValue: new Set(),
 });

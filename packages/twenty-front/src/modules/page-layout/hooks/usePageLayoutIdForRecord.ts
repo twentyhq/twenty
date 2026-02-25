@@ -5,7 +5,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
 import { getDefaultRecordPageLayoutId } from '@/page-layout/utils/getDefaultRecordPageLayoutId';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePageLayoutIdForRecord = ({
@@ -28,7 +28,7 @@ export const usePageLayoutIdForRecord = ({
     objectNameSingular: targetObjectNameSingular,
   });
 
-  const recordPageLayout = useFamilySelectorValue(
+  const recordPageLayout = useAtomFamilySelectorValue(
     recordPageLayoutByObjectMetadataIdFamilySelector,
     { objectMetadataId: objectMetadataItem.id },
   );

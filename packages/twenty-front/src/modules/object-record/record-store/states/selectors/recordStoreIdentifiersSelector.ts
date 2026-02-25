@@ -2,10 +2,10 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
-import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDefined, uncapitalize } from 'twenty-shared/utils';
 
-export const recordStoreIdentifiersFamilySelector = createFamilySelector<
+export const recordStoreIdentifiersFamilySelector = createAtomFamilySelector<
   ObjectRecordIdentifier[],
   {
     recordIds: string[];

@@ -2,14 +2,14 @@ import { useMemo } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type RecordFilterValueDependencies } from 'twenty-shared/types';
 
 export const useFilterValueDependencies = (): {
   filterValueDependencies: RecordFilterValueDependencies;
 } => {
   const { id: currentWorkspaceMemberId } =
-    useAtomValue(currentWorkspaceMemberState) ?? {};
+    useAtomStateValue(currentWorkspaceMemberState) ?? {};
 
   const { userTimezone } = useUserTimezone();
 

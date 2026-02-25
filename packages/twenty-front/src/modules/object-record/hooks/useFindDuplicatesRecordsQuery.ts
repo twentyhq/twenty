@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -20,7 +20,7 @@ export const useFindDuplicateRecordsQuery = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const findDuplicateRecordsQuery = gql`
     query FindDuplicate${capitalize(

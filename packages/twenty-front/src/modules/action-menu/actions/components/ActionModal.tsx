@@ -8,7 +8,7 @@ import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type ButtonAccent } from 'twenty-ui/input';
 
 export type ActionModalProps = {
@@ -49,7 +49,7 @@ export const ActionModal = ({
 
   const modalId = `${actionConfig?.key}-action-modal-${actionMenuType}`;
 
-  const isModalOpened = useAtomComponentValue(
+  const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     modalId,
   );

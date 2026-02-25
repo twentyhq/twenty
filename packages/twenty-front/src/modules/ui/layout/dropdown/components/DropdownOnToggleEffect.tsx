@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const DropdownOnToggleEffect = ({
   onDropdownClose,
@@ -10,7 +10,7 @@ export const DropdownOnToggleEffect = ({
   onDropdownClose?: () => void;
   onDropdownOpen?: () => void;
 }) => {
-  const isDropdownOpen = useAtomComponentValue(isDropdownOpenComponentState);
+  const isDropdownOpen = useAtomComponentStateValue(isDropdownOpenComponentState);
 
   const [currentIsDropdownOpen, setCurrentIsDropdownOpen] =
     useState(isDropdownOpen);

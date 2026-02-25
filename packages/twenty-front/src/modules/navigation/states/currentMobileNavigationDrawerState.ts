@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const currentMobileNavigationDrawerState = createState<
+export const currentMobileNavigationDrawerState = createAtomState<
   'main' | 'settings'
 >({
   key: 'currentMobileNavigationDrawerState',

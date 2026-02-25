@@ -16,7 +16,7 @@ import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelect
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CommandMenuPages } from 'twenty-shared/types';
@@ -70,7 +70,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
         const { commandMenuCloseAnimationCompleteCleanup } =
           useCommandMenuCloseAnimationCompleteCleanup();
 
-        const viewableRecordId = useAtomValue(viewableRecordIdState);
+        const viewableRecordId = useAtomStateValue(viewableRecordIdState);
 
         const setViewableRecordId = useSetAtomState(viewableRecordIdState);
 

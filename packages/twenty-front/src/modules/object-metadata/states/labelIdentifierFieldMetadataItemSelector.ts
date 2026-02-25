@@ -1,9 +1,9 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 
-export const labelIdentifierFieldMetadataItemSelector = createFamilySelector({
+export const labelIdentifierFieldMetadataItemSelector = createAtomFamilySelector({
   key: 'labelIdentifierFieldMetadataItemSelector',
   get:
     ({ objectMetadataItemId }: { objectMetadataItemId: string }) =>

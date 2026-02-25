@@ -1,9 +1,9 @@
 import { type RecordGqlOperationVariables } from 'twenty-shared/types';
 
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const currentNotesQueryVariablesStateV2 =
-  createState<RecordGqlOperationVariables | null>({
+  createAtomState<RecordGqlOperationVariables | null>({
     key: 'currentNotesQueryVariablesStateV2',
     defaultValue: null,
   });

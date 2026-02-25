@@ -10,8 +10,8 @@ import { RecordTableCellFieldInput } from '@/object-record/record-table/record-t
 
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { BORDER_COMMON } from 'twenty-ui/theme';
@@ -45,7 +45,7 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
 `;
 
 export const RecordTableCellHoveredPortalContent = () => {
-  const hoverPosition = useAtomComponentValue(
+  const hoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 
@@ -66,7 +66,7 @@ export const RecordTableCellHoveredPortalContent = () => {
 
   const { rowIndex } = useRecordTableRowContextOrThrow();
 
-  const isRowActive = useAtomComponentFamilyValue(
+  const isRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
     rowIndex,
   );

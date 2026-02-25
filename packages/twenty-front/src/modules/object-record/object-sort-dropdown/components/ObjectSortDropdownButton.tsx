@@ -27,9 +27,9 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { findByProperty } from 'twenty-shared/utils';
 import { IconX, useIcons } from 'twenty-ui/display';
@@ -49,11 +49,11 @@ export const ObjectSortDropdownButton = () => {
 
   const { recordIndexId, objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const objectSortDropdownSearchInput = useAtomComponentValue(
+  const objectSortDropdownSearchInput = useAtomComponentStateValue(
     objectSortDropdownSearchInputComponentState,
   );
 
-  const sortableFieldMetadataItems = useFamilySelectorValue(
+  const sortableFieldMetadataItems = useAtomFamilySelectorValue(
     availableFieldMetadataItemsForSortFamilySelector,
     {
       objectMetadataItemId: objectMetadataItem.id,
@@ -140,7 +140,7 @@ export const ObjectSortDropdownButton = () => {
     setIsRecordSortDirectionMenuUnfolded(false);
   };
 
-  const isDropdownOpen = useAtomComponentValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     OBJECT_SORT_DROPDOWN_ID,
   );
@@ -152,7 +152,7 @@ export const ObjectSortDropdownButton = () => {
     ...hiddenFieldMetadataItemsSorted.map((item) => item.id),
   ];
 
-  const selectedItemId = useAtomComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     OBJECT_SORT_DROPDOWN_ID,
   );

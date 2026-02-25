@@ -15,7 +15,7 @@ import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/r
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
 import { RECORD_TABLE_VIRTUALIZATION_BODY_PLACEHOLDER_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedBodyPlaceholder';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,11 +27,11 @@ export const RecordTableColumnWidthEffect = () => {
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const shouldCompactRecordTableFirstColumn = useAtomComponentValue(
+  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
     shouldCompactRecordTableFirstColumnComponentState,
   );
 
-  const recordTableWidth = useAtomComponentValue(
+  const recordTableWidth = useAtomComponentStateValue(
     recordTableWidthComponentState,
   );
 

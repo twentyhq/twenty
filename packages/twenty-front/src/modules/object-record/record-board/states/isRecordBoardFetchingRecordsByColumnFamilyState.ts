@@ -1,8 +1,8 @@
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { createFamilyState } from '@/ui/utilities/state/jotai/utils/createFamilyState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
 export const isRecordBoardFetchingRecordsByColumnFamilyState =
-  createFamilyState<boolean, RecordGroupDefinition['id']>({
+  createAtomFamilyState<boolean, RecordGroupDefinition['id']>({
     key: 'isRecordBoardFetchingRecordsByColumnFamilyState',
     defaultValue: false,
   });

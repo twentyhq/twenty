@@ -18,7 +18,7 @@ import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states
 import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
 import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
@@ -35,13 +35,13 @@ export const useHandleAddToNavigationDrop = () => {
   const { addFolderToDraft } = useAddFolderToNavigationMenuDraft();
   const { addLinkToDraft } = useAddLinkToNavigationMenuDraft();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
-  const navigationMenuItemsDraft = useAtomValue(
+  const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftStateV2,
   );
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const coreViews = useAtomValue(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsState);
   const { getIcon } = useIcons();
   const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
     selectedNavigationMenuItemInEditModeStateV2,

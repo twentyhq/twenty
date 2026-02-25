@@ -1,13 +1,13 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 type ObjectMetadataItemSelector = {
   objectName: string;
   objectNameType: 'singular' | 'plural';
 };
 
-export const objectMetadataItemFamilySelector = createFamilySelector<
+export const objectMetadataItemFamilySelector = createAtomFamilySelector<
   ObjectMetadataItem | null,
   ObjectMetadataItemSelector
 >({

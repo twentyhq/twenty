@@ -9,7 +9,7 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { injectRelationWidgetsIntoLayout } from '@/page-layout/utils/injectRelationWidgetsIntoLayout';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,7 +25,7 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
 }: PageLayoutRelationWidgetsSyncEffectProps) => {
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
-  const isInitialized = useAtomComponentValue(
+  const isInitialized = useAtomComponentStateValue(
     pageLayoutIsInitializedComponentState,
   );
 

@@ -23,8 +23,8 @@ import { useRecordLevelPermissionFilterInitialization } from '@/settings/roles/r
 import { useRecordLevelPermissionSyncToDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRecordLevelPermissionSyncToDraftRole';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 const StyledContainer = styled.div`
@@ -56,7 +56,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
     roleId,
     objectMetadataItem,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContentProps) => {
-    const settingsDraftRole = useFamilyAtomValue(
+    const settingsDraftRole = useAtomFamilyStateValue(
       settingsDraftRoleFamilyState,
       roleId,
     );
@@ -73,11 +73,11 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
       currentRecordFilterGroupsComponentState,
     );
 
-    const currentRecordFilters = useAtomComponentValue(
+    const currentRecordFilters = useAtomComponentStateValue(
       currentRecordFiltersComponentState,
     );
 
-    const currentRecordFilterGroups = useAtomComponentValue(
+    const currentRecordFilterGroups = useAtomComponentStateValue(
       currentRecordFilterGroupsComponentState,
     );
 

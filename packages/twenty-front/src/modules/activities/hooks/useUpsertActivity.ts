@@ -9,7 +9,7 @@ import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectN
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useUpsertActivity = ({
   activityObjectNameSingular,
@@ -30,7 +30,7 @@ export const useUpsertActivity = ({
     isUpsertingActivityInDBState,
   );
 
-  const objectShowPageTargetableObject = useAtomValue(
+  const objectShowPageTargetableObject = useAtomStateValue(
     objectShowPageTargetableObjectStateV2,
   );
 

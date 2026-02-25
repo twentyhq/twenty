@@ -7,7 +7,7 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { type SettingsRolePermissionsObjectLevelPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -70,7 +70,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
     settingsDraftRoleObjectPermissions,
     roleId,
   }: SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRowProps) => {
-    const settingsDraftRole = useFamilyAtomValue(
+    const settingsDraftRole = useAtomFamilyStateValue(
       settingsDraftRoleFamilyState,
       roleId,
     );

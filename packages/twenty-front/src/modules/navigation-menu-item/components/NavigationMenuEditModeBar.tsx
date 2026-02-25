@@ -7,7 +7,7 @@ import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/n
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
@@ -41,7 +41,7 @@ export const NavigationMenuEditModeBar = () => {
   const { getIcon } = useIcons();
   const [isSaving, setIsSaving] = useState(false);
   const { closeCommandMenu } = useCommandMenu();
-  const commandMenuPage = useAtomValue(commandMenuPageState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
   const { enqueueErrorSnackBar } = useSnackBar();
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftStateV2,
@@ -67,7 +67,7 @@ export const NavigationMenuEditModeBar = () => {
     }
   };
 
-  const isNavigationMenuInEditMode = useAtomValue(
+  const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeStateV2,
   );
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(

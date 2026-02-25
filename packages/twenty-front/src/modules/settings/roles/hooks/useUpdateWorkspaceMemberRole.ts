@@ -1,8 +1,8 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useUpdateWorkspaceMemberRoleMutation } from '~/generated-metadata/graphql';
 
 type AddWorkspaceMemberToRoleAndUpdateStateParams = {
@@ -19,15 +19,15 @@ type AddWorkspaceMembersToRoleParams = {
 };
 
 export const useUpdateWorkspaceMemberRole = (roleId: string) => {
-  const setSettingsPersistedRole = useSetFamilyAtomState(
+  const setSettingsPersistedRole = useSetAtomFamilyState(
     settingsPersistedRoleFamilyState,
     roleId,
   );
-  const settingsDraftRole = useFamilyAtomValue(
+  const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
   );
-  const setSettingsDraftRole = useSetFamilyAtomState(
+  const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
     roleId,
   );

@@ -5,7 +5,7 @@ import { FileChip } from '@/ui/field/display/components/FileChip';
 import { UploadFileChip } from '@/ui/field/display/components/UploadFileChip';
 import { filePreviewStateV2 } from '@/ui/field/display/states/filePreviewStateV2';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -23,7 +23,7 @@ export const FilesDisplay = ({
   isFileUploading = false,
 }: FilesDisplayProps) => {
   const setFilePreview = useSetAtomState(filePreviewStateV2);
-  const isAttachmentPreviewEnabled = useAtomValue(
+  const isAttachmentPreviewEnabled = useAtomStateValue(
     isAttachmentPreviewEnabledStateV2,
   );
 

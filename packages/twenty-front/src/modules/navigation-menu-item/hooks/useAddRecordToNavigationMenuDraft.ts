@@ -5,7 +5,7 @@ import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
 
 type SearchRecord = {
@@ -23,7 +23,7 @@ export const useAddRecordToNavigationMenuDraft = () => {
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftStateV2,
   );
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const addRecordToDraft = (
     searchRecord: SearchRecordWithOptionalMetadataId,

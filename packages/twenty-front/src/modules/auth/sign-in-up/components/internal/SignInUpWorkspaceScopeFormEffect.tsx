@@ -7,7 +7,7 @@ import {
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,11 +22,11 @@ enum LoadingStatus {
 }
 
 export const SignInUpWorkspaceScopeFormEffect = () => {
-  const workspaceAuthProviders = useAtomValue(workspaceAuthProvidersState);
+  const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
 
-  const isRequestingCaptchaToken = useAtomValue(isRequestingCaptchaTokenState);
+  const isRequestingCaptchaToken = useAtomStateValue(isRequestingCaptchaTokenState);
 
-  const captcha = useAtomValue(captchaState);
+  const captcha = useAtomStateValue(captchaState);
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>(
     LoadingStatus.Loading,

@@ -1,8 +1,8 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { createSelector } from '@/ui/utilities/state/jotai/utils/createSelector';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const objectMetadataItemsByNamePluralMapSelector = createSelector<
+export const objectMetadataItemsByNamePluralMapSelector = createAtomSelector<
   Map<string, ObjectMetadataItem>
 >({
   key: 'objectMetadataItemsByNamePluralMapSelector',

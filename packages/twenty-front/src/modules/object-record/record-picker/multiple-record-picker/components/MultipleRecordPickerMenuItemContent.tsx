@@ -11,8 +11,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
@@ -43,7 +43,7 @@ export const MultipleRecordPickerMenuItemContent = ({
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
-  const isSelectedByKeyboard = useAtomComponentFamilyValue(
+  const isSelectedByKeyboard = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     searchRecord.recordId,
     selectableListComponentInstanceId,
@@ -68,7 +68,7 @@ export const MultipleRecordPickerMenuItemContent = ({
   const displayText =
     searchRecord.label?.trim() || t`Untitled ${labelSingular}`;
 
-  const searchableObjectMetadataItems = useAtomComponentValue(
+  const searchableObjectMetadataItems = useAtomComponentStateValue(
     multipleRecordPickerSearchableObjectMetadataItemsComponentState,
     componentInstanceId,
   );

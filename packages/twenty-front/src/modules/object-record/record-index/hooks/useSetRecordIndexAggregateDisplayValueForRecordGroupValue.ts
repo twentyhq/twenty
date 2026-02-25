@@ -3,7 +3,7 @@ import { transformAggregateRawValueIntoAggregateDisplayValue } from '@/object-re
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useStore } from 'jotai';
 import { useCallback, useContext } from 'react';
@@ -12,7 +12,7 @@ import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 export const useSetRecordIndexAggregateDisplayValueForRecordGroupValue = () => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useAtomValue(dateLocaleState);
+  const dateLocale = useAtomStateValue(dateLocaleState);
 
   const recordIndexAggregateValueByGroupValueCallbackState =
     useAtomComponentFamilyStateCallbackState(

@@ -1,6 +1,6 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -27,7 +27,7 @@ export const DeleteTwoFactorAuthentication = () => {
   const { loadCurrentUser } = useLoadCurrentUser();
   const [deleteTwoFactorAuthenticationMethod] =
     useDeleteTwoFactorAuthenticationMethodMutation();
-  const currentUser = useAtomValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const userEmail = currentUser?.email;
   const navigate = useNavigateSettings();
   const twoFactorAuthenticationStrategy =

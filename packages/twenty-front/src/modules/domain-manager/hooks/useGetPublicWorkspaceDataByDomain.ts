@@ -4,7 +4,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
@@ -13,7 +13,7 @@ import { useGetPublicWorkspaceDataByDomainQuery } from '~/generated-metadata/gra
 
 export const useGetPublicWorkspaceDataByDomain = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
-  const isMultiWorkspaceEnabled = useAtomValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
   const { origin } = useOrigin();
   const setWorkspaceAuthProviders = useSetAtomState(
     workspaceAuthProvidersState,
@@ -21,10 +21,10 @@ export const useGetPublicWorkspaceDataByDomain = () => {
   const setWorkspaceAuthBypassProviders = useSetAtomState(
     workspaceAuthBypassProvidersState,
   );
-  const workspacePublicData = useAtomValue(workspacePublicDataState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
   const setWorkspacePublicDataState = useSetAtomState(workspacePublicDataState);
-  const clientConfigApiStatus = useAtomValue(clientConfigApiStatusState);
+  const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
 
   const { loading, data, error } = useGetPublicWorkspaceDataByDomainQuery({
     variables: {

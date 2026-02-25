@@ -1,7 +1,7 @@
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
@@ -9,7 +9,7 @@ import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/rec
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -46,7 +46,7 @@ type RecordTableRowVirtualizedDebugRowHelperProps = {
 export const RecordTableRowVirtualizedDebugRowHelper = ({
   virtualIndex,
 }: RecordTableRowVirtualizedDebugRowHelperProps) => {
-  const realIndex = useAtomComponentFamilyValue(
+  const realIndex = useAtomComponentFamilyStateValue(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
   );
@@ -65,7 +65,7 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
     (realIndex ?? 0) * (RECORD_TABLE_ROW_HEIGHT + 1) +
     (RECORD_TABLE_ROW_HEIGHT + 1);
 
-  const record = useFamilyAtomValue(recordStoreFamilyState, recordId ?? '');
+  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '');
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);

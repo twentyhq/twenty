@@ -1,9 +1,9 @@
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { type Nullable } from 'twenty-shared/types';
 
 export const useIsTableRowSecondaryDragged = (recordId: Nullable<string>) => {
-  const isSecondaryDragged = useAtomComponentFamilyValue(
+  const isSecondaryDragged = useAtomComponentFamilyStateValue(
     isRecordIdSecondaryDragMultipleComponentFamilyState,
     { recordId: recordId ?? '' },
   );

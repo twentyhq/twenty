@@ -11,12 +11,12 @@ import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states
 import { recordStoreIdentifierFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelectorV2';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Avatar } from 'twenty-ui/display';
 import {
   FeatureFlagKey,
@@ -31,15 +31,15 @@ export const CommandMenuRecordInfo = ({
 }: {
   commandMenuPageInstanceId: string;
 }) => {
-  const viewableRecordNameSingular = useAtomComponentValue(
+  const viewableRecordNameSingular = useAtomComponentStateValue(
     viewableRecordNameSingularComponentState,
     commandMenuPageInstanceId,
   );
-  const allowRequestsToTwentyIcons = useAtomValue(
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
 
-  const viewableRecordId = useAtomComponentValue(
+  const viewableRecordId = useAtomComponentStateValue(
     viewableRecordIdComponentState,
     commandMenuPageInstanceId,
   );
@@ -49,7 +49,7 @@ export const CommandMenuRecordInfo = ({
     viewableRecordId!,
   );
 
-  const recordCreatedAt = useFamilySelectorValue(recordStoreFamilySelectorV2, {
+  const recordCreatedAt = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
     recordId: objectRecordId,
     fieldName: 'createdAt',
   }) as string | null;
@@ -58,7 +58,7 @@ export const CommandMenuRecordInfo = ({
     FeatureFlagKey.IS_FILES_FIELD_MIGRATED,
   );
 
-  const recordIdentifier = useFamilySelectorValue(
+  const recordIdentifier = useAtomFamilySelectorValue(
     recordStoreIdentifierFamilySelectorV2,
     {
       recordId: objectRecordId,
@@ -67,7 +67,7 @@ export const CommandMenuRecordInfo = ({
     },
   );
 
-  const { localeCatalog } = useAtomValue(dateLocaleState);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const beautifiedCreatedAt = isNonEmptyString(recordCreatedAt)
     ? beautifyPastDateRelativeToNow(recordCreatedAt, localeCatalog)
     : '';

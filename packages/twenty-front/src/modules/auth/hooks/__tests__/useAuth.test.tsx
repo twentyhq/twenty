@@ -4,7 +4,7 @@ import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/i
 import { supportChatState } from '@/client-config/states/supportChatState';
 
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { type ReactNode, act } from 'react';
@@ -159,15 +159,15 @@ describe('useAuth', () => {
     const { result } = renderHook(
       () => {
         const client = useApolloClient();
-        const workspaceAuthProviders = useAtomValue(
+        const workspaceAuthProviders = useAtomStateValue(
           workspaceAuthProvidersState,
         );
-        const billing = useAtomValue(billingState);
-        const isDeveloperDefaultSignInPrefilled = useAtomValue(
+        const billing = useAtomStateValue(billingState);
+        const isDeveloperDefaultSignInPrefilled = useAtomStateValue(
           isDeveloperDefaultSignInPrefilledState,
         );
-        const supportChat = useAtomValue(supportChatState);
-        const isMultiWorkspaceEnabled = useAtomValue(
+        const supportChat = useAtomStateValue(supportChatState);
+        const isMultiWorkspaceEnabled = useAtomStateValue(
           isMultiWorkspaceEnabledState,
         );
         return {

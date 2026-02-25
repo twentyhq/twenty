@@ -1,7 +1,7 @@
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isLoadingTokensFromExtensionState } from '@/chrome-extension-sidecar/states/isLoadingTokensFromExtensionState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { isInFrame } from '~/utils/isInIframe';
 export const ChromeExtensionSidecarEffect = () => {
   const navigate = useNavigate();
   const setTokenPair = useSetAtomState(tokenPairState);
-  const chromeExtensionId = useAtomValue(chromeExtensionIdState);
+  const chromeExtensionId = useAtomStateValue(chromeExtensionIdState);
   const setIsLoadingTokensFromExtension = useSetAtomState(
     isLoadingTokensFromExtensionState,
   );

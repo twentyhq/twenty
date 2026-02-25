@@ -1,6 +1,6 @@
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -23,7 +23,7 @@ export const NavigationDrawerItemsCollapsableContainer = ({
 }: NavigationDrawerItemsCollapsableContainerProps) => {
   const theme = useTheme();
   const isSettingsPage = useIsSettingsPage();
-  const isNavigationDrawerExpanded = useAtomValue(
+  const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
   const isExpanded = isNavigationDrawerExpanded || isSettingsPage;

@@ -1,7 +1,7 @@
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconSearch } from 'twenty-ui/display';
@@ -25,11 +25,11 @@ export const ViewBarFilterDropdownAnyFieldSearchButtonMenuItem = ({
 }: ViewBarFilterDropdownAnyFieldSearchButtonMenuItemProps) => {
   const { t } = useLingui();
 
-  const objectFilterDropdownSearchInput = useAtomComponentValue(
+  const objectFilterDropdownSearchInput = useAtomComponentStateValue(
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const isSelected = useAtomComponentFamilyValue(
+  const isSelected = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH,
   );

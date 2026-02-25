@@ -11,8 +11,8 @@ import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import styled from '@emotion/styled';
 import {
@@ -70,18 +70,18 @@ export const DropdownInternalContainer = ({
   excludedClickOutsideIds,
   isDropdownInModal = false,
 }: DropdownInternalContainerProps) => {
-  const isDropdownOpen = useAtomComponentValue(isDropdownOpenComponentState);
+  const isDropdownOpen = useAtomComponentStateValue(isDropdownOpenComponentState);
 
   const { closeDropdown } = useCloseDropdown();
 
-  const activeDropdownFocusId = useAtomValue(activeDropdownFocusIdState);
+  const activeDropdownFocusId = useAtomStateValue(activeDropdownFocusIdState);
 
-  const dropdownMaxHeight = useAtomComponentValue(
+  const dropdownMaxHeight = useAtomComponentStateValue(
     dropdownMaxHeightComponentState,
     dropdownId,
   );
 
-  const dropdownMaxWidth = useAtomComponentValue(
+  const dropdownMaxWidth = useAtomComponentStateValue(
     dropdownMaxWidthComponentState,
     dropdownId,
   );

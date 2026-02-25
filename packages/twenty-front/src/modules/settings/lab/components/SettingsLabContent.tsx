@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { Card } from 'twenty-ui/layout';
 import { type FeatureFlagKey } from '~/generated-metadata/graphql';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledCardGrid = styled.div`
   display: grid;
@@ -22,7 +22,7 @@ const StyledImage = styled.img`
 `;
 
 export const SettingsLabContent = () => {
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { labPublicFeatureFlags, handleLabPublicFeatureFlagUpdate } =
     useLabPublicFeatureFlags();
   const [hasImageLoadingError, setHasImageLoadingError] = useState<

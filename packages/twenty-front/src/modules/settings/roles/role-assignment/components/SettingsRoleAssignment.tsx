@@ -10,11 +10,11 @@ import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles'
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   useFindManyAgentsQuery,
@@ -40,7 +40,7 @@ export const SettingsRoleAssignment = ({
 }: SettingsRoleAssignmentProps) => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  const settingsDraftRole = useFamilyAtomValue(
+  const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
   );
@@ -66,8 +66,8 @@ export const SettingsRoleAssignment = ({
       null,
     );
 
-  const currentWorkspaceMembers = useAtomValue(currentWorkspaceMembersState);
-  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
+  const currentWorkspaceMembers = useAtomStateValue(currentWorkspaceMembersState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const settingsAllRoles = useSettingsAllRoles();
 
   const roleMaps = buildRoleMaps(settingsAllRoles);
@@ -87,7 +87,7 @@ export const SettingsRoleAssignment = ({
     setSelectRoleTarget(null);
   };
 
-  const isModalOpened = useAtomComponentValue(
+  const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID,
   );

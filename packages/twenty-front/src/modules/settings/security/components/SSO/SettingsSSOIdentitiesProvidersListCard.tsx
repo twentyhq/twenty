@@ -14,7 +14,7 @@ import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconKey } from 'twenty-ui/display';
 import { useGetSsoIdentityProvidersQuery } from '~/generated-metadata/graphql';
@@ -29,7 +29,7 @@ const StyledLink = styled(Link, {
 export const SettingsSSOIdentitiesProvidersListCard = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { t } = useLingui();
 

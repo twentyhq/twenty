@@ -1,11 +1,11 @@
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { createComponentSelector } from '@/ui/utilities/state/jotai/utils/createComponentSelector';
+import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 
-export const recordGroupDefinitionsComponentSelector = createComponentSelector<
+export const recordGroupDefinitionsComponentSelector = createAtomComponentSelector<
   RecordGroupDefinition[]
 >({
   key: 'recordGroupDefinitionsComponentSelector',

@@ -12,7 +12,7 @@ import { SingleRecordPicker } from '@/object-record/record-picker/single-record-
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/display';
@@ -63,11 +63,11 @@ export const MorphRelationManyToOneFieldInput = () => {
     onCancel?.();
   };
 
-  const layoutDirection = useAtomComponentValue(
+  const layoutDirection = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 
-  const isLoading = useAtomComponentValue(
+  const isLoading = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionLoadingComponentState,
   );
 

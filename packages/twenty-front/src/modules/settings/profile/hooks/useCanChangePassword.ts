@@ -1,11 +1,11 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useCanChangePassword = () => {
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
-  const currentUserWorkspace = useAtomValue(currentUserWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
 
   const isPasswordAuthEnabled =
     currentWorkspace?.isPasswordAuthEnabled === true;

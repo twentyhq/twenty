@@ -12,7 +12,7 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -25,7 +25,7 @@ export const useFrontComponentExecutionContext = ({
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
 } => {
-  const currentUser = useAtomValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const navigateApp = useNavigateApp();
   const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
     frontComponentId,

@@ -18,7 +18,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -58,10 +58,10 @@ const StyledButtonContainer = styled.div`
 export const SettingsAdminWorkspaceContent = ({
   activeWorkspace,
 }: SettingsAdminWorkspaceContentProps) => {
-  const canManageFeatureFlags = useAtomValue(canManageFeatureFlagsState);
+  const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
   const [currentUser] = useAtomState(currentUserState);
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation();
   const [isImpersonateLoading, setIsImpersonationLoading] = useState(false);
@@ -70,7 +70,7 @@ export const SettingsAdminWorkspaceContent = ({
   const [impersonate] = useImpersonateMutation();
 
   const { updateFeatureFlagState } = useFeatureFlagState();
-  const userLookupResult = useAtomValue(userLookupResultStateV2);
+  const userLookupResult = useAtomStateValue(userLookupResultStateV2);
 
   const { t } = useLingui();
 

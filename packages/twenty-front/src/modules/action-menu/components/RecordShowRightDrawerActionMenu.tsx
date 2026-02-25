@@ -2,10 +2,10 @@ import { CommandMenuActionMenuDropdown } from '@/action-menu/components/CommandM
 import { ActionMenuContextProvider } from '@/action-menu/contexts/ActionMenuContextProvider';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const RecordShowRightDrawerActionMenu = () => {
-  const contextStoreCurrentObjectMetadataItemId = useAtomComponentValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );

@@ -5,7 +5,7 @@ import { Provider } from 'jotai';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 const selectableListComponentInstanceId = 'testId';
@@ -21,7 +21,7 @@ describe('useSelectableList', () => {
           selectableListComponentInstanceId,
         );
 
-        const selectableItemIds = useAtomComponentValue(
+        const selectableItemIds = useAtomComponentStateValue(
           selectableItemIdsComponentState,
           selectableListComponentInstanceId,
         );
@@ -52,7 +52,7 @@ describe('useSelectableList', () => {
           selectableListComponentInstanceId,
         );
 
-        const selectedItemId = useAtomComponentValue(
+        const selectedItemId = useAtomComponentStateValue(
           selectedItemIdComponentState,
           selectableListComponentInstanceId,
         );

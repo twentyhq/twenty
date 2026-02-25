@@ -17,7 +17,7 @@ import { t } from '@lingui/core/macro';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import {
@@ -356,7 +356,7 @@ export const DatePicker = ({
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
-  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const handleClear = () => {
     closeDropdowns();
     onClear?.();

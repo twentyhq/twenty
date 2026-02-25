@@ -21,7 +21,7 @@ import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/Sett
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/SettingsAgentModelCapabilities';
 import { type SettingsAIAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -66,7 +66,7 @@ export const SettingsAgentSettingsTab = ({
   const { t } = useLingui();
   const { openModal } = useModal();
 
-  const aiModels = useAtomValue(aiModelsState);
+  const aiModels = useAtomStateValue(aiModelsState);
   const activeModelOptions = useAiModelOptions();
   const currentModelLabel = useAiModelLabel(formValues.modelId);
 

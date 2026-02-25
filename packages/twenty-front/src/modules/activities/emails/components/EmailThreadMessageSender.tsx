@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppTooltip, TooltipPosition } from 'twenty-ui/display';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {
@@ -31,7 +31,7 @@ export const EmailThreadMessageSender = ({
   sender,
   sentAt,
 }: EmailThreadMessageSenderProps) => {
-  const { localeCatalog } = useAtomValue(dateLocaleState);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const tooltipId = `date-tooltip-${sentAt.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
   return (

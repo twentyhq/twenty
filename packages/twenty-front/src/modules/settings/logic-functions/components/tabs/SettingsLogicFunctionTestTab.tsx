@@ -1,6 +1,6 @@
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -31,11 +31,11 @@ export const SettingsLogicFunctionTestTab = ({
   isTesting?: boolean;
 }) => {
   const { t } = useLingui();
-  const logicFunctionTestData = useFamilyAtomValue(
+  const logicFunctionTestData = useAtomFamilyStateValue(
     logicFunctionTestDataFamilyState,
     logicFunctionId,
   );
-  const setLogicFunctionTestData = useSetFamilyAtomState(
+  const setLogicFunctionTestData = useSetAtomFamilyState(
     logicFunctionTestDataFamilyState,
     logicFunctionId,
   );

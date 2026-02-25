@@ -1,17 +1,17 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import {
   useAssignRoleToApiKeyMutation,
   type ApiKeyForRole,
 } from '~/generated-metadata/graphql';
 
 export const useUpdateApiKeyRole = (roleId: string) => {
-  const settingsDraftRole = useFamilyAtomValue(
+  const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
   );
-  const setSettingsDraftRole = useSetFamilyAtomState(
+  const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
     roleId,
   );

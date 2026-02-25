@@ -7,7 +7,7 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import styled from '@emotion/styled';
 import {
@@ -45,7 +45,7 @@ export type RecordTableCellEditModeProps = {
 export const RecordTableCellEditMode = ({
   children,
 }: RecordTableCellEditModeProps) => {
-  const isFieldInError = useAtomComponentValue(
+  const isFieldInError = useAtomComponentStateValue(
     recordFieldInputIsFieldInErrorComponentState,
   );
 

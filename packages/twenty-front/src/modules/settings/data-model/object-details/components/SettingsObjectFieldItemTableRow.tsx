@@ -13,7 +13,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useMemo } from 'react';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -139,7 +139,7 @@ export const SettingsObjectFieldItemTableRow = ({
 
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
 
-  const setActiveSettingsObjectFields = useSetFamilyAtomState(
+  const setActiveSettingsObjectFields = useSetAtomFamilyState(
     settingsObjectFieldsFamilyState,
     { objectMetadataItemId: objectMetadataItem.id },
   );

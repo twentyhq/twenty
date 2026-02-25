@@ -19,8 +19,8 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { type IconComponent } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
@@ -53,7 +53,7 @@ export const SingleRecordPickerMenuItems = ({
     selectableListComponentInstanceId,
   );
 
-  const isSelectedSelectNoneButton = useAtomComponentFamilyValue(
+  const isSelectedSelectNoneButton = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     selectableListComponentInstanceId,
     'select-none',
@@ -76,11 +76,11 @@ export const SingleRecordPickerMenuItems = ({
     singleRecordPickerSelectedIdComponentState,
   );
 
-  const singleRecordPickerShouldShowSkeleton = useAtomComponentValue(
+  const singleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
     singleRecordPickerShouldShowSkeletonComponentState,
   );
 
-  const singleRecordPickerShouldShowInitialLoading = useAtomComponentValue(
+  const singleRecordPickerShouldShowInitialLoading = useAtomComponentStateValue(
     singleRecordPickerShouldShowInitialLoadingComponentState,
   );
 

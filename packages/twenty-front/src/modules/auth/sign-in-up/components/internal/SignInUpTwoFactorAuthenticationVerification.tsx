@@ -22,7 +22,7 @@ import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledMainContentContainer = styled.div`
@@ -187,7 +187,7 @@ export const SignInUpTOTPVerification = () => {
   const navigate = useNavigateApp();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { isCaptchaReady } = useCaptcha();
-  const loginToken = useAtomValue(loginTokenState);
+  const loginToken = useAtomStateValue(loginTokenState);
   const setSignInUpStep = useSetAtomState(signInUpStepState);
   const { t } = useLingui();
 

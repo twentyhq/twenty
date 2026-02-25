@@ -4,7 +4,7 @@ import { type ReactNode, useMemo } from 'react';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { AdvancedFilterDropdownButton } from '@/views/advanced-filter-chip/components/AdvancedFilterDropdownButton';
 import { ViewBarDetailsAddFilterButton } from '@/views/components/ViewBarDetailsAddFilterButton';
 import { EditableSortChip } from '@/views/editable-chip/components/EditableSortChip';
@@ -106,28 +106,28 @@ export const ViewBarDetails = ({
   viewBarId,
   objectNamePlural,
 }: ViewBarDetailsProps) => {
-  const isViewBarExpanded = useAtomComponentValue(
+  const isViewBarExpanded = useAtomComponentStateValue(
     isViewBarExpandedComponentState,
   );
 
   const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
-  const currentRecordFilterGroups = useAtomComponentValue(
+  const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
     viewBarId,
   );
 
-  const currentRecordFilters = useAtomComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
     viewBarId,
   );
 
-  const currentRecordSorts = useAtomComponentValue(
+  const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
     viewBarId,
   );
 
-  const anyFieldFilterValue = useAtomComponentValue(
+  const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
     viewBarId,
   );
@@ -189,7 +189,7 @@ export const ViewBarDetails = ({
   const shouldShowAdvancedFilterDropdownButton =
     currentRecordFilterGroups.length > 0;
 
-  const isAnyFieldSearchDropdownOpen = useAtomComponentValue(
+  const isAnyFieldSearchDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     ANY_FIELD_SEARCH_DROPDOWN_ID,
   );

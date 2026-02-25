@@ -9,7 +9,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
@@ -27,7 +27,7 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const UserMetadataProviderInitialEffect = () => {
   const isLoggedIn = useIsLogged();
-  const currentUser = useAtomValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const store = useStore();
   const [isInitialized, setIsInitialized] = useState(false);
 

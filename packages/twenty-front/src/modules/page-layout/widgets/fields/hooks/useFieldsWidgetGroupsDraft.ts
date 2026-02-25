@@ -1,6 +1,6 @@
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
 
 type UseFieldsWidgetGroupsDraftParams = {
@@ -14,7 +14,7 @@ export const useFieldsWidgetGroupsDraft = ({
 }: UseFieldsWidgetGroupsDraftParams): {
   draftGroups: FieldsWidgetGroup[];
 } => {
-  const allDraftGroups = useAtomComponentValue(
+  const allDraftGroups = useAtomComponentStateValue(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );

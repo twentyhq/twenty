@@ -29,7 +29,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenuProps =
   {
@@ -89,7 +89,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
     const { advancedFilterFieldSelectDropdownId } =
       useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-    const selectedItemId = useAtomComponentValue(
+    const selectedItemId = useAtomComponentStateValue(
       selectedItemIdComponentState,
       advancedFilterFieldSelectDropdownId,
     );

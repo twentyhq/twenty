@@ -1,7 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { prefetchFavoriteFoldersState } from '@/prefetch/states/prefetchFavoriteFoldersState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type PrefetchedFavoritesFoldersData = {
   favoriteFolders: FavoriteFolder[];
@@ -10,10 +10,10 @@ type PrefetchedFavoritesFoldersData = {
 
 export const usePrefetchedFavoritesFoldersData =
   (): PrefetchedFavoritesFoldersData => {
-    const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
+    const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
     const currentWorkspaceMemberId = currentWorkspaceMember?.id;
 
-    const prefetchFavoriteFolders = useAtomValue(prefetchFavoriteFoldersState);
+    const prefetchFavoriteFolders = useAtomStateValue(prefetchFavoriteFoldersState);
 
     return {
       favoriteFolders: prefetchFavoriteFolders,

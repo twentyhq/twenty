@@ -1,12 +1,12 @@
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { createComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createComponentFamilySelector';
+import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 
 export const isRecordIdFirstOfGroupComponentFamilySelector =
-  createComponentFamilySelector<boolean, string>({
+  createAtomComponentFamilySelector<boolean, string>({
     key: 'isRecordIdFirstOfGroupComponentFamilySelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:

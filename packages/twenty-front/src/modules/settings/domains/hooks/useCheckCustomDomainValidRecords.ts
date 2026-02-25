@@ -4,13 +4,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useCheckCustomDomainValidRecords = () => {
   const [checkCustomDomainValidRecords] =
     useCheckCustomDomainValidRecordsMutation();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const [{ isLoading }, setCustomDomainRecords] = useAtomState(
     customDomainRecordsState,

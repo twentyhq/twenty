@@ -16,7 +16,7 @@ import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-reco
 import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-table/utils/computeVisibleRecordFieldsWidthOnTable';
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -33,21 +33,21 @@ export interface RecordTableEmptyProps {
 export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const recordTableWidth = useAtomComponentValue(
+  const recordTableWidth = useAtomComponentStateValue(
     recordTableWidthComponentState,
   );
 
-  const resizedFieldMetadataId = useAtomComponentValue(
+  const resizedFieldMetadataId = useAtomComponentStateValue(
     resizedFieldMetadataIdComponentState,
   );
 
-  const resizeFieldOffset = useAtomComponentValue(
+  const resizeFieldOffset = useAtomComponentStateValue(
     resizeFieldOffsetComponentState,
   );
 
   const isResizing = isDefined(resizedFieldMetadataId);
 
-  const shouldCompactRecordTableFirstColumn = useAtomComponentValue(
+  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
     shouldCompactRecordTableFirstColumnComponentState,
   );
 

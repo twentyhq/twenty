@@ -7,7 +7,7 @@ import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTi
 
 import { agentChatInputStateV2 } from '@/ai/states/agentChatInputStateV2';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
@@ -29,9 +29,9 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     currentAIChatThreadTitleState,
   );
 
-  const agentChatSelectedFiles = useAtomValue(agentChatSelectedFilesStateV2);
+  const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesStateV2);
 
-  const currentAIChatThread = useAtomValue(currentAIChatThreadStateV2);
+  const currentAIChatThread = useAtomStateValue(currentAIChatThreadStateV2);
 
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useAtomState(
     agentChatUploadedFilesStateV2,

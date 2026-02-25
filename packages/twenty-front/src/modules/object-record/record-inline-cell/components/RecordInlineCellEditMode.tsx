@@ -5,7 +5,7 @@ import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-r
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import styled from '@emotion/styled';
 import {
@@ -63,7 +63,7 @@ export const RecordInlineCellEditMode = ({
     },
   };
 
-  const isFieldInError = useAtomComponentValue(
+  const isFieldInError = useAtomComponentStateValue(
     recordFieldInputIsFieldInErrorComponentState,
   );
 

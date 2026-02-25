@@ -3,7 +3,7 @@ import { recordCalendarSelectedDateComponentState } from '@/object-record/record
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
@@ -108,7 +108,7 @@ export const RecordCalendarMonthBodyDay = ({
 }: RecordCalendarMonthBodyDayProps) => {
   const { userTimezone } = useUserTimezone();
 
-  const recordCalendarSelectedDate = useAtomComponentValue(
+  const recordCalendarSelectedDate = useAtomComponentStateValue(
     recordCalendarSelectedDateComponentState,
   );
 

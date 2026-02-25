@@ -4,7 +4,7 @@ import { type SelectorV2 } from '@/ui/utilities/state/jotai/types/SelectorV2';
 import { type StateV2 } from '@/ui/utilities/state/jotai/types/StateV2';
 import { type WritableSelectorV2 } from '@/ui/utilities/state/jotai/types/WritableSelectorV2';
 
-export const useAtomValue = <ValueType>(
+export const useAtomStateValue = <ValueType>(
   state:
     | StateV2<ValueType>
     | SelectorV2<ValueType>

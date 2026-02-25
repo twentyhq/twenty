@@ -4,12 +4,12 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSavePageLayout } from '@/page-layout/hooks/useSavePageLayout';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const SaveDashboardSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
-  const selectedRecord = useFamilyAtomValue(recordStoreFamilyState, recordId);
+  const selectedRecord = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const pageLayoutId = selectedRecord?.pageLayoutId;
 

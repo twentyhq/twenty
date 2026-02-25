@@ -1,7 +1,7 @@
 import { type PublicDomain } from '~/generated-metadata/graphql';
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const selectedPublicDomainState = createState<PublicDomain | undefined>({
+export const selectedPublicDomainState = createAtomState<PublicDomain | undefined>({
   key: 'selectedPublicDomainState',
   defaultValue: undefined,
 });

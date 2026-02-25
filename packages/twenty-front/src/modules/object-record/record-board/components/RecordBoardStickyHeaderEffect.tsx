@@ -1,9 +1,9 @@
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useEffect } from 'react';
 
 export const RecordBoardStickyHeaderEffect = () => {
-  const scrollTop = useAtomComponentValue(scrollWrapperScrollTopComponentState);
+  const scrollTop = useAtomComponentStateValue(scrollWrapperScrollTopComponentState);
 
   // TODO: move this outside because it might cause way too many re-renders for other hooks
   useEffect(() => {

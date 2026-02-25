@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedStateV2 } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedStateV2';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -47,12 +47,12 @@ export const NavigationDrawerBackButton = ({
   title,
 }: NavigationDrawerBackButtonProps) => {
   const theme = useTheme();
-  const navigationMemorizedUrl = useAtomValue(navigationMemorizedUrlState);
+  const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
 
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
   );
-  const navigationDrawerExpandedMemorized = useAtomValue(
+  const navigationDrawerExpandedMemorized = useAtomStateValue(
     navigationDrawerExpandedMemorizedStateV2,
   );
 

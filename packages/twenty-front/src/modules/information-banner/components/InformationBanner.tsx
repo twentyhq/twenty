@@ -1,6 +1,6 @@
 import { InformationBannerComponentInstanceContext } from '@/information-banner/states/contexts/InformationBannerComponentInstanceContext';
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import {
@@ -51,7 +51,7 @@ export const InformationBanner = ({
   onClose?: () => void;
   componentInstanceId: string;
 }) => {
-  const informationBannerIsOpenComponent = useAtomComponentValue(
+  const informationBannerIsOpenComponent = useAtomComponentStateValue(
     informationBannerIsOpenComponentState,
     componentInstanceId,
   );

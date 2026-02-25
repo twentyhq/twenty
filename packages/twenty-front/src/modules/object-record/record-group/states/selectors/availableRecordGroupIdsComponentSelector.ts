@@ -5,11 +5,11 @@ import {
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordGroupSortedInsert } from '@/object-record/record-group/utils/recordGroupSortedInsert';
-import { createComponentSelector } from '@/ui/utilities/state/jotai/utils/createComponentSelector';
+import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 
-export const availableRecordGroupIdsComponentSelector = createComponentSelector<
+export const availableRecordGroupIdsComponentSelector = createAtomComponentSelector<
   RecordGroupDefinition['id'][]
 >({
   key: 'availableRecordGroupIdsComponentSelector',

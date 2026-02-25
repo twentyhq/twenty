@@ -19,7 +19,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
@@ -74,9 +74,9 @@ export const useAuth = () => {
 
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
-  const isCaptchaScriptLoaded = useAtomValue(isCaptchaScriptLoadedState);
-  const isMultiWorkspaceEnabled = useAtomValue(isMultiWorkspaceEnabledState);
-  const isEmailVerificationRequired = useAtomValue(
+  const isCaptchaScriptLoaded = useAtomStateValue(isCaptchaScriptLoadedState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
+  const isEmailVerificationRequired = useAtomStateValue(
     isEmailVerificationRequiredState,
   );
   const { loadCurrentUser } = useLoadCurrentUser();
@@ -102,7 +102,7 @@ export const useAuth = () => {
     useVerifyEmailAndGetWorkspaceAgnosticTokenMutation();
   const [getAuthTokensFromOtp] = useGetAuthTokensFromOtpMutation();
 
-  const workspacePublicData = useAtomValue(workspacePublicDataState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
 
   const { setLastAuthenticateWorkspaceDomain } =
     useLastAuthenticatedWorkspaceDomain();

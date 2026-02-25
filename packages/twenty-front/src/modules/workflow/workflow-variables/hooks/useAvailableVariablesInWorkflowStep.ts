@@ -1,5 +1,5 @@
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import {
@@ -21,7 +21,7 @@ export const useAvailableVariablesInWorkflowStep = ({
   shouldDisplayRecordObjects: boolean;
   fieldTypesToExclude?: InputSchemaPropertyType[];
 }): StepOutputSchemaV2[] => {
-  const workflowSelectedNode = useAtomComponentValue(
+  const workflowSelectedNode = useAtomComponentStateValue(
     workflowSelectedNodeComponentState,
   );
   const flow = useFlowOrThrow();
@@ -33,7 +33,7 @@ export const useAvailableVariablesInWorkflowStep = ({
     : [];
 
   const availableStepsOutputSchema: StepOutputSchemaV2[] =
-    useFamilySelectorValue(stepsOutputSchemaFamilySelector, {
+    useAtomFamilySelectorValue(stepsOutputSchemaFamilySelector, {
       workflowVersionId: flow.workflowVersionId,
       stepIds: [TRIGGER_STEP_ID, ...previousStepIds],
     });

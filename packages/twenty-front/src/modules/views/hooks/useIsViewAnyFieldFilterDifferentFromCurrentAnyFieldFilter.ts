@@ -1,12 +1,12 @@
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { isNonEmptyString } from '@sniptt/guards';
 import { compareNonEmptyStrings } from '~/utils/compareNonEmptyStrings';
 
 export const useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter = () => {
   const { currentView } = useGetCurrentViewOnly();
-  const anyFieldFilterValue = useAtomComponentValue(
+  const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
   );
 

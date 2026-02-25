@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
@@ -24,7 +24,7 @@ export const useCreateManyRecordsMutation = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   if (isUndefinedOrNull(objectMetadataItem)) {
     return { createManyRecordsMutation: EMPTY_MUTATION };

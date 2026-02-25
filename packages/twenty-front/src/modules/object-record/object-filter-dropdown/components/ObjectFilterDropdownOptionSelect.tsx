@@ -18,7 +18,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
@@ -40,7 +40,7 @@ export const ObjectFilterDropdownOptionSelect = ({
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 
-  const objectFilterDropdownSearchInput = useAtomComponentValue(
+  const objectFilterDropdownSearchInput = useAtomComponentStateValue(
     objectFilterDropdownSearchInputComponentState,
   );
 
@@ -48,7 +48,7 @@ export const ObjectFilterDropdownOptionSelect = ({
     ObjectFilterDropdownComponentInstanceContext,
   );
 
-  const objectFilterDropdownCurrentRecordFilter = useAtomComponentValue(
+  const objectFilterDropdownCurrentRecordFilter = useAtomComponentStateValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 
@@ -69,7 +69,7 @@ export const ObjectFilterDropdownOptionSelect = ({
 
   const { resetSelectedItem } = useSelectableList(componentInstanceId);
 
-  const selectedItemId = useAtomComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     componentInstanceId,
   );

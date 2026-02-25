@@ -2,7 +2,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -82,7 +82,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
   const { advancedFilterFieldSelectDropdownId } =
     useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-  const selectedItemId = useAtomComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     advancedFilterFieldSelectDropdownId,
   );

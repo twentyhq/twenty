@@ -7,7 +7,7 @@ import { RecordTableActionRow } from '@/object-record/record-table/record-table-
 import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -30,7 +30,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
-  const totalNumberOfRecordsToVirtualize = useAtomComponentValue(
+  const totalNumberOfRecordsToVirtualize = useAtomComponentStateValue(
     totalNumberOfRecordsToVirtualizeComponentState,
   );
 

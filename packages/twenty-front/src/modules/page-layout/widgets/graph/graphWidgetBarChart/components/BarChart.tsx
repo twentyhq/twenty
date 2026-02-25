@@ -14,7 +14,7 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type MouseEvent } from 'react';
@@ -77,7 +77,7 @@ export const BarChart = ({
   hasNoData = false,
 }: BarChartProps) => {
   const theme = useTheme();
-  const highlightedLegendId = useAtomComponentValue(
+  const highlightedLegendId = useAtomComponentStateValue(
     graphWidgetHighlightedLegendIdComponentState,
   );
 

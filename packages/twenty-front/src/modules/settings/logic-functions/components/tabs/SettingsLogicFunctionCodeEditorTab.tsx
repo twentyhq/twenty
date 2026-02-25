@@ -5,7 +5,7 @@ import {
 import { SETTINGS_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/logic-functions/constants/SettingsLogicFunctionTabListComponentId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
@@ -27,7 +27,7 @@ export const SettingsLogicFunctionCodeEditorTab = ({
   onChange: (value: string) => void;
   isTesting?: boolean;
 }) => {
-  const activeTabId = useAtomComponentValue(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );

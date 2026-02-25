@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const tableWidthResizeIsActiveState = createState<boolean>({
+export const tableWidthResizeIsActiveState = createAtomState<boolean>({
   key: 'tableWidthResizeIsActiveState',
   defaultValue: true,
 });

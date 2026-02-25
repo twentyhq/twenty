@@ -15,9 +15,9 @@ import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } fro
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { Tag } from 'twenty-ui/components';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -101,12 +101,12 @@ export const RecordBoardColumnHeader = () => {
   });
 
   const recordIndexAggregateDisplayValueForGroupValue =
-    useAtomComponentFamilyValue(
+    useAtomComponentFamilyStateValue(
       recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
       { groupValue: columnDefinition?.value ?? '' },
     );
 
-  const recordIndexAggregateDisplayLabel = useAtomComponentValue(
+  const recordIndexAggregateDisplayLabel = useAtomComponentStateValue(
     recordIndexAggregateDisplayLabelComponentState,
   );
 

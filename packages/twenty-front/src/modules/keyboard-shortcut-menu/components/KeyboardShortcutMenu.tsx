@@ -5,11 +5,11 @@ import { isKeyboardShortcutMenuOpenedStateV2 } from '@/keyboard-shortcut-menu/st
 
 import { KeyboardShortcutMenuOpenContent } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const KeyboardShortcutMenu = () => {
   const { toggleKeyboardShortcutMenu } = useKeyboardShortcutMenu();
-  const isKeyboardShortcutMenuOpened = useAtomValue(
+  const isKeyboardShortcutMenuOpened = useAtomStateValue(
     isKeyboardShortcutMenuOpenedStateV2,
   );
   const { closeCommandMenu } = useCommandMenu();

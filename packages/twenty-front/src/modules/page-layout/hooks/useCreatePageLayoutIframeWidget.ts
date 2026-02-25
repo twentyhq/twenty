@@ -12,7 +12,7 @@ import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +27,7 @@ export const useCreatePageLayoutIframeWidget = (
     pageLayoutIdFromProps,
   );
 
-  const activeTabId = useAtomComponentValue(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     getTabListInstanceIdFromPageLayoutId(pageLayoutId),
   );

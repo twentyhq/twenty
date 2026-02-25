@@ -4,7 +4,7 @@ import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandl
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { createClient } from 'graphql-sse';
 import { useCallback, useEffect } from 'react';
@@ -16,7 +16,7 @@ export const SSEClientEffect = () => {
   const store = useStore();
   const isLoggedIn = useIsLogged();
   const [sseClient, setSseClient] = useAtomState(sseClientState);
-  const tokenPair = useAtomValue(tokenPairState);
+  const tokenPair = useAtomStateValue(tokenPairState);
 
   const handleSSEClientConnected = useCallback(() => {
     const currentActiveQueryListeners = store.get(

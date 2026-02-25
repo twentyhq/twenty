@@ -17,7 +17,7 @@ import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInS
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useCallback } from 'react';
@@ -43,7 +43,7 @@ export const useCreateNewIndexRecord = ({
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const recordIndexGroupFieldMetadataItem = useAtomComponentValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 

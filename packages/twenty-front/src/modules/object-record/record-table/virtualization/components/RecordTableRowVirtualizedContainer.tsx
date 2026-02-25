@@ -6,8 +6,8 @@ import { TABLE_VIRTUALIZATION_DEBUG_ACTIVATED } from '@/object-record/record-tab
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,13 +26,13 @@ type RecordTableRowVirtualizedContainerProps = {
 export const RecordTableRowVirtualizedContainer = ({
   virtualIndex,
 }: RecordTableRowVirtualizedContainerProps) => {
-  const realIndex = useAtomComponentFamilyValue(
+  const realIndex = useAtomComponentFamilyStateValue(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
   );
 
   const totalNumberOfRecordsToVirtualize =
-    useAtomComponentValue(totalNumberOfRecordsToVirtualizeComponentState) ?? 0;
+    useAtomComponentStateValue(totalNumberOfRecordsToVirtualizeComponentState) ?? 0;
 
   if (!isDefined(realIndex) || realIndex >= totalNumberOfRecordsToVirtualize) {
     return null;

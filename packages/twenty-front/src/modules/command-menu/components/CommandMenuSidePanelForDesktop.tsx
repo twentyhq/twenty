@@ -13,7 +13,7 @@ import { ModalContainerContext } from '@/ui/layout/modal/contexts/ModalContainer
 import { ResizablePanelGap } from '@/ui/layout/resizable-panel/components/ResizablePanelGap';
 import { COMMAND_MENU_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/CommandMenuConstraints';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
@@ -56,8 +56,8 @@ const StyledModalContainer = styled.div`
 const GAP_WIDTH = 8;
 
 export const CommandMenuSidePanelForDesktop = () => {
-  const isCommandMenuOpened = useAtomValue(isCommandMenuOpenedStateV2);
-  const isCommandMenuClosing = useAtomValue(isCommandMenuClosingState);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedStateV2);
+  const isCommandMenuClosing = useAtomStateValue(isCommandMenuClosingState);
   const [commandMenuWidth, setCommandMenuWidth] = useAtomState(
     commandMenuWidthState,
   );

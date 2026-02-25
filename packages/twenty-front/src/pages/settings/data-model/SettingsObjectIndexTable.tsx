@@ -12,8 +12,8 @@ import styled from '@emotion/styled';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useEffect, useMemo, useState } from 'react';
 import { IconSearch, IconSquareKey } from 'twenty-ui/display';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
@@ -67,11 +67,11 @@ export const SettingsObjectIndexTable = ({
     },
   };
 
-  const settingsObjectIndexes = useFamilyAtomValue(
+  const settingsObjectIndexes = useAtomFamilyStateValue(
     settingsObjectIndexesFamilyState,
     { objectMetadataItemId: objectMetadataItem.id },
   );
-  const setSettingsObjectIndexes = useSetFamilyAtomState(
+  const setSettingsObjectIndexes = useSetAtomFamilyState(
     settingsObjectIndexesFamilyState,
     { objectMetadataItemId: objectMetadataItem.id },
   );

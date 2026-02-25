@@ -5,10 +5,10 @@ import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAd
 import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminTabsId';
 import { SettingsAdminHealthStatus } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatus';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const SettingsAdminTabContent = () => {
-  const activeTabId = useAtomComponentValue(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_ADMIN_TABS_ID,
   );

@@ -7,7 +7,7 @@ import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permi
 import { newFieldPermissionsFilter } from '@/settings/roles/role/hooks/utils/newFieldPermissionsFilter.util';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { getOperationName } from '@apollo/client/utilities';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
@@ -57,12 +57,12 @@ export const useSaveDraftRoleToDB = ({
   const { addAgentsToRole } = useUpdateAgentRole(roleId);
   const { addApiKeysToRole } = useUpdateApiKeyRole(roleId);
 
-  const settingsPersistedRole = useFamilyAtomValue(
+  const settingsPersistedRole = useAtomFamilyStateValue(
     settingsPersistedRoleFamilyState,
     roleId,
   );
 
-  const settingsDraftRole = useFamilyAtomValue(
+  const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
   );

@@ -1,5 +1,5 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
-export const previousUrlState = createState<string>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const previousUrlState = createAtomState<string>({
   key: 'previousUrlState',
   defaultValue: '',
 });

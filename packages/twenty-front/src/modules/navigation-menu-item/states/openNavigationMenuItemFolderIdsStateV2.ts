@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const openNavigationMenuItemFolderIdsStateV2 = createState<string[]>({
+export const openNavigationMenuItemFolderIdsStateV2 = createAtomState<string[]>({
   key: 'openNavigationMenuItemFolderIdsStateV2',
   defaultValue: [],
 });

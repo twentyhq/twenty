@@ -8,7 +8,7 @@ import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-
 import { buildRatioNumeratorFilter } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/buildRatioNumeratorFilter';
 import { computeRatioDisplayValue } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/utils/computeRatioDisplayValue';
 import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
@@ -88,7 +88,7 @@ export const useGraphWidgetAggregateQuery = ({
   });
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useAtomValue(dateLocaleState);
+  const dateLocale = useAtomStateValue(dateLocaleState);
 
   if (isRatioQuery) {
     const isRatioLoading = ratioNumeratorLoading || ratioDenominatorLoading;

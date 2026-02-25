@@ -4,10 +4,10 @@ import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
 } from '@/ui/navigation/states/navigationDrawerWidthState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const NavigationDrawerWidthEffect = () => {
-  const navigationDrawerWidth = useAtomValue(navigationDrawerWidthState);
+  const navigationDrawerWidth = useAtomStateValue(navigationDrawerWidthState);
 
   useEffect(() => {
     document.documentElement.style.setProperty(

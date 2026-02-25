@@ -8,7 +8,7 @@ import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -26,7 +26,7 @@ type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
 export const MobileNavigationBar = () => {
   const navigate = useNavigate();
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const isCommandMenuOpened = useAtomValue(isCommandMenuOpenedStateV2);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedStateV2);
   const { closeCommandMenu } = useCommandMenu();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
   const isSettingsPage = useIsSettingsPage();

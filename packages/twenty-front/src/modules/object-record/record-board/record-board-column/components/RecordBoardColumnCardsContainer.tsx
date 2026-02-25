@@ -10,7 +10,7 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnLoadingSkeletonCards';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -33,12 +33,12 @@ export const RecordBoardColumnCardsContainer = ({
 }: RecordBoardColumnCardsContainerProps) => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const recordIds = useAtomComponentFamilyValue(
+  const recordIds = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
   );
 
-  const recordBoardShouldFetchMoreInColumn = useAtomComponentFamilyValue(
+  const recordBoardShouldFetchMoreInColumn = useAtomComponentFamilyStateValue(
     recordBoardShouldFetchMoreInColumnComponentFamilyState,
     recordBoardColumnId,
   );

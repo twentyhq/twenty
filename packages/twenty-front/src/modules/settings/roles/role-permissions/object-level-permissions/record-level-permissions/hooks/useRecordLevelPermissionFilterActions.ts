@@ -24,7 +24,7 @@ import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 type UseRecordLevelPermissionFilterActionsProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -42,7 +42,7 @@ export const useRecordLevelPermissionFilterActions = ({
   const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
     useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
-  const availableFieldMetadataItemsForFilter = useFamilySelectorValue(
+  const availableFieldMetadataItemsForFilter = useAtomFamilySelectorValue(
     availableFieldMetadataItemsForFilterFamilySelector,
     {
       objectMetadataItemId: objectMetadataItem.id,

@@ -7,7 +7,7 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
@@ -43,7 +43,7 @@ type TabId = WorkflowRunTabIdType;
 
 export const CommandMenuWorkflowRunViewStepContent = () => {
   const flow = useFlowOrThrow();
-  const workflowSelectedNode = useAtomComponentValue(
+  const workflowSelectedNode = useAtomComponentStateValue(
     workflowSelectedNodeComponentState,
   );
   const workflowRunId = useWorkflowRunIdOrThrow();
@@ -59,7 +59,7 @@ export const CommandMenuWorkflowRunViewStepContent = () => {
     );
   }
 
-  const activeTabId = useAtomComponentValue(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     commandMenuPageComponentInstance.instanceId,
   );

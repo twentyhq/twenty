@@ -1,5 +1,5 @@
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewSortsToCreate } from '@/views/utils/getViewSortsToCreate';
 import { getViewSortsToDelete } from '@/views/utils/getViewSortsToDelete';
@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useAreViewSortsDifferentFromRecordSorts = () => {
   const { currentView } = useGetCurrentViewOnly();
-  const currentRecordSorts = useAtomComponentValue(
+  const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
   );
 

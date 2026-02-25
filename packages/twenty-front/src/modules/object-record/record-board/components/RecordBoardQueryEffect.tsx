@@ -13,7 +13,7 @@ import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/obje
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 import { useEffect } from 'react';
@@ -29,7 +29,7 @@ export const RecordBoardQueryEffect = () => {
     lastRecordGroupIdsComponentState,
   );
 
-  const recordIndexRecordGroupsAreInInitialLoading = useAtomComponentValue(
+  const recordIndexRecordGroupsAreInInitialLoading = useAtomComponentStateValue(
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
   );
 
@@ -55,7 +55,7 @@ export const RecordBoardQueryEffect = () => {
     recordBoardShouldFetchMoreComponentState,
   );
 
-  const recordBoardIsFetchingMore = useAtomComponentValue(
+  const recordBoardIsFetchingMore = useAtomComponentStateValue(
     recordBoardIsFetchingMoreComponentState,
   );
 
@@ -64,7 +64,7 @@ export const RecordBoardQueryEffect = () => {
   const { triggerRecordBoardInitialQuery } =
     useTriggerRecordBoardInitialQuery();
 
-  const recordGroupdIds = useAtomComponentValue(recordGroupIdsComponentState);
+  const recordGroupdIds = useAtomComponentStateValue(recordGroupIdsComponentState);
   const recordGroupIdsHaveChanged = !isDeeplyEqual(
     [...recordGroupdIds].sort(),
     [...lastRecordGroupIds].sort(),

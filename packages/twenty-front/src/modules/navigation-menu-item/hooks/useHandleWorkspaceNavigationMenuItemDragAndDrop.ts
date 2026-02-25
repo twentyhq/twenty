@@ -5,7 +5,7 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants
 import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
 import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
 import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   matchesWorkspaceFolderId,
@@ -18,10 +18,10 @@ import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationM
 export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
   const { workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
-  const isNavigationMenuInEditMode = useAtomValue(
+  const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeStateV2,
   );
-  const navigationMenuItemsDraft = useAtomValue(
+  const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftStateV2,
   );
   const setNavigationMenuItemsDraft = useSetAtomState(

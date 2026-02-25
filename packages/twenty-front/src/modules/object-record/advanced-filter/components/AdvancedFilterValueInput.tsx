@@ -11,7 +11,7 @@ import { configurableViewFilterOperands } from '@/object-record/object-filter-dr
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 import styled from '@emotion/styled';
@@ -30,11 +30,11 @@ export const AdvancedFilterValueInput = ({
 }: AdvancedFilterValueInputProps) => {
   const dropdownId = `advanced-filter-view-filter-value-input-${recordFilterId}`;
 
-  const currentRecordFilters = useAtomComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
-  const subFieldNameUsedInDropdown = useAtomComponentValue(
+  const subFieldNameUsedInDropdown = useAtomComponentStateValue(
     subFieldNameUsedInDropdownComponentState,
     dropdownId,
   );

@@ -4,19 +4,19 @@ import { isChartWidget } from '@/command-menu/pages/page-layout/utils/isChartWid
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuPageLayoutGraphFilter = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
-  const draftPageLayout = useAtomComponentValue(
+  const draftPageLayout = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutEditingWidgetId = useAtomComponentValue(
+  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );
@@ -25,7 +25,7 @@ export const CommandMenuPageLayoutGraphFilter = () => {
     .flatMap((tab) => tab.widgets)
     .find((widget) => widget.id === pageLayoutEditingWidgetId);
 
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   if (
     !isDefined(widgetInEditMode) ||

@@ -22,7 +22,7 @@ type StateAtom<ValueType> = WritableAtom<
   void
 >;
 
-export const createState = <ValueType>({
+export const createAtomState = <ValueType>({
   key,
   defaultValue,
   useLocalStorage = false,

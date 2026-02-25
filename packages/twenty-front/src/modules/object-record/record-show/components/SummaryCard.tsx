@@ -14,8 +14,8 @@ import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
@@ -38,11 +38,11 @@ export const SummaryCard = ({
     objectRecordId,
   });
 
-  const recordCreatedAt = useFamilySelectorValue(recordStoreFamilySelectorV2, {
+  const recordCreatedAt = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
     recordId: objectRecordId,
     fieldName: 'createdAt',
   }) as string | null;
-  const allowRequestsToTwentyIcons = useAtomValue(
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
   const isFilesFieldMigrated = useIsFeatureEnabled(
@@ -57,7 +57,7 @@ export const SummaryCard = ({
 
   const isMobile = useIsMobile() || isInRightDrawer;
 
-  const recordIdentifier = useFamilySelectorValue(
+  const recordIdentifier = useAtomFamilySelectorValue(
     recordStoreIdentifierFamilySelectorV2,
     {
       recordId: objectRecordId,

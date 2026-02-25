@@ -1,5 +1,5 @@
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -14,7 +14,7 @@ export const TabListFromUrlOptionalEffect = ({
   isInRightDrawer,
 }: TabListFromUrlOptionalEffectProps) => {
   const location = useLocation();
-  const activeTabId = useAtomComponentValue(activeTabIdComponentState);
+  const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
   const setActiveTabId = useSetAtomComponentState(activeTabIdComponentState);
 
   const hash = location.hash.replace('#', '');

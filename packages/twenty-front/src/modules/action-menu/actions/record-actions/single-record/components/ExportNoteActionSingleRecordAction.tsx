@@ -1,13 +1,13 @@
 import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ExportNoteActionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
-  const selectedRecord = useFamilyAtomValue(recordStoreFamilyState, recordId);
+  const selectedRecord = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const filename = `${(selectedRecord?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
 

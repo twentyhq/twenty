@@ -6,7 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER = gql`
   mutation initiateOTPProvisioningForAuthenticatedUser {
@@ -19,7 +19,7 @@ const INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER = gql`
 export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const [qrCode, setQrCode] = useAtomState(qrCodeState);
-  const currentUser = useAtomValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
 
   const { t } = useLingui();
 

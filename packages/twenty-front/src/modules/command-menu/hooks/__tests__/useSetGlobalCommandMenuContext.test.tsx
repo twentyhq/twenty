@@ -14,7 +14,7 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -71,32 +71,32 @@ describe('useSetGlobalCommandMenuContext', () => {
         const { setGlobalCommandMenuContext } =
           useSetGlobalCommandMenuContext();
 
-        const targetedRecordsRule = useAtomComponentValue(
+        const targetedRecordsRule = useAtomComponentStateValue(
           contextStoreTargetedRecordsRuleComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const numberOfSelectedRecords = useAtomComponentValue(
+        const numberOfSelectedRecords = useAtomComponentStateValue(
           contextStoreNumberOfSelectedRecordsComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const filters = useAtomComponentValue(
+        const filters = useAtomComponentStateValue(
           contextStoreFiltersComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const filterGroups = useAtomComponentValue(
+        const filterGroups = useAtomComponentStateValue(
           contextStoreFilterGroupsComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const anyFieldFilterValue = useAtomComponentValue(
+        const anyFieldFilterValue = useAtomComponentStateValue(
           contextStoreAnyFieldFilterValueComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const currentViewType = useAtomComponentValue(
+        const currentViewType = useAtomComponentStateValue(
           contextStoreCurrentViewTypeComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );

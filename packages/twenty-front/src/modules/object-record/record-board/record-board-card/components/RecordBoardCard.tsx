@@ -26,7 +26,7 @@ import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/u
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -59,12 +59,12 @@ export const RecordBoardCard = () => {
     RecordBoardComponentInstanceContext,
   );
 
-  const isRecordIdPrimaryDragMultiple = useAtomComponentFamilyValue(
+  const isRecordIdPrimaryDragMultiple = useAtomComponentFamilyStateValue(
     isRecordIdPrimaryDragMultipleComponentFamilyState,
     { recordId },
   );
 
-  const isRecordIdSecondaryDragMultiple = useAtomComponentFamilyValue(
+  const isRecordIdSecondaryDragMultiple = useAtomComponentFamilyStateValue(
     isRecordIdSecondaryDragMultipleComponentFamilyState,
     { recordId },
   );
@@ -84,7 +84,7 @@ export const RecordBoardCard = () => {
       recordId,
     );
 
-  const isCurrentCardFocused = useAtomComponentFamilyValue(
+  const isCurrentCardFocused = useAtomComponentFamilyStateValue(
     isRecordBoardCardFocusedComponentFamilyState,
     {
       rowIndex,
@@ -92,7 +92,7 @@ export const RecordBoardCard = () => {
     },
   );
 
-  const isCurrentCardActive = useAtomComponentFamilyValue(
+  const isCurrentCardActive = useAtomComponentFamilyStateValue(
     isRecordBoardCardActiveComponentFamilyState,
     {
       rowIndex,

@@ -1,4 +1,4 @@
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramScreenToFlowPosition';
@@ -37,7 +37,7 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
 
   const { closeRightClickMenu } = useCloseRightClickMenu();
 
-  const workflowDiagramRightClickMenuPosition = useAtomComponentValue(
+  const workflowDiagramRightClickMenuPosition = useAtomComponentStateValue(
     workflowDiagramRightClickMenuPositionState,
   );
 

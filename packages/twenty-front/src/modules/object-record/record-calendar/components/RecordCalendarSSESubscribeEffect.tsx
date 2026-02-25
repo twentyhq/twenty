@@ -5,7 +5,7 @@ import { RecordCalendarComponentInstanceContext } from '@/object-record/record-c
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 
 export const RecordCalendarSSESubscribeEffect = () => {
@@ -13,7 +13,7 @@ export const RecordCalendarSSESubscribeEffect = () => {
     RecordCalendarComponentInstanceContext,
   );
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-  const recordCalendarSelectedDate = useAtomComponentValue(
+  const recordCalendarSelectedDate = useAtomComponentStateValue(
     recordCalendarSelectedDateComponentState,
   );
   const { dateRangeFilter } = useRecordCalendarQueryDateRangeFilter(

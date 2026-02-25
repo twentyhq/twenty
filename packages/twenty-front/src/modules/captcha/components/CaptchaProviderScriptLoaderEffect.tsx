@@ -4,7 +4,7 @@ import { getCaptchaUrlByProvider } from '@/captcha/utils/getCaptchaUrlByProvider
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { captchaState } from '@/client-config/states/captchaState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -12,7 +12,7 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
 export const CaptchaProviderScriptLoaderEffect = () => {
-  const captcha = useAtomValue(captchaState);
+  const captcha = useAtomStateValue(captchaState);
   const setIsCaptchaScriptLoaded = useSetAtomState(isCaptchaScriptLoadedState);
   const { isCaptchaScriptLoaded, isCaptchaConfigured } = useCaptcha();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();

@@ -4,11 +4,11 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useHasPermissionFlag = (permissionFlag?: PermissionFlagType) => {
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
-  const currentUserWorkspace = useAtomValue(currentUserWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
 
   if (!permissionFlag) {
     return true;

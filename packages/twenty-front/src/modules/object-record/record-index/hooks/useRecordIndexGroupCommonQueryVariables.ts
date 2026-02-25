@@ -11,7 +11,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
@@ -22,15 +22,15 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const currentRecordFilterGroups = useAtomComponentValue(
+  const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useAtomComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
-  const currentRecordSorts = useAtomComponentValue(
+  const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
   );
 
@@ -43,7 +43,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     fields: objectMetadataItem.fields,
   });
 
-  const anyFieldFilterValue = useAtomComponentValue(
+  const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
   );
 
@@ -59,7 +59,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     objectMetadataItems,
   );
 
-  const recordGroupFieldMetadata = useAtomComponentValue(
+  const recordGroupFieldMetadata = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 

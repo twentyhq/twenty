@@ -17,7 +17,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -48,7 +48,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const recordGroupFieldMetadata = useAtomComponentValue(
+  const recordGroupFieldMetadata = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -61,14 +61,14 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const hideEmptyRecordGroup = useAtomComponentValue(
+  const hideEmptyRecordGroup = useAtomComponentStateValue(
     recordIndexShouldHideEmptyRecordGroupsComponentState,
   );
 
   const shouldHideEmptyGroups =
     hideEmptyRecordGroup ?? currentView?.shouldHideEmptyGroups ?? false;
 
-  const recordGroupSort = useAtomComponentValue(
+  const recordGroupSort = useAtomComponentStateValue(
     recordIndexRecordGroupSortComponentState,
   );
 
@@ -91,7 +91,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     }
   }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
-  const selectedItemId = useAtomComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );

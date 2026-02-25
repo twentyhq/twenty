@@ -11,8 +11,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { t } from '@lingui/core/macro';
@@ -25,7 +25,7 @@ import { MenuItemSelect } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   const { onContentChange } = useObjectOptionsDropdown();
-  const recordIndexOpenRecordIn = useAtomValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useAtomStateValue(recordIndexOpenRecordInState);
   const { currentView } = useGetCurrentViewOnly();
   const { setAndPersistOpenRecordIn } = useUpdateObjectViewOptions();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -33,7 +33,7 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
     objectMetadataItem.nameSingular,
   );
 
-  const selectedItemId = useAtomComponentValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );

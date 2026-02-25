@@ -10,7 +10,7 @@ import { recordIndexOpenRecordInState } from '@/object-record/record-index/state
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 
 type RecordTableContextProviderProps = {
@@ -41,7 +41,7 @@ export const RecordTableContextProvider = ({
     recordTableId,
   );
 
-  const recordIndexOpenRecordIn = useAtomValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useAtomStateValue(recordIndexOpenRecordInState);
   const triggerEvent =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
       ? 'CLICK'

@@ -3,7 +3,7 @@ import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/con
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown } from '@/views/hooks/useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -17,7 +17,7 @@ export const ViewBarFilterDropdownFieldSelectMenuItem = ({
 }: ViewBarFilterDropdownFieldSelectMenuItemProps) => {
   const { resetSelectedItem } = useSelectableList(FILTER_FIELD_LIST_ID);
 
-  const isSelectedItem = useAtomComponentFamilyValue(
+  const isSelectedItem = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     fieldMetadataItemToSelect.id,
   );

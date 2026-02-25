@@ -7,7 +7,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 const ActivityRichTextEditor = lazy(() =>
@@ -48,7 +48,7 @@ const LoadingSkeleton = () => {
 
 export const FieldRichTextCard = () => {
   const targetRecord = useTargetRecord();
-  const activityBodyV2 = useFamilySelectorValue(recordStoreFamilySelectorV2, {
+  const activityBodyV2 = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
     recordId: targetRecord.id,
     fieldName: 'bodyV2',
   });

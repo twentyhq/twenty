@@ -1,6 +1,6 @@
 import { RecordTitleCellContext } from '@/object-record/record-title-cell/components/RecordTitleCellContext';
 import { isTitleCellInEditModeComponentState } from '@/object-record/record-title-cell/states/isTitleCellInEditModeComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -9,7 +9,7 @@ export const RecordTitleCellContainer = () => {
     RecordTitleCellContext,
   );
 
-  const isTitleCellInEditMode = useAtomComponentValue(
+  const isTitleCellInEditMode = useAtomComponentStateValue(
     isTitleCellInEditModeComponentState,
   );
 

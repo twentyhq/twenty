@@ -24,10 +24,10 @@ import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import {
   filterOutByProperty,
   findByProperty,
@@ -123,18 +123,18 @@ export const RecordTableRecordGroupSection = () => {
 
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const recordGroup = useFamilyAtomValue(
+  const recordGroup = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
     currentRecordGroupId,
   );
 
   const recordIndexAggregateDisplayValueForGroupValue =
-    useAtomComponentFamilyValue(
+    useAtomComponentFamilyStateValue(
       recordIndexAggregateDisplayValueForGroupValueComponentFamilyState,
       { groupValue: recordGroup?.value ?? '' },
     );
 
-  const recordIndexAggregateDisplayLabel = useAtomComponentValue(
+  const recordIndexAggregateDisplayLabel = useAtomComponentStateValue(
     recordIndexAggregateDisplayLabelComponentState,
   );
 

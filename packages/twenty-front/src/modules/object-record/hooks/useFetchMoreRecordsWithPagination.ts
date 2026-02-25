@@ -29,8 +29,8 @@ import {
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
 
@@ -89,12 +89,12 @@ export const useFetchMoreRecordsWithPagination = <
     orderBy,
   });
 
-  const hasNextPage = useFamilyAtomValue(
+  const hasNextPage = useAtomFamilyStateValue(
     hasNextPageFamilyState,
     queryIdentifier,
   );
 
-  const setIsFetchingMoreObjects = useSetFamilyAtomState(
+  const setIsFetchingMoreObjects = useSetAtomFamilyState(
     isFetchingMoreRecordsFamilyState,
     queryIdentifier,
   );

@@ -1,7 +1,7 @@
-import { createComponentFamilyState } from '@/ui/utilities/state/jotai/utils/createComponentFamilyState';
+import { createAtomComponentFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilyState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 
-export const isRowSelectedComponentFamilyState = createComponentFamilyState<
+export const isRowSelectedComponentFamilyState = createAtomComponentFamilyState<
   boolean,
   string
 >({

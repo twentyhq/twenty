@@ -1,4 +1,4 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import {
   type Application,
   type Role,
@@ -47,7 +47,7 @@ export type CurrentWorkspace = Pick<
   workspaceCustomApplication: Pick<Application, 'id'> | null;
 };
 
-export const currentWorkspaceState = createState<CurrentWorkspace | null>({
+export const currentWorkspaceState = createAtomState<CurrentWorkspace | null>({
   key: 'currentWorkspaceState',
   defaultValue: null,
 });

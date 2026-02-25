@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
@@ -17,7 +17,7 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
 }: {
   operationSignatures: RecordGqlOperationSignature[];
 }) => {
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   if (!isNonEmptyArray(operationSignatures)) {

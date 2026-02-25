@@ -1,8 +1,8 @@
 import { recordPageLayoutsState } from '@/page-layout/states/recordPageLayoutsState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-export const recordPageLayoutFromIdFamilySelector = createFamilySelector<
+export const recordPageLayoutFromIdFamilySelector = createAtomFamilySelector<
   PageLayout | undefined,
   { pageLayoutId: string }
 >({

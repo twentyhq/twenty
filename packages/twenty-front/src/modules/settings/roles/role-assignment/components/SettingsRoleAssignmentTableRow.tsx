@@ -6,7 +6,7 @@ import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   Avatar,
   IconKey,
@@ -55,10 +55,10 @@ export const SettingsRoleAssignmentTableRow = ({
   roleTarget,
 }: SettingsRoleAssignmentTableRowProps) => {
   const theme = useTheme();
-  const currentWorkspaceMembers = useAtomValue(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useAtomStateValue(currentWorkspaceMembersState);
   const { getIcon } = useIcons();
   const { dateFormat, timeZone } = useContext(UserContext);
-  const dateLocale = useAtomValue(dateLocaleState);
+  const dateLocale = useAtomStateValue(dateLocaleState);
 
   const renderIcon = () => {
     switch (roleTarget.type) {

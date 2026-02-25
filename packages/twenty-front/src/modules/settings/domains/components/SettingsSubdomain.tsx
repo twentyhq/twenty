@@ -8,7 +8,7 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledDomainFormWrapper = styled.div`
   align-items: center;
@@ -16,10 +16,10 @@ const StyledDomainFormWrapper = styled.div`
 `;
 
 export const SettingsSubdomain = () => {
-  const domainConfiguration = useAtomValue(domainConfigurationState);
+  const domainConfiguration = useAtomStateValue(domainConfigurationState);
   const { t } = useLingui();
 
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { control } = useFormContext<{
     subdomain: string;

@@ -9,7 +9,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const TwoFactorAuthenticationSetupEffect = () => {
   const { initiateCurrentUserWorkspaceOtpProvisioning } =
@@ -18,8 +18,8 @@ export const TwoFactorAuthenticationSetupEffect = () => {
 
   const navigate = useNavigateApp();
   const { origin } = useOrigin();
-  const loginToken = useAtomValue(loginTokenState);
-  const qrCode = useAtomValue(qrCodeState);
+  const loginToken = useAtomStateValue(loginTokenState);
+  const qrCode = useAtomStateValue(qrCodeState);
   const setQrCodeState = useSetAtomState(qrCodeState);
 
   const { t } = useLingui();

@@ -2,7 +2,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -31,12 +31,12 @@ export const DeleteAccount = () => {
 
   const [deleteUserAccount] = useDeleteUserAccountMutation();
   const [deleteUserFromWorkspace] = useDeleteUserWorkspaceMutation();
-  const currentUser = useAtomValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const userEmail = currentUser?.email;
-  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMemberId = currentWorkspaceMember?.id;
   const { signOut } = useAuth();
-  const availableWorkspaces = useAtomValue(availableWorkspacesState);
+  const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
   const availableWorkspacesCount =
     countAvailableWorkspaces(availableWorkspaces);
 

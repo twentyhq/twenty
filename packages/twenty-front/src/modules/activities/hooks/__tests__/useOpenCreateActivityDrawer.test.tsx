@@ -5,7 +5,7 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import gql from 'graphql-tag';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -83,7 +83,7 @@ describe('useOpenCreateActivityDrawer', () => {
         const openActivityRightDrawer = useOpenCreateActivityDrawer({
           activityObjectNameSingular: CoreObjectNameSingular.Note,
         });
-        const viewableRecordId = useAtomValue(viewableRecordIdState);
+        const viewableRecordId = useAtomStateValue(viewableRecordIdState);
         return {
           openActivityRightDrawer,
           viewableRecordId,

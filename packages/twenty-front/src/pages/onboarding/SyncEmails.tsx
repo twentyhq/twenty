@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { Key } from 'ts-key-enum';
 
@@ -85,14 +85,14 @@ export const SyncEmails = () => {
   const userAuthenticatedWithSSO =
     lastAuthenticatedMethod === AuthenticatedMethod.SSO;
 
-  const isGoogleMessagingEnabled = useAtomValue(isGoogleMessagingEnabledState);
-  const isMicrosoftMessagingEnabled = useAtomValue(
+  const isGoogleMessagingEnabled = useAtomStateValue(isGoogleMessagingEnabledState);
+  const isMicrosoftMessagingEnabled = useAtomStateValue(
     isMicrosoftMessagingEnabledState,
   );
 
-  const isGoogleCalendarEnabled = useAtomValue(isGoogleCalendarEnabledState);
+  const isGoogleCalendarEnabled = useAtomStateValue(isGoogleCalendarEnabledState);
 
-  const isMicrosoftCalendarEnabled = useAtomValue(
+  const isMicrosoftCalendarEnabled = useAtomStateValue(
     isMicrosoftCalendarEnabledState,
   );
 

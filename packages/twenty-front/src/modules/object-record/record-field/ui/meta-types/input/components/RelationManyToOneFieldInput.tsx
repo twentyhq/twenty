@@ -13,7 +13,7 @@ import { singleRecordPickerSelectedIdComponentState } from '@/object-record/reco
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
@@ -77,11 +77,11 @@ export const RelationManyToOneFieldInput = () => {
       recordId,
     });
 
-  const layoutDirection = useAtomComponentValue(
+  const layoutDirection = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 
-  const isLoading = useAtomComponentValue(
+  const isLoading = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionLoadingComponentState,
     instanceId,
   );

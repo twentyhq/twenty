@@ -13,7 +13,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledMainContentContainer = styled.div`
@@ -70,7 +70,7 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
-  const qrCode = useAtomValue(qrCodeState);
+  const qrCode = useAtomStateValue(qrCodeState);
   const setSignInUpStep = useSetAtomState(signInUpStepState);
 
   const handleClick = () => {

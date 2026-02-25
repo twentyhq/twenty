@@ -15,12 +15,12 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import styled from '@emotion/styled';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useEffect, useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
@@ -92,18 +92,18 @@ export const SettingsObjectFieldTable = ({
   const [showInactive, setShowInactive] = useState(true);
   const [showSystemFields, setShowSystemFields] = useState(false);
 
-  const isAdvancedModeEnabled = useAtomValue(isAdvancedModeEnabledState);
+  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   const tableMetadata = SETTINGS_OBJECT_FIELD_TABLE_METADATA;
 
   const { mapFieldMetadataItemToSettingsObjectDetailTableItem } =
     useMapFieldMetadataItemToSettingsObjectDetailTableItem(objectMetadataItem);
 
-  const settingsObjectFields = useFamilyAtomValue(
+  const settingsObjectFields = useAtomFamilyStateValue(
     settingsObjectFieldsFamilyState,
     { objectMetadataItemId: objectMetadataItem.id },
   );
-  const setSettingsObjectFields = useSetFamilyAtomState(
+  const setSettingsObjectFields = useSetAtomFamilyState(
     settingsObjectFieldsFamilyState,
     { objectMetadataItemId: objectMetadataItem.id },
   );

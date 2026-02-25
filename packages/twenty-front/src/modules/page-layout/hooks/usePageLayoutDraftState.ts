@@ -1,7 +1,7 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -16,7 +16,7 @@ export const usePageLayoutDraftState = (pageLayoutIdFromProps?: string) => {
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
-  const pageLayoutPersisted = useAtomComponentValue(
+  const pageLayoutPersisted = useAtomComponentStateValue(
     pageLayoutPersistedComponentState,
     pageLayoutId,
   );

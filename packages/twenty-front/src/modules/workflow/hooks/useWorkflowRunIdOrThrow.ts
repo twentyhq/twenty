@@ -1,9 +1,9 @@
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useWorkflowRunIdOrThrow = () => {
-  const workflowRunId = useAtomComponentValue(
+  const workflowRunId = useAtomComponentStateValue(
     workflowVisualizerWorkflowRunIdComponentState,
   );
 

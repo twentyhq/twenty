@@ -22,7 +22,7 @@ import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -50,19 +50,19 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
 
-  const isPageLayoutInEditMode = useAtomComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
-  const draggingWidgetId = useAtomComponentValue(
+  const draggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const resizingWidgetId = useAtomComponentValue(
+  const resizingWidgetId = useAtomComponentStateValue(
     pageLayoutResizingWidgetIdComponentState,
   );
 
-  const currentlyEditingWidgetId = useAtomComponentValue(
+  const currentlyEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
   );
 

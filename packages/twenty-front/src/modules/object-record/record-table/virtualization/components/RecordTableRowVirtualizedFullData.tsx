@@ -13,8 +13,8 @@ import { RecordTableRowVirtualizedSkeleton } from '@/object-record/record-table/
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableRowVirtualizedFullDataProps = {
@@ -27,12 +27,12 @@ export const RecordTableRowVirtualizedFullData = ({
 }: RecordTableRowVirtualizedFullDataProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isFocused = useAtomComponentFamilyValue(
+  const isFocused = useAtomComponentFamilyStateValue(
     isRecordTableRowFocusedComponentFamilyState,
     realIndex,
   );
 
-  const isRowFocusActive = useAtomComponentValue(
+  const isRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
     recordTableId,
   );

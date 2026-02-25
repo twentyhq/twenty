@@ -1,9 +1,9 @@
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
-import { createComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createComponentFamilySelector';
+import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
 
 export const multipleRecordPickerIsSelectedComponentFamilySelector =
-  createComponentFamilySelector<boolean, string>({
+  createAtomComponentFamilySelector<boolean, string>({
     key: 'visibleRecordGroupIdsComponentFamilySelector',
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
     get:

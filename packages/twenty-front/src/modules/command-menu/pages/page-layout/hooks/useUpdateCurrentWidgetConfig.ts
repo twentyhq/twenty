@@ -2,7 +2,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import type { PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -12,7 +12,7 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
     pageLayoutIdFromProps,
   );
 
-  const currentlyEditingWidgetId = useAtomComponentValue(
+  const currentlyEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutIdFromProps,
   );

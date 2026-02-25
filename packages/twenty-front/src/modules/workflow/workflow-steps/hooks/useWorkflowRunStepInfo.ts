@@ -1,5 +1,5 @@
 import { workflowRunIteratorSubStepIterationIndexComponentState } from '@/command-menu/pages/workflow/step/view-run/states/workflowRunIteratorSubStepIterationIndexComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,7 +9,7 @@ export const useWorkflowRunStepInfo = ({ stepId }: { stepId: string }) => {
   const workflowRunId = useWorkflowRunIdOrThrow();
   const workflowRun = useWorkflowRun({ workflowRunId });
 
-  const workflowRunIteratorSubStepIterationIndex = useAtomComponentValue(
+  const workflowRunIteratorSubStepIterationIndex = useAtomComponentStateValue(
     workflowRunIteratorSubStepIterationIndexComponentState,
   );
 

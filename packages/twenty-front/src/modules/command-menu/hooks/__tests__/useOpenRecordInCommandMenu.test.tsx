@@ -12,7 +12,7 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
@@ -52,27 +52,27 @@ const renderHooks = () => {
     () => {
       const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-      const viewableRecordId = useAtomComponentValue(
+      const viewableRecordId = useAtomComponentStateValue(
         viewableRecordIdComponentState,
         'mocked-uuid',
       );
-      const viewableRecordNameSingular = useAtomComponentValue(
+      const viewableRecordNameSingular = useAtomComponentStateValue(
         viewableRecordNameSingularComponentState,
         'mocked-uuid',
       );
-      const currentObjectMetadataItemId = useAtomComponentValue(
+      const currentObjectMetadataItemId = useAtomComponentStateValue(
         contextStoreCurrentObjectMetadataItemIdComponentState,
         'mocked-uuid',
       );
-      const targetedRecordsRule = useAtomComponentValue(
+      const targetedRecordsRule = useAtomComponentStateValue(
         contextStoreTargetedRecordsRuleComponentState,
         'mocked-uuid',
       );
-      const numberOfSelectedRecords = useAtomComponentValue(
+      const numberOfSelectedRecords = useAtomComponentStateValue(
         contextStoreNumberOfSelectedRecordsComponentState,
         'mocked-uuid',
       );
-      const currentViewType = useAtomComponentValue(
+      const currentViewType = useAtomComponentStateValue(
         contextStoreCurrentViewTypeComponentState,
         'mocked-uuid',
       );

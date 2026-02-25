@@ -15,7 +15,7 @@ import { useResetTableRowSelection } from '@/object-record/record-table/hooks/in
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import isEmpty from 'lodash.isempty';
 
 export const RecordTable = () => {
@@ -36,7 +36,7 @@ export const RecordTable = () => {
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
   );
 
-  const isRecordTableInitialLoading = useAtomComponentValue(
+  const isRecordTableInitialLoading = useAtomComponentStateValue(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );

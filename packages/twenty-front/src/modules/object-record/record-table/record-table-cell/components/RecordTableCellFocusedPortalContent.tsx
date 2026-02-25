@@ -7,8 +7,8 @@ import { RecordTableCellDisplayMode } from '@/object-record/record-table/record-
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { BORDER_COMMON } from 'twenty-ui/theme';
@@ -35,16 +35,16 @@ export const RecordTableCellFocusedPortalContent = () => {
   const { rowIndex } = useRecordTableRowContextOrThrow();
   const { onMoveHoverToCurrentCell } = useRecordTableBodyContextOrThrow();
 
-  const focusPosition = useAtomComponentValue(
+  const focusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
   );
 
-  const isRowActive = useAtomComponentFamilyValue(
+  const isRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
     rowIndex,
   );
 
-  const hoverPosition = useAtomComponentValue(
+  const hoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 

@@ -8,7 +8,7 @@ import { recordCalendarSelectedRecordIdsComponentSelector } from '@/object-recor
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect } from 'react';
 
@@ -22,7 +22,7 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
     recordCalendarId,
   );
 
-  const recordCalendarSelectedDate = useAtomComponentValue(
+  const recordCalendarSelectedDate = useAtomComponentStateValue(
     recordCalendarSelectedDateComponentState,
     recordCalendarId,
   );
@@ -43,7 +43,7 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
     recordCalendarSelectedDate,
   );
 
-  const hasInitializedRecordCalendarSelectedDate = useAtomComponentValue(
+  const hasInitializedRecordCalendarSelectedDate = useAtomComponentStateValue(
     hasInitializedRecordCalendarSelectedDateComponentState,
     recordCalendarId,
   );

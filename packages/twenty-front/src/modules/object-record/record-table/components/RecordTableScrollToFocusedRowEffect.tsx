@@ -4,19 +4,19 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { focusedRecordTableRowIndexComponentState } from '@/object-record/record-table/states/focusedRecordTableRowIndexComponentState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableScrollToFocusedRowEffect = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const focusedRowIndex = useAtomComponentValue(
+  const focusedRowIndex = useAtomComponentStateValue(
     focusedRecordTableRowIndexComponentState,
     recordTableId,
   );
 
-  const isRowFocusActive = useAtomComponentValue(
+  const isRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
     recordTableId,
   );

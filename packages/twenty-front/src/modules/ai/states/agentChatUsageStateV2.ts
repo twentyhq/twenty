@@ -1,4 +1,4 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export type AgentChatLastMessageUsage = {
   inputTokens: number;
@@ -18,7 +18,7 @@ export type AgentChatUsageState = {
   outputCredits: number;
 };
 
-export const agentChatUsageStateV2 = createState<AgentChatUsageState | null>({
+export const agentChatUsageStateV2 = createAtomState<AgentChatUsageState | null>({
   key: 'agentChatUsageStateV2',
   defaultValue: null,
 });

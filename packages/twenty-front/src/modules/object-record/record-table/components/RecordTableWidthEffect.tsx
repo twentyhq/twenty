@@ -2,7 +2,7 @@ import { recordTableWidthComponentState } from '@/object-record/record-table/sta
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,7 +12,7 @@ export const RecordTableWidthEffect = () => {
     recordTableWidthComponentState,
   );
 
-  const tableWidthResizeIsActive = useAtomValue(tableWidthResizeIsActiveState);
+  const tableWidthResizeIsActive = useAtomStateValue(tableWidthResizeIsActiveState);
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 

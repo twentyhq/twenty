@@ -10,7 +10,7 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ViewType } from '@/views/types/ViewType';
 import { t } from '@lingui/core/macro';
@@ -49,7 +49,7 @@ export const useRecordGroupActions = ({
     objectNameSingular,
   });
 
-  const recordIndexGroupFieldMetadataItem = useAtomComponentValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 

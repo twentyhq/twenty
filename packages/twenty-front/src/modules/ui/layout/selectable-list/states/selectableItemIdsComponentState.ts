@@ -1,7 +1,7 @@
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const selectableItemIdsComponentState = createComponentState<string[][]>(
+export const selectableItemIdsComponentState = createAtomComponentState<string[][]>(
   {
     key: 'selectableItemIdsComponentState',
     defaultValue: [[]],

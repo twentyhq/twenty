@@ -3,7 +3,7 @@ import { useStore } from 'jotai';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -36,7 +36,7 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const viewsOnCurrentObject = useFamilySelectorValue(
+  const viewsOnCurrentObject = useAtomFamilySelectorValue(
     coreViewsFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );

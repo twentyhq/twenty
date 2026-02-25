@@ -19,8 +19,8 @@ import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/co
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -99,19 +99,19 @@ export const GraphWidgetBarChart = ({
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const hoveredSliceIndexValue = useAtomComponentValue(
+  const hoveredSliceIndexValue = useAtomComponentStateValue(
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const draggingWidgetId = useAtomComponentValue(
+  const draggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const resizingWidgetId = useAtomComponentValue(
+  const resizingWidgetId = useAtomComponentStateValue(
     pageLayoutResizingWidgetIdComponentState,
   );
 
-  const isSidePanelAnimating = useAtomValue(isSidePanelAnimatingStateV2);
+  const isSidePanelAnimating = useAtomStateValue(isSidePanelAnimatingStateV2);
 
   const isLayoutAnimating =
     isSidePanelAnimating || draggingWidgetId === id || resizingWidgetId === id;

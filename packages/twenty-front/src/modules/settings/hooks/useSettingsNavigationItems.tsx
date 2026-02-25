@@ -11,7 +11,7 @@ import { type NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navig
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   IconApi,
   // IconApps, // TODO: Re-enable when integrations page is ready
@@ -62,13 +62,13 @@ export type SettingsNavigationItem = {
 };
 
 const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
-  const billing = useAtomValue(billingState);
+  const billing = useAtomStateValue(billingState);
   const { signOut } = useAuth();
-  const supportChat = useAtomValue(supportChatState);
-  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
+  const supportChat = useAtomStateValue(supportChatState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const currentUser = useAtomValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
   const isAdminEnabled =
     (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
     false;

@@ -1,8 +1,8 @@
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const hasWidgetTooManyGroupsComponentState =
-  createComponentState<boolean>({
+  createAtomComponentState<boolean>({
     key: 'hasWidgetTooManyGroupsComponentState',
     defaultValue: false,
     componentInstanceContext: WidgetComponentInstanceContext,

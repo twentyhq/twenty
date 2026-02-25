@@ -10,8 +10,8 @@ import { isFilteredViewRedirectionSupported } from '@/page-layout/widgets/graph/
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -58,7 +58,7 @@ export const GraphWidgetBarChartRenderer = () => {
 
   const navigate = useNavigate();
   const configuration = widget.configuration;
-  const isPageLayoutInEditMode = useAtomComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
@@ -81,7 +81,7 @@ export const GraphWidgetBarChartRenderer = () => {
     configuration.omitNullValues,
   );
 
-  const indexViewId = useFamilySelectorValue(
+  const indexViewId = useAtomFamilySelectorValue(
     coreIndexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );

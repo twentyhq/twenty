@@ -9,29 +9,29 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStopWorkflowRun } from '@/workflow/hooks/useStopWorkflowRun';
 
 export const StopWorkflowRunSingleRecordAction = () => {
   const { objectMetadataItem, recordIndexId } =
     useRecordIndexIdFromCurrentContextStore();
 
-  const contextStoreTargetedRecordsRule = useAtomComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
     recordIndexId,
   );
 
-  const contextStoreFilters = useAtomComponentValue(
+  const contextStoreFilters = useAtomComponentStateValue(
     contextStoreFiltersComponentState,
     recordIndexId,
   );
 
-  const contextStoreFilterGroups = useAtomComponentValue(
+  const contextStoreFilterGroups = useAtomComponentStateValue(
     contextStoreFilterGroupsComponentState,
     recordIndexId,
   );
 
-  const contextStoreAnyFieldFilterValue = useAtomComponentValue(
+  const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
     contextStoreAnyFieldFilterValueComponentState,
     recordIndexId,
   );

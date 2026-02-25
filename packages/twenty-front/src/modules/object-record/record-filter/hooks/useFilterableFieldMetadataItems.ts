@@ -1,10 +1,10 @@
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 export const useFilterableFieldMetadataItems = (
   objectMetadataItemId: string,
 ) => {
-  const filterableFieldMetadataItems = useFamilySelectorValue(
+  const filterableFieldMetadataItems = useAtomFamilySelectorValue(
     availableFieldMetadataItemsForFilterFamilySelector,
     {
       objectMetadataItemId,

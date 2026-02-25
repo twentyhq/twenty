@@ -24,7 +24,7 @@ import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterP
 import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -126,18 +126,18 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
-  const isPageLayoutInEditMode = useAtomComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
-  const pageLayoutCurrentLayouts = useAtomComponentValue(
+  const pageLayoutCurrentLayouts = useAtomComponentStateValue(
     pageLayoutCurrentLayoutsComponentState,
   );
 
-  const pageLayoutDraggedArea = useAtomComponentValue(
+  const pageLayoutDraggedArea = useAtomComponentStateValue(
     pageLayoutDraggedAreaComponentState,
   );
-  const draggingWidgetId = useAtomComponentValue(
+  const draggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 

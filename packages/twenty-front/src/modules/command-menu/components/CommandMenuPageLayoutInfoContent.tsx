@@ -10,10 +10,10 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,8 +27,8 @@ export const CommandMenuPageLayoutInfoContent = ({
 }) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const commandMenuPage = useAtomValue(commandMenuPageState);
-  const commandMenuPageInfo = useAtomValue(commandMenuPageInfoState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
+  const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
 
   const [shouldFocusTitleInput, setShouldFocusTitleInput] =
     useAtomComponentState(
@@ -40,12 +40,12 @@ export const CommandMenuPageLayoutInfoContent = ({
     setShouldFocusTitleInput(false);
   };
 
-  const draftPageLayout = useAtomComponentValue(
+  const draftPageLayout = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutEditingWidgetId = useAtomComponentValue(
+  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );

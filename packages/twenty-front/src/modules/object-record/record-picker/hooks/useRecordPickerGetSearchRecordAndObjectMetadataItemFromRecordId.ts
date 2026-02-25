@@ -1,7 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { multipleRecordPickerSinglePickableMorphItemComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerSinglePickableMorphItemComponentFamilySelector';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -20,7 +20,7 @@ export const useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId =
       recordId,
     );
 
-    const searchRecord = useFamilyAtomValue(
+    const searchRecord = useAtomFamilyStateValue(
       searchRecordStoreFamilyState,
       recordId,
     );

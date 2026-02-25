@@ -16,7 +16,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledCommandMenuPlaceholder = styled.p`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -30,7 +30,7 @@ const StyledCommandMenuPageContainer = styled.div`
 export const CommandMenuNavigationMenuItemEditPage = () => {
   const { t } = useLingui();
 
-  const selectedNavigationMenuItemInEditMode = useAtomValue(
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeStateV2,
   );
   const { selectedItemLabel } = useSelectedNavigationMenuItemEditItemLabel();

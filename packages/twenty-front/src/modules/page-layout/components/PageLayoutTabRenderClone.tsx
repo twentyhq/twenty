@@ -3,7 +3,7 @@ import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-la
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type DraggableProvided } from '@hello-pangea/dnd';
@@ -30,7 +30,7 @@ export const PageLayoutTabRenderClone = ({
 }) => {
   const theme = useTheme();
 
-  const pageLayoutTabListCurrentDragDroppableId = useAtomComponentValue(
+  const pageLayoutTabListCurrentDragDroppableId = useAtomComponentStateValue(
     pageLayoutTabListCurrentDragDroppableIdComponentState,
   );
 

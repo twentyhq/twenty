@@ -18,7 +18,7 @@ import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPoin
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
 import { useStore } from 'jotai';
@@ -59,12 +59,12 @@ export const useResizeTableHeader = () => {
 
   const { updateRecordField } = useUpdateRecordField();
 
-  const recordTableWidth = useAtomComponentValue(
+  const recordTableWidth = useAtomComponentStateValue(
     recordTableWidthComponentState,
     recordTableId,
   );
 
-  const shouldCompactRecordTableFirstColumn = useAtomComponentValue(
+  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
     shouldCompactRecordTableFirstColumnComponentState,
     recordTableId,
   );

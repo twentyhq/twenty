@@ -12,7 +12,7 @@ import { NavigationMenuItemType } from '@/navigation-menu-item/constants/Navigat
 import { useUpdateFolderInDraft } from '@/navigation-menu-item/hooks/useUpdateFolderInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
@@ -26,13 +26,13 @@ export const CommandMenuFolderInfo = () => {
   const theme = useTheme();
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const commandMenuPageInfo = useAtomValue(commandMenuPageInfoState);
+  const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
   const [shouldFocusTitleInput, setShouldFocusTitleInput] =
     useAtomComponentState(
       commandMenuShouldFocusTitleInputComponentState,
       commandMenuPageInfo.instanceId,
     );
-  const selectedNavigationMenuItemInEditMode = useAtomValue(
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeStateV2,
   );
   const items = useWorkspaceSectionItems();

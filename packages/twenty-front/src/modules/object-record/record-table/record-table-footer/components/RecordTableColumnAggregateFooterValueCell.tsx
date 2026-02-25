@@ -5,9 +5,9 @@ import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/rec
 import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
 import { hasAggregateOperationForViewFieldFamilySelector } from '@/object-record/record-table/record-table-footer/states/hasAggregateOperationForViewFieldFamilySelector';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
@@ -58,7 +58,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const isDropdownOpen = useAtomComponentValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
@@ -68,7 +68,7 @@ export const RecordTableColumnAggregateFooterValueCell = ({
     RecordTableColumnAggregateFooterCellContext,
   );
 
-  const hasAggregateOperationForViewField = useFamilySelectorValue(
+  const hasAggregateOperationForViewField = useAtomFamilySelectorValue(
     hasAggregateOperationForViewFieldFamilySelector,
     { viewFieldId },
   );

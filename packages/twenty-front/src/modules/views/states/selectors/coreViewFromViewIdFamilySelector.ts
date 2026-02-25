@@ -1,9 +1,9 @@
-import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type View } from '@/views/types/View';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
-export const coreViewFromViewIdFamilySelector = createFamilySelector<
+export const coreViewFromViewIdFamilySelector = createAtomFamilySelector<
   View | undefined,
   { viewId: string }
 >({

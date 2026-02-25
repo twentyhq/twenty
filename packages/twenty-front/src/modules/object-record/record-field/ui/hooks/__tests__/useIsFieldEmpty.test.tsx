@@ -8,7 +8,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 const recordId = 'recordId';
 
@@ -31,7 +31,7 @@ describe('useIsFieldEmpty', () => {
   it('should work as expected', () => {
     const { result } = renderHook(
       () => {
-        const setFieldState = useSetFamilyAtomState(
+        const setFieldState = useSetAtomFamilyState(
           recordStoreFamilyState,
           recordId,
         );

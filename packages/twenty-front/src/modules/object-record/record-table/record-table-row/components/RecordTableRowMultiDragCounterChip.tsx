@@ -1,5 +1,5 @@
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { NotificationCounter } from 'twenty-ui/navigation';
 
@@ -11,7 +11,7 @@ const StyledNotificationCounter = styled(NotificationCounter)`
 `;
 
 export const RecordTableRowMultiDragCounterChip = () => {
-  const originalDragSelection = useAtomComponentValue(
+  const originalDragSelection = useAtomComponentStateValue(
     originalDragSelectionComponentState,
   );
 

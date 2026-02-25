@@ -7,7 +7,7 @@ import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const dropdownId = 'test-dropdown-id';
@@ -47,12 +47,12 @@ describe('useCloseDropdown', () => {
   it('should close dropdown from inside component instance context', async () => {
     const { result } = renderHook(
       () => {
-        const isOutsideDropdownOpen = useAtomComponentValue(
+        const isOutsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
         );
 
-        const isInsideDropdownOpen = useAtomComponentValue(
+        const isInsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
         );
 
@@ -89,12 +89,12 @@ describe('useCloseDropdown', () => {
   it('should close dropdown from outside component instance context', async () => {
     const { result } = renderHook(
       () => {
-        const isOutsideDropdownOpen = useAtomComponentValue(
+        const isOutsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
         );
 
-        const isInsideDropdownOpen = useAtomComponentValue(
+        const isInsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
         );
 

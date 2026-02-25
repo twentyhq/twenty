@@ -2,7 +2,7 @@ import { type Decorator } from '@storybook/react-vite';
 
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useEffect, useState } from 'react';
 
 export const PrefetchLoadingDecorator: Decorator = (Story, context) => {
@@ -10,12 +10,12 @@ export const PrefetchLoadingDecorator: Decorator = (Story, context) => {
 
   const prefetchLoadingSetDelay = parameters.prefetchLoadingSetDelay ?? 0;
 
-  const setAreFavoritesFoldersPrefetched = useSetFamilyAtomState(
+  const setAreFavoritesFoldersPrefetched = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavoritesFolders,
   );
 
-  const setAreFavoritesPrefetched = useSetFamilyAtomState(
+  const setAreFavoritesPrefetched = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavorites,
   );

@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import {
@@ -29,7 +29,7 @@ export const ConfigVariableActionButtons = ({
   onReset,
 }: ConfigVariableActionButtonsProps) => {
   const { t } = useLingui();
-  const isConfigVariablesInDbEnabled = useAtomValue(
+  const isConfigVariablesInDbEnabled = useAtomStateValue(
     isConfigVariablesInDbEnabledState,
   );
   const isFromDatabase = variable.source === ConfigSource.DATABASE;

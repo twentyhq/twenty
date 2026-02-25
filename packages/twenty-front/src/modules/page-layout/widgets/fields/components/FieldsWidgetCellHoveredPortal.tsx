@@ -6,7 +6,7 @@ import { RecordFieldListComponentInstanceContext } from '@/object-record/record-
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type FieldsWidgetCellHoveredPortalProps = {
@@ -24,7 +24,7 @@ export const FieldsWidgetCellHoveredPortal = ({
     RecordFieldListComponentInstanceContext,
   );
 
-  const hoverPosition = useAtomComponentValue(
+  const hoverPosition = useAtomComponentStateValue(
     recordFieldListHoverPositionComponentState,
   );
 

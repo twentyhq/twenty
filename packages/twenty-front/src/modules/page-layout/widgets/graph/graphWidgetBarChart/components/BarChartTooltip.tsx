@@ -1,5 +1,5 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
@@ -30,7 +30,7 @@ export const BarChartTooltip = ({
   onMouseEnter,
   onMouseLeave,
 }: BarChartTooltipProps) => {
-  const tooltipState = useAtomComponentValue(
+  const tooltipState = useAtomComponentStateValue(
     graphWidgetBarTooltipComponentState,
   );
 

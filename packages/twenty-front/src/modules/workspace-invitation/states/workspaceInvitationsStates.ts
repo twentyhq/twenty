@@ -1,7 +1,7 @@
 import { type WorkspaceInvitation } from '@/workspace-member/types/WorkspaceMember';
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const workspaceInvitationsState = createState<
+export const workspaceInvitationsState = createAtomState<
   Omit<WorkspaceInvitation, '__typename'>[]
 >({
   key: 'workspaceInvitationsState',

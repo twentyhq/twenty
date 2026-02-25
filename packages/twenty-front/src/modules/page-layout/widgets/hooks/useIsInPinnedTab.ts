@@ -4,7 +4,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -15,7 +15,7 @@ export const useIsInPinnedTab = () => {
   const { isInRightDrawer } = useLayoutRenderingContext();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const isPageLayoutInEditMode = useAtomComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 

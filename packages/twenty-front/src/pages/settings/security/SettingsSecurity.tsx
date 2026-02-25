@@ -34,7 +34,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 const StyledContainer = styled.div`
@@ -63,10 +63,10 @@ export const SettingsSecurity = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const isMultiWorkspaceEnabled = useAtomValue(isMultiWorkspaceEnabledState);
-  const isClickHouseConfigured = useAtomValue(isClickHouseConfiguredState);
-  const authProviders = useAtomValue(authProvidersState);
-  const SSOIdentitiesProviders = useAtomValue(SSOIdentitiesProvidersState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
+  const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
+  const authProviders = useAtomStateValue(authProvidersState);
+  const SSOIdentitiesProviders = useAtomStateValue(SSOIdentitiesProvidersState);
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );

@@ -8,14 +8,14 @@ import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/h
 import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
 import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
 import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useAddLinkToNavigationMenu = () => {
   const { t } = useLingui();
   const { addLinkToDraft } = useAddLinkToNavigationMenuDraft();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
-  const navigationMenuItemsDraft = useAtomValue(
+  const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftStateV2,
   );
   const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
@@ -23,7 +23,7 @@ export const useAddLinkToNavigationMenu = () => {
   );
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
-  const addMenuItemInsertionContext = useAtomValue(
+  const addMenuItemInsertionContext = useAtomStateValue(
     addMenuItemInsertionContextStateV2,
   );
   const setAddMenuItemInsertionContext = useSetAtomState(

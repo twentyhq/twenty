@@ -15,14 +15,14 @@ import {
   useBillingPortalSessionQuery,
 } from '~/generated-metadata/graphql';
 import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SettingsBillingContent = () => {
   const { t } = useLingui();
 
   const { redirect } = useRedirect();
 
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const subscriptions = currentWorkspace?.billingSubscriptions;
 

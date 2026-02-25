@@ -1,6 +1,6 @@
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
@@ -9,7 +9,7 @@ import { getRolesMock } from '~/testing/mock-data/roles';
 const SettingsRoleAssignmentWrapper = (
   args: React.ComponentProps<typeof SettingsRoleAssignment>,
 ) => {
-  const setDraftRole = useSetFamilyAtomState(
+  const setDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
     args.roleId,
   );

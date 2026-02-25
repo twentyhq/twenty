@@ -1,10 +1,10 @@
 import { coreViewsState } from '@/views/states/coreViewState';
 import { ViewKey } from '@/views/types/ViewKey';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 export const coreIndexViewIdFromObjectMetadataItemFamilySelector =
-  createFamilySelector<string | undefined, { objectMetadataItemId: string }>({
+  createAtomFamilySelector<string | undefined, { objectMetadataItemId: string }>({
     key: 'coreIndexViewIdFromObjectMetadataItemFamilySelector',
     get:
       ({ objectMetadataItemId }) =>

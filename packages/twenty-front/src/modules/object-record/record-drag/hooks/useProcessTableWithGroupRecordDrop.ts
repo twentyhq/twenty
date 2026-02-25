@@ -19,7 +19,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useProcessTableWithGroupRecordDrop = () => {
   const store = useStore();
@@ -55,7 +55,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
     recordIndexId,
   );
 
-  const groupFieldMetadata = useAtomComponentValue(
+  const groupFieldMetadata = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 

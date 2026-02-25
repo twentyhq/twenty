@@ -3,7 +3,7 @@ import { commandMenuWidthState } from '@/command-menu/states/commandMenuWidthSta
 import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
 import { WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyNodeDefinition';
@@ -60,7 +60,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { useStore } from 'jotai';
@@ -170,10 +170,10 @@ export const WorkflowDiagramCanvasBase = ({
 
   const reactflow = useReactFlow();
 
-  const currentWorkflowDiagram = useAtomComponentValue(
+  const currentWorkflowDiagram = useAtomComponentStateValue(
     workflowDiagramComponentState,
   );
-  const workflowDiagramPanOnDrag = useAtomComponentValue(
+  const workflowDiagramPanOnDrag = useAtomComponentStateValue(
     workflowDiagramPanOnDragComponentState,
   );
   const workflowDiagram = useAtomComponentStateCallbackState(
@@ -194,7 +194,7 @@ export const WorkflowDiagramCanvasBase = ({
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
 
-  const workflowInsertStepIds = useAtomComponentValue(
+  const workflowInsertStepIds = useAtomComponentStateValue(
     workflowInsertStepIdsComponentState,
   );
 
@@ -257,7 +257,7 @@ export const WorkflowDiagramCanvasBase = ({
     return { nodes, edges };
   }, [currentWorkflowDiagram, workflowInsertStepIds]);
 
-  const isCommandMenuOpened = useAtomValue(isCommandMenuOpenedStateV2);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedStateV2);
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const handleEdgesChange = (

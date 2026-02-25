@@ -3,7 +3,7 @@ import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { useSetAtom } from 'jotai';
@@ -39,12 +39,12 @@ describe('useCreatePageLayoutGraphWidget', () => {
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const pageLayoutDraft = useAtomComponentValue(
+        const pageLayoutDraft = useAtomComponentStateValue(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
         const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
-        const pageLayoutCurrentLayouts = useAtomComponentValue(
+        const pageLayoutCurrentLayouts = useAtomComponentStateValue(
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
@@ -118,12 +118,12 @@ describe('useCreatePageLayoutGraphWidget', () => {
             instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
           }),
         );
-        const pageLayoutDraft = useAtomComponentValue(
+        const pageLayoutDraft = useAtomComponentStateValue(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
         const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
-        const pageLayoutCurrentLayouts = useAtomComponentValue(
+        const pageLayoutCurrentLayouts = useAtomComponentStateValue(
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );

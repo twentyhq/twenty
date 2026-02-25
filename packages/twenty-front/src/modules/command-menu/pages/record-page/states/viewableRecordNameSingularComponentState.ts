@@ -1,7 +1,7 @@
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/jotai/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const viewableRecordNameSingularComponentState = createComponentState<
+export const viewableRecordNameSingularComponentState = createAtomComponentState<
   string | null
 >({
   key: 'command-menu/viewable-record-name-singular',

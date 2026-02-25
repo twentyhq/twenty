@@ -11,7 +11,7 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
@@ -130,7 +130,7 @@ export const useObjectOptionsForBoard = ({
     ],
   );
 
-  const currentRecordFields = useAtomComponentValue(
+  const currentRecordFields = useAtomComponentStateValue(
     currentRecordFieldsComponentState,
     recordBoardId,
   );

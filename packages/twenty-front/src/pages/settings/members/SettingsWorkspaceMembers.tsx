@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useDebounce } from 'use-debounce';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -116,7 +116,7 @@ export const SettingsWorkspaceMembers = () => {
   const navigateSettings = useNavigateSettings();
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
-  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const [debouncedSearchFilter] = useDebounce(searchFilter, 300);
 
@@ -151,9 +151,9 @@ export const SettingsWorkspaceMembers = () => {
   const { resendInvitation } = useResendWorkspaceInvitation();
   const { deleteWorkspaceInvitation } = useDeleteWorkspaceInvitation();
 
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const workspaceInvitations = useAtomValue(workspaceInvitationsState);
+  const workspaceInvitations = useAtomStateValue(workspaceInvitationsState);
   const setWorkspaceInvitations = useSetAtomState(workspaceInvitationsState);
 
   const handleSearchChange = (text: string) => {

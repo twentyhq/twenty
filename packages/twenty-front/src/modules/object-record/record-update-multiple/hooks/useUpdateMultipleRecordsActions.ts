@@ -6,7 +6,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useIncrementalUpdateManyRecords } from '@/object-record/hooks/useIncrementalUpdateManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type UseUpdateMultipleRecordsActionsProps = {
   objectNameSingular: string;
@@ -21,22 +21,22 @@ export const useUpdateMultipleRecordsActions = ({
     contextStoreInstanceId,
   );
 
-  const contextStoreTargetedRecordsRule = useAtomComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
     contextStoreInstanceId,
   );
 
-  const contextStoreFilters = useAtomComponentValue(
+  const contextStoreFilters = useAtomComponentStateValue(
     contextStoreFiltersComponentState,
     contextStoreInstanceId,
   );
 
-  const contextStoreFilterGroups = useAtomComponentValue(
+  const contextStoreFilterGroups = useAtomComponentStateValue(
     contextStoreFilterGroupsComponentState,
     contextStoreInstanceId,
   );
 
-  const contextStoreAnyFieldFilterValue = useAtomComponentValue(
+  const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
     contextStoreAnyFieldFilterValueComponentState,
     contextStoreInstanceId,
   );

@@ -12,7 +12,7 @@ import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSessi
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
@@ -100,7 +100,7 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
     billingCheckoutSessionState,
   );
 
-  const calendarBookingPageId = useAtomValue(calendarBookingPageIdState);
+  const calendarBookingPageId = useAtomStateValue(calendarBookingPageIdState);
 
   const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useAtomState(
     verifyEmailRedirectPathState,

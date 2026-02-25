@@ -19,7 +19,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useRef } from 'react';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
@@ -95,9 +95,9 @@ export const CommandMenuTopBar = () => {
 
   const { closeCommandMenu } = useCommandMenu();
 
-  const commandMenuPage = useAtomValue(commandMenuPageState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
 
-  const commandMenuNavigationStack = useAtomValue(
+  const commandMenuNavigationStack = useAtomStateValue(
     commandMenuNavigationStackState,
   );
 

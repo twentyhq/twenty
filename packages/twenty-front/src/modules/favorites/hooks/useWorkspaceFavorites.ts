@@ -5,7 +5,7 @@ import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/ho
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useMemo } from 'react';
@@ -14,13 +14,13 @@ import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
 export const useWorkspaceFavorites = () => {
   const { workspaceFavorites } = usePrefetchedFavoritesData();
-  const coreViews = useAtomValue(coreViewsState);
-  const objectMetadataItems = useAtomValue(objectMetadataItemsState);
+  const coreViews = useAtomStateValue(coreViewsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Favorite,
     });
-  const allowRequestsToTwentyIcons = useAtomValue(
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
   const getObjectRecordIdentifierByNameSingular =

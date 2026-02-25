@@ -43,7 +43,7 @@ import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnable
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
@@ -219,11 +219,11 @@ export const PageLayoutTabList = ({
     [onReorder, setIsTabDragging, toggleClickOutside, openDropdown, dropdownId],
   );
 
-  const isPageLayoutInEditMode = useAtomComponentValue(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
     pageLayoutId,
   );
-  const tabSettingsOpenTabId = useAtomComponentValue(
+  const tabSettingsOpenTabId = useAtomComponentStateValue(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );

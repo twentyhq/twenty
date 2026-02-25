@@ -2,7 +2,7 @@ import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/Setti
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useSetFamilyAtomState } from '@/ui/utilities/state/jotai/hooks/useSetFamilyAtomState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
@@ -14,12 +14,12 @@ type SettingsRoleCreateEffectProps = {
 export const SettingsRoleCreateEffect = ({
   roleId,
 }: SettingsRoleCreateEffectProps) => {
-  const setSettingsDraftRole = useSetFamilyAtomState(
+  const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
     roleId,
   );
 
-  const setSettingsPersistedRole = useSetFamilyAtomState(
+  const setSettingsPersistedRole = useSetAtomFamilyState(
     settingsPersistedRoleFamilyState,
     roleId,
   );

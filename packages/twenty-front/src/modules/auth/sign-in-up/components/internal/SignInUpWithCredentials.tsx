@@ -23,7 +23,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledForm = styled.form`
   align-items: center;
@@ -42,9 +42,9 @@ export const SignInUpWithCredentials = ({
 
   const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);
-  const captcha = useAtomValue(captchaState);
-  const isRequestingCaptchaToken = useAtomValue(isRequestingCaptchaTokenState);
-  const lastAuthenticatedMethod = useAtomValue(lastAuthenticatedMethodState);
+  const captcha = useAtomStateValue(captchaState);
+  const isRequestingCaptchaToken = useAtomStateValue(isRequestingCaptchaTokenState);
+  const lastAuthenticatedMethod = useAtomStateValue(lastAuthenticatedMethodState);
   const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
   const {

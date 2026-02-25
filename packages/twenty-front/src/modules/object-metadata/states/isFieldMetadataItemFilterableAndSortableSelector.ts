@@ -2,11 +2,11 @@ import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-met
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { createFamilySelector } from '@/ui/utilities/state/jotai/utils/createFamilySelector';
+import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { findById, isDefined } from 'twenty-shared/utils';
 
 export const isFieldMetadataItemFilterableAndSortableSelector =
-  createFamilySelector({
+  createAtomFamilySelector({
     key: 'isFieldMetadataItemFilterableAndSortableSelector',
     get:
       ({ fieldMetadataItemId }: { fieldMetadataItemId: string }) =>

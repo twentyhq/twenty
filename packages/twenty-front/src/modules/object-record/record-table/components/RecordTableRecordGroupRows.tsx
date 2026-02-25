@@ -8,7 +8,7 @@ import { RecordTableRow } from '@/object-record/record-table/record-table-row/co
 import { RecordTableRecordGroupSectionAddNew } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew';
 import { RecordTableRecordGroupSectionLoadMore } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,12 +22,12 @@ export const RecordTableRecordGroupRows = () => {
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const recordIdsByGroup = useAtomComponentFamilyValue(
+  const recordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     currentRecordGroupId,
   );
 
-  const isRecordGroupTableSectionToggled = useAtomComponentFamilyValue(
+  const isRecordGroupTableSectionToggled = useAtomComponentFamilyStateValue(
     isRecordGroupTableSectionToggledComponentState,
     currentRecordGroupId,
   );

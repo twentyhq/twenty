@@ -12,8 +12,8 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useAtomComponentFamilyValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { forwardRef, type ReactNode } from 'react';
 
 type RecordTableTrProps = {
@@ -41,17 +41,17 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
   ) => {
     const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-    const currentRowSelected = useAtomComponentFamilyValue(
+    const currentRowSelected = useAtomComponentFamilyStateValue(
       isRowSelectedComponentFamilyState,
       recordId,
     );
 
-    const isActive = useAtomComponentFamilyValue(
+    const isActive = useAtomComponentFamilyStateValue(
       isRecordTableRowActiveComponentFamilyState,
       focusIndex,
     );
 
-    const isNextRowActive = useAtomComponentFamilyValue(
+    const isNextRowActive = useAtomComponentFamilyStateValue(
       isRecordTableRowActiveComponentFamilyState,
       focusIndex + 1,
     );
@@ -66,16 +66,16 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
       nextRecordId ?? '',
     );
 
-    const isFocused = useAtomComponentFamilyValue(
+    const isFocused = useAtomComponentFamilyStateValue(
       isRecordTableRowFocusedComponentFamilyState,
       focusIndex,
     );
 
-    const isRowFocusActive = useAtomComponentValue(
+    const isRowFocusActive = useAtomComponentStateValue(
       isRecordTableRowFocusActiveComponentState,
     );
 
-    const isNextRowFocused = useAtomComponentFamilyValue(
+    const isNextRowFocused = useAtomComponentFamilyStateValue(
       isRecordTableRowFocusedComponentFamilyState,
       focusIndex + 1,
     );

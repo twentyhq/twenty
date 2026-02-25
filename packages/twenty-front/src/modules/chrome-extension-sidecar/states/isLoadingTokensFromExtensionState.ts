@@ -1,5 +1,5 @@
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
-export const isLoadingTokensFromExtensionState = createState<boolean | null>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const isLoadingTokensFromExtensionState = createAtomState<boolean | null>({
   key: 'isLoadingTokensFromExtensionState',
   defaultValue: null,
 });

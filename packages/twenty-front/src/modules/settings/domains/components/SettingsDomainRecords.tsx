@@ -8,14 +8,14 @@ import {
   type DomainRecord,
   type DomainValidRecords,
 } from '~/generated-metadata/graphql';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SettingsDomainRecords = ({
   records,
 }: {
   records: DomainValidRecords['records'];
 }) => {
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const rowsDefinitions = [
     { name: 'Domain Setup', validationType: 'redirection' as const },

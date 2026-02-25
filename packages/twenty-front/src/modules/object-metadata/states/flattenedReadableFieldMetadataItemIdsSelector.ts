@@ -1,8 +1,8 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { createSelector } from '@/ui/utilities/state/jotai/utils/createSelector';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const flattenedReadableFieldMetadataItemsSelector = createSelector<
+export const flattenedReadableFieldMetadataItemsSelector = createAtomSelector<
   FieldMetadataItem[]
 >({
   key: 'flattenedReadableFieldMetadataItemsSelector',

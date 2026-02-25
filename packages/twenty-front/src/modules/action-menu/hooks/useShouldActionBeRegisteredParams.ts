@@ -18,9 +18,9 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
-import { useFamilyAtomValue } from '@/ui/utilities/state/jotai/hooks/useFamilyAtomValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -39,7 +39,7 @@ export const useShouldActionBeRegisteredParams = ({
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
 
-  const contextStoreTargetedRecordsRule = useAtomComponentValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
@@ -76,7 +76,7 @@ export const useShouldActionBeRegisteredParams = ({
   ]);
 
   const selectedRecord =
-    useFamilyAtomValue(recordStoreFamilyState, recordId ?? '') || undefined;
+    useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '') || undefined;
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem?.id ?? '',
@@ -96,17 +96,17 @@ export const useShouldActionBeRegisteredParams = ({
   );
 
   const isShowPage =
-    useAtomComponentValue(
+    useAtomComponentStateValue(
       contextStoreCurrentViewTypeComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     ) === ContextStoreViewType.ShowPage;
 
-  const numberOfSelectedRecords = useAtomComponentValue(
+  const numberOfSelectedRecords = useAtomComponentStateValue(
     contextStoreNumberOfSelectedRecordsComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const contextStoreCurrentViewType = useAtomComponentValue(
+  const contextStoreCurrentViewType = useAtomComponentStateValue(
     contextStoreCurrentViewTypeComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
@@ -140,11 +140,11 @@ export const useShouldActionBeRegisteredParams = ({
     [store],
   );
 
-  const forceRegisteredActionsByKey = useAtomValue(
+  const forceRegisteredActionsByKey = useAtomStateValue(
     forceRegisteredActionsByKeyState,
   );
 
-  const currentWorkspace = useAtomValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const isFeatureFlagEnabled = (featureFlagKey: FeatureFlagKey) => {
     const featureFlag = currentWorkspace?.featureFlags?.find(

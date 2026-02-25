@@ -1,8 +1,8 @@
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { createState } from '@/ui/utilities/state/jotai/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const navigationMenuItemsDraftStateV2 = createState<
+export const navigationMenuItemsDraftStateV2 = createAtomState<
   NavigationMenuItem[] | null
 >({
   key: 'navigationMenuItemsDraftStateV2',

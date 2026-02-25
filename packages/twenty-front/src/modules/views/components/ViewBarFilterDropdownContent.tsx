@@ -1,7 +1,7 @@
 import { objectFilterDropdownAnyFieldSearchIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownAnyFieldSearchIsSelectedComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewBarFilterDropdownAnyFieldSearchInput } from '@/views/components/ViewBarFilterDropdownAnyFieldSearchInput';
 import { ViewBarFilterDropdownFieldSelectMenu } from '@/views/components/ViewBarFilterDropdownFieldSelectMenu';
 import { ViewBarFilterDropdownFilterInput } from '@/views/components/ViewBarFilterDropdownFilterInput';
@@ -13,7 +13,7 @@ export const ViewBarFilterDropdownContent = () => {
     ViewBarFilterDropdownIds.MAIN,
   );
 
-  const objectFilterDropdownAnyFieldSearchIsSelected = useAtomComponentValue(
+  const objectFilterDropdownAnyFieldSearchIsSelected = useAtomComponentStateValue(
     objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
   );
 

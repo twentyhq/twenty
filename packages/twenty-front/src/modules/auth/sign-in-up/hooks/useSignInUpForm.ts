@@ -12,7 +12,7 @@ import {
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isDefined } from 'twenty-shared/utils';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const makeValidationSchema = (signInUpStep: SignInUpStep) =>
   z
@@ -34,11 +34,11 @@ const makeValidationSchema = (signInUpStep: SignInUpStep) =>
 
 export type Form = z.infer<ReturnType<typeof makeValidationSchema>>;
 export const useSignInUpForm = () => {
-  const signInUpStep = useAtomValue(signInUpStepState);
+  const signInUpStep = useAtomStateValue(signInUpStepState);
 
   const validationSchema = makeValidationSchema(signInUpStep); // Create schema based on the current step
 
-  const isDeveloperDefaultSignInPrefilled = useAtomValue(
+  const isDeveloperDefaultSignInPrefilled = useAtomStateValue(
     isDeveloperDefaultSignInPrefilledState,
   );
   const [searchParams] = useSearchParams();

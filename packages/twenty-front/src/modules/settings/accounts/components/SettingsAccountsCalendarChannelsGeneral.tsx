@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
 import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { H2Title } from 'twenty-ui/display';
 import {
   CalendarChannelVisibility,
@@ -21,7 +21,7 @@ const StyledGeneralContainer = styled.div`
 `;
 
 export const SettingsAccountsCalendarChannelsGeneral = () => {
-  const currentWorkspaceMember = useAtomValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const exampleStartDate = new Date();
   const exampleEndDate = min([

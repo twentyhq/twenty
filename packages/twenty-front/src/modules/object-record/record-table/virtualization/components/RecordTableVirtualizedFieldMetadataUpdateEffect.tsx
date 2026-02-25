@@ -5,7 +5,7 @@ import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record
 import { lastProcessedFieldMetadataUpdateIdComponentState } from '@/object-record/record-table/virtualization/states/lastProcessedFieldMetadataUpdateIdComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomValue } from '@/ui/utilities/state/jotai/hooks/useAtomValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect } from 'react';
 
 export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
@@ -18,7 +18,7 @@ export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
     visibleRecordFieldsComponentSelector,
   );
 
-  const lastFieldMetadataItemUpdate = useAtomValue(
+  const lastFieldMetadataItemUpdate = useAtomStateValue(
     lastFieldMetadataItemUpdateState,
   );
 
