@@ -1,7 +1,7 @@
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilyState } from '@/object-recordStore/recordStore-store/states/recordStoreFamilyState';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,13 +18,16 @@ export const RecordShowPageTitle = ({
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
-  const record = useAtomFamilyStateValue(
+  const recordStore = useAtomFamilyStateValue(
     recordStoreFamilyState,
     objectRecordId,
   );
 
-  const pageName = isDefined(record)
-    ? getLabelIdentifierFieldValue(record, labelIdentifierFieldMetadataItem)
+  const pageName = isDefined(recordStore)
+    ? getLabelIdentifierFieldValue(
+        recordStore,
+        labelIdentifierFieldMetadataItem,
+      )
     : '';
 
   const pageTitle = pageName.trim()

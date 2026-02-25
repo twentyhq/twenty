@@ -21,7 +21,7 @@ export const RecordBoardColumnHeaderWrapper = ({
     columnId,
   );
 
-  const recordIdsByGroup = useAtomComponentFamilyStateValue(
+  const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     columnId,
   );
@@ -41,7 +41,7 @@ export const RecordBoardColumnHeaderWrapper = ({
       value={{
         columnId,
         columnDefinition: recordGroupDefinition,
-        recordIds: recordIdsByGroup,
+        recordIds: recordIndexRecordIdsByGroup,
         columnIndex,
       }}
     >

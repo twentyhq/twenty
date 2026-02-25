@@ -43,69 +43,71 @@ describe('useToggleDropdown', () => {
   it('should toggle dropdown from inside component instance context', async () => {
     const { result } = renderHook(
       () => {
+        // eslint-disable-next-line twenty/matching-state-variable
         const isOutsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
         );
 
-        const isInsideDropdownOpen = useAtomComponentStateValue(
+        const isDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
         );
         const { toggleDropdown } = useToggleDropdown();
 
-        return { isOutsideDropdownOpen, isInsideDropdownOpen, toggleDropdown };
+        return { isOutsideDropdownOpen, isDropdownOpen, toggleDropdown };
       },
       {
         wrapper: Wrapper,
       },
     );
 
-    expect(result.current.isInsideDropdownOpen).toBe(false);
+    expect(result.current.isDropdownOpen).toBe(false);
     expect(result.current.isOutsideDropdownOpen).toBe(false);
 
     act(() => {
       result.current.toggleDropdown();
     });
 
-    expect(result.current.isInsideDropdownOpen).toBe(true);
+    expect(result.current.isDropdownOpen).toBe(true);
     expect(result.current.isOutsideDropdownOpen).toBe(false);
 
     act(() => {
       result.current.toggleDropdown();
     });
 
-    expect(result.current.isInsideDropdownOpen).toBe(false);
+    expect(result.current.isDropdownOpen).toBe(false);
     expect(result.current.isOutsideDropdownOpen).toBe(false);
 
     act(() => {
       result.current.toggleDropdown();
     });
 
-    expect(result.current.isInsideDropdownOpen).toBe(true);
+    expect(result.current.isDropdownOpen).toBe(true);
     expect(result.current.isOutsideDropdownOpen).toBe(false);
   });
 
   it('should toggle dropdown from outside component instance context', async () => {
     const { result } = renderHook(
       () => {
+        // eslint-disable-next-line twenty/matching-state-variable
         const isOutsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
         );
 
-        const isInsideDropdownOpen = useAtomComponentStateValue(
+        const isDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
         );
         const { toggleDropdown } = useToggleDropdown();
 
-        return { isOutsideDropdownOpen, isInsideDropdownOpen, toggleDropdown };
+        return { isOutsideDropdownOpen, isDropdownOpen, toggleDropdown };
       },
       {
         wrapper: Wrapper,
       },
     );
 
-    expect(result.current.isInsideDropdownOpen).toBe(false);
+    expect(result.current.isDropdownOpen).toBe(false);
     expect(result.current.isOutsideDropdownOpen).toBe(false);
 
     act(() => {
@@ -114,7 +116,7 @@ describe('useToggleDropdown', () => {
       });
     });
 
-    expect(result.current.isInsideDropdownOpen).toBe(false);
+    expect(result.current.isDropdownOpen).toBe(false);
     expect(result.current.isOutsideDropdownOpen).toBe(true);
 
     act(() => {
@@ -123,7 +125,7 @@ describe('useToggleDropdown', () => {
       });
     });
 
-    expect(result.current.isInsideDropdownOpen).toBe(false);
+    expect(result.current.isDropdownOpen).toBe(false);
     expect(result.current.isOutsideDropdownOpen).toBe(false);
 
     act(() => {
@@ -132,7 +134,7 @@ describe('useToggleDropdown', () => {
       });
     });
 
-    expect(result.current.isInsideDropdownOpen).toBe(false);
+    expect(result.current.isDropdownOpen).toBe(false);
     expect(result.current.isOutsideDropdownOpen).toBe(true);
   });
 });

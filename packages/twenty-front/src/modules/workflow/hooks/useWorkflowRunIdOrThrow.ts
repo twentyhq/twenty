@@ -3,13 +3,13 @@ import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states
 import { isDefined } from 'twenty-shared/utils';
 
 export const useWorkflowRunIdOrThrow = () => {
-  const workflowRunId = useAtomComponentStateValue(
+  const workflowVisualizerWorkflowRunId = useAtomComponentStateValue(
     workflowVisualizerWorkflowRunIdComponentState,
   );
 
-  if (!isDefined(workflowRunId)) {
+  if (!isDefined(workflowVisualizerWorkflowRunId)) {
     throw new Error('Expected the workflow run ID to be defined');
   }
 
-  return workflowRunId;
+  return workflowVisualizerWorkflowRunId;
 };

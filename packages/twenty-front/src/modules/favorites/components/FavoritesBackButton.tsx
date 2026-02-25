@@ -35,12 +35,14 @@ export const FavoritesBackButton = ({
   folderName,
 }: FavoritesBackButtonProps) => {
   const theme = useTheme();
-  const setCurrentFolderId = useSetAtomState(currentFavoriteFolderIdState);
+  const setCurrentFavoriteFolderId = useSetAtomState(
+    currentFavoriteFolderIdState,
+  );
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentFolderId(null);
+    setCurrentFavoriteFolderId(null);
   };
 
   return (

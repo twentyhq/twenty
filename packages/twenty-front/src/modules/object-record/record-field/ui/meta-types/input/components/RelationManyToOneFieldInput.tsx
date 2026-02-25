@@ -77,11 +77,11 @@ export const RelationManyToOneFieldInput = () => {
       recordId,
     });
 
-  const layoutDirection = useAtomComponentStateValue(
+  const recordFieldInputLayoutDirection = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 
-  const isLoading = useAtomComponentStateValue(
+  const recordFieldInputLayoutDirectionLoading = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionLoadingComponentState,
     instanceId,
   );
@@ -99,7 +99,7 @@ export const RelationManyToOneFieldInput = () => {
     }
   };
 
-  if (isLoading) {
+  if (recordFieldInputLayoutDirectionLoading) {
     return <></>;
   }
   const fieldLabel = fieldDefinition.label;
@@ -121,8 +121,8 @@ export const RelationManyToOneFieldInput = () => {
         fieldDefinition.metadata.relationObjectMetadataNameSingular,
       ]}
       recordPickerInstanceId={instanceId}
-      layoutDirection={
-        layoutDirection === 'downward'
+      recordFieldInputLayoutDirection={
+        recordFieldInputLayoutDirection === 'downward'
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'
       }

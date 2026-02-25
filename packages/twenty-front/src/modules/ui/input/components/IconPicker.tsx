@@ -103,7 +103,7 @@ const IconPickerIcon = ({
   Icon,
   focusedIconKey,
 }: IconPickerIconProps) => {
-  const isSelectedItemId = useAtomComponentStateValue(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     iconKey,
   );
@@ -116,7 +116,7 @@ const IconPickerIcon = ({
           aria-label={convertIconKeyToLabel(iconKey)}
           size="medium"
           title={iconKey}
-          isSelected={iconKey === selectedIconKey || !!isSelectedItemId}
+          isSelected={iconKey === selectedIconKey || !!selectedItemId}
           isFocused={iconKey === focusedIconKey}
           Icon={Icon}
           onClick={onSelect}

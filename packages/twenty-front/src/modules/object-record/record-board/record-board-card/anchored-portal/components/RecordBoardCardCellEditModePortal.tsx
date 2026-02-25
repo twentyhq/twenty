@@ -16,13 +16,16 @@ export const RecordBoardCardCellEditModePortal = () => {
   const { objectMetadataItem } = useContext(RecordBoardContext);
   const { recordId } = useContext(RecordBoardCardContext);
 
-  const editModePosition = useAtomComponentStateValue(
+  const recordBoardCardEditModePosition = useAtomComponentStateValue(
     recordBoardCardEditModePositionComponentState,
   );
 
   const { editedFieldMetadataItem } = useRecordBoardCardMetadataFromPosition();
 
-  if (!isDefined(editModePosition) || !isDefined(editedFieldMetadataItem)) {
+  if (
+    !isDefined(recordBoardCardEditModePosition) ||
+    !isDefined(editedFieldMetadataItem)
+  ) {
     return null;
   }
 

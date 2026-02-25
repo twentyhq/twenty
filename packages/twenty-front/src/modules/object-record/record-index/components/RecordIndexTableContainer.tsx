@@ -17,7 +17,7 @@ export const RecordIndexTableContainer = ({
   const { objectNameSingular, viewBarInstanceId } =
     useRecordIndexContextOrThrow();
 
-  const isRecordIndexRemoveSortingModalOpened = useAtomComponentStateValue(
+  const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     RECORD_INDEX_REMOVE_SORTING_MODAL_ID,
   );
@@ -40,9 +40,7 @@ export const RecordIndexTableContainer = ({
         viewBarId={viewBarInstanceId}
         updateRecordMutation={updateEntity}
       />
-      {isRecordIndexRemoveSortingModalOpened && (
-        <RecordIndexRemoveSortingModal />
-      )}
+      {isModalOpened && <RecordIndexRemoveSortingModal />}
     </>
   );
 };

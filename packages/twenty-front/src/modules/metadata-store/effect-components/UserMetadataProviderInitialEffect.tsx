@@ -41,7 +41,7 @@ export const UserMetadataProviderInitialEffect = () => {
   const setCurrentWorkspaceMembers = useSetAtomState(
     currentWorkspaceMembersState,
   );
-  const setCurrentWorkspaceMembersWithDeleted = useSetAtomState(
+  const setCurrentWorkspaceDeletedMembers = useSetAtomState(
     currentWorkspaceDeletedMembersState,
   );
   const setIsCurrentUserLoaded = useSetAtomState(isCurrentUserLoadedState);
@@ -151,7 +151,7 @@ export const UserMetadataProviderInitialEffect = () => {
     }
 
     if (isDefined(deletedWorkspaceMembers)) {
-      setCurrentWorkspaceMembersWithDeleted(deletedWorkspaceMembers);
+      setCurrentWorkspaceDeletedMembers(deletedWorkspaceMembers);
     }
 
     if (isDefined(availableWorkspaces)) {
@@ -172,7 +172,7 @@ export const UserMetadataProviderInitialEffect = () => {
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
     initializeFormatPreferences,
-    setCurrentWorkspaceMembersWithDeleted,
+    setCurrentWorkspaceDeletedMembers,
     updateLocaleCatalog,
     setIsCurrentUserLoaded,
   ]);

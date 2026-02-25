@@ -29,7 +29,7 @@ type CommandMenuContainerProps = {
 export const CommandMenuContainer = ({
   children,
 }: CommandMenuContainerProps) => {
-  const objectMetadataItemId = useAtomComponentStateValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
@@ -38,17 +38,18 @@ export const CommandMenuContainer = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
+    (objectMetadataItem) =>
+      objectMetadataItem.id === contextStoreCurrentObjectMetadataItemId,
   );
 
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem?.namePlural ?? '',
-    currentViewId ?? '',
+    contextStoreCurrentViewId ?? '',
   );
 
   return (

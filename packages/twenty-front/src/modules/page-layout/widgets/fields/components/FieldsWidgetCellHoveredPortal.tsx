@@ -24,15 +24,18 @@ export const FieldsWidgetCellHoveredPortal = ({
     RecordFieldListComponentInstanceContext,
   );
 
-  const hoverPosition = useAtomComponentStateValue(
+  const recordFieldListHoverPosition = useAtomComponentStateValue(
     recordFieldListHoverPositionComponentState,
   );
 
-  const hoveredFieldMetadataItem = isDefined(hoverPosition)
-    ? flattenedFieldMetadataItems.at(hoverPosition)
+  const hoveredFieldMetadataItem = isDefined(recordFieldListHoverPosition)
+    ? flattenedFieldMetadataItems.at(recordFieldListHoverPosition)
     : undefined;
 
-  if (!isDefined(hoverPosition) || !isDefined(hoveredFieldMetadataItem)) {
+  if (
+    !isDefined(recordFieldListHoverPosition) ||
+    !isDefined(hoveredFieldMetadataItem)
+  ) {
     return null;
   }
 

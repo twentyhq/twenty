@@ -84,14 +84,14 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
           useApplyCurrentViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useAtomComponentStateValue(
+        const currentRecordSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
           'recordIndexId',
         );
 
         return {
           applyCurrentViewSortsToCurrentRecordSorts,
-          currentSorts,
+          currentRecordSorts,
         };
       },
       {
@@ -109,7 +109,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
       result.current.applyCurrentViewSortsToCurrentRecordSorts();
     });
 
-    expect(result.current.currentSorts).toEqual([
+    expect(result.current.currentRecordSorts).toEqual([
       {
         id: mockViewSort.id,
         fieldMetadataId: mockViewSort.fieldMetadataId,
@@ -126,14 +126,14 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
           useApplyCurrentViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useAtomComponentStateValue(
+        const currentRecordSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
           'recordIndexId',
         );
 
         return {
           applyCurrentViewSortsToCurrentRecordSorts,
-          currentSorts,
+          currentRecordSorts,
         };
       },
       {
@@ -158,7 +158,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
       result.current.applyCurrentViewSortsToCurrentRecordSorts();
     });
 
-    expect(result.current.currentSorts).toEqual([]);
+    expect(result.current.currentRecordSorts).toEqual([]);
   });
 
   it('should handle view with empty sorts', () => {
@@ -174,14 +174,14 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
           useApplyCurrentViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useAtomComponentStateValue(
+        const currentRecordSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
           'recordIndexId',
         );
 
         return {
           applyCurrentViewSortsToCurrentRecordSorts,
-          currentSorts,
+          currentRecordSorts,
         };
       },
       {
@@ -206,6 +206,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
       result.current.applyCurrentViewSortsToCurrentRecordSorts();
     });
 
-    expect(result.current.currentSorts).toEqual([]);
+    expect(result.current.currentRecordSorts).toEqual([]);
   });
 });

@@ -1,10 +1,10 @@
-import { RecordChip } from '@/object-record/components/RecordChip';
-import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
-import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
-import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
-import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
-import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { RecordChip } from '@/object-recordStore/components/RecordChip';
+import { StopPropagationContainer } from '@/object-recordStore/recordStore-board/recordStore-board-card/components/StopPropagationContainer';
+import { useRecordCalendarContextOrThrow } from '@/object-recordStore/recordStore-calendar/contexts/RecordCalendarContext';
+import { RecordCardHeaderContainer } from '@/object-recordStore/recordStore-card/components/RecordCardHeaderContainer';
+import { isDraggingRecordComponentState } from '@/object-recordStore/recordStore-drag/states/isDraggingRecordComponentState';
+import { useOpenRecordFromIndexView } from '@/object-recordStore/recordStore-index/hooks/useOpenRecordFromIndexView';
+import { recordStoreFamilyState } from '@/object-recordStore/recordStore-store/states/recordStoreFamilyState';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -13,7 +13,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/components';
 import { Checkbox, CheckboxVariant } from 'twenty-ui/input';
-import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
+import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-recordStore/recordStore-calendar/recordStore-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 
 const StyledCheckboxContainer = styled.div`
   margin-left: auto;
@@ -38,7 +38,7 @@ export const RecordCalendarCardHeader = ({
   recordId,
 }: RecordCalendarCardHeaderProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const { currentView } = useGetCurrentViewOnly();
@@ -49,7 +49,7 @@ export const RecordCalendarCardHeader = ({
     isDraggingRecordComponentState,
   );
 
-  const [isCurrentCardSelected, setIsCurrentCardSelected] =
+  const [isRecordCalendarCardSelected, setIsRecordCalendarCardSelected] =
     useAtomComponentFamilyState(
       isRecordCalendarCardSelectedComponentFamilyState,
       recordId,
@@ -62,7 +62,7 @@ export const RecordCalendarCardHeader = ({
     openRecordFromIndexView({ recordId });
   };
 
-  if (!isDefined(record)) {
+  if (!isDefined(recordStore)) {
     return null;
   }
 
@@ -72,7 +72,7 @@ export const RecordCalendarCardHeader = ({
         <StopPropagationContainer>
           <RecordChip
             objectNameSingular={objectMetadataItem.nameSingular}
-            record={record}
+            recordStore={recordStore}
             variant={ChipVariant.Transparent}
             isIconHidden={true}
             onClick={handleChipClick}
@@ -84,9 +84,9 @@ export const RecordCalendarCardHeader = ({
         <StopPropagationContainer>
           <Checkbox
             hoverable
-            checked={isCurrentCardSelected}
+            checked={isRecordCalendarCardSelected}
             onChange={(value) => {
-              setIsCurrentCardSelected(value.target.checked);
+              setIsRecordCalendarCardSelected(value.target.checked);
             }}
             variant={CheckboxVariant.Secondary}
           />

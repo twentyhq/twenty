@@ -63,7 +63,7 @@ export const PageLayoutRendererContent = () => {
 
   const { createPageLayoutTab } = useCreatePageLayoutTab(currentPageLayout?.id);
   const { reorderTabs } = useReorderPageLayoutTabs(currentPageLayout?.id ?? '');
-  const setTabSettingsOpenTabId = useSetAtomComponentState(
+  const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
   );
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
@@ -79,7 +79,7 @@ export const PageLayoutRendererContent = () => {
     shouldEnableTabEditingFeatures(currentPageLayout.type)
       ? () => {
           const newTabId = createPageLayoutTab(t`Untitled`);
-          setTabSettingsOpenTabId(newTabId);
+          setPageLayoutTabSettingsOpenTabId(newTabId);
           navigatePageLayoutCommandMenu({
             commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
             focusTitleInput: true,

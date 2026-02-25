@@ -11,12 +11,12 @@ import { isDefined } from 'twenty-shared/utils';
 export const RecordTableScrollToFocusedRowEffect = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const focusedRowIndex = useAtomComponentStateValue(
+  const focusedRecordTableRowIndex = useAtomComponentStateValue(
     focusedRecordTableRowIndexComponentState,
     recordTableId,
   );
 
-  const isRowFocusActive = useAtomComponentStateValue(
+  const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
     recordTableId,
   );
@@ -28,21 +28,21 @@ export const RecordTableScrollToFocusedRowEffect = () => {
 
   useEffect(() => {
     if (
-      !isRowFocusActive ||
-      !isDefined(focusedRowIndex) ||
+      !isRecordTableRowFocusActive ||
+      !isDefined(focusedRecordTableRowIndex) ||
       !allRecordIds?.length
     ) {
       return;
     }
 
-    const recordId = allRecordIds[focusedRowIndex];
+    const recordId = allRecordIds[focusedRecordTableRowIndex];
 
     if (!recordId) {
       return;
     }
 
     const focusElement = document.getElementById(
-      `record-table-cell-0-${focusedRowIndex}`,
+      `record-table-cell-0-${focusedRecordTableRowIndex}`,
     );
 
     if (!focusElement) {
@@ -59,7 +59,7 @@ export const RecordTableScrollToFocusedRowEffect = () => {
         focusElement.style.scrollMarginBottom = '';
       }
     };
-  }, [focusedRowIndex, isRowFocusActive, allRecordIds]);
+  }, [focusedRecordTableRowIndex, isRecordTableRowFocusActive, allRecordIds]);
 
   return null;
 };

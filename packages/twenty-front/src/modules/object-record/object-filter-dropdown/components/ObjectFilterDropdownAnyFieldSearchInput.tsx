@@ -6,20 +6,21 @@ import { useLingui } from '@lingui/react/macro';
 export const ObjectFilterDropdownAnyFieldSearchInput = () => {
   const { t } = useLingui();
 
-  const [anyFieldFilterSearchValue, setAnyFieldFilterSearchValue] =
-    useAtomComponentState(anyFieldFilterValueComponentState);
+  const [anyFieldFilterValue, setAnyFieldFilterValue] = useAtomComponentState(
+    anyFieldFilterValueComponentState,
+  );
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
 
-    setAnyFieldFilterSearchValue(inputValue);
+    setAnyFieldFilterValue(inputValue);
   };
 
   return (
     <DropdownMenuSearchInput
       autoFocus
       type="text"
-      value={anyFieldFilterSearchValue}
+      value={anyFieldFilterValue}
       placeholder={t`Search any field`}
       onChange={handleSearchChange}
     />

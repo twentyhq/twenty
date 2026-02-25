@@ -43,19 +43,19 @@ export const FavoriteFolderPicker = ({
     objectNameSingular,
   });
 
-  const [favoriteFoldersSearchFilter] = useAtomComponentState(
+  const [favoriteFolderSearchFilter] = useAtomComponentState(
     favoriteFolderSearchFilterComponentState,
   );
 
   const filteredFolders = favoriteFolders.filter((folder) =>
     folder.name
       .toLowerCase()
-      .includes(favoriteFoldersSearchFilter.toLowerCase()),
+      .includes(favoriteFolderSearchFilter.toLowerCase()),
   );
 
   const showNoFolderOption =
-    !favoriteFoldersSearchFilter ||
-    'no folder'.includes(favoriteFoldersSearchFilter.toLowerCase());
+    !favoriteFolderSearchFilter ||
+    'no folder'.includes(favoriteFolderSearchFilter.toLowerCase());
 
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],

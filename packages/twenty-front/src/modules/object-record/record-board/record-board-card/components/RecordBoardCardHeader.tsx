@@ -1,17 +1,17 @@
-import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
-import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
-import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { RecordBoardContext } from '@/object-recordStore/recordStore-board/contexts/RecordBoardContext';
+import { useRecordBoardSelection } from '@/object-recordStore/recordStore-board/hooks/useRecordBoardSelection';
+import { RecordBoardCardContext } from '@/object-recordStore/recordStore-board/recordStore-board-card/contexts/RecordBoardCardContext';
+import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-recordStore/recordStore-board/states/isRecordBoardCardSelectedComponentFamilyState';
 
-import { RecordChip } from '@/object-record/components/RecordChip';
-import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
-import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
-import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
-import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState';
-import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
-import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { RecordChip } from '@/object-recordStore/components/RecordChip';
+import { useActiveRecordBoardCard } from '@/object-recordStore/recordStore-board/hooks/useActiveRecordBoardCard';
+import { useFocusedRecordBoardCard } from '@/object-recordStore/recordStore-board/hooks/useFocusedRecordBoardCard';
+import { StopPropagationContainer } from '@/object-recordStore/recordStore-board/recordStore-board-card/components/StopPropagationContainer';
+import { recordBoardCardIsExpandedComponentState } from '@/object-recordStore/recordStore-board/recordStore-board-card/states/recordBoardCardIsExpandedComponentState';
+import { RecordCardHeaderContainer } from '@/object-recordStore/recordStore-card/components/RecordCardHeaderContainer';
+import { useOpenRecordFromIndexView } from '@/object-recordStore/recordStore-index/hooks/useOpenRecordFromIndexView';
+import { recordIndexOpenRecordInState } from '@/object-recordStore/recordStore-index/states/recordIndexOpenRecordInState';
+import { recordStoreFamilyState } from '@/object-recordStore/recordStore-store/states/recordStoreFamilyState';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -54,14 +54,13 @@ export const RecordBoardCardHeader = () => {
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const [isCardExpanded, setIsCardExpanded] = useAtomComponentState(
-    recordBoardCardIsExpandedComponentState,
-  );
+  const [recordBoardCardIsExpanded, setRecordBoardCardIsExpanded] =
+    useAtomComponentState(recordBoardCardIsExpandedComponentState);
 
   const { checkIfLastUnselectAndCloseDropdown } =
     useRecordBoardSelection(recordBoardId);
 
-  const [isCurrentCardSelected, setIsCurrentCardSelected] =
+  const [isRecordBoardCardSelected, setIsRecordBoardCardSelected] =
     useAtomComponentFamilyState(
       isRecordBoardCardSelectedComponentFamilyState,
       recordId,
@@ -73,7 +72,7 @@ export const RecordBoardCardHeader = () => {
     recordIndexOpenRecordInState,
   );
 
-  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const triggerEvent =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
@@ -84,10 +83,10 @@ export const RecordBoardCardHeader = () => {
     <RecordCardHeaderContainer isCompact={isCompactModeActive}>
       <StyledRecordChipContainer>
         <StopPropagationContainer>
-          {isDefined(record) && (
+          {isDefined(recordStore) && (
             <RecordChip
               objectNameSingular={objectMetadataItem.nameSingular}
-              record={record}
+              recordStore={recordStore}
               variant={ChipVariant.Transparent}
               onClick={() => {
                 activateBoardCard({ rowIndex, columnIndex });
@@ -104,10 +103,10 @@ export const RecordBoardCardHeader = () => {
         <StyledCompactIconContainer className="compact-icon-container">
           <StopPropagationContainer>
             <LightIconButton
-              Icon={isCardExpanded ? IconEyeOff : IconEye}
+              Icon={recordBoardCardIsExpanded ? IconEyeOff : IconEye}
               accent="tertiary"
               onClick={() => {
-                setIsCardExpanded(!isCardExpanded);
+                setRecordBoardCardIsExpanded(!recordBoardCardIsExpanded);
               }}
             />
           </StopPropagationContainer>
@@ -117,9 +116,9 @@ export const RecordBoardCardHeader = () => {
         <StopPropagationContainer>
           <Checkbox
             hoverable
-            checked={isCurrentCardSelected}
+            checked={isRecordBoardCardSelected}
             onChange={(value) => {
-              setIsCurrentCardSelected(value.target.checked);
+              setIsRecordBoardCardSelected(value.target.checked);
               checkIfLastUnselectAndCloseDropdown();
             }}
             variant={CheckboxVariant.Secondary}

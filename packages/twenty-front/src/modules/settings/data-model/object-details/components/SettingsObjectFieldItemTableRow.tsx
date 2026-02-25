@@ -139,13 +139,13 @@ export const SettingsObjectFieldItemTableRow = ({
 
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
 
-  const setActiveSettingsObjectFields = useSetAtomFamilyState(
+  const setSettingsObjectFields = useSetAtomFamilyState(
     settingsObjectFieldsFamilyState,
     { objectMetadataItemId: objectMetadataItem.id },
   );
 
   const handleToggleField = () => {
-    setActiveSettingsObjectFields((previousFields) => {
+    setSettingsObjectFields((previousFields) => {
       const newFields = isDefined(previousFields)
         ? previousFields?.map((field) =>
             field.id === fieldMetadataItem.id

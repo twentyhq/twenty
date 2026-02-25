@@ -97,14 +97,14 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
           useApplyCurrentViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useAtomComponentStateValue(
+        const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
           'recordIndexId',
         );
 
         return {
           applyCurrentViewFiltersToCurrentRecordFilters,
-          currentFilters,
+          currentRecordFilters,
         };
       },
       {
@@ -122,7 +122,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
       result.current.applyCurrentViewFiltersToCurrentRecordFilters();
     });
 
-    expect(result.current.currentFilters).toEqual([
+    expect(result.current.currentRecordFilters).toEqual([
       {
         id: mockViewFilter.id,
         fieldMetadataId: mockViewFilter.fieldMetadataId,
@@ -146,14 +146,14 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
           useApplyCurrentViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useAtomComponentStateValue(
+        const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
           'recordIndexId',
         );
 
         return {
           applyCurrentViewFiltersToCurrentRecordFilters,
-          currentFilters,
+          currentRecordFilters,
         };
       },
       {
@@ -178,7 +178,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
       result.current.applyCurrentViewFiltersToCurrentRecordFilters();
     });
 
-    expect(result.current.currentFilters).toEqual([]);
+    expect(result.current.currentRecordFilters).toEqual([]);
   });
 
   it('should handle view with empty filters', () => {
@@ -189,14 +189,14 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
           useApplyCurrentViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useAtomComponentStateValue(
+        const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
           'recordIndexId',
         );
 
         return {
           applyCurrentViewFiltersToCurrentRecordFilters,
-          currentFilters,
+          currentRecordFilters,
         };
       },
       {
@@ -221,6 +221,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
       result.current.applyCurrentViewFiltersToCurrentRecordFilters();
     });
 
-    expect(result.current.currentFilters).toEqual([]);
+    expect(result.current.currentRecordFilters).toEqual([]);
   });
 });

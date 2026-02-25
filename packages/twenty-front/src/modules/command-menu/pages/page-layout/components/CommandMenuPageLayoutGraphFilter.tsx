@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const CommandMenuPageLayoutGraphFilter = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
-  const draftPageLayout = useAtomComponentStateValue(
+  const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
@@ -21,7 +21,7 @@ export const CommandMenuPageLayoutGraphFilter = () => {
     pageLayoutId,
   );
 
-  const widgetInEditMode = draftPageLayout.tabs
+  const widgetInEditMode = pageLayoutDraft.tabs
     .flatMap((tab) => tab.widgets)
     .find((widget) => widget.id === pageLayoutEditingWidgetId);
 

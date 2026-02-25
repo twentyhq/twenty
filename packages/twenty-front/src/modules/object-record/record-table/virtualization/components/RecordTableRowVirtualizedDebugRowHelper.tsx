@@ -1,12 +1,12 @@
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { recordStoreFamilyState } from '@/object-recordStore/recordStore-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
-import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
-import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-recordStore/recordStore-table/constants/RecordTableRowHeight';
+import { useRecordTableContextOrThrow } from '@/object-recordStore/recordStore-table/contexts/RecordTableContext';
+import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-recordStore/recordStore-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
+import { realIndexByVirtualIndexComponentFamilyState } from '@/object-recordStore/recordStore-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
+import { recordIdByRealIndexComponentFamilySelector } from '@/object-recordStore/recordStore-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -46,26 +46,26 @@ type RecordTableRowVirtualizedDebugRowHelperProps = {
 export const RecordTableRowVirtualizedDebugRowHelper = ({
   virtualIndex,
 }: RecordTableRowVirtualizedDebugRowHelperProps) => {
-  const realIndex = useAtomComponentFamilyStateValue(
+  const realIndexByVirtualIndex = useAtomComponentFamilyStateValue(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
   );
 
   const recordId = useAtomComponentFamilySelectorValue(
     recordIdByRealIndexComponentFamilySelector,
-    realIndex,
+    realIndexByVirtualIndex,
   );
 
   const dataLoadingStatus = useAtomComponentFamilySelectorValue(
     dataLoadingStatusByRealIndexComponentFamilySelector,
-    realIndex,
+    realIndexByVirtualIndex,
   );
 
   const pixelsFromTop =
-    (realIndex ?? 0) * (RECORD_TABLE_ROW_HEIGHT + 1) +
+    (realIndexByVirtualIndex ?? 0) * (RECORD_TABLE_ROW_HEIGHT + 1) +
     (RECORD_TABLE_ROW_HEIGHT + 1);
 
-  const record = useAtomFamilyStateValue(
+  const recordStore = useAtomFamilyStateValue(
     recordStoreFamilyState,
     recordId ?? '',
   );
@@ -73,16 +73,21 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-  const labelIdentifier = isDefined(record)
-    ? getLabelIdentifierFieldValue(record, labelIdentifierFieldMetadataItem)
+  const labelIdentifier = isDefined(recordStore)
+    ? getLabelIdentifierFieldValue(
+        recordStore,
+        labelIdentifierFieldMetadataItem,
+      )
     : '-';
 
-  const position = record?.position;
+  const position = recordStore?.position;
 
   return (
     <StyledDebugRow>
       <StyledDebugColumn width={70}>virtual :{virtualIndex}</StyledDebugColumn>
-      <StyledDebugColumn width={70}>real :{realIndex}</StyledDebugColumn>
+      <StyledDebugColumn width={70}>
+        real :{realIndexByVirtualIndex}
+      </StyledDebugColumn>
       <StyledDebugColumn width={100}>pos :{position}</StyledDebugColumn>
       <StyledDebugColumn width={80}>
         px:

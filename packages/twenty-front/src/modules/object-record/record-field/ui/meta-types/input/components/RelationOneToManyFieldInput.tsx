@@ -158,7 +158,7 @@ export const RelationOneToManyFieldInput = () => {
       relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
-  const layoutDirection = useAtomComponentStateValue(
+  const recordFieldInputLayoutDirection = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 
@@ -328,8 +328,8 @@ export const RelationOneToManyFieldInput = () => {
       onCreate={canCreateNew ? handleCreateNew : undefined}
       objectMetadataItemIdForCreate={objectMetadataItemIdForCreate}
       onClickOutside={handleSubmit}
-      layoutDirection={
-        layoutDirection === 'downward'
+      recordFieldInputLayoutDirection={
+        recordFieldInputLayoutDirection === 'downward'
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'
       }

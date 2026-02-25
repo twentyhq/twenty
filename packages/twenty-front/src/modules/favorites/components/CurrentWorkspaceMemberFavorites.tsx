@@ -68,13 +68,15 @@ export const CurrentWorkspaceMemberFavorites = ({
     openFavoriteFolderIdsState,
   );
 
-  const setCurrentFolderId = useSetAtomState(currentFavoriteFolderIdState);
+  const setCurrentFavoriteFolderId = useSetAtomState(
+    currentFavoriteFolderIdState,
+  );
 
   const isOpen = openFavoriteFolderIds.includes(folder.folderId);
 
   const handleToggle = () => {
     if (isMobile) {
-      setCurrentFolderId((prev) =>
+      setCurrentFavoriteFolderId((prev) =>
         prev === folder.folderId ? null : folder.folderId,
       );
     } else {
@@ -93,7 +95,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 
   const dropdownId = `favorite-folder-edit-${folder.folderId}`;
 
-  const isDropdownOpenComponent = useAtomComponentStateValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
@@ -190,7 +192,7 @@ export const CurrentWorkspaceMemberFavorites = ({
               onClick={handleToggle}
               rightOptions={rightOptions}
               className="navigation-drawer-item"
-              isRightOptionsDropdownOpen={isDropdownOpenComponent}
+              isRightOptionsDropdownOpen={isDropdownOpen}
               triggerEvent="CLICK"
               preventCollapseOnMobile={isMobile}
             />

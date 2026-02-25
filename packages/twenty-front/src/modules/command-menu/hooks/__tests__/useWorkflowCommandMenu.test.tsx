@@ -65,7 +65,7 @@ const renderHooks = () => {
         openWorkflowViewStepInCommandMenu,
       } = useWorkflowCommandMenu();
 
-      const _viewableRecordId = useAtomComponentStateValue(
+      const viewableRecordId = useAtomComponentStateValue(
         viewableRecordIdComponentState,
         'mocked-uuid',
       );
@@ -73,27 +73,28 @@ const renderHooks = () => {
         viewableRecordNameSingularComponentState,
         'mocked-uuid',
       );
-      const currentObjectMetadataItemId = useAtomComponentStateValue(
-        contextStoreCurrentObjectMetadataItemIdComponentState,
-        'mocked-uuid',
-      );
-      const targetedRecordsRule = useAtomComponentStateValue(
+      const contextStoreCurrentObjectMetadataItemId =
+        useAtomComponentStateValue(
+          contextStoreCurrentObjectMetadataItemIdComponentState,
+          'mocked-uuid',
+        );
+      const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
         contextStoreTargetedRecordsRuleComponentState,
         'mocked-uuid',
       );
-      const numberOfSelectedRecords = useAtomComponentStateValue(
+      const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
         contextStoreNumberOfSelectedRecordsComponentState,
         'mocked-uuid',
       );
-      const currentViewType = useAtomComponentStateValue(
+      const contextStoreCurrentViewType = useAtomComponentStateValue(
         contextStoreCurrentViewTypeComponentState,
         'mocked-uuid',
       );
-      const workflowId = useAtomComponentStateValue(
+      const commandMenuWorkflowId = useAtomComponentStateValue(
         commandMenuWorkflowIdComponentState,
         'mocked-uuid',
       );
-      const workflowVersionId = useAtomComponentStateValue(
+      const commandMenuWorkflowVersionId = useAtomComponentStateValue(
         commandMenuWorkflowVersionIdComponentState,
         'mocked-uuid',
       );
@@ -105,13 +106,13 @@ const renderHooks = () => {
         openWorkflowEditStepInCommandMenu,
         openWorkflowEditStepTypeInCommandMenu,
         openWorkflowViewStepInCommandMenu,
-        workflowId,
-        workflowVersionId,
+        commandMenuWorkflowId,
+        commandMenuWorkflowVersionId,
         viewableRecordNameSingular,
-        currentObjectMetadataItemId,
-        targetedRecordsRule,
-        numberOfSelectedRecords,
-        currentViewType,
+        contextStoreCurrentObjectMetadataItemId,
+        contextStoreTargetedRecordsRule,
+        contextStoreNumberOfSelectedRecords,
+        contextStoreCurrentViewType,
         getIcon,
       };
     },
@@ -134,7 +135,7 @@ describe('useWorkflowCommandMenu', () => {
       result.current.openWorkflowTriggerTypeInCommandMenu('test-workflow-id');
     });
 
-    expect(result.current.workflowId).toBe('test-workflow-id');
+    expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: CommandMenuPages.WorkflowTriggerSelectType,
@@ -151,7 +152,7 @@ describe('useWorkflowCommandMenu', () => {
       result.current.openWorkflowCreateStepInCommandMenu('test-workflow-id');
     });
 
-    expect(result.current.workflowId).toBe('test-workflow-id');
+    expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: CommandMenuPages.WorkflowStepCreate,
@@ -168,7 +169,7 @@ describe('useWorkflowCommandMenu', () => {
       result.current.openWorkflowEditStepTypeInCommandMenu('test-workflow-id');
     });
 
-    expect(result.current.workflowId).toBe('test-workflow-id');
+    expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: CommandMenuPages.WorkflowStepEditType,
@@ -189,7 +190,7 @@ describe('useWorkflowCommandMenu', () => {
       );
     });
 
-    expect(result.current.workflowId).toBe('test-workflow-id');
+    expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: CommandMenuPages.WorkflowStepEdit,
@@ -204,15 +205,17 @@ describe('useWorkflowCommandMenu', () => {
 
     act(() => {
       result.current.openWorkflowViewStepInCommandMenu({
-        workflowId: 'test-workflow-id',
-        workflowVersionId: 'test-workflow-version-id',
+        commandMenuWorkflowId: 'test-workflow-id',
+        commandMenuWorkflowVersionId: 'test-workflow-version-id',
         icon: IconSettingsAutomation,
         title: 'View Step',
       });
     });
 
-    expect(result.current.workflowId).toBe('test-workflow-id');
-    expect(result.current.workflowVersionId).toBe('test-workflow-version-id');
+    expect(result.current.commandMenuWorkflowId).toBe('test-workflow-id');
+    expect(result.current.commandMenuWorkflowVersionId).toBe(
+      'test-workflow-version-id',
+    );
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: CommandMenuPages.WorkflowStepView,
