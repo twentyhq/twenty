@@ -279,16 +279,14 @@ const createDefaultPostInstallFunction = async ({
 }) => {
   const universalIdentifier = v4();
 
-  const content = `import { defineLogicFunction } from 'twenty-sdk';
-
-export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '${universalIdentifier}';
+  const content = `import { definePostInstallLogicFunction } from 'twenty-sdk';
 
 const handler = async (): Promise<void> => {
   console.log('Post install logic function executed successfully!');
 };
 
-export default defineLogicFunction({
-  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+export default definePostInstallLogicFunction({
+  universalIdentifier: '${universalIdentifier}',
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
@@ -477,14 +475,12 @@ const createApplicationConfig = async ({
 }) => {
   const content = `import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '${v4()}',
   displayName: '${displayName}',
   description: '${description ?? ''}',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 `;
 
