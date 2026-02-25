@@ -19,9 +19,12 @@ export const useMergeRecordsSelectedRecords = () => {
       .get(mergeRecordsPageInstanceId ?? '')
       ?.map((morphItem) => morphItem.recordId) ?? [];
 
-  const selectedRecords = useAtomFamilySelectorValue(recordStoreRecordsSelectorV2, {
-    recordIds: selectedRecordIds,
-  });
+  const selectedRecords = useAtomFamilySelectorValue(
+    recordStoreRecordsSelectorV2,
+    {
+      recordIds: selectedRecordIds,
+    },
+  );
 
   return {
     selectedRecords,

@@ -4,7 +4,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const useReadDefaultDomainFromConfiguration = () => {
   const domainConfiguration = useAtomStateValue(domainConfigurationState);
-  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
 
   const defaultDomain = isMultiWorkspaceEnabled
     ? `${domainConfiguration.defaultSubdomain}.${domainConfiguration.frontDomain}`

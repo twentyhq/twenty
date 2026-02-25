@@ -7,7 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 export const useIsCurrentLocationOnAWorkspace = () => {
   const { defaultDomain } = useReadDefaultDomainFromConfiguration();
 
-  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
   const domainConfiguration = useAtomStateValue(domainConfigurationState);
 
   if (

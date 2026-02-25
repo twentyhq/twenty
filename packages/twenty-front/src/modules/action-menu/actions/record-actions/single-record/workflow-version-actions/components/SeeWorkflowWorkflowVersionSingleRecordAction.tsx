@@ -7,7 +7,10 @@ import { AppPath } from 'twenty-shared/types';
 
 export const SeeWorkflowWorkflowVersionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
-  const workflowVersion = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const workflowVersion = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   return (
     <ActionLink

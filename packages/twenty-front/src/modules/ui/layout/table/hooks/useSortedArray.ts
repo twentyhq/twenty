@@ -8,9 +8,12 @@ export const useSortedArray = <T>(
   arrayToSort: T[],
   tableMetadata: TableMetadata<T>,
 ): T[] => {
-  const sortedFieldByTable = useAtomFamilyStateValue(sortedFieldByTableFamilyState, {
-    tableId: tableMetadata.tableId,
-  });
+  const sortedFieldByTable = useAtomFamilyStateValue(
+    sortedFieldByTableFamilyState,
+    {
+      tableId: tableMetadata.tableId,
+    },
+  );
 
   const initialSort = tableMetadata.initialSort;
 

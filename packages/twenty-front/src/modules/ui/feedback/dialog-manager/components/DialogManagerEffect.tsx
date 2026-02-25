@@ -8,7 +8,9 @@ import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/state
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const DialogManagerEffect = () => {
-  const dialogInternal = useAtomComponentStateValue(dialogInternalComponentState);
+  const dialogInternal = useAtomComponentStateValue(
+    dialogInternalComponentState,
+  );
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 

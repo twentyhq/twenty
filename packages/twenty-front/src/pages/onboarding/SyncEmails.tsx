@@ -85,12 +85,16 @@ export const SyncEmails = () => {
   const userAuthenticatedWithSSO =
     lastAuthenticatedMethod === AuthenticatedMethod.SSO;
 
-  const isGoogleMessagingEnabled = useAtomStateValue(isGoogleMessagingEnabledState);
+  const isGoogleMessagingEnabled = useAtomStateValue(
+    isGoogleMessagingEnabledState,
+  );
   const isMicrosoftMessagingEnabled = useAtomStateValue(
     isMicrosoftMessagingEnabledState,
   );
 
-  const isGoogleCalendarEnabled = useAtomStateValue(isGoogleCalendarEnabledState);
+  const isGoogleCalendarEnabled = useAtomStateValue(
+    isGoogleCalendarEnabledState,
+  );
 
   const isMicrosoftCalendarEnabled = useAtomStateValue(
     isMicrosoftCalendarEnabledState,

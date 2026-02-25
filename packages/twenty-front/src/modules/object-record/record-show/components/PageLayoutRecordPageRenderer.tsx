@@ -43,10 +43,13 @@ export const PageLayoutRecordPageRenderer = ({
   targetRecordIdentifier: TargetRecordIdentifier;
   isInRightDrawer: boolean;
 }) => {
-  const recordDeletedAt = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
-    recordId: targetRecordIdentifier.id,
-    fieldName: 'deletedAt',
-  }) as string | null;
+  const recordDeletedAt = useAtomFamilySelectorValue(
+    recordStoreFamilySelectorV2,
+    {
+      recordId: targetRecordIdentifier.id,
+      fieldName: 'deletedAt',
+    },
+  ) as string | null;
 
   const { pageLayoutId } = usePageLayoutIdForRecord({
     id: targetRecordIdentifier.id,

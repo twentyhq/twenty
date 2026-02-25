@@ -69,7 +69,9 @@ export const RecordBoardCardHeader = () => {
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  const recordIndexOpenRecordIn = useAtomStateValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useAtomStateValue(
+    recordIndexOpenRecordInState,
+  );
 
   const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 

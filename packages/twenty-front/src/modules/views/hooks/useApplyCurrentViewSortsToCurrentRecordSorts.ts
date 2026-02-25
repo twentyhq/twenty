@@ -11,9 +11,12 @@ export const useApplyCurrentViewSortsToCurrentRecordSorts = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const currentView = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
-    viewId: currentViewId ?? '',
-  });
+  const currentView = useAtomFamilySelectorValue(
+    coreViewFromViewIdFamilySelector,
+    {
+      viewId: currentViewId ?? '',
+    },
+  );
 
   const setCurrentRecordSorts = useSetAtomComponentState(
     currentRecordSortsComponentState,

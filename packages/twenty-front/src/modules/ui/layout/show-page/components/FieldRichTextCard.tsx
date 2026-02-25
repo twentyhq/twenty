@@ -48,10 +48,13 @@ const LoadingSkeleton = () => {
 
 export const FieldRichTextCard = () => {
   const targetRecord = useTargetRecord();
-  const activityBodyV2 = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
-    recordId: targetRecord.id,
-    fieldName: 'bodyV2',
-  });
+  const activityBodyV2 = useAtomFamilySelectorValue(
+    recordStoreFamilySelectorV2,
+    {
+      recordId: targetRecord.id,
+      fieldName: 'bodyV2',
+    },
+  );
 
   const activityObjectNameSingular = targetRecord.targetObjectNameSingular as
     | CoreObjectNameSingular.Note

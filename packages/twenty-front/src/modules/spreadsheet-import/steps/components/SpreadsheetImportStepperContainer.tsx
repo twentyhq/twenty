@@ -28,7 +28,9 @@ const StyledHeader = styled(Modal.Header)`
 export const SpreadsheetImportStepperContainer = () => {
   const { t } = useLingui();
 
-  const spreadsheetImportDialog = useAtomStateValue(spreadsheetImportDialogState);
+  const spreadsheetImportDialog = useAtomStateValue(
+    spreadsheetImportDialogState,
+  );
 
   const stepTitles = {
     uploadStep: t`Upload File`,

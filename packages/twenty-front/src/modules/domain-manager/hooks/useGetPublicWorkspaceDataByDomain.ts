@@ -13,7 +13,9 @@ import { useGetPublicWorkspaceDataByDomainQuery } from '~/generated-metadata/gra
 
 export const useGetPublicWorkspaceDataByDomain = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
-  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
   const { origin } = useOrigin();
   const setWorkspaceAuthProviders = useSetAtomState(
     workspaceAuthProvidersState,

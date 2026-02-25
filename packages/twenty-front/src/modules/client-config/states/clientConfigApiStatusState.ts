@@ -10,14 +10,15 @@ type ClientConfigApiStatus = {
   data?: { clientConfig: ClientConfig };
 };
 
-export const clientConfigApiStatusState = createAtomState<ClientConfigApiStatus>({
-  key: 'clientConfigApiStatus',
-  defaultValue: {
-    isLoadedOnce: false,
-    isLoading: false,
-    isErrored: false,
-    isSaved: false,
-    error: undefined,
-    data: undefined,
-  },
-});
+export const clientConfigApiStatusState =
+  createAtomState<ClientConfigApiStatus>({
+    key: 'clientConfigApiStatus',
+    defaultValue: {
+      isLoadedOnce: false,
+      isLoading: false,
+      isErrored: false,
+      isSaved: false,
+      error: undefined,
+      data: undefined,
+    },
+  });

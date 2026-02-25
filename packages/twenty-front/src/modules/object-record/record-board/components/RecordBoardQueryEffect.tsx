@@ -64,7 +64,9 @@ export const RecordBoardQueryEffect = () => {
   const { triggerRecordBoardInitialQuery } =
     useTriggerRecordBoardInitialQuery();
 
-  const recordGroupdIds = useAtomComponentStateValue(recordGroupIdsComponentState);
+  const recordGroupdIds = useAtomComponentStateValue(
+    recordGroupIdsComponentState,
+  );
   const recordGroupIdsHaveChanged = !isDeeplyEqual(
     [...recordGroupdIds].sort(),
     [...lastRecordGroupIds].sort(),

@@ -14,7 +14,9 @@ export const useSortedFavorites = () => {
     favoriteRelationFields,
   } = useFavoritesMetadata();
 
-  const coreViews = useAtomStateValue(coreViewsState).map(convertCoreViewToView);
+  const coreViews = useAtomStateValue(coreViewsState).map(
+    convertCoreViewToView,
+  );
 
   const favoritesSorted = useMemo(() => {
     return sortFavorites(

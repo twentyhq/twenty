@@ -20,7 +20,9 @@ export const SettingsRoleAssignmentConfirmationModalSubtitle = ({
   selectedRoleTarget,
   onRoleClick,
 }: SettingsRoleAssignmentConfirmationModalSubtitleProps) => {
-  const currentWorkspaceMembers = useAtomStateValue(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
 
   const enrichedSelectedWorkspaceMember = currentWorkspaceMembers.find(
     (member) => member.id === selectedRoleTarget.id,

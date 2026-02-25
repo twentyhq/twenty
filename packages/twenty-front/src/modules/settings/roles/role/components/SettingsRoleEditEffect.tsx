@@ -19,7 +19,10 @@ export const SettingsRoleEditEffect = ({
 }: SettingsRoleEditEffectProps) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const role = useAtomFamilyStateValue(settingsPersistedRoleFamilyState, roleId);
+  const role = useAtomFamilyStateValue(
+    settingsPersistedRoleFamilyState,
+    roleId,
+  );
   const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,

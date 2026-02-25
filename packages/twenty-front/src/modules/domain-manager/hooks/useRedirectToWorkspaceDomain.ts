@@ -5,7 +5,9 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useRedirectToWorkspaceDomain = () => {
-  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { redirect } = useRedirect();
 

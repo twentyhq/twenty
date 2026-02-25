@@ -12,9 +12,12 @@ export const useViewOrDefaultViewFromPrefetchedViews = ({
     { objectMetadataItemId },
   );
 
-  const indexView = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
-    viewId: indexViewId ?? '',
-  });
+  const indexView = useAtomFamilySelectorValue(
+    coreViewFromViewIdFamilySelector,
+    {
+      viewId: indexViewId ?? '',
+    },
+  );
 
   return { view: indexView };
 };

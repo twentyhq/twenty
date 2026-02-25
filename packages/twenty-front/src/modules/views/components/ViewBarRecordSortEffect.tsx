@@ -17,9 +17,12 @@ export const ViewBarRecordSortEffect = () => {
 
   const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
 
-  const currentView = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
-    viewId: currentViewId ?? '',
-  });
+  const currentView = useAtomFamilySelectorValue(
+    coreViewFromViewIdFamilySelector,
+    {
+      viewId: currentViewId ?? '',
+    },
+  );
 
   const [
     hasInitializedCurrentRecordSorts,

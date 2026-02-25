@@ -10,7 +10,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const SettingsWorkspaceDomainCard = () => {
   const { t } = useLingui();
-  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   if (!isMultiWorkspaceEnabled) {

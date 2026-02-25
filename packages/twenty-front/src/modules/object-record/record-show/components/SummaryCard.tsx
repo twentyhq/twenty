@@ -38,10 +38,13 @@ export const SummaryCard = ({
     objectRecordId,
   });
 
-  const recordCreatedAt = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
-    recordId: objectRecordId,
-    fieldName: 'createdAt',
-  }) as string | null;
+  const recordCreatedAt = useAtomFamilySelectorValue(
+    recordStoreFamilySelectorV2,
+    {
+      recordId: objectRecordId,
+      fieldName: 'createdAt',
+    },
+  ) as string | null;
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );

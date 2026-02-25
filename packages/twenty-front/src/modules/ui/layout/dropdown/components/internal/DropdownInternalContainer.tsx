@@ -70,7 +70,9 @@ export const DropdownInternalContainer = ({
   excludedClickOutsideIds,
   isDropdownInModal = false,
 }: DropdownInternalContainerProps) => {
-  const isDropdownOpen = useAtomComponentStateValue(isDropdownOpenComponentState);
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+  );
 
   const { closeDropdown } = useCloseDropdown();
 

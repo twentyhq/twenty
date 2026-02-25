@@ -18,7 +18,8 @@ export type AgentChatUsageState = {
   outputCredits: number;
 };
 
-export const agentChatUsageStateV2 = createAtomState<AgentChatUsageState | null>({
-  key: 'agentChatUsageStateV2',
-  defaultValue: null,
-});
+export const agentChatUsageStateV2 =
+  createAtomState<AgentChatUsageState | null>({
+    key: 'agentChatUsageStateV2',
+    defaultValue: null,
+  });

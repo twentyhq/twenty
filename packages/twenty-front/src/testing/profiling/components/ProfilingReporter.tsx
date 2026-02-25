@@ -26,7 +26,9 @@ export const ProfilingReporter = () => {
     profilingSessionDataPointsState,
   );
 
-  const currentProfilingRunIndex = useAtomStateValue(currentProfilingRunIndexState);
+  const currentProfilingRunIndex = useAtomStateValue(
+    currentProfilingRunIndexState,
+  );
 
   const profilingSessionStatus = useAtomStateValue(profilingSessionStatusState);
 

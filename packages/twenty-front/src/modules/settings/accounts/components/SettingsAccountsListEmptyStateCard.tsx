@@ -26,18 +26,24 @@ export const SettingsAccountsListEmptyStateCard = () => {
   const { t } = useLingui();
   const theme = useTheme();
 
-  const isGoogleMessagingEnabled = useAtomStateValue(isGoogleMessagingEnabledState);
+  const isGoogleMessagingEnabled = useAtomStateValue(
+    isGoogleMessagingEnabledState,
+  );
   const isMicrosoftMessagingEnabled = useAtomStateValue(
     isMicrosoftMessagingEnabledState,
   );
 
-  const isGoogleCalendarEnabled = useAtomStateValue(isGoogleCalendarEnabledState);
+  const isGoogleCalendarEnabled = useAtomStateValue(
+    isGoogleCalendarEnabledState,
+  );
 
   const isMicrosoftCalendarEnabled = useAtomStateValue(
     isMicrosoftCalendarEnabledState,
   );
 
-  const isImapSmtpCaldavEnabled = useAtomStateValue(isImapSmtpCaldavEnabledState);
+  const isImapSmtpCaldavEnabled = useAtomStateValue(
+    isImapSmtpCaldavEnabledState,
+  );
 
   return (
     <StyledCardsContainer>

@@ -24,7 +24,9 @@ export const WorkspaceProviderEffect = () => {
 
   const { currentLocationHostname } = useReadWorkspaceUrlFromCurrentLocation();
 
-  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
 
   const { initializeQueryParamState } = useInitializeQueryParamState();
 

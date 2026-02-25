@@ -18,9 +18,15 @@ export const SSEEventStreamEffect = () => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const sseEventStreamId = useAtomStateValue(sseEventStreamIdState);
-  const isCreatingSseEventStream = useAtomStateValue(isCreatingSseEventStreamState);
-  const shouldDestroyEventStream = useAtomStateValue(shouldDestroyEventStreamState);
-  const isDestroyingEventStream = useAtomStateValue(isDestroyingEventStreamState);
+  const isCreatingSseEventStream = useAtomStateValue(
+    isCreatingSseEventStreamState,
+  );
+  const shouldDestroyEventStream = useAtomStateValue(
+    shouldDestroyEventStreamState,
+  );
+  const isDestroyingEventStream = useAtomStateValue(
+    isDestroyingEventStreamState,
+  );
 
   const isLoggedIn = useIsLogged();
   const currentUser = useAtomStateValue(currentUserState);

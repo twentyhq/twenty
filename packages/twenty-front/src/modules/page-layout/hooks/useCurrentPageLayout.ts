@@ -8,7 +8,9 @@ export const useCurrentPageLayout = () => {
     pageLayoutPersistedComponentState,
   );
 
-  const pageLayoutDraft = useAtomComponentStateValue(pageLayoutDraftComponentState);
+  const pageLayoutDraft = useAtomComponentStateValue(
+    pageLayoutDraftComponentState,
+  );
 
   const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,

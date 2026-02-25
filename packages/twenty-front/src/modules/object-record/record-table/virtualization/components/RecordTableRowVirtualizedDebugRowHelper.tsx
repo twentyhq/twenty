@@ -65,7 +65,10 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
     (realIndex ?? 0) * (RECORD_TABLE_ROW_HEIGHT + 1) +
     (RECORD_TABLE_ROW_HEIGHT + 1);
 
-  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '');
+  const record = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    recordId ?? '',
+  );
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);

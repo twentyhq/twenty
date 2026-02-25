@@ -135,7 +135,8 @@ export const ActionMenuContextProviderWorkflowObjects = ({
       : undefined;
 
   const selectedRecord =
-    useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '') || undefined;
+    useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '') ||
+    undefined;
 
   if (isDefined(selectedRecord?.id)) {
     return (

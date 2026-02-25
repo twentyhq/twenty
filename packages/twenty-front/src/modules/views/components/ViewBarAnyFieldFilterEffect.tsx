@@ -17,9 +17,12 @@ export const ViewBarAnyFieldFilterEffect = () => {
 
   const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
 
-  const currentView = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
-    viewId: currentViewId ?? '',
-  });
+  const currentView = useAtomFamilySelectorValue(
+    coreViewFromViewIdFamilySelector,
+    {
+      viewId: currentViewId ?? '',
+    },
+  );
 
   const [hasInitializedAnyFieldFilter, setHasInitializedAnyFieldFilter] =
     useAtomComponentFamilyState(

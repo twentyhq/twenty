@@ -3,24 +3,22 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 
-export const objectMetadataItemsBySingularNameSelector = createAtomFamilySelector<
-  ObjectMetadataItem[],
-  string[]
->({
-  key: 'objectMetadataItemsSelector',
-  get:
-    (objectNameSingulars: string[]) =>
-    ({ get }) => {
-      const objectMetadataItems = get(objectMetadataItemsState);
+export const objectMetadataItemsBySingularNameSelector =
+  createAtomFamilySelector<ObjectMetadataItem[], string[]>({
+    key: 'objectMetadataItemsSelector',
+    get:
+      (objectNameSingulars: string[]) =>
+      ({ get }) => {
+        const objectMetadataItems = get(objectMetadataItemsState);
 
-      return objectNameSingulars
-        .map(
-          (objectNameSingular) =>
-            objectMetadataItems.find(
-              (objectMetadataItem) =>
-                objectMetadataItem.nameSingular === objectNameSingular,
-            ) ?? null,
-        )
-        .filter(isDefined);
-    },
-});
+        return objectNameSingulars
+          .map(
+            (objectNameSingular) =>
+              objectMetadataItems.find(
+                (objectMetadataItem) =>
+                  objectMetadataItem.nameSingular === objectNameSingular,
+              ) ?? null,
+          )
+          .filter(isDefined);
+      },
+  });

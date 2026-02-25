@@ -5,29 +5,28 @@ import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/cr
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 
-export const hiddenRecordGroupIdsComponentSelector = createAtomComponentSelector<
-  RecordGroupDefinition['id'][]
->({
-  key: 'hiddenRecordGroupIdsComponentSelector',
-  componentInstanceContext: ViewComponentInstanceContext,
-  get:
-    ({ instanceId }) =>
-    ({ get }) => {
-      const recordGroupIds = get(recordGroupIdsComponentState, {
-        instanceId,
-      });
+export const hiddenRecordGroupIdsComponentSelector =
+  createAtomComponentSelector<RecordGroupDefinition['id'][]>({
+    key: 'hiddenRecordGroupIdsComponentSelector',
+    componentInstanceContext: ViewComponentInstanceContext,
+    get:
+      ({ instanceId }) =>
+      ({ get }) => {
+        const recordGroupIds = get(recordGroupIdsComponentState, {
+          instanceId,
+        });
 
-      return recordGroupIds.filter((recordGroupId) => {
-        const recordGroupDefinition = get(
-          recordGroupDefinitionFamilyState,
-          recordGroupId,
-        );
+        return recordGroupIds.filter((recordGroupId) => {
+          const recordGroupDefinition = get(
+            recordGroupDefinitionFamilyState,
+            recordGroupId,
+          );
 
-        if (!isDefined(recordGroupDefinition)) {
-          return false;
-        }
+          if (!isDefined(recordGroupDefinition)) {
+            return false;
+          }
 
-        return !recordGroupDefinition.isVisible;
-      });
-    },
-});
+          return !recordGroupDefinition.isVisible;
+        });
+      },
+  });

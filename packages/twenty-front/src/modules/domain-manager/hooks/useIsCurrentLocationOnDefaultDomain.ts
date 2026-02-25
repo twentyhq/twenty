@@ -3,7 +3,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 
 export const useIsCurrentLocationOnDefaultDomain = () => {
-  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
   const { defaultDomain } = useReadDefaultDomainFromConfiguration();
   const isDefaultDomain = isMultiWorkspaceEnabled
     ? window.location.hostname === defaultDomain

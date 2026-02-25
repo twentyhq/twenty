@@ -11,7 +11,9 @@ const StyledPageTitle = styled.div`
 `;
 
 export const CommandMenuAskAIInfo = () => {
-  const currentAIChatThreadTitle = useAtomStateValue(currentAIChatThreadTitleState);
+  const currentAIChatThreadTitle = useAtomStateValue(
+    currentAIChatThreadTitleState,
+  );
 
   return (
     <StyledPageTitle>

@@ -47,10 +47,13 @@ export const CommandMenuRecordPage = () => {
     viewableRecordId,
   );
 
-  const recordDeletedAt = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
-    recordId: objectRecordId,
-    fieldName: 'deletedAt',
-  });
+  const recordDeletedAt = useAtomFamilySelectorValue(
+    recordStoreFamilySelectorV2,
+    {
+      recordId: objectRecordId,
+      fieldName: 'deletedAt',
+    },
+  );
 
   const commandMenuPageInstanceId = useComponentInstanceStateContext(
     CommandMenuPageComponentInstanceContext,

@@ -10,10 +10,13 @@ type UseIsRecordReadOnlyParams = {
 export const useIsRecordDeleted = ({
   recordId,
 }: UseIsRecordReadOnlyParams): boolean => {
-  const recordDeletedAt = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
-    recordId,
-    fieldName: 'deletedAt',
-  }) as ObjectRecord | null;
+  const recordDeletedAt = useAtomFamilySelectorValue(
+    recordStoreFamilySelectorV2,
+    {
+      recordId,
+      fieldName: 'deletedAt',
+    },
+  ) as ObjectRecord | null;
 
   return isDefined(recordDeletedAt);
 };

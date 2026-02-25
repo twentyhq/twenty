@@ -38,7 +38,9 @@ export const EventLogFilters = ({
   onChange,
 }: EventLogFiltersProps) => {
   const { t } = useLingui();
-  const currentWorkspaceMembers = useAtomStateValue(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
   const { objectMetadataItems } = useObjectMetadataItems();
   const { getIcon } = useIcons();
 

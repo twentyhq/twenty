@@ -10,10 +10,14 @@ type PrefetchedFavoritesFoldersData = {
 
 export const usePrefetchedFavoritesFoldersData =
   (): PrefetchedFavoritesFoldersData => {
-    const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+    const currentWorkspaceMember = useAtomStateValue(
+      currentWorkspaceMemberState,
+    );
     const currentWorkspaceMemberId = currentWorkspaceMember?.id;
 
-    const prefetchFavoriteFolders = useAtomStateValue(prefetchFavoriteFoldersState);
+    const prefetchFavoriteFolders = useAtomStateValue(
+      prefetchFavoriteFoldersState,
+    );
 
     return {
       favoriteFolders: prefetchFavoriteFolders,

@@ -49,10 +49,13 @@ export const CommandMenuRecordInfo = ({
     viewableRecordId!,
   );
 
-  const recordCreatedAt = useAtomFamilySelectorValue(recordStoreFamilySelectorV2, {
-    recordId: objectRecordId,
-    fieldName: 'createdAt',
-  }) as string | null;
+  const recordCreatedAt = useAtomFamilySelectorValue(
+    recordStoreFamilySelectorV2,
+    {
+      recordId: objectRecordId,
+      fieldName: 'createdAt',
+    },
+  ) as string | null;
 
   const isFilesFieldMigrated = useIsFeatureEnabled(
     FeatureFlagKey.IS_FILES_FIELD_MIGRATED,

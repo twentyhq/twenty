@@ -9,7 +9,9 @@ import { getContiguousIncrementalValues } from 'twenty-shared/utils';
 
 export const RecordTableNoRecordGroupRows = () => {
   const totalNumberOfRecordsToVirtualize =
-    useAtomComponentStateValue(totalNumberOfRecordsToVirtualizeComponentState) ?? 0;
+    useAtomComponentStateValue(
+      totalNumberOfRecordsToVirtualizeComponentState,
+    ) ?? 0;
 
   const numberOfRows = Math.min(
     totalNumberOfRecordsToVirtualize,

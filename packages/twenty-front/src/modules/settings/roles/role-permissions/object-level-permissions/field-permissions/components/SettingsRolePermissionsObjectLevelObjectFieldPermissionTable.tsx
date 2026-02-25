@@ -45,9 +45,12 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const sortedFieldByTable = useAtomFamilyStateValue(sortedFieldByTableFamilyState, {
-    tableId: SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID,
-  });
+  const sortedFieldByTable = useAtomFamilyStateValue(
+    sortedFieldByTableFamilyState,
+    {
+      tableId: SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID,
+    },
+  );
 
   const searchedFields = objectMetadataItem.fields.filter((fieldMetadataItem) =>
     fieldMetadataItem.label

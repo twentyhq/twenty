@@ -24,7 +24,9 @@ enum LoadingStatus {
 export const SignInUpWorkspaceScopeFormEffect = () => {
   const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
 
-  const isRequestingCaptchaToken = useAtomStateValue(isRequestingCaptchaTokenState);
+  const isRequestingCaptchaToken = useAtomStateValue(
+    isRequestingCaptchaTokenState,
+  );
 
   const captcha = useAtomStateValue(captchaState);
 

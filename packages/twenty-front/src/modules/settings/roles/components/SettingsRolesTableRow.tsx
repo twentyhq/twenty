@@ -65,7 +65,9 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
   const { getIcon } = useIcons();
   const Icon = getIcon(role.icon ?? 'IconUser');
 
-  const currentWorkspaceMembers = useAtomStateValue(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
 
   const enrichedWorkspaceMembers = role.workspaceMembers
     .map((workspaceMember) =>

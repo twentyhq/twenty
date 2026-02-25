@@ -16,7 +16,9 @@ type PrefetchedNavigationMenuItemsData = {
 
 export const usePrefetchedNavigationMenuItemsData =
   (): PrefetchedNavigationMenuItemsData => {
-    const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+    const currentWorkspaceMember = useAtomStateValue(
+      currentWorkspaceMemberState,
+    );
     const currentWorkspaceMemberId = currentWorkspaceMember?.id;
     const prefetchNavigationMenuItems = useAtomStateValue(
       prefetchNavigationMenuItemsState,

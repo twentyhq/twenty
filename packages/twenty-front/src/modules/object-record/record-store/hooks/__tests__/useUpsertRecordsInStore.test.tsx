@@ -17,7 +17,10 @@ describe('useUpsertRecordsInStore', () => {
 
     const { result } = renderHook(
       () => {
-        const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+        const record = useAtomFamilyStateValue(
+          recordStoreFamilyState,
+          recordId,
+        );
         const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
         return { record, upsertRecordsInStore };
@@ -53,7 +56,10 @@ describe('useUpsertRecordsInStore', () => {
 
     const { result } = renderHook(
       () => {
-        const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+        const record = useAtomFamilyStateValue(
+          recordStoreFamilyState,
+          recordId,
+        );
         const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
         return { record, upsertRecordsInStore };
@@ -111,7 +117,10 @@ describe('useUpsertRecordsInStore', () => {
 
     const { result } = renderHook(
       () => {
-        const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+        const record = useAtomFamilyStateValue(
+          recordStoreFamilyState,
+          recordId,
+        );
         const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
         return { record, upsertRecordsInStore };

@@ -21,7 +21,9 @@ const StyledScrollableContent = styled.div`
 
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const currentFavoriteFolderId = useAtomStateValue(currentFavoriteFolderIdStateV2);
+  const currentFavoriteFolderId = useAtomStateValue(
+    currentFavoriteFolderIdStateV2,
+  );
   const currentNavigationMenuItemFolderId = useAtomStateValue(
     currentNavigationMenuItemFolderIdStateV2,
   );

@@ -66,7 +66,9 @@ export const SettingsRoleAssignment = ({
       null,
     );
 
-  const currentWorkspaceMembers = useAtomStateValue(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const settingsAllRoles = useSettingsAllRoles();
 

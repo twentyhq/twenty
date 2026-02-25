@@ -3,10 +3,9 @@ import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/creat
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
-export const fieldsWidgetGroupsPersistedComponentState = createAtomComponentState<
-  Record<string, FieldsWidgetGroup[]>
->({
-  key: 'fieldsWidgetGroupsPersistedComponentState',
-  defaultValue: {},
-  componentInstanceContext: PageLayoutComponentInstanceContext,
-});
+export const fieldsWidgetGroupsPersistedComponentState =
+  createAtomComponentState<Record<string, FieldsWidgetGroup[]>>({
+    key: 'fieldsWidgetGroupsPersistedComponentState',
+    defaultValue: {},
+    componentInstanceContext: PageLayoutComponentInstanceContext,
+  });

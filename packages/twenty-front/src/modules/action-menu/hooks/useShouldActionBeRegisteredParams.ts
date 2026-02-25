@@ -76,7 +76,8 @@ export const useShouldActionBeRegisteredParams = ({
   ]);
 
   const selectedRecord =
-    useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '') || undefined;
+    useAtomFamilyStateValue(recordStoreFamilyState, recordId ?? '') ||
+    undefined;
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem?.id ?? '',

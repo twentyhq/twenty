@@ -14,7 +14,9 @@ export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
   const numberOfRuns = parameters.numberOfRuns ?? 2;
   const warmUpRounds = parameters.warmUpRounds ?? 5;
 
-  const currentProfilingRunIndex = useAtomStateValue(currentProfilingRunIndexState);
+  const currentProfilingRunIndex = useAtomStateValue(
+    currentProfilingRunIndexState,
+  );
 
   const profilingSessionStatus = useAtomStateValue(profilingSessionStatusState);
   const profilingSessionRuns = useAtomStateValue(profilingSessionRunsState);

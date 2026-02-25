@@ -6,7 +6,9 @@ import { Dialog } from './Dialog';
 import { DialogManagerEffect } from './DialogManagerEffect';
 
 export const DialogManager = ({ children }: React.PropsWithChildren) => {
-  const dialogInternal = useAtomComponentStateValue(dialogInternalComponentState);
+  const dialogInternal = useAtomComponentStateValue(
+    dialogInternalComponentState,
+  );
   const { closeDialog } = useDialogManager();
 
   return (

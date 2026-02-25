@@ -32,7 +32,9 @@ export const RecordTableRowVirtualizedContainer = ({
   );
 
   const totalNumberOfRecordsToVirtualize =
-    useAtomComponentStateValue(totalNumberOfRecordsToVirtualizeComponentState) ?? 0;
+    useAtomComponentStateValue(
+      totalNumberOfRecordsToVirtualizeComponentState,
+    ) ?? 0;
 
   if (!isDefined(realIndex) || realIndex >= totalNumberOfRecordsToVirtualize) {
     return null;

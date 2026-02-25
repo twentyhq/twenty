@@ -50,7 +50,10 @@ export const useChipFieldDisplay = () => {
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 
-  const recordValue = useAtomFamilyStateValue(recordStoreFamilyStateV2, recordId);
+  const recordValue = useAtomFamilyStateValue(
+    recordStoreFamilyStateV2,
+    recordId,
+  );
 
   if (!isNonEmptyString(objectNameSingular)) {
     throw new Error('Object metadata name singular is not a non-empty string');

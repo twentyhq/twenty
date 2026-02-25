@@ -55,7 +55,9 @@ export const RecordChip = ({
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const recordIndexOpenRecordIn = useAtomStateValue(recordIndexOpenRecordInStateV2);
+  const recordIndexOpenRecordIn = useAtomStateValue(
+    recordIndexOpenRecordInStateV2,
+  );
   const canOpenInSidePanel = canOpenObjectInSidePanel(objectNameSingular);
 
   const isSidePanelViewOpenRecordInType =

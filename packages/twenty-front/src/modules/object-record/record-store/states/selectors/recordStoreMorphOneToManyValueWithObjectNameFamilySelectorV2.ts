@@ -16,30 +16,32 @@ type MorphValueWithObjectName = {
 };
 
 export const recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2 =
-  createAtomFamilySelector<MorphValueWithObjectName[], MorphOneToManyFamilyKey>({
-    key: 'recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2',
-    get:
-      ({ recordId, morphRelations }: MorphOneToManyFamilyKey) =>
-      ({ get }) => {
-        const morphValuesWithObjectName = morphRelations.map(
-          (morphRelation) => {
-            const fieldName = computeMorphRelationFieldName({
-              fieldName: morphRelation.sourceFieldMetadata.name,
-              relationType: morphRelation.type as RelationType,
-              targetObjectMetadataNameSingular:
-                morphRelation.targetObjectMetadata.nameSingular,
-              targetObjectMetadataNamePlural:
-                morphRelation.targetObjectMetadata.namePlural,
-            });
-            return {
-              objectNameSingular:
-                morphRelation.targetObjectMetadata.nameSingular,
-              value: (get(recordStoreFamilyState, recordId)?.[fieldName] ||
-                []) as ObjectRecord[] | ObjectRecord,
-            };
-          },
-        );
+  createAtomFamilySelector<MorphValueWithObjectName[], MorphOneToManyFamilyKey>(
+    {
+      key: 'recordStoreMorphOneToManyValueWithObjectNameFamilySelectorV2',
+      get:
+        ({ recordId, morphRelations }: MorphOneToManyFamilyKey) =>
+        ({ get }) => {
+          const morphValuesWithObjectName = morphRelations.map(
+            (morphRelation) => {
+              const fieldName = computeMorphRelationFieldName({
+                fieldName: morphRelation.sourceFieldMetadata.name,
+                relationType: morphRelation.type as RelationType,
+                targetObjectMetadataNameSingular:
+                  morphRelation.targetObjectMetadata.nameSingular,
+                targetObjectMetadataNamePlural:
+                  morphRelation.targetObjectMetadata.namePlural,
+              });
+              return {
+                objectNameSingular:
+                  morphRelation.targetObjectMetadata.nameSingular,
+                value: (get(recordStoreFamilyState, recordId)?.[fieldName] ||
+                  []) as ObjectRecord[] | ObjectRecord,
+              };
+            },
+          );
 
-        return morphValuesWithObjectName;
-      },
-  });
+          return morphValuesWithObjectName;
+        },
+    },
+  );

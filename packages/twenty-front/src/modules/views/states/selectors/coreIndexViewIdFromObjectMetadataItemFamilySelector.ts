@@ -4,7 +4,10 @@ import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 export const coreIndexViewIdFromObjectMetadataItemFamilySelector =
-  createAtomFamilySelector<string | undefined, { objectMetadataItemId: string }>({
+  createAtomFamilySelector<
+    string | undefined,
+    { objectMetadataItemId: string }
+  >({
     key: 'coreIndexViewIdFromObjectMetadataItemFamilySelector',
     get:
       ({ objectMetadataItemId }) =>

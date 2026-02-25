@@ -7,11 +7,12 @@ type DialogState = {
   queue: DialogOptions[];
 };
 
-export const dialogInternalComponentState = createAtomComponentState<DialogState>({
-  key: 'dialogInternalComponentState',
-  defaultValue: {
-    maxQueue: 2,
-    queue: [],
-  },
-  componentInstanceContext: DialogComponentInstanceContext,
-});
+export const dialogInternalComponentState =
+  createAtomComponentState<DialogState>({
+    key: 'dialogInternalComponentState',
+    defaultValue: {
+      maxQueue: 2,
+      queue: [],
+    },
+    componentInstanceContext: DialogComponentInstanceContext,
+  });

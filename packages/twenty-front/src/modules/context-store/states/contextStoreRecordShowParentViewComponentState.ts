@@ -13,7 +13,9 @@ type RecordShowParentViewComponentState = {
 };
 
 export const contextStoreRecordShowParentViewComponentState =
-  createAtomComponentState<RecordShowParentViewComponentState | undefined | null>({
+  createAtomComponentState<
+    RecordShowParentViewComponentState | undefined | null
+  >({
     key: 'contextStoreRecordShowParentViewComponentState',
     defaultValue: undefined,
     componentInstanceContext: ContextStoreComponentInstanceContext,

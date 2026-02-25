@@ -49,7 +49,9 @@ export const usePageChangeEffectNavigateLocation = () => {
   const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
-  const verifyEmailRedirectPath = useAtomStateValue(verifyEmailRedirectPathState);
+  const verifyEmailRedirectPath = useAtomStateValue(
+    verifyEmailRedirectPathState,
+  );
 
   if (
     (!isLoggedIn || (isLoggedIn && !isOnAWorkspace)) &&

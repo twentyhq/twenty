@@ -3,33 +3,34 @@ import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifie
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { findById, isDefined } from 'twenty-shared/utils';
 
-export const isFieldMetadataItemLabelIdentifierSelector = createAtomFamilySelector({
-  key: 'isFieldMetadataItemLabelIdentifierSelector',
-  get:
-    ({ fieldMetadataItemId }: { fieldMetadataItemId: string }) =>
-    ({ get }) => {
-      const objectMetadataItems = get(objectMetadataItemsState);
+export const isFieldMetadataItemLabelIdentifierSelector =
+  createAtomFamilySelector({
+    key: 'isFieldMetadataItemLabelIdentifierSelector',
+    get:
+      ({ fieldMetadataItemId }: { fieldMetadataItemId: string }) =>
+      ({ get }) => {
+        const objectMetadataItems = get(objectMetadataItemsState);
 
-      const foundObjectMetadataItem = objectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.fields.some(findById(fieldMetadataItemId)),
-      );
+        const foundObjectMetadataItem = objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.fields.some(findById(fieldMetadataItemId)),
+        );
 
-      if (!isDefined(foundObjectMetadataItem)) {
-        return false;
-      }
+        if (!isDefined(foundObjectMetadataItem)) {
+          return false;
+        }
 
-      const foundFieldMetadataItem = foundObjectMetadataItem.fields.find(
-        findById(fieldMetadataItemId),
-      );
+        const foundFieldMetadataItem = foundObjectMetadataItem.fields.find(
+          findById(fieldMetadataItemId),
+        );
 
-      if (!isDefined(foundFieldMetadataItem)) {
-        return false;
-      }
+        if (!isDefined(foundFieldMetadataItem)) {
+          return false;
+        }
 
-      return isLabelIdentifierField({
-        fieldMetadataItem: foundFieldMetadataItem,
-        objectMetadataItem: foundObjectMetadataItem,
-      });
-    },
-});
+        return isLabelIdentifierField({
+          fieldMetadataItem: foundFieldMetadataItem,
+          objectMetadataItem: foundObjectMetadataItem,
+        });
+      },
+  });

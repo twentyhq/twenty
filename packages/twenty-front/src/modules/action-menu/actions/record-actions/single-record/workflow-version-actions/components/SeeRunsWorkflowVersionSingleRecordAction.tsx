@@ -40,7 +40,10 @@ const SeeRunsWorkflowVersionSingleRecordActionContent = ({
 
 export const SeeRunsWorkflowVersionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
-  const workflowVersion = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const workflowVersion = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   const workflowId = workflowVersion?.workflow?.id;
 

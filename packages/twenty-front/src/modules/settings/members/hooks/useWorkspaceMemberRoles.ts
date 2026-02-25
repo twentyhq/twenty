@@ -4,7 +4,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const useWorkspaceMemberRoles = (workspaceMemberId: string) => {
   const settingsAllRoles = useSettingsAllRoles();
-  const settingsRolesIsLoading = useAtomStateValue(settingsRolesIsLoadingStateV2);
+  const settingsRolesIsLoading = useAtomStateValue(
+    settingsRolesIsLoadingStateV2,
+  );
 
   const roles = workspaceMemberId
     ? settingsAllRoles.filter((role) =>

@@ -12,7 +12,9 @@ export const RecordTableWidthEffect = () => {
     recordTableWidthComponentState,
   );
 
-  const tableWidthResizeIsActive = useAtomStateValue(tableWidthResizeIsActiveState);
+  const tableWidthResizeIsActive = useAtomStateValue(
+    tableWidthResizeIsActiveState,
+  );
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 

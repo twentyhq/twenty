@@ -16,7 +16,9 @@ import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationM
 export const useSortedNavigationMenuItems = () => {
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     usePrefetchedNavigationMenuItemsData();
-  const coreViews = useAtomStateValue(coreViewsState).map(convertCoreViewToView);
+  const coreViews = useAtomStateValue(coreViewsState).map(
+    convertCoreViewToView,
+  );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const targetRecordIdentifiers = useMemo(() => {

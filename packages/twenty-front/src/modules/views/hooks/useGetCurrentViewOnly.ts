@@ -8,9 +8,12 @@ export const useGetCurrentViewOnly = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const currentView = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
-    viewId: currentViewId ?? '',
-  });
+  const currentView = useAtomFamilySelectorValue(
+    coreViewFromViewIdFamilySelector,
+    {
+      viewId: currentViewId ?? '',
+    },
+  );
 
   return {
     currentView,

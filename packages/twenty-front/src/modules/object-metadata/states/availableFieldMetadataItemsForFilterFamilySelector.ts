@@ -8,7 +8,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const availableFieldMetadataItemsForFilterFamilySelector =
-  createAtomFamilySelector<FieldMetadataItem[], { objectMetadataItemId: string }>({
+  createAtomFamilySelector<
+    FieldMetadataItem[],
+    { objectMetadataItemId: string }
+  >({
     key: 'availableFieldMetadataItemsForFilterFamilySelector',
     get:
       ({ objectMetadataItemId }: { objectMetadataItemId: string }) =>

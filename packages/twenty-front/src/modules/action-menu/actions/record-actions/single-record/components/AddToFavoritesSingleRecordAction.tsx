@@ -13,7 +13,10 @@ export const AddToFavoritesSingleRecordAction = () => {
 
   const { createFavorite } = useCreateFavorite();
 
-  const selectedRecord = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const selectedRecord = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   const handleClick = () => {
     if (!isDefined(selectedRecord)) {

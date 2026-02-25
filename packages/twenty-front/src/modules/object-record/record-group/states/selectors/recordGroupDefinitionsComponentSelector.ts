@@ -5,32 +5,31 @@ import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/cr
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 
-export const recordGroupDefinitionsComponentSelector = createAtomComponentSelector<
-  RecordGroupDefinition[]
->({
-  key: 'recordGroupDefinitionsComponentSelector',
-  componentInstanceContext: ViewComponentInstanceContext,
-  get:
-    ({ instanceId }) =>
-    ({ get }) => {
-      const recordGroupIds = get(recordGroupIdsComponentState, {
-        instanceId,
-      });
+export const recordGroupDefinitionsComponentSelector =
+  createAtomComponentSelector<RecordGroupDefinition[]>({
+    key: 'recordGroupDefinitionsComponentSelector',
+    componentInstanceContext: ViewComponentInstanceContext,
+    get:
+      ({ instanceId }) =>
+      ({ get }) => {
+        const recordGroupIds = get(recordGroupIdsComponentState, {
+          instanceId,
+        });
 
-      return recordGroupIds.reduce<RecordGroupDefinition[]>(
-        (acc, recordGroupId) => {
-          const recordGroupDefinition = get(
-            recordGroupDefinitionFamilyState,
-            recordGroupId,
-          );
+        return recordGroupIds.reduce<RecordGroupDefinition[]>(
+          (acc, recordGroupId) => {
+            const recordGroupDefinition = get(
+              recordGroupDefinitionFamilyState,
+              recordGroupId,
+            );
 
-          if (!isDefined(recordGroupDefinition)) {
-            return acc;
-          }
+            if (!isDefined(recordGroupDefinition)) {
+              return acc;
+            }
 
-          return [...acc, recordGroupDefinition];
-        },
-        [],
-      );
-    },
-});
+            return [...acc, recordGroupDefinition];
+          },
+          [],
+        );
+      },
+  });

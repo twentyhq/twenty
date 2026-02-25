@@ -75,7 +75,9 @@ export const useAuth = () => {
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const isCaptchaScriptLoaded = useAtomStateValue(isCaptchaScriptLoadedState);
-  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
   const isEmailVerificationRequired = useAtomStateValue(
     isEmailVerificationRequiredState,
   );

@@ -7,7 +7,10 @@ import { isDefined } from 'twenty-shared/utils';
 export const ExportNoteActionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
-  const selectedRecord = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const selectedRecord = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   const filename = `${(selectedRecord?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
 

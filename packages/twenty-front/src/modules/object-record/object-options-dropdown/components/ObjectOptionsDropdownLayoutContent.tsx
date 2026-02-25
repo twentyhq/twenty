@@ -60,7 +60,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     [updateCurrentView],
   );
 
-  const recordIndexOpenRecordIn = useAtomStateValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useAtomStateValue(
+    recordIndexOpenRecordInState,
+  );
   const recordIndexCalendarLayout = useAtomStateValue(
     recordIndexCalendarLayoutState,
   );

@@ -18,7 +18,10 @@ export const RecordShowPageTitle = ({
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
-  const record = useAtomFamilyStateValue(recordStoreFamilyState, objectRecordId);
+  const record = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    objectRecordId,
+  );
 
   const pageName = isDefined(record)
     ? getLabelIdentifierFieldValue(record, labelIdentifierFieldMetadataItem)

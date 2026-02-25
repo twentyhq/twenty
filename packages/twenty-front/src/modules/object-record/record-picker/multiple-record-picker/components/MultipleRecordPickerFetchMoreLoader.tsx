@@ -59,9 +59,10 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     componentInstanceId,
   );
 
-  const multipleRecordPickerShouldShowInitialLoading = useAtomComponentStateValue(
-    multipleRecordPickerShouldShowInitialLoadingComponentState,
-  );
+  const multipleRecordPickerShouldShowInitialLoading =
+    useAtomComponentStateValue(
+      multipleRecordPickerShouldShowInitialLoadingComponentState,
+    );
 
   const multipleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
     multipleRecordPickerShouldShowSkeletonComponentState,

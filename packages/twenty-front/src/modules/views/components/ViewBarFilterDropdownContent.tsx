@@ -13,9 +13,10 @@ export const ViewBarFilterDropdownContent = () => {
     ViewBarFilterDropdownIds.MAIN,
   );
 
-  const objectFilterDropdownAnyFieldSearchIsSelected = useAtomComponentStateValue(
-    objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
-  );
+  const objectFilterDropdownAnyFieldSearchIsSelected =
+    useAtomComponentStateValue(
+      objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
+    );
 
   const isAnyFieldSearchFilter = objectFilterDropdownAnyFieldSearchIsSelected;
 

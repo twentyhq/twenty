@@ -25,9 +25,12 @@ export const SortableTableHeader = ({
   initialSort?: TableSortValue;
   Icon?: IconComponent;
 }) => {
-  const sortedFieldByTable = useAtomFamilyStateValue(sortedFieldByTableFamilyState, {
-    tableId,
-  });
+  const sortedFieldByTable = useAtomFamilyStateValue(
+    sortedFieldByTableFamilyState,
+    {
+      tableId,
+    },
+  );
   const setSortedFieldByTable = useSetAtomFamilyState(
     sortedFieldByTableFamilyState,
     { tableId },

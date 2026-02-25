@@ -17,7 +17,9 @@ export const SettingsRolesContainer = () => {
   const { t } = useLingui();
 
   const settingsAllRoles = useSettingsAllRoles();
-  const settingsRolesIsLoading = useAtomStateValue(settingsRolesIsLoadingStateV2);
+  const settingsRolesIsLoading = useAtomStateValue(
+    settingsRolesIsLoadingStateV2,
+  );
 
   if (settingsRolesIsLoading && !settingsAllRoles) {
     return null;

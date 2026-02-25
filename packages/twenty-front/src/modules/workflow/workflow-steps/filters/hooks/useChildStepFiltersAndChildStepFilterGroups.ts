@@ -13,7 +13,9 @@ export const useChildStepFiltersAndChildStepFilterGroups = ({
     currentStepFilterGroupsComponentState,
   );
 
-  const stepFilters = useAtomComponentStateValue(currentStepFiltersComponentState);
+  const stepFilters = useAtomComponentStateValue(
+    currentStepFiltersComponentState,
+  );
 
   const currentStepFilterGroup = stepFilterGroups?.find(
     (stepFilterGroup) => stepFilterGroup.id === stepFilterGroupId,

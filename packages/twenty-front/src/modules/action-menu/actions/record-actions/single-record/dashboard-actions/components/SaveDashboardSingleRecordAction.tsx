@@ -9,7 +9,10 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 export const SaveDashboardSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
-  const selectedRecord = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const selectedRecord = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   const pageLayoutId = selectedRecord?.pageLayoutId;
 

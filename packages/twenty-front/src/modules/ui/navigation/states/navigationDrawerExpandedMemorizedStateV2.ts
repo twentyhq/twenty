@@ -4,7 +4,8 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 
 const isMobile = window.innerWidth <= MOBILE_VIEWPORT;
 
-export const navigationDrawerExpandedMemorizedStateV2 = createAtomState<boolean>({
-  key: 'navigationDrawerExpandedMemorizedStateV2',
-  defaultValue: !isMobile,
-});
+export const navigationDrawerExpandedMemorizedStateV2 =
+  createAtomState<boolean>({
+    key: 'navigationDrawerExpandedMemorizedStateV2',
+    defaultValue: !isMobile,
+  });

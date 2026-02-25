@@ -6,7 +6,9 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
-  const currentWorkspaceMembers = useAtomStateValue(currentWorkspaceMembersState);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
   const currentWorkspaceDeletedMembers = useAtomStateValue(
     currentWorkspaceDeletedMembersState,
   );

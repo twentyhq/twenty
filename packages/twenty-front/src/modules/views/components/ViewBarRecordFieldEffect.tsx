@@ -18,9 +18,12 @@ export const ViewBarRecordFieldEffect = () => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const currentView = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
-    viewId: currentViewId ?? '',
-  });
+  const currentView = useAtomFamilySelectorValue(
+    coreViewFromViewIdFamilySelector,
+    {
+      viewId: currentViewId ?? '',
+    },
+  );
 
   const [
     hasInitializedCurrentRecordFields,

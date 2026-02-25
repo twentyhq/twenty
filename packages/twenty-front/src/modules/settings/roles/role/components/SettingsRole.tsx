@@ -45,7 +45,9 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const [isSaving, setIsSaving] = useState(false);
 
-  const settingsRolesIsLoading = useAtomStateValue(settingsRolesIsLoadingStateV2);
+  const settingsRolesIsLoading = useAtomStateValue(
+    settingsRolesIsLoadingStateV2,
+  );
 
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,

@@ -3,7 +3,10 @@ import { createAtomComponentFamilyState } from '@/ui/utilities/state/jotai/utils
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 export const recordIndexEntityCountByGroupComponentFamilyState =
-  createAtomComponentFamilyState<number | undefined, RecordGroupDefinition['id']>({
+  createAtomComponentFamilyState<
+    number | undefined,
+    RecordGroupDefinition['id']
+  >({
     key: 'recordIndexEntityCountByGroupComponentFamilyState',
     defaultValue: undefined,
     componentInstanceContext: ViewComponentInstanceContext,

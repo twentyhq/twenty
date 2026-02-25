@@ -39,10 +39,11 @@ export const CommandMenu = () => {
     commandMenuSearch,
   });
 
-  const previousContextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-    'command-menu-previous',
-  );
+  const previousContextStoreCurrentObjectMetadataItemId =
+    useAtomComponentStateValue(
+      contextStoreCurrentObjectMetadataItemIdComponentState,
+      'command-menu-previous',
+    );
 
   const objectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,

@@ -103,7 +103,10 @@ export const EventRow = ({
 
   const { recordId } = useContext(TimelineActivityContext);
 
-  const recordFromStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordFromStore = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
     event.createdAt,

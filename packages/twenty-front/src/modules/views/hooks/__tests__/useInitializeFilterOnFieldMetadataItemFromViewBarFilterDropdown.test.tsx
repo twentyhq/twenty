@@ -203,9 +203,10 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
           selectedOperandInDropdownComponentState,
         );
 
-        const objectFilterDropdownCurrentRecordFilter = useAtomComponentStateValue(
-          objectFilterDropdownCurrentRecordFilterComponentState,
-        );
+        const objectFilterDropdownCurrentRecordFilter =
+          useAtomComponentStateValue(
+            objectFilterDropdownCurrentRecordFilterComponentState,
+          );
 
         const setCurrentRecordFilters = useSetAtomComponentState(
           currentRecordFiltersComponentState,
@@ -285,9 +286,10 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
           selectedOperandInDropdownComponentState,
         );
 
-        const objectFilterDropdownCurrentRecordFilter = useAtomComponentStateValue(
-          objectFilterDropdownCurrentRecordFilterComponentState,
-        );
+        const objectFilterDropdownCurrentRecordFilter =
+          useAtomComponentStateValue(
+            objectFilterDropdownCurrentRecordFilterComponentState,
+          );
 
         const setCurrentRecordFilters = useSetAtomComponentState(
           currentRecordFiltersComponentState,

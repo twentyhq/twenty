@@ -6,35 +6,37 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 
 export const NO_RECORD_GROUP_FAMILY_KEY = 'record-group-default-id';
 
-export const recordIndexAllRecordIdsComponentSelector = createAtomComponentSelector<
-  string[]
->({
-  key: 'recordIndexAllRecordIdsComponentSelector',
-  componentInstanceContext: ViewComponentInstanceContext,
-  get:
-    ({ instanceId }) =>
-    ({ get }) => {
-      const recordGroupIds = get(recordGroupIdsComponentState, {
-        instanceId,
-      });
-
-      if (recordGroupIds.length === 0) {
-        return get(recordIndexRecordIdsByGroupComponentFamilyState, {
+export const recordIndexAllRecordIdsComponentSelector =
+  createAtomComponentSelector<string[]>({
+    key: 'recordIndexAllRecordIdsComponentSelector',
+    componentInstanceContext: ViewComponentInstanceContext,
+    get:
+      ({ instanceId }) =>
+      ({ get }) => {
+        const recordGroupIds = get(recordGroupIdsComponentState, {
           instanceId,
-          familyKey: NO_RECORD_GROUP_FAMILY_KEY,
         });
-      }
 
-      return recordGroupIds.reduce<ObjectRecord['id'][]>(
-        (acc, recordGroupId) => {
-          const rowIds = get(recordIndexRecordIdsByGroupComponentFamilyState, {
+        if (recordGroupIds.length === 0) {
+          return get(recordIndexRecordIdsByGroupComponentFamilyState, {
             instanceId,
-            familyKey: recordGroupId,
+            familyKey: NO_RECORD_GROUP_FAMILY_KEY,
           });
+        }
 
-          return [...acc, ...rowIds];
-        },
-        [],
-      );
-    },
-});
+        return recordGroupIds.reduce<ObjectRecord['id'][]>(
+          (acc, recordGroupId) => {
+            const rowIds = get(
+              recordIndexRecordIdsByGroupComponentFamilyState,
+              {
+                instanceId,
+                familyKey: recordGroupId,
+              },
+            );
+
+            return [...acc, ...rowIds];
+          },
+          [],
+        );
+      },
+  });

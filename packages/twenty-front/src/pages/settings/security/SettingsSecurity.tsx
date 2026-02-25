@@ -63,7 +63,9 @@ export const SettingsSecurity = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const isMultiWorkspaceEnabled = useAtomStateValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
   const authProviders = useAtomStateValue(authProvidersState);
   const SSOIdentitiesProviders = useAtomStateValue(SSOIdentitiesProvidersState);

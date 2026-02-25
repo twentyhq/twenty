@@ -29,7 +29,9 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     currentAIChatThreadTitleState,
   );
 
-  const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesStateV2);
+  const agentChatSelectedFiles = useAtomStateValue(
+    agentChatSelectedFilesStateV2,
+  );
 
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadStateV2);
 

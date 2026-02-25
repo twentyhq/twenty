@@ -33,7 +33,10 @@ const SeeVersionsWorkflowVersionSingleRecordActionContent = ({
 
 export const SeeVersionsWorkflowVersionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
-  const workflowVersion = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const workflowVersion = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   if (!isDefined(workflowVersion) || !isDefined(workflowVersion.workflowId)) {
     return null;

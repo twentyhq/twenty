@@ -41,7 +41,9 @@ export const RecordTableContextProvider = ({
     recordTableId,
   );
 
-  const recordIndexOpenRecordIn = useAtomStateValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useAtomStateValue(
+    recordIndexOpenRecordInState,
+  );
   const triggerEvent =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
       ? 'CLICK'

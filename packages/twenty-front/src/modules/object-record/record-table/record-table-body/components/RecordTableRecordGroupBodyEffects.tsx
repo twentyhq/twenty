@@ -4,7 +4,9 @@ import { RecordTableRecordGroupBodyEffect } from '@/object-record/record-table/r
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const RecordTableRecordGroupBodyEffects = () => {
-  const recordGroupIds = useAtomComponentStateValue(recordGroupIdsComponentState);
+  const recordGroupIds = useAtomComponentStateValue(
+    recordGroupIdsComponentState,
+  );
 
   return recordGroupIds.map((recordGroupId) => (
     <RecordGroupContext.Provider key={recordGroupId} value={{ recordGroupId }}>

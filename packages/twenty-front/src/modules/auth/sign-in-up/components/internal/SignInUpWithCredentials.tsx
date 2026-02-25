@@ -43,8 +43,12 @@ export const SignInUpWithCredentials = ({
   const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);
   const captcha = useAtomStateValue(captchaState);
-  const isRequestingCaptchaToken = useAtomStateValue(isRequestingCaptchaTokenState);
-  const lastAuthenticatedMethod = useAtomStateValue(lastAuthenticatedMethodState);
+  const isRequestingCaptchaToken = useAtomStateValue(
+    isRequestingCaptchaTokenState,
+  );
+  const lastAuthenticatedMethod = useAtomStateValue(
+    lastAuthenticatedMethodState,
+  );
   const hasMultipleAuthMethods = useHasMultipleAuthMethods();
 
   const {

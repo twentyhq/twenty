@@ -5,7 +5,10 @@ import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/creat
 import { isDefined } from 'twenty-shared/utils';
 
 export const availableFieldMetadataItemsForSortFamilySelector =
-  createAtomFamilySelector<FieldMetadataItem[], { objectMetadataItemId: string }>({
+  createAtomFamilySelector<
+    FieldMetadataItem[],
+    { objectMetadataItemId: string }
+  >({
     key: 'availableFieldMetadataItemsForSortFamilySelector',
     get:
       ({ objectMetadataItemId }: { objectMetadataItemId: string }) =>
