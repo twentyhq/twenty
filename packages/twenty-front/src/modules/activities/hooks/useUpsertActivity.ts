@@ -2,7 +2,7 @@ import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB'
 import { useRefreshShowPageFindManyActivitiesQueries } from '@/activities/hooks/useRefreshShowPageFindManyActivitiesQueries';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
-import { objectShowPageTargetableObjectStateV2 } from '@/activities/timeline-activities/states/objectShowPageTargetableObjectStateV2';
+import { objectShowPageTargetableObjectState } from '@/activities/timeline-activities/states/objectShowPageTargetableObjectState';
 import { type Note } from '@/activities/types/Note';
 import { type Task } from '@/activities/types/Task';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -31,7 +31,7 @@ export const useUpsertActivity = ({
   );
 
   const objectShowPageTargetableObject = useAtomStateValue(
-    objectShowPageTargetableObjectStateV2,
+    objectShowPageTargetableObjectState,
   );
 
   const { refreshShowPageFindManyActivitiesQueries } =

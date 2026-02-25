@@ -8,7 +8,7 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { computeDraftValueFromFieldValue } from '@/object-record/record-field/ui/utils/computeDraftValueFromFieldValue';
 import { computeDraftValueFromString } from '@/object-record/record-field/ui/utils/computeDraftValueFromString';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 export const useInitDraftValue = <FieldValue>() => {
   const store = useStore();
@@ -26,7 +26,7 @@ export const useInitDraftValue = <FieldValue>() => {
       fieldComponentInstanceId: string;
     }) => {
       const recordFieldValue = store.get(
-        recordStoreFamilySelectorV2.selectorFamily({
+        recordStoreFamilySelector.selectorFamily({
           recordId,
           fieldName: fieldDefinition.metadata.fieldName,
         }),

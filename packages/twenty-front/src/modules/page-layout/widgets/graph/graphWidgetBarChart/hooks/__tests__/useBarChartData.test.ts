@@ -3,18 +3,18 @@ import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphW
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { renderHook } from '@testing-library/react';
 
-const mockUseRecoilComponentValue = jest.fn();
+const mockUseAtomComponentStateValue = jest.fn();
 jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
   () => ({
-    useAtomComponentStateValue: () => mockUseRecoilComponentValue(),
+    useAtomComponentStateValue: () => mockUseAtomComponentStateValue(),
   }),
 );
 
 describe('useBarChartData', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseRecoilComponentValue.mockReturnValue([]);
+    mockUseAtomComponentStateValue.mockReturnValue([]);
   });
 
   const mockColorRegistry: GraphColorRegistry = {
@@ -194,7 +194,7 @@ describe('useBarChartData', () => {
   });
 
   it('should filter visible keys based on hidden legend ids', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['costs']);
+    mockUseAtomComponentStateValue.mockReturnValue(['costs']);
 
     const { result } = renderHook(() =>
       useBarChartData({
@@ -211,7 +211,7 @@ describe('useBarChartData', () => {
   });
 
   it('should maintain colors after filtering', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['sales']);
+    mockUseAtomComponentStateValue.mockReturnValue(['sales']);
 
     const { result } = renderHook(() =>
       useBarChartData({
@@ -226,7 +226,7 @@ describe('useBarChartData', () => {
   });
 
   it('should keep all items in legend even when filtering', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['sales']);
+    mockUseAtomComponentStateValue.mockReturnValue(['sales']);
 
     const { result } = renderHook(() =>
       useBarChartData({
@@ -242,7 +242,10 @@ describe('useBarChartData', () => {
   });
 
   it('should handle hidden ids that do not exist in keys', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['nonexistent', 'alsoNotReal']);
+    mockUseAtomComponentStateValue.mockReturnValue([
+      'nonexistent',
+      'alsoNotReal',
+    ]);
 
     const { result } = renderHook(() =>
       useBarChartData({

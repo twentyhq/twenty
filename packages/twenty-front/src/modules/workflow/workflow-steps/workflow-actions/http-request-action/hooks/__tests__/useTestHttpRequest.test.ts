@@ -3,7 +3,6 @@ import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-act
 import { useMutation } from '@apollo/client';
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
-import { RecoilRoot } from 'recoil';
 import { resolveInput } from 'twenty-shared/utils';
 import { useTestHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest';
 
@@ -87,7 +86,7 @@ describe('useTestHttpRequest', () => {
   };
 
   const wrapper = ({ children }: { children: React.ReactNode }) =>
-    React.createElement(RecoilRoot, null, children);
+    React.createElement(React.Fragment, null, children);
 
   beforeEach(() => {
     jest.clearAllMocks();

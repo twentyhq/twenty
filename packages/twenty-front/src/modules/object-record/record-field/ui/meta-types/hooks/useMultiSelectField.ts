@@ -7,7 +7,7 @@ import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/type
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelectValue';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -24,7 +24,7 @@ export const useMultiSelectField = () => {
   const { fieldName } = fieldDefinition.metadata;
 
   const [fieldValues, setFieldValue] = useAtomFamilySelectorState(
-    recordStoreFamilySelectorV2,
+    recordStoreFamilySelector,
     { recordId, fieldName },
   );
 

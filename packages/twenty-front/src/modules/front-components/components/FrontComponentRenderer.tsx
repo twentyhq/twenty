@@ -4,7 +4,7 @@ import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontC
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
 import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -23,7 +23,7 @@ export const FrontComponentRenderer = ({
   const theme = useTheme();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const setApplicationTokenPair = useSetRecoilComponentState(
+  const setApplicationTokenPair = useSetAtomComponentState(
     frontComponentApplicationTokenPairComponentState,
     frontComponentId,
   );

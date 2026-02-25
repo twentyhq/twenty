@@ -13,10 +13,10 @@ import {
   type NavigationMenuItemClickParams,
   useWorkspaceSectionItems,
 } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { NavigationDrawerSectionForWorkspaceItems } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItems';
@@ -48,24 +48,21 @@ export const WorkspaceNavigationMenuItems = () => {
     const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
       prefetchNavigationMenuItems,
     );
-    store.set(
-      navigationMenuItemsDraftStateV2.atom,
-      workspaceNavigationMenuItems,
-    );
-    store.set(isNavigationMenuInEditModeStateV2.atom, true);
+    store.set(navigationMenuItemsDraftState.atom, workspaceNavigationMenuItems);
+    store.set(isNavigationMenuInEditModeState.atom, true);
   };
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
   const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeStateV2,
+    isNavigationMenuInEditModeState,
   );
   const [
     selectedNavigationMenuItemInEditMode,
     setSelectedNavigationMenuItemInEditMode,
-  ] = useAtomState(selectedNavigationMenuItemInEditModeStateV2);
+  ] = useAtomState(selectedNavigationMenuItemInEditModeState);
   const setOpenNavigationMenuItemFolderIds = useSetAtomState(
-    openNavigationMenuItemFolderIdsStateV2,
+    openNavigationMenuItemFolderIdsState,
   );
   const navigate = useNavigate();
   const { navigateCommandMenu } = useNavigateCommandMenu();

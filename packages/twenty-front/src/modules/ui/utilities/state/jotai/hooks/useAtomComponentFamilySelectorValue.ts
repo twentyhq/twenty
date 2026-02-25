@@ -2,10 +2,10 @@ import { useAtomValue } from 'jotai';
 
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type ComponentFamilySelectorV2 } from '@/ui/utilities/state/jotai/types/ComponentFamilySelectorV2';
+import { type ComponentFamilySelector } from '@/ui/utilities/state/jotai/types/ComponentFamilySelector';
 
 export const useAtomComponentFamilySelectorValue = <StateType, FamilyKey>(
-  componentFamilySelector: ComponentFamilySelectorV2<StateType, FamilyKey>,
+  componentFamilySelector: ComponentFamilySelector<StateType, FamilyKey>,
   familyKey: FamilyKey,
   instanceIdFromProps?: string,
 ): StateType => {

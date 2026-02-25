@@ -1,7 +1,4 @@
 import { renderHook } from '@testing-library/react';
-import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
-
 import { useActivities } from '@/activities/hooks/useActivities';
 import { type Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -40,10 +37,6 @@ const mockActivity = {
   taskTargets: [],
 } satisfies Task;
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
-);
-
 describe('useActivities', () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -60,21 +53,16 @@ describe('useActivities', () => {
       },
     );
 
-    const { result } = renderHook(
-      () => {
-        const activities = useActivities({
-          objectNameSingular: CoreObjectNameSingular.Task,
-          targetableObjects: [
-            { targetObjectNameSingular: 'company', id: '123' },
-          ],
-          skip: false,
-          limit: 10,
-          activityTargetsOrderByVariables: [{}],
-        });
-        return activities;
-      },
-      { wrapper: Wrapper },
-    );
+    const { result } = renderHook(() => {
+      const activities = useActivities({
+        objectNameSingular: CoreObjectNameSingular.Task,
+        targetableObjects: [{ targetObjectNameSingular: 'company', id: '123' }],
+        skip: false,
+        limit: 10,
+        activityTargetsOrderByVariables: [{}],
+      });
+      return activities;
+    });
 
     expect(result.current.activities).toEqual([mockActivity]);
   });

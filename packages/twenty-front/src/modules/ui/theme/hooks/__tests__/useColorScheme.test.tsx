@@ -1,7 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
-
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -34,9 +32,7 @@ const workspaceMember: Omit<
 describe('useColorScheme', () => {
   it('should update color scheme', async () => {
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <JotaiProvider store={jotaiStore}>
-        <RecoilRoot>{children}</RecoilRoot>
-      </JotaiProvider>
+      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
     );
 
     const { result } = renderHook(

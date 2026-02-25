@@ -4,7 +4,6 @@ import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -41,7 +40,6 @@ export const useShouldActionBeRegisteredParams = ({
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const recordId =
@@ -97,19 +95,15 @@ export const useShouldActionBeRegisteredParams = ({
   );
 
   const isShowPage =
-    useAtomComponentStateValue(
-      contextStoreCurrentViewTypeComponentState,
-      MAIN_CONTEXT_STORE_INSTANCE_ID,
-    ) === ContextStoreViewType.ShowPage;
+    useAtomComponentStateValue(contextStoreCurrentViewTypeComponentState) ===
+    ContextStoreViewType.ShowPage;
 
   const numberOfSelectedRecords = useAtomComponentStateValue(
     contextStoreNumberOfSelectedRecordsComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const contextStoreCurrentViewType = useAtomComponentStateValue(
     contextStoreCurrentViewTypeComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const viewType = getActionViewType(

@@ -6,7 +6,7 @@ import { recordFieldInputDraftValueComponentState } from '@/object-record/record
 import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -24,7 +24,7 @@ export const useCurrencyField = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useAtomFamilySelectorState(
-    recordStoreFamilySelectorV2,
+    recordStoreFamilySelector,
     { recordId, fieldName },
   );
 

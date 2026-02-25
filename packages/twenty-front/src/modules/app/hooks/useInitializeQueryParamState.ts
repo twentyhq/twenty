@@ -6,8 +6,6 @@ import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/Bill
 import deepEqual from 'deep-equal';
 import { useStore } from 'jotai';
 
-// Initialize state that are hydrated from query parameters
-// We used to use recoil-sync to do this, but it was causing issues with Firefox
 export const useInitializeQueryParamState = () => {
   const store = useStore();
   const initializeQueryParamState = useCallback(() => {

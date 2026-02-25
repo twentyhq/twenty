@@ -4,7 +4,7 @@ import { FavoriteFolders } from '@/favorites/components/FavoritesFolders';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
-import { isFavoriteFolderCreatingStateV2 } from '@/favorites/states/isFavoriteFolderCreatingStateV2';
+import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -25,7 +25,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const { favoritesByFolder } = useFavoritesByFolder();
 
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] = useAtomState(
-    isFavoriteFolderCreatingStateV2,
+    isFavoriteFolderCreatingState,
   );
 
   const loading = useIsPrefetchLoading();

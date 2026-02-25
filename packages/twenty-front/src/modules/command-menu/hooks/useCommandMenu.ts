@@ -2,8 +2,8 @@ import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
-import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelOpenEvent';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -22,11 +22,11 @@ export const useCommandMenu = () => {
     useRemoveFocusItemFromFocusStackById();
 
   const closeCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = store.get(isCommandMenuOpenedStateV2.atom);
+    const isCommandMenuOpened = store.get(isCommandMenuOpenedState.atom);
 
     if (isCommandMenuOpened) {
-      store.set(addToNavPayloadRegistryStateV2.atom, new Map());
-      store.set(isCommandMenuOpenedStateV2.atom, false);
+      store.set(addToNavPayloadRegistryState.atom, new Map());
+      store.set(isCommandMenuOpenedState.atom, false);
       store.set(isCommandMenuClosingState.atom, true);
       closeAnyOpenDropdown();
       removeFocusItemFromFocusStackById({
@@ -47,7 +47,7 @@ export const useCommandMenu = () => {
   }, [closeAnyOpenDropdown, navigateCommandMenu]);
 
   const toggleCommandMenu = useCallback(() => {
-    const isCommandMenuOpened = store.get(isCommandMenuOpenedStateV2.atom);
+    const isCommandMenuOpened = store.get(isCommandMenuOpenedState.atom);
 
     store.set(commandMenuSearchState.atom, '');
 

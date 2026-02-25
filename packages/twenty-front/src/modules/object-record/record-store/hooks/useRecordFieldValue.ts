@@ -2,14 +2,14 @@ import { useAtomValue } from 'jotai';
 
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { recordStoreFieldValueSelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFieldValueSelectorV2';
+import { recordStoreFieldValueSelector } from '@/object-record/record-store/states/selectors/recordStoreFieldValueSelector';
 
 export const useRecordFieldValue = <T extends unknown>(
   recordId: string,
   fieldName: string,
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>,
 ) => {
-  const fieldValue = recordStoreFieldValueSelectorV2({
+  const fieldValue = recordStoreFieldValueSelector({
     recordId,
     fieldName,
     fieldDefinition: {

@@ -4,8 +4,8 @@ import { type ComponentInstanceStateContext } from '@/ui/utilities/state/compone
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import {
   type ComponentFamilyStateKey,
-  type ComponentFamilyStateV2,
-} from '@/ui/utilities/state/jotai/types/ComponentFamilyStateV2';
+  type ComponentFamilyState,
+} from '@/ui/utilities/state/jotai/types/ComponentFamilyState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const createAtomComponentFamilyState = <ValueType, FamilyKey>({
@@ -16,21 +16,21 @@ export const createAtomComponentFamilyState = <ValueType, FamilyKey>({
   key: string;
   defaultValue: ValueType;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-}): ComponentFamilyStateV2<ValueType, FamilyKey> => {
+}): ComponentFamilyState<ValueType, FamilyKey> => {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
 
   const atomCache = new Map<
     string,
-    ReturnType<ComponentFamilyStateV2<ValueType, FamilyKey>['atomFamily']>
+    ReturnType<ComponentFamilyState<ValueType, FamilyKey>['atomFamily']>
   >();
 
   const familyFunction = ({
     instanceId,
     familyKey,
   }: ComponentFamilyStateKey<FamilyKey>): ReturnType<
-    ComponentFamilyStateV2<ValueType, FamilyKey>['atomFamily']
+    ComponentFamilyState<ValueType, FamilyKey>['atomFamily']
   > => {
     const familyKeyStr =
       typeof familyKey === 'string' ? familyKey : JSON.stringify(familyKey);
@@ -50,7 +50,7 @@ export const createAtomComponentFamilyState = <ValueType, FamilyKey>({
   };
 
   return {
-    type: 'ComponentFamilyStateV2',
+    type: 'ComponentFamilyState',
     key,
     atomFamily: familyFunction,
   };

@@ -14,8 +14,7 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     type: 'problem',
     docs: {
       description:
-        'Ensure recoil value and setter are named after their atom name',
-      recommended: 'recommended',
+        'Ensure state value and setter are named after their atom name',
     },
     fixable: 'code',
     schema: [],
@@ -33,14 +32,9 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
         if (
           node?.init?.type === AST_NODE_TYPES.CallExpression &&
           isIdentifier(node.init.callee) &&
-          [
-            'useRecoilState',
-            'useRecoilScopedState',
-            'useRecoilFamilyState',
-            'useRecoilScopedFamilyState',
-            'useRecoilValue',
-            'useRecoilScopedValue',
-          ].includes(node.init.callee.name)
+          ['useAtomState', 'useAtomStateValue'].includes(
+            node.init.callee.name,
+          )
         ) {
           const stateNameBase = isIdentifier(node.init.arguments[0])
             ? node.init.arguments[0].name
@@ -51,7 +45,7 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
           }
 
           const expectedVariableNameBase = stateNameBase.replace(
-            /(State|FamilyState|Selector|ScopedState|ScopedFamilyState|ScopedSelector)$/,
+            /(State|Selector|ScopedState|ScopedFamilyState|ScopedSelector)$/,
             '',
           );
 
