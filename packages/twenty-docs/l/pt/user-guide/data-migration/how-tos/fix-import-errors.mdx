@@ -71,12 +71,12 @@ Um campo único (email, domínio) pode:
 3. O Twenty atualizará o registo existente em vez de criar um duplicado
 
 <Note>
-  **Também pode atualizar campos únicos.**
+**Também pode atualizar campos únicos.**
 
-  * Se mantiver o `id` mas alterar o `email` → o email será atualizado
-  * Se mantiver o `email` mas alterar o `id` → o id será atualizado
+* Se mantiver o `id` mas alterar o `email` → o email será atualizado
+* Se mantiver o `email` mas alterar o `id` → o id será atualizado
 
-  Desde que um identificador único corresponda, o Twenty atualiza o registo.
+Desde que um identificador único corresponda, o Twenty atualiza o registo.
 </Note>
 
 ### Como prevenir este erro
@@ -88,9 +88,9 @@ Antes de importar:
 3. Verifique se os registos já existem no Twenty
 
 <Warning>
-  **Registos eliminados logicamente contam para a unicidade.**
+**Registos eliminados logicamente contam para a unicidade.**
 
-  Verifique o Menu de Comandos → Ver registos eliminados. Os registos lá continuam a impor a unicidade. Elimine-os permanentemente ou restaure e atualize.
+Verifique o Menu de Comandos → Ver registos eliminados. Os registos lá continuam a impor a unicidade. Elimine-os permanentemente ou restaure e atualize.
 </Warning>
 
 Para mais detalhes: [Restrições de Unicidade](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -296,9 +296,9 @@ Está a tentar ligar a um registo que não existe no Twenty.
    * Verifique erros de digitação e sensibilidade a maiúsculas/minúsculas
 
 <Warning>
-  **A importação falhará se for feita referência a um registo inexistente.**
+**A importação falhará se for feita referência a um registo inexistente.**
 
-  Importe sempre os objetos pai antes dos objetos filho.
+Importe sempre os objetos pai antes dos objetos filho.
 </Warning>
 
 Para mais detalhes: [Importação de Relações](/l/pt/user-guide/data-migration/capabilities/import-relations)
@@ -372,9 +372,9 @@ Está a tentar atribuir um registo a um utilizador (Proprietário, Responsável)
 3. Use o mesmo email que utilizaram para aderir ao Twenty
 
 <Warning>
-  **Os utilizadores devem aceitar os convites antes de importar.**
+**Os utilizadores devem aceitar os convites antes de importar.**
 
-  Se um utilizador não tiver aceite o convite, os registos que o referenciem terão relações de utilizador vazias.
+Se um utilizador não tiver aceite o convite, os registos que o referenciem terão relações de utilizador vazias.
 </Warning>
 
 ---
