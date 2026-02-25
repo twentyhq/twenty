@@ -2,6 +2,7 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { isBulkRecordsManualTrigger } from '@/action-menu/actions/record-actions/utils/isBulkRecordsManualTrigger';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -40,7 +41,7 @@ export const useRunWorkflowRecordActions = ({
 
   const isPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
-    recordIndexId,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const selectedRecordIds =

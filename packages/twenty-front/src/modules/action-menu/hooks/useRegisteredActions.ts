@@ -8,7 +8,6 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,11 +31,9 @@ export const useRegisteredActions = (
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
-
   const isFullTabWidgetInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
-    recordIndexId,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const viewType = getActionViewType(
