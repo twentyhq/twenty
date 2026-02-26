@@ -285,10 +285,10 @@ const createDefaultPreInstallFunction = async ({
 }) => {
   const universalIdentifier = v4();
 
-  const content = `import { definePreInstallLogicFunction } from 'twenty-sdk';
+  const content = `import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
 
-const handler = async (): Promise<void> => {
-  console.log('Pre install logic function executed successfully!');
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
 };
 
 export default definePreInstallLogicFunction({
@@ -315,10 +315,10 @@ const createDefaultPostInstallFunction = async ({
 }) => {
   const universalIdentifier = v4();
 
-  const content = `import { definePostInstallLogicFunction } from 'twenty-sdk';
+  const content = `import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
 
-const handler = async (): Promise<void> => {
-  console.log('Post install logic function executed successfully!');
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
 export default definePostInstallLogicFunction({

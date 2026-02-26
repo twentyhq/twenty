@@ -498,10 +498,10 @@ When you scaffold a new app with `create-twenty-app`, a pre-install function is 
 
 ```typescript
 // src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction } from 'twenty-sdk';
+import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
 
-const handler = async (): Promise<void> => {
-  console.log('Pre install logic function executed successfully!');
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
 };
 
 export default definePreInstallLogicFunction({
@@ -521,6 +521,7 @@ yarn twenty function:execute --preInstall
 
 Key points:
 - Pre-install functions use `definePreInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+- The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
 - Only one pre-install function is allowed per application. The manifest build will error if more than one is detected.
 - The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
 - The default timeout is set to 300 seconds (5 minutes) to allow for longer preparation tasks.
@@ -534,10 +535,10 @@ When you scaffold a new app with `create-twenty-app`, a post-install function is
 
 ```typescript
 // src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
 
-const handler = async (): Promise<void> => {
-  console.log('Post install logic function executed successfully!');
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
 export default definePostInstallLogicFunction({
@@ -557,6 +558,7 @@ yarn twenty function:execute --postInstall
 
 Key points:
 - Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+- The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
 - Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
 - The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
 - The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.

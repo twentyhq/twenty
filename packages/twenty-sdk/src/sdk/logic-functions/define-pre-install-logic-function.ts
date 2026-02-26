@@ -3,7 +3,7 @@ import { type InstallLogicFunctionHandler } from '@/sdk/logic-functions/install-
 import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
 import type { DefineEntity } from '@/sdk/common/types/define-entity.type';
 
-export const definePostInstallLogicFunction: DefineEntity<
+export const definePreInstallLogicFunction: DefineEntity<
   Omit<
     LogicFunctionConfig,
     | 'cronTriggerSettings'
@@ -18,15 +18,15 @@ export const definePostInstallLogicFunction: DefineEntity<
   const errors = [];
 
   if (!config.universalIdentifier) {
-    errors.push('Post install logic function must have a universalIdentifier');
+    errors.push('Pre install logic function must have a universalIdentifier');
   }
 
   if (!config.handler) {
-    errors.push('Post install logic function must have a handler');
+    errors.push('Pre install logic function must have a handler');
   }
 
   if (typeof config.handler !== 'function') {
-    errors.push('Post install logic function handler must be a function');
+    errors.push('Pre install logic function handler must be a function');
   }
 
   return createValidationResult({

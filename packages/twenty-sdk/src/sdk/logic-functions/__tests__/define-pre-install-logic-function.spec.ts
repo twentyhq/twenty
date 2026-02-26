@@ -1,4 +1,4 @@
-import { definePostInstallLogicFunction } from '@/sdk/logic-functions/define-post-install-logic-function';
+import { definePreInstallLogicFunction } from '@/sdk/logic-functions/define-pre-install-logic-function';
 import { type InstallLogicFunctionPayload } from '@/sdk/logic-functions/install-logic-function-payload-type';
 
 const mockHandler = async (payload: InstallLogicFunctionPayload) => ({
@@ -6,7 +6,7 @@ const mockHandler = async (payload: InstallLogicFunctionPayload) => ({
   previousVersion: payload.previousVersion,
 });
 
-describe('definePostInstallLogicFunction', () => {
+describe('definePreInstallLogicFunction', () => {
   const validRouteConfig = {
     universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
     name: 'Send Postcard',
@@ -14,7 +14,7 @@ describe('definePostInstallLogicFunction', () => {
   };
 
   it('should return the config when valid with route trigger', () => {
-    const result = definePostInstallLogicFunction(validRouteConfig);
+    const result = definePreInstallLogicFunction(validRouteConfig);
 
     expect(result.config).toEqual(validRouteConfig);
   });
@@ -26,7 +26,7 @@ describe('definePostInstallLogicFunction', () => {
       timeoutSeconds: 30,
     };
 
-    const result = definePostInstallLogicFunction(config as any);
+    const result = definePreInstallLogicFunction(config as any);
 
     expect(result.config.description).toBe('Send a postcard to a contact');
     expect(result.config.timeoutSeconds).toBe(30);
@@ -37,11 +37,11 @@ describe('definePostInstallLogicFunction', () => {
       name: 'Send Postcard',
       handler: mockHandler,
     };
-    const result = definePostInstallLogicFunction(config as any);
+    const result = definePreInstallLogicFunction(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Post install logic function must have a universalIdentifier',
+      'Pre install logic function must have a universalIdentifier',
     );
   });
 
@@ -51,11 +51,11 @@ describe('definePostInstallLogicFunction', () => {
       name: 'Send Postcard',
     };
 
-    const result = definePostInstallLogicFunction(config as any);
+    const result = definePreInstallLogicFunction(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Post install logic function must have a handler',
+      'Pre install logic function must have a handler',
     );
   });
 
@@ -66,11 +66,11 @@ describe('definePostInstallLogicFunction', () => {
       handler: 'not-a-function',
     };
 
-    const result = definePostInstallLogicFunction(config as any);
+    const result = definePreInstallLogicFunction(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
-      'Post install logic function handler must be a function',
+      'Pre install logic function handler must be a function',
     );
   });
 });
