@@ -1,6 +1,6 @@
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { ACTION_MENU_CONFIRMATION_MODAL_ID } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
 import { actionMenuConfirmationModalState } from '@/action-menu/confirmation-modal/states/actionMenuConfirmationModalState';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -10,7 +10,7 @@ export const ActionMenuConfirmationModalManager = () => {
   const actionMenuConfirmationModal = useAtomStateValue(
     actionMenuConfirmationModalState,
   );
-  const isOpen = useAtomComponentStateValue(
+  const isConfirmationModalOpen = useAtomComponentStateValue(
     isModalOpenedComponentState,
     ACTION_MENU_CONFIRMATION_MODAL_ID,
   );
@@ -30,7 +30,7 @@ export const ActionMenuConfirmationModalManager = () => {
     setActionMenuConfirmationModalState(null);
   };
 
-  if (!actionMenuConfirmationModal || !isOpen) {
+  if (!actionMenuConfirmationModal || !isConfirmationModalOpen) {
     return null;
   }
 
