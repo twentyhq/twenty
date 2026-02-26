@@ -120,15 +120,7 @@ export const EmailMessageAttachments = ({
               <StyledLeftContent>
                 <FileIcon fileCategory={fileCategory} />
                 <StyledLinkContainer>
-                  <StyledLink
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      downloadAttachment(attachment.id, attachment.name);
-                    }}
-                  >
-                    <OverflowingTextWithTooltip text={attachment.name} />
-                  </StyledLink>
+                  <OverflowingTextWithTooltip text={attachment.name} />
                 </StyledLinkContainer>
               </StyledLeftContent>
             </ActivityRow>

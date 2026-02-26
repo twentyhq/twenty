@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { MessageAttachmentController } from 'src/modules/messaging/message-attachment-manager/controllers/message-attachment.controller';
@@ -13,6 +14,7 @@ import { MessagingIMAPDriverModule } from 'src/modules/messaging/message-import-
 @Module({
   imports: [
     TokenModule,
+    ThrottlerModule,
     WorkspaceCacheStorageModule,
     OAuth2ClientManagerModule,
     MessagingIMAPDriverModule,

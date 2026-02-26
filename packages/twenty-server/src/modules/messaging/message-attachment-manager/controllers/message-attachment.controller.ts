@@ -1,14 +1,19 @@
 import {
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   NotFoundException,
   Param,
+  PayloadTooLargeException,
   Res,
   UseGuards,
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import { isDefined } from 'twenty-shared/utils';
 
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -30,7 +35,7 @@ export class MessageAttachmentController {
     @Res() res: Response,
   ) {
     try {
-      const { content, filename, mimeType } =
+      const { stream, filename, mimeType, size } =
         await this.messagingAttachmentDownloadService.download(
           id,
           workspace.id,
@@ -41,10 +46,28 @@ export class MessageAttachmentController {
         'Content-Disposition',
         `attachment; filename="${encodeURIComponent(filename)}"`,
       );
-      res.send(content);
+
+      if (isDefined(size)) {
+        res.setHeader('Content-Length', String(size));
+      }
+
+      stream.on('error', () => {
+        if (!res.headersSent) {
+          res.status(500).send('Error streaming attachment');
+        }
+      });
+
+      stream.pipe(res);
     } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof PayloadTooLargeException
+      ) {
         throw error;
+      }
+
+      if (error instanceof ThrottlerException) {
+        throw new HttpException(error.message, HttpStatus.TOO_MANY_REQUESTS);
       }
 
       throw new NotFoundException('Attachment could not be downloaded');
