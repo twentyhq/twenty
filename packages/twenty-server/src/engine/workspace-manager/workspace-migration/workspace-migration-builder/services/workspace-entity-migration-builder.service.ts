@@ -343,7 +343,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       return [
         {
           code: FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
-          message: `Invalid universalIdentifier: "${universalIdentifier}" is not a valid UUID v4`,
+          message: `Invalid universalIdentifier: "${universalIdentifier}" is not a valid UUID, uuid version should be greater than 4`,
           value: universalIdentifier,
         },
       ];
