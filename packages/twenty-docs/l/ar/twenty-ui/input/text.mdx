@@ -20,27 +20,27 @@ import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
   const handleChange = (text) => {
-    console.log("تم تغيير الإدخال:", text);
+    console.log("Input changed:", text);
   };
 
   const handleKeyDown = (event) => {
-    console.log("تم ضغط المفتاح:", event.key);
+    console.log("Key pressed:", event.key);
   };
 
   return (
-      <TextInput
-        className
-        label="اسم المستخدم"
-        onChange={handleChange}
-        fullWidth={false}
-        disableHotkeys={false}
-        error="اسم مستخدم غير صالح"
-        onKeyDown={handleKeyDown}
-        RightIcon={null}
-      />
+    <TextInput
+      className
+      label="Username"
+      onChange={handleChange}
+      fullWidth={false}
+      disableHotkeys={false}
+      error="Invalid username"
+      onKeyDown={handleKeyDown}
+      RightIcon={null}
+    />
   );
 };
-},{
+
 ```
 
 
@@ -82,17 +82,17 @@ import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
 export const MyComponent = () => {
   return (
-      <AutosizeTextInput
-        onValidate={() => console.log("تم تشغيل الدالة onValidate")}
-        minRows={1}
-        placeholder="اكتب تعليقًا"
-        onFocus={() => console.log("تم تشغيل الدالة onFocus")}
-        variant="icon"
-        buttonTitle
-        value="المهمة: "
-      />
+    <AutosizeTextInput
+      onValidate={() => console.log("onValidate function fired")}
+      minRows={1}
+      placeholder="Write a comment"
+      onFocus={() => console.log("onFocus function fired")}
+      variant="icon"
+      buttonTitle
+      value="Task: "
+    />
   );
-};},{
+};
 ```
 
 

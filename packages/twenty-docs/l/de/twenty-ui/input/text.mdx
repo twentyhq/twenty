@@ -28,16 +28,16 @@ export const MyComponent = () => {
   };
 
   return (
-      <TextInput
-        className
-        label="Username"
-        onChange={handleChange}
-        fullWidth={false}
-        disableHotkeys={false}
-        error="Invalid username"
-        onKeyDown={handleKeyDown}
-        RightIcon={null}
-      />
+    <TextInput
+      className
+      label="Username"
+      onChange={handleChange}
+      fullWidth={false}
+      disableHotkeys={false}
+      error="Invalid username"
+      onKeyDown={handleKeyDown}
+      RightIcon={null}
+    />
   );
 };
 
@@ -82,15 +82,15 @@ import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
 export const MyComponent = () => {
   return (
-      <AutosizeTextInput
-        onValidate={() => console.log("onValidate function fired")}
-        minRows={1}
-        placeholder="Write a comment"
-        onFocus={() => console.log("onFocus function fired")}
-        variant="icon"
-        buttonTitle
-        value="Task: "
-      />
+    <AutosizeTextInput
+      onValidate={() => console.log("onValidate function fired")}
+      minRows={1}
+      placeholder="Write a comment"
+      onFocus={() => console.log("onFocus function fired")}
+      variant="icon"
+      buttonTitle
+      value="Task: "
+    />
   );
 };
 ```

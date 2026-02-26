@@ -19,6 +19,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   termsUrl?: string;
   preInstallLogicFunctionUniversalIdentifier?: string;
   postInstallLogicFunctionUniversalIdentifier?: string;
+  settingsCustomTabFrontComponentUniversalIdentifier?: string;
   packageJsonChecksum: string | null;
   yarnLockChecksum: string | null;
   apiClientChecksum: string | null;

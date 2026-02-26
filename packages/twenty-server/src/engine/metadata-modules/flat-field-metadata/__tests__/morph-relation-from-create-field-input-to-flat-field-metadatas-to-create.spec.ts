@@ -36,6 +36,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   logicFunctionLayerId: null,
   defaultRoleId: null,
   defaultRole: null,
+  settingsCustomTabFrontComponentId: null,
   canBeUninstalled: false,
   applicationRegistrationId: null,
   createdAt: new Date(),

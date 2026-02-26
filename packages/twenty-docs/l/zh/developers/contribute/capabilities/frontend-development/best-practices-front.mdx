@@ -6,9 +6,9 @@ title: 最佳实践
 
 ## 状态管理
 
-React 和 Jotai 在代码库中处理状态管理。
+React and Jotai handle state management in the codebase.
 
-### 使用 `useAtomState` 来存储状态
+### Use Jotai atoms to store state
 
 根据需要创建足够多的原子来存储你的状态，是一种良好实践。
 
@@ -45,7 +45,7 @@ export const MyComponent = () => {
 
 避免使用 `useRef` 来存储状态。
 
-如果想存储状态，应该使用 `useState` 或 `useAtomState`。
+If you want to store state, you should use `useState` or Jotai atoms with `useAtomState`.
 
 如果您觉得需要通过使用 `useRef` 来防止一些再渲染，请了解[如何管理再渲染](#managing-re-renders)。
 
@@ -82,8 +82,8 @@ If you feel like you need to add a `useEffect` in your root component, you shoul
 对于数据获取逻辑也可以采用相同的方法，使用 Apollo hooks。
 
 ```tsx
-// ❌ 不佳：即使数据未发生变化也会导致重新渲染，
-//    因为需要重新评估 useEffect
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -103,8 +103,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ 良好：如果数据未发生变化，将不会导致重新渲染，
-//   因为 useEffect 会在另一个同级组件中重新评估
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 
@@ -132,9 +132,9 @@ export const App = () => (
 );
 ```
 
-### 使用 Jotai 状态族和 Jotai 选择器族
+### Use atom family states and selectors
 
-Jotai 状态族和选择器族是避免再渲染的好方法。
+Atom family states and selectors are a great way to avoid re-renders.
 
 当您需要存储项目列表时，它们很有用。
 
