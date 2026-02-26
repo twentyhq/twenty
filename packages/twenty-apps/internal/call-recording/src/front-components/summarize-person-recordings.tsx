@@ -21,39 +21,30 @@ const SummarizePersonRecordings = () => {
 
     const client = new Twenty();
 
-    const personResult: any = await client.query({
-      person: {
+    const result: any = await client.query({
+      callRecordings: {
         __args: {
-          filter: { id: { eq: personRecordId } },
+          filter: { personId: { eq: personRecordId } },
         },
-        id: true,
-        callRecordingId: true,
+        edges: {
+          node: {
+            id: true,
+            name: true,
+            summary: { markdown: true },
+            createdAt: true,
+          },
+        },
       },
     });
 
-    const callRecordingId = personResult?.person?.callRecordingId;
+    const recordings =
+      result?.callRecordings?.edges?.map(
+        (edge: any) => edge.node,
+      ) ?? [];
 
-    if (!isDefined(callRecordingId)) {
-      throw new Error('No call recording linked to this person');
+    if (!recordings.length) {
+      throw new Error('No call recordings linked to this person');
     }
-
-    const { callRecording }: any = await client.query({
-      callRecording: {
-        __args: {
-          filter: { id: { eq: callRecordingId } },
-        },
-        id: true,
-        name: true,
-        summary: { markdown: true },
-        createdAt: true,
-      },
-    });
-
-    if (!isDefined(callRecording)) {
-      throw new Error('Call recording not found');
-    }
-
-    const recordings = [callRecording];
 
     const summariesText = recordings
       .map(
@@ -63,12 +54,12 @@ const SummarizePersonRecordings = () => {
       .join('\n\n---\n\n');
 
     const prompt = [
-      `Here is the summary of the latest call recording linked to this person:`,
+      `Here are the summaries of ${recordings.length} call recording(s) linked to this person:`,
       '',
       summariesText,
       '',
       'Using the "Call Transcript Summarization" skill as a guide for structure,',
-      'generate a detailed summary of this call.',
+      'generate a detailed summary of these calls.',
       'Highlight key themes, action items, and any risks or opportunities.',
     ].join('\n');
 

@@ -9,14 +9,15 @@ export default defineField({
   universalIdentifier: PEOPLE_ON_CALL_RECORDING_ID,
   objectUniversalIdentifier: CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
   type: FieldType.RELATION,
-  name: 'people',
-  label: 'People',
+  name: 'person',
+  label: 'Person',
   relationTargetObjectMetadataUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   relationTargetFieldMetadataUniversalIdentifier:
     CALL_RECORDING_ON_PERSON_ID,
   universalSettings: {
-    relationType: RelationType.ONE_TO_MANY,
+    relationType: RelationType.MANY_TO_ONE,
+    joinColumnName: 'personId',
   },
   icon: 'IconUser',
 });

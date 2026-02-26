@@ -109,10 +109,10 @@ export const matchParticipants = async (
       );
 
       await client.mutation({
-        updateWorkspaceMember: {
+        updateCallRecording: {
           __args: {
-            id: workspaceMemberId,
-            data: { callRecordingId },
+            id: callRecordingId,
+            data: { workspaceMemberId },
           },
           id: true,
         },
@@ -129,10 +129,10 @@ export const matchParticipants = async (
       );
 
       await client.mutation({
-        updatePerson: {
+        updateCallRecording: {
           __args: {
-            id: personId,
-            data: { callRecordingId },
+            id: callRecordingId,
+            data: { personId },
           },
           id: true,
         },

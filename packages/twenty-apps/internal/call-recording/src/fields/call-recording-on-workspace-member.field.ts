@@ -9,14 +9,13 @@ export default defineField({
   universalIdentifier: CALL_RECORDING_ON_WORKSPACE_MEMBER_ID,
   objectUniversalIdentifier: '20202020-3319-4234-a34c-82d5c0e881a6',
   type: FieldType.RELATION,
-  name: 'callRecording',
-  label: 'Call Recording',
+  name: 'callRecordings',
+  label: 'Call Recordings',
   relationTargetObjectMetadataUniversalIdentifier:
     CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier:
     WORKSPACE_MEMBERS_ON_CALL_RECORDING_ID,
   universalSettings: {
-    relationType: RelationType.MANY_TO_ONE,
-    joinColumnName: 'callRecordingId',
+    relationType: RelationType.ONE_TO_MANY,
   },
 });

@@ -11,14 +11,13 @@ export default defineField({
   universalIdentifier: CALL_RECORDING_ON_PERSON_ID,
   objectUniversalIdentifier: '20202020-e674-48e5-a542-72570eee7213',
   type: FieldType.RELATION,
-  name: 'callRecording',
-  label: 'Call Recording',
+  name: 'callRecordings',
+  label: 'Call Recordings',
   relationTargetObjectMetadataUniversalIdentifier:
     CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier:
     PEOPLE_ON_CALL_RECORDING_ID,
   universalSettings: {
-    relationType: RelationType.MANY_TO_ONE,
-    joinColumnName: 'callRecordingId',
+    relationType: RelationType.ONE_TO_MANY,
   },
 });
