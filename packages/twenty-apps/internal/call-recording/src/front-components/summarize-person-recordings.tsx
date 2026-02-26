@@ -8,7 +8,7 @@ import {
   openAskAIWithPrompt,
   useRecordId,
 } from 'twenty-sdk';
-import Twenty from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/generated';
 import { isDefined } from 'twenty-shared/utils';
 
 const SummarizePersonRecordings = () => {
@@ -19,7 +19,7 @@ const SummarizePersonRecordings = () => {
       throw new Error('No person record selected');
     }
 
-    const client = new Twenty();
+    const client = new CoreApiClient();
 
     const result: any = await client.query({
       callRecordings: {

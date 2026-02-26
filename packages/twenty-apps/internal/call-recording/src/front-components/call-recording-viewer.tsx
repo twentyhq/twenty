@@ -19,7 +19,7 @@ export const CallRecordingViewer = () => {
   } = useTranscript(transcriptFileUrl);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return;
   }
 
   if (isDefined(error)) {
@@ -32,11 +32,11 @@ export const CallRecordingViewer = () => {
   const recordingFileExtension = recordingFile?.extension;
 
   if (!isDefined(recordingFileUrl)) {
-    throw new Error('Recording file url not found');
+    return;
   }
 
   if (!isDefined(recordingFileExtension)) {
-    throw new Error('Recording file extension not found');
+    return;
   }
 
   return (

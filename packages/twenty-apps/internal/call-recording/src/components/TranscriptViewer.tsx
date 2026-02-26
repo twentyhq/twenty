@@ -8,11 +8,6 @@ type TranscriptViewerProps = {
   currentTimeSeconds: number;
 };
 
-const StyledEmptyState = styled.div`
-  padding: 16px;
-  color: #888;
-`;
-
 const StyledTranscriptContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -68,7 +63,7 @@ export const TranscriptViewer = ({
   );
 
   if (entries.length === 0) {
-    return <StyledEmptyState>No transcript available.</StyledEmptyState>;
+    return;
   }
 
   return (

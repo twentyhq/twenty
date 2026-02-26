@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRecordId } from 'twenty-sdk';
-import Twenty from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/generated';
 import { isDefined } from 'twenty-shared/utils';
 
 type CallRecording = {
@@ -10,6 +10,7 @@ type CallRecording = {
   endedAt: string | null;
   recordingFile: Array<{ fileId: string; label: string; url: string | null; extension: string | null }>;
   transcriptFile: Array<{ fileId: string; label: string; url: string | null; extension: string | null }>;
+  summary: { markdown: string | null } | null;
 };
 
 export const useCallRecording = () => {
@@ -35,7 +36,7 @@ export const useCallRecording = () => {
         setLoading(true);
         setError(null);
 
-        const client = new Twenty();
+        const client = new CoreApiClient();
 
         const { callRecording } = await client.query({
           callRecording: {
@@ -58,6 +59,9 @@ export const useCallRecording = () => {
               url: true,
               extension: true,
             },
+            summary: {
+              markdown: true,
+            },
           },
         });
 
@@ -78,6 +82,9 @@ export const useCallRecording = () => {
             url: file.url ?? null,
             extension: file.extension ?? null,
           })) ?? [],
+          summary: callRecording?.summary
+            ? { markdown: callRecording.summary.markdown ?? null }
+            : null,
         });
       } catch (fetchError) {
         if (fetchError instanceof Error) {

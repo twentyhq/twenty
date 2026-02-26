@@ -8,7 +8,7 @@ import {
 } from 'src/utils/match-participants';
 import { summarizeTranscript } from 'src/utils/summarize-transcript';
 import { defineLogicFunction } from 'twenty-sdk';
-import Twenty from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/generated';
 import { z } from 'zod';
 
 interface EndRecordingBody {
@@ -76,7 +76,7 @@ const downloadFile = async (
 };
 
 const processTranscript = async (
-  client: InstanceType<typeof Twenty>,
+  client: InstanceType<typeof CoreApiClient>,
   transcriptUrl: string | undefined,
 ): Promise<
   | {
@@ -119,7 +119,7 @@ const handler = async (event: any) => {
     throw new Error('Missing audioUrl in request body');
   }
 
-  const client = new Twenty();
+  const client = new CoreApiClient();
 
   const { callRecording } = await client.query({
     callRecording: {

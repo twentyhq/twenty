@@ -1,3 +1,4 @@
+import { CALL_RECORDING_SUMMARY_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-summary-viewer-front-component-universal-identifier';
 import { CALL_RECORDING_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-viewer-front-component-universal-identifier';
 import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
@@ -8,6 +9,25 @@ export default definePageLayout({
   type: 'RECORD_PAGE',
   objectUniversalIdentifier: CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [
+    {
+      universalIdentifier: 'e6b2d8f4-7a13-4c59-b2e1-9d4f0c8a3b67',
+      title: 'Summary',
+      position: 50,
+      icon: 'IconSparkles',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'e5c93fce-76b4-41e9-9c5d-9b17e034366c',
+          title: 'Summary',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              CALL_RECORDING_SUMMARY_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
     {
       universalIdentifier: 'c4f8e2a6-3d71-4b95-8e0c-1a9f6d5b7c34',
       title: 'Transcript',
@@ -35,7 +55,7 @@ export default definePageLayout({
       layoutMode: PageLayoutTabLayoutMode.CANVAS,
       widgets: [
         {
-          universalIdentifier: 'a8d2c6e0-7b15-4f39-c240-5e3d0b9f1a78',
+          universalIdentifier: '23c87a9c-25e3-4e83-84d9-02fb1a6fde76',
           title: 'Timeline',
           type: 'TIMELINE',
           configuration: {
@@ -45,14 +65,14 @@ export default definePageLayout({
       ],
     },
     {
-      universalIdentifier: 'b9e3d7f1-8c26-4a40-d351-6f4e1c0a2b89',
+      universalIdentifier: '498e47e5-bed1-4492-a08d-b12b7ff40ed9',
       title: 'Tasks',
       position: 300,
       icon: 'IconCheckbox',
       layoutMode: PageLayoutTabLayoutMode.CANVAS,
       widgets: [
         {
-          universalIdentifier: 'c0f4e8a2-9d37-4b51-e462-7a5f2d1b3c90',
+          universalIdentifier: 'ae93482f-384f-42a8-9c06-6bc14b10da6a',
           title: 'Tasks',
           type: 'TASKS',
           configuration: {
@@ -62,7 +82,7 @@ export default definePageLayout({
       ],
     },
     {
-      universalIdentifier: 'd1a5f9b3-0e48-4c62-f573-8b6a3e2c4d01',
+      universalIdentifier: 'c111ccf0-b95b-4333-b2bc-a7a9da40f913',
       title: 'Notes',
       position: 400,
       icon: 'IconNotes',
@@ -86,7 +106,7 @@ export default definePageLayout({
       layoutMode: PageLayoutTabLayoutMode.CANVAS,
       widgets: [
         {
-          universalIdentifier: 'a4d8c2e6-3b71-4f95-c8a6-1e9d6b5f7a34',
+          universalIdentifier: 'a17bf74a-a7ff-48a0-8628-3fd905539c8d',
           title: 'Files',
           type: 'FILES',
           configuration: {

@@ -1,4 +1,4 @@
-import Twenty from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/generated';
 
 export interface Participant {
   id: string;
@@ -18,7 +18,7 @@ const parseName = (
 };
 
 const findWorkspaceMember = async (
-  client: InstanceType<typeof Twenty>,
+  client: InstanceType<typeof CoreApiClient>,
   firstName: string,
   lastName: string,
 ): Promise<string | null> => {
@@ -47,7 +47,7 @@ const findWorkspaceMember = async (
 };
 
 const findPerson = async (
-  client: InstanceType<typeof Twenty>,
+  client: InstanceType<typeof CoreApiClient>,
   firstName: string,
   lastName: string,
 ): Promise<string | null> => {
@@ -85,7 +85,7 @@ export const matchParticipants = async (
     return;
   }
 
-  const client = new Twenty();
+  const client = new CoreApiClient();
 
   for (const participant of participants) {
     const { firstName, lastName } = parseName(participant.name);
