@@ -20,21 +20,21 @@ import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
   const handleChange = (text) => {
-    console.log("Input changed:", text);
+    console.log("Textul introdus s-a schimbat:", text);
   };
 
   const handleKeyDown = (event) => {
-    console.log("Key pressed:", event.key);
+    console.log("Tastă apăsată:", event.key);
   };
 
   return (
     <TextInput
       className
-      label="Username"
+      label="Nume de utilizator"
       onChange={handleChange}
       fullWidth={false}
       disableHotkeys={false}
-      error="Invalid username"
+      error="Nume de utilizator nevalid"
       onKeyDown={handleKeyDown}
       RightIcon={null}
     />
@@ -83,13 +83,13 @@ import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 export const MyComponent = () => {
   return (
     <AutosizeTextInput
-      onValidate={() => console.log("onValidate function fired")}
+      onValidate={() => console.log("funcția onValidate a fost declanșată")}
       minRows={1}
-      placeholder="Write a comment"
-      onFocus={() => console.log("onFocus function fired")}
+      placeholder="Scrie un comentariu"
+      onFocus={() => console.log("funcția onFocus a fost declanșată")}
       variant="icon"
       buttonTitle
-      value="Task: "
+      value="Sarcină: "
     />
   );
 };
