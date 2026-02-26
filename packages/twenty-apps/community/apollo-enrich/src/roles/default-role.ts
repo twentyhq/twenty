@@ -11,4 +11,5 @@ export default defineRole({
   canUpdateAllObjectRecords: true,
   canSoftDeleteAllObjectRecords: true,
   canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: true,
 });

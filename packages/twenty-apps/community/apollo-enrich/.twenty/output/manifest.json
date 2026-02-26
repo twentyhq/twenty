@@ -4,6 +4,7 @@
     "displayName": "Apollo enrichment",
     "description": "Data enrichment with Apollo to keep your data accurate",
     "defaultRoleUniversalIdentifier": "b8faae3f-e174-43fa-ab94-715712ae26cb",
+    "settingsCustomTabFrontComponentUniversalIdentifier": "50d59f7c-eada-4731-aacd-8e45371e1040",
     "applicationVariables": {
       "APOLLO_CLIENT_ID": {
         "universalIdentifier": "5852219e-7757-463e-9e7c-80980203794c",
@@ -34,11 +35,23 @@
         "isSecret": false,
         "value": "",
         "description": "Apollo registered URL"
+      },
+      "APOLLO_ACCESS_TOKEN": {
+        "universalIdentifier": "672a6fce-5565-43bc-9a3b-7f2c33620771",
+        "isSecret": true,
+        "value": "",
+        "description": "Apollo access token"
+      },
+      "APOLLO_REFRESH_TOKEN": {
+        "universalIdentifier": "672a6fce-5565-43bc-9a3b-7f2c33620772",
+        "isSecret": true,
+        "value": "",
+        "description": "Apollo refresh token"
       }
     },
     "yarnLockChecksum": "0d2353a6658e57eb832d0f924f07b2ff",
     "packageJsonChecksum": "e5b55760981dea090642b5dffb00904f",
-    "apiClientChecksum": "87772bb0b06ba8792f14151a068940da",
+    "apiClientChecksum": null,
     "preInstallLogicFunctionUniversalIdentifier": "af7cd86e-149e-466a-8d60-312b6e46d604",
     "postInstallLogicFunctionUniversalIdentifier": "08292efc-d7ba-4ec3-ab95-e7c33bd3a3bc"
   },
@@ -52,7 +65,8 @@
       "canReadAllObjectRecords": true,
       "canUpdateAllObjectRecords": true,
       "canSoftDeleteAllObjectRecords": true,
-      "canDestroyAllObjectRecords": false
+      "canDestroyAllObjectRecords": false,
+      "canUpdateAllSettings": true
     }
   ],
   "skills": [],
@@ -74,7 +88,7 @@
       "handlerName": "default.config.handler",
       "sourceHandlerPath": "src/logic-functions/get-authentication-token-pairs.ts",
       "builtHandlerPath": "src/logic-functions/get-authentication-token-pairs.mjs",
-      "builtHandlerChecksum": "ba8cd2ded79a72b96755f689c1b9c4d6"
+      "builtHandlerChecksum": "86d735241ac01ef5b459eca0dbcee09d"
     },
     {
       "universalIdentifier": "b7c3e8f1-9d4a-4e2b-8f6c-1a5d3e7b9c2f",
@@ -112,7 +126,7 @@
       "handlerName": "default.config.handler",
       "sourceHandlerPath": "src/logic-functions/get-verify-page.ts",
       "builtHandlerPath": "src/logic-functions/get-verify-page.mjs",
-      "builtHandlerChecksum": "ed60dee42b098ff23964249d9338233a"
+      "builtHandlerChecksum": "96632e6c4e25a6b27ba09938b8ffa19d"
     },
     {
       "universalIdentifier": "08292efc-d7ba-4ec3-ab95-e7c33bd3a3bc",
@@ -151,7 +165,7 @@
       "componentName": "ApolloOAuthCta",
       "sourceComponentPath": "src/front-components/apollo-oauth-cta.tsx",
       "builtComponentPath": "src/front-components/apollo-oauth-cta.mjs",
-      "builtComponentChecksum": "92c08f88ad8ae00ae6fc52cf17e9d197",
+      "builtComponentChecksum": "9b81d28047401ff1665e11664810e2ee",
       "isHeadless": false
     }
   ],

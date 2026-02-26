@@ -348,6 +348,7 @@ export interface Application {
     availablePackages: Scalars['JSON']
     canBeUninstalled: Scalars['Boolean']
     defaultRoleId?: Scalars['String']
+    settingsCustomTabFrontComponentId?: Scalars['UUID']
     defaultLogicFunctionRole?: Role
     agents: Agent[]
     logicFunctions: LogicFunction[]
@@ -3080,6 +3081,7 @@ export interface ApplicationGenqlSelection{
     availablePackages?: boolean | number
     canBeUninstalled?: boolean | number
     defaultRoleId?: boolean | number
+    settingsCustomTabFrontComponentId?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
     agents?: AgentGenqlSelection
     logicFunctions?: LogicFunctionGenqlSelection
