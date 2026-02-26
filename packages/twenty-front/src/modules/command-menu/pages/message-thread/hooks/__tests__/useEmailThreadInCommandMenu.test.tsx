@@ -1,7 +1,10 @@
 import { renderHook, waitFor } from '@testing-library/react';
 
+import { fetchAllThreadMessagesOperationSignatureFactory } from '@/activities/emails/graphql/operation-signatures/factories/fetchAllThreadMessagesOperationSignatureFactory';
+import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import gql from 'graphql-tag';
 import {
   QUERY_DEFAULT_LIMIT_RECORDS,
@@ -10,7 +13,39 @@ import {
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+const messageMetadataItem = getMockObjectMetadataItemOrThrow('message');
+const messageParticipantMetadataItem =
+  getMockObjectMetadataItemOrThrow('messageParticipant');
+
+const messageOperationSignature =
+  fetchAllThreadMessagesOperationSignatureFactory({
+    messageThreadId: '1',
+  });
+
+const findManyMessagesQuery = generateFindManyRecordsQuery({
+  objectMetadataItem: messageMetadataItem,
+  objectMetadataItems: generatedMockObjectMetadataItems,
+  recordGqlFields: messageOperationSignature.fields,
+  objectPermissionsByObjectMetadataId: {},
+});
+
+const findManyMessageParticipantsQuery = generateFindManyRecordsQuery({
+  objectMetadataItem: messageParticipantMetadataItem,
+  objectMetadataItems: generatedMockObjectMetadataItems,
+  recordGqlFields: {
+    id: true,
+    role: true,
+    displayName: true,
+    messageId: true,
+    handle: true,
+    person: true,
+    workspaceMember: true,
+  },
+  objectPermissionsByObjectMetadataId: {},
+});
 
 const mocks = [
   {
@@ -36,129 +71,7 @@ const mocks = [
   },
   {
     request: {
-      query: gql`
-        query FindManyMessages(
-          $filter: MessageFilterInput
-          $orderBy: [MessageOrderByInput]
-          $lastCursor: String
-          $limit: Int
-          $offset: Int
-        ) {
-          messages(
-            filter: $filter
-            orderBy: $orderBy
-            first: $limit
-            after: $lastCursor
-            offset: $offset
-          ) {
-            edges {
-              node {
-                __typename
-                createdAt
-                headerMessageId
-                id
-                messageParticipants {
-                  edges {
-                    node {
-                      __typename
-                      displayName
-                      handle
-                      id
-                      person {
-                        __typename
-                        avatarUrl
-                        city
-                        companyId
-                        createdAt
-                        createdBy {
-                          source
-                          workspaceMemberId
-                          name
-                          context
-                        }
-                        deletedAt
-                        emails {
-                          primaryEmail
-                          additionalEmails
-                        }
-                        id
-                        intro
-                        jobTitle
-                        linkedinLink {
-                          primaryLinkUrl
-                          primaryLinkLabel
-                          secondaryLinks
-                        }
-                        name {
-                          firstName
-                          lastName
-                        }
-                        performanceRating
-                        phones {
-                          primaryPhoneNumber
-                          primaryPhoneCountryCode
-                          primaryPhoneCallingCode
-                          additionalPhones
-                        }
-                        position
-                        updatedAt
-                        whatsapp {
-                          primaryPhoneNumber
-                          primaryPhoneCountryCode
-                          primaryPhoneCallingCode
-                          additionalPhones
-                        }
-                        workPreference
-                        xLink {
-                          primaryLinkUrl
-                          primaryLinkLabel
-                          secondaryLinks
-                        }
-                      }
-                      role
-                      workspaceMember {
-                        __typename
-                        avatarUrl
-                        colorScheme
-                        createdAt
-                        dateFormat
-                        deletedAt
-                        id
-                        locale
-                        name {
-                          firstName
-                          lastName
-                        }
-                        position
-                        timeFormat
-                        timeZone
-                        updatedAt
-                        userEmail
-                        userId
-                      }
-                    }
-                  }
-                }
-                messageThread {
-                  __typename
-                  id
-                }
-                receivedAt
-                subject
-                text
-              }
-              cursor
-            }
-            pageInfo {
-              hasNextPage
-              hasPreviousPage
-              startCursor
-              endCursor
-            }
-            totalCount
-          }
-        }
-      `,
+      query: findManyMessagesQuery,
       variables: {
         filter: { messageThreadId: { eq: '1' } },
         orderBy: [{ receivedAt: 'AscNullsLast' }],
@@ -206,113 +119,7 @@ const mocks = [
   },
   {
     request: {
-      query: gql`
-        query FindManyMessageParticipants(
-          $filter: MessageParticipantFilterInput
-          $orderBy: [MessageParticipantOrderByInput]
-          $lastCursor: String
-          $limit: Int
-          $offset: Int
-        ) {
-          messageParticipants(
-            filter: $filter
-            orderBy: $orderBy
-            first: $limit
-            after: $lastCursor
-            offset: $offset
-          ) {
-            edges {
-              node {
-                __typename
-                displayName
-                handle
-                id
-                messageId
-                person {
-                  __typename
-                  avatarUrl
-                  city
-                  companyId
-                  createdAt
-                  createdBy {
-                    source
-                    workspaceMemberId
-                    name
-                    context
-                  }
-                  deletedAt
-                  emails {
-                    primaryEmail
-                    additionalEmails
-                  }
-                  id
-                  intro
-                  jobTitle
-                  linkedinLink {
-                    primaryLinkUrl
-                    primaryLinkLabel
-                    secondaryLinks
-                  }
-                  name {
-                    firstName
-                    lastName
-                  }
-                  performanceRating
-                  phones {
-                    primaryPhoneNumber
-                    primaryPhoneCountryCode
-                    primaryPhoneCallingCode
-                    additionalPhones
-                  }
-                  position
-                  updatedAt
-                  whatsapp {
-                    primaryPhoneNumber
-                    primaryPhoneCountryCode
-                    primaryPhoneCallingCode
-                    additionalPhones
-                  }
-                  workPreference
-                  xLink {
-                    primaryLinkUrl
-                    primaryLinkLabel
-                    secondaryLinks
-                  }
-                }
-                role
-                workspaceMember {
-                  __typename
-                  avatarUrl
-                  colorScheme
-                  createdAt
-                  dateFormat
-                  deletedAt
-                  id
-                  locale
-                  name {
-                    firstName
-                    lastName
-                  }
-                  position
-                  timeFormat
-                  timeZone
-                  updatedAt
-                  userEmail
-                  userId
-                }
-              }
-              cursor
-            }
-            pageInfo {
-              hasNextPage
-              hasPreviousPage
-              startCursor
-              endCursor
-            }
-            totalCount
-          }
-        }
-      `,
+      query: findManyMessageParticipantsQuery,
       variables: {
         filter: {
           messageId: { in: ['1', '2'] },

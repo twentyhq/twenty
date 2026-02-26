@@ -15,16 +15,17 @@ export const RecordTableRecordGroupSectionLoadMore = () => {
   const { fetchMoreRecordsLazy } =
     useRecordIndexTableFetchMore(objectNameSingular);
 
-  const hasFetchedAllRecords = useAtomComponentFamilyStateValue(
-    recordIndexHasFetchedAllRecordsByGroupComponentState,
-    currentRecordGroupId,
-  );
+  const recordIndexHasFetchedAllRecordsByGroup =
+    useAtomComponentFamilyStateValue(
+      recordIndexHasFetchedAllRecordsByGroupComponentState,
+      currentRecordGroupId,
+    );
 
   const handleLoadMore = () => {
     fetchMoreRecordsLazy();
   };
 
-  if (hasFetchedAllRecords) {
+  if (recordIndexHasFetchedAllRecordsByGroup) {
     return null;
   }
 

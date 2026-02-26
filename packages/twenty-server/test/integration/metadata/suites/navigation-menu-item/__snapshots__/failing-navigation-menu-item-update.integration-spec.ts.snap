@@ -22,7 +22,7 @@ exports[`NavigationMenuItem update should fail when updating with empty id 1`] =
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID: 'not-a-valid-uuid'",
+  "message": "Invalid UUID: ''",
   "name": "ValidationError",
 }
 `;
@@ -67,7 +67,7 @@ exports[`NavigationMenuItem update should fail when updating with missing id 1`]
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID: 'not-a-valid-uuid'",
+  "message": "Invalid UUID: ''",
   "name": "ValidationError",
 }
 `;

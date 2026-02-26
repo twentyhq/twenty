@@ -14,8 +14,10 @@ export const MultipleRecordPickerSearchInput = () => {
     MultipleRecordPickerComponentInstanceContext,
   );
 
-  const [recordPickerSearchFilter, setRecordPickerSearchFilter] =
-    useAtomComponentState(multipleRecordPickerSearchFilterComponentState);
+  const [
+    multipleRecordPickerSearchFilter,
+    setMultipleRecordPickerSearchFilter,
+  ] = useAtomComponentState(multipleRecordPickerSearchFilterComponentState);
 
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
@@ -43,13 +45,13 @@ export const MultipleRecordPickerSearchInput = () => {
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSearchFilter = event.currentTarget.value;
-    setRecordPickerSearchFilter(newSearchFilter);
+    setMultipleRecordPickerSearchFilter(newSearchFilter);
     debouncedSearch(newSearchFilter);
   };
 
   return (
     <DropdownMenuSearchInput
-      value={recordPickerSearchFilter}
+      value={multipleRecordPickerSearchFilter}
       onChange={handleFilterChange}
       autoFocus
     />

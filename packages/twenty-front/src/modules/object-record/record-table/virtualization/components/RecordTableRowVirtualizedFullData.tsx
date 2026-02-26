@@ -27,12 +27,12 @@ export const RecordTableRowVirtualizedFullData = ({
 }: RecordTableRowVirtualizedFullDataProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isFocused = useAtomComponentFamilyStateValue(
+  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
     isRecordTableRowFocusedComponentFamilyState,
     realIndex,
   );
 
-  const isRowFocusActive = useAtomComponentStateValue(
+  const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
     recordTableId,
   );
@@ -52,7 +52,7 @@ export const RecordTableRowVirtualizedFullData = ({
       draggableIndex={realIndex}
       focusIndex={realIndex}
     >
-      {isRowFocusActive && isFocused && (
+      {isRecordTableRowFocusActive && isRecordTableRowFocused && (
         <>
           <RecordTableRowHotkeyEffect />
           <RecordTableRowArrowKeysEffect />

@@ -27,12 +27,12 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
 
   const store = useStore();
 
-  const recordIndexFilters = useAtomComponentStateValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
     recordIndexId,
   );
 
-  const recordIndexFilterGroups = useAtomComponentStateValue(
+  const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
     recordIndexId,
   );
@@ -173,8 +173,8 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
 
   useEffect(() => {
     store.set(syncWriteAtom, {
-      filters: recordIndexFilters,
-      filterGroups: recordIndexFilterGroups,
+      filters: currentRecordFilters,
+      filterGroups: currentRecordFilterGroups,
       anyFieldFilterValue,
     });
 
@@ -182,8 +182,8 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
       store.set(resetWriteAtom);
     };
   }, [
-    recordIndexFilters,
-    recordIndexFilterGroups,
+    currentRecordFilters,
+    currentRecordFilterGroups,
     anyFieldFilterValue,
     store,
     syncWriteAtom,

@@ -52,7 +52,7 @@ export const useRecordGroupReorderConfirmationModal = ({
     recordIndexId,
   );
 
-  const [, setRecordGroupSort] = useAtomComponentState(
+  const [, setRecordIndexRecordGroupSort] = useAtomComponentState(
     recordIndexRecordGroupSortComponentState,
   );
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
@@ -73,7 +73,7 @@ export const useRecordGroupReorderConfirmationModal = ({
       throw new Error('pendingDragEndReorder is not set');
     }
 
-    setRecordGroupSort(RecordGroupSort.Manual);
+    setRecordIndexRecordGroupSort(RecordGroupSort.Manual);
     setPendingDragEndHandlerParams(null);
     handleDragEnd(...pendingDragEndHandlerParams);
     goBackToPreviousDropdownFocusId();

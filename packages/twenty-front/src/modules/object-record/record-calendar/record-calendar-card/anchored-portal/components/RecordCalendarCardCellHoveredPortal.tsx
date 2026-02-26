@@ -18,14 +18,17 @@ export const RecordCalendarCardCellHoveredPortal = ({
 }: RecordCalendarCardCellHoveredPortalProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
-  const hoverPosition = useAtomComponentStateValue(
+  const recordCalendarCardHoverPosition = useAtomComponentStateValue(
     recordCalendarCardHoverPositionComponentState,
   );
 
   const { hoveredFieldMetadataItem } =
     useRecordCalendarCardMetadataFromPosition();
 
-  if (!isDefined(hoverPosition) || !isDefined(hoveredFieldMetadataItem)) {
+  if (
+    !isDefined(recordCalendarCardHoverPosition) ||
+    !isDefined(hoveredFieldMetadataItem)
+  ) {
     return null;
   }
 

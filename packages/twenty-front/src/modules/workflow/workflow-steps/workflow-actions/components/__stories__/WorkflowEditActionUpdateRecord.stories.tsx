@@ -21,18 +21,7 @@ const DEFAULT_ACTION = {
       objectName: 'person',
       objectRecordId: '',
       objectRecord: {},
-      fieldsToUpdate: [
-        'updatedAt',
-        'averageEstimatedNumberOfAtomsInTheUniverse',
-        'comments',
-        'createdAt',
-        'deletedAt',
-        'name',
-        'participants',
-        'percentageOfCompletion',
-        'score',
-        'shortNotes',
-      ],
+      fieldsToUpdate: ['city', 'emails', 'jobTitle', 'name', 'phones'],
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -107,7 +96,7 @@ export const DisabledWithEmptyValues: Story = {
 
     const firstSelectedUpdatableField = await within(
       await canvas.findByTestId('workflow-fields-multi-select'),
-    ).findByText('Creation date');
+    ).findByText('City');
 
     await userEvent.click(firstSelectedUpdatableField);
 
@@ -164,7 +153,7 @@ export const DisabledWithDefaultStaticValues: Story = {
 
     const firstSelectedUpdatableField = await within(
       await canvas.findByTestId('workflow-fields-multi-select'),
-    ).findByText('Creation date');
+    ).findByText('City');
 
     await userEvent.click(firstSelectedUpdatableField);
 
@@ -215,7 +204,7 @@ export const DisabledWithDefaultVariableValues: Story = {
 
     const firstSelectedUpdatableField = await within(
       await canvas.findByTestId('workflow-fields-multi-select'),
-    ).findByText('Creation date');
+    ).findByText('City');
 
     await userEvent.click(firstSelectedUpdatableField);
 

@@ -61,17 +61,17 @@ export const PageLayoutVerticalListEditor = ({
     isInRightDrawer,
   });
 
-  const setDraggingWidgetId = useSetAtomComponentState(
+  const setPageLayoutDraggingWidgetId = useSetAtomComponentState(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
   return (
     <DragDropContext
       onDragStart={(result) => {
-        setDraggingWidgetId(result.draggableId);
+        setPageLayoutDraggingWidgetId(result.draggableId);
       }}
       onDragEnd={(result) => {
-        setDraggingWidgetId(null);
+        setPageLayoutDraggingWidgetId(null);
         onReorder(result);
       }}
     >

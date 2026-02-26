@@ -10,7 +10,7 @@ import { settingsPersistedRoleFamilyState } from '~/modules/settings/roles/state
 export const SettingsRoleEdit = () => {
   const { roleId } = useParams();
 
-  const persistedRole = useAtomFamilyStateValue(
+  const settingsPersistedRole = useAtomFamilyStateValue(
     settingsPersistedRoleFamilyState,
     roleId ?? '',
   );
@@ -19,7 +19,7 @@ export const SettingsRoleEdit = () => {
     return <Navigate to={getSettingsPath(SettingsPath.Roles)} />;
   }
 
-  const isCreateMode = !isDefined(persistedRole?.id);
+  const isCreateMode = !isDefined(settingsPersistedRole?.id);
 
   return (
     <>

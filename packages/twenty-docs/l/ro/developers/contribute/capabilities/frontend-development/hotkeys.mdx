@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Intern, domeniul selectat în prezent este stocat într-o stare Recoil care este partajată în toată aplicația:
+Intern, domeniul selectat în prezent este stocat într-o stare Jotai care este partajată în toată aplicația:
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-Însă această stare Recoil nu ar trebui să fie gestionată manual! Vom vedea cum să o folosim în secțiunea următoare.
+Însă această stare Jotai nu ar trebui să fie gestionată manual! Vom vedea cum să o folosim în secțiunea următoare.
 
 ## Cum funcționează intern?
 
 Am făcut un wrapper subțire peste [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) care îl face mai performant și evită re-rendările inutile.
 
-De asemenea, creăm o stare Recoil pentru a gestiona starea domeniului comenzilor rapide și să fie disponibilă oriunde în aplicație.
+De asemenea, creăm o stare Jotai pentru a gestiona starea domeniului comenzilor rapide și să fie disponibilă oriunde în aplicație.

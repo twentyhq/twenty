@@ -30,7 +30,7 @@ export const BarChartTooltip = ({
   onMouseEnter,
   onMouseLeave,
 }: BarChartTooltipProps) => {
-  const tooltipState = useAtomComponentStateValue(
+  const graphWidgetBarTooltip = useAtomComponentStateValue(
     graphWidgetBarTooltipComponentState,
   );
 
@@ -41,27 +41,27 @@ export const BarChartTooltip = ({
 
   const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
     ? () => {
-        if (isDefined(tooltipState)) {
-          onSliceClick(tooltipState.slice);
+        if (isDefined(graphWidgetBarTooltip)) {
+          onSliceClick(graphWidgetBarTooltip.slice);
         }
       }
     : undefined;
 
-  const tooltipData = !isDefined(tooltipState)
+  const tooltipData = !isDefined(graphWidgetBarTooltip)
     ? null
     : getBarChartTooltipData({
-        slice: tooltipState.slice,
+        slice: graphWidgetBarTooltip.slice,
         dataByIndexValue,
         enrichedKeys,
         formatOptions,
       });
 
-  const reference = !isDefined(tooltipState)
+  const reference = !isDefined(graphWidgetBarTooltip)
     ? null
     : createVirtualElementFromContainerOffset(
         containerElement,
-        tooltipState.offsetLeft,
-        tooltipState.offsetTop,
+        graphWidgetBarTooltip.offsetLeft,
+        graphWidgetBarTooltip.offsetTop,
       );
 
   return (

@@ -49,7 +49,7 @@ export const MainContextStoreProvider = () => {
   const viewIdQueryParam = searchParams.get('viewId');
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-  const viewsEntry = useAtomFamilyStateValue(metadataStoreState, 'views');
+  const metadataStore = useAtomFamilyStateValue(metadataStoreState, 'views');
   const coreViews = useAtomStateValue(coreViewsState);
 
   const objectMetadataItem = objectMetadataItems.find(
@@ -76,7 +76,7 @@ export const MainContextStoreProvider = () => {
   const shouldComputeContextStore =
     (isRecordIndexPage || isRecordShowPage || isSettingsPage) &&
     !showAuthModal &&
-    viewsEntry.status === 'up-to-date';
+    metadataStore.status === 'up-to-date';
 
   if (!shouldComputeContextStore) {
     return null;

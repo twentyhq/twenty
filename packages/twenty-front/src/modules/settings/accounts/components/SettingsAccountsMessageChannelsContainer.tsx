@@ -31,7 +31,7 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID,
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const setSelectedMessageChannel = useSetAtomState(
+  const setSettingsAccountsSelectedMessageChannel = useSetAtomState(
     settingsAccountsSelectedMessageChannelState,
   );
 
@@ -68,7 +68,7 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     },
     recordGqlFields,
     onCompleted: (data) => {
-      setSelectedMessageChannel(data[0]);
+      setSettingsAccountsSelectedMessageChannel(data[0]);
     },
     skip: !accounts.length,
   });
@@ -84,10 +84,10 @@ export const SettingsAccountsMessageChannelsContainer = () => {
         (channel) => channel.id === tabId,
       );
       if (isDefined(selectedMessageChannel)) {
-        setSelectedMessageChannel(selectedMessageChannel);
+        setSettingsAccountsSelectedMessageChannel(selectedMessageChannel);
       }
     },
-    [messageChannels, setSelectedMessageChannel],
+    [messageChannels, setSettingsAccountsSelectedMessageChannel],
   );
 
   if (!messageChannels.length) {

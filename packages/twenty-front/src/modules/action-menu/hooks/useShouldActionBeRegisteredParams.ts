@@ -98,7 +98,7 @@ export const useShouldActionBeRegisteredParams = ({
     useAtomComponentStateValue(contextStoreCurrentViewTypeComponentState) ===
     ContextStoreViewType.ShowPage;
 
-  const numberOfSelectedRecords = useAtomComponentStateValue(
+  const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
@@ -159,7 +159,7 @@ export const useShouldActionBeRegisteredParams = ({
     isShowPage,
     isSelectAll,
     selectedRecord,
-    numberOfSelectedRecords,
+    numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
     viewType: viewType ?? undefined,
     getTargetObjectReadPermission: getObjectReadPermission,
     getTargetObjectWritePermission: getObjectWritePermission,

@@ -9,7 +9,7 @@ import { getRolesMock } from '~/testing/mock-data/roles';
 const SettingsRoleAssignmentWrapper = (
   args: React.ComponentProps<typeof SettingsRoleAssignment>,
 ) => {
-  const setDraftRole = useSetAtomFamilyState(
+  const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
     args.roleId,
   );
@@ -17,7 +17,7 @@ const SettingsRoleAssignmentWrapper = (
   const role = getRolesMock().find((role) => role.id === args.roleId);
 
   if (isDefined(role)) {
-    setDraftRole(role);
+    setSettingsDraftRole(role);
   }
 
   return <SettingsRoleAssignment roleId={args.roleId} />;

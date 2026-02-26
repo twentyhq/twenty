@@ -14,7 +14,7 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
 
   const { setColorScheme, colorScheme, colorSchemeList } = useColorScheme();
 
-  const setMultiWorkspaceDropdownState = useSetAtomState(
+  const setMultiWorkspaceDropdown = useSetAtomState(
     multiWorkspaceDropdownState,
   );
 
@@ -23,7 +23,7 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
-            onClick={() => setMultiWorkspaceDropdownState('default')}
+            onClick={() => setMultiWorkspaceDropdown('default')}
             Icon={IconChevronLeft}
           />
         }

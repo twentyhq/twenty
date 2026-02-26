@@ -7,14 +7,14 @@ import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreV
 import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyCurrentViewSortsToCurrentRecordSorts = () => {
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
   const currentView = useAtomFamilySelectorValue(
     coreViewFromViewIdFamilySelector,
     {
-      viewId: currentViewId ?? '',
+      viewId: contextStoreCurrentViewId ?? '',
     },
   );
 

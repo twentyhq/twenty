@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordSortEffect = () => {
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -20,7 +20,7 @@ export const ViewBarRecordSortEffect = () => {
   const currentView = useAtomFamilySelectorValue(
     coreViewFromViewIdFamilySelector,
     {
-      viewId: currentViewId ?? '',
+      viewId: contextStoreCurrentViewId ?? '',
     },
   );
 
@@ -30,7 +30,7 @@ export const ViewBarRecordSortEffect = () => {
   ] = useAtomComponentFamilyState(
     hasInitializedCurrentRecordSortsComponentFamilyState,
     {
-      viewId: currentViewId ?? undefined,
+      viewId: contextStoreCurrentViewId ?? undefined,
     },
   );
 

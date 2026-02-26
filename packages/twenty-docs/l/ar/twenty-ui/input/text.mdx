@@ -16,7 +16,6 @@ image: /images/user-guide/notes/notes_header.png
 <Tab title="27332A2E2F2745">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
@@ -29,7 +28,6 @@ export const MyComponent = () => {
   };
 
   return (
-    <RecoilRoot>
       <TextInput
         className
         label="اسم المستخدم"
@@ -40,7 +38,6 @@ export const MyComponent = () => {
         onKeyDown={handleKeyDown}
         RightIcon={null}
       />
-    </RecoilRoot>
   );
 };
 },{
@@ -81,12 +78,10 @@ export const MyComponent = () => {
 <Tab title="الاستخدام">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
 export const MyComponent = () => {
   return (
-    <RecoilRoot>
       <AutosizeTextInput
         onValidate={() => console.log("تم تشغيل الدالة onValidate")}
         minRows={1}
@@ -96,7 +91,6 @@ export const MyComponent = () => {
         buttonTitle
         value="المهمة: "
       />
-    </RecoilRoot>
   );
 };},{
 ```

@@ -55,7 +55,7 @@ export const RecordBoardContainer = ({
       ...args,
     });
 
-  const isRecordIndexRemoveSortingModalOpened = useAtomComponentStateValue(
+  const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     RECORD_INDEX_REMOVE_SORTING_MODAL_ID,
   );
@@ -80,9 +80,7 @@ export const RecordBoardContainer = ({
         value={{ instanceId: recordBoardId }}
       >
         <RecordBoard />
-        {isRecordIndexRemoveSortingModalOpened && (
-          <RecordIndexRemoveSortingModal />
-        )}
+        {isModalOpened && <RecordIndexRemoveSortingModal />}
         <RecordBoardHotkeyEffect />
         <RecordBoardBodyEscapeHotkeyEffect />
       </RecordBoardComponentInstanceContext.Provider>

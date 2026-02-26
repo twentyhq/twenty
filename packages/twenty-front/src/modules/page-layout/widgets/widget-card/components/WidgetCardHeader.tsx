@@ -90,7 +90,7 @@ export const WidgetCardHeader = ({
 }: WidgetCardHeaderProps) => {
   const theme = useTheme();
 
-  const isWidgetCardHovered = useAtomComponentFamilyStateValue(
+  const widgetCardHovered = useAtomComponentFamilyStateValue(
     widgetCardHoveredComponentFamilyState,
     widgetId,
   );
@@ -123,7 +123,7 @@ export const WidgetCardHeader = ({
             isInEditMode &&
             isDeletingWidgetEnabled &&
             onRemove &&
-            isWidgetCardHovered && (
+            widgetCardHovered && (
               <StyledIconButtonContainer
                 initial={{ width: 0, opacity: 0 }}
                 animate={{ width: 'auto', opacity: 1 }}

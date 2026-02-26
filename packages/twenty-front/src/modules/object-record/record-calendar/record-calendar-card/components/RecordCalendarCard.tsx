@@ -36,7 +36,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
   const { currentView } = useGetCurrentViewOnly();
 
   const isCompactModeActive = currentView?.isCompact ?? false;
-  const [isCurrentCardSelected, setIsCurrentCardSelected] =
+  const [isRecordCalendarCardSelected, setIsRecordCalendarCardSelected] =
     useAtomComponentFamilyState(
       isRecordCalendarCardSelectedComponentFamilyState,
       recordId,
@@ -51,7 +51,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
   const actionMenuDropdownId =
     getActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
-  const setActionMenuDropdownPosition = useSetAtomComponentState(
+  const setRecordIndexActionMenuDropdownPosition = useSetAtomComponentState(
     recordIndexActionMenuDropdownPositionComponentState,
     actionMenuDropdownId,
   );
@@ -60,8 +60,8 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
 
   const handleContextMenuOpen = (event: React.MouseEvent) => {
     event.preventDefault();
-    setIsCurrentCardSelected(true);
-    setActionMenuDropdownPosition({
+    setIsRecordCalendarCardSelected(true);
+    setRecordIndexActionMenuDropdownPosition({
       x: event.clientX,
       y: event.clientY,
     });
@@ -85,7 +85,7 @@ export const RecordCalendarCard = ({ recordId }: RecordCalendarCardProps) => {
       >
         <StyledContainer onContextMenu={handleContextMenuOpen}>
           <StyledRecordCard
-            data-selected={isCurrentCardSelected}
+            data-selected={isRecordCalendarCardSelected}
             data-click-outside-id={RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID}
           >
             <RecordCalendarCardHeader recordId={recordId} />

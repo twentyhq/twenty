@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyCurrentViewAnyFieldFilterToAnyFieldFilter = () => {
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -21,14 +21,14 @@ export const useApplyCurrentViewAnyFieldFilterToAnyFieldFilter = () => {
   const applyCurrentViewAnyFieldFilterToAnyFieldFilter = useCallback(() => {
     const currentView = store.get(
       coreViewFromViewIdFamilySelector.selectorFamily({
-        viewId: currentViewId ?? '',
+        viewId: contextStoreCurrentViewId ?? '',
       }),
     );
 
     if (isDefined(currentView)) {
       setAnyFieldFilterValue(currentView.anyFieldFilterValue ?? '');
     }
-  }, [currentViewId, setAnyFieldFilterValue, store]);
+  }, [contextStoreCurrentViewId, setAnyFieldFilterValue, store]);
 
   return {
     applyCurrentViewAnyFieldFilterToAnyFieldFilter,

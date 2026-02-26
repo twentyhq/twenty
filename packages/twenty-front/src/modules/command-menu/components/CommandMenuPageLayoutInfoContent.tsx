@@ -30,17 +30,19 @@ export const CommandMenuPageLayoutInfoContent = ({
   const commandMenuPage = useAtomStateValue(commandMenuPageState);
   const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
 
-  const [shouldFocusTitleInput, setShouldFocusTitleInput] =
-    useAtomComponentState(
-      commandMenuShouldFocusTitleInputComponentState,
-      commandMenuPageInfo.instanceId,
-    );
+  const [
+    commandMenuShouldFocusTitleInput,
+    setCommandMenuShouldFocusTitleInput,
+  ] = useAtomComponentState(
+    commandMenuShouldFocusTitleInputComponentState,
+    commandMenuPageInfo.instanceId,
+  );
 
   const handleTitleInputOpen = () => {
-    setShouldFocusTitleInput(false);
+    setCommandMenuShouldFocusTitleInput(false);
   };
 
-  const draftPageLayout = useAtomComponentStateValue(
+  const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
@@ -50,7 +52,7 @@ export const CommandMenuPageLayoutInfoContent = ({
     pageLayoutId,
   );
 
-  const [openTabId] = useAtomComponentState(
+  const [pageLayoutTabSettingsOpenTabId] = useAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
@@ -63,9 +65,9 @@ export const CommandMenuPageLayoutInfoContent = ({
 
   const headerInfo = usePageLayoutHeaderInfo({
     commandMenuPage,
-    draftPageLayout,
+    draftPageLayout: pageLayoutDraft,
     pageLayoutEditingWidgetId,
-    openTabId,
+    openTabId: pageLayoutTabSettingsOpenTabId,
     editedTitle,
   });
 
@@ -136,7 +138,7 @@ export const CommandMenuPageLayoutInfoContent = ({
           onClickOutside={saveTitle}
           onTab={saveTitle}
           onShiftTab={saveTitle}
-          shouldFocus={shouldFocusTitleInput}
+          shouldFocus={commandMenuShouldFocusTitleInput}
           onFocus={handleTitleInputOpen}
         />
       }

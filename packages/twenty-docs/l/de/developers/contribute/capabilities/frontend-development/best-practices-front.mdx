@@ -6,9 +6,9 @@ Dieses Dokument beschreibt die besten Praktiken, die Sie beim Arbeiten am Fronte
 
 ## Zustandsverwaltung
 
-React und Recoil übernehmen die Zustandsverwaltung im Code.
+React und Jotai übernehmen die Zustandsverwaltung im Code.
 
-### Verwenden Sie `useRecoilState`, um den Zustand zu speichern.
+### Verwenden Sie `useAtomState`, um den Zustand zu speichern.
 
 Es ist eine gute Praxis, so viele Atome zu erstellen, wie Sie benötigen, um Ihren Zustand zu speichern.
 
@@ -19,13 +19,16 @@ Es ist besser, zusätzliche Atome zu verwenden, als zu versuchen, mit Prop Drill
 </Warning>
 
 ```tsx
-export const myAtomState = atom({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
   key: 'myAtomState',
-  default: 'default value',
+  defaultValue: 'default value',
 });
 
 export const MyComponent = () => {
-  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+  const [myAtom, setMyAtom] = useAtomState(myAtomState);
 
   return (
     <div>
@@ -42,7 +45,7 @@ export const MyComponent = () => {
 
 Vermeiden Sie die Verwendung von `useRef`, um den Zustand zu speichern.
 
-If you want to store state, you should use `useState` or `useRecoilState`.
+If you want to store state, you should use `useState` or `useAtomState`.
 
 Sehen Sie sich [an, wie Re-Renderings verwaltet werden können](#managing-re-renders), falls Sie das Gefühl haben, dass Sie `useRef` benötigen, um einige Re-Renderings zu verhindern.
 
@@ -82,8 +85,8 @@ Dasselbe können Sie auch für die Datenabruflogik mit Apollo-Hooks anwenden.
 // ❌ Bad, will cause re-renders even if data is not changing,
 //    because useEffect needs to be re-evaluated
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -95,9 +98,7 @@ export const PageComponent = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
-    <PageComponent />
-  </RecoilRoot>
+  <PageComponent />
 );
 ```
 
@@ -105,14 +106,14 @@ export const App = () => (
 // ✅ Good, will not cause re-renders if data is not changing,
 //   because useEffect is re-evaluated in another sibling component
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
+  const [data, setData] = useAtomState(dataState);
 
   return <div>{data}</div>;
 };
 
 export const PageData = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -124,16 +125,16 @@ export const PageData = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
+  <>
     <PageData />
     <PageComponent />
-  </RecoilRoot>
+  </>
 );
 ```
 
-### Verwenden Sie Recoil-Familienzustände und Recoil-Familienselektoren
+### Verwenden Sie Jotai-Familienzustände und Jotai-Familienselektoren
 
-Recoil-Familienzustände und -Selektoren sind eine großartige Möglichkeit, Re-Renders zu vermeiden.
+Jotai-Familienzustände und -Selektoren sind eine großartige Möglichkeit, Re-Renders zu vermeiden.
 
 Sie sind nützlich, wenn Sie eine Liste von Elementen speichern müssen.
 

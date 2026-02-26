@@ -9,15 +9,15 @@ export const useChildStepFiltersAndChildStepFilterGroups = ({
 }: {
   stepFilterGroupId: string;
 }) => {
-  const stepFilterGroups = useAtomComponentStateValue(
+  const currentStepFilterGroups = useAtomComponentStateValue(
     currentStepFilterGroupsComponentState,
   );
 
-  const stepFilters = useAtomComponentStateValue(
+  const currentStepFilters = useAtomComponentStateValue(
     currentStepFiltersComponentState,
   );
 
-  const currentStepFilterGroup = stepFilterGroups?.find(
+  const currentStepFilterGroup = currentStepFilterGroups?.find(
     (stepFilterGroup) => stepFilterGroup.id === stepFilterGroupId,
   );
 
@@ -33,11 +33,11 @@ export const useChildStepFiltersAndChildStepFilterGroups = ({
     };
   }
 
-  const childStepFilters = stepFilters?.filter(
+  const childStepFilters = currentStepFilters?.filter(
     (filter) => filter.stepFilterGroupId === currentStepFilterGroup.id,
   );
 
-  const childStepFilterGroups = stepFilterGroups?.filter(
+  const childStepFilterGroups = currentStepFilterGroups?.filter(
     (filterGroup) =>
       filterGroup.parentStepFilterGroupId === currentStepFilterGroup.id,
   );

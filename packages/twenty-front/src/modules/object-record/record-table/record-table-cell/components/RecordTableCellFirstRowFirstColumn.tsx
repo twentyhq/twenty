@@ -33,19 +33,21 @@ export const RecordTableCellFirstRowFirstColumn = ({
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
-  const hoverPosition = useAtomComponentStateValue(
+  const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 
-  const focusPosition = useAtomComponentStateValue(
+  const recordTableFocusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
   );
 
   const isFocusPortalOnThisCell =
-    focusPosition?.column === 0 && focusPosition.row === 0;
+    recordTableFocusPosition?.column === 0 &&
+    recordTableFocusPosition.row === 0;
 
   const isHoveredPortalOnThisCell =
-    hoverPosition?.column === 0 && hoverPosition.row === 0;
+    recordTableHoverPosition?.column === 0 &&
+    recordTableHoverPosition.row === 0;
 
   const [isRecordTableScrolledVertically] = useAtomComponentState(
     isRecordTableScrolledVerticallyComponentState,

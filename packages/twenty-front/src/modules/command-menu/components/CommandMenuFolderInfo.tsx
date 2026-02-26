@@ -27,11 +27,13 @@ export const CommandMenuFolderInfo = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
-  const [shouldFocusTitleInput, setShouldFocusTitleInput] =
-    useAtomComponentState(
-      commandMenuShouldFocusTitleInputComponentState,
-      commandMenuPageInfo.instanceId,
-    );
+  const [
+    commandMenuShouldFocusTitleInput,
+    setCommandMenuShouldFocusTitleInput,
+  ] = useAtomComponentState(
+    commandMenuShouldFocusTitleInputComponentState,
+    commandMenuPageInfo.instanceId,
+  );
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeState,
   );
@@ -106,8 +108,8 @@ export const CommandMenuFolderInfo = () => {
           onClickOutside={handleSave}
           onTab={handleSave}
           onShiftTab={handleSave}
-          shouldFocus={shouldFocusTitleInput}
-          onFocus={() => setShouldFocusTitleInput(false)}
+          shouldFocus={commandMenuShouldFocusTitleInput}
+          onFocus={() => setCommandMenuShouldFocusTitleInput(false)}
         />
       }
     />

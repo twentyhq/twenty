@@ -63,15 +63,15 @@ export const MorphRelationManyToOneFieldInput = () => {
     onCancel?.();
   };
 
-  const layoutDirection = useAtomComponentStateValue(
+  const recordFieldInputLayoutDirection = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 
-  const isLoading = useAtomComponentStateValue(
+  const recordFieldInputLayoutDirectionLoading = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionLoadingComponentState,
   );
 
-  if (isLoading) {
+  if (recordFieldInputLayoutDirectionLoading) {
     return <></>;
   }
 
@@ -95,7 +95,7 @@ export const MorphRelationManyToOneFieldInput = () => {
       objectNameSingulars={objectNameSingulars}
       recordPickerInstanceId={instanceId}
       layoutDirection={
-        layoutDirection === 'downward'
+        recordFieldInputLayoutDirection === 'downward'
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'
       }

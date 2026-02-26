@@ -8,9 +8,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const SeeVersionWorkflowRunSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
-  const workflowRun = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  if (!isDefined(workflowRun) || !isDefined(workflowRun?.workflowVersion?.id)) {
+  if (!isDefined(recordStore) || !isDefined(recordStore?.workflowVersion?.id)) {
     return null;
   }
 
@@ -19,7 +19,7 @@ export const SeeVersionWorkflowRunSingleRecordAction = () => {
       to={AppPath.RecordShowPage}
       params={{
         objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-        objectRecordId: workflowRun.workflowVersion.id,
+        objectRecordId: recordStore.workflowVersion.id,
       }}
     />
   );

@@ -47,7 +47,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
 
       const mockCoreView = mockedCoreViewsData[0];
 
-      const setCurrentViewId = useSetAtomComponentState(
+      const setContextStoreCurrentViewId = useSetAtomComponentState(
         contextStoreCurrentViewIdComponentState,
         MAIN_CONTEXT_STORE_INSTANCE_ID,
       );
@@ -71,12 +71,12 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
 
       useEffect(() => {
         setCoreViews([mockCoreView]);
-        setCurrentViewId(mockCoreView.id);
+        setContextStoreCurrentViewId(mockCoreView.id);
         setCurrentRecordFields(columns);
         setIsLoaded(true);
       }, [
         setCoreViews,
-        setCurrentViewId,
+        setContextStoreCurrentViewId,
         setCurrentRecordFields,
         mockCoreView,
         columns,

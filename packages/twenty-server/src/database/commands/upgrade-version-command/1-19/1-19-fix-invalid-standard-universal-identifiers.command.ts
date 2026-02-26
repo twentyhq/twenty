@@ -9,6 +9,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { STANDARD_AGENT } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-agent.constant';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
+import { STANDARD_SKILL } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-skill.constant';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 const OLD_ROLE_ADMIN_UNIVERSAL_IDENTIFIER =
@@ -431,6 +432,72 @@ const STANDARD_OBJECT_MISMATCHES = [
     oldValue: '4749c4d8-5770-4b2e-4c1d-78a9b70a1a7a',
     newValue: '8678dde9-a804-4a9e-80e3-9af35e471ec5',
   },
+  {
+    table: 'core."fieldMetadata"',
+    column: '"universalIdentifier"',
+    oldValue: '20202020-92d0-1d7f-a126-25ededa6b142',
+    newValue: '20202020-1ecc-4562-84c9-ff3a2f6cce85',
+  },
+  {
+    table: 'core."skill"',
+    column: '"universalIdentifier"',
+    oldValue: '20202020-6155-838a-b64e-44a791fbdc13',
+    newValue: STANDARD_SKILL['workflow-building'].universalIdentifier,
+  },
+  {
+    table: 'core."skill"',
+    column: '"universalIdentifier"',
+    oldValue: '20202020-e225-f5c7-3d56-45feaa36f2e6',
+    newValue: STANDARD_SKILL['data-manipulation'].universalIdentifier,
+  },
+  {
+    table: 'core."skill"',
+    column: '"universalIdentifier"',
+    oldValue: '20202020-398f-0d7a-82db-4f43bc7e7044',
+    newValue: STANDARD_SKILL['dashboard-building'].universalIdentifier,
+  },
+  {
+    table: 'core."skill"',
+    column: '"universalIdentifier"',
+    oldValue: '20202020-c66a-5fed-4a74-46e0b42a6332',
+    newValue: STANDARD_SKILL['metadata-building'].universalIdentifier,
+  },
+  {
+    table: 'core."skill"',
+    column: '"universalIdentifier"',
+    oldValue: '20202020-db75-4fca-6813-4c7db0f964a0',
+    newValue: STANDARD_SKILL.research.universalIdentifier,
+  },
+  {
+    table: 'core."skill"',
+    column: '"universalIdentifier"',
+    oldValue: '20202020-5eb9-e775-cf4e-4f22be7be362',
+    newValue: STANDARD_SKILL['code-interpreter'].universalIdentifier,
+  },
+  {
+    table: 'core."skill"',
+    column: '"universalIdentifier"',
+    oldValue: '20202020-2c7f-5b77-dfa4-494b84752ab7',
+    newValue: STANDARD_SKILL.xlsx.universalIdentifier,
+  },
+  {
+    table: 'core."skill"',
+    column: '"universalIdentifier"',
+    oldValue: '20202020-c3d1-e0c9-2f93-45648b8bbd26',
+    newValue: STANDARD_SKILL.pdf.universalIdentifier,
+  },
+  {
+    table: 'core."skill"',
+    column: '"universalIdentifier"',
+    oldValue: '20202020-6f15-2432-0537-4e23a2efd1cb',
+    newValue: STANDARD_SKILL.docx.universalIdentifier,
+  },
+  {
+    table: 'core."skill"',
+    column: '"universalIdentifier"',
+    oldValue: '20202020-c81b-baf8-5255-4c34bd0eac9b',
+    newValue: STANDARD_SKILL.pptx.universalIdentifier,
+  },
 ];
 
 @Command({
@@ -462,7 +529,7 @@ export class FixInvalidStandardUniversalIdentifiersCommand extends ActiveOrSuspe
 
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Would fix role, agent, and ${STANDARD_OBJECT_MISMATCHES.length} standard object universal identifier mismatches in workspace ${workspaceId}. Skipping.`,
+        `[DRY RUN] Would fix role, agent, skill, and ${STANDARD_OBJECT_MISMATCHES.length} standard object universal identifier mismatches in workspace ${workspaceId}. Skipping.`,
       );
 
       return;

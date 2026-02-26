@@ -6,9 +6,9 @@ Questo documento descrive le migliori pratiche da seguire quando si lavora sul f
 
 ## Gestione dello Stato
 
-React e Recoil gestiscono la gestione dello stato nella base di codice.
+React e Jotai gestiscono la gestione dello stato nella base di codice.
 
-### Usa `useRecoilState` per memorizzare lo stato
+### Usa `useAtomState` per memorizzare lo stato
 
 È buona pratica creare tanti atomi quanti servono per memorizzare il tuo stato.
 
@@ -19,13 +19,16 @@ React e Recoil gestiscono la gestione dello stato nella base di codice.
 </Warning>
 
 ```tsx
-export const myAtomState = atom({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
   key: 'myAtomState',
-  default: 'default value',
+  defaultValue: 'default value',
 });
 
 export const MyComponent = () => {
-  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+  const [myAtom, setMyAtom] = useAtomState(myAtomState);
 
   return (
     <div>
@@ -42,7 +45,7 @@ export const MyComponent = () => {
 
 Evita di usare `useRef` per memorizzare lo stato.
 
-Se vuoi memorizzare lo stato, dovresti usare `useState` o `useRecoilState`.
+Se vuoi memorizzare lo stato, dovresti usare `useState` o `useAtomState`.
 
 Consulta [come gestire i re-render](#managing-re-renders) se senti che hai bisogno di `useRef` per evitare alcuni re-render.
 
@@ -82,8 +85,8 @@ Puoi applicare lo stesso per la logica di recupero dati, con i hook di Apollo.
 // ❌ Sconsigliato, causerà re-render anche se i dati non cambiano,
 //    perché useEffect deve essere ri-eseguito
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -95,9 +98,7 @@ export const PageComponent = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
-    <PageComponent />
-  </RecoilRoot>
+  <PageComponent />
 );
 ```
 
@@ -105,14 +106,14 @@ export const App = () => (
 // ✅ Consigliato, non causerà re-render se i dati non cambiano,
 //   perché useEffect viene ri-eseguito in un altro componente fratello
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
+  const [data, setData] = useAtomState(dataState);
 
   return <div>{data}</div>;
 };
 
 export const PageData = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -124,16 +125,16 @@ export const PageData = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
+  <>
     <PageData />
     <PageComponent />
-  </RecoilRoot>
+  </>
 );
 ```
 
-### Usa stati di famiglia recoil e selettori di famiglia recoil
+### Usa stati di famiglia jotai e selettori di famiglia jotai
 
-Gli stati e i selettori di famiglia Recoil sono un ottimo modo per evitare re-render.
+Gli stati e i selettori di famiglia Jotai sono un ottimo modo per evitare re-render.
 
 Sono utili quando hai bisogno di memorizzare una lista di elementi.
 

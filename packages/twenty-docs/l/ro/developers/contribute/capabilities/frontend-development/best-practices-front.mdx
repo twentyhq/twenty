@@ -6,9 +6,9 @@ Acest document prezintă cele mai bune practici pe care ar trebui să le urmați
 
 ## Managementul stării
 
-React și Recoil se ocupă de managementul stării în cod.
+React și Jotai se ocupă de managementul stării în cod.
 
-### Folosiți `useRecoilState` pentru a stoca starea
+### Folosiți `useAtomState` pentru a stoca starea
 
 Este o bună practică să creezi atâția atomi câți ai nevoie pentru a-ți stoca starea.
 
@@ -19,13 +19,16 @@ Este mai bine să folosești atomi suplimentari decât să încerci să fii prea
 </Warning>
 
 ```tsx
-export const myAtomState = atom({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
   key: 'myAtomState',
-  default: 'default value',
+  defaultValue: 'default value',
 });
 
 export const MyComponent = () => {
-  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+  const [myAtom, setMyAtom] = useAtomState(myAtomState);
 
   return (
     <div>
@@ -42,7 +45,7 @@ export const MyComponent = () => {
 
 Evitați utilizarea `useRef` pentru a stoca starea.
 
-Dacă doriți să stocați starea, ar trebui să folosiți `useState` sau `useRecoilState`.
+Dacă doriți să stocați starea, ar trebui să folosiți `useState` sau `useAtomState`.
 
 Vezi [cum să gestionezi re-randările](#managing-re-renders) dacă ți se pare că ai nevoie de `useRef` pentru a preveni apariția unor re-randări.
 
@@ -82,8 +85,8 @@ Puteți aplica același principiu pentru logica de interogare de date, folosind 
 // ❌ Greșit, va provoca re-randări chiar dacă datele nu se schimbă,
 //    deoarece useEffect trebuie re-evaluat
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -95,9 +98,7 @@ export const PageComponent = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
-    <PageComponent />
-  </RecoilRoot>
+  <PageComponent />
 );
 ```
 
@@ -105,14 +106,14 @@ export const App = () => (
 // ✅ Bun, nu va provoca re-randări dacă datele nu se schimbă,
 //   deoarece useEffect este re-evaluat într-o altă componentă la același nivel
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
+  const [data, setData] = useAtomState(dataState);
 
   return <div>{data}</div>;
 };
 
 export const PageData = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -124,16 +125,16 @@ export const PageData = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
+  <>
     <PageData />
     <PageComponent />
-  </RecoilRoot>
+  </>
 );
 ```
 
-### Folosiți stări de familie și selectoare de familie cu recoil
+### Folosiți stări de familie și selectoare de familie cu jotai
 
-Stările și selectoarele de familie cu recoil sunt o metodă excelentă de a evita re-render-urile.
+Stările și selectoarele de familie cu jotai sunt o metodă excelentă de a evita re-render-urile.
 
 Sunt utile când trebuie să stocați o listă de elemente.
 

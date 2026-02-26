@@ -32,7 +32,7 @@ export const FavoriteFolderPickerEffect = ({
   const { favoriteFolders } = usePrefetchedFavoritesFoldersData();
 
   const { sortedFavorites: favorites } = useFavorites();
-  const setCheckedState = useSetAtomComponentState(
+  const setFavoriteFolderPickerChecked = useSetAtomComponentState(
     favoriteFolderPickerCheckedComponentState,
   );
 
@@ -74,8 +74,8 @@ export const FavoriteFolderPickerEffect = ({
           favorite.recordId === targetId && favorite.forWorkspaceMemberId,
       )
       .map((favorite) => favorite.favoriteFolderId || 'no-folder');
-    setCheckedState(checkedFolderIds);
-  }, [favorites, setCheckedState, record?.id]);
+    setFavoriteFolderPickerChecked(checkedFolderIds);
+  }, [favorites, setFavoriteFolderPickerChecked, record?.id]);
 
   return null;
 };
