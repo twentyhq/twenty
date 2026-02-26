@@ -63,9 +63,6 @@ yarn twenty function:logs
 # Execute a function by name
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execute the pre-install function
-yarn twenty function:execute --preInstall
-
 # Execute the post-install function
 yarn twenty function:execute --postInstall
 
@@ -429,13 +426,12 @@ Notes:
 
 ### Logic function config and entrypoint
 
-Each function file uses `defineLogicFunction()` to export a configuration with a handler and optional triggers.
+Each function file uses `defineLogicFunction()` to export a configuration with a handler and optional trigger settings.
 
 ```typescript
-// src/app/createPostCard.logic-function.ts
-import { defineLogicFunction } from 'twenty-sdk';
-import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+// src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/generated';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -458,42 +454,52 @@ export default defineLogicFunction({
   name: 'create-new-post-card',
   timeoutSeconds: 2,
   handler,
-  triggers: [
-    // Public HTTP route trigger '/s/post-card/create'
-    {
-      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-      type: 'route',
-      path: '/post-card/create',
-      httpMethod: 'GET',
-      isAuthRequired: false,
-    },
-    // Cron trigger (CRON pattern)
-    // {
-    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-    //   type: 'cron',
-    //   pattern: '0 0 1 1 *',
-    // },
-    // Database event trigger
-    // {
-    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-    //   type: 'databaseEvent',
-    //   eventName: 'person.updated',
-    //   updatedFields: ['name'],
-    // },
-  ],
+  // HTTP route trigger — exposes function at /s/post-card/create
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
 });
 ```
 
-Common trigger types:
-- **route**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
-> e.g. `path: '/post-card/create',` -> call on `<APP_URL>/s/post-card/create`
-- **cron**: Runs your function on a schedule using a CRON expression.
-- **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
-> e.g. `person.updated`
+Here is an example with a cron trigger:
+
+```typescript
+export default defineLogicFunction({
+  universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+  name: 'daily-cleanup',
+  handler: cleanupHandler,
+  cronTriggerSettings: {
+    pattern: '0 0 * * *', // Every day at midnight
+  },
+});
+```
+
+And with a database event trigger:
+
+```typescript
+export default defineLogicFunction({
+  universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+  name: 'on-person-updated',
+  handler: personUpdatedHandler,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    updatedFields: ['name'],
+  },
+});
+```
+
+Trigger types:
+- **`httpRouteTriggerSettings`**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
+> e.g. `path: '/post-card/create'` → call on `<APP_URL>/s/post-card/create`
+- **`cronTriggerSettings`**: Runs your function on a schedule using a CRON expression.
+- **`databaseEventTriggerSettings`**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
+> e.g. `eventName: 'person.updated'`
 
 Notes:
-- The `triggers` array is optional. Functions without triggers can be used as utility functions called by other functions.
-- You can mix multiple trigger types in a single function.
+- All trigger settings are optional. Functions without triggers can be used as utility functions called by other functions.
+- Each trigger type is a separate property on the config. A function can have at most one trigger of each type.
 
 ### Pre-install functions
 
@@ -521,16 +527,16 @@ export default definePreInstallLogicFunction({
 You can also manually execute the pre-install function at any time using the CLI:
 
 ```bash filename="Terminal"
-yarn twenty function:execute --preInstall
+yarn twenty function:execute -n pre-install
 ```
 
 Key points:
 - Pre-install functions use `definePreInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
 - The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
 - Only one pre-install function is allowed per application. The manifest build will error if more than one is detected.
-- The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
+- The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build. You can also set it explicitly in `defineApplication()` via the `preInstallLogicFunctionUniversalIdentifier` property.
 - The default timeout is set to 300 seconds (5 minutes) to allow for longer preparation tasks.
-- Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `function:execute --preInstall`.
+- Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `function:execute -n <name>`.
 
 ### Post-install functions
 
@@ -565,7 +571,7 @@ Key points:
 - Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
 - The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
 - Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
-- The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
+- The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to set it in `defineApplication()`.
 - The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
 - Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
 
@@ -630,16 +636,12 @@ export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'webhook-handler',
   handler,
-  triggers: [
-    {
-      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-      type: 'route',
-      path: '/webhook',
-      httpMethod: 'POST',
-      isAuthRequired: false,
-      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
-    },
-  ],
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
 });
 ```
 
@@ -723,7 +725,7 @@ Key points:
 - **`toolInputSchema`** (`object`, optional): A JSON Schema object that describes the parameters your function accepts. AI agents use this schema to understand what inputs the tool expects and to validate calls. If omitted, the schema defaults to `{ type: 'object', properties: {} }` (no parameters).
 - Functions with `isTool: false` (or unset) are **not** exposed as tools. They can still be executed directly or called by other functions, but will not appear in tool discovery.
 - **Tool naming**: When exposed as a tool, the function name is automatically normalized to `logic_function_<name>` (lowercased, non-alphanumeric characters replaced with underscores). For example, `enrich-company` becomes `logic_function_enrich_company`.
-- You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events (cron, database events, routes) at the same time.
+- You can combine `isTool` with trigger settings — a function can be both a tool (callable by AI agents) and triggered by events (cron, database events, routes) at the same time.
 
 <Note>
 **Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
@@ -1120,7 +1122,11 @@ Key points:
 
 ### Hello World example
 
-Explore a minimal, end-to-end example that demonstrates objects, logic functions, front components, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Explore a minimal, end-to-end example that demonstrates objects, logic functions, front components, and trigger settings [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+
+<Note>
+The hello-world example app may still use the legacy `FunctionConfig` / `triggers` array format. For the latest API patterns using `defineLogicFunction()` with individual trigger properties (`httpRouteTriggerSettings`, `cronTriggerSettings`, `databaseEventTriggerSettings`), refer to the documentation on this page.
+</Note>
 
 ## Manual setup (without the scaffolder)
 
