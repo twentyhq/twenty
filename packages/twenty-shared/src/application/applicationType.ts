@@ -11,7 +11,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   serverVariables?: ServerVariables;
   author?: string;
   category?: string;
-  logo?: string;
+  logoUrl?: string;
   screenshots?: string[];
   aboutDescription?: string;
   providers?: string[];
