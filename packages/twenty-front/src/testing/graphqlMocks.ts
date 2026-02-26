@@ -26,7 +26,7 @@ import { LIST_PLANS } from '@/billing/graphql/queries/listPlans';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { isDefined } from 'twenty-shared/utils';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
-import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
+import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata';
 import { getRolesMock } from '~/testing/mock-data/roles';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 import {
@@ -35,11 +35,30 @@ import {
   workflowQueryResult,
 } from '~/testing/mock-data/workflow';
 import { oneSucceededWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
+import { getConnectionTypename } from '@/object-record/cache/utils/getConnectionTypename';
+import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
+import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
 const peopleMock = getPeopleRecordConnectionMock();
 const companiesMock = getCompaniesRecordConnectionMock();
 const duplicateCompanyMock = getCompanyDuplicateMock();
+
+// Wraps raw server-fetched records (which already have correct field shapes)
+// into a GraphQL connection response structure.
+const wrapRecordsAsConnection = (
+  objectNameSingular: string,
+  records: Record<string, unknown>[],
+) => ({
+  __typename: getConnectionTypename(objectNameSingular),
+  edges: records.map((node) => ({
+    __typename: getEdgeTypename(objectNameSingular),
+    node,
+    cursor: '',
+  })),
+  pageInfo: getEmptyPageInfo(),
+  totalCount: records.length,
+});
 
 const getRootFieldNamesFromQuery = (query: string) => {
   try {
@@ -390,45 +409,7 @@ export const graphqlMocks = {
 
       return HttpResponse.json({
         data: {
-          companies: {
-            edges: mockedData.map((company) => ({
-              node: {
-                ...company,
-                favorites: {
-                  edges: [],
-                  __typename: 'FavoriteConnection',
-                },
-                attachments: {
-                  edges: [],
-                  __typename: 'AttachmentConnection',
-                },
-                people: {
-                  edges: [],
-                  __typename: 'PersonConnection',
-                },
-                opportunities: {
-                  edges: [],
-                  __typename: 'OpportunityConnection',
-                },
-                taskTargets: {
-                  edges: [],
-                  __typename: 'TaskTargetConnection',
-                },
-                noteTargets: {
-                  edges: [],
-                  __typename: 'NoteTargetConnection',
-                },
-              },
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-            totalCount: mockedData.length,
-          },
+          companies: wrapRecordsAsConnection('company', mockedData),
         },
       });
     }),
@@ -436,46 +417,7 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           companyDuplicates: [
-            {
-              edges: [
-                {
-                  node: {
-                    ...duplicateCompanyMock,
-                    favorites: {
-                      edges: [],
-                      __typename: 'FavoriteConnection',
-                    },
-                    attachments: {
-                      edges: [],
-                      __typename: 'AttachmentConnection',
-                    },
-                    people: {
-                      edges: [],
-                      __typename: 'PersonConnection',
-                    },
-                    opportunities: {
-                      edges: [],
-                      __typename: 'OpportunityConnection',
-                    },
-                    taskTargets: {
-                      edges: [],
-                      __typename: 'TaskTargetConnection',
-                    },
-                    noteTargets: {
-                      edges: [],
-                      __typename: 'NoteTargetConnection',
-                    },
-                  },
-                  cursor: null,
-                },
-              ],
-              pageInfo: {
-                hasNextPage: false,
-                hasPreviousPage: false,
-                startCursor: null,
-                endCursor: null,
-              },
-            },
+            wrapRecordsAsConnection('company', [duplicateCompanyMock]),
           ],
         },
       });

@@ -10,8 +10,9 @@ import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { type Decorator } from '@storybook/react-vite';
-import { useStore } from 'jotai';
-import { useCallback, useEffect, useState } from 'react';
+import { useAtomValue, useStore } from 'jotai';
+import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowMock,
   getWorkflowNodeIdMock,
@@ -24,12 +25,17 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
     .node as WorkflowVersion;
   const { populateStepsOutputSchema } = useStepsOutputSchema();
   const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
-  const [ready, setReady] = useState(false);
 
   const store = useStore();
 
-  const handleMount = useCallback(async () => {
-    await loadMockedObjectMetadataItems();
+  const workflowVersionId = useAtomValue(
+    workflowVisualizerWorkflowVersionIdComponentState.atomFamily({
+      instanceId: workflowVisualizerComponentInstanceId,
+    }),
+  );
+
+  useEffect(() => {
+    loadMockedObjectMetadataItems();
 
     store.set(
       workflowVisualizerWorkflowIdComponentState.atomFamily({
@@ -72,17 +78,12 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
       getWorkflowMock().id,
     );
     populateStepsOutputSchema(workflowVersion);
-    setReady(true);
   }, [
     loadMockedObjectMetadataItems,
     populateStepsOutputSchema,
     workflowVersion,
     store,
   ]);
-
-  useEffect(() => {
-    handleMount();
-  }, [handleMount]);
 
   return (
     <CommandMenuPageComponentInstanceContext.Provider
@@ -95,7 +96,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
           instanceId: workflowVisualizerComponentInstanceId,
         }}
       >
-        {ready && <Story />}
+        {isDefined(workflowVersionId) && <Story />}
       </WorkflowVisualizerComponentInstanceContext.Provider>
     </CommandMenuPageComponentInstanceContext.Provider>
   );
