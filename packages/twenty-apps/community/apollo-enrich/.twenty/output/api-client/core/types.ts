@@ -14980,6 +14980,18 @@ export default {
             "accountOwnerId": [
                 22
             ],
+            "apolloIndustry": [
+                1
+            ],
+            "apolloFoundedYear": [
+                13
+            ],
+            "apolloShortDescription": [
+                1
+            ],
+            "apolloTotalFunding": [
+                61
+            ],
             "attachments": [
                 118,
                 {
@@ -15479,6 +15491,90 @@ export default {
             "percentageNotEmptySearchVector": [
                 13
             ],
+            "countUniqueValuesApolloIndustry": [
+                10
+            ],
+            "countEmptyApolloIndustry": [
+                10
+            ],
+            "countNotEmptyApolloIndustry": [
+                10
+            ],
+            "percentageEmptyApolloIndustry": [
+                13
+            ],
+            "percentageNotEmptyApolloIndustry": [
+                13
+            ],
+            "countUniqueValuesApolloFoundedYear": [
+                10
+            ],
+            "countEmptyApolloFoundedYear": [
+                10
+            ],
+            "countNotEmptyApolloFoundedYear": [
+                10
+            ],
+            "percentageEmptyApolloFoundedYear": [
+                13
+            ],
+            "percentageNotEmptyApolloFoundedYear": [
+                13
+            ],
+            "minApolloFoundedYear": [
+                13
+            ],
+            "maxApolloFoundedYear": [
+                13
+            ],
+            "avgApolloFoundedYear": [
+                13
+            ],
+            "sumApolloFoundedYear": [
+                13
+            ],
+            "countUniqueValuesApolloShortDescription": [
+                10
+            ],
+            "countEmptyApolloShortDescription": [
+                10
+            ],
+            "countNotEmptyApolloShortDescription": [
+                10
+            ],
+            "percentageEmptyApolloShortDescription": [
+                13
+            ],
+            "percentageNotEmptyApolloShortDescription": [
+                13
+            ],
+            "countUniqueValuesApolloTotalFunding": [
+                10
+            ],
+            "countEmptyApolloTotalFunding": [
+                10
+            ],
+            "countNotEmptyApolloTotalFunding": [
+                10
+            ],
+            "percentageEmptyApolloTotalFunding": [
+                13
+            ],
+            "percentageNotEmptyApolloTotalFunding": [
+                13
+            ],
+            "minApolloTotalFundingAmountMicros": [
+                13
+            ],
+            "maxApolloTotalFundingAmountMicros": [
+                13
+            ],
+            "sumApolloTotalFundingAmountMicros": [
+                13
+            ],
+            "avgApolloTotalFundingAmountMicros": [
+                13
+            ],
             "edges": [
                 218
             ],
@@ -15781,6 +15877,90 @@ export default {
             "percentageNotEmptySearchVector": [
                 13
             ],
+            "countUniqueValuesApolloIndustry": [
+                10
+            ],
+            "countEmptyApolloIndustry": [
+                10
+            ],
+            "countNotEmptyApolloIndustry": [
+                10
+            ],
+            "percentageEmptyApolloIndustry": [
+                13
+            ],
+            "percentageNotEmptyApolloIndustry": [
+                13
+            ],
+            "countUniqueValuesApolloFoundedYear": [
+                10
+            ],
+            "countEmptyApolloFoundedYear": [
+                10
+            ],
+            "countNotEmptyApolloFoundedYear": [
+                10
+            ],
+            "percentageEmptyApolloFoundedYear": [
+                13
+            ],
+            "percentageNotEmptyApolloFoundedYear": [
+                13
+            ],
+            "minApolloFoundedYear": [
+                13
+            ],
+            "maxApolloFoundedYear": [
+                13
+            ],
+            "avgApolloFoundedYear": [
+                13
+            ],
+            "sumApolloFoundedYear": [
+                13
+            ],
+            "countUniqueValuesApolloShortDescription": [
+                10
+            ],
+            "countEmptyApolloShortDescription": [
+                10
+            ],
+            "countNotEmptyApolloShortDescription": [
+                10
+            ],
+            "percentageEmptyApolloShortDescription": [
+                13
+            ],
+            "percentageNotEmptyApolloShortDescription": [
+                13
+            ],
+            "countUniqueValuesApolloTotalFunding": [
+                10
+            ],
+            "countEmptyApolloTotalFunding": [
+                10
+            ],
+            "countNotEmptyApolloTotalFunding": [
+                10
+            ],
+            "percentageEmptyApolloTotalFunding": [
+                13
+            ],
+            "percentageNotEmptyApolloTotalFunding": [
+                13
+            ],
+            "minApolloTotalFundingAmountMicros": [
+                13
+            ],
+            "maxApolloTotalFundingAmountMicros": [
+                13
+            ],
+            "sumApolloTotalFundingAmountMicros": [
+                13
+            ],
+            "avgApolloTotalFundingAmountMicros": [
+                13
+            ],
             "edges": [
                 218
             ],
@@ -15887,6 +16067,18 @@ export default {
             "accountOwner": [
                 581
             ],
+            "apolloIndustry": [
+                1
+            ],
+            "apolloFoundedYear": [
+                13
+            ],
+            "apolloShortDescription": [
+                1
+            ],
+            "apolloTotalFunding": [
+                63
+            ],
             "__typename": [
                 1
             ]
@@ -15946,6 +16138,18 @@ export default {
             "accountOwner": [
                 581
             ],
+            "apolloIndustry": [
+                1
+            ],
+            "apolloFoundedYear": [
+                13
+            ],
+            "apolloShortDescription": [
+                1
+            ],
+            "apolloTotalFunding": [
+                64
+            ],
             "__typename": [
                 1
             ]
@@ -16001,6 +16205,18 @@ export default {
             ],
             "accountOwnerId": [
                 33
+            ],
+            "apolloIndustry": [
+                56
+            ],
+            "apolloFoundedYear": [
+                130
+            ],
+            "apolloShortDescription": [
+                56
+            ],
+            "apolloTotalFunding": [
+                65
             ],
             "and": [
                 227
@@ -16070,6 +16286,18 @@ export default {
             "accountOwner": [
                 591
             ],
+            "apolloIndustry": [
+                59
+            ],
+            "apolloFoundedYear": [
+                59
+            ],
+            "apolloShortDescription": [
+                59
+            ],
+            "apolloTotalFunding": [
+                67
+            ],
             "__typename": [
                 1
             ]
@@ -16131,6 +16359,18 @@ export default {
             ],
             "accountOwner": [
                 592
+            ],
+            "apolloIndustry": [
+                59
+            ],
+            "apolloFoundedYear": [
+                59
+            ],
+            "apolloShortDescription": [
+                59
+            ],
+            "apolloTotalFunding": [
+                67
             ],
             "__typename": [
                 1
@@ -16434,6 +16674,90 @@ export default {
             "accountOwner": [
                 591
             ],
+            "countUniqueValuesApolloIndustry": [
+                59
+            ],
+            "countEmptyApolloIndustry": [
+                59
+            ],
+            "countNotEmptyApolloIndustry": [
+                59
+            ],
+            "percentageEmptyApolloIndustry": [
+                59
+            ],
+            "percentageNotEmptyApolloIndustry": [
+                59
+            ],
+            "countUniqueValuesApolloFoundedYear": [
+                59
+            ],
+            "countEmptyApolloFoundedYear": [
+                59
+            ],
+            "countNotEmptyApolloFoundedYear": [
+                59
+            ],
+            "percentageEmptyApolloFoundedYear": [
+                59
+            ],
+            "percentageNotEmptyApolloFoundedYear": [
+                59
+            ],
+            "minApolloFoundedYear": [
+                59
+            ],
+            "maxApolloFoundedYear": [
+                59
+            ],
+            "avgApolloFoundedYear": [
+                59
+            ],
+            "sumApolloFoundedYear": [
+                59
+            ],
+            "countUniqueValuesApolloShortDescription": [
+                59
+            ],
+            "countEmptyApolloShortDescription": [
+                59
+            ],
+            "countNotEmptyApolloShortDescription": [
+                59
+            ],
+            "percentageEmptyApolloShortDescription": [
+                59
+            ],
+            "percentageNotEmptyApolloShortDescription": [
+                59
+            ],
+            "countUniqueValuesApolloTotalFunding": [
+                59
+            ],
+            "countEmptyApolloTotalFunding": [
+                59
+            ],
+            "countNotEmptyApolloTotalFunding": [
+                59
+            ],
+            "percentageEmptyApolloTotalFunding": [
+                59
+            ],
+            "percentageNotEmptyApolloTotalFunding": [
+                59
+            ],
+            "minApolloTotalFundingAmountMicros": [
+                59
+            ],
+            "maxApolloTotalFundingAmountMicros": [
+                59
+            ],
+            "sumApolloTotalFundingAmountMicros": [
+                59
+            ],
+            "avgApolloTotalFundingAmountMicros": [
+                59
+            ],
             "__typename": [
                 1
             ]
@@ -16489,6 +16813,18 @@ export default {
             ],
             "accountOwner": [
                 594
+            ],
+            "apolloIndustry": [
+                6
+            ],
+            "apolloFoundedYear": [
+                6
+            ],
+            "apolloShortDescription": [
+                6
+            ],
+            "apolloTotalFunding": [
+                68
             ],
             "__typename": [
                 1

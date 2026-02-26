@@ -708,9 +708,9 @@ export interface Address {
 export type ActorSourceEnum = 'EMAIL' | 'CALENDAR' | 'WORKFLOW' | 'AGENT' | 'API' | 'IMPORT' | 'MANUAL' | 'SYSTEM' | 'WEBHOOK' | 'APPLICATION'
 
 export interface Actor {
-    source: ActorSourceEnum
+    source?: ActorSourceEnum
     workspaceMemberId?: Scalars['UUID']
-    name: Scalars['String']
+    name?: Scalars['String']
     context?: Scalars['JSON']
     __typename: 'Actor'
 }
@@ -3284,6 +3284,14 @@ export interface Company {
     searchVector?: Scalars['TSVector']
     /** Your team member responsible for managing the company account */
     accountOwnerId?: Scalars['ID']
+    /** Industry classification from Apollo enrichment */
+    apolloIndustry?: Scalars['String']
+    /** Year the company was founded, from Apollo enrichment */
+    apolloFoundedYear?: Scalars['Float']
+    /** Short company description from Apollo enrichment */
+    apolloShortDescription?: Scalars['String']
+    /** Total funding raised by the company, from Apollo enrichment */
+    apolloTotalFunding?: Currency
     /** Attachments linked to the company */
     attachments?: AttachmentConnection
     /** People linked to the company. */
@@ -3508,6 +3516,62 @@ export interface CompanyConnection {
     percentageEmptySearchVector?: Scalars['Float']
     /** Percentage of non-empty values for searchVector */
     percentageNotEmptySearchVector?: Scalars['Float']
+    /** Number of unique values for apolloIndustry */
+    countUniqueValuesApolloIndustry?: Scalars['Int']
+    /** Number of empty values for apolloIndustry */
+    countEmptyApolloIndustry?: Scalars['Int']
+    /** Number of non-empty values for apolloIndustry */
+    countNotEmptyApolloIndustry?: Scalars['Int']
+    /** Percentage of empty values for apolloIndustry */
+    percentageEmptyApolloIndustry?: Scalars['Float']
+    /** Percentage of non-empty values for apolloIndustry */
+    percentageNotEmptyApolloIndustry?: Scalars['Float']
+    /** Number of unique values for apolloFoundedYear */
+    countUniqueValuesApolloFoundedYear?: Scalars['Int']
+    /** Number of empty values for apolloFoundedYear */
+    countEmptyApolloFoundedYear?: Scalars['Int']
+    /** Number of non-empty values for apolloFoundedYear */
+    countNotEmptyApolloFoundedYear?: Scalars['Int']
+    /** Percentage of empty values for apolloFoundedYear */
+    percentageEmptyApolloFoundedYear?: Scalars['Float']
+    /** Percentage of non-empty values for apolloFoundedYear */
+    percentageNotEmptyApolloFoundedYear?: Scalars['Float']
+    /** Minimum amount contained in the field apolloFoundedYear */
+    minApolloFoundedYear?: Scalars['Float']
+    /** Maximum amount contained in the field apolloFoundedYear */
+    maxApolloFoundedYear?: Scalars['Float']
+    /** Average amount contained in the field apolloFoundedYear */
+    avgApolloFoundedYear?: Scalars['Float']
+    /** Sum of amounts contained in the field apolloFoundedYear */
+    sumApolloFoundedYear?: Scalars['Float']
+    /** Number of unique values for apolloShortDescription */
+    countUniqueValuesApolloShortDescription?: Scalars['Int']
+    /** Number of empty values for apolloShortDescription */
+    countEmptyApolloShortDescription?: Scalars['Int']
+    /** Number of non-empty values for apolloShortDescription */
+    countNotEmptyApolloShortDescription?: Scalars['Int']
+    /** Percentage of empty values for apolloShortDescription */
+    percentageEmptyApolloShortDescription?: Scalars['Float']
+    /** Percentage of non-empty values for apolloShortDescription */
+    percentageNotEmptyApolloShortDescription?: Scalars['Float']
+    /** Number of unique values for apolloTotalFunding */
+    countUniqueValuesApolloTotalFunding?: Scalars['Int']
+    /** Number of empty values for apolloTotalFunding */
+    countEmptyApolloTotalFunding?: Scalars['Int']
+    /** Number of non-empty values for apolloTotalFunding */
+    countNotEmptyApolloTotalFunding?: Scalars['Int']
+    /** Percentage of empty values for apolloTotalFunding */
+    percentageEmptyApolloTotalFunding?: Scalars['Float']
+    /** Percentage of non-empty values for apolloTotalFunding */
+    percentageNotEmptyApolloTotalFunding?: Scalars['Float']
+    /** Minimum amount contained in the field apolloTotalFunding */
+    minApolloTotalFundingAmountMicros?: Scalars['Float']
+    /** Maximal amount contained in the field apolloTotalFunding */
+    maxApolloTotalFundingAmountMicros?: Scalars['Float']
+    /** Sum of amounts contained in the field apolloTotalFunding */
+    sumApolloTotalFundingAmountMicros?: Scalars['Float']
+    /** Average amount contained in the field apolloTotalFunding */
+    avgApolloTotalFundingAmountMicros?: Scalars['Float']
     edges: CompanyEdge[]
     pageInfo: PageInfo
     __typename: 'CompanyConnection'
@@ -3710,6 +3774,62 @@ export interface CompanyGroupByConnection {
     percentageEmptySearchVector?: Scalars['Float']
     /** Percentage of non-empty values for searchVector */
     percentageNotEmptySearchVector?: Scalars['Float']
+    /** Number of unique values for apolloIndustry */
+    countUniqueValuesApolloIndustry?: Scalars['Int']
+    /** Number of empty values for apolloIndustry */
+    countEmptyApolloIndustry?: Scalars['Int']
+    /** Number of non-empty values for apolloIndustry */
+    countNotEmptyApolloIndustry?: Scalars['Int']
+    /** Percentage of empty values for apolloIndustry */
+    percentageEmptyApolloIndustry?: Scalars['Float']
+    /** Percentage of non-empty values for apolloIndustry */
+    percentageNotEmptyApolloIndustry?: Scalars['Float']
+    /** Number of unique values for apolloFoundedYear */
+    countUniqueValuesApolloFoundedYear?: Scalars['Int']
+    /** Number of empty values for apolloFoundedYear */
+    countEmptyApolloFoundedYear?: Scalars['Int']
+    /** Number of non-empty values for apolloFoundedYear */
+    countNotEmptyApolloFoundedYear?: Scalars['Int']
+    /** Percentage of empty values for apolloFoundedYear */
+    percentageEmptyApolloFoundedYear?: Scalars['Float']
+    /** Percentage of non-empty values for apolloFoundedYear */
+    percentageNotEmptyApolloFoundedYear?: Scalars['Float']
+    /** Minimum amount contained in the field apolloFoundedYear */
+    minApolloFoundedYear?: Scalars['Float']
+    /** Maximum amount contained in the field apolloFoundedYear */
+    maxApolloFoundedYear?: Scalars['Float']
+    /** Average amount contained in the field apolloFoundedYear */
+    avgApolloFoundedYear?: Scalars['Float']
+    /** Sum of amounts contained in the field apolloFoundedYear */
+    sumApolloFoundedYear?: Scalars['Float']
+    /** Number of unique values for apolloShortDescription */
+    countUniqueValuesApolloShortDescription?: Scalars['Int']
+    /** Number of empty values for apolloShortDescription */
+    countEmptyApolloShortDescription?: Scalars['Int']
+    /** Number of non-empty values for apolloShortDescription */
+    countNotEmptyApolloShortDescription?: Scalars['Int']
+    /** Percentage of empty values for apolloShortDescription */
+    percentageEmptyApolloShortDescription?: Scalars['Float']
+    /** Percentage of non-empty values for apolloShortDescription */
+    percentageNotEmptyApolloShortDescription?: Scalars['Float']
+    /** Number of unique values for apolloTotalFunding */
+    countUniqueValuesApolloTotalFunding?: Scalars['Int']
+    /** Number of empty values for apolloTotalFunding */
+    countEmptyApolloTotalFunding?: Scalars['Int']
+    /** Number of non-empty values for apolloTotalFunding */
+    countNotEmptyApolloTotalFunding?: Scalars['Int']
+    /** Percentage of empty values for apolloTotalFunding */
+    percentageEmptyApolloTotalFunding?: Scalars['Float']
+    /** Percentage of non-empty values for apolloTotalFunding */
+    percentageNotEmptyApolloTotalFunding?: Scalars['Float']
+    /** Minimum amount contained in the field apolloTotalFunding */
+    minApolloTotalFundingAmountMicros?: Scalars['Float']
+    /** Maximal amount contained in the field apolloTotalFunding */
+    maxApolloTotalFundingAmountMicros?: Scalars['Float']
+    /** Sum of amounts contained in the field apolloTotalFunding */
+    sumApolloTotalFundingAmountMicros?: Scalars['Float']
+    /** Average amount contained in the field apolloTotalFunding */
+    avgApolloTotalFundingAmountMicros?: Scalars['Float']
     edges: CompanyEdge[]
     pageInfo: PageInfo
     groupByDimensionValues: Scalars['JSON']
@@ -13063,7 +13183,7 @@ export interface ActorGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ActorCreateInput {source: ActorSourceEnum,context?: (Scalars['JSON'] | null)}
+export interface ActorCreateInput {source?: (ActorSourceEnum | null),context?: (Scalars['JSON'] | null)}
 
 export interface ActorUpdateInput {source?: (ActorSourceEnum | null),context?: (Scalars['JSON'] | null)}
 
@@ -18241,6 +18361,14 @@ export interface CompanyGenqlSelection{
     searchVector?: boolean | number
     /** Your team member responsible for managing the company account */
     accountOwnerId?: boolean | number
+    /** Industry classification from Apollo enrichment */
+    apolloIndustry?: boolean | number
+    /** Year the company was founded, from Apollo enrichment */
+    apolloFoundedYear?: boolean | number
+    /** Short company description from Apollo enrichment */
+    apolloShortDescription?: boolean | number
+    /** Total funding raised by the company, from Apollo enrichment */
+    apolloTotalFunding?: CurrencyGenqlSelection
     /** Attachments linked to the company */
     attachments?: (AttachmentConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (AttachmentFilterInput | null), orderBy?: ((AttachmentOrderByInput | null)[] | null)} })
     /** People linked to the company. */
@@ -18467,6 +18595,62 @@ export interface CompanyConnectionGenqlSelection{
     percentageEmptySearchVector?: boolean | number
     /** Percentage of non-empty values for searchVector */
     percentageNotEmptySearchVector?: boolean | number
+    /** Number of unique values for apolloIndustry */
+    countUniqueValuesApolloIndustry?: boolean | number
+    /** Number of empty values for apolloIndustry */
+    countEmptyApolloIndustry?: boolean | number
+    /** Number of non-empty values for apolloIndustry */
+    countNotEmptyApolloIndustry?: boolean | number
+    /** Percentage of empty values for apolloIndustry */
+    percentageEmptyApolloIndustry?: boolean | number
+    /** Percentage of non-empty values for apolloIndustry */
+    percentageNotEmptyApolloIndustry?: boolean | number
+    /** Number of unique values for apolloFoundedYear */
+    countUniqueValuesApolloFoundedYear?: boolean | number
+    /** Number of empty values for apolloFoundedYear */
+    countEmptyApolloFoundedYear?: boolean | number
+    /** Number of non-empty values for apolloFoundedYear */
+    countNotEmptyApolloFoundedYear?: boolean | number
+    /** Percentage of empty values for apolloFoundedYear */
+    percentageEmptyApolloFoundedYear?: boolean | number
+    /** Percentage of non-empty values for apolloFoundedYear */
+    percentageNotEmptyApolloFoundedYear?: boolean | number
+    /** Minimum amount contained in the field apolloFoundedYear */
+    minApolloFoundedYear?: boolean | number
+    /** Maximum amount contained in the field apolloFoundedYear */
+    maxApolloFoundedYear?: boolean | number
+    /** Average amount contained in the field apolloFoundedYear */
+    avgApolloFoundedYear?: boolean | number
+    /** Sum of amounts contained in the field apolloFoundedYear */
+    sumApolloFoundedYear?: boolean | number
+    /** Number of unique values for apolloShortDescription */
+    countUniqueValuesApolloShortDescription?: boolean | number
+    /** Number of empty values for apolloShortDescription */
+    countEmptyApolloShortDescription?: boolean | number
+    /** Number of non-empty values for apolloShortDescription */
+    countNotEmptyApolloShortDescription?: boolean | number
+    /** Percentage of empty values for apolloShortDescription */
+    percentageEmptyApolloShortDescription?: boolean | number
+    /** Percentage of non-empty values for apolloShortDescription */
+    percentageNotEmptyApolloShortDescription?: boolean | number
+    /** Number of unique values for apolloTotalFunding */
+    countUniqueValuesApolloTotalFunding?: boolean | number
+    /** Number of empty values for apolloTotalFunding */
+    countEmptyApolloTotalFunding?: boolean | number
+    /** Number of non-empty values for apolloTotalFunding */
+    countNotEmptyApolloTotalFunding?: boolean | number
+    /** Percentage of empty values for apolloTotalFunding */
+    percentageEmptyApolloTotalFunding?: boolean | number
+    /** Percentage of non-empty values for apolloTotalFunding */
+    percentageNotEmptyApolloTotalFunding?: boolean | number
+    /** Minimum amount contained in the field apolloTotalFunding */
+    minApolloTotalFundingAmountMicros?: boolean | number
+    /** Maximal amount contained in the field apolloTotalFunding */
+    maxApolloTotalFundingAmountMicros?: boolean | number
+    /** Sum of amounts contained in the field apolloTotalFunding */
+    sumApolloTotalFundingAmountMicros?: boolean | number
+    /** Average amount contained in the field apolloTotalFunding */
+    avgApolloTotalFundingAmountMicros?: boolean | number
     edges?: CompanyEdgeGenqlSelection
     pageInfo?: PageInfoGenqlSelection
     __typename?: boolean | number
@@ -18670,6 +18854,62 @@ export interface CompanyGroupByConnectionGenqlSelection{
     percentageEmptySearchVector?: boolean | number
     /** Percentage of non-empty values for searchVector */
     percentageNotEmptySearchVector?: boolean | number
+    /** Number of unique values for apolloIndustry */
+    countUniqueValuesApolloIndustry?: boolean | number
+    /** Number of empty values for apolloIndustry */
+    countEmptyApolloIndustry?: boolean | number
+    /** Number of non-empty values for apolloIndustry */
+    countNotEmptyApolloIndustry?: boolean | number
+    /** Percentage of empty values for apolloIndustry */
+    percentageEmptyApolloIndustry?: boolean | number
+    /** Percentage of non-empty values for apolloIndustry */
+    percentageNotEmptyApolloIndustry?: boolean | number
+    /** Number of unique values for apolloFoundedYear */
+    countUniqueValuesApolloFoundedYear?: boolean | number
+    /** Number of empty values for apolloFoundedYear */
+    countEmptyApolloFoundedYear?: boolean | number
+    /** Number of non-empty values for apolloFoundedYear */
+    countNotEmptyApolloFoundedYear?: boolean | number
+    /** Percentage of empty values for apolloFoundedYear */
+    percentageEmptyApolloFoundedYear?: boolean | number
+    /** Percentage of non-empty values for apolloFoundedYear */
+    percentageNotEmptyApolloFoundedYear?: boolean | number
+    /** Minimum amount contained in the field apolloFoundedYear */
+    minApolloFoundedYear?: boolean | number
+    /** Maximum amount contained in the field apolloFoundedYear */
+    maxApolloFoundedYear?: boolean | number
+    /** Average amount contained in the field apolloFoundedYear */
+    avgApolloFoundedYear?: boolean | number
+    /** Sum of amounts contained in the field apolloFoundedYear */
+    sumApolloFoundedYear?: boolean | number
+    /** Number of unique values for apolloShortDescription */
+    countUniqueValuesApolloShortDescription?: boolean | number
+    /** Number of empty values for apolloShortDescription */
+    countEmptyApolloShortDescription?: boolean | number
+    /** Number of non-empty values for apolloShortDescription */
+    countNotEmptyApolloShortDescription?: boolean | number
+    /** Percentage of empty values for apolloShortDescription */
+    percentageEmptyApolloShortDescription?: boolean | number
+    /** Percentage of non-empty values for apolloShortDescription */
+    percentageNotEmptyApolloShortDescription?: boolean | number
+    /** Number of unique values for apolloTotalFunding */
+    countUniqueValuesApolloTotalFunding?: boolean | number
+    /** Number of empty values for apolloTotalFunding */
+    countEmptyApolloTotalFunding?: boolean | number
+    /** Number of non-empty values for apolloTotalFunding */
+    countNotEmptyApolloTotalFunding?: boolean | number
+    /** Percentage of empty values for apolloTotalFunding */
+    percentageEmptyApolloTotalFunding?: boolean | number
+    /** Percentage of non-empty values for apolloTotalFunding */
+    percentageNotEmptyApolloTotalFunding?: boolean | number
+    /** Minimum amount contained in the field apolloTotalFunding */
+    minApolloTotalFundingAmountMicros?: boolean | number
+    /** Maximal amount contained in the field apolloTotalFunding */
+    maxApolloTotalFundingAmountMicros?: boolean | number
+    /** Sum of amounts contained in the field apolloTotalFunding */
+    sumApolloTotalFundingAmountMicros?: boolean | number
+    /** Average amount contained in the field apolloTotalFunding */
+    avgApolloTotalFundingAmountMicros?: boolean | number
     edges?: CompanyEdgeGenqlSelection
     pageInfo?: PageInfoGenqlSelection
     groupByDimensionValues?: boolean | number
@@ -18735,7 +18975,15 @@ searchVector?: (Scalars['TSVector'] | null),
 /** Your team member responsible for managing the company account */
 accountOwnerId?: (Scalars['ID'] | null),
 /** Your team member responsible for managing the company account */
-accountOwner?: (WorkspaceMemberRelationInput | null)}
+accountOwner?: (WorkspaceMemberRelationInput | null),
+/** Industry classification from Apollo enrichment */
+apolloIndustry?: (Scalars['String'] | null),
+/** Year the company was founded, from Apollo enrichment */
+apolloFoundedYear?: (Scalars['Float'] | null),
+/** Short company description from Apollo enrichment */
+apolloShortDescription?: (Scalars['String'] | null),
+/** Total funding raised by the company, from Apollo enrichment */
+apolloTotalFunding?: (CurrencyCreateInput | null)}
 
 
 /** A company */
@@ -18775,7 +19023,15 @@ searchVector?: (Scalars['TSVector'] | null),
 /** Your team member responsible for managing the company account */
 accountOwnerId?: (Scalars['ID'] | null),
 /** Your team member responsible for managing the company account */
-accountOwner?: (WorkspaceMemberRelationInput | null)}
+accountOwner?: (WorkspaceMemberRelationInput | null),
+/** Industry classification from Apollo enrichment */
+apolloIndustry?: (Scalars['String'] | null),
+/** Year the company was founded, from Apollo enrichment */
+apolloFoundedYear?: (Scalars['Float'] | null),
+/** Short company description from Apollo enrichment */
+apolloShortDescription?: (Scalars['String'] | null),
+/** Total funding raised by the company, from Apollo enrichment */
+apolloTotalFunding?: (CurrencyUpdateInput | null)}
 
 
 /** A company */
@@ -18813,7 +19069,15 @@ updatedBy?: (ActorFilterInput | null),
 /** Field used for full-text search */
 searchVector?: (TSVectorFilter | null),
 /** Your team member responsible for managing the company account */
-accountOwnerId?: (UUIDFilter | null),and?: ((CompanyFilterInput | null)[] | null),or?: ((CompanyFilterInput | null)[] | null),not?: (CompanyFilterInput | null)}
+accountOwnerId?: (UUIDFilter | null),
+/** Industry classification from Apollo enrichment */
+apolloIndustry?: (StringFilter | null),
+/** Year the company was founded, from Apollo enrichment */
+apolloFoundedYear?: (FloatFilter | null),
+/** Short company description from Apollo enrichment */
+apolloShortDescription?: (StringFilter | null),
+/** Total funding raised by the company, from Apollo enrichment */
+apolloTotalFunding?: (CurrencyFilterInput | null),and?: ((CompanyFilterInput | null)[] | null),or?: ((CompanyFilterInput | null)[] | null),not?: (CompanyFilterInput | null)}
 
 
 /** A company */
@@ -18853,7 +19117,15 @@ searchVector?: (OrderByDirection | null),
 /** Your team member responsible for managing the company account */
 accountOwnerId?: (OrderByDirection | null),
 /** Order by fields of the related workspaceMember */
-accountOwner?: (WorkspaceMemberOrderByInput | null)}
+accountOwner?: (WorkspaceMemberOrderByInput | null),
+/** Industry classification from Apollo enrichment */
+apolloIndustry?: (OrderByDirection | null),
+/** Year the company was founded, from Apollo enrichment */
+apolloFoundedYear?: (OrderByDirection | null),
+/** Short company description from Apollo enrichment */
+apolloShortDescription?: (OrderByDirection | null),
+/** Total funding raised by the company, from Apollo enrichment */
+apolloTotalFunding?: (CurrencyOrderByInput | null)}
 
 
 /** A company */
@@ -18895,7 +19167,15 @@ searchVector?: (OrderByDirection | null),
 /** Your team member responsible for managing the company account */
 accountOwnerId?: (OrderByDirection | null),
 /** Order by fields of the related workspaceMember */
-accountOwner?: (WorkspaceMemberOrderByWithGroupByInput | null)}
+accountOwner?: (WorkspaceMemberOrderByWithGroupByInput | null),
+/** Industry classification from Apollo enrichment */
+apolloIndustry?: (OrderByDirection | null),
+/** Year the company was founded, from Apollo enrichment */
+apolloFoundedYear?: (OrderByDirection | null),
+/** Short company description from Apollo enrichment */
+apolloShortDescription?: (OrderByDirection | null),
+/** Total funding raised by the company, from Apollo enrichment */
+apolloTotalFunding?: (CurrencyOrderByInput | null)}
 
 
 /** Aggregate-based ordering */
@@ -19097,7 +19377,63 @@ percentageNotEmptySearchVector?: (OrderByDirection | null),
 /** Your team member responsible for managing the company account */
 accountOwnerId?: (OrderByDirection | null),
 /** Order by fields of the related workspaceMember */
-accountOwner?: (WorkspaceMemberOrderByInput | null)}
+accountOwner?: (WorkspaceMemberOrderByInput | null),
+/** Number of unique values for apolloIndustry */
+countUniqueValuesApolloIndustry?: (OrderByDirection | null),
+/** Number of empty values for apolloIndustry */
+countEmptyApolloIndustry?: (OrderByDirection | null),
+/** Number of non-empty values for apolloIndustry */
+countNotEmptyApolloIndustry?: (OrderByDirection | null),
+/** Percentage of empty values for apolloIndustry */
+percentageEmptyApolloIndustry?: (OrderByDirection | null),
+/** Percentage of non-empty values for apolloIndustry */
+percentageNotEmptyApolloIndustry?: (OrderByDirection | null),
+/** Number of unique values for apolloFoundedYear */
+countUniqueValuesApolloFoundedYear?: (OrderByDirection | null),
+/** Number of empty values for apolloFoundedYear */
+countEmptyApolloFoundedYear?: (OrderByDirection | null),
+/** Number of non-empty values for apolloFoundedYear */
+countNotEmptyApolloFoundedYear?: (OrderByDirection | null),
+/** Percentage of empty values for apolloFoundedYear */
+percentageEmptyApolloFoundedYear?: (OrderByDirection | null),
+/** Percentage of non-empty values for apolloFoundedYear */
+percentageNotEmptyApolloFoundedYear?: (OrderByDirection | null),
+/** Minimum amount contained in the field apolloFoundedYear */
+minApolloFoundedYear?: (OrderByDirection | null),
+/** Maximum amount contained in the field apolloFoundedYear */
+maxApolloFoundedYear?: (OrderByDirection | null),
+/** Average amount contained in the field apolloFoundedYear */
+avgApolloFoundedYear?: (OrderByDirection | null),
+/** Sum of amounts contained in the field apolloFoundedYear */
+sumApolloFoundedYear?: (OrderByDirection | null),
+/** Number of unique values for apolloShortDescription */
+countUniqueValuesApolloShortDescription?: (OrderByDirection | null),
+/** Number of empty values for apolloShortDescription */
+countEmptyApolloShortDescription?: (OrderByDirection | null),
+/** Number of non-empty values for apolloShortDescription */
+countNotEmptyApolloShortDescription?: (OrderByDirection | null),
+/** Percentage of empty values for apolloShortDescription */
+percentageEmptyApolloShortDescription?: (OrderByDirection | null),
+/** Percentage of non-empty values for apolloShortDescription */
+percentageNotEmptyApolloShortDescription?: (OrderByDirection | null),
+/** Number of unique values for apolloTotalFunding */
+countUniqueValuesApolloTotalFunding?: (OrderByDirection | null),
+/** Number of empty values for apolloTotalFunding */
+countEmptyApolloTotalFunding?: (OrderByDirection | null),
+/** Number of non-empty values for apolloTotalFunding */
+countNotEmptyApolloTotalFunding?: (OrderByDirection | null),
+/** Percentage of empty values for apolloTotalFunding */
+percentageEmptyApolloTotalFunding?: (OrderByDirection | null),
+/** Percentage of non-empty values for apolloTotalFunding */
+percentageNotEmptyApolloTotalFunding?: (OrderByDirection | null),
+/** Minimum amount contained in the field apolloTotalFunding */
+minApolloTotalFundingAmountMicros?: (OrderByDirection | null),
+/** Maximal amount contained in the field apolloTotalFunding */
+maxApolloTotalFundingAmountMicros?: (OrderByDirection | null),
+/** Sum of amounts contained in the field apolloTotalFunding */
+sumApolloTotalFundingAmountMicros?: (OrderByDirection | null),
+/** Average amount contained in the field apolloTotalFunding */
+avgApolloTotalFundingAmountMicros?: (OrderByDirection | null)}
 
 
 /** A company */
@@ -19135,7 +19471,15 @@ updatedBy?: (ActorGroupByInput | null),
 /** Field used for full-text search */
 searchVector?: (Scalars['Boolean'] | null),
 /** Group by fields of the related workspaceMember */
-accountOwner?: (WorkspaceMemberGroupByInput | null)}
+accountOwner?: (WorkspaceMemberGroupByInput | null),
+/** Industry classification from Apollo enrichment */
+apolloIndustry?: (Scalars['Boolean'] | null),
+/** Year the company was founded, from Apollo enrichment */
+apolloFoundedYear?: (Scalars['Boolean'] | null),
+/** Short company description from Apollo enrichment */
+apolloShortDescription?: (Scalars['Boolean'] | null),
+/** Total funding raised by the company, from Apollo enrichment */
+apolloTotalFunding?: (CurrencyGroupByInput | null)}
 
 
 /** A connected account */
