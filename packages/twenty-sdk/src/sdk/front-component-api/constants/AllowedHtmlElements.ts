@@ -159,7 +159,7 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
       allowFullScreen: { type: 'boolean', optional: true },
       loading: { type: 'string', optional: true },
       referrerPolicy: { type: 'string', optional: true },
-      srcdoc: { type: 'string', optional: true },
+      srcDoc: { type: 'string', optional: true },
     },
   },
   {

@@ -155,10 +155,11 @@ const generateElementPropertyType = (
   });
 };
 
+type EventStrategy = 'none' | 'standalone' | 'shared-only' | 'extend-shared';
+
 type ElementEventAnalysis = {
+  strategy: EventStrategy;
   specificEvents: string[];
-  shouldApplySharedEventsOnly: boolean;
-  hasExtraEvents: boolean;
 };
 
 const analyzeElementEvents = (
@@ -166,33 +167,37 @@ const analyzeElementEvents = (
   commonEventNames: Set<string>,
   isHtml: boolean,
 ): ElementEventAnalysis => {
+  if (component.events.length === 0) {
+    return { strategy: 'none', specificEvents: [] };
+  }
+
+  if (!isHtml || commonEventNames.size === 0) {
+    return { strategy: 'standalone', specificEvents: [] };
+  }
+
   const specificEvents = component.events.filter(
     (event) => !commonEventNames.has(event),
   );
-  const hasExtraEvents = specificEvents.length > 0;
-  const shouldApplySharedEventsOnly =
-    !hasExtraEvents && commonEventNames.size > 0 && isHtml;
 
-  return { specificEvents, hasExtraEvents, shouldApplySharedEventsOnly };
+  return specificEvents.length === 0
+    ? { strategy: 'shared-only', specificEvents: [] }
+    : { strategy: 'extend-shared', specificEvents };
 };
 
 const computeEventsType = (
   component: ComponentSchema,
   eventAnalysis: ElementEventAnalysis,
 ): string => {
-  if (component.events.length === 0) {
-    return TYPE_NAMES.EMPTY_RECORD;
+  switch (eventAnalysis.strategy) {
+    case 'none':
+      return TYPE_NAMES.EMPTY_RECORD;
+    case 'shared-only':
+      return TYPE_NAMES.COMMON_EVENTS;
+    case 'extend-shared':
+      return `${TYPE_NAMES.COMMON_EVENTS} & ${formatEventsTypeBlock(eventAnalysis.specificEvents)}`;
+    case 'standalone':
+      return formatEventsTypeBlock(component.events);
   }
-
-  if (eventAnalysis.shouldApplySharedEventsOnly) {
-    return TYPE_NAMES.COMMON_EVENTS;
-  }
-
-  if (eventAnalysis.hasExtraEvents) {
-    return `${TYPE_NAMES.COMMON_EVENTS} & ${formatEventsTypeBlock(eventAnalysis.specificEvents)}`;
-  }
-
-  return formatEventsTypeBlock(component.events);
 };
 
 const writeEventsConfig = (
@@ -200,29 +205,30 @@ const writeEventsConfig = (
   component: ComponentSchema,
   eventAnalysis: ElementEventAnalysis,
 ): void => {
-  if (eventAnalysis.shouldApplySharedEventsOnly) {
-    writer.write(`events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}],`);
-    writer.newLine();
-
-    return;
+  switch (eventAnalysis.strategy) {
+    case 'none':
+      return;
+    case 'shared-only': {
+      writer.write(`events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}],`);
+      writer.newLine();
+      return;
+    }
+    case 'extend-shared': {
+      const extraEntries = eventAnalysis.specificEvents
+        .map((event) => `'${event}'`)
+        .join(', ');
+      writer.write(
+        `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}, ${extraEntries}],`,
+      );
+      writer.newLine();
+      return;
+    }
+    case 'standalone': {
+      const entries = component.events.map((event) => `'${event}'`).join(', ');
+      writer.write(`events: [${entries}],`);
+      writer.newLine();
+    }
   }
-
-  if (eventAnalysis.hasExtraEvents) {
-    const extraEntries = eventAnalysis.specificEvents
-      .map((event) => `'${event}'`)
-      .join(', ');
-
-    writer.write(
-      `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}, ${extraEntries}],`,
-    );
-    writer.newLine();
-
-    return;
-  }
-
-  const entries = component.events.map((event) => `'${event}'`).join(', ');
-  writer.write(`events: [${entries}],`);
-  writer.newLine();
 };
 
 const writePropertiesConfig = (

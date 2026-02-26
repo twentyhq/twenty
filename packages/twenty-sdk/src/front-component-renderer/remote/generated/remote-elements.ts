@@ -611,7 +611,7 @@ export type HtmlIframeProperties = HtmlCommonProperties & {
   allowFullScreen?: boolean;
   loading?: string;
   referrerPolicy?: string;
-  srcdoc?: string;
+  srcDoc?: string;
 };
 
 export const HtmlIframeElement = createRemoteElement<
@@ -631,7 +631,7 @@ export const HtmlIframeElement = createRemoteElement<
     allowFullScreen: { type: Boolean },
     loading: { type: String },
     referrerPolicy: { type: String },
-    srcdoc: { type: String },
+    srcDoc: { type: String },
   },
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
