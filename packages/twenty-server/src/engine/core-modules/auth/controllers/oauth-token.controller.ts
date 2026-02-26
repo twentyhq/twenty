@@ -13,11 +13,9 @@ import { type Response } from 'express';
 import { IsOptional, IsString, MaxLength } from 'class-validator';
 
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
-import {
-  OAuthErrorResponse,
-  OAuthService,
-  OAuthTokenResponse,
-} from 'src/engine/core-modules/auth/services/oauth.service';
+import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
+import { OAuthErrorResponse } from 'src/engine/core-modules/auth/types/oauth-error-response.type';
+import { OAuthTokenResponse } from 'src/engine/core-modules/auth/types/oauth-token-response.type';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 

@@ -13,22 +13,11 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { OAuthErrorResponse } from 'src/engine/core-modules/auth/types/oauth-error-response.type';
+import { OAuthTokenResponse } from 'src/engine/core-modules/auth/types/oauth-token-response.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 const OAUTH_ACCESS_TOKEN_EXPIRES_IN = 1800;
-
-export type OAuthTokenResponse = {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-  refresh_token?: string;
-  scope?: string;
-};
-
-export type OAuthErrorResponse = {
-  error: string;
-  error_description: string;
-};
 
 @Injectable()
 export class OAuthService {
