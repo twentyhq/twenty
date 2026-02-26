@@ -16,8 +16,9 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { atom, useStore } from 'jotai';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -54,6 +55,23 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
 
   const unselectedRowIdsAtom = useAtomComponentSelectorCallbackState(
     unselectedRowIdsComponentSelector,
+    recordIndexId,
+  );
+
+  // TODO: remove before merge or rebase with main to get the proper fix -- this is just to unblock this PR
+
+  const selectedRowIds = useAtomComponentSelectorValue(
+    selectedRowIdsComponentSelector,
+    recordIndexId,
+  );
+
+  const unselectedRowIds = useAtomComponentSelectorValue(
+    unselectedRowIdsComponentSelector,
+    recordIndexId,
+  );
+
+  const hasUserSelectedAllRows = useAtomComponentStateValue(
+    hasUserSelectedAllRowsComponentState,
     recordIndexId,
   );
 
@@ -185,6 +203,9 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     currentRecordFilters,
     currentRecordFilterGroups,
     anyFieldFilterValue,
+    selectedRowIds,
+    unselectedRowIds,
+    hasUserSelectedAllRows,
     store,
     syncWriteAtom,
     resetWriteAtom,
