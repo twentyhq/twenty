@@ -24,6 +24,7 @@ import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogMan
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
+import { ConfirmationModalManager } from '@/ui/layout/modal/components/ConfirmationModalManager';
 import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
@@ -71,6 +72,7 @@ export const AppRouterProviders = () => {
                                     <PageFavicon />
                                     <Outlet />
                                     <GlobalFilePreviewModal />
+                                    <ConfirmationModalManager />
                                     <HeadlessFrontComponentMountRoot />
                                   </StrictMode>
                                 </DialogManager>

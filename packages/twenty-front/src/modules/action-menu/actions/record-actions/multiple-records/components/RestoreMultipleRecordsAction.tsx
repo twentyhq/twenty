@@ -1,4 +1,5 @@
-import { ActionModal } from '@/action-menu/actions/components/ActionModal';
+import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
+import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -12,6 +13,7 @@ import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useConfirmationModalManager } from '@/ui/layout/modal/hooks/useConfirmationModalManager';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
@@ -77,6 +79,9 @@ export const RestoreMultipleRecordsAction = () => {
     recordGqlFields: { id: true },
   });
 
+  const { openConfirmationModal } = useConfirmationModalManager();
+  const { closeActionMenu } = useCloseActionMenu();
+
   const handleRestoreClick = async () => {
     removeSelectedRecordsFromRecordBoard();
     const recordsToRestore = await fetchAllRecordIds();
@@ -89,13 +94,18 @@ export const RestoreMultipleRecordsAction = () => {
     });
   };
 
-  return (
-    <ActionModal
-      title={t`Restore Records`}
-      subtitle={t`Are you sure you want to restore these records?`}
-      onConfirmClick={handleRestoreClick}
-      confirmButtonText={t`Restore Records`}
-      confirmButtonAccent="default"
-    />
-  );
+  const handleClick = () => {
+    openConfirmationModal({
+      title: t`Restore Records`,
+      subtitle: t`Are you sure you want to restore these records?`,
+      onConfirmClick: async () => {
+        await handleRestoreClick();
+        closeActionMenu();
+      },
+      confirmButtonText: t`Restore Records`,
+      confirmButtonAccent: 'default',
+    });
+  };
+
+  return <ActionDisplay onClick={handleClick} />;
 };
