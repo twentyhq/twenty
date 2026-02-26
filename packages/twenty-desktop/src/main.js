@@ -28,15 +28,22 @@ function getHeaderLines() {
   ];
 }
 
-// Initialize OpenAI client with OpenRouter as the base URL
-const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_KEY,
-  defaultHeaders: {
-    "HTTP-Referer": "https://recall.ai",
-    "X-Title": "Twenty AI Notetaker"
-  }
-});
+let openai = null;
+
+function getOpenAIClient() {
+  if (openai) return openai;
+  if (!process.env.OPENROUTER_KEY) return null;
+
+  openai = new OpenAI({
+    baseURL: "https://openrouter.ai/api/v1",
+    apiKey: process.env.OPENROUTER_KEY,
+    defaultHeaders: {
+      "HTTP-Referer": "https://recall.ai",
+      "X-Title": "Twenty AI Notetaker"
+    }
+  });
+  return openai;
+}
 
 // Define available models with their capabilities
 const MODELS = {
@@ -1667,8 +1674,7 @@ ${transcriptText}`
 
     // If no progress callback provided, use the non-streaming version
     if (!progressCallback) {
-      // Call the OpenAI API (via OpenRouter) for summarization (non-streaming)
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAIClient().chat.completions.create({
         model: MODELS.PRIMARY, // Use our primary model for a good balance of quality and speed
         messages: messages,
         max_tokens: 1000,
@@ -1687,8 +1693,7 @@ ${transcriptText}`
       // Use streaming version and accumulate the response
       let fullText = '';
 
-      // Create a streaming request
-      const stream = await openai.chat.completions.create({
+      const stream = await getOpenAIClient().chat.completions.create({
         model: MODELS.PRIMARY, // Use our primary model for a good balance of quality and speed
         messages: messages,
         max_tokens: 1000,

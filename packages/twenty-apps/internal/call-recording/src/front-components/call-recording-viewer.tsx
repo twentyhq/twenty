@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { MediaPlayer } from 'src/components/MediaPlayer';
 import { TranscriptViewer } from 'src/components/TranscriptViewer';
 import { CALL_RECORDING_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-viewer-front-component-universal-identifier';
@@ -9,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const CallRecordingViewer = () => {
   const { callRecording, loading, error } = useCallRecording();
-  const [currentTimeSeconds, setCurrentTimeSeconds] = useState(0);
 
   const transcriptFileUrl = callRecording?.transcriptFile[0]?.url;
 
@@ -44,15 +42,11 @@ export const CallRecordingViewer = () => {
       <MediaPlayer
         url={recordingFileUrl}
         extension={recordingFileExtension}
-        onTimeUpdate={setCurrentTimeSeconds}
       />
       {transcriptLoading ? (
         <div>Loading transcript...</div>
       ) : (
-        <TranscriptViewer
-          entries={transcriptEntries}
-          currentTimeSeconds={currentTimeSeconds}
-        />
+        <TranscriptViewer entries={transcriptEntries} />
       )}
     </div>
   );

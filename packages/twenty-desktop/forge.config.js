@@ -6,12 +6,9 @@ module.exports = {
     asar: {
       unpackDir: "node_modules/@recallai"
     },
-    osxSign: {
+    osxSign: process.env.SKIP_SIGN ? false : {
       continueOnError: false,
       optionsForFile: (_) => {
-        // Here, we keep it simple and return a single entitlements.plist file.
-        // You can use this callback to map different sets of entitlements
-        // to specific files in your packaged app.
         return {
           entitlements: './Entitlements.plist'
         };

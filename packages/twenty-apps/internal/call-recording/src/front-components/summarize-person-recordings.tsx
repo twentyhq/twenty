@@ -155,7 +155,7 @@ const SummarizePersonRecordings = () => {
   }, [personRecordId]);
 
   if (loading) {
-    return <div>Generating summary...</div>;
+    return <SummaryViewer markdown="*Generating summary...*" />;
   }
 
   if (isDefined(error)) {
