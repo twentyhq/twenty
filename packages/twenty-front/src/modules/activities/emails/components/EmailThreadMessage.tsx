@@ -78,16 +78,14 @@ export const EmailThreadMessage = ({
             visibility={MessageChannelVisibility.METADATA}
           />
         ) : isOpen ? (
-          <>
-            <EmailThreadMessageBody body={body} isDisplayed />
-            {attachments && attachments.length > 0 && (
-              <EmailMessageAttachments attachments={attachments} />
-            )}
-          </>
+          <EmailThreadMessageBody body={body} isDisplayed />
         ) : (
           <EmailThreadMessageBodyPreview body={body} />
         )}
       </StyledThreadMessageBody>
+      {isOpen && attachments && attachments.length > 0 && (
+        <EmailMessageAttachments attachments={attachments} />
+      )}
     </StyledThreadMessage>
   );
 };
