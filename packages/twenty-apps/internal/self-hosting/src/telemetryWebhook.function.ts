@@ -1,20 +1,5 @@
-import { defineFunction } from 'twenty-sdk';
-import { createClient } from '../../generated';
-
-// TODO: import from twenty-sdk when 0.4.0 is deployed
-type ServerlessFunctionEvent<TBody = object> = {
-  headers: Record<string, string | undefined>;
-  queryStringParameters: Record<string, string | undefined>;
-  pathParameters: Record<string, string | undefined>;
-  body: TBody | null;
-  isBase64Encoded: boolean;
-  requestContext: {
-    http: {
-      method: string;
-      path: string;
-    };
-  };
-};
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/generated';
 
 type TelemetryEventPayload = {
   action: string;
@@ -37,7 +22,7 @@ type TelemetryEventPayload = {
 };
 
 export const main = async (
-  params: ServerlessFunctionEvent<TelemetryEventPayload>,
+  params: RoutePayload<TelemetryEventPayload>,
 ): Promise<{ success: boolean; message: string; error?: string }> => {
   try {
     const { action, payload } = params.body || {};
@@ -71,13 +56,7 @@ export const main = async (
       };
     }
 
-    const client = createClient({
-      url: `${process.env.TWENTY_API_URL}/graphql`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
-      },
-    });
+    const client = new CoreApiClient();
 
     // Create or update selfHostingUser record
     const result = await client.mutation({
@@ -115,18 +94,14 @@ export const main = async (
   }
 };
 
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: '10104201-622b-4a5e-9f27-8f2af19b2a3c',
   name: 'telemetry-webhook',
   timeoutSeconds: 5,
   handler: main,
-  triggers: [
-    {
-      universalIdentifier: '7c8e3f5a-9b4c-4d1e-8f2a-1b3c4d5e6f7a',
-      type: 'route',
-      path: '/webhook/telemetry',
-      httpMethod: 'POST',
-      isAuthRequired: false,
-    },
-  ],
+  httpRouteTriggerSettings: {
+    path: '/webhook/telemetry',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+  },
 });

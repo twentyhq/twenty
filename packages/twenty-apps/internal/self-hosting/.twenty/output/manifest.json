@@ -1,0 +1,558 @@
+{
+  "application": {
+    "universalIdentifier": "94f7db30-59e5-4b09-a5fe-64cd3d4a65b0",
+    "displayName": "Self Hosting",
+    "description": "Used to manage billing and telemetry of self-hosted instances",
+    "defaultRoleUniversalIdentifier": "66972e19-9fdb-4336-87ce-442a17fd179c",
+    "yarnLockChecksum": "f66aa34e63e82a31ee0072fffaac635d",
+    "packageJsonChecksum": "bf473a5444c8dcb9a2de60adf70a0a99",
+    "apiClientChecksum": "251ea4e066bd44571694ebd57ceac900"
+  },
+  "objects": [
+    {
+      "universalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
+      "nameSingular": "selfHostingUser",
+      "namePlural": "selfHostingUsers",
+      "labelSingular": "Self Hosting User",
+      "labelPlural": "Self Hosting Users",
+      "fields": [
+        {
+          "type": "TEXT",
+          "name": "name",
+          "label": "Name",
+          "description": "Name of the self hosting user",
+          "universalIdentifier": "682cccbf-9f37-4290-a94c-902c771f61e4"
+        },
+        {
+          "type": "EMAILS",
+          "name": "email",
+          "label": "Email",
+          "description": "The email of the self hosting user",
+          "universalIdentifier": "a4b7892c-431a-4d44-973e-a5481652704f"
+        },
+        {
+          "type": "LINKS",
+          "name": "domain",
+          "label": "Domain",
+          "description": "Domain extracted from the email address (e.g. domain.com / https://domain.com/)",
+          "universalIdentifier": "1dfa7d4e-c8f5-4639-b58e-3392a8789f76"
+        },
+        {
+          "type": "NUMBER",
+          "name": "numberOfEmailsWithSameDomain",
+          "label": "Number of Emails with Same Domain",
+          "description": "Aggregated count of self hosting users sharing the same business domain",
+          "universalIdentifier": "0bf05db0-6771-4400-91ca-1579ec11e76e"
+        },
+        {
+          "type": "BOOLEAN",
+          "name": "isEnriched",
+          "label": "Is Enriched",
+          "description": "Whether the record has been enriched",
+          "defaultValue": false,
+          "universalIdentifier": "fefe9fd6-23ae-4046-b60b-64d17e9ff7ed"
+        },
+        {
+          "type": "BOOLEAN",
+          "name": "triedToBeEnriched",
+          "label": "Tried to Be Enriched",
+          "description": "Whether an enrichment attempt has been made",
+          "defaultValue": false,
+          "universalIdentifier": "d32c8cc3-8855-453d-bb7d-9c9c0b3f2128"
+        },
+        {
+          "type": "BOOLEAN",
+          "name": "isPersonalEmail",
+          "label": "Is Personal Email",
+          "description": "Whether the email is a personal email address",
+          "defaultValue": true,
+          "universalIdentifier": "f4568391-9474-4ed8-8cbb-e36d86e0f5f9"
+        },
+        {
+          "type": "BOOLEAN",
+          "name": "isTwenty",
+          "label": "Is Twenty",
+          "description": "Whether the user is from Twenty",
+          "defaultValue": false,
+          "universalIdentifier": "b1acef1f-7c10-47a9-899e-aaca45b36e04"
+        },
+        {
+          "type": "TEXT",
+          "name": "personFirstName",
+          "label": "Person First Name",
+          "description": "First name of the person",
+          "universalIdentifier": "d5104f88-a6ff-4559-914b-f127ab0c6477"
+        },
+        {
+          "type": "TEXT",
+          "name": "personLastName",
+          "label": "Person Last Name",
+          "description": "Last name of the person",
+          "universalIdentifier": "f39871d6-295d-48b1-ba44-5799dcc9b710"
+        },
+        {
+          "type": "TEXT",
+          "name": "personCity",
+          "label": "Person City",
+          "description": "City of the person",
+          "universalIdentifier": "ca733484-e595-4257-9ca9-9a7802fb8bcb"
+        },
+        {
+          "type": "TEXT",
+          "name": "personCountry",
+          "label": "Person Country",
+          "description": "Country of the person",
+          "universalIdentifier": "18c06357-1b50-4d5b-82cf-1f71f286fbe4"
+        },
+        {
+          "type": "TEXT",
+          "name": "personJobFunction",
+          "label": "Person Job Function",
+          "description": "Job function of the person",
+          "universalIdentifier": "26e7e2c7-ea83-41e0-8c07-1fc2549a3fb4"
+        },
+        {
+          "type": "TEXT",
+          "name": "personJobTitle",
+          "label": "Person Job Title",
+          "description": "Job title of the person",
+          "universalIdentifier": "177908e9-1ca6-4762-9518-0df966d3e9fc"
+        },
+        {
+          "type": "LINKS",
+          "name": "personLinkedIn",
+          "label": "Person LinkedIn",
+          "description": "LinkedIn profile of the person",
+          "universalIdentifier": "3515683f-7f9f-4b6d-9b16-614824d277b7"
+        },
+        {
+          "type": "TEXT",
+          "name": "personSeniority",
+          "label": "Person Seniority",
+          "description": "Seniority level of the person",
+          "universalIdentifier": "8b63855a-5915-4d6a-a6ed-ef7d8f8e5dd1"
+        },
+        {
+          "type": "NUMBER",
+          "name": "companyAlexaRank",
+          "label": "Company Alexa Rank",
+          "description": "Alexa rank of the company",
+          "universalIdentifier": "7c61335b-cd4b-4eae-8b02-0db746913e36"
+        },
+        {
+          "type": "CURRENCY",
+          "name": "companyAnnualRevenue",
+          "label": "Company Annual Revenue",
+          "description": "Annual revenue of the company",
+          "universalIdentifier": "a2367973-aa12-42c2-9577-fe868f61b83b"
+        },
+        {
+          "type": "TEXT",
+          "name": "companyAnnualRevenuePrinted",
+          "label": "Company Annual Revenue Printed",
+          "description": "Formatted annual revenue of the company",
+          "universalIdentifier": "bc02b6af-8f48-4fde-920d-1fd3e2a8557b"
+        },
+        {
+          "type": "TEXT",
+          "name": "companyDescription",
+          "label": "Company Description",
+          "description": "Description of the company",
+          "universalIdentifier": "a9bb622e-56b6-42ba-8b03-17a47d707409"
+        },
+        {
+          "type": "NUMBER",
+          "name": "companyEmployees",
+          "label": "Company Employees",
+          "description": "Number of employees at the company",
+          "universalIdentifier": "8e1dbc58-d444-470f-b8fe-9eed8da4b59e"
+        },
+        {
+          "type": "TEXT",
+          "name": "companyFoundedYear",
+          "label": "Company Founded Year",
+          "description": "Year the company was founded",
+          "universalIdentifier": "3cf95527-5064-43ab-bf5e-421eb45fac5f"
+        },
+        {
+          "type": "TEXT",
+          "name": "companyFundingLatestStage",
+          "label": "Company Funding Latest Stage",
+          "description": "Latest funding stage of the company",
+          "universalIdentifier": "a7dcd92a-6811-490b-a8dd-fad1c19091a1"
+        },
+        {
+          "type": "NUMBER",
+          "name": "companyFundingTotalAmount",
+          "label": "Company Funding Total Amount",
+          "description": "Total funding amount of the company",
+          "universalIdentifier": "6fca8a11-b49a-4081-a7c9-9646f43ad7aa"
+        },
+        {
+          "type": "TEXT",
+          "name": "companyFundingTotalAmountPrinted",
+          "label": "Company Funding Total Amount Printed",
+          "description": "Formatted total funding amount of the company",
+          "universalIdentifier": "0078f0f0-2262-4c74-aaf8-4061c6c8a1f3"
+        },
+        {
+          "type": "TEXT",
+          "name": "companyIndustries",
+          "label": "Company Industries",
+          "description": "Industries the company operates in",
+          "universalIdentifier": "6b971b9c-6ef5-4497-989e-f9a7c72720cf"
+        },
+        {
+          "type": "TEXT",
+          "name": "companyIndustry",
+          "label": "Company Industry",
+          "description": "Primary industry of the company",
+          "universalIdentifier": "ab84e651-d35b-4e02-8d69-1740af3e22f7"
+        },
+        {
+          "type": "LINKS",
+          "name": "companyLinkedIn",
+          "label": "Company LinkedIn",
+          "description": "LinkedIn page of the company",
+          "universalIdentifier": "4c44b956-f880-434f-b4cd-854b82076e56"
+        },
+        {
+          "type": "TEXT",
+          "name": "companyName",
+          "label": "Company Name",
+          "description": "Name of the company",
+          "universalIdentifier": "1a25412b-f9ce-4406-ac53-f20d1ab8c5ea"
+        },
+        {
+          "type": "ARRAY",
+          "name": "companyTags",
+          "label": "Company Tags",
+          "description": "Tags associated with the company",
+          "universalIdentifier": "ceb64d0b-1203-4c6d-af00-39b668f5f891"
+        },
+        {
+          "type": "ARRAY",
+          "name": "companyTech",
+          "label": "Company Tech",
+          "description": "Technologies used by the company",
+          "universalIdentifier": "11dd57c3-06bb-4722-bb65-96d0a899ca91"
+        },
+        {
+          "name": "id",
+          "label": "Id",
+          "description": "Id",
+          "icon": "Icon123",
+          "isNullable": false,
+          "defaultValue": "uuid",
+          "type": "UUID",
+          "universalIdentifier": "104bc2d3-5d58-5d81-8f6b-5a3415e8b728"
+        },
+        {
+          "name": "createdAt",
+          "label": "Creation date",
+          "description": "Creation date",
+          "icon": "IconCalendar",
+          "isNullable": false,
+          "defaultValue": "now",
+          "type": "DATE_TIME",
+          "universalIdentifier": "d433a8ed-e38d-5fb9-9453-00de44f8fa9f"
+        },
+        {
+          "name": "updatedAt",
+          "label": "Last update",
+          "description": "Last time the record was changed",
+          "icon": "IconCalendarClock",
+          "isNullable": false,
+          "defaultValue": "now",
+          "type": "DATE_TIME",
+          "universalIdentifier": "2af5ec50-16e4-5abf-84e4-1bb203c32531"
+        },
+        {
+          "name": "deletedAt",
+          "label": "Deleted at",
+          "description": "Deletion date",
+          "icon": "IconCalendarClock",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "DATE_TIME",
+          "universalIdentifier": "b93f044a-b8a0-5e04-b730-3cb2fba4a7bb"
+        },
+        {
+          "name": "createdBy",
+          "label": "Created by",
+          "description": "The creator of the record",
+          "icon": "IconCreativeCommonsSa",
+          "isNullable": false,
+          "defaultValue": {
+            "name": "''",
+            "source": "'MANUAL'"
+          },
+          "type": "ACTOR",
+          "universalIdentifier": "c020206b-7b6e-5106-b072-b624c904e97a"
+        },
+        {
+          "name": "updatedBy",
+          "label": "Updated by",
+          "description": "The workspace member who last updated the record",
+          "icon": "IconUserCircle",
+          "isNullable": false,
+          "defaultValue": {
+            "name": "''",
+            "source": "'MANUAL'"
+          },
+          "type": "ACTOR",
+          "universalIdentifier": "839fdddd-2cb1-5610-a061-b51600f07c20"
+        },
+        {
+          "name": "position",
+          "label": "Position",
+          "description": "Position",
+          "icon": "IconHierarchy2",
+          "isNullable": false,
+          "defaultValue": 0,
+          "type": "POSITION",
+          "universalIdentifier": "e7bec4b7-4284-5e5e-b9c4-a702e35e7a44"
+        },
+        {
+          "name": "searchVector",
+          "label": "Search vector",
+          "icon": "IconSearch",
+          "description": "Search vector",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "TS_VECTOR",
+          "universalIdentifier": "1d1978ba-308a-57d9-ab77-25b475aa2474"
+        },
+        {
+          "name": "timelineActivities",
+          "label": "Timeline Activities",
+          "description": "Self Hosting Users tied to the SelfHostingUser",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": false,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "a66704e0-a56f-5935-baef-be07783e34b8",
+          "relationTargetFieldMetadataUniversalIdentifier": "8ac8783c-d3e9-517b-b706-d6e5ab841943",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5"
+        },
+        {
+          "name": "favorites",
+          "label": "Favorites",
+          "description": "Self Hosting Users tied to the SelfHostingUser",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": false,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "d345d500-c61c-5403-b319-2757ec38618d",
+          "relationTargetFieldMetadataUniversalIdentifier": "a63ef2c0-ec6f-5672-b0c2-916878e92282",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-ab56-4e05-92a3-e2414a499860"
+        },
+        {
+          "name": "attachments",
+          "label": "Attachments",
+          "description": "Self Hosting Users tied to the SelfHostingUser",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": false,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "91f2d9e2-269d-5c5a-b439-af024370759a",
+          "relationTargetFieldMetadataUniversalIdentifier": "bd429c63-c18c-557c-89ab-c87991fcdfa0",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a"
+        },
+        {
+          "name": "noteTargets",
+          "label": "Note Targets",
+          "description": "Self Hosting Users tied to the SelfHostingUser",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": false,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "231cef37-fa05-578e-b30e-661adf2d85c8",
+          "relationTargetFieldMetadataUniversalIdentifier": "e8fcaab6-4e46-5ea1-b5fc-d6cfa285ac2e",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400"
+        },
+        {
+          "name": "taskTargets",
+          "label": "Task Targets",
+          "description": "Self Hosting Users tied to the SelfHostingUser",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": false,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "4f3c330f-d172-5dbb-9532-13f8472aef8d",
+          "relationTargetFieldMetadataUniversalIdentifier": "06844ebf-71c0-5eaf-8a43-71b118b073b9",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1"
+        }
+      ],
+      "labelIdentifierFieldMetadataUniversalIdentifier": "682cccbf-9f37-4290-a94c-902c771f61e4"
+    }
+  ],
+  "fields": [
+    {
+      "name": "targetSelfHostingUser",
+      "label": "SelfHostingUser",
+      "description": "SelfHostingUser Self Hosting User",
+      "icon": "IconTimelineEvent",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetSelfHostingUserId"
+      },
+      "universalIdentifier": "8ac8783c-d3e9-517b-b706-d6e5ab841943",
+      "objectUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5",
+      "relationTargetFieldMetadataUniversalIdentifier": "a66704e0-a56f-5935-baef-be07783e34b8",
+      "relationTargetObjectMetadataUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1"
+    },
+    {
+      "name": "targetSelfHostingUser",
+      "label": "SelfHostingUser",
+      "description": "SelfHostingUser Self Hosting User",
+      "icon": "IconHeart",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetSelfHostingUserId"
+      },
+      "universalIdentifier": "a63ef2c0-ec6f-5672-b0c2-916878e92282",
+      "objectUniversalIdentifier": "20202020-ab56-4e05-92a3-e2414a499860",
+      "relationTargetFieldMetadataUniversalIdentifier": "d345d500-c61c-5403-b319-2757ec38618d",
+      "relationTargetObjectMetadataUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
+      "type": "RELATION"
+    },
+    {
+      "name": "targetSelfHostingUser",
+      "label": "SelfHostingUser",
+      "description": "SelfHostingUser Self Hosting User",
+      "icon": "IconFileImport",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetSelfHostingUserId"
+      },
+      "universalIdentifier": "bd429c63-c18c-557c-89ab-c87991fcdfa0",
+      "objectUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a",
+      "relationTargetFieldMetadataUniversalIdentifier": "91f2d9e2-269d-5c5a-b439-af024370759a",
+      "relationTargetObjectMetadataUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f634-435d-ab8d-e1168b375c69"
+    },
+    {
+      "name": "targetSelfHostingUser",
+      "label": "SelfHostingUser",
+      "description": "SelfHostingUser Self Hosting User",
+      "icon": "IconCheckbox",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetSelfHostingUserId"
+      },
+      "universalIdentifier": "e8fcaab6-4e46-5ea1-b5fc-d6cfa285ac2e",
+      "objectUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400",
+      "relationTargetFieldMetadataUniversalIdentifier": "231cef37-fa05-578e-b30e-661adf2d85c8",
+      "relationTargetObjectMetadataUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f635-435d-ab8d-e1168b375c70"
+    },
+    {
+      "name": "targetSelfHostingUser",
+      "label": "SelfHostingUser",
+      "description": "SelfHostingUser Self Hosting User",
+      "icon": "IconCheckbox",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetSelfHostingUserId"
+      },
+      "universalIdentifier": "06844ebf-71c0-5eaf-8a43-71b118b073b9",
+      "objectUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1",
+      "relationTargetFieldMetadataUniversalIdentifier": "4f3c330f-d172-5dbb-9532-13f8472aef8d",
+      "relationTargetObjectMetadataUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f636-435d-ab8d-e1168b375c71"
+    }
+  ],
+  "roles": [
+    {
+      "universalIdentifier": "66972e19-9fdb-4336-87ce-442a17fd179c",
+      "label": "default role",
+      "description": "Add a description for your role",
+      "canReadAllObjectRecords": true,
+      "canUpdateAllObjectRecords": true,
+      "canSoftDeleteAllObjectRecords": true,
+      "canDestroyAllObjectRecords": false
+    }
+  ],
+  "skills": [],
+  "logicFunctions": [
+    {
+      "universalIdentifier": "10104201-622b-4a5e-9f27-8f2af19b2a3c",
+      "name": "telemetry-webhook",
+      "timeoutSeconds": 5,
+      "httpRouteTriggerSettings": {
+        "path": "/webhook/telemetry",
+        "httpMethod": "POST",
+        "isAuthRequired": false
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/telemetryWebhook.function.ts",
+      "builtHandlerPath": "src/telemetryWebhook.function.mjs",
+      "builtHandlerChecksum": "57a17c862e11da4cb5e2af2b9a80019b"
+    }
+  ],
+  "frontComponents": [],
+  "publicAssets": [],
+  "views": [
+    {
+      "universalIdentifier": "e903f0ee-52cb-4537-aca8-8940e30b023d",
+      "name": "self-hosting-user-view",
+      "objectUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
+      "icon": "IconList",
+      "position": 0,
+      "fields": [
+        {
+          "universalIdentifier": "243a2401-cd13-440c-8dcd-649e26df36bc",
+          "fieldMetadataUniversalIdentifier": "682cccbf-9f37-4290-a94c-902c771f61e4",
+          "position": 0,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "dfa75ef8-d40d-416f-9f1c-3e86edfa9fce",
+          "fieldMetadataUniversalIdentifier": "a4b7892c-431a-4d44-973e-a5481652704f",
+          "position": 0,
+          "isVisible": true
+        }
+      ]
+    }
+  ],
+  "navigationMenuItems": [
+    {
+      "universalIdentifier": "fe3aaca4-9eda-4565-b215-5d268fbf8164",
+      "name": "Self host user",
+      "icon": "IconList",
+      "position": 1,
+      "viewUniversalIdentifier": "e903f0ee-52cb-4537-aca8-8940e30b023d"
+    }
+  ],
+  "pageLayouts": []
+}
