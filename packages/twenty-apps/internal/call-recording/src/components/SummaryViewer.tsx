@@ -6,13 +6,38 @@ type SummaryViewerProps = {
   markdown: string | null | undefined;
 };
 
-const StyledSummaryContainer = styled.div`
-  line-height: 1.6;
-  padding: 16px;
-  font-size: 14px;
+const StyledSummaryCard = styled.div`
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+`;
+
+const StyledSummaryContent = styled.div`
+  line-height: 1.7;
+  padding: 20px 24px;
+  font-size: 13.5px;
   color: #333;
-  max-height: 600px;
+  max-height: 500px;
   overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.2);
+  }
 
   h1,
   h2,
@@ -20,12 +45,19 @@ const StyledSummaryContainer = styled.div`
   h4,
   h5,
   h6 {
-    margin-top: 1em;
+    margin-top: 1.2em;
     margin-bottom: 0.5em;
+    color: #1a1a1a;
+    font-weight: 600;
   }
 
   p {
-    margin: 0.5em 0;
+    margin: 0.6em 0;
+  }
+
+  strong {
+    color: #1a1a1a;
+    font-weight: 600;
   }
 
   ul,
@@ -35,24 +67,26 @@ const StyledSummaryContainer = styled.div`
   }
 
   code {
-    background-color: rgba(0, 0, 0, 0.05);
-    padding: 2px 4px;
-    border-radius: 3px;
-    font-size: 0.9em;
+    background-color: rgba(0, 0, 0, 0.04);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    font-family: 'SF Mono', 'Fira Code', monospace;
   }
 
   pre {
-    background-color: rgba(0, 0, 0, 0.05);
-    padding: 12px;
-    border-radius: 4px;
+    background-color: #f6f8fa;
+    padding: 14px 16px;
+    border-radius: 8px;
     overflow-x: auto;
+    border: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   blockquote {
-    border-left: 3px solid #ddd;
-    margin: 0.5em 0;
+    border-left: 3px solid #d0d7de;
+    margin: 0.6em 0;
     padding-left: 1em;
-    color: #666;
+    color: #57606a;
   }
 `;
 
@@ -62,8 +96,10 @@ export const SummaryViewer = ({ markdown }: SummaryViewerProps) => {
   }
 
   return (
-    <StyledSummaryContainer>
-      <Markdown>{markdown}</Markdown>
-    </StyledSummaryContainer>
+    <StyledSummaryCard>
+      <StyledSummaryContent>
+        <Markdown>{markdown}</Markdown>
+      </StyledSummaryContent>
+    </StyledSummaryCard>
   );
 };
