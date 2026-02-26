@@ -177,7 +177,7 @@ describe('syncApplication', () => {
     });
   }, 60000);
 
-  it.only('should delete old field and create equivalent one when field universalIdentifier changes', async () => {
+  it('should delete old field and create equivalent one when field universalIdentifier changes', async () => {
     const originalFieldId = uuidv4();
     const updatedFieldId = uuidv4();
 
