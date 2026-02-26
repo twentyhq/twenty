@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { IngestionPipelineEntity } from 'src/engine/metadata-modules/ingestion-pipeline/entities/ingestion-pipeline.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { lookupCarrierProductCommission } from 'src/modules/policy/utils/lookup-carrier-product-commission.util';
 
 type HealthSherpaWebhookPayload = Record<string, unknown> & {
   application_id?: string;
@@ -58,7 +59,10 @@ export class HealthSherpaPolicyPreprocessor {
       workspaceId,
     );
 
-    // 4. Inject computed fields into payload
+    // 4. Look up LTV from CarrierProduct commission
+    const ltvCommission = await this.lookupLtv(payload, workspaceId);
+
+    // 5. Inject computed fields into payload
     return {
       ...payload,
       _personId: person.id, // For leadId mapping
@@ -67,8 +71,67 @@ export class HealthSherpaPolicyPreprocessor {
       _usd: 'USD', // For premium.currencyCode mapping
       _displayName: displayName, // For name mapping (Carrier - ProductType)
       _policyNumber: payload.application_id || '', // For policyNumber mapping
+      _ltvAmountMicros: ltvCommission?.amountMicros ?? null,
+      _ltvCurrencyCode: ltvCommission?.currencyCode ?? null,
       member_phone: normalizedPhone, // Replace with normalized version
     };
+  }
+
+  private async lookupLtv(
+    payload: HealthSherpaWebhookPayload,
+    workspaceId: string,
+  ): Promise<{ amountMicros: number; currencyCode: string } | null> {
+    const carrierName = payload.carrier_name?.toString().trim();
+    const planName = payload.plan_name?.toString().trim();
+
+    if (!carrierName || !planName) {
+      return null;
+    }
+
+    try {
+      const carrierRepo = await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        'carrier',
+        { shouldBypassPermissionChecks: true },
+      );
+
+      const carrier = await carrierRepo.findOne({
+        where: { name: carrierName },
+      });
+
+      if (!isDefined(carrier)) {
+        return null;
+      }
+
+      const carrierId = (carrier as Record<string, unknown>).id as string;
+
+      const productRepo = await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        'product',
+        { shouldBypassPermissionChecks: true },
+      );
+
+      const product = await productRepo.findOne({
+        where: { name: planName },
+      });
+
+      if (!isDefined(product)) {
+        return null;
+      }
+
+      const productId = (product as Record<string, unknown>).id as string;
+
+      return await lookupCarrierProductCommission(
+        carrierId,
+        productId,
+        workspaceId,
+        this.globalWorkspaceOrmManager,
+      );
+    } catch (error) {
+      this.logger.warn(`Failed to lookup LTV: ${error}`);
+
+      return null;
+    }
   }
 
   private async computePolicyDisplayName(
@@ -81,12 +144,11 @@ export class HealthSherpaPolicyPreprocessor {
     // Look up ProductType through Product -> ProductType chain
     if (payload.plan_name) {
       try {
-        const productRepo =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            'product',
-            { shouldBypassPermissionChecks: true },
-          );
+        const productRepo = await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          'product',
+          { shouldBypassPermissionChecks: true },
+        );
 
         const product = await productRepo.findOne({
           where: { name: payload.plan_name },
@@ -124,9 +186,7 @@ export class HealthSherpaPolicyPreprocessor {
 
     // Don't return "Unknown - Unknown" — fall back to plan_name or application_id
     if (!carrierName && !productTypeName) {
-      return (
-        payload.plan_name || payload.application_id || 'Unknown - Unknown'
-      );
+      return payload.plan_name || payload.application_id || 'Unknown - Unknown';
     }
 
     return `${carrier} - ${productType}`;

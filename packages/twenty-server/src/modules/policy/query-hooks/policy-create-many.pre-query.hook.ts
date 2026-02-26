@@ -7,15 +7,20 @@ import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-re
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { AgentProfileResolverService } from 'src/modules/agent-profile/services/agent-profile-resolver.service';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildPolicyDisplayName } from 'src/modules/policy/utils/build-policy-display-name.util';
 
+// Only derives name from carrier + product. All other auto-set fields
+// (submittedDate, agentId, LTV) are handled in post-query hooks with
+// bypassed permissions to avoid field-level permission failures.
 @Injectable()
 @WorkspaceQueryHook(`policy.createMany`)
 export class PolicyCreateManyPreQueryHook
   implements WorkspacePreQueryHookInstance
 {
   constructor(
-    private readonly agentProfileResolverService: AgentProfileResolverService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async execute(
@@ -23,41 +28,35 @@ export class PolicyCreateManyPreQueryHook
     _objectName: string,
     payload: CreateManyResolverArgs,
   ): Promise<CreateManyResolverArgs> {
-    const now = new Date().toISOString();
-
-    for (const record of payload.data) {
-      if (!isDefined(record.submittedDate)) {
-        record.submittedDate = now;
-      }
-    }
-
     const workspace = authContext.workspace;
 
-    if (!isDefined(workspace) || !isDefined(authContext.workspaceMemberId)) {
+    if (!isDefined(workspace)) {
       return payload;
     }
 
-    const recordsWithoutAgent = payload.data.filter(
-      (record) => !isDefined(record.agentId),
+    // Auto-derive name from carrier + product
+    const recordsWithCarrierOrProduct = payload.data.filter(
+      (record) => isDefined(record.carrierId) || isDefined(record.productId),
     );
 
-    if (recordsWithoutAgent.length === 0) {
-      return payload;
-    }
+    if (recordsWithCarrierOrProduct.length > 0) {
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          for (const record of recordsWithCarrierOrProduct) {
+            const displayName = await buildPolicyDisplayName(
+              (record.carrierId as string) ?? null,
+              (record.productId as string) ?? null,
+              workspace.id,
+              this.globalWorkspaceOrmManager,
+            );
 
-    const agentProfileId =
-      await this.agentProfileResolverService.resolveAgentProfileId(
-        workspace.id,
-        authContext.workspaceMemberId,
-        authContext,
+            if (displayName) {
+              record.name = displayName;
+            }
+          }
+        },
+        authContext as WorkspaceAuthContext,
       );
-
-    if (!isDefined(agentProfileId)) {
-      return payload;
-    }
-
-    for (const record of recordsWithoutAgent) {
-      record.agentId = agentProfileId;
     }
 
     return payload;

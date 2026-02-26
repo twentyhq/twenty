@@ -220,7 +220,6 @@ jobs:
             --set worker.image.repository=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }} \
             --set worker.image.tag=${{ steps.image-tag.outputs.tag }} \
             --wait \
-            --atomic \
             --timeout 15m
 
       - name: Verify deployment

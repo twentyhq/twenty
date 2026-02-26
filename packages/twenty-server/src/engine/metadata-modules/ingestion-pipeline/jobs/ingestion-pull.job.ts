@@ -245,11 +245,6 @@ export class IngestionPullJob {
       // Check if there are more pages
       if (!isDefined(pipeline.paginationConfig) || records.length === 0) {
         hasMore = false;
-      } else if (
-        isDefined(pipeline.paginationConfig.maxPages) &&
-        page + 1 >= pipeline.paginationConfig.maxPages
-      ) {
-        hasMore = false;
       } else {
         const pageSize = pipeline.paginationConfig.pageSize;
 

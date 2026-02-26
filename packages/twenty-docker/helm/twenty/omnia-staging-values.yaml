@@ -1,3 +1,9 @@
+tolerations:
+  - key: environment
+    operator: Equal
+    value: staging
+    effect: NoSchedule
+
 server:
   replicaCount: 1
   persistence:

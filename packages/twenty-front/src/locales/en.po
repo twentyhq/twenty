@@ -2423,6 +2423,7 @@ msgstr "Can't scan? Copy the"
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel"
@@ -5574,6 +5575,11 @@ msgstr "Exclude non-professional emails"
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 
+#. js-lingui-id: u73wth
+#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
+msgid "excluded"
+msgstr "excluded"
+
 #. js-lingui-id: YzI8cc
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 msgid "Existing Field"
@@ -5704,6 +5710,11 @@ msgstr "Export ({exportedCount})"
 msgid "Export ({percentageValue}%)"
 msgstr "Export ({percentageValue}%)"
 
+#. js-lingui-id: 5P9szN
+#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
+msgid "Export ({totalSelected} extra fields)"
+msgstr "Export ({totalSelected} extra fields)"
+
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
@@ -5764,6 +5775,11 @@ msgstr "Export versions"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export view"
 msgstr "Export view"
+
+#. js-lingui-id: i0hGgC
+#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
+msgid "Export with Related Fields"
+msgstr "Export with Related Fields"
 
 #. js-lingui-id: +FMXdE
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -13606,6 +13622,11 @@ msgstr "Unable to delete member right now"
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "Unable to Reach Back-end"
+
+#. js-lingui-id: 0rIkys
+#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
+msgid "Uncheck any related fields you don't need in the export."
+msgstr "Uncheck any related fields you don't need in the export."
 
 #. js-lingui-id: EUHN7i
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx

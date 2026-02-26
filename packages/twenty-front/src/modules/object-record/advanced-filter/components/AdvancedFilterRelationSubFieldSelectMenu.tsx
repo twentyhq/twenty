@@ -17,7 +17,12 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconFilterOff, IconFilterPlus, useIcons } from 'twenty-ui/display';
+import {
+  IconChevronLeft,
+  IconFilterOff,
+  IconFilterPlus,
+  useIcons,
+} from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 type AdvancedFilterRelationSubFieldSelectMenuProps = {
@@ -38,8 +43,10 @@ export const AdvancedFilterRelationSubFieldSelectMenu = ({
       objectFilterDropdownIsSelectingRelationSubFieldComponentState,
     );
 
-  const { closeAdvancedFilterFieldSelectDropdown, advancedFilterFieldSelectDropdownId } =
-    useAdvancedFilterFieldSelectDropdown(recordFilterId);
+  const {
+    closeAdvancedFilterFieldSelectDropdown,
+    advancedFilterFieldSelectDropdownId,
+  } = useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
   const { selectFieldUsedInAdvancedFilterDropdown } =
     useSelectFieldUsedInAdvancedFilterDropdown();
