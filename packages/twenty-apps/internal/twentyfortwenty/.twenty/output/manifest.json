@@ -28,7 +28,7 @@
     },
     "yarnLockChecksum": "31c83d74119b810f2c956d41c2ee3576",
     "packageJsonChecksum": "1807c41d2a51ee36385ece5d35b3ef4f",
-    "apiClientChecksum": "3016815faabfbe0aa66c15e37330545f"
+    "apiClientChecksum": null
   },
   "objects": [
     {
@@ -1579,8 +1579,8 @@
   "logicFunctions": [
     {
       "universalIdentifier": "3897e059-715e-4a4b-b165-c44f17d2e30a",
-      "name": "product-data-create-users",
-      "description": "A simple logic function",
+      "name": "sync-product-data",
+      "description": "Syncs cloud users, cloud workspaces, and cloud user workspaces from ClickHouse",
       "timeoutSeconds": 120,
       "cronTriggerSettings": {
         "pattern": "*/10 * * * *"
@@ -1590,9 +1590,9 @@
         "properties": {}
       },
       "handlerName": "default.config.handler",
-      "sourceHandlerPath": "src/logic-functions/create-users.ts",
-      "builtHandlerPath": "src/logic-functions/create-users.mjs",
-      "builtHandlerChecksum": "dc59169411b3508d7a008e213b31f3e2"
+      "sourceHandlerPath": "src/logic-functions/sync-product-data.ts",
+      "builtHandlerPath": "src/logic-functions/sync-product-data.mjs",
+      "builtHandlerChecksum": "9e7a645ec39adf0585692bf9273efec6"
     }
   ],
   "frontComponents": [],
