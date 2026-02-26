@@ -2777,7 +2777,7 @@ export type MutationEditSsoIdentityProviderArgs = {
 
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String'];
-  workspaceId: Scalars['UUID'];
+  workspaceId?: InputMaybe<Scalars['UUID']>;
 };
 
 
@@ -5489,7 +5489,7 @@ export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __
 
 export type EmailPasswordResetLinkMutationVariables = Exact<{
   email: Scalars['String'];
-  workspaceId: Scalars['UUID'];
+  workspaceId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
@@ -8942,7 +8942,7 @@ export type AuthorizeAppMutationHookResult = ReturnType<typeof useAuthorizeAppMu
 export type AuthorizeAppMutationResult = Apollo.MutationResult<AuthorizeAppMutation>;
 export type AuthorizeAppMutationOptions = Apollo.BaseMutationOptions<AuthorizeAppMutation, AuthorizeAppMutationVariables>;
 export const EmailPasswordResetLinkDocument = gql`
-    mutation EmailPasswordResetLink($email: String!, $workspaceId: UUID!) {
+    mutation EmailPasswordResetLink($email: String!, $workspaceId: UUID) {
   emailPasswordResetLink(email: $email, workspaceId: $workspaceId) {
     success
   }

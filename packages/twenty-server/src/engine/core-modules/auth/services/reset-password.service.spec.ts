@@ -17,6 +17,7 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -42,6 +43,8 @@ describe('ResetPasswordService', () => {
   let emailService: EmailService;
   let twentyConfigService: TwentyConfigService;
   let workspaceDomainsService: WorkspaceDomainsService;
+  let userWorkspaceService: UserWorkspaceService;
+  let domainServerConfigService: DomainServerConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -75,6 +78,9 @@ describe('ResetPasswordService', () => {
         {
           provide: DomainServerConfigService,
           useValue: {
+            getFrontUrl: jest
+              .fn()
+              .mockReturnValue(new URL('https://app.localhost.com:3000')),
             getBaseUrl: jest
               .fn()
               .mockResolvedValue(new URL('http://localhost:3001')),
@@ -100,6 +106,12 @@ describe('ResetPasswordService', () => {
             }),
           },
         },
+        {
+          provide: UserWorkspaceService,
+          useValue: {
+            findFirstWorkspaceByUserId: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -116,6 +128,10 @@ describe('ResetPasswordService', () => {
 
     workspaceDomainsService = module.get<WorkspaceDomainsService>(
       WorkspaceDomainsService,
+    );
+    userWorkspaceService = module.get<UserWorkspaceService>(UserWorkspaceService);
+    domainServerConfigService = module.get<DomainServerConfigService>(
+      DomainServerConfigService,
     );
   });
 
@@ -146,7 +162,63 @@ describe('ResetPasswordService', () => {
       expect(appTokenRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
           userId: '1',
+          workspaceId: 'workspace-id',
           type: AppTokenType.PasswordResetToken,
+        }),
+      );
+    });
+
+    it('should resolve workspace from user memberships when workspaceId is missing', async () => {
+      const mockUser = { id: '1', email: 'test@example.com' };
+
+      jest
+        .spyOn(userService, 'findUserByEmailOrThrow')
+        .mockResolvedValue(mockUser as UserEntity);
+      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(appTokenRepository, 'save')
+        .mockResolvedValue({} as AppTokenEntity);
+      jest
+        .spyOn(userWorkspaceService, 'findFirstWorkspaceByUserId')
+        .mockResolvedValue({ id: 'resolved-workspace-id' } as WorkspaceEntity);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
+
+      const result = await service.generatePasswordResetToken('test@example.com');
+
+      expect(result.workspaceId).toBe('resolved-workspace-id');
+      expect(appTokenRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId: 'resolved-workspace-id',
+        }),
+      );
+    });
+
+    it('should store null workspaceId when no workspace can be resolved', async () => {
+      const mockUser = { id: '1', email: 'test@example.com' };
+
+      jest
+        .spyOn(userService, 'findUserByEmailOrThrow')
+        .mockResolvedValue(mockUser as UserEntity);
+      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(appTokenRepository, 'save')
+        .mockResolvedValue({} as AppTokenEntity);
+      jest
+        .spyOn(userWorkspaceService, 'findFirstWorkspaceByUserId')
+        .mockRejectedValue(
+          new AuthException(
+            'Workspace not found',
+            AuthExceptionCode.WORKSPACE_NOT_FOUND,
+          ),
+        );
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
+
+      const result = await service.generatePasswordResetToken('test@example.com');
+
+      expect(result.workspaceId).toBeNull();
+      expect(appTokenRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId: null,
         }),
       );
     });
@@ -221,6 +293,32 @@ describe('ResetPasswordService', () => {
       );
 
       expect(result.success).toBe(true);
+      expect(emailService.send).toHaveBeenCalled();
+    });
+
+    it('should send a password reset email on app domain when workspaceId is null', async () => {
+      const mockUser = { id: '1', email: 'test@example.com' };
+      const mockToken = {
+        workspaceId: null,
+        passwordResetToken: 'token123',
+        passwordResetTokenExpiresAt: new Date(),
+      };
+
+      jest
+        .spyOn(userService, 'findUserByEmailOrThrow')
+        .mockResolvedValue(mockUser as UserEntity);
+      jest
+        .spyOn(domainServerConfigService, 'getFrontUrl')
+        .mockReturnValue(new URL('https://app.localhost.com:3000'));
+
+      const result = await service.sendEmailPasswordResetLink(
+        mockToken,
+        'test@example.com',
+        'en',
+      );
+
+      expect(result.success).toBe(true);
+      expect(workspaceDomainsService.buildWorkspaceURL).not.toHaveBeenCalled();
       expect(emailService.send).toHaveBeenCalled();
     });
 

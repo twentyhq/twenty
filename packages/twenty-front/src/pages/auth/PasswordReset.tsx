@@ -8,6 +8,7 @@ import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -138,7 +139,8 @@ export const PasswordReset = () => {
   const [updatePasswordViaToken, { loading: isUpdatingPassword }] =
     useUpdatePasswordViaResetTokenMutation();
 
-  const { signInWithCredentialsInWorkspace } = useAuth();
+  const { signInWithCredentialsInWorkspace, signInWithCredentials } = useAuth();
+  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { isCaptchaReady } = useCaptcha();
 
@@ -184,11 +186,15 @@ export const PasswordReset = () => {
 
       const token = readCaptchaToken();
 
-      await signInWithCredentialsInWorkspace(
-        email || '',
-        formData.newPassword,
-        token,
-      );
+      if (isOnAWorkspace) {
+        await signInWithCredentialsInWorkspace(
+          email || '',
+          formData.newPassword,
+          token,
+        );
+      } else {
+        await signInWithCredentials(email || '', formData.newPassword, token);
+      }
 
       redirect(AppPath.Index);
     } catch (err) {

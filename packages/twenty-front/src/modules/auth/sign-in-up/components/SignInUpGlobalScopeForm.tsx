@@ -12,6 +12,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
+import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import {
@@ -136,6 +137,7 @@ export const SignInUpGlobalScopeForm = () => {
   const { t } = useLingui();
 
   const { form } = useSignInUpForm();
+  const { handleResetPassword } = useHandleResetPassword();
 
   const getAvailableWorkspaceUrl = (availableWorkspace: AvailableWorkspace) => {
     const { pathname, searchParams } = getAvailableWorkspacePathAndSearchParams(
@@ -234,6 +236,15 @@ export const SignInUpGlobalScopeForm = () => {
           <FormProvider {...form}>
             <SignInUpWithCredentials isGlobalScope />
           </FormProvider>
+          {signInUpStep === SignInUpStep.Password && (
+            <StyledActionLinkContainer>
+              <ClickToActionLink
+                onClick={handleResetPassword(form.getValues('email'))}
+              >
+                <Trans>Forgot your password?</Trans>
+              </ClickToActionLink>
+            </StyledActionLinkContainer>
+          )}
         </StyledContentContainer>
       )}
     </>

@@ -29,10 +29,12 @@ import { type EmailPasswordResetLinkOutput } from 'src/engine/core-modules/auth/
 import { type InvalidatePasswordOutput } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
 import { type PasswordResetToken } from 'src/engine/core-modules/auth/dto/password-reset-token.dto';
 import { type ValidatePasswordResetTokenOutput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
@@ -41,6 +43,7 @@ import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace
 export class ResetPasswordService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly domainServerConfigService: DomainServerConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -48,17 +51,37 @@ export class ResetPasswordService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly emailService: EmailService,
     private readonly i18nService: I18nService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userService: UserService,
   ) {}
 
   async generatePasswordResetToken(
     email: string,
-    workspaceId: string,
+    workspaceId?: string,
   ): Promise<PasswordResetToken> {
     const user = await this.userService.findUserByEmailOrThrow(
       email,
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
     );
+
+    let targetWorkspaceId = workspaceId ?? null;
+
+    if (!targetWorkspaceId) {
+      try {
+        const firstWorkspace = await this.userWorkspaceService.findFirstWorkspaceByUserId(
+          user.id,
+        );
+
+        targetWorkspaceId = firstWorkspace.id;
+      } catch (error) {
+        if (
+          !(error instanceof AuthException) ||
+          error.code !== AuthExceptionCode.WORKSPACE_NOT_FOUND
+        ) {
+          throw error;
+        }
+      }
+    }
 
     const expiresIn = this.twentyConfigService.get(
       'PASSWORD_RESET_TOKEN_EXPIRES_IN',
@@ -102,14 +125,14 @@ export class ResetPasswordService {
 
     await this.appTokenRepository.save({
       userId: user.id,
-      workspaceId: workspaceId,
+      workspaceId: targetWorkspaceId,
       value: hashedResetToken,
       expiresAt,
       type: AppTokenType.PasswordResetToken,
     });
 
     return {
-      workspaceId,
+      workspaceId: targetWorkspaceId,
       passwordResetToken: plainResetToken,
       passwordResetTokenExpiresAt: expiresAt,
     };
@@ -126,18 +149,28 @@ export class ResetPasswordService {
     );
     const hasPassword = isDefined(user.passwordHash);
 
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: resetToken.workspaceId,
+    const resetPasswordPath = getAppPath(AppPath.ResetPassword, {
+      passwordResetToken: resetToken.passwordResetToken,
     });
 
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+    let link: URL;
 
-    const link = this.workspaceDomainsService.buildWorkspaceURL({
-      workspace,
-      pathname: getAppPath(AppPath.ResetPassword, {
-        passwordResetToken: resetToken.passwordResetToken,
-      }),
-    });
+    if (resetToken.workspaceId) {
+      const workspace = await this.workspaceRepository.findOneBy({
+        id: resetToken.workspaceId,
+      });
+
+      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+      link = this.workspaceDomainsService.buildWorkspaceURL({
+        workspace,
+        pathname: resetPasswordPath,
+      });
+    } else {
+      link = this.domainServerConfigService.getFrontUrl();
+      link.pathname = resetPasswordPath;
+      link.search = '';
+    }
 
     const emailData = {
       link: link.toString(),

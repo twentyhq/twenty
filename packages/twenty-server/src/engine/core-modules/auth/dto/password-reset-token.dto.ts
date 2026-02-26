@@ -10,6 +10,6 @@ export class PasswordResetToken {
   @Field(() => Date)
   passwordResetTokenExpiresAt: Date;
 
-  @Field(() => UUIDScalarType)
-  workspaceId: string;
+  @Field(() => UUIDScalarType, { nullable: true })
+  workspaceId: string | null;
 }
