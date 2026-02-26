@@ -603,11 +603,15 @@ export const HtmlHrElement = createRemoteElement<
 
 export type HtmlIframeProperties = HtmlCommonProperties & {
   src?: string;
+  name?: string;
   width?: string;
   height?: string;
   allow?: string;
   sandbox?: string;
   allowFullScreen?: boolean;
+  loading?: string;
+  referrerPolicy?: string;
+  srcDoc?: string;
 };
 
 export const HtmlIframeElement = createRemoteElement<
@@ -619,11 +623,15 @@ export const HtmlIframeElement = createRemoteElement<
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
     src: { type: String },
+    name: { type: String },
     width: { type: String },
     height: { type: String },
     allow: { type: String },
     sandbox: { type: String },
     allowFullScreen: { type: Boolean },
+    loading: { type: String },
+    referrerPolicy: { type: String },
+    srcDoc: { type: String },
   },
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
@@ -640,13 +648,35 @@ export type HtmlVideoProperties = HtmlCommonProperties & {
   height?: string;
   crossOrigin?: string;
   playsInline?: boolean;
+  disablePictureInPicture?: boolean;
+  disableRemotePlayback?: boolean;
 };
 
 export const HtmlVideoElement = createRemoteElement<
   HtmlVideoProperties,
   Record<string, never>,
   Record<string, never>,
-  HtmlCommonEvents
+  HtmlCommonEvents & {
+    timeupdate(event: RemoteEvent<SerializedEventData>): void;
+    play(event: RemoteEvent<SerializedEventData>): void;
+    pause(event: RemoteEvent<SerializedEventData>): void;
+    ended(event: RemoteEvent<SerializedEventData>): void;
+    loadedmetadata(event: RemoteEvent<SerializedEventData>): void;
+    loadeddata(event: RemoteEvent<SerializedEventData>): void;
+    volumechange(event: RemoteEvent<SerializedEventData>): void;
+    seeking(event: RemoteEvent<SerializedEventData>): void;
+    seeked(event: RemoteEvent<SerializedEventData>): void;
+    error(event: RemoteEvent<SerializedEventData>): void;
+    canplay(event: RemoteEvent<SerializedEventData>): void;
+    canplaythrough(event: RemoteEvent<SerializedEventData>): void;
+    waiting(event: RemoteEvent<SerializedEventData>): void;
+    progress(event: RemoteEvent<SerializedEventData>): void;
+    durationchange(event: RemoteEvent<SerializedEventData>): void;
+    ratechange(event: RemoteEvent<SerializedEventData>): void;
+    stalled(event: RemoteEvent<SerializedEventData>): void;
+    suspend(event: RemoteEvent<SerializedEventData>): void;
+    emptied(event: RemoteEvent<SerializedEventData>): void;
+  }
 >({
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
@@ -661,8 +691,31 @@ export const HtmlVideoElement = createRemoteElement<
     height: { type: String },
     crossOrigin: { type: String },
     playsInline: { type: Boolean },
+    disablePictureInPicture: { type: Boolean },
+    disableRemotePlayback: { type: Boolean },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: [
+    ...HTML_COMMON_EVENTS_ARRAY,
+    'timeupdate',
+    'play',
+    'pause',
+    'ended',
+    'loadedmetadata',
+    'loadeddata',
+    'volumechange',
+    'seeking',
+    'seeked',
+    'error',
+    'canplay',
+    'canplaythrough',
+    'waiting',
+    'progress',
+    'durationchange',
+    'ratechange',
+    'stalled',
+    'suspend',
+    'emptied',
+  ],
 });
 
 export type HtmlAudioProperties = HtmlCommonProperties & {
@@ -679,7 +732,27 @@ export const HtmlAudioElement = createRemoteElement<
   HtmlAudioProperties,
   Record<string, never>,
   Record<string, never>,
-  HtmlCommonEvents
+  HtmlCommonEvents & {
+    timeupdate(event: RemoteEvent<SerializedEventData>): void;
+    play(event: RemoteEvent<SerializedEventData>): void;
+    pause(event: RemoteEvent<SerializedEventData>): void;
+    ended(event: RemoteEvent<SerializedEventData>): void;
+    loadedmetadata(event: RemoteEvent<SerializedEventData>): void;
+    loadeddata(event: RemoteEvent<SerializedEventData>): void;
+    volumechange(event: RemoteEvent<SerializedEventData>): void;
+    seeking(event: RemoteEvent<SerializedEventData>): void;
+    seeked(event: RemoteEvent<SerializedEventData>): void;
+    error(event: RemoteEvent<SerializedEventData>): void;
+    canplay(event: RemoteEvent<SerializedEventData>): void;
+    canplaythrough(event: RemoteEvent<SerializedEventData>): void;
+    waiting(event: RemoteEvent<SerializedEventData>): void;
+    progress(event: RemoteEvent<SerializedEventData>): void;
+    durationchange(event: RemoteEvent<SerializedEventData>): void;
+    ratechange(event: RemoteEvent<SerializedEventData>): void;
+    stalled(event: RemoteEvent<SerializedEventData>): void;
+    suspend(event: RemoteEvent<SerializedEventData>): void;
+    emptied(event: RemoteEvent<SerializedEventData>): void;
+  }
 >({
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
@@ -691,13 +764,38 @@ export const HtmlAudioElement = createRemoteElement<
     preload: { type: String },
     crossOrigin: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: [
+    ...HTML_COMMON_EVENTS_ARRAY,
+    'timeupdate',
+    'play',
+    'pause',
+    'ended',
+    'loadedmetadata',
+    'loadeddata',
+    'volumechange',
+    'seeking',
+    'seeked',
+    'error',
+    'canplay',
+    'canplaythrough',
+    'waiting',
+    'progress',
+    'durationchange',
+    'ratechange',
+    'stalled',
+    'suspend',
+    'emptied',
+  ],
 });
 
 export type HtmlSourceProperties = HtmlCommonProperties & {
   src?: string;
   type?: string;
   media?: string;
+  srcSet?: string;
+  sizes?: string;
+  width?: number;
+  height?: number;
 };
 
 export const HtmlSourceElement = createRemoteElement<
@@ -711,6 +809,10 @@ export const HtmlSourceElement = createRemoteElement<
     src: { type: String },
     type: { type: String },
     media: { type: String },
+    srcSet: { type: String },
+    sizes: { type: String },
+    width: { type: Number },
+    height: { type: Number },
   },
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });

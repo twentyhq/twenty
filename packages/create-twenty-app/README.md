@@ -50,6 +50,9 @@ yarn twenty function:logs
 # Execute a function with a JSON payload
 yarn twenty function:execute -n my-function -p '{"key": "value"}'
 
+# Execute the pre-install function
+yarn twenty function:execute --preInstall
+
 # Execute the post-install function
 yarn twenty function:execute --postInstall
 
@@ -92,6 +95,7 @@ In interactive mode, you can pick from:
 **Core files (always created):**
 - `application-config.ts` — Application metadata configuration
 - `roles/default-role.ts` — Default role for logic functions
+- `logic-functions/pre-install.ts` — Pre-install logic function (runs before app installation)
 - `logic-functions/post-install.ts` — Post-install logic function (runs after app installation)
 - TypeScript configuration, ESLint, package.json, .gitignore
 - A prewired `twenty` script that delegates to the `twenty` CLI from twenty-sdk

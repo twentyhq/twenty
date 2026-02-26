@@ -24,6 +24,19 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+const personMetadata = getMockObjectMetadataItemOrThrow('person');
+const companyMetadata = getMockObjectMetadataItemOrThrow('company');
+const companyFieldOnPerson = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: personMetadata,
+  fieldName: 'company',
+});
+const peopleFieldOnCompany = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyMetadata,
+  fieldName: 'people',
+});
 
 const RelationWorkspaceSetterEffect = () => {
   useEffect(() => {
@@ -39,7 +52,7 @@ const RelationOneToManyFieldInputWithContext = () => {
 
   const fieldDefinition = useMemo(
     () => ({
-      fieldMetadataId: '94902a74-b8ca-4a56-8573-7469f0b664f6',
+      fieldMetadataId: peopleFieldOnCompany.id,
       label: 'People',
       type: FieldMetadataType.RELATION,
       iconName: 'IconLink',
@@ -49,7 +62,7 @@ const RelationOneToManyFieldInputWithContext = () => {
         relationObjectMetadataNamePlural: 'people',
         relationObjectMetadataNameSingular: CoreObjectNameSingular.Person,
         objectMetadataNameSingular: 'company',
-        relationFieldMetadataId: 'f6be42ac-ccb8-4df0-8c22-a9627d655c76',
+        relationFieldMetadataId: companyFieldOnPerson.id,
       },
     }),
     [],

@@ -155,7 +155,8 @@ Application development commands.
 
 - `twenty function:execute [appPath]` — Execute a logic function with a JSON payload.
   - Options:
-    - `--postInstall`: Execute the post-install logic function defined in the application config (required if `-n` and `-u` not provided).
+    - `--preInstall`: Execute the pre-install logic function defined in the application manifest (required if `--postInstall`, `-n`, and `-u` not provided).
+    - `--postInstall`: Execute the post-install logic function defined in the application manifest (required if `--preInstall`, `-n`, and `-u` not provided).
     - `-n, --functionName <name>`: Name of the function to execute (required if `--postInstall` and `-u` not provided).
     - `-u, --functionUniversalIdentifier <id>`: Universal ID of the function to execute (required if `--postInstall` and `-n` not provided).
     - `-p, --payload <payload>`: JSON payload to send to the function (default: `{}`).
@@ -207,6 +208,9 @@ twenty function:execute -n my-function -p '{"name": "test"}'
 
 # Execute a function by universal identifier
 twenty function:execute -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf -p '{"key": "value"}'
+
+# Execute the pre-install function
+twenty function:execute --preInstall
 
 # Execute the post-install function
 twenty function:execute --postInstall
