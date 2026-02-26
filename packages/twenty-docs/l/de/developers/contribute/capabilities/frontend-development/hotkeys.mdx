@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Intern wird der aktuell ausgewählte Bereich in einem Recoil-State gespeichert, der in der gesamten Anwendung geteilt wird:
+Intern wird der aktuell ausgewählte Bereich in einem Jotai-State gespeichert, der in der gesamten Anwendung geteilt wird:
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-Aber dieser Recoil-State sollte niemals manuell bearbeitet werden! Wir werden im nächsten Abschnitt sehen, wie man es verwendet.
+Aber dieser Jotai-State sollte niemals manuell bearbeitet werden! Wir werden im nächsten Abschnitt sehen, wie man es verwendet.
 
 ## Wie funktioniert es intern?
 
 Wir haben eine dünne Schicht über [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) erstellt, die es leistungsfähiger macht und unnötige Neu-Renderings vermeidet.
 
-Wir haben auch einen Recoil-State erstellt, um den Tastenkombinationsbereich zu verwalten und in der gesamten Anwendung verfügbar zu machen.
+Wir haben auch einen Jotai-State erstellt, um den Tastenkombinationsbereich zu verwalten und in der gesamten Anwendung verfügbar zu machen.

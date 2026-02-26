@@ -16,7 +16,6 @@ Permite utilizatorilor să introducă și să editeze text.
 <Tab title="Utilizare">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
@@ -29,7 +28,6 @@ export const MyComponent = () => {
   };
 
   return (
-    <RecoilRoot>
       <TextInput
         className
         label="Username"
@@ -40,7 +38,6 @@ export const MyComponent = () => {
         onKeyDown={handleKeyDown}
         RightIcon={null}
       />
-    </RecoilRoot>
   );
 };
 
@@ -81,12 +78,10 @@ Componenta de intrare text care își ajustează automat înălțimea în funcț
 <Tab title="Utilizare">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
 export const MyComponent = () => {
   return (
-    <RecoilRoot>
       <AutosizeTextInput
         onValidate={() => console.log("onValidate function fired")}
         minRows={1}
@@ -96,7 +91,6 @@ export const MyComponent = () => {
         buttonTitle
         value="Task: "
       />
-    </RecoilRoot>
   );
 };
 ```

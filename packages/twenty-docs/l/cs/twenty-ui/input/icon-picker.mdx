@@ -14,7 +14,6 @@ Rozbalovací výběr ikon, který uživatelům umožňuje vybrat ikonu ze seznam
 <Tab title="Použití">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import React, { useState } from "react";
 import { IconPicker } from "@/ui/input/components/IconPicker";
 
@@ -27,14 +26,12 @@ export const MyComponent = () => {
    };
 
   return (
-    <RecoilRoot>
       <IconPicker
         disabled={false}
         onChange={handleIconChange}
         selectedIconKey={selectedIcon}
         variant="primary"
       />
-    </RecoilRoot>
   );
 };
 ```

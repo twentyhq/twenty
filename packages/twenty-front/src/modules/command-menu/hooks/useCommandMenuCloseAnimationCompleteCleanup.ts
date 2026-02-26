@@ -42,8 +42,8 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
   const commandMenuCloseAnimationCompleteCleanup = useCallback(() => {
     closeDropdown(COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
 
-    // Snapshot values before any mutations (Jotai store.get is live, unlike
-    // Recoil snapshots which were immutable point-in-time captures).
+    // Snapshot values before any mutations (Jotai store.get is live and
+    // reflects the latest state, so we capture before mutating).
     const currentPage = store.get(commandMenuPageState.atom);
     const targetedRecordsRule = store.get(
       contextStoreTargetedRecordsRuleComponentState.atomFamily({

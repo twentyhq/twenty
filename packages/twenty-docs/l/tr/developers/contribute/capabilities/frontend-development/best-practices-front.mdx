@@ -6,9 +6,9 @@ Bu belge, ön yüz üzerinde çalışırken takip etmeniz gereken en iyi uygulam
 
 ## Durum Yönetimi
 
-React ve Recoil, kod tabanında durumu yönetir.
+React ve Jotai, kod tabanında durumu yönetir.
 
-### Durumu depolamak için `useRecoilState` kullanın.
+### Durumu depolamak için `useAtomState` kullanın.
 
 Durumunuzu depolamak için ihtiyaç duyduğunuz kadar atom oluşturmak iyi bir uygulamadır.
 
@@ -19,13 +19,16 @@ Prop drilling ile gereğinden fazla sade olmaya çalışmaktansa, fazladan atom 
 </Warning>
 
 ```tsx
-export const myAtomState = atom({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
   key: 'myAtomState',
-  default: 'default value',
+  defaultValue: 'default value',
 });
 
 export const MyComponent = () => {
-  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+  const [myAtom, setMyAtom] = useAtomState(myAtomState);
 
   return (
     <div>
@@ -42,7 +45,7 @@ export const MyComponent = () => {
 
 Durum saklamak için `useRef` kullanmaktan kaçının.
 
-Durum saklamak istiyorsanız, `useState` veya `useRecoilState` kullanmalısınız.
+Durum saklamak istiyorsanız, `useState` veya `useAtomState` kullanmalısınız.
 
 Bazı yeniden render edilmelerin olmasını önlemek için `useRef`'e ihtiyacınız varmış gibi hissediyorsanız, [yeniden render yönetimi](#managing-re-renders) konusuna bakın.
 
@@ -82,8 +85,8 @@ Aynısını Apollo kancaları ile veri çekme mantığı için de uygulayabilirs
 // ❌ Kötü, veri değişmese bile yeniden render'a neden olacak,
 //    çünkü useEffect'in yeniden değerlendirilmesi gerekiyor
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -95,9 +98,7 @@ export const PageComponent = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
-    <PageComponent />
-  </RecoilRoot>
+  <PageComponent />
 );
 ```
 
@@ -105,14 +106,14 @@ export const App = () => (
 // ✅ İyi, veri değişmiyorsa yeniden render'a neden olmaz,
 //   çünkü useEffect başka bir kardeş bileşende yeniden değerlendirilir
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
+  const [data, setData] = useAtomState(dataState);
 
   return <div>{data}</div>;
 };
 
 export const PageData = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -124,16 +125,16 @@ export const PageData = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
+  <>
     <PageData />
     <PageComponent />
-  </RecoilRoot>
+  </>
 );
 ```
 
-### Recoil aile durumlarını ve recoil aile seçimcilerini kullanın.
+### Jotai aile durumlarını ve jotai aile seçimcilerini kullanın.
 
-Recoil aile durumları ve seçimcileri, yeniden render'ları önlemenin harika bir yoludur.
+Jotai aile durumları ve seçimcileri, yeniden render'ları önlemenin harika bir yoludur.
 
 Bir öğe listesini saklamanız gerektiğinde kullanılabilirdir.
 

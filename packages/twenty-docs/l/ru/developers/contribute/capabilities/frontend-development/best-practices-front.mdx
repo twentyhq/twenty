@@ -6,9 +6,9 @@ title: Лучшие практики
 
 ## Управление состоянием
 
-React и Recoil отвечают за управление состоянием в коде.
+React и Jotai отвечают за управление состоянием в коде.
 
-### Используйте `useRecoilState` для хранения состояния
+### Используйте `useAtomState` для хранения состояния
 
 Полезно создавать столько атомов, сколько вам нужно для хранения состояния.
 
@@ -19,13 +19,16 @@ React и Recoil отвечают за управление состоянием 
 </Warning>
 
 ```tsx
-export const myAtomState = atom({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
   key: 'myAtomState',
-  default: 'default value',
+  defaultValue: 'default value',
 });
 
 export const MyComponent = () => {
-  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+  const [myAtom, setMyAtom] = useAtomState(myAtomState);
 
   return (
     <div>
@@ -42,7 +45,7 @@ export const MyComponent = () => {
 
 Избегайте использования `useRef` для хранения состояния.
 
-Если вы хотите сохранить состояние, вам следует использовать `useState` или `useRecoilState`.
+Если вы хотите сохранить состояние, вам следует использовать `useState` или `useAtomState`.
 
 Смотрите [как управлять повторными рендерами](#managing-re-renders), если вы считаете, что вам нужен `useRef`, чтобы предотвратить их.
 
@@ -82,8 +85,8 @@ export const MyComponent = () => {
 // ❌ Bad, will cause re-renders even if data is not changing,
 //    because useEffect needs to be re-evaluated
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -95,9 +98,7 @@ export const PageComponent = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
-    <PageComponent />
-  </RecoilRoot>
+  <PageComponent />
 );
 ```
 
@@ -105,14 +106,14 @@ export const App = () => (
 // ✅ Good, will not cause re-renders if data is not changing,
 //   because useEffect is re-evaluated in another sibling component
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
+  const [data, setData] = useAtomState(dataState);
 
   return <div>{data}</div>;
 };
 
 export const PageData = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -124,16 +125,16 @@ export const PageData = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
+  <>
     <PageData />
     <PageComponent />
-  </RecoilRoot>
+  </>
 );
 ```
 
-### Используйте состояния семейства Recoil и селекторы семейства Recoil
+### Используйте состояния семейства Jotai и селекторы семейства Jotai
 
-Состояния семейства Recoil и селекторы — отличный способ избежать повторных рендеров.
+Состояния семейства Jotai и селекторы — отличный способ избежать повторных рендеров.
 
 Они полезны, когда нужно хранить список элементов.
 

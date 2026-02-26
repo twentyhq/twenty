@@ -16,7 +16,6 @@ image: /images/user-guide/notes/notes_header.png
 <Tab title="用法">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
@@ -29,7 +28,6 @@ export const MyComponent = () => {
   };
 
   return (
-    <RecoilRoot>
       <TextInput
         className
         label="用户名"
@@ -40,7 +38,6 @@ export const MyComponent = () => {
         onKeyDown={handleKeyDown}
         RightIcon={null}
       />
-    </RecoilRoot>
   );
 };
 ```
@@ -80,12 +77,10 @@ export const MyComponent = () => {
 <Tab title="用法">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
 export const MyComponent = () => {
   return (
-    <RecoilRoot>
       <AutosizeTextInput
         onValidate={() => console.log("onValidate 函数已触发")}
         minRows={1}
@@ -95,7 +90,6 @@ export const MyComponent = () => {
         buttonTitle
         value="任务： "
       />
-    </RecoilRoot>
   );
 };
 ```

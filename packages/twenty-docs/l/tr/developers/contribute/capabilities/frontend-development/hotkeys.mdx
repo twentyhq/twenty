@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Dahili olarak, şu anda seçili olan kapsam, uygulama genelinde paylaşılan bir Recoil durumunda saklanır:
+Dahili olarak, şu anda seçili olan kapsam, uygulama genelinde paylaşılan bir Jotai durumunda saklanır:
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-Ancak bu Recoil durumu asla el ile yönetilmemelidir! Bunu bir sonraki bölümde nasıl kullanacağımızı göreceğiz.
+Ancak bu Jotai durumu asla el ile yönetilmemelidir! Bunu bir sonraki bölümde nasıl kullanacağımızı göreceğiz.
 
 ## İçsel olarak nasıl çalışıyor?
 
 Gereksiz yeniden render etme işlemlerinden kaçınarak daha performanslı hale getiren [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) üzerine ince bir sarmalayıcı yaptık.
 
-Ayrıca, kısayol kapsamı durumunu yönetmek ve uygulamanın her yerinde kullanılabilir hale getirmek için bir Recoil durumu oluşturuyoruz.
+Ayrıca, kısayol kapsamı durumunu yönetmek ve uygulamanın her yerinde kullanılabilir hale getirmek için bir Jotai durumu oluşturuyoruz.
