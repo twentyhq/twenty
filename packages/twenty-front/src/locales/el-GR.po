@@ -2428,7 +2428,6 @@ msgstr "Δεν μπορείτε να σαρώσετε; Αντιγράψτε το
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
-#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel"
@@ -5580,11 +5579,6 @@ msgstr "Εξαίρεση μη επαγγελματικών emails"
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Εξαιρέστε τα παρακάτω άτομα και τομείς από τον συγχρονισμό ηλεκτρονικού ταχυδρομείου μου. Εσωτερικές συζητήσεις δεν θα εισαχθούν"
 
-#. js-lingui-id: u73wth
-#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
-msgid "excluded"
-msgstr ""
-
 #. js-lingui-id: YzI8cc
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 msgid "Existing Field"
@@ -5715,11 +5709,6 @@ msgstr "Εξαγωγή ({exportedCount})"
 msgid "Export ({percentageValue}%)"
 msgstr "Εξαγωγή ({percentageValue}%)"
 
-#. js-lingui-id: 5P9szN
-#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
-msgid "Export ({totalSelected} extra fields)"
-msgstr ""
-
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
@@ -5780,11 +5769,6 @@ msgstr "Εξαγωγή εκδόσεων"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export view"
 msgstr "Εξαγωγή προβολής"
-
-#. js-lingui-id: i0hGgC
-#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
-msgid "Export with Related Fields"
-msgstr ""
 
 #. js-lingui-id: +FMXdE
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -13629,11 +13613,6 @@ msgstr ""
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "Μη διαθέσιμη σύνδεση με το Back-end"
-
-#. js-lingui-id: 0rIkys
-#: src/modules/object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx
-msgid "Uncheck any related fields you don't need in the export."
-msgstr ""
 
 #. js-lingui-id: EUHN7i
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx

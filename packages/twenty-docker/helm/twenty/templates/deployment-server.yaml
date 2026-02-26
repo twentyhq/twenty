@@ -44,10 +44,6 @@ spec:
             matchLabels:
               app.kubernetes.io/name: {{ include "twenty.name" . }}
               app.kubernetes.io/component: server
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       securityContext:
 {{- toYaml .Values.securityContext | nindent 8 }}
       volumes:

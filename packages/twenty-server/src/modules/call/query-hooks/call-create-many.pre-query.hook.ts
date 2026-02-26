@@ -23,6 +23,14 @@ export class CallCreateManyPreQueryHook
     _objectName: string,
     payload: CreateManyResolverArgs,
   ): Promise<CreateManyResolverArgs> {
+    const now = new Date().toISOString();
+
+    for (const record of payload.data) {
+      if (!isDefined(record.callDate)) {
+        record.callDate = now;
+      }
+    }
+
     const workspace = authContext.workspace;
 
     if (!isDefined(workspace) || !isDefined(authContext.workspaceMemberId)) {
@@ -41,6 +49,7 @@ export class CallCreateManyPreQueryHook
       await this.agentProfileResolverService.resolveAgentProfileId(
         workspace.id,
         authContext.workspaceMemberId,
+        authContext,
       );
 
     if (!isDefined(agentProfileId)) {

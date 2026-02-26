@@ -26,7 +26,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { type MouseEvent, useCallback } from 'react';
+import { type MouseEvent } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/display';
 import {
@@ -132,39 +132,6 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const actions = useWidgetActions({ widget });
 
-  const handleWidgetError = useCallback(
-    (error: Error, info: { componentStack?: string | null }) => {
-      // eslint-disable-next-line no-console
-      console.error(
-        `Widget error [type=${widget.type}, id=${widget.id}]:`,
-        error,
-        info.componentStack,
-      );
-
-      import('@sentry/react')
-        .then(({ captureException, withScope }) => {
-          withScope((scope) => {
-            scope.setTag('widgetType', widget.type);
-            scope.setTag('widgetId', widget.id);
-            scope.setContext('widget', {
-              type: widget.type,
-              id: widget.id,
-              configuration: widget.configuration,
-              objectMetadataId: widget.objectMetadataId,
-            });
-            if (info.componentStack) {
-              scope.setExtra('componentStack', info.componentStack);
-            }
-            captureException(error);
-          });
-        })
-        .catch(() => {
-          // Sentry not available
-        });
-    },
-    [widget],
-  );
-
   return (
     <WidgetComponentInstanceContext.Provider value={{ instanceId: widget.id }}>
       <WidgetCard
@@ -212,7 +179,6 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
           {hasAccess ? (
             <ErrorBoundary
               FallbackComponent={PageLayoutWidgetInvalidConfigDisplay}
-              onError={handleWidgetError}
             >
               <WidgetContentRenderer widget={widget} />
             </ErrorBoundary>
