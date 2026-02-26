@@ -22,7 +22,7 @@ exports[`Row Level Permission Predicate upsert should fail when fieldMetadataId 
     "userFriendlyMessage": "An error occurred.",
     "value": "invalid-uuid",
   },
-  "message": "Invalid UUID: 'not-a-valid-uuid'",
+  "message": "Invalid UUID: 'invalid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -49,7 +49,7 @@ exports[`Row Level Permission Predicate upsert should fail when objectMetadataId
     "userFriendlyMessage": "An error occurred.",
     "value": "invalid-uuid",
   },
-  "message": "Invalid UUID: 'not-a-valid-uuid'",
+  "message": "Invalid UUID: 'invalid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -64,7 +64,7 @@ exports[`Row Level Permission Predicate upsert should fail when objectMetadataId
     "userFriendlyMessage": "An error occurred.",
     "value": "invalid-uuid",
   },
-  "message": "Invalid UUID: 'not-a-valid-uuid'",
+  "message": "Invalid UUID: 'invalid-uuid'",
   "name": "ValidationError",
 }
 `;
@@ -91,7 +91,7 @@ exports[`Row Level Permission Predicate upsert should fail when roleId is not a 
     "userFriendlyMessage": "An error occurred.",
     "value": "invalid-uuid",
   },
-  "message": "Invalid UUID: 'not-a-valid-uuid'",
+  "message": "Invalid UUID: 'invalid-uuid'",
   "name": "ValidationError",
 }
 `;

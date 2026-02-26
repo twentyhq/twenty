@@ -12,20 +12,6 @@ exports[`CommandMenuItem deletion should fail when deleting a non-existent comma
 }
 `;
 
-exports[`CommandMenuItem deletion should fail when deleting with missing id 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "Variable "$id" of required type "UUID!" was not provided.",
-  "name": "GraphQLError",
-}
-`;
-
 exports[`CommandMenuItem deletion should fail when deleting with empty id 1`] = `
 {
   "extensions": {
@@ -36,7 +22,7 @@ exports[`CommandMenuItem deletion should fail when deleting with empty id 1`] = 
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID: 'not-a-valid-uuid'",
+  "message": "Invalid UUID: ''",
   "name": "ValidationError",
 }
 `;
@@ -53,5 +39,19 @@ exports[`CommandMenuItem deletion should fail when deleting with invalid id (not
   },
   "message": "Invalid UUID: 'not-a-valid-uuid'",
   "name": "ValidationError",
+}
+`;
+
+exports[`CommandMenuItem deletion should fail when deleting with missing id 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Variable "$id" of required type "UUID!" was not provided.",
+  "name": "GraphQLError",
 }
 `;

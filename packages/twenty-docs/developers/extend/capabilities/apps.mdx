@@ -60,6 +60,9 @@ yarn twenty function:logs
 # Execute a function by name
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
+# Execute the pre-install function
+yarn twenty function:execute --preInstall
+
 # Execute the post-install function
 yarn twenty function:execute --postInstall
 
@@ -79,7 +82,7 @@ When you run `npx create-twenty-app@latest my-twenty-app`, the scaffolder:
 - Copies a minimal base application into `my-twenty-app/`
 - Adds a local `twenty-sdk` dependency and Yarn 4 configuration
 - Creates config files and scripts wired to the `twenty` CLI
-- Generates core files (application config, default function role, post-install function) plus example files based on the scaffolding mode
+- Generates core files (application config, default function role, pre-install and post-install functions) plus example files based on the scaffolding mode
 
 A freshly scaffolded app with the default `--exhaustive` mode looks like this:
 
@@ -106,6 +109,7 @@ my-twenty-app/
   │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
   │   ├── hello-world.ts                # Example logic function
+  │   ├── pre-install.ts                # Pre-install logic function
   │   └── post-install.ts               # Post-install logic function
   ├── front-components/
   │   └── hello-world.tsx               # Example front component
@@ -117,7 +121,7 @@ my-twenty-app/
       └── example-skill.ts                # Example AI agent skill definition
 ```
 
-With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
+With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
 
 At a high level:
 
@@ -138,6 +142,8 @@ The SDK detects entities by parsing your TypeScript files for **`export default 
 |-----------------|-------------|
 | `defineObject()` | Custom object definitions |
 | `defineLogicFunction()` | Logic function definitions |
+| `definePreInstallLogicFunction()` | Pre-install logic function (runs before installation) |
+| `definePostInstallLogicFunction()` | Post-install logic function (runs after installation) |
 | `defineFrontComponent()` | Front component definitions |
 | `defineRole()` | Role definitions |
 | `defineField()` | Field extensions for existing objects |
@@ -212,6 +218,8 @@ The SDK provides helper functions for defining your app entities. As described i
 | `defineApplication()` | Configure application metadata (required, one per app) |
 | `defineObject()` | Define custom objects with fields |
 | `defineLogicFunction()` | Define logic functions with handlers |
+| `definePreInstallLogicFunction()` | Define a pre-install logic function (one per app) |
+| `definePostInstallLogicFunction()` | Define a post-install logic function (one per app) |
 | `defineFrontComponent()` | Define front components for custom UI |
 | `defineRole()` | Configure role permissions and object access |
 | `defineField()` | Extend existing objects with additional fields |
@@ -318,6 +326,7 @@ Every app has a single `application-config.ts` file that describes:
 - **Who the app is**: identifiers, display name, and description.
 - **How its functions run**: which role they use for permissions.
 - **(Optional) variables**: key–value pairs exposed to your functions as environment variables.
+- **(Optional) pre-install function**: a logic function that runs before the app is installed.
 - **(Optional) post-install function**: a logic function that runs after the app is installed.
 
 Use `defineApplication()` to define your application configuration:
@@ -326,7 +335,6 @@ Use `defineApplication()` to define your application configuration:
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -342,7 +350,6 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -350,7 +357,7 @@ Notes:
 - `universalIdentifier` fields are deterministic IDs you own; generate them once and keep them stable across syncs.
 - `applicationVariables` become environment variables for your functions (for example, `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
 - `defaultRoleUniversalIdentifier` must match the role file (see below).
-- `postInstallLogicFunctionUniversalIdentifier` (optional) points to a logic function that runs automatically after the app is installed. See [Post-install functions](#post-install-functions).
+- Pre-install and post-install functions are automatically detected during the manifest build. See [Pre-install functions](#pre-install-functions) and [Post-install functions](#post-install-functions).
 
 #### Roles and permissions
 
@@ -483,6 +490,43 @@ Notes:
 - The `triggers` array is optional. Functions without triggers can be used as utility functions called by other functions.
 - You can mix multiple trigger types in a single function.
 
+### Pre-install functions
+
+A pre-install function is a logic function that runs automatically before your app is installed on a workspace. This is useful for validation tasks, prerequisite checks, or preparing workspace state before the main installation proceeds.
+
+When you scaffold a new app with `create-twenty-app`, a pre-install function is generated for you at `src/logic-functions/pre-install.ts`:
+
+```typescript
+// src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+You can also manually execute the pre-install function at any time using the CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --preInstall
+```
+
+Key points:
+- Pre-install functions use `definePreInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+- The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
+- Only one pre-install function is allowed per application. The manifest build will error if more than one is detected.
+- The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
+- The default timeout is set to 300 seconds (5 minutes) to allow for longer preparation tasks.
+- Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `function:execute --preInstall`.
+
 ### Post-install functions
 
 A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
@@ -491,31 +535,18 @@ When you scaffold a new app with `create-twenty-app`, a post-install function is
 
 ```typescript
 // src/logic-functions/post-install.ts
-import { defineLogicFunction } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
 
-export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
-
-const handler = async (): Promise<void> => {
-  console.log('Post install logic function executed successfully!');
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
-export default defineLogicFunction({
-  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+export default definePostInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
   handler,
-});
-```
-
-The function is wired into your app by referencing its universal identifier in `application-config.ts`:
-
-```typescript
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
-
-export default defineApplication({
-  // ...
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -526,8 +557,10 @@ yarn twenty function:execute --postInstall
 ```
 
 Key points:
-- Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
-- The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
+- Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+- The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
+- Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
+- The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
 - The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
 - Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
 

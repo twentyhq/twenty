@@ -1,5 +1,40 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`Install application should fail when entity does not exist should fail when a role has an invalid universalIdentifier 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "ENTITY_MALFORMED",
+              "message": "Invalid universalIdentifier: "not-a-valid-uuid" is not a valid UUID v4",
+              "value": "not-a-valid-uuid",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Install application should fail when entity does not exist should fail with execution error when deleting non-existent field metadata 1`] = `
 {
   "eventId": Any<String>,
