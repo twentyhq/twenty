@@ -10,11 +10,11 @@ export const ActionMenuConfirmationModalManager = () => {
   const actionMenuConfirmationModal = useAtomStateValue(
     actionMenuConfirmationModalState,
   );
-  const isConfirmationModalOpen = useAtomComponentStateValue(
+  const isModalOpened = useAtomComponentStateValue(
     isModalOpenedComponentState,
     ACTION_MENU_CONFIRMATION_MODAL_ID,
   );
-  const setActionMenuConfirmationModalState = useSetAtomState(
+  const setActionMenuConfirmationModal = useSetAtomState(
     actionMenuConfirmationModalState,
   );
 
@@ -22,15 +22,15 @@ export const ActionMenuConfirmationModalManager = () => {
     try {
       await actionMenuConfirmationModal?.onConfirmClick();
     } finally {
-      setActionMenuConfirmationModalState(null);
+      setActionMenuConfirmationModal(null);
     }
   };
 
   const handleClose = () => {
-    setActionMenuConfirmationModalState(null);
+    setActionMenuConfirmationModal(null);
   };
 
-  if (!actionMenuConfirmationModal || !isConfirmationModalOpen) {
+  if (!actionMenuConfirmationModal || !isModalOpened) {
     return null;
   }
 

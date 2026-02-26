@@ -11,23 +11,23 @@ export const ACTION_MENU_CONFIRMATION_MODAL_ID =
   'action-menu-confirmation-modal';
 
 export const useActionMenuConfirmationModal = () => {
-  const setActionMenuConfirmationModalState = useSetAtomState(
+  const setActionMenuConfirmationModal = useSetAtomState(
     actionMenuConfirmationModalState,
   );
   const { openModal, closeModal } = useModal();
 
   const openConfirmationModal = useCallback(
     (actionMenuConfirmationModalConfig: ActionMenuConfirmationModalConfig) => {
-      setActionMenuConfirmationModalState(actionMenuConfirmationModalConfig);
+      setActionMenuConfirmationModal(actionMenuConfirmationModalConfig);
       openModal(ACTION_MENU_CONFIRMATION_MODAL_ID);
     },
-    [setActionMenuConfirmationModalState, openModal],
+    [setActionMenuConfirmationModal, openModal],
   );
 
   const closeConfirmationModal = useCallback(() => {
     closeModal(ACTION_MENU_CONFIRMATION_MODAL_ID);
-    setActionMenuConfirmationModalState(null);
-  }, [closeModal, setActionMenuConfirmationModalState]);
+    setActionMenuConfirmationModal(null);
+  }, [closeModal, setActionMenuConfirmationModal]);
 
   return { openConfirmationModal, closeConfirmationModal };
 };
