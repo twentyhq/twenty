@@ -246,15 +246,16 @@ const generateElementDefinition = (
               }
             }
             if (hasEvents) {
-              const customLiterals = customEvents
+              const formattedCustomEvents = customEvents
                 .map((event) => `'${event}'`)
                 .join(', ');
+
               writer.write(
                 hasSharedEvents && customEvents.length > 0
-                  ? `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}, ${customLiterals}],`
+                  ? `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}, ${formattedCustomEvents}],`
                   : hasSharedEvents
                     ? `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}],`
-                    : `events: [${customLiterals}],`,
+                    : `events: [${formattedCustomEvents}],`,
               );
               writer.newLine();
             }
