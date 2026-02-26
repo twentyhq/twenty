@@ -54,6 +54,10 @@ const StyledButtonContainer = styled.div`
   flex-direction: row;
   gap: 10px;
   width: 100%;
+
+  > * {
+    flex: 1;
+  }
 `;
 
 const StyledScopeList = styled.ul`
@@ -113,15 +117,11 @@ export const Authorize = () => {
   }
 
   const handleAuthorize = async () => {
-    if (
-      isDefined(clientId) &&
-      isDefined(codeChallenge) &&
-      isDefined(redirectUrl)
-    ) {
+    if (isDefined(clientId) && isDefined(redirectUrl)) {
       await authorizeApp({
         variables: {
           clientId,
-          codeChallenge,
+          codeChallenge: codeChallenge ?? undefined,
           redirectUrl,
         },
         onCompleted: (responseData) => {
