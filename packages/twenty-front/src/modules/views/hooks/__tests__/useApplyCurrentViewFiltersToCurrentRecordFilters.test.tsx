@@ -3,8 +3,8 @@ import { renderHook } from '@testing-library/react';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
@@ -37,8 +37,8 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     );
   }
 
-  afterEach(() => {
-    jotaiStore.set(coreViewsState.atom, []);
+  beforeEach(() => {
+    resetJotaiStore();
   });
 
   const allCompaniesView = mockedViewsData[0];
@@ -83,20 +83,19 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
   } satisfies CoreViewWithRelations;
 
   it('should apply filters from current view', () => {
-    jotaiStore.set(coreViewsState.atom, [mockCoreView]);
-
     const { result } = renderHook(
       () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
           useApplyCurrentViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValue(
+        const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
+          'recordIndexId',
         );
 
         return {
           applyCurrentViewFiltersToCurrentRecordFilters,
-          currentFilters,
+          currentRecordFilters,
         };
       },
       {
@@ -106,6 +105,9 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           contextStoreCurrentViewId: mockView.id,
+          onInitializeJotaiStore: (store) => {
+            store.set(coreViewsState.atom, [mockCoreView]);
+          },
         }),
       },
     );
@@ -114,7 +116,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
       result.current.applyCurrentViewFiltersToCurrentRecordFilters();
     });
 
-    expect(result.current.currentFilters).toEqual([
+    expect(result.current.currentRecordFilters).toEqual([
       {
         id: mockViewFilter.id,
         fieldMetadataId: mockViewFilter.fieldMetadataId,
@@ -131,20 +133,19 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
   });
 
   it('should not apply filters when current view is not found', () => {
-    jotaiStore.set(coreViewsState.atom, []);
-
     const { result } = renderHook(
       () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
           useApplyCurrentViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValue(
+        const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
+          'recordIndexId',
         );
 
         return {
           applyCurrentViewFiltersToCurrentRecordFilters,
-          currentFilters,
+          currentRecordFilters,
         };
       },
       {
@@ -153,8 +154,8 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
+          onInitializeJotaiStore: (store) => {
+            store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
@@ -169,24 +170,23 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
       result.current.applyCurrentViewFiltersToCurrentRecordFilters();
     });
 
-    expect(result.current.currentFilters).toEqual([]);
+    expect(result.current.currentRecordFilters).toEqual([]);
   });
 
   it('should handle view with empty filters', () => {
-    jotaiStore.set(coreViewsState.atom, [{ ...mockCoreView, viewFilters: [] }]);
-
     const { result } = renderHook(
       () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
           useApplyCurrentViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValue(
+        const currentRecordFilters = useAtomComponentStateValue(
           currentRecordFiltersComponentState,
+          'recordIndexId',
         );
 
         return {
           applyCurrentViewFiltersToCurrentRecordFilters,
-          currentFilters,
+          currentRecordFilters,
         };
       },
       {
@@ -195,8 +195,11 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
+          onInitializeJotaiStore: (store) => {
+            store.set(coreViewsState.atom, [
+              { ...mockCoreView, viewFilters: [] },
+            ]);
+            store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
@@ -211,6 +214,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
       result.current.applyCurrentViewFiltersToCurrentRecordFilters();
     });
 
-    expect(result.current.currentFilters).toEqual([]);
+    expect(result.current.currentRecordFilters).toEqual([]);
   });
 });

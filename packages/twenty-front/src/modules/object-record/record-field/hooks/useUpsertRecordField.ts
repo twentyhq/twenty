@@ -1,51 +1,48 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useUpsertRecordField = (recordTableId?: string) => {
-  const currentRecordFieldsCallbackState = useRecoilComponentCallbackState(
+  const store = useStore();
+  const currentRecordFields = useAtomComponentStateCallbackState(
     currentRecordFieldsComponentState,
     recordTableId,
   );
 
-  const upsertRecordField = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (recordFieldToUpsert: RecordField) => {
-        const currentRecordFields = getSnapshotValue(
-          snapshot,
-          currentRecordFieldsCallbackState,
-        );
+  const upsertRecordField = useCallback(
+    (recordFieldToUpsert: RecordField) => {
+      const existingRecordFields = store.get(currentRecordFields);
 
-        const foundRecordFieldInCurrentRecordFields = currentRecordFields.some(
-          (existingRecordField) =>
-            existingRecordField.id === recordFieldToUpsert.id,
-        );
+      const foundRecordFieldInCurrentRecordFields = existingRecordFields.some(
+        (existingRecordField) =>
+          existingRecordField.id === recordFieldToUpsert.id,
+      );
 
-        if (!foundRecordFieldInCurrentRecordFields) {
-          set(currentRecordFieldsCallbackState, [
-            ...currentRecordFields,
-            recordFieldToUpsert,
-          ]);
-        } else {
-          set(currentRecordFieldsCallbackState, (currentRecordFields) => {
-            const newCurrentRecordFields = [...currentRecordFields];
+      if (!foundRecordFieldInCurrentRecordFields) {
+        store.set(currentRecordFields, [
+          ...existingRecordFields,
+          recordFieldToUpsert,
+        ]);
+      } else {
+        store.set(currentRecordFields, (previousRecordFields) => {
+          const newCurrentRecordFields = [...previousRecordFields];
 
-            const indexOfRecordFieldToUpdate = newCurrentRecordFields.findIndex(
-              (existingRecordField) =>
-                existingRecordField.id === recordFieldToUpsert.id,
-            );
+          const indexOfRecordFieldToUpdate = newCurrentRecordFields.findIndex(
+            (existingRecordField) =>
+              existingRecordField.id === recordFieldToUpsert.id,
+          );
 
-            newCurrentRecordFields[indexOfRecordFieldToUpdate] = {
-              ...recordFieldToUpsert,
-            };
+          newCurrentRecordFields[indexOfRecordFieldToUpdate] = {
+            ...recordFieldToUpsert,
+          };
 
-            return newCurrentRecordFields;
-          });
-        }
-      },
-    [currentRecordFieldsCallbackState],
+          return newCurrentRecordFields;
+        });
+      }
+    },
+    [currentRecordFields, store],
   );
 
   return {

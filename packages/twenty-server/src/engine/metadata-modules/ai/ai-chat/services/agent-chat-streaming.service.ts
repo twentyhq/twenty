@@ -131,7 +131,8 @@ export class AgentChatStreamingService {
               messageMetadata: ({ part }) => {
                 if (part.type === 'finish-step') {
                   const stepInput = part.usage?.inputTokens ?? 0;
-                  const stepCached = part.usage?.cachedInputTokens ?? 0;
+                  const stepCached =
+                    part.usage?.inputTokenDetails?.cacheReadTokens ?? 0;
                   const stepCacheCreation = extractCacheCreationTokens(
                     (
                       part as {
@@ -245,8 +246,8 @@ function computeStreamCosts(
     | {
         inputTokens?: number;
         outputTokens?: number;
-        cachedInputTokens?: number;
-        reasoningTokens?: number;
+        inputTokenDetails?: { cacheReadTokens?: number };
+        outputTokenDetails?: { reasoningTokens?: number };
       }
     | undefined,
   cacheCreationTokens: number,
@@ -254,8 +255,8 @@ function computeStreamCosts(
   const breakdown = computeCostBreakdown(modelConfig, {
     inputTokens: totalUsage?.inputTokens,
     outputTokens: totalUsage?.outputTokens,
-    cachedInputTokens: totalUsage?.cachedInputTokens,
-    reasoningTokens: totalUsage?.reasoningTokens,
+    cachedInputTokens: totalUsage?.inputTokenDetails?.cacheReadTokens,
+    reasoningTokens: totalUsage?.outputTokenDetails?.reasoningTokens,
     cacheCreationTokens,
   });
 

@@ -5,17 +5,18 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { enrichObjectMetadataItemsWithPermissions } from '@/object-metadata/utils/enrichObjectMetadataItemsWithPermissions';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type FetchPolicy, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useStore } from 'jotai';
 
 export const useRefreshObjectMetadataItems = (
   fetchPolicy: FetchPolicy = 'network-only',
 ) => {
+  const store = useStore();
   const client = useApolloClient();
 
   const replaceObjectMetadataItemIfDifferent = useCallback(
@@ -25,9 +26,7 @@ export const useRefreshObjectMetadataItems = (
         'readableFields' | 'updatableFields'
       >[],
     ) => {
-      const currentUserWorkspace = jotaiStore.get(
-        currentUserWorkspaceState.atom,
-      );
+      const currentUserWorkspace = store.get(currentUserWorkspaceState.atom);
 
       if (!isDefined(currentUserWorkspace)) {
         return;
@@ -52,21 +51,21 @@ export const useRefreshObjectMetadataItems = (
 
       if (
         !isDeeplyEqual(
-          jotaiStore.get(objectMetadataItemsState.atom),
+          store.get(objectMetadataItemsState.atom),
           newObjectMetadataItems,
         ) &&
         newObjectMetadataItems.length > 0
       ) {
-        jotaiStore.set(objectMetadataItemsState.atom, newObjectMetadataItems);
+        store.set(objectMetadataItemsState.atom, newObjectMetadataItems);
       }
 
-      if (jotaiStore.get(isAppEffectRedirectEnabledState.atom) === false) {
-        jotaiStore.set(isAppEffectRedirectEnabledState.atom, true);
+      if (store.get(isAppEffectRedirectEnabledState.atom) === false) {
+        store.set(isAppEffectRedirectEnabledState.atom, true);
       }
 
       return newObjectMetadataItems;
     },
-    [],
+    [store],
   );
 
   const refreshObjectMetadataItems = async () => {

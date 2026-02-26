@@ -5,9 +5,9 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 
 import { SettingsEmailingDomainRowDropdownMenu } from '@/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu';
 
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconMail, Status } from 'twenty-ui/display';
@@ -23,7 +23,7 @@ const StyledLink = styled(Link)`
 
 export const SettingsEmailingDomains = () => {
   const { t } = useLingui();
-  const { localeCatalog } = useRecoilValue(dateLocaleState);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const navigate = useNavigate();
 
   const { data, loading: isLoading } = useGetEmailingDomainsQuery();

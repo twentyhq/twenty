@@ -4,12 +4,12 @@ import { useResetTableRowSelection } from '@/object-record/record-table/hooks/in
 import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
 export const RecordTableBodyEscapeHotkeyEffect = () => {
   const { resetTableRowSelection } = useResetTableRowSelection();
 
-  const isAtLeastOneRecordSelected = useRecoilComponentValue(
+  const isAtLeastOneRecordSelected = useAtomComponentSelectorValue(
     isAtLeastOneTableRowSelectedSelector,
   );
 

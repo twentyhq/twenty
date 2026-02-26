@@ -22,7 +22,7 @@ export const BooleanFieldInput = ({ testId }: BooleanFieldInputProps) => {
 
   return (
     <BooleanInput
-      value={fieldValue ?? ''}
+      value={fieldValue ?? false}
       onToggle={handleToggle}
       readonly={isRecordFieldReadOnly}
       testId={testId}

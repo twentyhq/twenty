@@ -15,11 +15,13 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrowserMaximize } from 'twenty-ui/display';
@@ -36,9 +38,10 @@ export const RecordShowRightDrawerOpenRecordButton = ({
   objectNameSingular,
   recordId,
 }: RecordShowRightDrawerOpenRecordButtonProps) => {
-  const record = useRecoilValue<ObjectRecord | null | undefined>(
-    recordStoreFamilyState(recordId),
-  );
+  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId) as
+    | ObjectRecord
+    | null
+    | undefined;
   const { closeCommandMenu } = useCommandMenu();
 
   const commandMenuPageComponentInstance = useComponentInstanceStateContext(
@@ -50,7 +53,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     targetObjectId: recordId,
   });
 
-  const activeTabIdInRightDrawer = useRecoilComponentValueV2(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     tabListComponentId,
   );
@@ -59,15 +62,17 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     targetObjectId: recordId,
   });
 
-  const setActiveTabIdInRecordPage = useSetRecoilComponentStateV2(
+  const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     tabListComponentIdInRecordPage,
   );
 
-  const parentViewState = useRecoilComponentCallbackState(
+  const parentViewState = useAtomComponentStateCallbackState(
     contextStoreRecordShowParentViewComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
+
+  const store = useStore();
 
   const navigate = useNavigateApp();
 
@@ -77,50 +82,50 @@ export const RecordShowRightDrawerOpenRecordButton = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const handleOpenRecord = useRecoilCallback(
-    ({ snapshot, reset, set }) =>
-      () => {
-        const tabIdToOpen =
-          activeTabIdInRightDrawer === 'home'
-            ? objectNameSingular === CoreObjectNameSingular.Note ||
-              objectNameSingular === CoreObjectNameSingular.Task
-              ? 'richText'
-              : 'timeline'
-            : activeTabIdInRightDrawer;
+  const handleOpenRecord = useCallback(() => {
+    const tabIdToOpen =
+      activeTabId === 'home'
+        ? objectNameSingular === CoreObjectNameSingular.Note ||
+          objectNameSingular === CoreObjectNameSingular.Task
+          ? 'richText'
+          : 'timeline'
+        : activeTabId;
 
-        setActiveTabIdInRecordPage(tabIdToOpen);
+    setActiveTabId(tabIdToOpen);
 
-        const parentView = snapshot.getLoadable(parentViewState).getValue();
+    const parentView = store.get(parentViewState);
 
-        if (parentView?.parentViewObjectNameSingular !== objectNameSingular) {
-          reset(parentViewState);
-        }
+    if (
+      isDefined(parentView) &&
+      parentView.parentViewObjectNameSingular !== objectNameSingular
+    ) {
+      store.set(parentViewState, undefined);
+    }
 
-        set(commandMenuNavigationStackState, []);
+    store.set(commandMenuNavigationStackState, []);
 
-        navigate(AppPath.RecordShowPage, {
-          objectNameSingular,
-          objectRecordId: recordId,
-        });
-
-        closeDropdown(
-          getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
-        );
-
-        closeCommandMenu();
-      },
-    [
-      actionMenuId,
-      activeTabIdInRightDrawer,
-      closeCommandMenu,
-      closeDropdown,
-      navigate,
+    navigate(AppPath.RecordShowPage, {
       objectNameSingular,
-      parentViewState,
-      recordId,
-      setActiveTabIdInRecordPage,
-    ],
-  );
+      objectRecordId: recordId,
+    });
+
+    closeDropdown(
+      getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
+    );
+
+    closeCommandMenu();
+  }, [
+    actionMenuId,
+    activeTabId,
+    closeCommandMenu,
+    closeDropdown,
+    navigate,
+    objectNameSingular,
+    parentViewState,
+    recordId,
+    setActiveTabId,
+    store,
+  ]);
 
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],

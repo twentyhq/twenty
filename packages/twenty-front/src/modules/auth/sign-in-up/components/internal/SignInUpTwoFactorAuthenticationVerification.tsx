@@ -22,8 +22,8 @@ import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledMainContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -187,8 +187,8 @@ export const SignInUpTOTPVerification = () => {
   const navigate = useNavigateApp();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { isCaptchaReady } = useCaptcha();
-  const loginToken = useRecoilValueV2(loginTokenState);
-  const setSignInUpStep = useSetRecoilStateV2(signInUpStepState);
+  const loginToken = useAtomStateValue(loginTokenState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
   const { t } = useLingui();
 
   const { form } = useTwoFactorAuthenticationForm();

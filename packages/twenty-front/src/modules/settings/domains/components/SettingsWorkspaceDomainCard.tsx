@@ -6,14 +6,14 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconWorld, Status } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SettingsWorkspaceDomainCard = () => {
   const { t } = useLingui();
-  const isMultiWorkspaceEnabled = useRecoilValueV2(
+  const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   if (!isMultiWorkspaceEnabled) {
     return null;

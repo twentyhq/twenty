@@ -8,7 +8,7 @@ import { RecordTableTr } from '@/object-record/record-table/record-table-row/com
 
 import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/record-table-row/hooks/useIsRecordSecondaryDragged';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type RecordTableDraggableTrFirstRowOfGroupProps = {
   className?: string;
@@ -33,7 +33,7 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
 
   const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
 
-  const isScrolledVertically = useRecoilComponentValue(
+  const isRecordTableScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
@@ -68,7 +68,7 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
             data-selectable-id={recordId}
             onClick={onClick}
             isFirstRowOfGroup={true}
-            isScrolledVertically={isScrolledVertically}
+            isScrolledVertically={isRecordTableScrolledVertically}
           >
             <RecordTableRowDraggableContextProvider
               value={{

@@ -1,12 +1,10 @@
-import { atom } from 'recoil';
-
 import { COMMAND_MENU_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/CommandMenuConstraints';
-import { localStorageEffect } from '~/utils/recoil/localStorageEffect';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const COMMAND_MENU_WIDTH_VAR = '--command-menu-width';
 
-export const commandMenuWidthState = atom<number>({
+export const commandMenuWidthState = createAtomState<number>({
   key: 'commandMenuWidth',
-  default: COMMAND_MENU_CONSTRAINTS.default,
-  effects: [localStorageEffect()],
+  defaultValue: COMMAND_MENU_CONSTRAINTS.default,
+  useLocalStorage: true,
 });

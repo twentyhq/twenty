@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtom } from 'jotai';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -39,24 +39,24 @@ const RelationOneToManyFieldInputWithContext = () => {
 
   const fieldDefinition = useMemo(
     () => ({
-      fieldMetadataId: 'e82262eb-7f58-4167-a23c-fc51ec584d1b',
+      fieldMetadataId: '94902a74-b8ca-4a56-8573-7469f0b664f6',
       label: 'People',
       type: FieldMetadataType.RELATION,
       iconName: 'IconLink',
       metadata: {
         fieldName: 'people',
         relationType: RelationType.ONE_TO_MANY,
-        relationObjectMetadataNamePlural: 'companies',
-        relationObjectMetadataNameSingular: CoreObjectNameSingular.Company,
-        objectMetadataNameSingular: 'person',
-        relationFieldMetadataId: '3c211c59-02a1-4904-ad0f-5bb30b736461',
+        relationObjectMetadataNamePlural: 'people',
+        relationObjectMetadataNameSingular: CoreObjectNameSingular.Person,
+        objectMetadataNameSingular: 'company',
+        relationFieldMetadataId: 'f6be42ac-ccb8-4df0-8c22-a9627d655c76',
       },
     }),
     [],
   );
 
-  const setRecordStoreFieldValue = useSetRecoilState(
-    recordStoreFamilySelector({
+  const setRecordStoreFieldValue = useSetAtom(
+    recordStoreFamilySelector.selectorFamily({
       fieldName: 'people',
       recordId: 'recordId',
     }),

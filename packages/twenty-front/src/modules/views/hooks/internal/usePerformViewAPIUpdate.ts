@@ -6,7 +6,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CrudOperationType } from 'twenty-shared/types';
 import { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from 'twenty-shared/utils';
 import {
@@ -21,7 +21,7 @@ export const usePerformViewAPIUpdate = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const setCoreViews = useSetRecoilStateV2(coreViewsState);
+  const setCoreViews = useSetAtomState(coreViewsState);
 
   const performViewAPIUpdate = useCallback(
     async (

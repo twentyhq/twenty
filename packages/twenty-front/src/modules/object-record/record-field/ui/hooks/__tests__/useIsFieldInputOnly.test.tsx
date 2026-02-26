@@ -1,6 +1,5 @@
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import {
   phonesFieldDefinition,
@@ -24,7 +23,7 @@ const getWrapper =
         isRecordFieldReadOnly: false,
       }}
     >
-      <RecoilRoot>{children}</RecoilRoot>
+      {children}
     </FieldContext.Provider>
   );
 

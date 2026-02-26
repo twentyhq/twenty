@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Internamente, l'ambito selezionato attualmente viene memorizzato in uno stato Recoil condiviso in tutta l'applicazione:
+Internamente, l'ambito selezionato attualmente viene memorizzato in uno stato Jotai condiviso in tutta l'applicazione:
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-Ma questo stato Recoil non dovrebbe mai essere gestito manualmente! Vedremo come usarlo nella sezione successiva.
+Ma questo stato Jotai non dovrebbe mai essere gestito manualmente! Vedremo come usarlo nella sezione successiva.
 
 ## Come funziona internamente?
 
 Abbiamo creato un sottile wrapper su [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) che lo rende più performante ed evita rendering non necessari.
 
-Abbiamo anche creato uno stato Recoil per gestire lo stato dell'ambito del tasto di scelta rapida e renderlo disponibile ovunque nell'applicazione.
+Abbiamo anche creato uno stato Jotai per gestire lo stato dell'ambito del tasto di scelta rapida e renderlo disponibile ovunque nell'applicazione.

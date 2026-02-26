@@ -74,7 +74,7 @@ describe('Agent role update should succeed', () => {
       input: {
         label: 'Agent Without Role',
         prompt: 'Test prompt',
-        modelId: 'gpt-4o',
+        modelId: 'gpt-4.1',
       },
     });
 
@@ -103,7 +103,7 @@ describe('Agent role update should succeed', () => {
       input: {
         label: 'Agent With Initial Role',
         prompt: 'Test prompt',
-        modelId: 'gpt-4o',
+        modelId: 'gpt-4.1',
         roleId: testRoleId,
       },
     });
@@ -133,7 +133,7 @@ describe('Agent role update should succeed', () => {
       input: {
         label: 'Agent With Role To Remove',
         prompt: 'Test prompt',
-        modelId: 'gpt-4o',
+        modelId: 'gpt-4.1',
         roleId: testRoleId,
       },
     });

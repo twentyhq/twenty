@@ -1,8 +1,8 @@
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const multipleRecordPickerSearchFilterComponentState =
-  createComponentState<string>({
+  createAtomComponentState<string>({
     key: 'multipleRecordPickerSearchFilterComponentState',
     defaultValue: '',
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,

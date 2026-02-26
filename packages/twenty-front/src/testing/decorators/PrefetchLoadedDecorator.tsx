@@ -2,20 +2,21 @@ import { type Decorator } from '@storybook/react-vite';
 
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 export const PrefetchLoadedDecorator: Decorator = (Story) => {
-  const setAreFavoritesPrefetched = useSetFamilyRecoilStateV2(
+  const setPrefetchIsLoaded = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavorites,
   );
-  const setAreFavoritesFoldersPrefetched = useSetFamilyRecoilStateV2(
+  // eslint-disable-next-line twenty/matching-state-variable
+  const setPrefetchIsLoadedFolders = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavoritesFolders,
   );
 
-  setAreFavoritesPrefetched(true);
-  setAreFavoritesFoldersPrefetched(true);
+  setPrefetchIsLoaded(true);
+  setPrefetchIsLoadedFolders(true);
 
   return <Story />;
 };

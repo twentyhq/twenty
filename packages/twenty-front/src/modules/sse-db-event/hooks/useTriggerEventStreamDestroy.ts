@@ -4,52 +4,49 @@ import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroying
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useTriggerEventStreamDestroy = () => {
-  const setIsDestroyingEventStream = useSetRecoilState(
+  const store = useStore();
+  const setIsDestroyingEventStream = useSetAtomState(
     isDestroyingEventStreamState,
   );
 
-  const triggerEventStreamDestroy = useRecoilCallback(
-    ({ snapshot, set }) =>
-      () => {
-        const isDestroyingEventStream = snapshot
-          .getLoadable(isDestroyingEventStreamState)
-          .getValue();
+  const triggerEventStreamDestroy = useCallback(() => {
+    const isDestroyingEventStream = store.get(
+      isDestroyingEventStreamState.atom,
+    );
 
-        const isCreatingSseEventStream = snapshot
-          .getLoadable(isCreatingSseEventStreamState)
-          .getValue();
+    const isCreatingSseEventStream = store.get(
+      isCreatingSseEventStreamState.atom,
+    );
 
-        if (isDestroyingEventStream || isCreatingSseEventStream) {
-          return;
-        }
+    if (isDestroyingEventStream || isCreatingSseEventStream) {
+      return;
+    }
 
-        setIsDestroyingEventStream(true);
+    setIsDestroyingEventStream(true);
 
-        const eventStreamId = snapshot
-          .getLoadable(sseEventStreamIdState)
-          .getValue();
+    const eventStreamId = store.get(sseEventStreamIdState.atom);
 
-        const disposeFunctionForEventStream = snapshot
-          .getLoadable(disposeFunctionForEventStreamState)
-          .getValue();
+    const disposeFunctionForEventStream = store.get(
+      disposeFunctionForEventStreamState.atom,
+    );
 
-        if (isNonEmptyString(eventStreamId)) {
-          disposeFunctionForEventStream?.dispose();
+    if (isNonEmptyString(eventStreamId)) {
+      disposeFunctionForEventStream?.dispose();
 
-          set(sseEventStreamIdState, null);
-          set(sseEventStreamReadyState, false);
-          set(disposeFunctionForEventStreamState, null);
-          set(shouldDestroyEventStreamState, false);
-        }
+      store.set(sseEventStreamIdState.atom, null);
+      store.set(sseEventStreamReadyState.atom, false);
+      store.set(disposeFunctionForEventStreamState.atom, null);
+      store.set(shouldDestroyEventStreamState.atom, false);
+    }
 
-        setIsDestroyingEventStream(false);
-      },
-    [setIsDestroyingEventStream],
-  );
+    setIsDestroyingEventStream(false);
+  }, [setIsDestroyingEventStream, store]);
 
   return {
     triggerEventStreamDestroy,

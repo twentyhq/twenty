@@ -5,7 +5,7 @@ import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
 
 type UseBarChartDataProps = {
@@ -24,7 +24,7 @@ export const useBarChartData = ({
   seriesLabels,
   colorMode,
 }: UseBarChartDataProps) => {
-  const hiddenLegendIds = useRecoilComponentValue(
+  const graphWidgetHiddenLegendIds = useAtomComponentStateValue(
     graphWidgetHiddenLegendIdsComponentState,
   );
 
@@ -62,10 +62,12 @@ export const useBarChartData = ({
     color: item.colorScheme.solid,
   }));
 
-  const visibleKeys = keys.filter((key) => !hiddenLegendIds.includes(key));
+  const visibleKeys = keys.filter(
+    (key) => !graphWidgetHiddenLegendIds.includes(key),
+  );
 
   const enrichedKeys = allEnrichedKeys.filter(
-    (item) => !hiddenLegendIds.includes(item.key),
+    (item) => !graphWidgetHiddenLegendIds.includes(item.key),
   );
 
   const enrichedKeysMap = useMemo(

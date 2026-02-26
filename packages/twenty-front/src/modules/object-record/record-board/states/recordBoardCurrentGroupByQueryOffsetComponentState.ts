@@ -1,8 +1,8 @@
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const recordBoardCurrentGroupByQueryOffsetComponentState =
-  createComponentState<number>({
+  createAtomComponentState<number>({
     key: 'recordBoardCurrentGroupByQueryOffsetComponentState',
     defaultValue: 0,
     componentInstanceContext: RecordBoardComponentInstanceContext,

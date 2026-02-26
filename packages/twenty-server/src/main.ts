@@ -22,6 +22,7 @@ import './instrument';
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
 
+// Trigger
 const bootstrap = async () => {
   setPgDateTypeParser();
 

@@ -2,15 +2,15 @@ import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCu
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { workspaceBypassModeState } from '@/workspace/states/workspaceBypassModeState';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useWorkspaceBypass = () => {
-  const workspaceAuthProviders = useRecoilValueV2(workspaceAuthProvidersState);
-  const workspaceAuthBypassProviders = useRecoilValueV2(
+  const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
+  const workspaceAuthBypassProviders = useAtomStateValue(
     workspaceAuthBypassProvidersState,
   );
-  const [workspaceBypassMode, setWorkspaceBypassMode] = useRecoilStateV2(
+  const [workspaceBypassMode, setWorkspaceBypassMode] = useAtomState(
     workspaceBypassModeState,
   );
 

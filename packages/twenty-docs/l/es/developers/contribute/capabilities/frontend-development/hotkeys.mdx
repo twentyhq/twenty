@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Internamente, el ámbito seleccionado se almacena en un estado de Recoil que se comparte en toda la aplicación:
+Internamente, el ámbito seleccionado se almacena en un estado de Jotai que se comparte en toda la aplicación:
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-¡Pero este estado de Recoil nunca debe manejarse manualmente! Veremos cómo usarlo en la siguiente sección.
+¡Pero este estado de Jotai nunca debe manejarse manualmente! Veremos cómo usarlo en la siguiente sección.
 
 ## ¿Cómo funciona internamente?
 
 Hicimos un contenedor delgado sobre [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) que lo hace más eficiente y evita renders innecesarios.
 
-También creamos un estado de Recoil para manejar el estado del ámbito de atajos de teclado y hacerlo disponible en toda la aplicación.
+También creamos un estado de Jotai para manejar el estado del ámbito de atajos de teclado y hacerlo disponible en toda la aplicación.

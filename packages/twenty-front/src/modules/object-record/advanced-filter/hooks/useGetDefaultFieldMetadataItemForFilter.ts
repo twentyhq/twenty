@@ -1,13 +1,14 @@
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useGetDefaultFieldMetadataItemForFilter = () => {
+  const store = useStore();
   const getDefaultFieldMetadataItemForFilter = useCallback(
     (objectMetadataItem: ObjectMetadataItem) => {
-      const availableFieldMetadataItemsForFilter = jotaiStore.get(
+      const availableFieldMetadataItemsForFilter = store.get(
         availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
           objectMetadataItemId: objectMetadataItem.id,
         }),
@@ -30,7 +31,7 @@ export const useGetDefaultFieldMetadataItemForFilter = () => {
 
       return { defaultFieldMetadataItemForFilter };
     },
-    [],
+    [store],
   );
 
   return {

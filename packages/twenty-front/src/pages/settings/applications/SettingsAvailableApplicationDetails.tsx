@@ -4,7 +4,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
@@ -260,7 +260,7 @@ export const SettingsAvailableApplicationDetails = () => {
     }
   };
 
-  const activeTabId = useRecoilComponentValueV2(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     AVAILABLE_APPLICATION_DETAIL_ID,
   );

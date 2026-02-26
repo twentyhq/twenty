@@ -1,4 +1,4 @@
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
 import { workflowHoveredEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowHoveredEdgeComponentState';
 import { workflowSelectedEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowSelectedEdgeComponentState';
@@ -8,10 +8,11 @@ import { useReactFlow } from '@xyflow/react';
 export const useEdgeState = () => {
   const reactflow = useReactFlow();
 
-  const [workflowSelectedEdge, setWorkflowSelectedEdge] =
-    useRecoilComponentState(workflowSelectedEdgeComponentState);
+  const [workflowSelectedEdge, setWorkflowSelectedEdge] = useAtomComponentState(
+    workflowSelectedEdgeComponentState,
+  );
 
-  const [workflowHoveredEdge, setWorkflowHoveredEdge] = useRecoilComponentState(
+  const [workflowHoveredEdge, setWorkflowHoveredEdge] = useAtomComponentState(
     workflowHoveredEdgeComponentState,
   );
 

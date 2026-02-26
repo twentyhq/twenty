@@ -13,9 +13,11 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
@@ -26,6 +28,7 @@ export const MultipleRecordPickerMenuItems = ({
   onChange,
   focusId,
 }: MultipleRecordPickerMenuItemsProps) => {
+  const store = useStore();
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
@@ -33,47 +36,46 @@ export const MultipleRecordPickerMenuItems = ({
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
-  const pickableRecordIds = useRecoilComponentValue(
+  const pickableRecordIds = useAtomComponentSelectorValue(
     multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector,
     componentInstanceId,
   );
 
-  const multipleRecordPickerPickableMorphItemsState =
-    useRecoilComponentCallbackState(
+  const multipleRecordPickerPickableMorphItems =
+    useAtomComponentStateCallbackState(
       multipleRecordPickerPickableMorphItemsComponentState,
       componentInstanceId,
     );
 
-  const handleChange = useRecoilCallback(
-    ({ snapshot, set }) => {
-      return (morphItem: RecordPickerPickableMorphItem) => {
-        const previousMorphItems = snapshot
-          .getLoadable(multipleRecordPickerPickableMorphItemsState)
-          .getValue();
+  const handleChange = useCallback(
+    (morphItem: RecordPickerPickableMorphItem) => {
+      const previousMorphItems = store.get(
+        multipleRecordPickerPickableMorphItems,
+      );
 
-        const existingMorphItemIndex = previousMorphItems.findIndex(
-          (item) => item.recordId === morphItem.recordId,
-        );
+      const existingMorphItemIndex = previousMorphItems.findIndex(
+        (item) => item.recordId === morphItem.recordId,
+      );
 
-        const newMorphItems = [...previousMorphItems];
+      const newMorphItems = [...previousMorphItems];
 
-        if (existingMorphItemIndex === -1) {
-          newMorphItems.push(morphItem);
-        } else {
-          newMorphItems[existingMorphItemIndex] = morphItem;
-        }
+      if (existingMorphItemIndex === -1) {
+        newMorphItems.push(morphItem);
+      } else {
+        newMorphItems[existingMorphItemIndex] = morphItem;
+      }
 
-        set(multipleRecordPickerPickableMorphItemsState, newMorphItems);
-      };
+      store.set(multipleRecordPickerPickableMorphItems, newMorphItems);
     },
-    [multipleRecordPickerPickableMorphItemsState],
+    [multipleRecordPickerPickableMorphItems, store],
   );
 
-  const multipleRecordPickerShouldShowInitialLoading = useRecoilComponentValue(
-    multipleRecordPickerShouldShowInitialLoadingComponentState,
-  );
+  const multipleRecordPickerShouldShowInitialLoading =
+    useAtomComponentStateValue(
+      multipleRecordPickerShouldShowInitialLoadingComponentState,
+    );
 
-  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValue(
+  const multipleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 

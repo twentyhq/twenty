@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { generateGroupByRecordsQuery } from '@/object-record/utils/generateGroupByRecordsQuery';
@@ -18,7 +18,7 @@ export const useGroupByRecordsQuery = ({
     objectNameSingular,
   });
 
-  const objectMetadataItems = useRecoilValueV2(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 

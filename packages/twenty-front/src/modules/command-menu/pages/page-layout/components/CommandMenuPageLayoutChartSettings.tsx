@@ -5,7 +5,7 @@ import { isChartWidget } from '@/command-menu/pages/page-layout/utils/isChartWid
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,17 +18,17 @@ const StyledContainer = styled.div`
 export const CommandMenuPageLayoutChartSettings = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
-  const draftPageLayout = useRecoilComponentValue(
+  const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const pageLayoutEditingWidgetId = useRecoilComponentValue(
+  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );
 
-  const widgetInEditMode = draftPageLayout.tabs
+  const widgetInEditMode = pageLayoutDraft.tabs
     .flatMap((tab) => tab.widgets)
     .find((widget) => widget.id === pageLayoutEditingWidgetId);
 

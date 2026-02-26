@@ -109,7 +109,7 @@ Below are a few features we have implemented to date:
 - [TypeScript](https://www.typescriptlang.org/)
 - [Nx](https://nx.dev/)
 - [NestJS](https://nestjs.com/), with [BullMQ](https://bullmq.io/), [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/)
-- [React](https://reactjs.org/), with [Recoil](https://recoiljs.org/), [Emotion](https://emotion.sh/) and [Lingui](https://lingui.dev/)
+- [React](https://reactjs.org/), with [Jotai](https://jotai.org/), [Emotion](https://emotion.sh/) and [Lingui](https://lingui.dev/)
 
 
 

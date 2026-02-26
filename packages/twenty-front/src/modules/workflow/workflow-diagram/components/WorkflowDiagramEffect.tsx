@@ -1,7 +1,6 @@
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
@@ -12,12 +11,12 @@ import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useSte
 
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
-import { useEffect } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramEffect = () => {
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
 
@@ -25,62 +24,55 @@ export const WorkflowDiagramEffect = () => {
     workflowVisualizerWorkflowId,
   );
 
-  const workflowDiagramState = useRecoilComponentCallbackState(
+  const workflowDiagram = useAtomComponentStateCallbackState(
     workflowDiagramComponentState,
   );
-  const setFlow = useSetRecoilComponentState(flowComponentState);
+  const setFlow = useSetAtomComponentState(flowComponentState);
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
-  const workflowLastCreatedStepIdState = useRecoilComponentCallbackState(
+  const workflowLastCreatedStepId = useAtomComponentStateCallbackState(
     workflowLastCreatedStepIdComponentState,
   );
 
+  const store = useStore();
   const currentVersion = workflowWithCurrentVersion?.currentVersion;
 
-  const computeAndMergeNewWorkflowDiagram = useRecoilCallback(
-    ({ snapshot, set }) => {
-      return (currentVersion: WorkflowVersion) => {
-        const previousWorkflowDiagram = getSnapshotValue(
-          snapshot,
-          workflowDiagramState,
+  const computeAndMergeNewWorkflowDiagram = useCallback(
+    (version: WorkflowVersion) => {
+      const previousWorkflowDiagram = store.get(workflowDiagram);
+
+      const nextWorkflowDiagram = getWorkflowVersionDiagram({
+        workflowVersion: version,
+        workflowContext: 'workflow',
+      });
+
+      let mergedWorkflowDiagram = nextWorkflowDiagram;
+
+      if (isDefined(previousWorkflowDiagram)) {
+        mergedWorkflowDiagram = mergeWorkflowDiagrams(
+          previousWorkflowDiagram,
+          nextWorkflowDiagram,
+        );
+      }
+
+      const lastCreatedStepId = store.get(workflowLastCreatedStepId);
+
+      if (isDefined(lastCreatedStepId)) {
+        mergedWorkflowDiagram.nodes = mergedWorkflowDiagram.nodes.map(
+          (node) => {
+            return {
+              ...node,
+              selected: node.id === lastCreatedStepId,
+            };
+          },
         );
 
-        const nextWorkflowDiagram = getWorkflowVersionDiagram({
-          workflowVersion: currentVersion,
-          workflowContext: 'workflow',
-        });
+        store.set(workflowLastCreatedStepId, undefined);
+      }
 
-        let mergedWorkflowDiagram = nextWorkflowDiagram;
-
-        if (isDefined(previousWorkflowDiagram)) {
-          mergedWorkflowDiagram = mergeWorkflowDiagrams(
-            previousWorkflowDiagram,
-            nextWorkflowDiagram,
-          );
-        }
-
-        const lastCreatedStepId = getSnapshotValue(
-          snapshot,
-          workflowLastCreatedStepIdState,
-        );
-
-        if (isDefined(lastCreatedStepId)) {
-          mergedWorkflowDiagram.nodes = mergedWorkflowDiagram.nodes.map(
-            (node) => {
-              return {
-                ...node,
-                selected: node.id === lastCreatedStepId,
-              };
-            },
-          );
-
-          set(workflowLastCreatedStepIdState, undefined);
-        }
-
-        set(workflowDiagramState, mergedWorkflowDiagram);
-      };
+      store.set(workflowDiagram, mergedWorkflowDiagram);
     },
-    [workflowDiagramState, workflowLastCreatedStepIdState],
+    [workflowDiagram, workflowLastCreatedStepId, store],
   );
 
   useEffect(() => {

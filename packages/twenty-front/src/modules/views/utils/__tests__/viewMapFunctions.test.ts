@@ -12,6 +12,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const baseFieldMetadataItem = {
   id: '05731f68-6e7a-4903-8374-c0b6a9063482',
+  universalIdentifier: '05731f68-6e7a-4903-8374-c0b6a9063482',
   createdAt: '2021-01-01',
   updatedAt: '2021-01-01',
   name: 'name',

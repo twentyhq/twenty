@@ -1,22 +1,24 @@
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { workflowAiAgentActionAgentStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentStateV2';
-import { workflowAiAgentPermissionsIsAddingPermissionStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionStateV2';
-import { workflowAiAgentPermissionsSelectedObjectIdStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
+import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
+import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
 
 export const useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose = () => {
-  const setSelectedObjectId = useSetRecoilStateV2(
-    workflowAiAgentPermissionsSelectedObjectIdStateV2,
+  const setWorkflowAiAgentPermissionsSelectedObjectId = useSetAtomState(
+    workflowAiAgentPermissionsSelectedObjectIdState,
   );
-  const setIsAddingPermission = useSetRecoilStateV2(
-    workflowAiAgentPermissionsIsAddingPermissionStateV2,
+  const setWorkflowAiAgentPermissionsIsAddingPermission = useSetAtomState(
+    workflowAiAgentPermissionsIsAddingPermissionState,
   );
-  const setAgentState = useSetRecoilStateV2(workflowAiAgentActionAgentStateV2);
+  const setWorkflowAiAgentActionAgent = useSetAtomState(
+    workflowAiAgentActionAgentState,
+  );
 
   const resetPermissionState = () => {
-    setSelectedObjectId(undefined);
-    setIsAddingPermission(false);
-    setAgentState(undefined);
+    setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
+    setWorkflowAiAgentPermissionsIsAddingPermission(false);
+    setWorkflowAiAgentActionAgent(undefined);
   };
 
   useListenToSidePanelClosing(resetPermissionState);

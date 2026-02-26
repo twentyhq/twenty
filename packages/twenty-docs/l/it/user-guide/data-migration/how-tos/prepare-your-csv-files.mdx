@@ -210,15 +210,14 @@ Jane,Doe,jane@widgets.co,https://widgets.co
 * Per i membri dello spazio di lavoro, usa la loro **email** (non il nome)
 
 <Warning>
-  **L'ordine di importazione è importante!**
+**L'ordine di importazione è importante!**
 
-  Importa il lato "uno" prima del lato "molti":
+Importa il lato "uno" prima del lato "molti":
+1. **Aziende** prima
+2. **Persone** poi (con riferimento all'azienda)
+3. **Opportunità** al terzo posto
 
-  1. **Aziende** prima
-  2. **Persone** poi (con riferimento all'azienda)
-  3. **Opportunità** al terzo posto
-
-  Il record padre deve esistere prima di potervi fare riferimento.
+Il record padre deve esistere prima di potervi fare riferimento.
 </Warning>
 
 Consulta [Come importare le relazioni](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) per istruzioni dettagliate.

@@ -11,7 +11,7 @@ import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOp
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useSetRecoilState } from 'recoil';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
@@ -26,7 +26,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     objectNameSingular,
   });
 
-  const setCreatedRecordsProgress = useSetRecoilState(
+  const setSpreadsheetImportCreatedRecordsProgress = useSetAtomState(
     spreadsheetImportCreatedRecordsProgressState,
   );
 
@@ -41,7 +41,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     objectNameSingular,
     recordGqlFields,
     mutationBatchSize: SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE,
-    setBatchedRecordsCount: setCreatedRecordsProgress,
+    setBatchedRecordsCount: setSpreadsheetImportCreatedRecordsProgress,
     abortController,
   });
 

@@ -1,13 +1,14 @@
 import { useTheme } from '@emotion/react';
 import React from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { SPREADSHEET_IMPORT_MODAL_ID } from '@/spreadsheet-import/constants/SpreadsheetImportModalId';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { matchColumnsState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const SpreadsheetImport = React.lazy(() =>
   import('./SpreadsheetImport').then((module) => ({
@@ -34,11 +35,11 @@ type SpreadsheetImportProviderProps = React.PropsWithChildren;
 export const SpreadsheetImportProvider = (
   props: SpreadsheetImportProviderProps,
 ) => {
-  const [spreadsheetImportDialog, setSpreadsheetImportDialog] = useRecoilState(
+  const [spreadsheetImportDialog, setSpreadsheetImportDialog] = useAtomState(
     spreadsheetImportDialogState,
   );
 
-  const setMatchColumnsState = useSetRecoilState(matchColumnsState);
+  const setMatchColumns = useSetAtomState(matchColumnsState);
 
   const { closeModal } = useModal();
 
@@ -52,7 +53,7 @@ export const SpreadsheetImportProvider = (
 
     closeModal(SPREADSHEET_IMPORT_MODAL_ID);
 
-    setMatchColumnsState([]);
+    setMatchColumns([]);
   };
 
   return (

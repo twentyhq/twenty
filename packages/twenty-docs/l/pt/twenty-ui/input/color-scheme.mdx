@@ -12,28 +12,36 @@ image: /images/user-guide/fields/field.png
 Representa diferentes esquemas de cores e é especialmente adaptado para temas claros e escuros.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { ColorSchemeCard } from "twenty-ui/display";
+<Tab title="Uso">
 
-    export const MyComponent = () => {
-      return (
-          <ColorSchemeCard
-          variant="Dark"
-          selected={true}
-          />
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
 
-  <Tab title="Propriedades">
-    | Propriedades            | Tipo                                    | Descrição                                                                       | Padrão |
-    | ----------------------- | --------------------------------------- | ------------------------------------------------------------------------------- | ------ |
-    | variante                | string                                  | A variante do esquema de cores. As opções incluem `Escuro`, `Claro` e `Sistema` | claro  |
-    | selecionado             | booleano                                | If `true`, displays a checkmark to indicate the selected color scheme           |        |
-    | propriedades adicionais | `React.ComponentPropsWithoutRef<'div'>` | Propriedades padrão do elemento HTML `div`                                      |        |
-  </Tab>
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Propriedades">
+
+
+| Propriedades            | Tipo                                    | Descrição                                                                       | Padrão |
+| ----------------------- | --------------------------------------- | ------------------------------------------------------------------------------- | ------ |
+| variante                | string                                  | A variante do esquema de cores. As opções incluem `Escuro`, `Claro` e `Sistema` | claro  |
+| selecionado             | booleano                                | If `true`, displays a checkmark to indicate the selected color scheme           |        |
+| propriedades adicionais | `React.ComponentPropsWithoutRef<'div'>` | Propriedades padrão do elemento HTML `div`                                      |        |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Seletor de Esquema de Cores
@@ -41,23 +49,31 @@ Representa diferentes esquemas de cores e é especialmente adaptado para temas c
 Permite que os usuários escolham entre diferentes esquemas de cores.
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { ColorSchemePicker } from "twenty-ui/display";
+<Tab title="Uso">
 
-    export const MyComponent = () => {
-      return <ColorSchemePicker
-      value="Dark"
-      onChange
-      />;
-    };
-    ```
-  </Tab>
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
 
-  <Tab title="Propriedades">
-    | Propriedades | Tipo               | Descrição                                                                    |
-    | ------------ | ------------------ | ---------------------------------------------------------------------------- |
-    | valor        | `Esquema de Cores` | O esquema de cores atualmente selecionado                                    |
-    | onChange     | função             | The callback function you want to trigger when a user selects a color scheme |
-  </Tab>
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="Propriedades">
+
+
+| Propriedades | Tipo               | Descrição                                                                    |
+| ------------ | ------------------ | ---------------------------------------------------------------------------- |
+| valor        | `Esquema de Cores` | O esquema de cores atualmente selecionado                                    |
+| onChange     | função             | The callback function you want to trigger when a user selects a color scheme |
+
+
+
+</Tab>
+
 </Tabs>

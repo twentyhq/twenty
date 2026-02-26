@@ -1,7 +1,7 @@
 import { type Favorite } from '@/favorites/types/Favorite';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const prefetchFavoritesState = createStateV2<Favorite[]>({
+export const prefetchFavoritesState = createAtomState<Favorite[]>({
   key: 'prefetchFavoritesState',
   defaultValue: [],
 });

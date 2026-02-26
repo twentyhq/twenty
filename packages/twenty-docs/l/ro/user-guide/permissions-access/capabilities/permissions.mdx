@@ -30,7 +30,7 @@ Pentru a șterge un rol:
 4. Faceți clic pe **Confirmă** în fereastra modală
 
 <Note>
-  Dacă un rol este șters, orice membru al workspace-ului alocat acestuia va fi reatribuit automat rolului implicit. Toate, cu excepția rolului **Admin**, pot fi șterse. Trebuie să existe întotdeauna cel puțin un membru alocat rolului **Admin**.
+Dacă un rol este șters, orice membru al workspace-ului alocat acestuia va fi reatribuit automat rolului implicit. Toate, cu excepția rolului **Admin**, pot fi șterse. Trebuie să existe întotdeauna cel puțin un membru alocat rolului **Admin**.
 </Note>
 
 ## Atribuiți Roluri Membrilor
@@ -58,7 +58,7 @@ Pentru a șterge un rol:
 4. Noii membri ai workspace-ului vor primi acest rol când se alătură
 
 <Note>
-  Puteți atribui roluri doar membrilor existenți ai workspace-ului. Pentru a invita noi membri, utilizați [Gestionarea Membrelor](/l/ro/user-guide/settings/capabilities/member-management).
+Puteți atribui roluri doar membrilor existenți ai workspace-ului. Pentru a invita noi membri, utilizați [Gestionarea Membrelor](/l/ro/user-guide/settings/capabilities/member-management).
 </Note>
 
 ## Personalizați Permisiunile
@@ -83,7 +83,7 @@ Mai întâi, configurați permisiunile de bază care se aplică în mod implicit
 Selectați sau deselectați în funcție de comportamentul implicit dorit pentru acest rol.
 
 <Note>
-  **Exemplu — rol Intern**: Un intern ar trebui să poată vedea toate obiectele, dar să nu le poată edita în mod implicit. Activați "See Records on All Objects", dar lăsați "Edit Records on All Objects" debifat.
+**Exemplu — rol Intern**: Un intern ar trebui să poată vedea toate obiectele, dar să nu le poată edita în mod implicit. Activați "See Records on All Objects", dar lăsați "Edit Records on All Objects" debifat.
 </Note>
 
 #### Adăugați excepții la nivel de obiect
@@ -146,7 +146,7 @@ Controlați accesul la setările workspace-ului în două moduri:
 * Sau activați permisiuni specifice (de ex., generarea de chei API, preferințele workspace-ului, atribuirea de roluri, configurația modelului de date, setările de securitate și gestionarea fluxurilor de lucru)
 
 <Note>
-  **Limitare actuală**: Accesul la gestionarea fluxurilor de lucru este în prezent necesar pentru a declanșa manual fluxurile de lucru. Acest comportament se poate schimba în versiunile viitoare.
+**Limitare actuală**: Accesul la gestionarea fluxurilor de lucru este în prezent necesar pentru a declanșa manual fluxurile de lucru. Acest comportament se poate schimba în versiunile viitoare.
 </Note>
 
 ### Permisiuni de Acțiune în Workspace
@@ -179,7 +179,7 @@ Pe lângă membrii workspace-ului, rolurile pot fi atribuite și cheilor API și
 Cheia API va moșteni acum toate permisiunile definite de acel rol. Orice apeluri API efectuate cu această cheie vor fi restricționate în consecință.
 
 <Note>
-  Cheile API fără un rol atribuit folosesc permisiunile implicite. Pentru o securitate sporită, atribuiți întotdeauna un rol specific cheilor API din producție.
+Cheile API fără un rol atribuit folosesc permisiunile implicite. Pentru o securitate sporită, atribuiți întotdeauna un rol specific cheilor API din producție.
 </Note>
 
 ### Atribuiți un rol unui agent AI
@@ -194,5 +194,5 @@ Cheia API va moșteni acum toate permisiunile definite de acel rol. Orice apelur
 Agentul AI va putea accesa date și executa doar acțiunile permise de rolul său atribuit.
 
 <Note>
-  Pentru agenții AI care rulează în cadrul fluxurilor de lucru, acest lucru asigură că agentul nu poate accesa sau modifica date în afara ariei sale intenționate — chiar dacă fluxul de lucru are permisiuni mai largi.
+Pentru agenții AI care rulează în cadrul fluxurilor de lucru, acest lucru asigură că agentul nu poate accesa sau modifica date în afara ariei sale intenționate — chiar dacă fluxul de lucru are permisiuni mai largi.
 </Note>

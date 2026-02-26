@@ -9,6 +9,7 @@ import { CommandMenuContextRecordsChip } from '@/command-menu/components/Command
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { type RecordChipData } from '@/object-record/record-field/ui/types/RecordChipData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
@@ -190,9 +191,12 @@ const createContextStoreWrapper = ({
       selectedRecordIds: companies.map((company) => company.id),
     },
     contextStoreNumberOfSelectedRecords: companies.length,
-    onInitializeRecoilSnapshot: (snapshot) => {
+    onInitializeJotaiStore: () => {
       for (const company of companies) {
-        snapshot.set(recordStoreFamilyState(company.id), company);
+        jotaiStore.set(
+          recordStoreFamilyState.atomFamily(company.id),
+          company as ObjectRecord,
+        );
       }
     },
   });

@@ -7,8 +7,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
 import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
 import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
@@ -45,7 +45,7 @@ export const UpdateViewButtonGroup = () => {
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const currentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -53,19 +53,19 @@ export const UpdateViewButtonGroup = () => {
   const { openDropdown: openViewPickerDropdown } = useOpenDropdown();
   const { currentView } = useGetCurrentViewOnly();
 
-  const setViewPickerReferenceViewId = useSetRecoilComponentState(
+  const setViewPickerReferenceViewId = useSetAtomComponentState(
     viewPickerReferenceViewIdComponentState,
   );
 
   const openViewPickerInCreateMode = () => {
-    if (!currentViewId) {
+    if (!contextStoreCurrentViewId) {
       return;
     }
 
     openViewPickerDropdown({
       dropdownComponentInstanceIdFromProps: VIEW_PICKER_DROPDOWN_ID,
     });
-    setViewPickerReferenceViewId(currentViewId);
+    setViewPickerReferenceViewId(contextStoreCurrentViewId);
     setViewPickerMode('create-from-current');
 
     closeUpdateViewButtonDropdown(UPDATE_VIEW_BUTTON_DROPDOWN_ID);

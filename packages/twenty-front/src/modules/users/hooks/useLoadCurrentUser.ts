@@ -8,8 +8,8 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { useCallback } from 'react';
@@ -25,26 +25,24 @@ import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const useLoadCurrentUser = () => {
-  const setCurrentUser = useSetRecoilStateV2(currentUserState);
-  const setAvailableWorkspaces = useSetRecoilStateV2(availableWorkspacesState);
-  const setCurrentWorkspaceMember = useSetRecoilStateV2(
+  const setCurrentUser = useSetAtomState(currentUserState);
+  const setAvailableWorkspaces = useSetAtomState(availableWorkspacesState);
+  const setCurrentWorkspaceMember = useSetAtomState(
     currentWorkspaceMemberState,
   );
   const { setLastAuthenticateWorkspaceDomain } =
     useLastAuthenticatedWorkspaceDomain();
-  const setCurrentUserWorkspace = useSetRecoilStateV2(
-    currentUserWorkspaceState,
-  );
-  const setCurrentWorkspaceMembers = useSetRecoilStateV2(
+  const setCurrentUserWorkspace = useSetAtomState(currentUserWorkspaceState);
+  const setCurrentWorkspaceMembers = useSetAtomState(
     currentWorkspaceMembersState,
   );
-  const setCurrentWorkspace = useSetRecoilStateV2(currentWorkspaceState);
+  const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
-  const setCoreViews = useSetRecoilStateV2(coreViewsState);
-  const setWorkspaceAuthBypassProviders = useSetRecoilStateV2(
+  const setCoreViews = useSetAtomState(coreViewsState);
+  const setWorkspaceAuthBypassProviders = useSetAtomState(
     workspaceAuthBypassProvidersState,
   );
-  const authProviders = useRecoilValueV2(authProvidersState);
+  const authProviders = useAtomStateValue(authProvidersState);
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 

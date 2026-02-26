@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const currentPageLayoutIdState = createState<string | null>({
+export const currentPageLayoutIdState = createAtomState<string | null>({
   key: 'currentPageLayoutIdState',
   defaultValue: null,
 });

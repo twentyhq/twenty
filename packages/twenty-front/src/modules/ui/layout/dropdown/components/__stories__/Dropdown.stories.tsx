@@ -16,9 +16,6 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 // TEMP_DISABLED_TEST: Commented out unused imports due to commented tests
 // import { Modal } from '@/ui/layout/modal/components/Modal';
 // import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-// import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
-// import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-// import { type SetRecoilState } from 'recoil';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
@@ -377,7 +374,7 @@ export const WithInput: Story = {
 // };
 
 // TEMP_DISABLED_TEST: Commented out unused function
-// const initializeModalState = ({ set }: { set: SetRecoilState }) => {
+// const initializeModalState = ({ set }: { set: (atom: any, value: any) => void }) => {
 //   set(
 //     isModalOpenedComponentState.atomFamily({
 //       instanceId: modalId,

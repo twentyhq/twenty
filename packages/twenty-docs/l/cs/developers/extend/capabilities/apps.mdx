@@ -4,7 +4,7 @@ description: Vytvářejte a spravujte přizpůsobení Twenty jako kód.
 ---
 
 <Warning>
-  Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stále se vyvíjí.
+Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stále se vyvíjí.
 </Warning>
 
 ## Co jsou aplikace?
@@ -31,13 +31,6 @@ Vytvořte novou aplikaci pomocí oficiálního scaffolderu, poté se ověřte a 
 # Vygenerujte kostru nové aplikace (ve výchozím nastavení zahrnuje všechny příklady)
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
-
-# Pokud nepoužíváte yarn@4
-corepack enable
-yarn install
-
-# Přihlaste se pomocí svého API klíče (budete vyzváni)
-yarn twenty auth:login
 
 # Spusťte vývojový režim: automaticky synchronizuje místní změny s vaším pracovním prostorem
 yarn twenty app:dev
@@ -154,7 +147,7 @@ SDK detekuje entity analýzou vašich souborů TypeScript a hledá volání **`e
 | `defineSkill()`              | Definice dovedností agenta AI         |
 
 <Note>
-  **Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
+**Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
 </Note>
 
 Příklad detekované entity:
@@ -172,7 +165,7 @@ export default defineObject({
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn twenty app:dev` automaticky vygeneruje typovaného klienta API v `node_modules/twenty-sdk/generated` (typovaný klient Twenty + typy pracovního prostoru).
+* `yarn twenty app:dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
 * `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty, role, dovednosti a další.
 
 ## Ověření
@@ -312,11 +305,11 @@ Hlavní body:
 * Nové objekty můžete vygenerovat pomocí `yarn twenty entity:add`, který vás provede pojmenováním, poli a vztahy.
 
 <Note>
-  **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole
-  jako `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`.
-  Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
-  Výchozí pole můžete přepsat definováním pole se stejným názvem v poli `fields`,
-  ale to se nedoporučuje.
+**Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole
+jako `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`.
+Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
+Výchozí pole můžete přepsat definováním pole se stejným názvem v poli `fields`,
+ale to se nedoporučuje.
 </Note>
 
 ### Konfigurace aplikace (application-config.ts)
@@ -433,10 +426,10 @@ Každý soubor funkce používá `defineLogicFunction()` k exportu konfigurace s
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '~/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/generated';
 
 const handler = async (params: RoutePayload) => {
-  const client = new Twenty(); // generated typed client
+  const client = new CoreApiClient();
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
@@ -550,27 +543,25 @@ Hlavní body:
 ### Payload spouštěče trasy
 
 <Warning>
-  **Zpětně nekompatibilní změna (v1.16, leden 2026):** Formát payloadu spouštěče trasy se změnil. Před verzí v1.16 byly parametry dotazu, parametry cesty a tělo odesílány přímo jako payload. Od verze v1.16 jsou zanořeny uvnitř strukturovaného objektu `RoutePayload`.
+**Zpětně nekompatibilní změna (v1.16, leden 2026):** Formát payloadu spouštěče trasy se změnil. Před verzí v1.16 byly parametry dotazu, parametry cesty a tělo odesílány přímo jako payload. Od verze v1.16 jsou zanořeny uvnitř strukturovaného objektu `RoutePayload`.
 
-  **Před v1.16:**
+**Před v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
 
-  ```typescript
-  const handler = async (params) => {
-    const { param1, param2 } = params; // Direct access
-  };
-  ```
+**Po v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
 
-  **Po v1.16:**
-
-  ```typescript
-  const handler = async (event: RoutePayload) => {
-    const { param1, param2 } = event.body; // Access via .body
-    const { queryParam } = event.queryStringParameters;
-    const { id } = event.pathParameters;
-  };
-  ```
-
-  **Jak migrovat existující funkce:** Aktualizujte svůj handler tak, aby destrukturoval z `event.body`, `event.queryStringParameters` nebo `event.pathParameters` místo přímo z objektu params.
+**Jak migrovat existující funkce:** Aktualizujte svůj handler tak, aby destrukturoval z `event.body`, `event.queryStringParameters` nebo `event.pathParameters` místo přímo z objektu params.
 </Warning>
 
 Když spouštěč trasy vyvolá vaši logickou funkci, ta obdrží objekt `RoutePayload`, který odpovídá formátu AWS HTTP API v2. Importujte typ z `twenty-sdk`:
@@ -653,10 +644,10 @@ Chcete-li označit logickou funkci jako nástroj, nastavte `isTool: true` a posk
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import Twenty from '~/generated';
+import { CoreApiClient } from 'twenty-sdk/generated';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
-  const client = new Twenty();
+  const client = new CoreApiClient();
 
   const result = await client.mutation({
     createTask: {
@@ -706,7 +697,7 @@ Hlavní body:
 * Můžete kombinovat `isTool` se spouštěči — funkce může být zároveň nástrojem (volatelným agenty AI) i spouštěna událostmi (cron, databázové události, routes).
 
 <Note>
-  **Napište kvalitní `description`.** Agenti AI se spoléhají na pole funkce `description` při rozhodování, kdy nástroj použít. Buďte konkrétní ohledně toho, co nástroj dělá a kdy se má volat.
+**Napište kvalitní `description`.** Agenti AI se spoléhají na pole funkce `description` při rozhodování, kdy nástroj použít. Buďte konkrétní ohledně toho, co nástroj dělá a kdy se má volat.
 </Note>
 
 ### Frontendové komponenty
@@ -714,7 +705,7 @@ Hlavní body:
 Frontendové komponenty vám umožňují vytvářet vlastní React komponenty, které se vykreslují v rozhraní Twenty. K definování komponent s vestavěnou validací použijte `defineFrontComponent()`:
 
 ```typescript
-// src/my-widget.front-component.tsx
+// src/front-components/my-widget.tsx
 import { defineFrontComponent } from 'twenty-sdk';
 
 const MyWidget = () => {
@@ -737,14 +728,13 @@ export default defineFrontComponent({
 Hlavní body:
 
 * Frontendové komponenty jsou React komponenty, které se vykreslují v izolovaných kontextech v rámci Twenty.
-* Pro automatickou detekci použijte příponu souboru `*.front-component.tsx`.
 * Pole `component` odkazuje na vaši React komponentu.
 * Komponenty se během `yarn twenty app:dev` automaticky sestaví a synchronizují.
 
 Nové frontendové komponenty můžete vytvořit dvěma způsoby:
 
 * **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou frontendovou komponentu.
-* **Ruční**: Vytvořte nový soubor `*.front-component.tsx` a použijte `defineFrontComponent()`.
+* **Manual**: Create a new `.tsx` file and use `defineFrontComponent()`, following the same pattern.
 
 ### Dovednosti
 
@@ -781,18 +771,24 @@ Nové dovednosti můžete vytvářet dvěma způsoby:
 * **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou dovednost.
 * **Ruční**: Vytvořte nový soubor a použijte `defineSkill()` podle stejného vzoru.
 
-### Generovaný typovaný klient
+### Generated typed clients
 
-Typovaný klient je automaticky generován pomocí `yarn twenty app:dev` a ukládá se do `node_modules/twenty-sdk/generated` podle schématu vašeho pracovního prostoru. Použijte jej ve svých funkcích:
+Two typed clients are auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/generated` based on your workspace schema:
+
+* **`CoreApiClient`** — queries the `/graphql` endpoint for workspace data
+* **`MetadataApiClient`** — queries the `/metadata` endpoint for workspace configuration and file uploads
 
 ```typescript
-import Twenty from '~/generated';
+import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
 
-const client = new Twenty();
+const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
+
+const metadataClient = new MetadataApiClient();
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Klient se automaticky znovu generuje pomocí `yarn twenty app:dev` kdykoli se změní vaše objekty nebo pole.
+Both clients are re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
 
 #### Běhové přihlašovací údaje v logických funkcích
 
@@ -809,17 +805,17 @@ Poznámky:
 
 #### Nahrávání souborů
 
-Vygenerovaný klient `Twenty` obsahuje metodu `uploadFile` pro připojování souborů k polím typu souboru u objektů ve vašem pracovním prostoru. Protože standardní klienti GraphQL nativně nepodporují nahrávání souborů pomocí multipart, klient poskytuje tuto speciální metodu, která interně implementuje [specifikaci multipart požadavků GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+The generated `MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. Protože standardní klienti GraphQL nativně nepodporují nahrávání souborů pomocí multipart, klient poskytuje tuto speciální metodu, která interně implementuje [specifikaci multipart požadavků GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 ```typescript
-import Twenty from '~/generated';
+import { MetadataApiClient } from 'twenty-sdk/generated';
 import * as fs from 'fs';
 
-const client = new Twenty();
+const metadataClient = new MetadataApiClient();
 
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
-const uploadedFile = await client.uploadFile(
+const uploadedFile = await metadataClient.uploadFile(
   fileBuffer,                                         // file contents as a Buffer
   'invoice.pdf',                                      // filename
   'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
@@ -850,7 +846,7 @@ uploadFile(
 
 Hlavní body:
 
-* Metoda odešle soubor na **koncový bod metadat** (nikoli na hlavní koncový bod GraphQL), kde se provede mutace nahrání.
+* The `uploadFile` method is available on `MetadataApiClient` because the upload mutation is resolved by the `/metadata` endpoint.
 * Používá `universalIdentifier` pole (nikoli jeho ID specifické pro pracovní prostor), takže váš kód pro nahrávání funguje ve všech pracovních prostorech, kde je vaše aplikace nainstalována — v souladu s tím, jak aplikace odkazují na pole všude jinde.
 * Vrácená hodnota `url` je podepsaná adresa URL, kterou můžete použít k přístupu k nahranému souboru.
 

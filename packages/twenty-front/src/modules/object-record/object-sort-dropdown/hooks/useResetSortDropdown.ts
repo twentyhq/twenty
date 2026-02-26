@@ -1,15 +1,14 @@
 import { isRecordSortDirectionDropdownMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isRecordSortDirectionDropdownMenuUnfoldedComponentState';
 import { selectedRecordSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedRecordSortDirectionComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 export const useResetSortDropdown = () => {
-  const setIsRecordSortDirectionDropdownMenuUnfolded =
-    useSetRecoilComponentState(
-      isRecordSortDirectionDropdownMenuUnfoldedComponentState,
-    );
+  const setIsRecordSortDirectionDropdownMenuUnfolded = useSetAtomComponentState(
+    isRecordSortDirectionDropdownMenuUnfoldedComponentState,
+  );
 
-  const setSelectedRecordSortDirection = useSetRecoilComponentState(
+  const setSelectedRecordSortDirection = useSetAtomComponentState(
     selectedRecordSortDirectionComponentState,
   );
 

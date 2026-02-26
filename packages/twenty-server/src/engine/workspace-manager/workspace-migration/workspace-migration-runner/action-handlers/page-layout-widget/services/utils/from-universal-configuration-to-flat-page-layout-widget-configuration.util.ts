@@ -70,11 +70,13 @@ const convertUniversalFilterToChartFilter = ({
 export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
   universalConfiguration,
   flatFieldMetadataMaps,
+  flatFrontComponentMaps,
   flatViewMaps,
   flatViewFieldGroupMaps,
 }: {
   universalConfiguration: FlatPageLayoutWidget['universalConfiguration'];
   flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+  flatFrontComponentMaps: MetadataFlatEntityMaps<'frontComponent'>;
   flatViewMaps: MetadataFlatEntityMaps<'view'>;
   flatViewFieldGroupMaps: MetadataFlatEntityMaps<'viewFieldGroup'>;
 }): FlatPageLayoutWidget['configuration'] => {
@@ -310,6 +312,35 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       return { ...rest, viewId, newFieldDefaultConfiguration };
     }
 
+    case WidgetConfigurationType.FRONT_COMPONENT: {
+      const { frontComponentUniversalIdentifier, ...rest } =
+        universalConfiguration;
+
+      if (!isDefined(frontComponentUniversalIdentifier)) {
+        throw new FlatEntityMapsException(
+          `Front component universal identifier is required for FRONT_COMPONENT configuration`,
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      const flatFrontComponent = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatFrontComponentMaps,
+        universalIdentifier: frontComponentUniversalIdentifier,
+      });
+
+      if (!isDefined(flatFrontComponent)) {
+        throw new FlatEntityMapsException(
+          `Front component not found for universal identifier: ${frontComponentUniversalIdentifier}`,
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      return {
+        ...rest,
+        frontComponentId: flatFrontComponent.id,
+      };
+    }
+
     case WidgetConfigurationType.VIEW:
     case WidgetConfigurationType.FIELD:
     case WidgetConfigurationType.TIMELINE:
@@ -322,7 +353,6 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     case WidgetConfigurationType.WORKFLOW:
     case WidgetConfigurationType.WORKFLOW_VERSION:
     case WidgetConfigurationType.WORKFLOW_RUN:
-    case WidgetConfigurationType.FRONT_COMPONENT:
     case WidgetConfigurationType.IFRAME:
     case WidgetConfigurationType.STANDALONE_RICH_TEXT:
       return universalConfiguration;

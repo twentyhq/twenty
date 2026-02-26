@@ -13,7 +13,7 @@ import {
   CatalogDecorator,
   type CatalogStory,
   ComponentWithRouterDecorator,
-  RecoilRootDecorator,
+  JotaiRootDecorator,
 } from '@ui/testing';
 
 // Mimic the TabList container styling for proper positioning
@@ -39,7 +39,7 @@ const StyledTabContainer = styled.div`
 const meta: Meta<typeof TabButton> = {
   title: 'UI/Input/Button/TabButton',
   component: TabButton,
-  decorators: [ComponentWithRouterDecorator, RecoilRootDecorator],
+  decorators: [ComponentWithRouterDecorator, JotaiRootDecorator],
   args: {
     id: 'tab-button',
     title: 'Tab Title',

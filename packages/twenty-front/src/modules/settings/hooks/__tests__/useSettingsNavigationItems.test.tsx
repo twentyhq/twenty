@@ -3,7 +3,6 @@ import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   type Billing,
@@ -53,17 +52,15 @@ const mockBilling: Billing = {
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider>
     <JotaiProvider store={jotaiStore}>
-      <RecoilRoot>
-        <MemoryRouter>
-          <I18nProvider i18n={i18n}>
-            <SnackBarComponentInstanceContext.Provider
-              value={{ instanceId: 'test-scope-id' }}
-            >
-              {children}
-            </SnackBarComponentInstanceContext.Provider>
-          </I18nProvider>
-        </MemoryRouter>
-      </RecoilRoot>
+      <MemoryRouter>
+        <I18nProvider i18n={i18n}>
+          <SnackBarComponentInstanceContext.Provider
+            value={{ instanceId: 'test-scope-id' }}
+          >
+            {children}
+          </SnackBarComponentInstanceContext.Provider>
+        </I18nProvider>
+      </MemoryRouter>
     </JotaiProvider>
   </MockedProvider>
 );

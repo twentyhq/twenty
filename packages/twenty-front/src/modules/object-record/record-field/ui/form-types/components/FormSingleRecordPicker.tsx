@@ -12,7 +12,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -116,14 +116,14 @@ export const FormSingleRecordPicker = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const setRecordPickerSearchFilter = useSetRecoilComponentState(
+  const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
     dropdownId,
   );
 
   const handleCloseRelationPickerDropdown = useCallback(() => {
-    setRecordPickerSearchFilter('');
-  }, [setRecordPickerSearchFilter]);
+    setSingleRecordPickerSearchFilter('');
+  }, [setSingleRecordPickerSearchFilter]);
 
   const handleMorphItemSelected = (
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
@@ -148,7 +148,7 @@ export const FormSingleRecordPicker = ({
     onClear?.();
   };
 
-  const setRecordPickerSelectedId = useSetRecoilComponentState(
+  const setSingleRecordPickerSelectedId = useSetAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
   );
@@ -158,7 +158,7 @@ export const FormSingleRecordPicker = ({
       isDefined(draftValue?.value) &&
       !isStandaloneVariableString(draftValue.value)
     ) {
-      setRecordPickerSelectedId(draftValue.value);
+      setSingleRecordPickerSelectedId(draftValue.value);
     }
   };
 
