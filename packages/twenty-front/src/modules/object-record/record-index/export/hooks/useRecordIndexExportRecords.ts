@@ -41,12 +41,11 @@ const formatCompositeFieldForCSV = (
     case FieldMetadataType.PHONES: {
       const number = (record.primaryPhoneNumber as string) ?? '';
       if (!number) return '';
-      const callingCode = (record.primaryPhoneCallingCode as string) ?? '+1';
       const cleaned = number.replace(/\D/g, '');
       if (cleaned.length === 10) {
-        return `${callingCode} (${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+        return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
       }
-      return `${callingCode} ${number}`;
+      return number;
     }
     case FieldMetadataType.EMAILS:
       return (record.primaryEmail as string) ?? '';

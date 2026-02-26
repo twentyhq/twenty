@@ -11,14 +11,13 @@ const formatPhoneNumber = (phoneData: Record<string, unknown>): string => {
   const number = (phoneData.primaryPhoneNumber as string) ?? '';
   if (!number) return '';
 
-  const callingCode = (phoneData.primaryPhoneCallingCode as string) ?? '+1';
   const cleaned = number.replace(/\D/g, '');
 
   if (cleaned.length === 10) {
-    return `${callingCode} (${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
   }
 
-  return `${callingCode} ${number}`;
+  return number;
 };
 
 export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
