@@ -1,5 +1,5 @@
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';

@@ -2,95 +2,21 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
+import { capitalize } from 'twenty-shared/utils';
+
 import { GENERATED_DIR, graphqlRequest, writeGeneratedFile } from './utils.js';
 
 const RECORDS_LIMIT = 10;
 
-type MetadataField = {
-  type: string;
-  name: string;
-  relation?: { type: string } | null;
-  settings?: { relationType?: string } | null;
-};
+// Production query builders omit __typename on connection/edge wrappers
+// since Apollo Client injects them automatically. Raw fetch needs them explicit.
+const addTypenamesToSelections = (query: string): string =>
+  query.replace(/\{(?!\s*__typename\b)/g, '{\n__typename');
 
-type MetadataObject = {
-  nameSingular: string;
-  namePlural: string;
-  fieldsList: MetadataField[];
-};
-
-const COMPOSITE_SELECTIONS: Record<string, string> = {
-  LINKS: '{ __typename primaryLinkUrl primaryLinkLabel secondaryLinks }',
-  ADDRESS:
-    '{ __typename addressStreet1 addressStreet2 addressCity addressState addressCountry addressPostcode addressLat addressLng }',
-  CURRENCY: '{ __typename amountMicros currencyCode }',
-  FULL_NAME: '{ __typename firstName lastName }',
-  EMAILS: '{ __typename primaryEmail additionalEmails }',
-  PHONES:
-    '{ __typename primaryPhoneNumber primaryPhoneCountryCode primaryPhoneCallingCode additionalPhones }',
-  ACTOR: '{ __typename source workspaceMemberId name context }',
-  RICH_TEXT_V2: '{ __typename blocknote markdown }',
-};
-
-const buildFieldSelection = (field: MetadataField): string | null => {
-  if (field.type in COMPOSITE_SELECTIONS) {
-    return `${field.name} ${COMPOSITE_SELECTIONS[field.type]}`;
-  }
-
-  if (field.type === 'RELATION') {
-    if (!field.relation) return null;
-
-    if (field.relation.type === 'ONE_TO_MANY') {
-      return `${field.name} { __typename edges { __typename node { __typename id } } totalCount }`;
-    }
-
-    return `${field.name} { __typename id }`;
-  }
-
-  if (field.type === 'MORPH_RELATION') {
-    return null;
-  }
-
-  return field.name;
-};
-
-const buildFindManyQuery = (object: MetadataObject, limit: number): string => {
-  const selections = object.fieldsList
-    .map(buildFieldSelection)
-    .filter(Boolean)
-    .join('\n            ');
-
-  const capitalName =
-    object.namePlural.charAt(0).toUpperCase() + object.namePlural.slice(1);
-
-  return `
-    query FindMany${capitalName} {
-      ${object.namePlural}(first: ${limit}) {
-        __typename
-        edges {
-          __typename
-          node {
-            __typename
-            ${selections}
-          }
-          cursor
-        }
-        pageInfo {
-          __typename
-          hasNextPage
-          hasPreviousPage
-          startCursor
-          endCursor
-        }
-        totalCount
-      }
-    }
-  `;
-};
-
-const loadMetadata = (): {
-  objects: { edges: { node: MetadataObject }[] };
-} => {
+const loadObjectMetadataItems = (): ObjectMetadataItem[] => {
   const metadataPath = path.join(
     GENERATED_DIR,
     'metadata/objects/mock-objects-metadata.ts',
@@ -113,20 +39,85 @@ const loadMetadata = (): {
     throw new Error('Could not parse metadata file');
   }
 
-  return JSON.parse(jsonMatch[1]);
+  const metadata = JSON.parse(jsonMatch[1]);
+
+  return metadata.objects.edges.map(
+    (edge: { node: Record<string, unknown> }) => {
+      const {
+        fieldsList,
+        indexMetadataList,
+        ...rest
+      } = edge.node as Record<string, unknown>;
+
+      const fields = fieldsList as unknown[];
+
+      return {
+        ...rest,
+        fields,
+        readableFields: fields,
+        updatableFields: fields,
+        indexMetadatas: ((indexMetadataList as unknown[]) ?? []).map(
+          (index: any) => ({
+            ...index,
+            indexFieldMetadatas: index.indexFieldMetadataList ?? [],
+          }),
+        ),
+      } as unknown as ObjectMetadataItem;
+    },
+  );
 };
 
-const fetchObjectRecords = async ({
-  token,
-  objectMetadata,
-}: {
-  token: string;
-  objectMetadata: MetadataObject;
-}) => {
-  const query = buildFindManyQuery(objectMetadata, RECORDS_LIMIT);
+const buildFindManyQuery = (
+  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItems: ObjectMetadataItem[],
+): string => {
+  const recordGqlFields = generateDepthRecordGqlFieldsFromObject({
+    objectMetadataItems,
+    objectMetadataItem,
+    depth: 1,
+  });
+
+  const fieldSelection = mapObjectMetadataToGraphQLQuery({
+    objectMetadataItems,
+    objectMetadataItem,
+    recordGqlFields,
+    objectPermissionsByObjectMetadataId: {},
+  });
+
+  return addTypenamesToSelections(`
+    query FindMany${capitalize(objectMetadataItem.namePlural)} {
+      ${objectMetadataItem.namePlural}(first: ${RECORDS_LIMIT}) {
+        edges {
+          node ${fieldSelection}
+          cursor
+        }
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
+        }
+        totalCount
+      }
+    }
+  `);
+};
+
+export const generateRecordData = async (token: string) => {
+  const objectMetadataItems = loadObjectMetadataItems();
+
+  const companyObject = objectMetadataItems.find(
+    (item) => item.nameSingular === 'company',
+  );
+
+  if (!companyObject) {
+    throw new Error('Company object metadata not found');
+  }
+
+  const query = buildFindManyQuery(companyObject, objectMetadataItems);
 
   console.log(
-    `Fetching ${objectMetadata.namePlural} (limit: ${RECORDS_LIMIT}) from /graphql ...`,
+    `Fetching ${companyObject.namePlural} (limit: ${RECORDS_LIMIT}) from /graphql ...`,
   );
 
   const data = (await graphqlRequest('/graphql', query, token)) as Record<
@@ -134,35 +125,17 @@ const fetchObjectRecords = async ({
     { edges: { node: Record<string, unknown> }[] }
   >;
 
-  const records = data[objectMetadata.namePlural].edges.map(
+  const records = data[companyObject.namePlural].edges.map(
     (edge) => edge.node,
   );
 
-  console.log(`  Got ${records.length} ${objectMetadata.namePlural}.`);
-  return records;
-};
-
-export const generateRecordData = async (token: string) => {
-  const metadata = loadMetadata();
-
-  const companyObject = metadata.objects.edges.find(
-    (edge) => edge.node.nameSingular === 'company',
-  )?.node;
-
-  if (!companyObject) {
-    throw new Error('Company object metadata not found');
-  }
-
-  const companyRecords = await fetchObjectRecords({
-    token,
-    objectMetadata: companyObject,
-  });
+  console.log(`  Got ${records.length} ${companyObject.namePlural}.`);
 
   writeGeneratedFile(
     'data/companies/mock-companies-data.ts',
     'mockedCompanyRecords',
     'Record<string, unknown>[]',
     '',
-    companyRecords,
+    records,
   );
 };
