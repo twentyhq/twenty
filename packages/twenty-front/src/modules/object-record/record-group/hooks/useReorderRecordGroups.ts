@@ -42,7 +42,7 @@ export const useReorderRecordGroups = ({
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
 
-  const groupFieldMetadata = useAtomComponentStateValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -86,12 +86,12 @@ export const useReorderRecordGroups = ({
         ];
       }, []);
 
-      if (!isDefined(groupFieldMetadata?.id)) {
+      if (!isDefined(recordIndexGroupFieldMetadataItem?.id)) {
         throw new Error('mainGroupByFieldMetadataId is required');
       }
 
       setRecordGroups({
-        mainGroupByFieldMetadataId: groupFieldMetadata?.id,
+        mainGroupByFieldMetadataId: recordIndexGroupFieldMetadataItem?.id,
         recordGroups: updatedRecordGroups,
         recordIndexId,
         objectMetadataItemId: objectMetadataItem.id,
@@ -102,7 +102,7 @@ export const useReorderRecordGroups = ({
     },
     [
       objectMetadataItem.id,
-      groupFieldMetadata?.id,
+      recordIndexGroupFieldMetadataItem?.id,
       recordIndexId,
       saveViewGroups,
       setRecordGroups,

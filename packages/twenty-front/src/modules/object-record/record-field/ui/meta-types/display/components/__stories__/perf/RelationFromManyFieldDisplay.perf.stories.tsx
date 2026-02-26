@@ -19,18 +19,18 @@ import {
 } from './relationFromManyFieldDisplayMock';
 
 const RelationFieldValueSetterEffect = () => {
-  const setEntity = useSetAtomFamilyState(
+  const setRecordStore = useSetAtomFamilyState(
     recordStoreFamilyState,
     relationFromManyFieldDisplayMock.entityValue.id,
   );
 
   useEffect(() => {
-    setEntity({
+    setRecordStore({
       __typename: relationFromManyFieldDisplayMock.entityValue.__typename,
       id: relationFromManyFieldDisplayMock.entityValue.id,
       company: [relationFromManyFieldDisplayMock.entityValue],
     } satisfies ObjectRecord);
-  }, [setEntity]);
+  }, [setRecordStore]);
 
   return null;
 };

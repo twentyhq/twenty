@@ -11,11 +11,11 @@ type UseFieldListFieldMetadataFromPositionProps = {
 export const useFieldListFieldMetadataFromPosition = ({
   objectNameSingular,
 }: UseFieldListFieldMetadataFromPositionProps) => {
-  const hoverPosition = useAtomComponentStateValue(
+  const recordFieldListHoverPosition = useAtomComponentStateValue(
     recordFieldListHoverPositionComponentState,
   );
 
-  const editModePosition = useAtomComponentStateValue(
+  const recordFieldListCellEditModePosition = useAtomComponentStateValue(
     recordFieldListCellEditModePositionComponentState,
   );
 
@@ -33,12 +33,12 @@ export const useFieldListFieldMetadataFromPosition = ({
     ...boxedRelationFieldMetadataItems,
   ];
 
-  const hoveredFieldMetadataItem = isDefined(hoverPosition)
-    ? fieldMetadataItems.at(hoverPosition)
+  const hoveredFieldMetadataItem = isDefined(recordFieldListHoverPosition)
+    ? fieldMetadataItems.at(recordFieldListHoverPosition)
     : undefined;
 
-  const editedFieldMetadataItem = isDefined(editModePosition)
-    ? fieldMetadataItems.at(editModePosition)
+  const editedFieldMetadataItem = isDefined(recordFieldListCellEditModePosition)
+    ? fieldMetadataItems.at(recordFieldListCellEditModePosition)
     : undefined;
 
   return {

@@ -42,12 +42,12 @@ export const RecordInlineCellEditMode = ({
     RecordFieldComponentInstanceContext,
   );
 
-  const setFieldInputLayoutDirection = useSetAtomComponentState(
+  const setRecordFieldInputLayoutDirection = useSetAtomComponentState(
     recordFieldInputLayoutDirectionComponentState,
     recordFieldComponentInstanceId,
   );
 
-  const setFieldInputLayoutDirectionLoading = useSetAtomComponentState(
+  const setRecordFieldInputLayoutDirectionLoading = useSetAtomComponentState(
     recordFieldInputLayoutDirectionLoadingComponentState,
     recordFieldComponentInstanceId,
   );
@@ -55,15 +55,15 @@ export const RecordInlineCellEditMode = ({
   const setFieldInputLayoutDirectionMiddleware = {
     name: 'middleware',
     fn: async (state: MiddlewareState) => {
-      setFieldInputLayoutDirection(
+      setRecordFieldInputLayoutDirection(
         state.placement.startsWith('bottom') ? 'downward' : 'upward',
       );
-      setFieldInputLayoutDirectionLoading(false);
+      setRecordFieldInputLayoutDirectionLoading(false);
       return {};
     },
   };
 
-  const isFieldInError = useAtomComponentStateValue(
+  const recordFieldInputIsFieldInError = useAtomComponentStateValue(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
@@ -98,7 +98,7 @@ export const RecordInlineCellEditMode = ({
             ref={refs.setFloating}
             style={floatingStyles}
             borderRadius="sm"
-            hasDangerBorder={isFieldInError}
+            hasDangerBorder={recordFieldInputIsFieldInError}
           >
             {children}
           </OverlayContainer>,

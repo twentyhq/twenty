@@ -39,27 +39,29 @@ export const SingleRecordPickerMenuItem = ({
   const selectableListComponentInstanceId =
     getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
-  const isSelectedByKeyboard = useAtomComponentFamilyStateValue(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     morphItem.recordId,
     selectableListComponentInstanceId,
   );
 
-  const searchRecord = useAtomFamilyStateValue(
+  const searchRecordStore = useAtomFamilyStateValue(
     searchRecordStoreFamilyState,
     morphItem.recordId,
   );
 
-  const searchableObjectMetadataItems = useAtomComponentStateValue(
-    singleRecordPickerSearchableObjectMetadataItemsComponentState,
-    recordPickerComponentInstanceId,
-  );
+  const singleRecordPickerSearchableObjectMetadataItems =
+    useAtomComponentStateValue(
+      singleRecordPickerSearchableObjectMetadataItemsComponentState,
+      recordPickerComponentInstanceId,
+    );
 
-  if (!isDefined(searchRecord)) {
+  if (!isDefined(searchRecordStore)) {
     return null;
   }
 
-  const showObjectName = searchableObjectMetadataItems.length > 1;
+  const showObjectName =
+    singleRecordPickerSearchableObjectMetadataItems.length > 1;
 
   return (
     <StyledSelectableItem
@@ -72,21 +74,23 @@ export const SingleRecordPickerMenuItem = ({
       <MenuItemSelectAvatar
         testId="menu-item"
         onClick={() => onMorphItemSelected(morphItem)}
-        text={searchRecord.label}
+        text={searchRecordStore.label}
         selected={isRecordSelected}
-        focused={isSelectedByKeyboard}
+        focused={isSelectedItemId}
         avatar={
           <Avatar
-            avatarUrl={searchRecord.imageUrl}
+            avatarUrl={searchRecordStore.imageUrl}
             placeholderColorSeed={morphItem.recordId}
-            placeholder={searchRecord.label}
+            placeholder={searchRecordStore.label}
             size="md"
-            type={getAvatarType(searchRecord.objectNameSingular) ?? 'rounded'}
+            type={
+              getAvatarType(searchRecordStore.objectNameSingular) ?? 'rounded'
+            }
           />
         }
         contextualText={
           showObjectName
-            ? capitalize(searchRecord.objectLabelSingular)
+            ? capitalize(searchRecordStore.objectLabelSingular)
             : undefined
         }
       />

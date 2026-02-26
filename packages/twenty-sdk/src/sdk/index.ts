@@ -30,6 +30,12 @@ export type {
 } from './front-component-config';
 export { defineLogicFunction } from './logic-functions/define-logic-function';
 export type {
+  InstallLogicFunctionPayload,
+  InstallLogicFunctionHandler,
+} from './logic-functions/install-logic-function-payload-type';
+export { definePreInstallLogicFunction } from './logic-functions/define-pre-install-logic-function';
+export { definePostInstallLogicFunction } from './logic-functions/define-post-install-logic-function';
+export type {
   LogicFunctionConfig,
   LogicFunctionHandler,
 } from './logic-functions/logic-function-config';

@@ -17,7 +17,7 @@ export const ContextStoreDecorator: Decorator = (Story, context) => {
     componentInstanceId = MAIN_CONTEXT_STORE_INSTANCE_ID;
   }
 
-  const setCurrentObjectMetadataItemId = useSetAtomComponentState(
+  const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     componentInstanceId,
   );
@@ -27,9 +27,9 @@ export const ContextStoreDecorator: Decorator = (Story, context) => {
   const objectMetadataItem = getMockCompanyObjectMetadataItem();
 
   useEffect(() => {
-    setCurrentObjectMetadataItemId(objectMetadataItem.id);
+    setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     setIsLoaded(true);
-  }, [setCurrentObjectMetadataItemId, objectMetadataItem]);
+  }, [setContextStoreCurrentObjectMetadataItemId, objectMetadataItem]);
 
   return (
     <ContextStoreComponentInstanceContext.Provider

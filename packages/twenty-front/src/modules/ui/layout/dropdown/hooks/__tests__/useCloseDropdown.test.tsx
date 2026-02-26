@@ -44,12 +44,13 @@ describe('useCloseDropdown', () => {
   it('should close dropdown from inside component instance context', async () => {
     const { result } = renderHook(
       () => {
+        // eslint-disable-next-line twenty/matching-state-variable
         const isOutsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
         );
 
-        const isInsideDropdownOpen = useAtomComponentStateValue(
+        const isDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
         );
 
@@ -58,7 +59,7 @@ describe('useCloseDropdown', () => {
 
         return {
           isOutsideDropdownOpen,
-          isInsideDropdownOpen,
+          isDropdownOpen,
           closeDropdown,
           openDropdown,
         };
@@ -72,26 +73,27 @@ describe('useCloseDropdown', () => {
       result.current.openDropdown();
     });
 
-    expect(result.current.isInsideDropdownOpen).toBe(true);
+    expect(result.current.isDropdownOpen).toBe(true);
     expect(result.current.isOutsideDropdownOpen).toBe(false);
 
     act(() => {
       result.current.closeDropdown();
     });
 
-    expect(result.current.isInsideDropdownOpen).toBe(false);
+    expect(result.current.isDropdownOpen).toBe(false);
     expect(result.current.isOutsideDropdownOpen).toBe(false);
   });
 
   it('should close dropdown from outside component instance context', async () => {
     const { result } = renderHook(
       () => {
+        // eslint-disable-next-line twenty/matching-state-variable
         const isOutsideDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
           outsideDropdownId,
         );
 
-        const isInsideDropdownOpen = useAtomComponentStateValue(
+        const isDropdownOpen = useAtomComponentStateValue(
           isDropdownOpenComponentState,
         );
 
@@ -100,7 +102,7 @@ describe('useCloseDropdown', () => {
 
         return {
           isOutsideDropdownOpen,
-          isInsideDropdownOpen,
+          isDropdownOpen,
           closeDropdown,
           openDropdown,
         };
@@ -116,14 +118,14 @@ describe('useCloseDropdown', () => {
       });
     });
 
-    expect(result.current.isInsideDropdownOpen).toBe(false);
+    expect(result.current.isDropdownOpen).toBe(false);
     expect(result.current.isOutsideDropdownOpen).toBe(true);
 
     act(() => {
       result.current.closeDropdown(outsideDropdownId);
     });
 
-    expect(result.current.isInsideDropdownOpen).toBe(false);
+    expect(result.current.isDropdownOpen).toBe(false);
     expect(result.current.isOutsideDropdownOpen).toBe(false);
   });
 });

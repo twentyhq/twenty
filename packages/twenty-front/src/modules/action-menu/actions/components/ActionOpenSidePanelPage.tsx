@@ -26,7 +26,7 @@ export const ActionOpenSidePanelPage = ({
 
   const { navigateCommandMenu } = useNavigateCommandMenu();
 
-  const setCommandMenuSearchState = useSetAtomState(commandMenuSearchState);
+  const setCommandMenuSearch = useSetAtomState(commandMenuSearchState);
 
   if (!actionConfig) {
     return null;
@@ -42,7 +42,7 @@ export const ActionOpenSidePanelPage = ({
     });
 
     if (shouldResetSearchState) {
-      setCommandMenuSearchState('');
+      setCommandMenuSearch('');
     }
   };
 

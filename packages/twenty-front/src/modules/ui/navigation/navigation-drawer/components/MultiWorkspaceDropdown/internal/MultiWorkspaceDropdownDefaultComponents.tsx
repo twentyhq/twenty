@@ -75,7 +75,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
 
   const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
 
-  const setMultiWorkspaceDropdownState = useSetAtomState(
+  const setMultiWorkspaceDropdown = useSetAtomState(
     multiWorkspaceDropdownState,
   );
 
@@ -195,9 +195,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
               <MenuItem
                 LeftIcon={IconSwitchHorizontal}
                 text={t`Other workspaces`}
-                onClick={() =>
-                  setMultiWorkspaceDropdownState('workspaces-list')
-                }
+                onClick={() => setMultiWorkspaceDropdown('workspaces-list')}
                 hasSubMenu={true}
               />
             )}
@@ -215,7 +213,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             </>
           }
           hasSubMenu={true}
-          onClick={() => setMultiWorkspaceDropdownState('themes')}
+          onClick={() => setMultiWorkspaceDropdown('themes')}
         />
         <UndecoratedLink
           to={getSettingsPath(SettingsPath.WorkspaceMembersPage)}

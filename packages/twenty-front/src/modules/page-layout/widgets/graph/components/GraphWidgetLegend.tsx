@@ -152,13 +152,12 @@ export const GraphWidgetLegend = ({
 
   const isInteractive = !isPageLayoutInEditMode;
 
-  const setHighlightedLegendId = useSetAtomComponentState(
+  const setGraphWidgetHighlightedLegendId = useSetAtomComponentState(
     graphWidgetHighlightedLegendIdComponentState,
   );
 
-  const [hiddenLegendIds, setHiddenLegendIds] = useAtomComponentState(
-    graphWidgetHiddenLegendIdsComponentState,
-  );
+  const [graphWidgetHiddenLegendIds, setGraphWidgetHiddenLegendIds] =
+    useAtomComponentState(graphWidgetHiddenLegendIdsComponentState);
 
   const itemIds = items.map((item) => item.id);
 
@@ -167,22 +166,22 @@ export const GraphWidgetLegend = ({
     isInteractive,
   });
 
-  if (isPageLayoutInEditMode && hiddenLegendIds.length > 0) {
-    setHiddenLegendIds([]);
+  if (isPageLayoutInEditMode && graphWidgetHiddenLegendIds.length > 0) {
+    setGraphWidgetHiddenLegendIds([]);
   }
 
   const handleLegendItemMouseEnter = (itemId: string) => {
     if (!isInteractive) {
       return;
     }
-    setHighlightedLegendId(itemId);
+    setGraphWidgetHighlightedLegendId(itemId);
   };
 
   const handleLegendItemMouseLeave = () => {
     if (!isInteractive) {
       return;
     }
-    setHighlightedLegendId(null);
+    setGraphWidgetHighlightedLegendId(null);
   };
 
   const shouldShowLegend = show && items.length > 1;
@@ -302,7 +301,9 @@ export const GraphWidgetLegend = ({
                   centered={!needsPagination}
                 >
                   {visibleItems.map((item) => {
-                    const isHidden = hiddenLegendIds.includes(item.id);
+                    const isHidden = graphWidgetHiddenLegendIds.includes(
+                      item.id,
+                    );
                     return (
                       <StyledLegendItem
                         key={item.id}

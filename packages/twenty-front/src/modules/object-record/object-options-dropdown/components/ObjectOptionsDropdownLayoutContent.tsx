@@ -66,7 +66,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const recordIndexCalendarLayout = useAtomStateValue(
     recordIndexCalendarLayoutState,
   );
-  const recordGroupFieldMetadata = useAtomComponentStateValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -282,7 +282,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
               <SelectableListItem
                 itemId="Group"
                 onEnter={() => {
-                  isDefined(recordGroupFieldMetadata)
+                  isDefined(recordIndexGroupFieldMetadataItem)
                     ? onContentChange('recordGroups')
                     : onContentChange('recordGroupFields');
                 }}
@@ -290,13 +290,13 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 <MenuItem
                   focused={selectedItemId === 'Group'}
                   onClick={() =>
-                    isDefined(recordGroupFieldMetadata)
+                    isDefined(recordIndexGroupFieldMetadataItem)
                       ? onContentChange('recordGroups')
                       : onContentChange('recordGroupFields')
                   }
                   LeftIcon={IconLayoutList}
                   text={t`Group`}
-                  contextualText={recordGroupFieldMetadata?.label}
+                  contextualText={recordIndexGroupFieldMetadataItem?.label}
                   contextualTextPosition="right"
                   hasSubMenu
                 />

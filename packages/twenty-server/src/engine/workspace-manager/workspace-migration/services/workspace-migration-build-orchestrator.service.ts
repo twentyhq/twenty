@@ -523,6 +523,31 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatFrontComponentMaps)) {
+      const { from: fromFlatFrontComponentMaps, to: toFlatFrontComponentMaps } =
+        flatFrontComponentMaps;
+
+      const frontComponentResult =
+        await this.workspaceMigrationFrontComponentActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatFrontComponentMaps,
+            to: toFlatFrontComponentMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
+            workspaceId,
+          },
+        );
+
+      if (frontComponentResult.status === 'fail') {
+        orchestratorFailureReport.frontComponent.push(
+          ...frontComponentResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.frontComponent = frontComponentResult.actions;
+      }
+    }
+
     if (isDefined(flatCommandMenuItemMaps)) {
       const {
         from: fromFlatCommandMenuItemMaps,
@@ -652,31 +677,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
       } else {
         orchestratorActionsReport.pageLayoutWidget =
           pageLayoutWidgetResult.actions;
-      }
-    }
-
-    if (isDefined(flatFrontComponentMaps)) {
-      const { from: fromFlatFrontComponentMaps, to: toFlatFrontComponentMaps } =
-        flatFrontComponentMaps;
-
-      const frontComponentResult =
-        await this.workspaceMigrationFrontComponentActionsBuilderService.validateAndBuild(
-          {
-            additionalCacheDataMaps,
-            from: fromFlatFrontComponentMaps,
-            to: toFlatFrontComponentMaps,
-            buildOptions,
-            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            workspaceId,
-          },
-        );
-
-      if (frontComponentResult.status === 'fail') {
-        orchestratorFailureReport.frontComponent.push(
-          ...frontComponentResult.errors,
-        );
-      } else {
-        orchestratorActionsReport.frontComponent = frontComponentResult.actions;
       }
     }
 

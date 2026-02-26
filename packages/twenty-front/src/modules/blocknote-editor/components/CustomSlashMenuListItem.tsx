@@ -15,7 +15,7 @@ export const CustomSlashMenuListItem = ({
 }: CustomSlashMenuListItemProps) => {
   const { resetSelectedItem } = useSelectableList(SLASH_MENU_LIST_ID);
 
-  const isSelectedItem = useAtomComponentFamilyStateValue(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     item.title,
   );
@@ -28,7 +28,7 @@ export const CustomSlashMenuListItem = ({
   return (
     <SelectableListItem itemId={item.title} onEnter={handleClick}>
       <MenuItemSuggestion
-        selected={isSelectedItem}
+        selected={isSelectedItemId}
         onClick={handleClick}
         LeftIcon={item.Icon}
         text={item.title}

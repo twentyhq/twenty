@@ -1,8 +1,8 @@
 import { Action } from '@/action-menu/actions/components/Action';
+import { HeadlessFrontComponentAction } from '@/action-menu/actions/display/components/HeadlessFrontComponentAction';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { HeadlessFrontComponentAction } from '@/action-menu/actions/display/components/HeadlessFrontComponentAction';
 import { useOpenFrontComponentInCommandMenu } from '@/command-menu/hooks/useOpenFrontComponentInCommandMenu';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
@@ -102,29 +102,29 @@ export const useCommandMenuItemFrontComponentActions = () => {
     useOpenFrontComponentInCommandMenu();
   const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
 
-  const isPageInEditMode = useAtomComponentStateValue(
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
 
   const { actionMenuType } = useContext(ActionMenuContext);
 
-  const currentObjectMetadataItemId = useAtomComponentStateValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const targetedRecordsRule = useAtomComponentStateValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const currentObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === currentObjectMetadataItemId,
+    (item) => item.id === contextStoreCurrentObjectMetadataItemId,
   );
 
   const selectedRecordIds =
-    targetedRecordsRule.mode === 'selection'
-      ? targetedRecordsRule.selectedRecordIds
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds
       : [];
 
   const mountContext: HeadlessFrontComponentMountContext | undefined =
@@ -152,11 +152,15 @@ export const useCommandMenuItemFrontComponentActions = () => {
         isDefined(item.frontComponentId),
     ) ?? [];
 
-  const selectedRecordCount = selectedRecordIds.length;
+  const selectedRecordCount =
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds.length
+      : 0;
 
   const objectMatches = (item: CommandMenuItemWithFrontComponent) =>
     !isDefined(item.availabilityObjectMetadataId) ||
-    item.availabilityObjectMetadataId === currentObjectMetadataItemId;
+    item.availabilityObjectMetadataId ===
+      contextStoreCurrentObjectMetadataItemId;
 
   const globalItems = frontComponentItems.filter(
     (item) => item.availabilityType === CommandMenuItemAvailabilityType.GLOBAL,
@@ -176,7 +180,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
       item,
       scope: ActionScope.Global,
       index,
-      isPinned: !isPageInEditMode && item.isPinned,
+      isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
       openFrontComponentInCommandMenu,
       mountHeadlessFrontComponent,
@@ -188,7 +192,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
       item,
       scope: ActionScope.RecordSelection,
       index,
-      isPinned: !isPageInEditMode && item.isPinned,
+      isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
       openFrontComponentInCommandMenu,
       mountHeadlessFrontComponent,

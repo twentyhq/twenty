@@ -65,27 +65,27 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   // TODO: This shouldn't be set with impossible values,
   // see problem with view id not being set early enoughby Effect component in context store,
   // This happens here when switching from a view to another.
-  const aggregateOperationForViewFieldWithProbableImpossibleValues =
-    useAtomFamilyStateValue(viewFieldAggregateOperationState, { viewFieldId });
+  const viewFieldAggregateOperation = useAtomFamilyStateValue(
+    viewFieldAggregateOperationState,
+    { viewFieldId },
+  );
 
   const isAggregateOperationImpossibleForDateField =
     isDefined(fieldMetadataItem) &&
     isFieldMetadataDateKind(fieldMetadataItem.type) &&
-    isDefined(aggregateOperationForViewFieldWithProbableImpossibleValues) &&
-    (aggregateOperationForViewFieldWithProbableImpossibleValues ===
-      AggregateOperations.MIN ||
-      aggregateOperationForViewFieldWithProbableImpossibleValues ===
-        AggregateOperations.MAX);
+    isDefined(viewFieldAggregateOperation) &&
+    (viewFieldAggregateOperation === AggregateOperations.MIN ||
+      viewFieldAggregateOperation === AggregateOperations.MAX);
 
   const aggregateOperationForViewField:
     | ExtendedAggregateOperations
     | undefined
     | null = isAggregateOperationImpossibleForDateField
     ? convertAggregateOperationToExtendedAggregateOperation(
-        aggregateOperationForViewFieldWithProbableImpossibleValues,
+        viewFieldAggregateOperation,
         fieldMetadataItem.type,
       )
-    : aggregateOperationForViewFieldWithProbableImpossibleValues;
+    : viewFieldAggregateOperation;
 
   const fieldName = fieldMetadataItem?.name;
 

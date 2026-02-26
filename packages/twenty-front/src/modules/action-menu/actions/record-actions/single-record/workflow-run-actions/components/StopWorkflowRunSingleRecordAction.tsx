@@ -13,27 +13,22 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useStopWorkflowRun } from '@/workflow/hooks/useStopWorkflowRun';
 
 export const StopWorkflowRunSingleRecordAction = () => {
-  const { objectMetadataItem, recordIndexId } =
-    useRecordIndexIdFromCurrentContextStore();
+  const { objectMetadataItem } = useRecordIndexIdFromCurrentContextStore();
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
-    recordIndexId,
   );
 
   const contextStoreFilters = useAtomComponentStateValue(
     contextStoreFiltersComponentState,
-    recordIndexId,
   );
 
   const contextStoreFilterGroups = useAtomComponentStateValue(
     contextStoreFilterGroupsComponentState,
-    recordIndexId,
   );
 
   const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
     contextStoreAnyFieldFilterValueComponentState,
-    recordIndexId,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();

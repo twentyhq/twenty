@@ -24,7 +24,6 @@ import { ClientService } from '@/cli/utilities/client/client-service';
 
 type TwentyClassType = new (options?: {
   url?: string;
-  metadataUrl?: string;
   fetch?: typeof globalThis.fetch;
 }) => {
   query: (request: Record<string, unknown>) => Promise<unknown>;
@@ -49,7 +48,6 @@ export type GraphqlOperation = Record<string, unknown>
 
 export type ClientOptions = {
   url?: string
-  metadataUrl?: string
   headers?: HeadersInit | (() => HeadersInit | Promise<HeadersInit>)
   fetcher?: (operation: GraphqlOperation | GraphqlOperation[]) => Promise<unknown>
   fetch?: typeof globalThis.fetch
@@ -128,9 +126,20 @@ describe('ClientService generated Twenty auth behavior', () => {
     const clientService = new ClientService();
     await (
       clientService as unknown as {
-        injectTwentyClient: (output: string) => Promise<void>;
+        injectClientWrapper: (
+          output: string,
+          options: {
+            apiClientName: string;
+            defaultUrl: string;
+            includeUploadFile: boolean;
+          },
+        ) => Promise<void>;
       }
-    ).injectTwentyClient(temporaryGeneratedClientDirectory);
+    ).injectClientWrapper(temporaryGeneratedClientDirectory, {
+      apiClientName: 'MetadataApiClient',
+      defaultUrl: '`${process.env.TWENTY_API_URL}/metadata`',
+      includeUploadFile: true,
+    });
 
     const generatedIndexContent = await readFile(
       temporaryGeneratedIndexTsPath,
@@ -153,7 +162,7 @@ describe('ClientService generated Twenty auth behavior', () => {
       `${pathToFileURL(temporaryGeneratedIndexMjsPath).href}?t=${Date.now()}`
     );
 
-    TwentyClass = generatedModule.default as TwentyClassType;
+    TwentyClass = generatedModule.MetadataApiClient as TwentyClassType;
   });
 
   beforeEach(() => {
@@ -235,6 +244,7 @@ describe('ClientService generated Twenty auth behavior', () => {
 
   it('refreshes and retries once after auth error when refresh callback is available', async () => {
     process.env.TWENTY_APP_ACCESS_TOKEN = 'stale-token';
+    process.env.TWENTY_API_KEY = 'legacy-api-key-token';
 
     const requestAccessTokenRefresh = vi
       .fn<() => Promise<string>>()
@@ -280,7 +290,7 @@ describe('ClientService generated Twenty auth behavior', () => {
     expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(process.env.TWENTY_APP_ACCESS_TOKEN).toBe('fresh-token');
-    expect(process.env.TWENTY_API_KEY).toBe('fresh-token');
+    expect(process.env.TWENTY_API_KEY).toBe('legacy-api-key-token');
   });
 
   it('deduplicates concurrent token refresh requests', async () => {
@@ -379,7 +389,6 @@ describe('ClientService generated Twenty auth behavior', () => {
 
     const twentyClient = new TwentyClass({
       url: 'https://example.com/graphql',
-      metadataUrl: 'https://example.com/metadata',
       fetch: fetchMock as unknown as typeof globalThis.fetch,
     });
 

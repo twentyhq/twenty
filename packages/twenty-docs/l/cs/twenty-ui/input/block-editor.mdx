@@ -10,22 +10,28 @@ image: /images/user-guide/api/api.png
 Používá blokově založený editor bohatého textu od [BlockNote](https://www.blocknotejs.org/) pro umožnění uživatelům editovat a zobrazovat bloky obsahu.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { useBlockNote } from "@blocknote/react";
-    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
-      const BlockNoteEditor = useBlockNote();
+```jsx
+import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
 
-      return <BlockEditor editor={BlockNoteEditor} />;
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti | Typ               | Popis                                       |
-    | ---------- | ----------------- | ------------------------------------------- |
-    | editor     | `BlockNoteEditor` | Instance nebo konfigurace blokového editoru |
-  </Tab>
+  return <BlockEditor editor={BlockNoteEditor} />;
+};
+```
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti | Typ               | Popis                                       |
+| ---------- | ----------------- | ------------------------------------------- |
+| editor     | `BlockNoteEditor` | Instance nebo konfigurace blokového editoru |
+
+
+
+</Tab>
 </Tabs>

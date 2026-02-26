@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-  generateObject,
   generateText,
   jsonSchema,
+  Output,
   stepCountIs,
   type ToolSet,
 } from 'ai';
@@ -20,6 +20,7 @@ import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-c
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import {
   AgentException,
   AgentExceptionCode,
@@ -219,7 +220,7 @@ export class AgentAsyncExecutorService {
         };
       }
 
-      const output = await generateObject({
+      const structuredResult = await generateText({
         system: WORKFLOW_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
         model: registeredModel.model,
         prompt: `Based on the following execution results, generate the structured output according to the schema:
@@ -227,23 +228,23 @@ export class AgentAsyncExecutorService {
                  Execution Results: ${textResponse.text}
 
                  Please generate the structured output based on the execution results and context above.`,
-        schema: jsonSchema(agentSchema),
+        output: Output.object({ schema: jsonSchema(agentSchema) }),
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
+      if (structuredResult.output == null) {
+        throw new AgentException(
+          'Failed to generate structured output from execution results',
+          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        );
+      }
+
       return {
-        result: output.object as object,
-        usage: {
-          inputTokens:
-            (textResponse.usage?.inputTokens ?? 0) +
-            (output.usage?.inputTokens ?? 0),
-          outputTokens:
-            (textResponse.usage?.outputTokens ?? 0) +
-            (output.usage?.outputTokens ?? 0),
-          totalTokens:
-            (textResponse.usage?.totalTokens ?? 0) +
-            (output.usage?.totalTokens ?? 0),
-        },
+        result: structuredResult.output as object,
+        usage: mergeLanguageModelUsage(
+          textResponse.usage,
+          structuredResult.usage,
+        ),
         cacheCreationTokens,
       };
     } catch (error) {

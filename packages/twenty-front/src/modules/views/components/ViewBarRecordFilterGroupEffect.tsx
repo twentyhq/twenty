@@ -12,7 +12,7 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordFilterGroupEffect = () => {
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -21,7 +21,7 @@ export const ViewBarRecordFilterGroupEffect = () => {
   const currentView = useAtomFamilySelectorValue(
     coreViewFromViewIdFamilySelector,
     {
-      viewId: currentViewId ?? '',
+      viewId: contextStoreCurrentViewId ?? '',
     },
   );
 
@@ -31,7 +31,7 @@ export const ViewBarRecordFilterGroupEffect = () => {
   ] = useAtomComponentFamilyState(
     hasInitializedCurrentRecordFilterGroupsComponentFamilyState,
     {
-      viewId: currentViewId ?? undefined,
+      viewId: contextStoreCurrentViewId ?? undefined,
     },
   );
 
@@ -57,7 +57,7 @@ export const ViewBarRecordFilterGroupEffect = () => {
       }
     }
   }, [
-    currentViewId,
+    contextStoreCurrentViewId,
     setCurrentRecordFilterGroups,
     hasInitializedCurrentRecordFilterGroups,
     setHasInitializedCurrentRecordFilterGroups,

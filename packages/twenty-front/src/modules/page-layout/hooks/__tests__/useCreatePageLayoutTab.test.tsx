@@ -174,13 +174,13 @@ describe('useCreatePageLayoutTab', () => {
 
     const { result } = renderHook(
       () => {
-        const getActiveTabId = useAtomComponentStateValue(
+        const activeTabId = useAtomComponentStateValue(
           activeTabIdComponentState,
           `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
         );
         return {
           createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
-          activeTabId: getActiveTabId,
+          activeTabId: activeTabId,
         };
       },
       {

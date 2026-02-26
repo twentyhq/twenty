@@ -38,7 +38,7 @@ export const useFrontComponentExecutionContext = ({
     frontComponentId,
   });
   const { navigateCommandMenu } = useNavigateCommandMenu();
-  const setCommandMenuSearchState = useSetAtomState(commandMenuSearchState);
+  const setCommandMenuSearch = useSetAtomState(commandMenuSearchState);
   const { getIcon } = useIcons();
   const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();
   const {
@@ -73,7 +73,7 @@ export const useFrontComponentExecutionContext = ({
       });
 
       if (shouldResetSearchState === true) {
-        setCommandMenuSearchState('');
+        setCommandMenuSearch('');
       }
     };
 

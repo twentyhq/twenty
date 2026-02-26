@@ -44,16 +44,15 @@ CSV içe aktarma işlevini kullanarak nesneler arasındaki ilişkileri içe akta
 <Note>**Silinen kayıtlar benzersizlik hesabına dahildir.** Geçici olarak silinen kayıtlar (Komut Menüsü → Silinen kayıtları gör altında görünür) benzersizlik kontrollerine dahildir. Silinmiş bir kayıtla aynı benzersiz değere sahip bir kaydı içe aktarırsanız, silinmiş kayıt geri yüklenir.</Note>
 
 <Warning>
-  **İçe Aktarma Sırası Önemlidir!**
+**İçe Aktarma Sırası Önemlidir!**
 
-  İlişkili nesneleri içe aktarırken dosyaları şu sırayla yükleyin:
+İlişkili nesneleri içe aktarırken dosyaları şu sırayla yükleyin:
+1. **Şirketler** önce (ilişkilerin "bir" tarafı)
+2. **Kişiler** ikinci (companyId aracılığıyla şirketlere bağlı)
+3. **Fırsatlar** üçüncü (şirketlere/kişilere bağlı)
+4. **İlişkileri olan özel nesneler** en son
 
-  1. **Şirketler** önce (ilişkilerin "bir" tarafı)
-  2. **Kişiler** ikinci (companyId aracılığıyla şirketlere bağlı)
-  3. **Fırsatlar** üçüncü (şirketlere/kişilere bağlı)
-  4. **İlişkileri olan özel nesneler** en son
-
-  Neden? Bire-çok ilişkinin "bir" tarafı, ona referans verebilmeden önce mevcut olmalıdır. Örneğin, o şirketin kimliğine sahip bir Kişi içe aktarmadan önce Şirket kaydının mevcut olması gerekir.
+Neden? Bire-çok ilişkinin "bir" tarafı, ona referans verebilmeden önce mevcut olmalıdır. Örneğin, o şirketin kimliğine sahip bir Kişi içe aktarmadan önce Şirket kaydının mevcut olması gerekir.
 </Warning>
 
 Nasıl ilerleyeceğinize ilişkin adım adım yönergeler için lütfen [bu makaleye](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) bakın.

@@ -51,9 +51,9 @@ description: 在 CSV 导入过程中关联记录的完整分步指南。
 4. **任务/笔记**（可关联到以上任一项）
 
 <Warning>
-  **如果父级记录不存在，导入将失败。**
+**如果父级记录不存在，导入将失败。**
 
-  在导入包含公司引用的人员之前，请务必确认公司已导入。
+在导入包含公司引用的人员之前，请务必确认公司已导入。
 </Warning>
 
 ## 步骤 3：记录父级的唯一标识符
@@ -117,9 +117,9 @@ Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
 | 编号   | UUID   | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **域名格式很重要！**
+**域名格式很重要！**
 
-  请使用 `https://domain.com`（而不是仅 `domain.com`）。 这与 Twenty 存储公司域名的方式一致，并可避免匹配错误。
+请使用 `https://domain.com`（而不是仅 `domain.com`）。 这与 Twenty 存储公司域名的方式一致，并可避免匹配错误。
 </Warning>
 
 ### 重要规则
@@ -178,7 +178,6 @@ Review proposal,jane@yourcompany.com
 <AccordionGroup>
   <Accordion title="如果我的父级记录没有域名或邮箱怎么办？">
     您有两个选项：
-
     1. 使用 Twenty 的 `id`（导出父级记录以获取其 ID）
     2. 在数据模型中创建自定义唯一字段，用于存储来自旧系统的外部 ID
   </Accordion>
@@ -197,7 +196,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="如果父级记录不存在会怎样？">
     导入会为该行显示错误。 您可以：
-
     * 先导入父级记录，然后重新导入
     * 修正引用值
     * 从导入中移除该行
@@ -205,7 +203,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="为什么我的关系没有正确关联？">
     常见原因：
-
     * 格式错误（域名请使用 `https://domain.com`）
     * 大小写不匹配（检查拼写是否完全一致）
     * 父级不存在（请先导入父级）
@@ -214,9 +211,9 @@ Review proposal,jane@yourcompany.com
 </AccordionGroup>
 
 <Warning>
-  **请注意：软删除的记录也会计入唯一性。**
+**请注意：软删除的记录也会计入唯一性。**
 
-  如果您收到“not found”错误，但记录似乎存在，请检查命令菜单 → 查看已删除的记录。 父级可能已被软删除。
+如果您收到“not found”错误，但记录似乎存在，请检查命令菜单 → 查看已删除的记录。 父级可能已被软删除。
 </Warning>
 
 ## 故障排除

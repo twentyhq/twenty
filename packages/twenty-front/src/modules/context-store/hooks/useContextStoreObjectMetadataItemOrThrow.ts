@@ -5,13 +5,13 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 export const useContextStoreObjectMetadataItemOrThrow = (
   contextStoreInstanceId?: string,
 ) => {
-  const objectMetadataItemId = useAtomComponentStateValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     contextStoreInstanceId,
   );
 
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataItemId ?? '',
+    objectId: contextStoreCurrentObjectMetadataItemId ?? '',
   });
 
   if (!objectMetadataItem) {

@@ -23,11 +23,14 @@ const BooleanFieldValueSetterEffect = ({
   value: boolean;
   recordId: string;
 }) => {
-  const setField = useSetAtomFamilyState(recordStoreFamilyState, recordId);
+  const setRecordStore = useSetAtomFamilyState(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   useEffect(() => {
-    setField({ id: recordId, Boolean: value, __typename: 'Person' });
-  }, [recordId, setField, value]);
+    setRecordStore({ id: recordId, Boolean: value, __typename: 'Person' });
+  }, [recordId, setRecordStore, value]);
 
   return <></>;
 };

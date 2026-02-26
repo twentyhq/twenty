@@ -44,12 +44,12 @@ Aici, Proiectul se află pe partea „unu”. Mai multe înregistrări din obiec
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Limitare de import/export**: Relațiile care indică către mai multe tipuri de obiecte (cum ar fi Note → Persoane/Companii/Oportunități) nu sunt **încă acceptate** la importul sau exportul CSV.
+**Limitare de import/export**: Relațiile care indică către mai multe tipuri de obiecte (cum ar fi Note → Persoane/Companii/Oportunități) nu sunt **încă acceptate** la importul sau exportul CSV.
 
-  * **Import**: Numai relațiile unu-la-mulți care indică spre un singur tip de obiect pe fiecare parte pot fi importate
-  * **Export**: Coloanele pentru relațiile care indică către mai multe tipuri de obiecte sunt în prezent lăsate necompletate
+* **Import**: Numai relațiile unu-la-mulți care indică spre un singur tip de obiect pe fiecare parte pot fi importate
+* **Export**: Coloanele pentru relațiile care indică către mai multe tipuri de obiecte sunt în prezent lăsate necompletate
 
-  Această funcționalitate este în planul nostru de dezvoltare.
+Această funcționalitate este în planul nostru de dezvoltare.
 </Warning>
 
 ### Ce nu este acceptat astăzi
@@ -137,12 +137,12 @@ Dacă nu există:
 ## Regula ordinii de import
 
 <Warning>
-  **Importați întotdeauna mai întâi partea „unu”!**
+**Importați întotdeauna mai întâi partea „unu”!**
 
-  1. **Companii** mai întâi (fără dependențe)
-  2. **Persoane** în al doilea rând (legate de Companii)
-  3. **Oportunități** în al treilea rând (legate de Companii/Persoane)
-  4. **Obiecte personalizate** respectând dependențele lor
+1. **Companii** mai întâi (fără dependențe)
+2. **Persoane** în al doilea rând (legate de Companii)
+3. **Oportunități** în al treilea rând (legate de Companii/Persoane)
+4. **Obiecte personalizate** respectând dependențele lor
 
-  Înregistrarea părinte trebuie să existe înainte de a o putea referi.
+Înregistrarea părinte trebuie să existe înainte de a o putea referi.
 </Warning>

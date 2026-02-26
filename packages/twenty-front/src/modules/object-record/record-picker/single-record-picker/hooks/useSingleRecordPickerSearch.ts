@@ -14,18 +14,18 @@ export const useSingleRecordPickerSearch = (
       recordPickerComponentInstanceIdFromProps,
     );
 
-  const setRecordPickerSearchFilter = useSetAtomComponentState(
+  const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
     recordPickerComponentInstanceId,
   );
 
-  const setRecordPickerSelectedId = useSetAtomComponentState(
+  const setSingleRecordPickerSelectedId = useSetAtomComponentState(
     singleRecordPickerSelectedIdComponentState,
     recordPickerComponentInstanceId,
   );
 
   const debouncedSetSearchFilter = useDebouncedCallback(
-    setRecordPickerSearchFilter,
+    setSingleRecordPickerSearchFilter,
     100,
     {
       leading: true,
@@ -34,7 +34,7 @@ export const useSingleRecordPickerSearch = (
 
   const resetSearchFilter = () => {
     debouncedSetSearchFilter('');
-    setRecordPickerSelectedId(undefined);
+    setSingleRecordPickerSelectedId(undefined);
   };
 
   const handleSearchFilterChange = (
