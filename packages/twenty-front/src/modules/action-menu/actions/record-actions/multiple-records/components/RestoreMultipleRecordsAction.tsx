@@ -1,6 +1,4 @@
-import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
-import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
-import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
+import { ActionConfirmation } from '@/action-menu/actions/components/ActionConfirmation';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -79,9 +77,6 @@ export const RestoreMultipleRecordsAction = () => {
     recordGqlFields: { id: true },
   });
 
-  const { openConfirmationModal } = useActionMenuConfirmationModal();
-  const { closeActionMenu } = useCloseActionMenu();
-
   const handleRestoreClick = async () => {
     removeSelectedRecordsFromRecordBoard();
     const recordsToRestore = await fetchAllRecordIds();
@@ -94,18 +89,13 @@ export const RestoreMultipleRecordsAction = () => {
     });
   };
 
-  const handleClick = () => {
-    openConfirmationModal({
-      title: t`Restore Records`,
-      subtitle: t`Are you sure you want to restore these records?`,
-      onConfirmClick: async () => {
-        await handleRestoreClick();
-        closeActionMenu();
-      },
-      confirmButtonText: t`Restore Records`,
-      confirmButtonAccent: 'default',
-    });
-  };
-
-  return <ActionDisplay onClick={handleClick} />;
+  return (
+    <ActionConfirmation
+      title={t`Restore Records`}
+      subtitle={t`Are you sure you want to restore these records?`}
+      onConfirmClick={handleRestoreClick}
+      confirmButtonText={t`Restore Records`}
+      confirmButtonAccent="default"
+    />
+  );
 };

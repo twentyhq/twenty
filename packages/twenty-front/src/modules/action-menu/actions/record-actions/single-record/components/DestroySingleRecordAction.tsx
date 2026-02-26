@@ -1,7 +1,5 @@
-import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
-import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
+import { ActionConfirmation } from '@/action-menu/actions/components/ActionConfirmation';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
@@ -27,11 +25,6 @@ export const DestroySingleRecordAction = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const { openConfirmationModal } = useActionMenuConfirmationModal();
-  const { closeActionMenu } = useCloseActionMenu({
-    closeSidePanelOnShowPageOptionsActionExecution: true,
-  });
-
   const handleDeleteClick = async () => {
     removeSelectedRecordsFromRecordBoard();
     resetTableRowSelection();
@@ -42,18 +35,13 @@ export const DestroySingleRecordAction = () => {
     });
   };
 
-  const handleClick = () => {
-    openConfirmationModal({
-      title: t`Permanently Destroy Record`,
-      subtitle: t`Are you sure you want to destroy this record? It cannot be recovered anymore.`,
-      onConfirmClick: async () => {
-        await handleDeleteClick();
-        closeActionMenu();
-      },
-      confirmButtonText: t`Permanently Destroy Record`,
-      confirmButtonAccent: 'danger',
-    });
-  };
-
-  return <ActionDisplay onClick={handleClick} />;
+  return (
+    <ActionConfirmation
+      title={t`Permanently Destroy Record`}
+      subtitle={t`Are you sure you want to destroy this record? It cannot be recovered anymore.`}
+      onConfirmClick={handleDeleteClick}
+      confirmButtonText={t`Permanently Destroy Record`}
+      closeSidePanelOnShowPageOptionsActionExecution={true}
+    />
+  );
 };

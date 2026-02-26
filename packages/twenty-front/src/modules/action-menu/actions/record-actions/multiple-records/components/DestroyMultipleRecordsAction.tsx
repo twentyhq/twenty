@@ -1,7 +1,5 @@
-import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
-import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
+import { ActionConfirmation } from '@/action-menu/actions/components/ActionConfirmation';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
-import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { computeProgressText } from '@/action-menu/utils/computeProgressText';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
@@ -81,9 +79,6 @@ export const DestroyMultipleRecordsAction = () => {
 
   const actionConfig = useContext(ActionConfigContext);
 
-  const { openConfirmationModal } = useActionMenuConfirmationModal();
-  const { closeActionMenu } = useCloseActionMenu();
-
   if (!isDefined(actionConfig)) {
     return null;
   }
@@ -106,22 +101,14 @@ export const DestroyMultipleRecordsAction = () => {
     await incrementalDestroyManyRecords();
   };
 
-  const handleClick = () => {
-    openConfirmationModal({
-      title: t`Permanently Destroy Records`,
-      subtitle: t`Are you sure you want to destroy these records? They won't be recoverable anymore.`,
-      onConfirmClick: async () => {
-        await handleDestroyClick();
-        closeActionMenu();
-      },
-      confirmButtonText: t`Destroy Records`,
-      confirmButtonAccent: 'danger',
-    });
-  };
-
   return (
     <ActionConfigContext.Provider value={actionConfigWithProgress}>
-      <ActionDisplay onClick={handleClick} />
+      <ActionConfirmation
+        title={t`Permanently Destroy Records`}
+        subtitle={t`Are you sure you want to destroy these records? They won't be recoverable anymore.`}
+        onConfirmClick={handleDestroyClick}
+        confirmButtonText={t`Destroy Records`}
+      />
     </ActionConfigContext.Provider>
   );
 };
