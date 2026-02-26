@@ -39,6 +39,10 @@ type BuildActionFromItemParams = {
     frontComponentId: string;
     pageTitle: string;
     pageIcon: IconComponent;
+    recordContext?: {
+      recordId: string;
+      objectNameSingular: string;
+    };
   }) => void;
   mountHeadlessFrontComponent: (
     frontComponentId: string,
@@ -71,6 +75,12 @@ const buildActionFromItem = ({
         frontComponentId: item.frontComponentId,
         pageTitle: displayLabel,
         pageIcon: Icon,
+        recordContext: isDefined(mountContext)
+          ? {
+              recordId: mountContext.recordId,
+              objectNameSingular: mountContext.objectNameSingular,
+            }
+          : undefined,
       });
     }
   };
