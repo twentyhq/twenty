@@ -6,7 +6,7 @@
     "defaultRoleUniversalIdentifier": "66972e19-9fdb-4336-87ce-442a17fd179c",
     "yarnLockChecksum": "f66aa34e63e82a31ee0072fffaac635d",
     "packageJsonChecksum": "bf473a5444c8dcb9a2de60adf70a0a99",
-    "apiClientChecksum": "88c00d7fde8abef84273ac7ece6a0e36"
+    "apiClientChecksum": "1e8a96b102f39453a49f31f32b3daba1"
   },
   "objects": [
     {
@@ -17,18 +17,18 @@
       "labelPlural": "Self Hosting Users",
       "fields": [
         {
-          "type": "RELATION",
+          "universalIdentifier": "b453a43c-1512-48ca-8604-db750ad3ffb8",
           "name": "person",
           "label": "Person",
           "description": "Person matching with the self hosting user",
+          "type": "RELATION",
           "relationTargetFieldMetadataUniversalIdentifier": "9507f244-fdea-47d5-a734-725d4dae43da",
           "relationTargetObjectMetadataUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
           "isNullable": true,
-          "universalIdentifier": "b453a43c-1512-48ca-8604-db750ad3ffb8",
           "universalSettings": {
             "relationType": "MANY_TO_ONE",
             "onDelete": "SET_NULL",
-            "joinColumnName": "targetPersonId"
+            "joinColumnName": "personId"
           }
         },
         {
@@ -428,6 +428,20 @@
   ],
   "fields": [
     {
+      "universalIdentifier": "9507f244-fdea-47d5-a734-725d4dae43da",
+      "name": "selfHostingUsers",
+      "label": "Self hosting users",
+      "description": "Self hosting user related to the person",
+      "type": "RELATION",
+      "relationTargetFieldMetadataUniversalIdentifier": "b453a43c-1512-48ca-8604-db750ad3ffb8",
+      "relationTargetObjectMetadataUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
+      "objectUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "ONE_TO_MANY"
+      }
+    },
+    {
       "name": "targetSelfHostingUser",
       "label": "SelfHostingUser",
       "description": "SelfHostingUser Self Hosting User",
@@ -515,19 +529,6 @@
       "relationTargetObjectMetadataUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
       "type": "MORPH_RELATION",
       "morphId": "20202020-f636-435d-ab8d-e1168b375c71"
-    },
-    {
-      "universalIdentifier": "9507f244-fdea-47d5-a734-725d4dae43da",
-      "name": "selfHostingUsers",
-      "label": "Self hosting users",
-      "type": "RELATION",
-      "relationTargetFieldMetadataUniversalIdentifier": "b453a43c-1512-48ca-8604-db750ad3ffb8",
-      "relationTargetObjectMetadataUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
-      "objectUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
-      "description": "Self hosting user related to the person",
-      "universalSettings": {
-        "relationType": "ONE_TO_MANY"
-      }
     }
   ],
   "roles": [
@@ -546,7 +547,7 @@
     {
       "universalIdentifier": "87f0293a-997a-4c7b-85e2-e77462ccf0c5",
       "name": "match-telemetry-event-with-people",
-      "description": "Add a description for your logic function",
+      "description": "Matches self hosting users with existing people based on email address",
       "timeoutSeconds": 10,
       "databaseEventTriggerSettings": {
         "eventName": "selfHostingUser.*"
@@ -558,7 +559,7 @@
       "handlerName": "default.config.handler",
       "sourceHandlerPath": "src/logic-functions/match-telemetry-event-with-people.ts",
       "builtHandlerPath": "src/logic-functions/match-telemetry-event-with-people.mjs",
-      "builtHandlerChecksum": "ec63ecb4d2840086b95d665be6d49fb4"
+      "builtHandlerChecksum": "45288f0aafa96f22f14186ff9f1c89d1"
     },
     {
       "universalIdentifier": "10104201-622b-4a5e-9f27-8f2af19b2a3c",
@@ -576,7 +577,7 @@
       "handlerName": "default.config.handler",
       "sourceHandlerPath": "src/logic-functions/telemetryWebhook.function.ts",
       "builtHandlerPath": "src/logic-functions/telemetryWebhook.function.mjs",
-      "builtHandlerChecksum": "99e031fe128e7ce15bd0841809896964"
+      "builtHandlerChecksum": "32fda75cf45b8c277ebcdaf1111b62b7"
     }
   ],
   "frontComponents": [],

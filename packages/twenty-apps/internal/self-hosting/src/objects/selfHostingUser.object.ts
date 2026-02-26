@@ -20,22 +20,22 @@ export default defineObject({
   labelPlural: 'Self Hosting Users',
   fields: [
     {
-      type: FieldType.RELATION,
+      universalIdentifier:
+        UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId
+          .universalIdentifier,
       name: 'person',
       label: 'Person',
       description: 'Person matching with the self hosting user',
+      type: FieldType.RELATION,
       relationTargetFieldMetadataUniversalIdentifier:
         SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER,
       relationTargetObjectMetadataUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
       isNullable: true,
-      universalIdentifier:
-        UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId
-          .universalIdentifier,
       universalSettings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: OnDeleteAction.SET_NULL,
-        joinColumnName: 'targetPersonId',
+        joinColumnName: 'personId',
       },
     },
     {

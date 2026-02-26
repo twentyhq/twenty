@@ -13,6 +13,7 @@ export default defineField({
   universalIdentifier: SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER,
   name: 'selfHostingUsers',
   label: 'Self hosting users',
+  description: 'Self hosting user related to the person',
   type: FieldType.RELATION,
   relationTargetFieldMetadataUniversalIdentifier:
     UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId
@@ -21,7 +22,7 @@ export default defineField({
     UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.universalIdentifier,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  description: 'Self hosting user related to the person',
+  isNullable: true,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
   },

@@ -146,11 +146,12 @@ var self_hosting_user_id_default = defineField({
   universalIdentifier: SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER,
   name: "selfHostingUsers",
   label: "Self hosting users",
+  description: "Self hosting user related to the person",
   type: FieldType.RELATION,
   relationTargetFieldMetadataUniversalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId.universalIdentifier,
   relationTargetObjectMetadataUniversalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.universalIdentifier,
   objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  description: "Self hosting user related to the person",
+  isNullable: true,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY
   }
@@ -166,18 +167,18 @@ var selfHostingUser_object_default = defineObject({
   labelPlural: "Self Hosting Users",
   fields: [
     {
-      type: FieldType2.RELATION,
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId.universalIdentifier,
       name: "person",
       label: "Person",
       description: "Person matching with the self hosting user",
+      type: FieldType2.RELATION,
       relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER,
       relationTargetObjectMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS2.person.universalIdentifier,
       isNullable: true,
-      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId.universalIdentifier,
       universalSettings: {
         relationType: RelationType2.MANY_TO_ONE,
         onDelete: OnDeleteAction.SET_NULL,
-        joinColumnName: "targetPersonId"
+        joinColumnName: "personId"
       }
     },
     {
@@ -45838,12 +45839,6 @@ var types_default = {
       "serverUrl": [
         1
       ],
-      "personLinkedIn": [
-        52
-      ],
-      "personSeniority": [
-        1
-      ],
       "numberOfEmailsWithSameDomain": [
         13
       ],
@@ -45869,6 +45864,12 @@ var types_default = {
         1
       ],
       "personJobTitle": [
+        1
+      ],
+      "personLinkedIn": [
+        52
+      ],
+      "personSeniority": [
         1
       ],
       "companyAlexaRank": [
@@ -45940,11 +45941,8 @@ var types_default = {
       "searchVector": [
         115
       ],
-      "targetPersonId": [
+      "personId": [
         22
-      ],
-      "person": [
-        453
       ],
       "timelineActivities": [
         500,
@@ -46081,6 +46079,9 @@ var types_default = {
           ]
         }
       ],
+      "person": [
+        453
+      ],
       "__typename": [
         1
       ]
@@ -46203,36 +46204,6 @@ var types_default = {
         13
       ],
       "percentageNotEmptyServerUrl": [
-        13
-      ],
-      "countUniqueValuesPersonLinkedIn": [
-        10
-      ],
-      "countEmptyPersonLinkedIn": [
-        10
-      ],
-      "countNotEmptyPersonLinkedIn": [
-        10
-      ],
-      "percentageEmptyPersonLinkedIn": [
-        13
-      ],
-      "percentageNotEmptyPersonLinkedIn": [
-        13
-      ],
-      "countUniqueValuesPersonSeniority": [
-        10
-      ],
-      "countEmptyPersonSeniority": [
-        10
-      ],
-      "countNotEmptyPersonSeniority": [
-        10
-      ],
-      "percentageEmptyPersonSeniority": [
-        13
-      ],
-      "percentageNotEmptyPersonSeniority": [
         13
       ],
       "countUniqueValuesNumberOfEmailsWithSameDomain": [
@@ -46404,6 +46375,36 @@ var types_default = {
         13
       ],
       "percentageNotEmptyPersonJobTitle": [
+        13
+      ],
+      "countUniqueValuesPersonLinkedIn": [
+        10
+      ],
+      "countEmptyPersonLinkedIn": [
+        10
+      ],
+      "countNotEmptyPersonLinkedIn": [
+        10
+      ],
+      "percentageEmptyPersonLinkedIn": [
+        13
+      ],
+      "percentageNotEmptyPersonLinkedIn": [
+        13
+      ],
+      "countUniqueValuesPersonSeniority": [
+        10
+      ],
+      "countEmptyPersonSeniority": [
+        10
+      ],
+      "countNotEmptyPersonSeniority": [
+        10
+      ],
+      "percentageEmptyPersonSeniority": [
+        13
+      ],
+      "percentageNotEmptyPersonSeniority": [
         13
       ],
       "countUniqueValuesCompanyAlexaRank": [
@@ -46936,36 +46937,6 @@ var types_default = {
       "percentageNotEmptyServerUrl": [
         13
       ],
-      "countUniqueValuesPersonLinkedIn": [
-        10
-      ],
-      "countEmptyPersonLinkedIn": [
-        10
-      ],
-      "countNotEmptyPersonLinkedIn": [
-        10
-      ],
-      "percentageEmptyPersonLinkedIn": [
-        13
-      ],
-      "percentageNotEmptyPersonLinkedIn": [
-        13
-      ],
-      "countUniqueValuesPersonSeniority": [
-        10
-      ],
-      "countEmptyPersonSeniority": [
-        10
-      ],
-      "countNotEmptyPersonSeniority": [
-        10
-      ],
-      "percentageEmptyPersonSeniority": [
-        13
-      ],
-      "percentageNotEmptyPersonSeniority": [
-        13
-      ],
       "countUniqueValuesNumberOfEmailsWithSameDomain": [
         10
       ],
@@ -47135,6 +47106,36 @@ var types_default = {
         13
       ],
       "percentageNotEmptyPersonJobTitle": [
+        13
+      ],
+      "countUniqueValuesPersonLinkedIn": [
+        10
+      ],
+      "countEmptyPersonLinkedIn": [
+        10
+      ],
+      "countNotEmptyPersonLinkedIn": [
+        10
+      ],
+      "percentageEmptyPersonLinkedIn": [
+        13
+      ],
+      "percentageNotEmptyPersonLinkedIn": [
+        13
+      ],
+      "countUniqueValuesPersonSeniority": [
+        10
+      ],
+      "countEmptyPersonSeniority": [
+        10
+      ],
+      "countNotEmptyPersonSeniority": [
+        10
+      ],
+      "percentageEmptyPersonSeniority": [
+        13
+      ],
+      "percentageNotEmptyPersonSeniority": [
         13
       ],
       "countUniqueValuesCompanyAlexaRank": [
@@ -47610,12 +47611,6 @@ var types_default = {
       "serverUrl": [
         1
       ],
-      "personLinkedIn": [
-        53
-      ],
-      "personSeniority": [
-        1
-      ],
       "numberOfEmailsWithSameDomain": [
         13
       ],
@@ -47641,6 +47636,12 @@ var types_default = {
         1
       ],
       "personJobTitle": [
+        1
+      ],
+      "personLinkedIn": [
+        53
+      ],
+      "personSeniority": [
         1
       ],
       "companyAlexaRank": [
@@ -47712,7 +47713,7 @@ var types_default = {
       "searchVector": [
         115
       ],
-      "targetPersonId": [
+      "personId": [
         22
       ],
       "person": [
@@ -47744,12 +47745,6 @@ var types_default = {
       "serverUrl": [
         1
       ],
-      "personLinkedIn": [
-        54
-      ],
-      "personSeniority": [
-        1
-      ],
       "numberOfEmailsWithSameDomain": [
         13
       ],
@@ -47775,6 +47770,12 @@ var types_default = {
         1
       ],
       "personJobTitle": [
+        1
+      ],
+      "personLinkedIn": [
+        54
+      ],
+      "personSeniority": [
         1
       ],
       "companyAlexaRank": [
@@ -47846,7 +47847,7 @@ var types_default = {
       "searchVector": [
         115
       ],
-      "targetPersonId": [
+      "personId": [
         22
       ],
       "person": [
@@ -47878,12 +47879,6 @@ var types_default = {
       "serverUrl": [
         56
       ],
-      "personLinkedIn": [
-        55
-      ],
-      "personSeniority": [
-        56
-      ],
       "numberOfEmailsWithSameDomain": [
         130
       ],
@@ -47909,6 +47904,12 @@ var types_default = {
         56
       ],
       "personJobTitle": [
+        56
+      ],
+      "personLinkedIn": [
+        55
+      ],
+      "personSeniority": [
         56
       ],
       "companyAlexaRank": [
@@ -47980,7 +47981,7 @@ var types_default = {
       "searchVector": [
         131
       ],
-      "targetPersonId": [
+      "personId": [
         33
       ],
       "and": [
@@ -48018,12 +48019,6 @@ var types_default = {
       "serverUrl": [
         59
       ],
-      "personLinkedIn": [
-        58
-      ],
-      "personSeniority": [
-        59
-      ],
       "numberOfEmailsWithSameDomain": [
         59
       ],
@@ -48049,6 +48044,12 @@ var types_default = {
         59
       ],
       "personJobTitle": [
+        59
+      ],
+      "personLinkedIn": [
+        58
+      ],
+      "personSeniority": [
         59
       ],
       "companyAlexaRank": [
@@ -48120,7 +48121,7 @@ var types_default = {
       "searchVector": [
         59
       ],
-      "targetPersonId": [
+      "personId": [
         59
       ],
       "person": [
@@ -48155,12 +48156,6 @@ var types_default = {
       "serverUrl": [
         59
       ],
-      "personLinkedIn": [
-        58
-      ],
-      "personSeniority": [
-        59
-      ],
       "numberOfEmailsWithSameDomain": [
         59
       ],
@@ -48186,6 +48181,12 @@ var types_default = {
         59
       ],
       "personJobTitle": [
+        59
+      ],
+      "personLinkedIn": [
+        58
+      ],
+      "personSeniority": [
         59
       ],
       "companyAlexaRank": [
@@ -48257,7 +48258,7 @@ var types_default = {
       "searchVector": [
         59
       ],
-      "targetPersonId": [
+      "personId": [
         59
       ],
       "person": [
@@ -48374,36 +48375,6 @@ var types_default = {
         59
       ],
       "percentageNotEmptyServerUrl": [
-        59
-      ],
-      "countUniqueValuesPersonLinkedIn": [
-        59
-      ],
-      "countEmptyPersonLinkedIn": [
-        59
-      ],
-      "countNotEmptyPersonLinkedIn": [
-        59
-      ],
-      "percentageEmptyPersonLinkedIn": [
-        59
-      ],
-      "percentageNotEmptyPersonLinkedIn": [
-        59
-      ],
-      "countUniqueValuesPersonSeniority": [
-        59
-      ],
-      "countEmptyPersonSeniority": [
-        59
-      ],
-      "countNotEmptyPersonSeniority": [
-        59
-      ],
-      "percentageEmptyPersonSeniority": [
-        59
-      ],
-      "percentageNotEmptyPersonSeniority": [
         59
       ],
       "countUniqueValuesNumberOfEmailsWithSameDomain": [
@@ -48575,6 +48546,36 @@ var types_default = {
         59
       ],
       "percentageNotEmptyPersonJobTitle": [
+        59
+      ],
+      "countUniqueValuesPersonLinkedIn": [
+        59
+      ],
+      "countEmptyPersonLinkedIn": [
+        59
+      ],
+      "countNotEmptyPersonLinkedIn": [
+        59
+      ],
+      "percentageEmptyPersonLinkedIn": [
+        59
+      ],
+      "percentageNotEmptyPersonLinkedIn": [
+        59
+      ],
+      "countUniqueValuesPersonSeniority": [
+        59
+      ],
+      "countEmptyPersonSeniority": [
+        59
+      ],
+      "countNotEmptyPersonSeniority": [
+        59
+      ],
+      "percentageEmptyPersonSeniority": [
+        59
+      ],
+      "percentageNotEmptyPersonSeniority": [
         59
       ],
       "countUniqueValuesCompanyAlexaRank": [
@@ -48988,7 +48989,7 @@ var types_default = {
       "percentageNotEmptySearchVector": [
         59
       ],
-      "targetPersonId": [
+      "personId": [
         59
       ],
       "person": [
@@ -49020,12 +49021,6 @@ var types_default = {
       "serverUrl": [
         6
       ],
-      "personLinkedIn": [
-        60
-      ],
-      "personSeniority": [
-        6
-      ],
       "numberOfEmailsWithSameDomain": [
         6
       ],
@@ -49051,6 +49046,12 @@ var types_default = {
         6
       ],
       "personJobTitle": [
+        6
+      ],
+      "personLinkedIn": [
+        60
+      ],
+      "personSeniority": [
         6
       ],
       "companyAlexaRank": [
@@ -59521,54 +59522,40 @@ var defaultOptions2 = {
 
 // src/logic-functions/match-telemetry-event-with-people.ts
 var handler = async (params) => {
-  console.log("matching");
   const [object, action] = params.name.split(".");
   if (object !== SELF_HOSTING_USER_NAME_SINGULAR) {
     return;
   }
-  console.log("matching2");
   if (!["created", "updated"].includes(action)) {
-    console.log("not a good action");
     return;
   }
-  console.log("matching3");
   const email = params.properties.after.email?.primaryEmail;
   if (!email) {
     return;
   }
-  console.log("matching4");
   const client = new CoreApiClient();
   const { people } = await client.query({
     people: {
+      edges: { node: { id: true } },
       __args: {
         filter: {
           emails: {
             primaryEmail: { eq: email }
           }
         }
-      },
-      edges: {
-        node: {
-          id: true,
-          selfHostingUsers: {
-            edges: {
-              node: {
-                id: true
-              }
-            }
-          }
-        }
       }
     }
   });
-  console.log("matching5", people);
-  let personId = people?.edges[0].node.id;
-  console.log("matching55", personId);
+  let personId = people?.edges[0]?.node?.id;
   if (!personId) {
-    const person = await client.mutation({
+    const { createPerson } = await client.mutation({
       createPerson: {
         __args: {
           data: {
+            name: {
+              firstName: params.properties.after.name?.firstName,
+              lastName: params.properties.after.name?.lastName
+            },
             emails: {
               primaryEmail: email
             }
@@ -59577,26 +59564,24 @@ var handler = async (params) => {
         id: true
       }
     });
-    personId = person.createPerson?.id;
+    personId = createPerson?.id;
   }
-  console.log("matching6");
   await client.mutation({
     updateSelfHostingUser: {
       __args: {
         id: params.properties.after.id,
         data: {
-          person: { connect: { where: { id: personId } } }
+          personId
         }
       },
       id: true
     }
   });
-  console.log("matching7");
 };
 var match_telemetry_event_with_people_default = defineLogicFunction({
   universalIdentifier: "87f0293a-997a-4c7b-85e2-e77462ccf0c5",
   name: "match-telemetry-event-with-people",
-  description: "Add a description for your logic function",
+  description: "Matches self hosting users with existing people based on email address",
   timeoutSeconds: 10,
   handler,
   databaseEventTriggerSettings: {

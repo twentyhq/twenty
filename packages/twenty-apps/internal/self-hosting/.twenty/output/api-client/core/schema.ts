@@ -721,9 +721,9 @@ export interface Address {
 export type ActorSourceEnum = 'EMAIL' | 'CALENDAR' | 'WORKFLOW' | 'AGENT' | 'API' | 'IMPORT' | 'MANUAL' | 'SYSTEM' | 'WEBHOOK' | 'APPLICATION'
 
 export interface Actor {
-    source: ActorSourceEnum
+    source?: ActorSourceEnum
     workspaceMemberId?: Scalars['UUID']
-    name: Scalars['String']
+    name?: Scalars['String']
     context?: Scalars['JSON']
     __typename: 'Actor'
 }
@@ -12323,10 +12323,6 @@ export interface SelfHostingUser {
     locale?: Scalars['String']
     /** Server url of the self hosting user */
     serverUrl?: Scalars['String']
-    /** LinkedIn profile of the person */
-    personLinkedIn?: Links
-    /** Seniority level of the person */
-    personSeniority?: Scalars['String']
     /** Aggregated count of self hosting users sharing the same business domain */
     numberOfEmailsWithSameDomain?: Scalars['Float']
     /** Whether the record has been enriched */
@@ -12345,6 +12341,10 @@ export interface SelfHostingUser {
     personJobFunction?: Scalars['String']
     /** Job title of the person */
     personJobTitle?: Scalars['String']
+    /** LinkedIn profile of the person */
+    personLinkedIn?: Links
+    /** Seniority level of the person */
+    personSeniority?: Scalars['String']
     /** Alexa rank of the company */
     companyAlexaRank?: Scalars['Float']
     /** Annual revenue of the company */
@@ -12392,9 +12392,7 @@ export interface SelfHostingUser {
     /** Search vector */
     searchVector?: Scalars['TSVector']
     /** Person matching with the self hosting user */
-    targetPersonId?: Scalars['ID']
-    /** Person matching with the self hosting user */
-    person?: Person
+    personId?: Scalars['ID']
     /** Self Hosting Users tied to the SelfHostingUser */
     timelineActivities?: TimelineActivityConnection
     /** Self Hosting Users tied to the SelfHostingUser */
@@ -12405,6 +12403,8 @@ export interface SelfHostingUser {
     noteTargets?: NoteTargetConnection
     /** Self Hosting Users tied to the SelfHostingUser */
     taskTargets?: TaskTargetConnection
+    /** Person matching with the self hosting user */
+    person?: Person
     __typename: 'SelfHostingUser'
 }
 
@@ -12487,26 +12487,6 @@ export interface SelfHostingUserConnection {
     percentageEmptyServerUrl?: Scalars['Float']
     /** Percentage of non-empty values for serverUrl */
     percentageNotEmptyServerUrl?: Scalars['Float']
-    /** Number of unique values for personLinkedIn */
-    countUniqueValuesPersonLinkedIn?: Scalars['Int']
-    /** Number of empty values for personLinkedIn */
-    countEmptyPersonLinkedIn?: Scalars['Int']
-    /** Number of non-empty values for personLinkedIn */
-    countNotEmptyPersonLinkedIn?: Scalars['Int']
-    /** Percentage of empty values for personLinkedIn */
-    percentageEmptyPersonLinkedIn?: Scalars['Float']
-    /** Percentage of non-empty values for personLinkedIn */
-    percentageNotEmptyPersonLinkedIn?: Scalars['Float']
-    /** Number of unique values for personSeniority */
-    countUniqueValuesPersonSeniority?: Scalars['Int']
-    /** Number of empty values for personSeniority */
-    countEmptyPersonSeniority?: Scalars['Int']
-    /** Number of non-empty values for personSeniority */
-    countNotEmptyPersonSeniority?: Scalars['Int']
-    /** Percentage of empty values for personSeniority */
-    percentageEmptyPersonSeniority?: Scalars['Float']
-    /** Percentage of non-empty values for personSeniority */
-    percentageNotEmptyPersonSeniority?: Scalars['Float']
     /** Number of unique values for numberOfEmailsWithSameDomain */
     countUniqueValuesNumberOfEmailsWithSameDomain?: Scalars['Int']
     /** Number of empty values for numberOfEmailsWithSameDomain */
@@ -12621,6 +12601,26 @@ export interface SelfHostingUserConnection {
     percentageEmptyPersonJobTitle?: Scalars['Float']
     /** Percentage of non-empty values for personJobTitle */
     percentageNotEmptyPersonJobTitle?: Scalars['Float']
+    /** Number of unique values for personLinkedIn */
+    countUniqueValuesPersonLinkedIn?: Scalars['Int']
+    /** Number of empty values for personLinkedIn */
+    countEmptyPersonLinkedIn?: Scalars['Int']
+    /** Number of non-empty values for personLinkedIn */
+    countNotEmptyPersonLinkedIn?: Scalars['Int']
+    /** Percentage of empty values for personLinkedIn */
+    percentageEmptyPersonLinkedIn?: Scalars['Float']
+    /** Percentage of non-empty values for personLinkedIn */
+    percentageNotEmptyPersonLinkedIn?: Scalars['Float']
+    /** Number of unique values for personSeniority */
+    countUniqueValuesPersonSeniority?: Scalars['Int']
+    /** Number of empty values for personSeniority */
+    countEmptyPersonSeniority?: Scalars['Int']
+    /** Number of non-empty values for personSeniority */
+    countNotEmptyPersonSeniority?: Scalars['Int']
+    /** Percentage of empty values for personSeniority */
+    percentageEmptyPersonSeniority?: Scalars['Float']
+    /** Percentage of non-empty values for personSeniority */
+    percentageNotEmptyPersonSeniority?: Scalars['Float']
     /** Number of unique values for companyAlexaRank */
     countUniqueValuesCompanyAlexaRank?: Scalars['Int']
     /** Number of empty values for companyAlexaRank */
@@ -12973,26 +12973,6 @@ export interface SelfHostingUserGroupByConnection {
     percentageEmptyServerUrl?: Scalars['Float']
     /** Percentage of non-empty values for serverUrl */
     percentageNotEmptyServerUrl?: Scalars['Float']
-    /** Number of unique values for personLinkedIn */
-    countUniqueValuesPersonLinkedIn?: Scalars['Int']
-    /** Number of empty values for personLinkedIn */
-    countEmptyPersonLinkedIn?: Scalars['Int']
-    /** Number of non-empty values for personLinkedIn */
-    countNotEmptyPersonLinkedIn?: Scalars['Int']
-    /** Percentage of empty values for personLinkedIn */
-    percentageEmptyPersonLinkedIn?: Scalars['Float']
-    /** Percentage of non-empty values for personLinkedIn */
-    percentageNotEmptyPersonLinkedIn?: Scalars['Float']
-    /** Number of unique values for personSeniority */
-    countUniqueValuesPersonSeniority?: Scalars['Int']
-    /** Number of empty values for personSeniority */
-    countEmptyPersonSeniority?: Scalars['Int']
-    /** Number of non-empty values for personSeniority */
-    countNotEmptyPersonSeniority?: Scalars['Int']
-    /** Percentage of empty values for personSeniority */
-    percentageEmptyPersonSeniority?: Scalars['Float']
-    /** Percentage of non-empty values for personSeniority */
-    percentageNotEmptyPersonSeniority?: Scalars['Float']
     /** Number of unique values for numberOfEmailsWithSameDomain */
     countUniqueValuesNumberOfEmailsWithSameDomain?: Scalars['Int']
     /** Number of empty values for numberOfEmailsWithSameDomain */
@@ -13107,6 +13087,26 @@ export interface SelfHostingUserGroupByConnection {
     percentageEmptyPersonJobTitle?: Scalars['Float']
     /** Percentage of non-empty values for personJobTitle */
     percentageNotEmptyPersonJobTitle?: Scalars['Float']
+    /** Number of unique values for personLinkedIn */
+    countUniqueValuesPersonLinkedIn?: Scalars['Int']
+    /** Number of empty values for personLinkedIn */
+    countEmptyPersonLinkedIn?: Scalars['Int']
+    /** Number of non-empty values for personLinkedIn */
+    countNotEmptyPersonLinkedIn?: Scalars['Int']
+    /** Percentage of empty values for personLinkedIn */
+    percentageEmptyPersonLinkedIn?: Scalars['Float']
+    /** Percentage of non-empty values for personLinkedIn */
+    percentageNotEmptyPersonLinkedIn?: Scalars['Float']
+    /** Number of unique values for personSeniority */
+    countUniqueValuesPersonSeniority?: Scalars['Int']
+    /** Number of empty values for personSeniority */
+    countEmptyPersonSeniority?: Scalars['Int']
+    /** Number of non-empty values for personSeniority */
+    countNotEmptyPersonSeniority?: Scalars['Int']
+    /** Percentage of empty values for personSeniority */
+    percentageEmptyPersonSeniority?: Scalars['Float']
+    /** Percentage of non-empty values for personSeniority */
+    percentageNotEmptyPersonSeniority?: Scalars['Float']
     /** Number of unique values for companyAlexaRank */
     countUniqueValuesCompanyAlexaRank?: Scalars['Int']
     /** Number of empty values for companyAlexaRank */
@@ -14270,7 +14270,7 @@ export interface ActorGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ActorCreateInput {source: ActorSourceEnum,context?: (Scalars['JSON'] | null)}
+export interface ActorCreateInput {source?: (ActorSourceEnum | null),context?: (Scalars['JSON'] | null)}
 
 export interface ActorUpdateInput {source?: (ActorSourceEnum | null),context?: (Scalars['JSON'] | null)}
 
@@ -38049,10 +38049,6 @@ export interface SelfHostingUserGenqlSelection{
     locale?: boolean | number
     /** Server url of the self hosting user */
     serverUrl?: boolean | number
-    /** LinkedIn profile of the person */
-    personLinkedIn?: LinksGenqlSelection
-    /** Seniority level of the person */
-    personSeniority?: boolean | number
     /** Aggregated count of self hosting users sharing the same business domain */
     numberOfEmailsWithSameDomain?: boolean | number
     /** Whether the record has been enriched */
@@ -38071,6 +38067,10 @@ export interface SelfHostingUserGenqlSelection{
     personJobFunction?: boolean | number
     /** Job title of the person */
     personJobTitle?: boolean | number
+    /** LinkedIn profile of the person */
+    personLinkedIn?: LinksGenqlSelection
+    /** Seniority level of the person */
+    personSeniority?: boolean | number
     /** Alexa rank of the company */
     companyAlexaRank?: boolean | number
     /** Annual revenue of the company */
@@ -38118,9 +38118,7 @@ export interface SelfHostingUserGenqlSelection{
     /** Search vector */
     searchVector?: boolean | number
     /** Person matching with the self hosting user */
-    targetPersonId?: boolean | number
-    /** Person matching with the self hosting user */
-    person?: PersonGenqlSelection
+    personId?: boolean | number
     /** Self Hosting Users tied to the SelfHostingUser */
     timelineActivities?: (TimelineActivityConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (TimelineActivityFilterInput | null), orderBy?: ((TimelineActivityOrderByInput | null)[] | null)} })
     /** Self Hosting Users tied to the SelfHostingUser */
@@ -38131,6 +38129,8 @@ export interface SelfHostingUserGenqlSelection{
     noteTargets?: (NoteTargetConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (NoteTargetFilterInput | null), orderBy?: ((NoteTargetOrderByInput | null)[] | null)} })
     /** Self Hosting Users tied to the SelfHostingUser */
     taskTargets?: (TaskTargetConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (TaskTargetFilterInput | null), orderBy?: ((TaskTargetOrderByInput | null)[] | null)} })
+    /** Person matching with the self hosting user */
+    person?: PersonGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -38215,26 +38215,6 @@ export interface SelfHostingUserConnectionGenqlSelection{
     percentageEmptyServerUrl?: boolean | number
     /** Percentage of non-empty values for serverUrl */
     percentageNotEmptyServerUrl?: boolean | number
-    /** Number of unique values for personLinkedIn */
-    countUniqueValuesPersonLinkedIn?: boolean | number
-    /** Number of empty values for personLinkedIn */
-    countEmptyPersonLinkedIn?: boolean | number
-    /** Number of non-empty values for personLinkedIn */
-    countNotEmptyPersonLinkedIn?: boolean | number
-    /** Percentage of empty values for personLinkedIn */
-    percentageEmptyPersonLinkedIn?: boolean | number
-    /** Percentage of non-empty values for personLinkedIn */
-    percentageNotEmptyPersonLinkedIn?: boolean | number
-    /** Number of unique values for personSeniority */
-    countUniqueValuesPersonSeniority?: boolean | number
-    /** Number of empty values for personSeniority */
-    countEmptyPersonSeniority?: boolean | number
-    /** Number of non-empty values for personSeniority */
-    countNotEmptyPersonSeniority?: boolean | number
-    /** Percentage of empty values for personSeniority */
-    percentageEmptyPersonSeniority?: boolean | number
-    /** Percentage of non-empty values for personSeniority */
-    percentageNotEmptyPersonSeniority?: boolean | number
     /** Number of unique values for numberOfEmailsWithSameDomain */
     countUniqueValuesNumberOfEmailsWithSameDomain?: boolean | number
     /** Number of empty values for numberOfEmailsWithSameDomain */
@@ -38349,6 +38329,26 @@ export interface SelfHostingUserConnectionGenqlSelection{
     percentageEmptyPersonJobTitle?: boolean | number
     /** Percentage of non-empty values for personJobTitle */
     percentageNotEmptyPersonJobTitle?: boolean | number
+    /** Number of unique values for personLinkedIn */
+    countUniqueValuesPersonLinkedIn?: boolean | number
+    /** Number of empty values for personLinkedIn */
+    countEmptyPersonLinkedIn?: boolean | number
+    /** Number of non-empty values for personLinkedIn */
+    countNotEmptyPersonLinkedIn?: boolean | number
+    /** Percentage of empty values for personLinkedIn */
+    percentageEmptyPersonLinkedIn?: boolean | number
+    /** Percentage of non-empty values for personLinkedIn */
+    percentageNotEmptyPersonLinkedIn?: boolean | number
+    /** Number of unique values for personSeniority */
+    countUniqueValuesPersonSeniority?: boolean | number
+    /** Number of empty values for personSeniority */
+    countEmptyPersonSeniority?: boolean | number
+    /** Number of non-empty values for personSeniority */
+    countNotEmptyPersonSeniority?: boolean | number
+    /** Percentage of empty values for personSeniority */
+    percentageEmptyPersonSeniority?: boolean | number
+    /** Percentage of non-empty values for personSeniority */
+    percentageNotEmptyPersonSeniority?: boolean | number
     /** Number of unique values for companyAlexaRank */
     countUniqueValuesCompanyAlexaRank?: boolean | number
     /** Number of empty values for companyAlexaRank */
@@ -38702,26 +38702,6 @@ export interface SelfHostingUserGroupByConnectionGenqlSelection{
     percentageEmptyServerUrl?: boolean | number
     /** Percentage of non-empty values for serverUrl */
     percentageNotEmptyServerUrl?: boolean | number
-    /** Number of unique values for personLinkedIn */
-    countUniqueValuesPersonLinkedIn?: boolean | number
-    /** Number of empty values for personLinkedIn */
-    countEmptyPersonLinkedIn?: boolean | number
-    /** Number of non-empty values for personLinkedIn */
-    countNotEmptyPersonLinkedIn?: boolean | number
-    /** Percentage of empty values for personLinkedIn */
-    percentageEmptyPersonLinkedIn?: boolean | number
-    /** Percentage of non-empty values for personLinkedIn */
-    percentageNotEmptyPersonLinkedIn?: boolean | number
-    /** Number of unique values for personSeniority */
-    countUniqueValuesPersonSeniority?: boolean | number
-    /** Number of empty values for personSeniority */
-    countEmptyPersonSeniority?: boolean | number
-    /** Number of non-empty values for personSeniority */
-    countNotEmptyPersonSeniority?: boolean | number
-    /** Percentage of empty values for personSeniority */
-    percentageEmptyPersonSeniority?: boolean | number
-    /** Percentage of non-empty values for personSeniority */
-    percentageNotEmptyPersonSeniority?: boolean | number
     /** Number of unique values for numberOfEmailsWithSameDomain */
     countUniqueValuesNumberOfEmailsWithSameDomain?: boolean | number
     /** Number of empty values for numberOfEmailsWithSameDomain */
@@ -38836,6 +38816,26 @@ export interface SelfHostingUserGroupByConnectionGenqlSelection{
     percentageEmptyPersonJobTitle?: boolean | number
     /** Percentage of non-empty values for personJobTitle */
     percentageNotEmptyPersonJobTitle?: boolean | number
+    /** Number of unique values for personLinkedIn */
+    countUniqueValuesPersonLinkedIn?: boolean | number
+    /** Number of empty values for personLinkedIn */
+    countEmptyPersonLinkedIn?: boolean | number
+    /** Number of non-empty values for personLinkedIn */
+    countNotEmptyPersonLinkedIn?: boolean | number
+    /** Percentage of empty values for personLinkedIn */
+    percentageEmptyPersonLinkedIn?: boolean | number
+    /** Percentage of non-empty values for personLinkedIn */
+    percentageNotEmptyPersonLinkedIn?: boolean | number
+    /** Number of unique values for personSeniority */
+    countUniqueValuesPersonSeniority?: boolean | number
+    /** Number of empty values for personSeniority */
+    countEmptyPersonSeniority?: boolean | number
+    /** Number of non-empty values for personSeniority */
+    countNotEmptyPersonSeniority?: boolean | number
+    /** Percentage of empty values for personSeniority */
+    percentageEmptyPersonSeniority?: boolean | number
+    /** Percentage of non-empty values for personSeniority */
+    percentageNotEmptyPersonSeniority?: boolean | number
     /** Number of unique values for companyAlexaRank */
     countUniqueValuesCompanyAlexaRank?: boolean | number
     /** Number of empty values for companyAlexaRank */
@@ -39146,10 +39146,6 @@ userId?: (Scalars['UUID'] | null),
 locale?: (Scalars['String'] | null),
 /** Server url of the self hosting user */
 serverUrl?: (Scalars['String'] | null),
-/** LinkedIn profile of the person */
-personLinkedIn?: (LinksCreateInput | null),
-/** Seniority level of the person */
-personSeniority?: (Scalars['String'] | null),
 /** Aggregated count of self hosting users sharing the same business domain */
 numberOfEmailsWithSameDomain?: (Scalars['Float'] | null),
 /** Whether the record has been enriched */
@@ -39168,6 +39164,10 @@ personCountry?: (Scalars['String'] | null),
 personJobFunction?: (Scalars['String'] | null),
 /** Job title of the person */
 personJobTitle?: (Scalars['String'] | null),
+/** LinkedIn profile of the person */
+personLinkedIn?: (LinksCreateInput | null),
+/** Seniority level of the person */
+personSeniority?: (Scalars['String'] | null),
 /** Alexa rank of the company */
 companyAlexaRank?: (Scalars['Float'] | null),
 /** Annual revenue of the company */
@@ -39215,7 +39215,7 @@ position?: (Scalars['Position'] | null),
 /** Search vector */
 searchVector?: (Scalars['TSVector'] | null),
 /** Person matching with the self hosting user */
-targetPersonId?: (Scalars['ID'] | null),
+personId?: (Scalars['ID'] | null),
 /** Person matching with the self hosting user */
 person?: (PersonRelationInput | null)}
 
@@ -39234,10 +39234,6 @@ userId?: (Scalars['UUID'] | null),
 locale?: (Scalars['String'] | null),
 /** Server url of the self hosting user */
 serverUrl?: (Scalars['String'] | null),
-/** LinkedIn profile of the person */
-personLinkedIn?: (LinksUpdateInput | null),
-/** Seniority level of the person */
-personSeniority?: (Scalars['String'] | null),
 /** Aggregated count of self hosting users sharing the same business domain */
 numberOfEmailsWithSameDomain?: (Scalars['Float'] | null),
 /** Whether the record has been enriched */
@@ -39256,6 +39252,10 @@ personCountry?: (Scalars['String'] | null),
 personJobFunction?: (Scalars['String'] | null),
 /** Job title of the person */
 personJobTitle?: (Scalars['String'] | null),
+/** LinkedIn profile of the person */
+personLinkedIn?: (LinksUpdateInput | null),
+/** Seniority level of the person */
+personSeniority?: (Scalars['String'] | null),
 /** Alexa rank of the company */
 companyAlexaRank?: (Scalars['Float'] | null),
 /** Annual revenue of the company */
@@ -39303,7 +39303,7 @@ position?: (Scalars['Position'] | null),
 /** Search vector */
 searchVector?: (Scalars['TSVector'] | null),
 /** Person matching with the self hosting user */
-targetPersonId?: (Scalars['ID'] | null),
+personId?: (Scalars['ID'] | null),
 /** Person matching with the self hosting user */
 person?: (PersonRelationInput | null)}
 
@@ -39322,10 +39322,6 @@ userId?: (UUIDFilter | null),
 locale?: (StringFilter | null),
 /** Server url of the self hosting user */
 serverUrl?: (StringFilter | null),
-/** LinkedIn profile of the person */
-personLinkedIn?: (LinksFilterInput | null),
-/** Seniority level of the person */
-personSeniority?: (StringFilter | null),
 /** Aggregated count of self hosting users sharing the same business domain */
 numberOfEmailsWithSameDomain?: (FloatFilter | null),
 /** Whether the record has been enriched */
@@ -39344,6 +39340,10 @@ personCountry?: (StringFilter | null),
 personJobFunction?: (StringFilter | null),
 /** Job title of the person */
 personJobTitle?: (StringFilter | null),
+/** LinkedIn profile of the person */
+personLinkedIn?: (LinksFilterInput | null),
+/** Seniority level of the person */
+personSeniority?: (StringFilter | null),
 /** Alexa rank of the company */
 companyAlexaRank?: (FloatFilter | null),
 /** Annual revenue of the company */
@@ -39391,7 +39391,7 @@ position?: (FloatFilter | null),
 /** Search vector */
 searchVector?: (TSVectorFilter | null),
 /** Person matching with the self hosting user */
-targetPersonId?: (UUIDFilter | null),and?: ((SelfHostingUserFilterInput | null)[] | null),or?: ((SelfHostingUserFilterInput | null)[] | null),not?: (SelfHostingUserFilterInput | null)}
+personId?: (UUIDFilter | null),and?: ((SelfHostingUserFilterInput | null)[] | null),or?: ((SelfHostingUserFilterInput | null)[] | null),not?: (SelfHostingUserFilterInput | null)}
 
 export interface SelfHostingUserOrderByInput {
 /** Name of the self hosting user */
@@ -39408,10 +39408,6 @@ userId?: (OrderByDirection | null),
 locale?: (OrderByDirection | null),
 /** Server url of the self hosting user */
 serverUrl?: (OrderByDirection | null),
-/** LinkedIn profile of the person */
-personLinkedIn?: (LinksOrderByInput | null),
-/** Seniority level of the person */
-personSeniority?: (OrderByDirection | null),
 /** Aggregated count of self hosting users sharing the same business domain */
 numberOfEmailsWithSameDomain?: (OrderByDirection | null),
 /** Whether the record has been enriched */
@@ -39430,6 +39426,10 @@ personCountry?: (OrderByDirection | null),
 personJobFunction?: (OrderByDirection | null),
 /** Job title of the person */
 personJobTitle?: (OrderByDirection | null),
+/** LinkedIn profile of the person */
+personLinkedIn?: (LinksOrderByInput | null),
+/** Seniority level of the person */
+personSeniority?: (OrderByDirection | null),
 /** Alexa rank of the company */
 companyAlexaRank?: (OrderByDirection | null),
 /** Annual revenue of the company */
@@ -39477,7 +39477,7 @@ position?: (OrderByDirection | null),
 /** Search vector */
 searchVector?: (OrderByDirection | null),
 /** Person matching with the self hosting user */
-targetPersonId?: (OrderByDirection | null),
+personId?: (OrderByDirection | null),
 /** Order by fields of the related person */
 person?: (PersonOrderByInput | null)}
 
@@ -39498,10 +39498,6 @@ userId?: (OrderByDirection | null),
 locale?: (OrderByDirection | null),
 /** Server url of the self hosting user */
 serverUrl?: (OrderByDirection | null),
-/** LinkedIn profile of the person */
-personLinkedIn?: (LinksOrderByInput | null),
-/** Seniority level of the person */
-personSeniority?: (OrderByDirection | null),
 /** Aggregated count of self hosting users sharing the same business domain */
 numberOfEmailsWithSameDomain?: (OrderByDirection | null),
 /** Whether the record has been enriched */
@@ -39520,6 +39516,10 @@ personCountry?: (OrderByDirection | null),
 personJobFunction?: (OrderByDirection | null),
 /** Job title of the person */
 personJobTitle?: (OrderByDirection | null),
+/** LinkedIn profile of the person */
+personLinkedIn?: (LinksOrderByInput | null),
+/** Seniority level of the person */
+personSeniority?: (OrderByDirection | null),
 /** Alexa rank of the company */
 companyAlexaRank?: (OrderByDirection | null),
 /** Annual revenue of the company */
@@ -39567,7 +39567,7 @@ position?: (OrderByDirection | null),
 /** Search vector */
 searchVector?: (OrderByDirection | null),
 /** Person matching with the self hosting user */
-targetPersonId?: (OrderByDirection | null),
+personId?: (OrderByDirection | null),
 /** Order by fields of the related person */
 person?: (PersonOrderByWithGroupByInput | null)}
 
@@ -39646,26 +39646,6 @@ countNotEmptyServerUrl?: (OrderByDirection | null),
 percentageEmptyServerUrl?: (OrderByDirection | null),
 /** Percentage of non-empty values for serverUrl */
 percentageNotEmptyServerUrl?: (OrderByDirection | null),
-/** Number of unique values for personLinkedIn */
-countUniqueValuesPersonLinkedIn?: (OrderByDirection | null),
-/** Number of empty values for personLinkedIn */
-countEmptyPersonLinkedIn?: (OrderByDirection | null),
-/** Number of non-empty values for personLinkedIn */
-countNotEmptyPersonLinkedIn?: (OrderByDirection | null),
-/** Percentage of empty values for personLinkedIn */
-percentageEmptyPersonLinkedIn?: (OrderByDirection | null),
-/** Percentage of non-empty values for personLinkedIn */
-percentageNotEmptyPersonLinkedIn?: (OrderByDirection | null),
-/** Number of unique values for personSeniority */
-countUniqueValuesPersonSeniority?: (OrderByDirection | null),
-/** Number of empty values for personSeniority */
-countEmptyPersonSeniority?: (OrderByDirection | null),
-/** Number of non-empty values for personSeniority */
-countNotEmptyPersonSeniority?: (OrderByDirection | null),
-/** Percentage of empty values for personSeniority */
-percentageEmptyPersonSeniority?: (OrderByDirection | null),
-/** Percentage of non-empty values for personSeniority */
-percentageNotEmptyPersonSeniority?: (OrderByDirection | null),
 /** Number of unique values for numberOfEmailsWithSameDomain */
 countUniqueValuesNumberOfEmailsWithSameDomain?: (OrderByDirection | null),
 /** Number of empty values for numberOfEmailsWithSameDomain */
@@ -39780,6 +39760,26 @@ countNotEmptyPersonJobTitle?: (OrderByDirection | null),
 percentageEmptyPersonJobTitle?: (OrderByDirection | null),
 /** Percentage of non-empty values for personJobTitle */
 percentageNotEmptyPersonJobTitle?: (OrderByDirection | null),
+/** Number of unique values for personLinkedIn */
+countUniqueValuesPersonLinkedIn?: (OrderByDirection | null),
+/** Number of empty values for personLinkedIn */
+countEmptyPersonLinkedIn?: (OrderByDirection | null),
+/** Number of non-empty values for personLinkedIn */
+countNotEmptyPersonLinkedIn?: (OrderByDirection | null),
+/** Percentage of empty values for personLinkedIn */
+percentageEmptyPersonLinkedIn?: (OrderByDirection | null),
+/** Percentage of non-empty values for personLinkedIn */
+percentageNotEmptyPersonLinkedIn?: (OrderByDirection | null),
+/** Number of unique values for personSeniority */
+countUniqueValuesPersonSeniority?: (OrderByDirection | null),
+/** Number of empty values for personSeniority */
+countEmptyPersonSeniority?: (OrderByDirection | null),
+/** Number of non-empty values for personSeniority */
+countNotEmptyPersonSeniority?: (OrderByDirection | null),
+/** Percentage of empty values for personSeniority */
+percentageEmptyPersonSeniority?: (OrderByDirection | null),
+/** Percentage of non-empty values for personSeniority */
+percentageNotEmptyPersonSeniority?: (OrderByDirection | null),
 /** Number of unique values for companyAlexaRank */
 countUniqueValuesCompanyAlexaRank?: (OrderByDirection | null),
 /** Number of empty values for companyAlexaRank */
@@ -40055,7 +40055,7 @@ percentageEmptySearchVector?: (OrderByDirection | null),
 /** Percentage of non-empty values for searchVector */
 percentageNotEmptySearchVector?: (OrderByDirection | null),
 /** Person matching with the self hosting user */
-targetPersonId?: (OrderByDirection | null),
+personId?: (OrderByDirection | null),
 /** Order by fields of the related person */
 person?: (PersonOrderByInput | null)}
 
@@ -40074,10 +40074,6 @@ userId?: (Scalars['Boolean'] | null),
 locale?: (Scalars['Boolean'] | null),
 /** Server url of the self hosting user */
 serverUrl?: (Scalars['Boolean'] | null),
-/** LinkedIn profile of the person */
-personLinkedIn?: (LinksGroupByInput | null),
-/** Seniority level of the person */
-personSeniority?: (Scalars['Boolean'] | null),
 /** Aggregated count of self hosting users sharing the same business domain */
 numberOfEmailsWithSameDomain?: (Scalars['Boolean'] | null),
 /** Whether the record has been enriched */
@@ -40096,6 +40092,10 @@ personCountry?: (Scalars['Boolean'] | null),
 personJobFunction?: (Scalars['Boolean'] | null),
 /** Job title of the person */
 personJobTitle?: (Scalars['Boolean'] | null),
+/** LinkedIn profile of the person */
+personLinkedIn?: (LinksGroupByInput | null),
+/** Seniority level of the person */
+personSeniority?: (Scalars['Boolean'] | null),
 /** Alexa rank of the company */
 companyAlexaRank?: (Scalars['Boolean'] | null),
 /** Annual revenue of the company */
