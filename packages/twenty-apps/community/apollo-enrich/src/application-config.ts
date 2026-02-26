@@ -11,19 +11,19 @@ export default defineApplication({
     APOLLO_CLIENT_ID: {
       universalIdentifier: '5852219e-7757-463e-9e7c-80980203794c',
       isSecret: true,
-      value: 'svSdsc2ke_N_3UhVAXjM4ayZrHZItEGHHUZpJzzDPvY',
+      value: '',
       description: 'Apollo Client ID',
     },
     APOLLO_CLIENT_SECRET: {
       universalIdentifier: 'a032349d-9458-4381-8505-82547276434a',
       isSecret: true,
-      value: 'TM26HxjXh9LwmsYqBoDqjjGN1HB8GsGQAA__gEX6EH8',
+      value: '',
       description: 'Apollo Client Secret',
     },
     APOLLO_OAUTH_URL: {
       universalIdentifier: '1d42411c-5809-4093-873a-8121b1302475',
       isSecret: false,
-      value: 'https://app.apollo.io/#/oauth/authorize',
+      value: '',
       description: 'Apollo OAuth URL',
     },
     APOLLO_REDIRECT_URI: {
@@ -35,20 +35,20 @@ export default defineApplication({
     APOLLO_REGISTERED_URL: {
       universalIdentifier: '672a6fce-5565-43bc-9a3b-7f2c33620770',
       isSecret: false,
-      value: 'https://hjsm0q38-3000.uks1.devtunnels.ms/',
+      value: '',
       description: 'Apollo registered URL',
     },
-      APOLLO_ACCESS_TOKEN: {
-        universalIdentifier: '672a6fce-5565-43bc-9a3b-7f2c33620771',
-        isSecret: true,
-        value: '',
-        description: 'Apollo access token',
-      },
-      APOLLO_REFRESH_TOKEN: {
-        universalIdentifier: '672a6fce-5565-43bc-9a3b-7f2c33620772',
-        isSecret: true,
-        value: '',
-        description: 'Apollo refresh token',
-      },
+    APOLLO_ACCESS_TOKEN: {
+      universalIdentifier: '672a6fce-5565-43bc-9a3b-7f2c33620771',
+      isSecret: true,
+      value: '',
+      description: 'Apollo access token',
+    },
+    APOLLO_REFRESH_TOKEN: {
+      universalIdentifier: '672a6fce-5565-43bc-9a3b-7f2c33620772',
+      isSecret: true,
+      value: '',
+      description: 'Apollo refresh token',
+    },
   },
 });

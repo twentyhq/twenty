@@ -138,7 +138,7 @@ const fetchOAuthApplicationVariables = async (): Promise<OAuthApplicationVariabl
 };
 
 const buildOAuthUrl = (oauthApplicationVariables: OAuthApplicationVariables): string => {
-  const { apolloOAuthUrl, apolloClientId, apolloRegisteredUrl, apolloAccessToken, apolloRefreshToken } = oauthApplicationVariables;
+  const { apolloOAuthUrl, apolloClientId, apolloRegisteredUrl } = oauthApplicationVariables;
   const redirectUri = `${apolloRegisteredUrl}auth/oauth-propagator/callback`;
   const state = encodeURIComponent(`${process.env.TWENTY_API_URL}/s${VERIFY_PAGE_PATH}`);
   return `${apolloOAuthUrl}?client_id=${apolloClientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code`;

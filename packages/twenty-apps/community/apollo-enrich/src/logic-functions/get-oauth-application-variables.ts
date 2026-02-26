@@ -1,7 +1,5 @@
 import { defineLogicFunction } from 'twenty-sdk';
 
-
-
 export type OAuthApplicationVariables = {
   apolloClientId: string;
   apolloRegisteredUrl: string;
@@ -9,8 +7,6 @@ export type OAuthApplicationVariables = {
   apolloAccessToken: string;
   apolloRefreshToken: string;
 };
-
-
 
 const handler = async (): Promise<OAuthApplicationVariables> => {
   const apolloClientId = process.env.APOLLO_CLIENT_ID ?? '';
