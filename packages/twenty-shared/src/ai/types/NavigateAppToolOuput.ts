@@ -11,4 +11,8 @@ export type NavigateAppToolOutput =
       action: 'navigateToRecordPage';
       objectNameSingular: string;
       recordId: string;
+    }
+  | {
+      action: 'wait';
+      durationMs: number;
     };

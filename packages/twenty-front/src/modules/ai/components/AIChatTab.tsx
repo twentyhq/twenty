@@ -147,6 +147,10 @@ export const AIChatTab = () => {
     agentChatMessageIdsComponentSelector,
   );
 
+  console.log({
+    agentChatMessageIds,
+  });
+
   const hasMessages = agentChatMessageIds.length > 0;
 
   const { uploadFiles } = useAIChatFileUpload();

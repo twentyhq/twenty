@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { sleep } from '@nestjs/terminus/dist/utils';
 
 import Fuse from 'fuse.js';
 import { NavigateAppToolOutput } from 'twenty-shared/ai';
@@ -26,8 +27,11 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 
 @Injectable()
 export class NavigateAppTool implements Tool {
-  description =
-    'Navigate the application. Use navigateToRecord when the user wants to go to a specific record by name. Default to navigateToObject for all other navigation requests. Only use navigateToView when the user explicitly mentions the word "view" in their request.';
+  description = `Navigate the application.
+    Use navigateToRecord when the user wants to go to a specific record by name.
+    Default to navigateToObject for all other navigation requests.
+    Only use navigateToView when the user explicitly mentions the word "view" in their request.
+    If the user asks to wait, use the wait tool with the specified duration.`;
 
   inputSchema = NavigateAppInputZodSchema;
 
@@ -73,7 +77,24 @@ export class NavigateAppTool implements Tool {
           input.recordName,
           context.workspaceId,
         );
+      case 'wait':
+        return this.wait(input.durationMs);
     }
+  }
+
+  private async wait(
+    durationMs: number,
+  ): Promise<ToolOutput<NavigateAppToolOutput>> {
+    await sleep(durationMs);
+
+    return {
+      success: true,
+      message: `Waited  for ${durationMs}ms`,
+      result: {
+        action: 'wait',
+        durationMs,
+      },
+    };
   }
 
   private async navigateToView(

@@ -42,6 +42,21 @@ export const NavigateAppInputZodSchema = z.discriminatedUnion('type', [
         'The name or label of the record to navigate to (e.g. "Acme", "John Doe", "Enterprise Plan")',
       ),
   }),
+  z.object({
+    type: z
+      .literal('wait')
+      .describe(
+        'Wait for a specified duration in milliseconds before continuing. Useful when you need the page to fully load after a navigation before taking further actions (e.g. 2000 for 2 seconds).',
+      ),
+    durationMs: z
+      .number()
+      .int()
+      .min(0)
+      .max(30000)
+      .describe(
+        'The duration in milliseconds to wait (e.g. 2000 for 2 seconds). Maximum 30000 (30 seconds).',
+      ),
+  }),
 ]);
 
 export type NavigateAppInput = z.infer<typeof NavigateAppInputZodSchema>;
