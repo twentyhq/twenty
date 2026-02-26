@@ -72,11 +72,26 @@ export const isMatchingCurrencyFilter = ({
   value,
 }: {
   currencyFilter: CurrencyFilter;
-  value: {
-    amountMicros?: number | null;
-    currencyCode?: string | null;
-  };
+  value:
+    | {
+        amountMicros?: number | null;
+        currencyCode?: string | null;
+      }
+    | null
+    | undefined;
 }) => {
+  if (!isDefined(value)) {
+    // Check if the filter is testing for NULL — if so, match
+    if (currencyFilter.amountMicros?.is === 'NULL') {
+      return true;
+    }
+    if (currencyFilter.currencyCode?.is === 'NULL') {
+      return true;
+    }
+
+    return false;
+  }
+
   const shouldMatchCurrencyCodeFilter = isDefined(currencyFilter.currencyCode);
   const shouldMatchAmountMicrosFilter = isDefined(currencyFilter.amountMicros);
 

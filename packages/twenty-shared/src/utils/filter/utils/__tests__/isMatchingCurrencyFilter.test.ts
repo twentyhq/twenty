@@ -310,6 +310,56 @@ describe('isMatchingCurrencyFilter', () => {
     });
   });
 
+  describe('undefined value', () => {
+    it('returns false when value is undefined and filter checks amountMicros', () => {
+      const currencyFilter: CurrencyFilter = {
+        amountMicros: { eq: 10 },
+      };
+      expect(
+        isMatchingCurrencyFilter({
+          currencyFilter,
+          value: undefined,
+        }),
+      ).toBe(false);
+    });
+
+    it('returns false when value is null and filter checks amountMicros', () => {
+      const currencyFilter: CurrencyFilter = {
+        amountMicros: { gt: 0 },
+      };
+      expect(
+        isMatchingCurrencyFilter({
+          currencyFilter,
+          value: null,
+        }),
+      ).toBe(false);
+    });
+
+    it('returns true when value is undefined and filter checks amountMicros is NULL', () => {
+      const currencyFilter: CurrencyFilter = {
+        amountMicros: { is: 'NULL' },
+      };
+      expect(
+        isMatchingCurrencyFilter({
+          currencyFilter,
+          value: undefined,
+        }),
+      ).toBe(true);
+    });
+
+    it('returns true when value is null and filter checks currencyCode is NULL', () => {
+      const currencyFilter: CurrencyFilter = {
+        currencyCode: { is: 'NULL' },
+      };
+      expect(
+        isMatchingCurrencyFilter({
+          currencyFilter,
+          value: null,
+        }),
+      ).toBe(true);
+    });
+  });
+
   describe('unexpected operand', () => {
     it('throws an error for unexpected operand', () => {
       const currencyFilter: any = {

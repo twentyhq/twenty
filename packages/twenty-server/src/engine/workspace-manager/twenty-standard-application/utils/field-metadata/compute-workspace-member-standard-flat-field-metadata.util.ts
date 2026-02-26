@@ -482,6 +482,31 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  // @deprecated – kept so DB metadata stays consistent until author is fully removed
+  authoredAttachments: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'authoredAttachments',
+      label: 'Authored attachments',
+      description: 'Attachments created by the workspace member',
+      icon: 'IconFileDescription',
+      isSystem: true,
+      isNullable: false,
+      isUIReadOnly: true,
+      targetObjectName: 'attachment',
+      targetFieldName: 'author',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   connectedAccounts: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

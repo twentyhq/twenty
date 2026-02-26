@@ -431,4 +431,31 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  // @deprecated – kept so DB metadata stays consistent until author is fully removed
+  author: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'author',
+      label: 'Author',
+      description: 'Attachment author',
+      icon: 'IconUserCircle',
+      isSystem: true,
+      isNullable: true,
+      isUIReadOnly: true,
+      targetObjectName: 'workspaceMember',
+      targetFieldName: 'authoredAttachments',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'authorId',
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

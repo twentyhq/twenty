@@ -41,6 +41,7 @@ export class CallCreateManyPreQueryHook
       await this.agentProfileResolverService.resolveAgentProfileId(
         workspace.id,
         authContext.workspaceMemberId,
+        authContext,
       );
 
     if (!isDefined(agentProfileId)) {

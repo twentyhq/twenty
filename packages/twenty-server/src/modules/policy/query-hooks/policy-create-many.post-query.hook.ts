@@ -6,7 +6,7 @@ import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/work
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type SystemWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { AgentProfileResolverService } from 'src/modules/agent-profile/services/agent-profile-resolver.service';
 import { enrichPolicyAfterSave } from 'src/modules/policy/utils/enrich-policy-after-save.util';
@@ -50,8 +50,14 @@ export class PolicyCreateManyPostQueryHook
         await this.agentProfileResolverService.resolveAgentProfileId(
           workspace.id,
           authContext.workspaceMemberId,
+          authContext,
         );
     }
+
+    const systemAuthContext: SystemWorkspaceAuthContext = {
+      type: 'system',
+      workspace,
+    };
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       await enrichPolicyAfterSave(
@@ -60,6 +66,6 @@ export class PolicyCreateManyPostQueryHook
         this.globalWorkspaceOrmManager,
         { submittedDate, agentProfileId },
       );
-    }, authContext as WorkspaceAuthContext);
+    }, systemAuthContext);
   }
 }

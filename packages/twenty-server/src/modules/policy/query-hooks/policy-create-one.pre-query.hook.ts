@@ -7,7 +7,7 @@ import { type CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-res
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type SystemWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { AgentProfileResolverService } from 'src/modules/agent-profile/services/agent-profile-resolver.service';
 import { buildPolicyDisplayName } from 'src/modules/policy/utils/build-policy-display-name.util';
@@ -38,22 +38,20 @@ export class PolicyCreateOnePreQueryHook
     }
 
     // Auto-assign agentId so RLS predicates pass on insert
-    if (!isDefined(payload.data.agentId) && isDefined(authContext.workspaceMemberId)) {
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const agentProfileId =
-            await this.agentProfileResolverService.resolveAgentProfileId(
-              workspace.id,
-              authContext.workspaceMemberId!,
-              authContext,
-            );
+    if (
+      !isDefined(payload.data.agentId) &&
+      isDefined(authContext.workspaceMemberId)
+    ) {
+      const agentProfileId =
+        await this.agentProfileResolverService.resolveAgentProfileId(
+          workspace.id,
+          authContext.workspaceMemberId,
+          authContext,
+        );
 
-          if (agentProfileId) {
-            payload.data.agentId = agentProfileId;
-          }
-        },
-        authContext as WorkspaceAuthContext,
-      );
+      if (agentProfileId) {
+        payload.data.agentId = agentProfileId;
+      }
     }
 
     // Auto-derive name from carrier + product
@@ -61,6 +59,11 @@ export class PolicyCreateOnePreQueryHook
       isDefined(payload.data.carrierId) ||
       isDefined(payload.data.productId)
     ) {
+      const systemAuthContext: SystemWorkspaceAuthContext = {
+        type: 'system',
+        workspace,
+      };
+
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const displayName = await buildPolicyDisplayName(
@@ -74,7 +77,7 @@ export class PolicyCreateOnePreQueryHook
             payload.data.name = displayName;
           }
         },
-        authContext as WorkspaceAuthContext,
+        systemAuthContext,
       );
     }
 

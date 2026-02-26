@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type SystemWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -25,88 +27,125 @@ export class AgentProfileResolverService {
   async resolveAgentProfileId(
     workspaceId: string,
     workspaceMemberId: string,
+    authContext?: AuthContext,
   ): Promise<string | null> {
-    // Try both 'agentProfile' (production) and 'agent' (future migration)
-    let agentObjectMetadata = await this.objectMetadataRepository.findOne({
-      where: {
-        nameSingular: 'agentProfile',
-        workspaceId,
-        isActive: true,
-      },
-    });
-
-    if (!isDefined(agentObjectMetadata)) {
-      agentObjectMetadata = await this.objectMetadataRepository.findOne({
+    try {
+      // Try both 'agentProfile' (production) and 'agent' (future migration)
+      let agentObjectMetadata = await this.objectMetadataRepository.findOne({
         where: {
-          nameSingular: 'agent',
-          workspaceId,
-          isActive: true,
-        },
-      });
-    }
-
-    if (!isDefined(agentObjectMetadata)) {
-      this.logger.warn(
-        `Agent object metadata not found in workspace ${workspaceId}`,
-      );
-
-      return null;
-    }
-
-    const workspaceMemberObjectMetadata =
-      await this.objectMetadataRepository.findOne({
-        where: {
-          nameSingular: 'workspaceMember',
+          nameSingular: 'agentProfile',
           workspaceId,
           isActive: true,
         },
       });
 
-    if (!isDefined(workspaceMemberObjectMetadata)) {
-      return null;
-    }
+      if (!isDefined(agentObjectMetadata)) {
+        agentObjectMetadata = await this.objectMetadataRepository.findOne({
+          where: {
+            nameSingular: 'agent',
+            workspaceId,
+            isActive: true,
+          },
+        });
+      }
 
-    const workspaceMemberRelationField =
-      await this.fieldMetadataRepository.findOne({
-        where: {
-          objectMetadataId: agentObjectMetadata.id,
-          type: FieldMetadataType.RELATION,
-          relationTargetObjectMetadataId: workspaceMemberObjectMetadata.id,
-          workspaceId,
-          isActive: true,
+      if (!isDefined(agentObjectMetadata)) {
+        this.logger.warn(
+          `Agent object metadata not found in workspace ${workspaceId}`,
+        );
+
+        return null;
+      }
+
+      const workspaceMemberObjectMetadata =
+        await this.objectMetadataRepository.findOne({
+          where: {
+            nameSingular: 'workspaceMember',
+            workspaceId,
+            isActive: true,
+          },
+        });
+
+      if (!isDefined(workspaceMemberObjectMetadata)) {
+        return null;
+      }
+
+      const workspaceMemberRelationField =
+        await this.fieldMetadataRepository.findOne({
+          where: {
+            objectMetadataId: agentObjectMetadata.id,
+            type: FieldMetadataType.RELATION,
+            relationTargetObjectMetadataId: workspaceMemberObjectMetadata.id,
+            workspaceId,
+            isActive: true,
+          },
+        });
+
+      if (!isDefined(workspaceMemberRelationField)) {
+        this.logger.warn(
+          `No workspace member relation field found on agent in workspace ${workspaceId}`,
+        );
+
+        return null;
+      }
+
+      const foreignKeyColumn = `${workspaceMemberRelationField.name}Id`;
+      const entityName = agentObjectMetadata.nameSingular;
+
+      // Workspace ORM operations require workspace context in
+      // AsyncLocalStorage. Pre-query hooks run before context is set,
+      // so we wrap the repository call in executeInWorkspaceContext
+      // using a system-level auth context.
+      const workspace = authContext?.workspace;
+
+      if (!isDefined(workspace)) {
+        this.logger.warn(
+          `No workspace on authContext for agent profile resolution`,
+        );
+
+        return null;
+      }
+
+      const systemAuthContext: SystemWorkspaceAuthContext = {
+        type: 'system',
+        workspace,
+      };
+
+      return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const agentRepo =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              entityName,
+              { shouldBypassPermissionChecks: true },
+            );
+
+          const agent = await agentRepo.findOne({
+            where: {
+              [foreignKeyColumn]: workspaceMemberId,
+            },
+          });
+
+          if (!isDefined(agent)) {
+            this.logger.warn(
+              `No agent profile found for workspace member ${workspaceMemberId} ` +
+                `using FK column "${foreignKeyColumn}" on object "${entityName}"`,
+            );
+
+            return null;
+          }
+
+          return (agent as Record<string, unknown>).id as string;
         },
-      });
-
-    if (!isDefined(workspaceMemberRelationField)) {
-      this.logger.warn(
-        `No workspace member relation field found on agent in workspace ${workspaceId}`,
+        systemAuthContext,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to resolve agent profile for workspace member ${workspaceMemberId} ` +
+          `in workspace ${workspaceId}: ${error}`,
       );
 
       return null;
     }
-
-    const foreignKeyColumn = `${workspaceMemberRelationField.name}Id`;
-
-    const agentRepo = await this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
-      'agentProfile',
-      { shouldBypassPermissionChecks: true },
-    );
-
-    const agent = await agentRepo.findOne({
-      where: {
-        [foreignKeyColumn]: workspaceMemberId,
-      },
-    });
-
-    if (!isDefined(agent)) {
-      this.logger.warn(
-        `No agent profile found for workspace member ${workspaceMemberId}`,
-      );
-
-      return null;
-    }
-
-    return (agent as Record<string, unknown>).id as string;
   }
 }

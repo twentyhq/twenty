@@ -7,7 +7,7 @@ import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-re
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type SystemWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { AgentProfileResolverService } from 'src/modules/agent-profile/services/agent-profile-resolver.service';
 import { buildPolicyDisplayName } from 'src/modules/policy/utils/build-policy-display-name.util';
@@ -60,6 +60,11 @@ export class PolicyCreateManyPreQueryHook
     );
 
     if (recordsWithCarrierOrProduct.length > 0) {
+      const systemAuthContext: SystemWorkspaceAuthContext = {
+        type: 'system',
+        workspace,
+      };
+
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           for (const record of recordsWithCarrierOrProduct) {
@@ -75,7 +80,7 @@ export class PolicyCreateManyPreQueryHook
             }
           }
         },
-        authContext as WorkspaceAuthContext,
+        systemAuthContext,
       );
     }
 

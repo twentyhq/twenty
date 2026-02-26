@@ -53,6 +53,10 @@ export const STANDARD_OBJECTS = {
       targetWorkflow: {
         universalIdentifier: '20202020-f1e8-4c9d-8a7b-3f5e1d2c9a8b',
       },
+      //deprecated
+      author: {
+        universalIdentifier: '20202020-d036-493c-b3b3-e53b7fc1f834',
+      },
     },
     morphIds: {
       targetMorphId: { morphId: '20202020-f634-435d-ab8d-e1168b375c69' },
@@ -2321,6 +2325,10 @@ export const STANDARD_OBJECTS = {
       },
       accountOwnerForCompanies: {
         universalIdentifier: '20202020-dc29-4bd4-a3c1-29eafa324bee',
+      },
+      //deprecated
+      authoredAttachments: {
+        universalIdentifier: '20202020-9e80-4eec-a3e2-3a0d42f3c3f5',
       },
       connectedAccounts: {
         universalIdentifier: '20202020-e322-4bde-a525-727079b4a100',
