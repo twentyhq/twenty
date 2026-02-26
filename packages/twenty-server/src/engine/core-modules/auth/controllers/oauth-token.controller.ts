@@ -1,13 +1,15 @@
 import {
   Body,
   Controller,
-  HttpCode,
-  HttpStatus,
   Post,
+  Res,
   UseFilters,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 
+import { type Response } from 'express';
 import { IsOptional, IsString, MaxLength } from 'class-validator';
 
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
@@ -57,38 +59,49 @@ export class OAuthTokenController {
   constructor(private readonly oauthService: OAuthService) {}
 
   @Post('token')
-  @HttpCode(HttpStatus.OK)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  async token(@Body() body: OAuthTokenRequestDto) {
+  @UsePipes(new ValidationPipe())
+  async token(
+    @Body() body: OAuthTokenRequestDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    let result: Record<string, unknown>;
+
     switch (body.grant_type) {
       case 'authorization_code':
-        return this.oauthService.exchangeAuthorizationCode({
+        result = await this.oauthService.exchangeAuthorizationCode({
           authorizationCode: body.code ?? '',
           clientId: body.client_id ?? '',
           clientSecret: body.client_secret,
           codeVerifier: body.code_verifier,
           redirectUri: body.redirect_uri ?? '',
         });
+        break;
 
       case 'client_credentials':
-        return this.oauthService.clientCredentialsGrant({
+        result = await this.oauthService.clientCredentialsGrant({
           clientId: body.client_id ?? '',
           clientSecret: body.client_secret ?? '',
         });
+        break;
 
       case 'refresh_token':
-        return this.oauthService.refreshTokenGrant({
+        result = await this.oauthService.refreshTokenGrant({
           refreshToken: body.refresh_token ?? '',
           clientId: body.client_id ?? '',
           clientSecret: body.client_secret,
         });
+        break;
 
       default:
-        return {
+        result = {
           error: 'unsupported_grant_type',
           error_description:
             'The provided grant_type is not supported. Supported values: authorization_code, client_credentials, refresh_token',
         };
+        break;
     }
+
+    res.status('error' in result ? 400 : 200).json(result);
   }
 }

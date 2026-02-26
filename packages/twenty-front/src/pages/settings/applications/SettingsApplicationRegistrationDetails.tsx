@@ -265,6 +265,12 @@ export const SettingsApplicationRegistrationDetails = () => {
       return;
     }
 
+    if (formRedirectUris.includes(trimmed)) {
+      enqueueErrorSnackBar({ message: t`This redirect URI is already added` });
+
+      return;
+    }
+
     setFormRedirectUris([...formRedirectUris, trimmed]);
     setNewRedirectUri('');
     markDirty();
@@ -380,8 +386,8 @@ export const SettingsApplicationRegistrationDetails = () => {
     },
     {
       Icon: IconTag,
-      label: t`Latest version`,
-      value: stats?.latestVersion ?? '—',
+      label: t`Most installed version`,
+      value: stats?.mostInstalledVersion ?? '—',
     },
     {
       Icon: IconChartBar,

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
@@ -106,6 +106,7 @@ export class OAuthService {
       where: {
         value: authorizationCode,
         type: AppTokenType.AuthorizationCode,
+        revokedAt: IsNull(),
       },
     });
 
@@ -338,6 +339,7 @@ export class OAuthService {
       where: {
         value: codeChallenge,
         type: AppTokenType.CodeChallenge,
+        revokedAt: IsNull(),
         ...(authCodeToken.userId ? { userId: authCodeToken.userId } : {}),
       },
     });

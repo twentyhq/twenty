@@ -379,7 +379,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         relations: ['user', 'workspace'],
       });
 
-      if (isDefined(userWorkspace)) {
+      if (
+        isDefined(userWorkspace) &&
+        userWorkspace.workspace.id === workspace.id
+      ) {
         context.userWorkspace = userWorkspace;
         context.userWorkspaceId = userWorkspace.id;
       }

@@ -276,10 +276,16 @@ export class ApplicationRegistrationService {
   ): Promise<void> {
     const declaredKeys = Object.keys(serverVariables);
 
+    const existingVariables = await this.variableRepository.find({
+      where: { applicationRegistrationId },
+    });
+
+    const existingByKey = new Map(
+      existingVariables.map((variable) => [variable.key, variable]),
+    );
+
     for (const [key, schema] of Object.entries(serverVariables)) {
-      const existing = await this.variableRepository.findOne({
-        where: { applicationRegistrationId, key },
-      });
+      const existing = existingByKey.get(key);
 
       if (existing) {
         await this.variableRepository.update(existing.id, {
@@ -333,11 +339,11 @@ export class ApplicationRegistrationService {
       .map(([version, count]) => ({ version, count }))
       .sort((a, b) => b.count - a.count);
 
-    const latestVersion = versionDistribution[0]?.version ?? null;
+    const mostInstalledVersion = versionDistribution[0]?.version ?? null;
 
     return {
       activeInstalls: installs.length,
-      latestVersion,
+      mostInstalledVersion,
       versionDistribution,
     };
   }

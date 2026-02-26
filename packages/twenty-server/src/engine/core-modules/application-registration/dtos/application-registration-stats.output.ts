@@ -8,7 +8,7 @@ export class ApplicationRegistrationStatsOutput {
   activeInstalls: number;
 
   @Field(() => String, { nullable: true })
-  latestVersion: string | null;
+  mostInstalledVersion: string | null;
 
   @Field(() => [VersionDistributionEntry])
   versionDistribution: VersionDistributionEntry[];

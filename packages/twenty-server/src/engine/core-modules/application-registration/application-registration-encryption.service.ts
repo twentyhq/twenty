@@ -45,6 +45,14 @@ export class ApplicationRegistrationEncryptionService {
 
     const data = Buffer.from(encryptedBase64, 'base64');
 
+    const minLength = IV_LENGTH + AUTH_TAG_LENGTH;
+
+    if (data.length < minLength) {
+      throw new Error(
+        'Encrypted data is too short — possibly corrupted or truncated',
+      );
+    }
+
     const iv = data.subarray(0, IV_LENGTH);
     const authTag = data.subarray(IV_LENGTH, IV_LENGTH + AUTH_TAG_LENGTH);
     const ciphertext = data.subarray(IV_LENGTH + AUTH_TAG_LENGTH);

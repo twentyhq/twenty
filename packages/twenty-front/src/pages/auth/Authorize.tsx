@@ -100,7 +100,13 @@ export const Authorize = () => {
   const applicationRegistration = data?.findApplicationRegistrationByClientId;
   const [authorizeApp] = useAuthorizeAppMutation();
 
-  if (!loading && !isDefined(applicationRegistration) && isDefined(clientId)) {
+  if (!isDefined(clientId)) {
+    navigate(AppPath.NotFound);
+
+    return null;
+  }
+
+  if (!loading && !isDefined(applicationRegistration)) {
     navigate(AppPath.NotFound);
 
     return null;

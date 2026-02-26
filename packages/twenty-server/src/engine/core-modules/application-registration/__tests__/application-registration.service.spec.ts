@@ -8,6 +8,7 @@ import { ApplicationRegistrationEncryptionService } from 'src/engine/core-module
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application-registration/application-registration.exception';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 describe('ApplicationRegistrationService', () => {
   let service: ApplicationRegistrationService;
@@ -46,6 +47,13 @@ describe('ApplicationRegistrationService', () => {
             save: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(ApplicationEntity),
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
           },
         },
         {
