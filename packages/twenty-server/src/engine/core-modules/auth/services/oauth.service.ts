@@ -75,11 +75,15 @@ export class OAuthService {
 
     const applicationRegistration = clientValidation;
 
-    if (redirectUri) {
-      if (
-        applicationRegistration.oAuthRedirectUris.length === 0 ||
-        !applicationRegistration.oAuthRedirectUris.includes(redirectUri)
-      ) {
+    if (applicationRegistration.oAuthRedirectUris.length > 0) {
+      if (!redirectUri) {
+        return this.errorResponse(
+          'invalid_request',
+          'redirect_uri is required when redirect URIs are registered',
+        );
+      }
+
+      if (!applicationRegistration.oAuthRedirectUris.includes(redirectUri)) {
         return this.errorResponse(
           'invalid_grant',
           'Redirect URI does not match any registered redirect URI',

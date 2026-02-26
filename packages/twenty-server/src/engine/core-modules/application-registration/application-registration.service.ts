@@ -95,6 +95,10 @@ export class ApplicationRegistrationService {
       );
     }
 
+    if (isDefined(input.oAuthRedirectUris)) {
+      this.validateRedirectUris(input.oAuthRedirectUris);
+    }
+
     if (isDefined(input.oAuthScopes)) {
       this.validateScopes(input.oAuthScopes);
     }
@@ -130,6 +134,10 @@ export class ApplicationRegistrationService {
     input: UpdateApplicationRegistrationInput,
   ): Promise<ApplicationRegistrationEntity> {
     await this.findOneById(input.id);
+
+    if (isDefined(input.oAuthRedirectUris)) {
+      this.validateRedirectUris(input.oAuthRedirectUris);
+    }
 
     if (isDefined(input.oAuthScopes)) {
       this.validateScopes(input.oAuthScopes);
@@ -345,6 +353,38 @@ export class ApplicationRegistrationService {
     );
 
     return { clientSecret, clientSecretHash };
+  }
+
+  private validateRedirectUris(uris: string[]): void {
+    for (const uri of uris) {
+      let parsed: URL;
+
+      try {
+        parsed = new URL(uri);
+      } catch {
+        throw new ApplicationRegistrationException(
+          `Invalid redirect URI: ${uri}`,
+          ApplicationRegistrationExceptionCode.INVALID_REDIRECT_URI,
+        );
+      }
+
+      const isLocalhost =
+        parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1';
+
+      if (parsed.protocol !== 'https:' && !isLocalhost) {
+        throw new ApplicationRegistrationException(
+          `Redirect URIs must use HTTPS (except localhost): ${uri}`,
+          ApplicationRegistrationExceptionCode.INVALID_REDIRECT_URI,
+        );
+      }
+
+      if (parsed.hash) {
+        throw new ApplicationRegistrationException(
+          `Redirect URIs must not contain fragments: ${uri}`,
+          ApplicationRegistrationExceptionCode.INVALID_REDIRECT_URI,
+        );
+      }
+    }
   }
 
   private validateScopes(scopes: string[]): void {

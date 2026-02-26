@@ -525,6 +525,28 @@ export class AuthService {
       );
     }
 
+    let parsedRedirectUrl: URL;
+
+    try {
+      parsedRedirectUrl = new URL(authorizeAppInput.redirectUrl);
+    } catch {
+      throw new AuthException(
+        'Invalid redirect URL format',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const isLocalhost =
+      parsedRedirectUrl.hostname === 'localhost' ||
+      parsedRedirectUrl.hostname === '127.0.0.1';
+
+    if (parsedRedirectUrl.protocol !== 'https:' && !isLocalhost) {
+      throw new AuthException(
+        'Redirect URL must use HTTPS',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const authorizationCode = crypto.randomBytes(42).toString('hex');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms('5m'));
@@ -560,9 +582,9 @@ export class AuthService {
       await this.appTokenRepository.save(token);
     }
 
-    const redirectUrl = `${authorizeAppInput.redirectUrl}?authorizationCode=${authorizationCode}`;
+    parsedRedirectUrl.searchParams.set('authorizationCode', authorizationCode);
 
-    return { redirectUrl };
+    return { redirectUrl: parsedRedirectUrl.toString() };
   }
 
   async updatePassword(

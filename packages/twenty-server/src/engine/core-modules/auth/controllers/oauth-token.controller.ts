@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
 
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
@@ -17,30 +17,37 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 export class OAuthTokenRequestDto {
   @IsString()
+  @MaxLength(50)
   grant_type: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(512)
   code?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(2048)
   redirect_uri?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(256)
   client_id?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(512)
   client_secret?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(512)
   code_verifier?: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(2048)
   refresh_token?: string;
 }
 
@@ -79,7 +86,8 @@ export class OAuthTokenController {
       default:
         return {
           error: 'unsupported_grant_type',
-          error_description: `Grant type '${body.grant_type}' is not supported`,
+          error_description:
+            'The provided grant_type is not supported. Supported values: authorization_code, client_credentials, refresh_token',
         };
     }
   }
