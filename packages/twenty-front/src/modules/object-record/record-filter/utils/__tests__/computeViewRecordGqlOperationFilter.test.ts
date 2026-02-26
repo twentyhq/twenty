@@ -61,7 +61,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
 
     expect(result).toEqual({
       name: {
-        ilike: '%Linkedin%',
+        ilike: `%${companiesMock[0].name}%`,
       },
     });
   });
@@ -116,7 +116,7 @@ describe('computeViewRecordGqlOperationFilter', () => {
       and: [
         {
           name: {
-            ilike: '%Linkedin%',
+            ilike: `%${companiesMock[0].name}%`,
           },
         },
         {

@@ -16,7 +16,6 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
-import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -43,22 +42,10 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     recordIndexId,
   );
 
-  const hasUserSelectedAllRowsAtom = useAtomComponentStateCallbackState(
+  const hasUserSelectedAllRows = useAtomComponentStateValue(
     hasUserSelectedAllRowsComponentState,
     recordIndexId,
   );
-
-  const selectedRowIdsAtom = useAtomComponentSelectorCallbackState(
-    selectedRowIdsComponentSelector,
-    recordIndexId,
-  );
-
-  const unselectedRowIdsAtom = useAtomComponentSelectorCallbackState(
-    unselectedRowIdsComponentSelector,
-    recordIndexId,
-  );
-
-  // TODO: remove before merge or rebase with main to get the proper fix -- this is just to unblock this PR
 
   const selectedRowIds = useAtomComponentSelectorValue(
     selectedRowIdsComponentSelector,
@@ -67,11 +54,6 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
 
   const unselectedRowIds = useAtomComponentSelectorValue(
     unselectedRowIdsComponentSelector,
-    recordIndexId,
-  );
-
-  const hasUserSelectedAllRows = useAtomComponentStateValue(
-    hasUserSelectedAllRowsComponentState,
     recordIndexId,
   );
 
@@ -106,17 +88,14 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
             anyFieldFilterValue: string;
           },
         ) => {
-          const hasUserSelectedAllRows = get(hasUserSelectedAllRowsAtom);
           let newRule: ContextStoreTargetedRecordsRule;
 
           if (hasUserSelectedAllRows) {
-            const unselectedRowIds = get(unselectedRowIdsAtom);
             newRule = {
               mode: 'exclusion',
               excludedRecordIds: unselectedRowIds,
             };
           } else {
-            const selectedRowIds = get(selectedRowIdsAtom);
             newRule = {
               mode: 'selection',
               selectedRecordIds: selectedRowIds,
@@ -150,9 +129,9 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
         },
       ),
     [
-      hasUserSelectedAllRowsAtom,
-      selectedRowIdsAtom,
-      unselectedRowIdsAtom,
+      hasUserSelectedAllRows,
+      selectedRowIds,
+      unselectedRowIds,
       contextStoreTargetedRecordsRuleAtom,
       contextStoreFiltersAtom,
       contextStoreFilterGroupsAtom,
@@ -203,9 +182,6 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     currentRecordFilters,
     currentRecordFilterGroups,
     anyFieldFilterValue,
-    selectedRowIds,
-    unselectedRowIds,
-    hasUserSelectedAllRows,
     store,
     syncWriteAtom,
     resetWriteAtom,
