@@ -21,9 +21,9 @@ export default defineObject({
   fields: [
     {
       type: FieldType.RELATION,
-      name: 'personId',
+      name: 'person',
       label: 'Person',
-      description: 'Person id matching with the self hosting user',
+      description: 'Person matching with the self hosting user',
       relationTargetFieldMetadataUniversalIdentifier:
         SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER,
       relationTargetObjectMetadataUniversalIdentifier:
@@ -33,9 +33,9 @@ export default defineObject({
         UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId
           .universalIdentifier,
       universalSettings: {
-        joinColumnName: 'personId',
-        onDelete: OnDeleteAction.SET_NULL,
         relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.SET_NULL,
+        joinColumnName: 'targetPersonId',
       },
     },
     {

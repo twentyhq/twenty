@@ -6,7 +6,7 @@
     "defaultRoleUniversalIdentifier": "66972e19-9fdb-4336-87ce-442a17fd179c",
     "yarnLockChecksum": "f66aa34e63e82a31ee0072fffaac635d",
     "packageJsonChecksum": "bf473a5444c8dcb9a2de60adf70a0a99",
-    "apiClientChecksum": null
+    "apiClientChecksum": "88c00d7fde8abef84273ac7ece6a0e36"
   },
   "objects": [
     {
@@ -18,17 +18,17 @@
       "fields": [
         {
           "type": "RELATION",
-          "name": "personId",
+          "name": "person",
           "label": "Person",
-          "description": "Person id matching with the self hosting user",
+          "description": "Person matching with the self hosting user",
           "relationTargetFieldMetadataUniversalIdentifier": "9507f244-fdea-47d5-a734-725d4dae43da",
           "relationTargetObjectMetadataUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
           "isNullable": true,
           "universalIdentifier": "b453a43c-1512-48ca-8604-db750ad3ffb8",
           "universalSettings": {
-            "joinColumnName": "personId",
+            "relationType": "MANY_TO_ONE",
             "onDelete": "SET_NULL",
-            "relationType": "MANY_TO_ONE"
+            "joinColumnName": "targetPersonId"
           }
         },
         {
@@ -428,21 +428,6 @@
   ],
   "fields": [
     {
-      "universalIdentifier": "9507f244-fdea-47d5-a734-725d4dae43da",
-      "name": "selfHostingUser",
-      "label": "Self hosting user id",
-      "type": "RELATION",
-      "relationTargetFieldMetadataUniversalIdentifier": "b453a43c-1512-48ca-8604-db750ad3ffb8",
-      "relationTargetObjectMetadataUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
-      "objectUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
-      "description": "Self hosting user related to the person",
-      "universalSettings": {
-        "relationType": "MANY_TO_ONE",
-        "joinColumnName": "selfHostingUserId",
-        "onDelete": "SET_NULL"
-      }
-    },
-    {
       "name": "targetSelfHostingUser",
       "label": "SelfHostingUser",
       "description": "SelfHostingUser Self Hosting User",
@@ -530,6 +515,19 @@
       "relationTargetObjectMetadataUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
       "type": "MORPH_RELATION",
       "morphId": "20202020-f636-435d-ab8d-e1168b375c71"
+    },
+    {
+      "universalIdentifier": "9507f244-fdea-47d5-a734-725d4dae43da",
+      "name": "selfHostingUsers",
+      "label": "Self hosting users",
+      "type": "RELATION",
+      "relationTargetFieldMetadataUniversalIdentifier": "b453a43c-1512-48ca-8604-db750ad3ffb8",
+      "relationTargetObjectMetadataUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
+      "objectUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
+      "description": "Self hosting user related to the person",
+      "universalSettings": {
+        "relationType": "ONE_TO_MANY"
+      }
     }
   ],
   "roles": [
@@ -560,7 +558,7 @@
       "handlerName": "default.config.handler",
       "sourceHandlerPath": "src/logic-functions/match-telemetry-event-with-people.ts",
       "builtHandlerPath": "src/logic-functions/match-telemetry-event-with-people.mjs",
-      "builtHandlerChecksum": "bdabdf19130f19c6e72b367005753866"
+      "builtHandlerChecksum": "ec63ecb4d2840086b95d665be6d49fb4"
     },
     {
       "universalIdentifier": "10104201-622b-4a5e-9f27-8f2af19b2a3c",
@@ -578,7 +576,7 @@
       "handlerName": "default.config.handler",
       "sourceHandlerPath": "src/logic-functions/telemetryWebhook.function.ts",
       "builtHandlerPath": "src/logic-functions/telemetryWebhook.function.mjs",
-      "builtHandlerChecksum": "f8a420d6e499de6fb23a60f1bae3ddc8"
+      "builtHandlerChecksum": "99e031fe128e7ce15bd0841809896964"
     }
   ],
   "frontComponents": [],

@@ -32997,9 +32997,6 @@ export default {
             "companyId": [
                 22
             ],
-            "selfHostingUserId": [
-                22
-            ],
             "attachments": [
                 118,
                 {
@@ -33219,8 +33216,32 @@ export default {
                     ]
                 }
             ],
-            "selfHostingUser": [
-                595
+            "selfHostingUsers": [
+                597,
+                {
+                    "first": [
+                        10
+                    ],
+                    "last": [
+                        10
+                    ],
+                    "offset": [
+                        10
+                    ],
+                    "before": [
+                        1
+                    ],
+                    "after": [
+                        1
+                    ],
+                    "filter": [
+                        604
+                    ],
+                    "orderBy": [
+                        605,
+                        "[SelfHostingUserOrderByInput]"
+                    ]
+                }
             ],
             "__typename": [
                 1
@@ -33910,12 +33931,6 @@ export default {
             "company": [
                 221
             ],
-            "selfHostingUserId": [
-                22
-            ],
-            "selfHostingUser": [
-                599
-            ],
             "__typename": [
                 1
             ]
@@ -33978,12 +33993,6 @@ export default {
             "company": [
                 221
             ],
-            "selfHostingUserId": [
-                22
-            ],
-            "selfHostingUser": [
-                599
-            ],
             "__typename": [
                 1
             ]
@@ -34041,9 +34050,6 @@ export default {
                 131
             ],
             "companyId": [
-                33
-            ],
-            "selfHostingUserId": [
                 33
             ],
             "and": [
@@ -34117,12 +34123,6 @@ export default {
             "company": [
                 228
             ],
-            "selfHostingUserId": [
-                59
-            ],
-            "selfHostingUser": [
-                605
-            ],
             "__typename": [
                 1
             ]
@@ -34187,12 +34187,6 @@ export default {
             ],
             "company": [
                 229
-            ],
-            "selfHostingUserId": [
-                59
-            ],
-            "selfHostingUser": [
-                606
             ],
             "__typename": [
                 1
@@ -34481,12 +34475,6 @@ export default {
             "company": [
                 228
             ],
-            "selfHostingUserId": [
-                59
-            ],
-            "selfHostingUser": [
-                605
-            ],
             "__typename": [
                 1
             ]
@@ -34545,9 +34533,6 @@ export default {
             ],
             "company": [
                 231
-            ],
-            "selfHostingUser": [
-                608
             ],
             "__typename": [
                 1
@@ -44890,9 +44875,6 @@ export default {
             ]
         },
         "SelfHostingUser": {
-            "companyFundingTotalAmountPrinted": [
-                1
-            ],
             "name": [
                 69
             ],
@@ -44912,6 +44894,12 @@ export default {
                 1
             ],
             "serverUrl": [
+                1
+            ],
+            "personLinkedIn": [
+                52
+            ],
+            "personSeniority": [
                 1
             ],
             "numberOfEmailsWithSameDomain": [
@@ -44941,12 +44929,6 @@ export default {
             "personJobTitle": [
                 1
             ],
-            "personLinkedIn": [
-                52
-            ],
-            "personSeniority": [
-                1
-            ],
             "companyAlexaRank": [
                 13
             ],
@@ -44970,6 +44952,9 @@ export default {
             ],
             "companyFundingTotalAmount": [
                 13
+            ],
+            "companyFundingTotalAmountPrinted": [
+                1
             ],
             "companyIndustries": [
                 1
@@ -45013,7 +44998,10 @@ export default {
             "searchVector": [
                 115
             ],
-            "personId": [
+            "targetPersonId": [
+                22
+            ],
+            "person": [
                 453
             ],
             "timelineActivities": [
@@ -45170,21 +45158,6 @@ export default {
             "totalCount": [
                 10
             ],
-            "countUniqueValuesCompanyFundingTotalAmountPrinted": [
-                10
-            ],
-            "countEmptyCompanyFundingTotalAmountPrinted": [
-                10
-            ],
-            "countNotEmptyCompanyFundingTotalAmountPrinted": [
-                10
-            ],
-            "percentageEmptyCompanyFundingTotalAmountPrinted": [
-                13
-            ],
-            "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
-                13
-            ],
             "countUniqueValuesName": [
                 10
             ],
@@ -45288,6 +45261,36 @@ export default {
                 13
             ],
             "percentageNotEmptyServerUrl": [
+                13
+            ],
+            "countUniqueValuesPersonLinkedIn": [
+                10
+            ],
+            "countEmptyPersonLinkedIn": [
+                10
+            ],
+            "countNotEmptyPersonLinkedIn": [
+                10
+            ],
+            "percentageEmptyPersonLinkedIn": [
+                13
+            ],
+            "percentageNotEmptyPersonLinkedIn": [
+                13
+            ],
+            "countUniqueValuesPersonSeniority": [
+                10
+            ],
+            "countEmptyPersonSeniority": [
+                10
+            ],
+            "countNotEmptyPersonSeniority": [
+                10
+            ],
+            "percentageEmptyPersonSeniority": [
+                13
+            ],
+            "percentageNotEmptyPersonSeniority": [
                 13
             ],
             "countUniqueValuesNumberOfEmailsWithSameDomain": [
@@ -45461,36 +45464,6 @@ export default {
             "percentageNotEmptyPersonJobTitle": [
                 13
             ],
-            "countUniqueValuesPersonLinkedIn": [
-                10
-            ],
-            "countEmptyPersonLinkedIn": [
-                10
-            ],
-            "countNotEmptyPersonLinkedIn": [
-                10
-            ],
-            "percentageEmptyPersonLinkedIn": [
-                13
-            ],
-            "percentageNotEmptyPersonLinkedIn": [
-                13
-            ],
-            "countUniqueValuesPersonSeniority": [
-                10
-            ],
-            "countEmptyPersonSeniority": [
-                10
-            ],
-            "countNotEmptyPersonSeniority": [
-                10
-            ],
-            "percentageEmptyPersonSeniority": [
-                13
-            ],
-            "percentageNotEmptyPersonSeniority": [
-                13
-            ],
             "countUniqueValuesCompanyAlexaRank": [
                 10
             ],
@@ -45657,6 +45630,21 @@ export default {
                 13
             ],
             "sumCompanyFundingTotalAmount": [
+                13
+            ],
+            "countUniqueValuesCompanyFundingTotalAmountPrinted": [
+                10
+            ],
+            "countEmptyCompanyFundingTotalAmountPrinted": [
+                10
+            ],
+            "countNotEmptyCompanyFundingTotalAmountPrinted": [
+                10
+            ],
+            "percentageEmptyCompanyFundingTotalAmountPrinted": [
+                13
+            ],
+            "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
                 13
             ],
             "countUniqueValuesCompanyIndustries": [
@@ -45901,21 +45889,6 @@ export default {
             "totalCount": [
                 10
             ],
-            "countUniqueValuesCompanyFundingTotalAmountPrinted": [
-                10
-            ],
-            "countEmptyCompanyFundingTotalAmountPrinted": [
-                10
-            ],
-            "countNotEmptyCompanyFundingTotalAmountPrinted": [
-                10
-            ],
-            "percentageEmptyCompanyFundingTotalAmountPrinted": [
-                13
-            ],
-            "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
-                13
-            ],
             "countUniqueValuesName": [
                 10
             ],
@@ -46019,6 +45992,36 @@ export default {
                 13
             ],
             "percentageNotEmptyServerUrl": [
+                13
+            ],
+            "countUniqueValuesPersonLinkedIn": [
+                10
+            ],
+            "countEmptyPersonLinkedIn": [
+                10
+            ],
+            "countNotEmptyPersonLinkedIn": [
+                10
+            ],
+            "percentageEmptyPersonLinkedIn": [
+                13
+            ],
+            "percentageNotEmptyPersonLinkedIn": [
+                13
+            ],
+            "countUniqueValuesPersonSeniority": [
+                10
+            ],
+            "countEmptyPersonSeniority": [
+                10
+            ],
+            "countNotEmptyPersonSeniority": [
+                10
+            ],
+            "percentageEmptyPersonSeniority": [
+                13
+            ],
+            "percentageNotEmptyPersonSeniority": [
                 13
             ],
             "countUniqueValuesNumberOfEmailsWithSameDomain": [
@@ -46192,36 +46195,6 @@ export default {
             "percentageNotEmptyPersonJobTitle": [
                 13
             ],
-            "countUniqueValuesPersonLinkedIn": [
-                10
-            ],
-            "countEmptyPersonLinkedIn": [
-                10
-            ],
-            "countNotEmptyPersonLinkedIn": [
-                10
-            ],
-            "percentageEmptyPersonLinkedIn": [
-                13
-            ],
-            "percentageNotEmptyPersonLinkedIn": [
-                13
-            ],
-            "countUniqueValuesPersonSeniority": [
-                10
-            ],
-            "countEmptyPersonSeniority": [
-                10
-            ],
-            "countNotEmptyPersonSeniority": [
-                10
-            ],
-            "percentageEmptyPersonSeniority": [
-                13
-            ],
-            "percentageNotEmptyPersonSeniority": [
-                13
-            ],
             "countUniqueValuesCompanyAlexaRank": [
                 10
             ],
@@ -46388,6 +46361,21 @@ export default {
                 13
             ],
             "sumCompanyFundingTotalAmount": [
+                13
+            ],
+            "countUniqueValuesCompanyFundingTotalAmountPrinted": [
+                10
+            ],
+            "countEmptyCompanyFundingTotalAmountPrinted": [
+                10
+            ],
+            "countNotEmptyCompanyFundingTotalAmountPrinted": [
+                10
+            ],
+            "percentageEmptyCompanyFundingTotalAmountPrinted": [
+                13
+            ],
+            "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
                 13
             ],
             "countUniqueValuesCompanyIndustries": [
@@ -46659,9 +46647,6 @@ export default {
             ]
         },
         "SelfHostingUserCreateInput": {
-            "companyFundingTotalAmountPrinted": [
-                1
-            ],
             "name": [
                 70
             ],
@@ -46681,6 +46666,12 @@ export default {
                 1
             ],
             "serverUrl": [
+                1
+            ],
+            "personLinkedIn": [
+                53
+            ],
+            "personSeniority": [
                 1
             ],
             "numberOfEmailsWithSameDomain": [
@@ -46708,12 +46699,6 @@ export default {
                 1
             ],
             "personJobTitle": [
-                1
-            ],
-            "personLinkedIn": [
-                53
-            ],
-            "personSeniority": [
                 1
             ],
             "companyAlexaRank": [
@@ -46740,6 +46725,9 @@ export default {
             "companyFundingTotalAmount": [
                 13
             ],
+            "companyFundingTotalAmountPrinted": [
+                1
+            ],
             "companyIndustries": [
                 1
             ],
@@ -46782,7 +46770,10 @@ export default {
             "searchVector": [
                 115
             ],
-            "personId": [
+            "targetPersonId": [
+                22
+            ],
+            "person": [
                 457
             ],
             "__typename": [
@@ -46790,9 +46781,6 @@ export default {
             ]
         },
         "SelfHostingUserUpdateInput": {
-            "companyFundingTotalAmountPrinted": [
-                1
-            ],
             "name": [
                 71
             ],
@@ -46812,6 +46800,12 @@ export default {
                 1
             ],
             "serverUrl": [
+                1
+            ],
+            "personLinkedIn": [
+                54
+            ],
+            "personSeniority": [
                 1
             ],
             "numberOfEmailsWithSameDomain": [
@@ -46841,12 +46835,6 @@ export default {
             "personJobTitle": [
                 1
             ],
-            "personLinkedIn": [
-                54
-            ],
-            "personSeniority": [
-                1
-            ],
             "companyAlexaRank": [
                 13
             ],
@@ -46870,6 +46858,9 @@ export default {
             ],
             "companyFundingTotalAmount": [
                 13
+            ],
+            "companyFundingTotalAmountPrinted": [
+                1
             ],
             "companyIndustries": [
                 1
@@ -46913,7 +46904,10 @@ export default {
             "searchVector": [
                 115
             ],
-            "personId": [
+            "targetPersonId": [
+                22
+            ],
+            "person": [
                 457
             ],
             "__typename": [
@@ -46921,9 +46915,6 @@ export default {
             ]
         },
         "SelfHostingUserFilterInput": {
-            "companyFundingTotalAmountPrinted": [
-                56
-            ],
             "name": [
                 72
             ],
@@ -46943,6 +46934,12 @@ export default {
                 56
             ],
             "serverUrl": [
+                56
+            ],
+            "personLinkedIn": [
+                55
+            ],
+            "personSeniority": [
                 56
             ],
             "numberOfEmailsWithSameDomain": [
@@ -46972,12 +46969,6 @@ export default {
             "personJobTitle": [
                 56
             ],
-            "personLinkedIn": [
-                55
-            ],
-            "personSeniority": [
-                56
-            ],
             "companyAlexaRank": [
                 130
             ],
@@ -47001,6 +46992,9 @@ export default {
             ],
             "companyFundingTotalAmount": [
                 130
+            ],
+            "companyFundingTotalAmountPrinted": [
+                56
             ],
             "companyIndustries": [
                 56
@@ -47044,7 +47038,7 @@ export default {
             "searchVector": [
                 131
             ],
-            "personId": [
+            "targetPersonId": [
                 33
             ],
             "and": [
@@ -47061,9 +47055,6 @@ export default {
             ]
         },
         "SelfHostingUserOrderByInput": {
-            "companyFundingTotalAmountPrinted": [
-                59
-            ],
             "name": [
                 73
             ],
@@ -47083,6 +47074,12 @@ export default {
                 59
             ],
             "serverUrl": [
+                59
+            ],
+            "personLinkedIn": [
+                58
+            ],
+            "personSeniority": [
                 59
             ],
             "numberOfEmailsWithSameDomain": [
@@ -47112,12 +47109,6 @@ export default {
             "personJobTitle": [
                 59
             ],
-            "personLinkedIn": [
-                58
-            ],
-            "personSeniority": [
-                59
-            ],
             "companyAlexaRank": [
                 59
             ],
@@ -47140,6 +47131,9 @@ export default {
                 59
             ],
             "companyFundingTotalAmount": [
+                59
+            ],
+            "companyFundingTotalAmountPrinted": [
                 59
             ],
             "companyIndustries": [
@@ -47184,7 +47178,10 @@ export default {
             "searchVector": [
                 59
             ],
-            "personId": [
+            "targetPersonId": [
+                59
+            ],
+            "person": [
                 464
             ],
             "__typename": [
@@ -47195,9 +47192,6 @@ export default {
             "aggregate": [
                 607
             ],
-            "companyFundingTotalAmountPrinted": [
-                59
-            ],
             "name": [
                 73
             ],
@@ -47217,6 +47211,12 @@ export default {
                 59
             ],
             "serverUrl": [
+                59
+            ],
+            "personLinkedIn": [
+                58
+            ],
+            "personSeniority": [
                 59
             ],
             "numberOfEmailsWithSameDomain": [
@@ -47246,12 +47246,6 @@ export default {
             "personJobTitle": [
                 59
             ],
-            "personLinkedIn": [
-                58
-            ],
-            "personSeniority": [
-                59
-            ],
             "companyAlexaRank": [
                 59
             ],
@@ -47274,6 +47268,9 @@ export default {
                 59
             ],
             "companyFundingTotalAmount": [
+                59
+            ],
+            "companyFundingTotalAmountPrinted": [
                 59
             ],
             "companyIndustries": [
@@ -47318,7 +47315,10 @@ export default {
             "searchVector": [
                 59
             ],
-            "personId": [
+            "targetPersonId": [
+                59
+            ],
+            "person": [
                 465
             ],
             "__typename": [
@@ -47327,21 +47327,6 @@ export default {
         },
         "SelfHostingUserOrderByWithGroupByAggregateInput": {
             "totalCount": [
-                59
-            ],
-            "countUniqueValuesCompanyFundingTotalAmountPrinted": [
-                59
-            ],
-            "countEmptyCompanyFundingTotalAmountPrinted": [
-                59
-            ],
-            "countNotEmptyCompanyFundingTotalAmountPrinted": [
-                59
-            ],
-            "percentageEmptyCompanyFundingTotalAmountPrinted": [
-                59
-            ],
-            "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
                 59
             ],
             "countUniqueValuesName": [
@@ -47447,6 +47432,36 @@ export default {
                 59
             ],
             "percentageNotEmptyServerUrl": [
+                59
+            ],
+            "countUniqueValuesPersonLinkedIn": [
+                59
+            ],
+            "countEmptyPersonLinkedIn": [
+                59
+            ],
+            "countNotEmptyPersonLinkedIn": [
+                59
+            ],
+            "percentageEmptyPersonLinkedIn": [
+                59
+            ],
+            "percentageNotEmptyPersonLinkedIn": [
+                59
+            ],
+            "countUniqueValuesPersonSeniority": [
+                59
+            ],
+            "countEmptyPersonSeniority": [
+                59
+            ],
+            "countNotEmptyPersonSeniority": [
+                59
+            ],
+            "percentageEmptyPersonSeniority": [
+                59
+            ],
+            "percentageNotEmptyPersonSeniority": [
                 59
             ],
             "countUniqueValuesNumberOfEmailsWithSameDomain": [
@@ -47620,36 +47635,6 @@ export default {
             "percentageNotEmptyPersonJobTitle": [
                 59
             ],
-            "countUniqueValuesPersonLinkedIn": [
-                59
-            ],
-            "countEmptyPersonLinkedIn": [
-                59
-            ],
-            "countNotEmptyPersonLinkedIn": [
-                59
-            ],
-            "percentageEmptyPersonLinkedIn": [
-                59
-            ],
-            "percentageNotEmptyPersonLinkedIn": [
-                59
-            ],
-            "countUniqueValuesPersonSeniority": [
-                59
-            ],
-            "countEmptyPersonSeniority": [
-                59
-            ],
-            "countNotEmptyPersonSeniority": [
-                59
-            ],
-            "percentageEmptyPersonSeniority": [
-                59
-            ],
-            "percentageNotEmptyPersonSeniority": [
-                59
-            ],
             "countUniqueValuesCompanyAlexaRank": [
                 59
             ],
@@ -47816,6 +47801,21 @@ export default {
                 59
             ],
             "sumCompanyFundingTotalAmount": [
+                59
+            ],
+            "countUniqueValuesCompanyFundingTotalAmountPrinted": [
+                59
+            ],
+            "countEmptyCompanyFundingTotalAmountPrinted": [
+                59
+            ],
+            "countNotEmptyCompanyFundingTotalAmountPrinted": [
+                59
+            ],
+            "percentageEmptyCompanyFundingTotalAmountPrinted": [
+                59
+            ],
+            "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
                 59
             ],
             "countUniqueValuesCompanyIndustries": [
@@ -48046,7 +48046,10 @@ export default {
             "percentageNotEmptySearchVector": [
                 59
             ],
-            "personId": [
+            "targetPersonId": [
+                59
+            ],
+            "person": [
                 464
             ],
             "__typename": [
@@ -48054,9 +48057,6 @@ export default {
             ]
         },
         "SelfHostingUserGroupByInput": {
-            "companyFundingTotalAmountPrinted": [
-                6
-            ],
             "name": [
                 74
             ],
@@ -48076,6 +48076,12 @@ export default {
                 6
             ],
             "serverUrl": [
+                6
+            ],
+            "personLinkedIn": [
+                60
+            ],
+            "personSeniority": [
                 6
             ],
             "numberOfEmailsWithSameDomain": [
@@ -48105,12 +48111,6 @@ export default {
             "personJobTitle": [
                 6
             ],
-            "personLinkedIn": [
-                60
-            ],
-            "personSeniority": [
-                6
-            ],
             "companyAlexaRank": [
                 6
             ],
@@ -48133,6 +48133,9 @@ export default {
                 6
             ],
             "companyFundingTotalAmount": [
+                6
+            ],
+            "companyFundingTotalAmountPrinted": [
                 6
             ],
             "companyIndustries": [
@@ -48177,7 +48180,7 @@ export default {
             "searchVector": [
                 6
             ],
-            "personId": [
+            "person": [
                 467
             ],
             "__typename": [

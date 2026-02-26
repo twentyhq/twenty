@@ -1,7 +1,6 @@
 import {
   defineField,
   FieldType,
-  OnDeleteAction,
   RelationType,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk';
@@ -12,8 +11,8 @@ export const SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER =
 
 export default defineField({
   universalIdentifier: SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER,
-  name: 'selfHostingUser',
-  label: 'Self hosting user id',
+  name: 'selfHostingUsers',
+  label: 'Self hosting users',
   type: FieldType.RELATION,
   relationTargetFieldMetadataUniversalIdentifier:
     UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId
@@ -24,8 +23,6 @@ export default defineField({
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   description: 'Self hosting user related to the person',
   universalSettings: {
-    relationType: RelationType.MANY_TO_ONE,
-    joinColumnName: 'selfHostingUserId',
-    onDelete: OnDeleteAction.SET_NULL,
+    relationType: RelationType.ONE_TO_MANY,
   },
 });

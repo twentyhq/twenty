@@ -15,21 +15,26 @@ const handler = async (
     | ObjectRecordUpdateEvent<SelfHostingUser>
   >,
 ) => {
+  console.log('matching');
   const [object, action] = params.name.split('.');
 
   if (object !== SELF_HOSTING_USER_NAME_SINGULAR) {
     return;
   }
+  console.log('matching2');
 
   if (!['created', 'updated'].includes(action)) {
+    console.log('not a good action');
     return;
   }
+  console.log('matching3');
 
   const email = params.properties.after.email?.primaryEmail;
 
   if (!email) {
     return;
   }
+  console.log('matching4');
 
   const client = new CoreApiClient();
 
@@ -56,8 +61,10 @@ const handler = async (
       },
     },
   });
+  console.log('matching5', people);
 
   let personId = people?.edges[0].node.id;
+  console.log('matching55', personId);
 
   if (!personId) {
     const person = await client.mutation({
@@ -75,18 +82,20 @@ const handler = async (
 
     personId = person.createPerson?.id;
   }
+  console.log('matching6');
 
   await client.mutation({
     updateSelfHostingUser: {
       __args: {
         id: params.properties.after.id,
         data: {
-          personId: { connect: { where: { id: personId } } },
+          person: { connect: { where: { id: personId } } },
         },
       },
       id: true,
     },
   });
+  console.log('matching7');
 };
 
 export default defineLogicFunction({

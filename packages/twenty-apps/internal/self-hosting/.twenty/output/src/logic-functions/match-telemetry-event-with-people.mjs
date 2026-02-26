@@ -11,7 +11,7 @@ import {
   defineObject,
   FieldType as FieldType2,
   RelationType as RelationType2,
-  OnDeleteAction as OnDeleteAction2,
+  OnDeleteAction,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS as STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS2
 } from "twenty-sdk";
 
@@ -138,24 +138,21 @@ var UNIVERSAL_IDENTIFIERS = {
 import {
   defineField,
   FieldType,
-  OnDeleteAction,
   RelationType,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS
 } from "twenty-sdk";
 var SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER = "9507f244-fdea-47d5-a734-725d4dae43da";
 var self_hosting_user_id_default = defineField({
   universalIdentifier: SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER,
-  name: "selfHostingUser",
-  label: "Self hosting user id",
+  name: "selfHostingUsers",
+  label: "Self hosting users",
   type: FieldType.RELATION,
   relationTargetFieldMetadataUniversalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId.universalIdentifier,
   relationTargetObjectMetadataUniversalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.universalIdentifier,
   objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   description: "Self hosting user related to the person",
   universalSettings: {
-    relationType: RelationType.MANY_TO_ONE,
-    joinColumnName: "selfHostingUserId",
-    onDelete: OnDeleteAction.SET_NULL
+    relationType: RelationType.ONE_TO_MANY
   }
 });
 
@@ -170,17 +167,17 @@ var selfHostingUser_object_default = defineObject({
   fields: [
     {
       type: FieldType2.RELATION,
-      name: "personId",
+      name: "person",
       label: "Person",
-      description: "Person id matching with the self hosting user",
+      description: "Person matching with the self hosting user",
       relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER,
       relationTargetObjectMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS2.person.universalIdentifier,
       isNullable: true,
       universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId.universalIdentifier,
       universalSettings: {
-        joinColumnName: "personId",
-        onDelete: OnDeleteAction2.SET_NULL,
-        relationType: RelationType2.MANY_TO_ONE
+        relationType: RelationType2.MANY_TO_ONE,
+        onDelete: OnDeleteAction.SET_NULL,
+        joinColumnName: "targetPersonId"
       }
     },
     {
@@ -33942,9 +33939,6 @@ var types_default = {
       "companyId": [
         22
       ],
-      "selfHostingUserId": [
-        22
-      ],
       "attachments": [
         118,
         {
@@ -34164,8 +34158,32 @@ var types_default = {
           ]
         }
       ],
-      "selfHostingUser": [
-        595
+      "selfHostingUsers": [
+        597,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            604
+          ],
+          "orderBy": [
+            605,
+            "[SelfHostingUserOrderByInput]"
+          ]
+        }
       ],
       "__typename": [
         1
@@ -34855,12 +34873,6 @@ var types_default = {
       "company": [
         221
       ],
-      "selfHostingUserId": [
-        22
-      ],
-      "selfHostingUser": [
-        599
-      ],
       "__typename": [
         1
       ]
@@ -34923,12 +34935,6 @@ var types_default = {
       "company": [
         221
       ],
-      "selfHostingUserId": [
-        22
-      ],
-      "selfHostingUser": [
-        599
-      ],
       "__typename": [
         1
       ]
@@ -34986,9 +34992,6 @@ var types_default = {
         131
       ],
       "companyId": [
-        33
-      ],
-      "selfHostingUserId": [
         33
       ],
       "and": [
@@ -35062,12 +35065,6 @@ var types_default = {
       "company": [
         228
       ],
-      "selfHostingUserId": [
-        59
-      ],
-      "selfHostingUser": [
-        605
-      ],
       "__typename": [
         1
       ]
@@ -35132,12 +35129,6 @@ var types_default = {
       ],
       "company": [
         229
-      ],
-      "selfHostingUserId": [
-        59
-      ],
-      "selfHostingUser": [
-        606
       ],
       "__typename": [
         1
@@ -35426,12 +35417,6 @@ var types_default = {
       "company": [
         228
       ],
-      "selfHostingUserId": [
-        59
-      ],
-      "selfHostingUser": [
-        605
-      ],
       "__typename": [
         1
       ]
@@ -35490,9 +35475,6 @@ var types_default = {
       ],
       "company": [
         231
-      ],
-      "selfHostingUser": [
-        608
       ],
       "__typename": [
         1
@@ -45835,9 +45817,6 @@ var types_default = {
       ]
     },
     "SelfHostingUser": {
-      "companyFundingTotalAmountPrinted": [
-        1
-      ],
       "name": [
         69
       ],
@@ -45857,6 +45836,12 @@ var types_default = {
         1
       ],
       "serverUrl": [
+        1
+      ],
+      "personLinkedIn": [
+        52
+      ],
+      "personSeniority": [
         1
       ],
       "numberOfEmailsWithSameDomain": [
@@ -45886,12 +45871,6 @@ var types_default = {
       "personJobTitle": [
         1
       ],
-      "personLinkedIn": [
-        52
-      ],
-      "personSeniority": [
-        1
-      ],
       "companyAlexaRank": [
         13
       ],
@@ -45915,6 +45894,9 @@ var types_default = {
       ],
       "companyFundingTotalAmount": [
         13
+      ],
+      "companyFundingTotalAmountPrinted": [
+        1
       ],
       "companyIndustries": [
         1
@@ -45958,7 +45940,10 @@ var types_default = {
       "searchVector": [
         115
       ],
-      "personId": [
+      "targetPersonId": [
+        22
+      ],
+      "person": [
         453
       ],
       "timelineActivities": [
@@ -46115,21 +46100,6 @@ var types_default = {
       "totalCount": [
         10
       ],
-      "countUniqueValuesCompanyFundingTotalAmountPrinted": [
-        10
-      ],
-      "countEmptyCompanyFundingTotalAmountPrinted": [
-        10
-      ],
-      "countNotEmptyCompanyFundingTotalAmountPrinted": [
-        10
-      ],
-      "percentageEmptyCompanyFundingTotalAmountPrinted": [
-        13
-      ],
-      "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
-        13
-      ],
       "countUniqueValuesName": [
         10
       ],
@@ -46233,6 +46203,36 @@ var types_default = {
         13
       ],
       "percentageNotEmptyServerUrl": [
+        13
+      ],
+      "countUniqueValuesPersonLinkedIn": [
+        10
+      ],
+      "countEmptyPersonLinkedIn": [
+        10
+      ],
+      "countNotEmptyPersonLinkedIn": [
+        10
+      ],
+      "percentageEmptyPersonLinkedIn": [
+        13
+      ],
+      "percentageNotEmptyPersonLinkedIn": [
+        13
+      ],
+      "countUniqueValuesPersonSeniority": [
+        10
+      ],
+      "countEmptyPersonSeniority": [
+        10
+      ],
+      "countNotEmptyPersonSeniority": [
+        10
+      ],
+      "percentageEmptyPersonSeniority": [
+        13
+      ],
+      "percentageNotEmptyPersonSeniority": [
         13
       ],
       "countUniqueValuesNumberOfEmailsWithSameDomain": [
@@ -46406,36 +46406,6 @@ var types_default = {
       "percentageNotEmptyPersonJobTitle": [
         13
       ],
-      "countUniqueValuesPersonLinkedIn": [
-        10
-      ],
-      "countEmptyPersonLinkedIn": [
-        10
-      ],
-      "countNotEmptyPersonLinkedIn": [
-        10
-      ],
-      "percentageEmptyPersonLinkedIn": [
-        13
-      ],
-      "percentageNotEmptyPersonLinkedIn": [
-        13
-      ],
-      "countUniqueValuesPersonSeniority": [
-        10
-      ],
-      "countEmptyPersonSeniority": [
-        10
-      ],
-      "countNotEmptyPersonSeniority": [
-        10
-      ],
-      "percentageEmptyPersonSeniority": [
-        13
-      ],
-      "percentageNotEmptyPersonSeniority": [
-        13
-      ],
       "countUniqueValuesCompanyAlexaRank": [
         10
       ],
@@ -46602,6 +46572,21 @@ var types_default = {
         13
       ],
       "sumCompanyFundingTotalAmount": [
+        13
+      ],
+      "countUniqueValuesCompanyFundingTotalAmountPrinted": [
+        10
+      ],
+      "countEmptyCompanyFundingTotalAmountPrinted": [
+        10
+      ],
+      "countNotEmptyCompanyFundingTotalAmountPrinted": [
+        10
+      ],
+      "percentageEmptyCompanyFundingTotalAmountPrinted": [
+        13
+      ],
+      "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
         13
       ],
       "countUniqueValuesCompanyIndustries": [
@@ -46846,21 +46831,6 @@ var types_default = {
       "totalCount": [
         10
       ],
-      "countUniqueValuesCompanyFundingTotalAmountPrinted": [
-        10
-      ],
-      "countEmptyCompanyFundingTotalAmountPrinted": [
-        10
-      ],
-      "countNotEmptyCompanyFundingTotalAmountPrinted": [
-        10
-      ],
-      "percentageEmptyCompanyFundingTotalAmountPrinted": [
-        13
-      ],
-      "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
-        13
-      ],
       "countUniqueValuesName": [
         10
       ],
@@ -46964,6 +46934,36 @@ var types_default = {
         13
       ],
       "percentageNotEmptyServerUrl": [
+        13
+      ],
+      "countUniqueValuesPersonLinkedIn": [
+        10
+      ],
+      "countEmptyPersonLinkedIn": [
+        10
+      ],
+      "countNotEmptyPersonLinkedIn": [
+        10
+      ],
+      "percentageEmptyPersonLinkedIn": [
+        13
+      ],
+      "percentageNotEmptyPersonLinkedIn": [
+        13
+      ],
+      "countUniqueValuesPersonSeniority": [
+        10
+      ],
+      "countEmptyPersonSeniority": [
+        10
+      ],
+      "countNotEmptyPersonSeniority": [
+        10
+      ],
+      "percentageEmptyPersonSeniority": [
+        13
+      ],
+      "percentageNotEmptyPersonSeniority": [
         13
       ],
       "countUniqueValuesNumberOfEmailsWithSameDomain": [
@@ -47137,36 +47137,6 @@ var types_default = {
       "percentageNotEmptyPersonJobTitle": [
         13
       ],
-      "countUniqueValuesPersonLinkedIn": [
-        10
-      ],
-      "countEmptyPersonLinkedIn": [
-        10
-      ],
-      "countNotEmptyPersonLinkedIn": [
-        10
-      ],
-      "percentageEmptyPersonLinkedIn": [
-        13
-      ],
-      "percentageNotEmptyPersonLinkedIn": [
-        13
-      ],
-      "countUniqueValuesPersonSeniority": [
-        10
-      ],
-      "countEmptyPersonSeniority": [
-        10
-      ],
-      "countNotEmptyPersonSeniority": [
-        10
-      ],
-      "percentageEmptyPersonSeniority": [
-        13
-      ],
-      "percentageNotEmptyPersonSeniority": [
-        13
-      ],
       "countUniqueValuesCompanyAlexaRank": [
         10
       ],
@@ -47333,6 +47303,21 @@ var types_default = {
         13
       ],
       "sumCompanyFundingTotalAmount": [
+        13
+      ],
+      "countUniqueValuesCompanyFundingTotalAmountPrinted": [
+        10
+      ],
+      "countEmptyCompanyFundingTotalAmountPrinted": [
+        10
+      ],
+      "countNotEmptyCompanyFundingTotalAmountPrinted": [
+        10
+      ],
+      "percentageEmptyCompanyFundingTotalAmountPrinted": [
+        13
+      ],
+      "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
         13
       ],
       "countUniqueValuesCompanyIndustries": [
@@ -47604,9 +47589,6 @@ var types_default = {
       ]
     },
     "SelfHostingUserCreateInput": {
-      "companyFundingTotalAmountPrinted": [
-        1
-      ],
       "name": [
         70
       ],
@@ -47626,6 +47608,12 @@ var types_default = {
         1
       ],
       "serverUrl": [
+        1
+      ],
+      "personLinkedIn": [
+        53
+      ],
+      "personSeniority": [
         1
       ],
       "numberOfEmailsWithSameDomain": [
@@ -47653,12 +47641,6 @@ var types_default = {
         1
       ],
       "personJobTitle": [
-        1
-      ],
-      "personLinkedIn": [
-        53
-      ],
-      "personSeniority": [
         1
       ],
       "companyAlexaRank": [
@@ -47685,6 +47667,9 @@ var types_default = {
       "companyFundingTotalAmount": [
         13
       ],
+      "companyFundingTotalAmountPrinted": [
+        1
+      ],
       "companyIndustries": [
         1
       ],
@@ -47727,7 +47712,10 @@ var types_default = {
       "searchVector": [
         115
       ],
-      "personId": [
+      "targetPersonId": [
+        22
+      ],
+      "person": [
         457
       ],
       "__typename": [
@@ -47735,9 +47723,6 @@ var types_default = {
       ]
     },
     "SelfHostingUserUpdateInput": {
-      "companyFundingTotalAmountPrinted": [
-        1
-      ],
       "name": [
         71
       ],
@@ -47757,6 +47742,12 @@ var types_default = {
         1
       ],
       "serverUrl": [
+        1
+      ],
+      "personLinkedIn": [
+        54
+      ],
+      "personSeniority": [
         1
       ],
       "numberOfEmailsWithSameDomain": [
@@ -47786,12 +47777,6 @@ var types_default = {
       "personJobTitle": [
         1
       ],
-      "personLinkedIn": [
-        54
-      ],
-      "personSeniority": [
-        1
-      ],
       "companyAlexaRank": [
         13
       ],
@@ -47815,6 +47800,9 @@ var types_default = {
       ],
       "companyFundingTotalAmount": [
         13
+      ],
+      "companyFundingTotalAmountPrinted": [
+        1
       ],
       "companyIndustries": [
         1
@@ -47858,7 +47846,10 @@ var types_default = {
       "searchVector": [
         115
       ],
-      "personId": [
+      "targetPersonId": [
+        22
+      ],
+      "person": [
         457
       ],
       "__typename": [
@@ -47866,9 +47857,6 @@ var types_default = {
       ]
     },
     "SelfHostingUserFilterInput": {
-      "companyFundingTotalAmountPrinted": [
-        56
-      ],
       "name": [
         72
       ],
@@ -47888,6 +47876,12 @@ var types_default = {
         56
       ],
       "serverUrl": [
+        56
+      ],
+      "personLinkedIn": [
+        55
+      ],
+      "personSeniority": [
         56
       ],
       "numberOfEmailsWithSameDomain": [
@@ -47917,12 +47911,6 @@ var types_default = {
       "personJobTitle": [
         56
       ],
-      "personLinkedIn": [
-        55
-      ],
-      "personSeniority": [
-        56
-      ],
       "companyAlexaRank": [
         130
       ],
@@ -47946,6 +47934,9 @@ var types_default = {
       ],
       "companyFundingTotalAmount": [
         130
+      ],
+      "companyFundingTotalAmountPrinted": [
+        56
       ],
       "companyIndustries": [
         56
@@ -47989,7 +47980,7 @@ var types_default = {
       "searchVector": [
         131
       ],
-      "personId": [
+      "targetPersonId": [
         33
       ],
       "and": [
@@ -48006,9 +47997,6 @@ var types_default = {
       ]
     },
     "SelfHostingUserOrderByInput": {
-      "companyFundingTotalAmountPrinted": [
-        59
-      ],
       "name": [
         73
       ],
@@ -48028,6 +48016,12 @@ var types_default = {
         59
       ],
       "serverUrl": [
+        59
+      ],
+      "personLinkedIn": [
+        58
+      ],
+      "personSeniority": [
         59
       ],
       "numberOfEmailsWithSameDomain": [
@@ -48057,12 +48051,6 @@ var types_default = {
       "personJobTitle": [
         59
       ],
-      "personLinkedIn": [
-        58
-      ],
-      "personSeniority": [
-        59
-      ],
       "companyAlexaRank": [
         59
       ],
@@ -48085,6 +48073,9 @@ var types_default = {
         59
       ],
       "companyFundingTotalAmount": [
+        59
+      ],
+      "companyFundingTotalAmountPrinted": [
         59
       ],
       "companyIndustries": [
@@ -48129,7 +48120,10 @@ var types_default = {
       "searchVector": [
         59
       ],
-      "personId": [
+      "targetPersonId": [
+        59
+      ],
+      "person": [
         464
       ],
       "__typename": [
@@ -48140,9 +48134,6 @@ var types_default = {
       "aggregate": [
         607
       ],
-      "companyFundingTotalAmountPrinted": [
-        59
-      ],
       "name": [
         73
       ],
@@ -48162,6 +48153,12 @@ var types_default = {
         59
       ],
       "serverUrl": [
+        59
+      ],
+      "personLinkedIn": [
+        58
+      ],
+      "personSeniority": [
         59
       ],
       "numberOfEmailsWithSameDomain": [
@@ -48191,12 +48188,6 @@ var types_default = {
       "personJobTitle": [
         59
       ],
-      "personLinkedIn": [
-        58
-      ],
-      "personSeniority": [
-        59
-      ],
       "companyAlexaRank": [
         59
       ],
@@ -48219,6 +48210,9 @@ var types_default = {
         59
       ],
       "companyFundingTotalAmount": [
+        59
+      ],
+      "companyFundingTotalAmountPrinted": [
         59
       ],
       "companyIndustries": [
@@ -48263,7 +48257,10 @@ var types_default = {
       "searchVector": [
         59
       ],
-      "personId": [
+      "targetPersonId": [
+        59
+      ],
+      "person": [
         465
       ],
       "__typename": [
@@ -48272,21 +48269,6 @@ var types_default = {
     },
     "SelfHostingUserOrderByWithGroupByAggregateInput": {
       "totalCount": [
-        59
-      ],
-      "countUniqueValuesCompanyFundingTotalAmountPrinted": [
-        59
-      ],
-      "countEmptyCompanyFundingTotalAmountPrinted": [
-        59
-      ],
-      "countNotEmptyCompanyFundingTotalAmountPrinted": [
-        59
-      ],
-      "percentageEmptyCompanyFundingTotalAmountPrinted": [
-        59
-      ],
-      "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
         59
       ],
       "countUniqueValuesName": [
@@ -48392,6 +48374,36 @@ var types_default = {
         59
       ],
       "percentageNotEmptyServerUrl": [
+        59
+      ],
+      "countUniqueValuesPersonLinkedIn": [
+        59
+      ],
+      "countEmptyPersonLinkedIn": [
+        59
+      ],
+      "countNotEmptyPersonLinkedIn": [
+        59
+      ],
+      "percentageEmptyPersonLinkedIn": [
+        59
+      ],
+      "percentageNotEmptyPersonLinkedIn": [
+        59
+      ],
+      "countUniqueValuesPersonSeniority": [
+        59
+      ],
+      "countEmptyPersonSeniority": [
+        59
+      ],
+      "countNotEmptyPersonSeniority": [
+        59
+      ],
+      "percentageEmptyPersonSeniority": [
+        59
+      ],
+      "percentageNotEmptyPersonSeniority": [
         59
       ],
       "countUniqueValuesNumberOfEmailsWithSameDomain": [
@@ -48565,36 +48577,6 @@ var types_default = {
       "percentageNotEmptyPersonJobTitle": [
         59
       ],
-      "countUniqueValuesPersonLinkedIn": [
-        59
-      ],
-      "countEmptyPersonLinkedIn": [
-        59
-      ],
-      "countNotEmptyPersonLinkedIn": [
-        59
-      ],
-      "percentageEmptyPersonLinkedIn": [
-        59
-      ],
-      "percentageNotEmptyPersonLinkedIn": [
-        59
-      ],
-      "countUniqueValuesPersonSeniority": [
-        59
-      ],
-      "countEmptyPersonSeniority": [
-        59
-      ],
-      "countNotEmptyPersonSeniority": [
-        59
-      ],
-      "percentageEmptyPersonSeniority": [
-        59
-      ],
-      "percentageNotEmptyPersonSeniority": [
-        59
-      ],
       "countUniqueValuesCompanyAlexaRank": [
         59
       ],
@@ -48761,6 +48743,21 @@ var types_default = {
         59
       ],
       "sumCompanyFundingTotalAmount": [
+        59
+      ],
+      "countUniqueValuesCompanyFundingTotalAmountPrinted": [
+        59
+      ],
+      "countEmptyCompanyFundingTotalAmountPrinted": [
+        59
+      ],
+      "countNotEmptyCompanyFundingTotalAmountPrinted": [
+        59
+      ],
+      "percentageEmptyCompanyFundingTotalAmountPrinted": [
+        59
+      ],
+      "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
         59
       ],
       "countUniqueValuesCompanyIndustries": [
@@ -48991,7 +48988,10 @@ var types_default = {
       "percentageNotEmptySearchVector": [
         59
       ],
-      "personId": [
+      "targetPersonId": [
+        59
+      ],
+      "person": [
         464
       ],
       "__typename": [
@@ -48999,9 +48999,6 @@ var types_default = {
       ]
     },
     "SelfHostingUserGroupByInput": {
-      "companyFundingTotalAmountPrinted": [
-        6
-      ],
       "name": [
         74
       ],
@@ -49021,6 +49018,12 @@ var types_default = {
         6
       ],
       "serverUrl": [
+        6
+      ],
+      "personLinkedIn": [
+        60
+      ],
+      "personSeniority": [
         6
       ],
       "numberOfEmailsWithSameDomain": [
@@ -49050,12 +49053,6 @@ var types_default = {
       "personJobTitle": [
         6
       ],
-      "personLinkedIn": [
-        60
-      ],
-      "personSeniority": [
-        6
-      ],
       "companyAlexaRank": [
         6
       ],
@@ -49078,6 +49075,9 @@ var types_default = {
         6
       ],
       "companyFundingTotalAmount": [
+        6
+      ],
+      "companyFundingTotalAmountPrinted": [
         6
       ],
       "companyIndustries": [
@@ -49122,7 +49122,7 @@ var types_default = {
       "searchVector": [
         6
       ],
-      "personId": [
+      "person": [
         467
       ],
       "__typename": [
@@ -59521,17 +59521,22 @@ var defaultOptions2 = {
 
 // src/logic-functions/match-telemetry-event-with-people.ts
 var handler = async (params) => {
+  console.log("matching");
   const [object, action] = params.name.split(".");
   if (object !== SELF_HOSTING_USER_NAME_SINGULAR) {
     return;
   }
+  console.log("matching2");
   if (!["created", "updated"].includes(action)) {
+    console.log("not a good action");
     return;
   }
+  console.log("matching3");
   const email = params.properties.after.email?.primaryEmail;
   if (!email) {
     return;
   }
+  console.log("matching4");
   const client = new CoreApiClient();
   const { people } = await client.query({
     people: {
@@ -59556,7 +59561,9 @@ var handler = async (params) => {
       }
     }
   });
+  console.log("matching5", people);
   let personId = people?.edges[0].node.id;
+  console.log("matching55", personId);
   if (!personId) {
     const person = await client.mutation({
       createPerson: {
@@ -59572,17 +59579,19 @@ var handler = async (params) => {
     });
     personId = person.createPerson?.id;
   }
+  console.log("matching6");
   await client.mutation({
     updateSelfHostingUser: {
       __args: {
         id: params.properties.after.id,
         data: {
-          personId: { connect: { where: { id: personId } } }
+          person: { connect: { where: { id: personId } } }
         }
       },
       id: true
     }
   });
+  console.log("matching7");
 };
 var match_telemetry_event_with_people_default = defineLogicFunction({
   universalIdentifier: "87f0293a-997a-4c7b-85e2-e77462ccf0c5",
