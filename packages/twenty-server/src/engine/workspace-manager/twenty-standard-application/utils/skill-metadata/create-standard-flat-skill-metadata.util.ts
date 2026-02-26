@@ -157,7 +157,7 @@ Create relations fields between objects, for example a car repair shop workspace
 
 DO NOT USE code-interpreter tool at all. Prefer more steps.
 
-Before starting, hide the demo objects or non relevant objects for this workspace, update each object metadata item to deactivate it, to clear the navigation menu.
+LIMIT TO 3 OBJECTS FOR DEMO, AND 3 FIELDS FOR EACH OBJECT, to avoid bugs.
 
 For the fields you will create, make sure to create a good variety of field types to showcase the different capabilities of the platform, for example:
 - Create SELECT and SELECT_MULTIPLE field types for building demo board index views and table with groups views
@@ -167,16 +167,15 @@ For the fields you will create, make sure to create a good variety of field type
 Here are the steps for you to work properly :
 - Proceed object by object, for each object.
 - Create the object with the right tool, DO THIS FIRST
+- Wait 3 seconds before navigating, for the view to be populated by the backend
 - Navigate to its default view
-- Then create each relevant field metadata one by one
-- Then call the dedicated tool to hide system fields
-- Then call the dedicated tool to create view fields for non-system field metadata items
-
-Then add mock data for all created objects:
-- between 20 and 50
-- with a coherent combination of values
-- proceed with the relevant tools for each object, do not use code-interpreter
-- navigate to each default view before seeding an object, so the user can see what happens.
+- Then create each relevant field metadata one by one, and create a view field for each of them, reorder them to the start so we see them.
+- Then seed mock data relevant :
+  - use the tool that is related to the object, look for tools, create_my_new_object, create_many_of_my_new_object, look again in tools, don't use http
+  - between 20 and 50
+  - with a coherent combination of values
+  - proceed with the relevant tools for each object, do not use code-interpreter
+  - navigate to each default view before seeding an object, so the user can see what happens.
 
 After you've finished with this part, let's proceed to the dashboard creation. We will create a dashboard with 4 graphs.
 - Navigate to the dashboard list default view
@@ -186,20 +185,6 @@ After you've finished with this part, let's proceed to the dashboard creation. W
   - For each graph, find a relevant amount for y axis, a relevant date or select field for x axis, and if necessary a relevant group by stack
   - Change the name of each graph so it is relevant
   - Turn on the labels on the graphs
-
-Create multiple views, and navigate and wait for each one, they should be creative and relevant to this workspace :
-- Board view
-- Calendar view
-- Table with groups
-
-For each view :
-- Call create view fields for non-system field metadata items tool
-- Navigate to this view
-- Explain a bit this view and its relevance,
-- Wait around 30 seconds
-- Then warn the user that you're proceeding to the next and proceed.
-
-After everything is done, make a tour to the user, by waiting between each step so the user can see what have been made, explain what you've done and how to use it, and then ask the user if they want to modify or add something to this demo workspace, and if they do, help them with that.
 `,
         isCustom: false,
       },
