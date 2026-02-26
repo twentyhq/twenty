@@ -94,7 +94,7 @@ export const useFetchMoreRecordsWithPagination = <
     queryIdentifier,
   );
 
-  const setIsFetchingMoreObjects = useSetAtomFamilyState(
+  const setIsFetchingMoreRecords = useSetAtomFamilyState(
     isFetchingMoreRecordsFamilyState,
     queryIdentifier,
   );
@@ -119,7 +119,7 @@ export const useFetchMoreRecordsWithPagination = <
       hasNextPageLocal ||
       (!isAggregationEnabled(objectMetadataItem) && !error)
     ) {
-      setIsFetchingMoreObjects(true);
+      setIsFetchingMoreRecords(true);
 
       try {
         const { data: fetchMoreDataResult } = await fetchMore({
@@ -193,13 +193,13 @@ export const useFetchMoreRecordsWithPagination = <
         handleFindManyRecordsError(error as ApolloError);
         return { error: error as ApolloError };
       } finally {
-        setIsFetchingMoreObjects(false);
+        setIsFetchingMoreRecords(false);
       }
     }
   }, [
     objectMetadataItem,
     error,
-    setIsFetchingMoreObjects,
+    setIsFetchingMoreRecords,
     fetchMore,
     filter,
     orderBy,

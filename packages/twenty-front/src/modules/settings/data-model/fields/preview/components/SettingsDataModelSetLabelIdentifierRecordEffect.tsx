@@ -16,11 +16,14 @@ export const SettingsDataModelSetLabelIdentifierRecordEffect = ({
     objectNameSingular: objectNameSingular,
   });
 
-  const setRecord = useSetAtomFamilyState(recordStoreFamilyState, recordId);
+  const setRecordStore = useSetAtomFamilyState(
+    recordStoreFamilyState,
+    recordId,
+  );
 
   useEffect(() => {
-    setRecord(recordPreviewForLabelIdentifier);
-  }, [recordPreviewForLabelIdentifier, setRecord, recordId]);
+    setRecordStore(recordPreviewForLabelIdentifier);
+  }, [recordPreviewForLabelIdentifier, setRecordStore, recordId]);
 
   return null;
 };

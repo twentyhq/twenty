@@ -10,11 +10,11 @@ import { useDebouncedCallback } from 'use-debounce';
 export const MultipleRecordPickerLoadingEffect = () => {
   const [previousLoading, setPreviousLoading] = useState(false);
 
-  const loading = useAtomComponentStateValue(
+  const multipleRecordPickerIsLoading = useAtomComponentStateValue(
     multipleRecordPickerIsLoadingComponentState,
   );
 
-  const setMultipleRecordPickerShowSkeleton = useSetAtomComponentState(
+  const setMultipleRecordPickerShouldShowSkeleton = useSetAtomComponentState(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 
@@ -23,27 +23,27 @@ export const MultipleRecordPickerLoadingEffect = () => {
   );
 
   const debouncedShowPickerSearchSkeleton = useDebouncedCallback(
-    () => setMultipleRecordPickerShowSkeleton(true),
+    () => setMultipleRecordPickerShouldShowSkeleton(true),
     350,
   );
 
   useEffect(() => {
-    if (previousLoading !== loading) {
-      setPreviousLoading(loading);
+    if (previousLoading !== multipleRecordPickerIsLoading) {
+      setPreviousLoading(multipleRecordPickerIsLoading);
 
-      if (loading) {
+      if (multipleRecordPickerIsLoading) {
         if (!multipleRecordPickerIsFetchingMore) {
           debouncedShowPickerSearchSkeleton();
         }
       } else {
         debouncedShowPickerSearchSkeleton.cancel();
-        setMultipleRecordPickerShowSkeleton(false);
+        setMultipleRecordPickerShouldShowSkeleton(false);
       }
     }
   }, [
-    loading,
+    multipleRecordPickerIsLoading,
     previousLoading,
-    setMultipleRecordPickerShowSkeleton,
+    setMultipleRecordPickerShouldShowSkeleton,
     multipleRecordPickerIsFetchingMore,
     debouncedShowPickerSearchSkeleton,
   ]);

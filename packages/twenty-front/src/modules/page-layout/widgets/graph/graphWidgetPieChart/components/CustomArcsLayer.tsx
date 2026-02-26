@@ -27,7 +27,7 @@ export const CustomArcsLayer = ({
   onMouseLeave,
   onClick,
 }: CustomArcsLayerProps) => {
-  const highlightedLegendId = useAtomComponentStateValue(
+  const graphWidgetHighlightedLegendId = useAtomComponentStateValue(
     graphWidgetHighlightedLegendIdComponentState,
   );
 
@@ -37,8 +37,8 @@ export const CustomArcsLayer = ({
     <g transform={`translate(${centerX},${centerY})`}>
       {transition((_, datum) => {
         const isDimmed =
-          isDefined(highlightedLegendId) &&
-          String(highlightedLegendId) !== String(datum.id);
+          isDefined(graphWidgetHighlightedLegendId) &&
+          String(graphWidgetHighlightedLegendId) !== String(datum.id);
         const arcLength = datum.arc.endAngle - datum.arc.startAngle;
         const padAngleRadians = (padAngle * Math.PI) / 180;
         const clampedPadAngle = Math.min(

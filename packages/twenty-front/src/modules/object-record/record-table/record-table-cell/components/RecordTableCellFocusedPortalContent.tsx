@@ -14,12 +14,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { BORDER_COMMON } from 'twenty-ui/theme';
 
 const StyledRecordTableCellFocusPortalContent = styled.div<{
-  isRowActive: boolean;
+  isRecordTableRowActive: boolean;
 }>`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.secondary};
-  background-color: ${({ theme, isRowActive }) =>
-    isRowActive ? theme.accent.quaternary : theme.background.primary};
+  background-color: ${({ theme, isRecordTableRowActive }) =>
+    isRecordTableRowActive
+      ? theme.accent.quaternary
+      : theme.background.primary};
   border-radius: ${BORDER_COMMON.radius.sm};
   box-sizing: border-box;
   display: flex;
@@ -35,32 +37,32 @@ export const RecordTableCellFocusedPortalContent = () => {
   const { rowIndex } = useRecordTableRowContextOrThrow();
   const { onMoveHoverToCurrentCell } = useRecordTableBodyContextOrThrow();
 
-  const focusPosition = useAtomComponentStateValue(
+  const recordTableFocusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
   );
 
-  const isRowActive = useAtomComponentFamilyStateValue(
+  const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
     rowIndex,
   );
 
-  const hoverPosition = useAtomComponentStateValue(
+  const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 
   const arePositionsDifferent =
-    hoverPosition?.row !== focusPosition?.row ||
-    hoverPosition?.column !== focusPosition?.column;
+    recordTableHoverPosition?.row !== recordTableFocusPosition?.row ||
+    recordTableHoverPosition?.column !== recordTableFocusPosition?.column;
 
   const handleContainerMouseMove = () => {
-    if (arePositionsDifferent && isDefined(focusPosition)) {
-      onMoveHoverToCurrentCell(focusPosition);
+    if (arePositionsDifferent && isDefined(recordTableFocusPosition)) {
+      onMoveHoverToCurrentCell(recordTableFocusPosition);
     }
   };
 
   return (
     <StyledRecordTableCellFocusPortalContent
-      isRowActive={isRowActive}
+      isRecordTableRowActive={isRecordTableRowActive}
       onMouseMove={handleContainerMouseMove}
     >
       <RecordTableCellDisplayMode>

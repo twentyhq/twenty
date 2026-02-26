@@ -83,7 +83,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
   const [openNavigationMenuItemFolderIds, setOpenNavigationMenuItemFolderIds] =
     useAtomState(openNavigationMenuItemFolderIdsState);
 
-  const setCurrentFolderId = useSetAtomState(
+  const setCurrentNavigationMenuItemFolderId = useSetAtomState(
     currentNavigationMenuItemFolderIdState,
   );
 
@@ -91,7 +91,9 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
 
   const handleToggle = () => {
     if (isMobile) {
-      setCurrentFolderId((prev) => (prev === folder.id ? null : folder.id));
+      setCurrentNavigationMenuItemFolderId((prev) =>
+        prev === folder.id ? null : folder.id,
+      );
     } else {
       setOpenNavigationMenuItemFolderIds((currentOpenFolders) => {
         if (isOpen) {
@@ -121,7 +123,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
 
   const dropdownId = `navigation-menu-item-folder-edit-${folder.id}`;
 
-  const isDropdownOpenComponent = useAtomComponentStateValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
@@ -235,7 +237,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
                 onClick={handleToggle}
                 rightOptions={rightOptions}
                 className="navigation-drawer-item"
-                isRightOptionsDropdownOpen={isDropdownOpenComponent}
+                isRightOptionsDropdownOpen={isDropdownOpen}
                 triggerEvent="CLICK"
                 preventCollapseOnMobile={isMobile}
               />

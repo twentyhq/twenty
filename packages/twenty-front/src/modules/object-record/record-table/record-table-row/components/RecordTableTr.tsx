@@ -41,17 +41,18 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
   ) => {
     const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-    const currentRowSelected = useAtomComponentFamilyStateValue(
+    const isRowSelected = useAtomComponentFamilyStateValue(
       isRowSelectedComponentFamilyState,
       recordId,
     );
 
-    const isActive = useAtomComponentFamilyStateValue(
+    const isRecordTableRowActive = useAtomComponentFamilyStateValue(
       isRecordTableRowActiveComponentFamilyState,
       focusIndex,
     );
 
-    const isNextRowActive = useAtomComponentFamilyStateValue(
+    // eslint-disable-next-line twenty/matching-state-variable
+    const isNextRecordTableRowActive = useAtomComponentFamilyStateValue(
       isRecordTableRowActiveComponentFamilyState,
       focusIndex + 1,
     );
@@ -66,23 +67,25 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
       nextRecordId ?? '',
     );
 
-    const isFocused = useAtomComponentFamilyStateValue(
+    const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
       isRecordTableRowFocusedComponentFamilyState,
       focusIndex,
     );
 
-    const isRowFocusActive = useAtomComponentStateValue(
+    const isRecordTableRowFocusActive = useAtomComponentStateValue(
       isRecordTableRowFocusActiveComponentState,
     );
 
-    const isNextRowFocused = useAtomComponentFamilyStateValue(
+    // eslint-disable-next-line twenty/matching-state-variable
+    const isNextRecordTableRowFocused = useAtomComponentFamilyStateValue(
       isRecordTableRowFocusedComponentFamilyState,
       focusIndex + 1,
     );
 
     const isNextRowActiveOrFocused =
       !isNextRecordIdFirstOfGroup &&
-      ((isRowFocusActive && isNextRowFocused) || isNextRowActive);
+      ((isRecordTableRowFocusActive && isNextRecordTableRowFocused) ||
+        isNextRecordTableRowActive);
 
     const isRecordReadOnly = useIsRecordReadOnly({
       recordId,
@@ -99,7 +102,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
               objectNameSingular: objectMetadataItem.nameSingular,
             }) + recordId,
           objectNameSingular: objectMetadataItem.nameSingular,
-          isSelected: currentRowSelected,
+          isSelected: isRowSelected,
           isRecordReadOnly,
         }}
       >
@@ -109,13 +112,17 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
             data-virtualized-id={recordId}
             isDragging={isDragging}
             ref={ref}
-            data-active={isActive}
-            data-focused={isRowFocusActive && isFocused && !isActive}
+            data-active={isRecordTableRowActive}
+            data-focused={
+              isRecordTableRowFocusActive &&
+              isRecordTableRowFocused &&
+              !isRecordTableRowActive
+            }
             data-next-row-active-or-focused={isNextRowActiveOrFocused}
             isNextRowActiveOrFocused={isNextRowActiveOrFocused}
             focusIndex={focusIndex}
-            isFocused={isFocused}
-            isRowFocusActive={isRowFocusActive}
+            isFocused={isRecordTableRowFocused}
+            isRowFocusActive={isRecordTableRowFocusActive}
             recordId={recordId}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...props}
@@ -128,8 +135,12 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
             data-virtualized-id={recordId}
             isDragging={isDragging}
             ref={ref}
-            data-active={isActive}
-            data-focused={isRowFocusActive && isFocused && !isActive}
+            data-active={isRecordTableRowActive}
+            data-focused={
+              isRecordTableRowFocusActive &&
+              isRecordTableRowFocused &&
+              !isRecordTableRowActive
+            }
             data-next-row-active-or-focused={isNextRowActiveOrFocused}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...props}

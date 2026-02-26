@@ -29,11 +29,11 @@ export const RecordTableRow = ({
 }: RecordTableRowProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isFocused = useAtomComponentFamilyStateValue(
+  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
     isRecordTableRowFocusedComponentFamilyState,
     rowIndexForFocus,
   );
-  const isRowFocusActive = useAtomComponentStateValue(
+  const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
     recordTableId,
   );
@@ -44,7 +44,7 @@ export const RecordTableRow = ({
       draggableIndex={rowIndexForDrag}
       focusIndex={rowIndexForFocus}
     >
-      {isRowFocusActive && isFocused && (
+      {isRecordTableRowFocusActive && isRecordTableRowFocused && (
         <>
           <RecordTableRowHotkeyEffect />
           <RecordTableRowArrowKeysEffect />
@@ -62,7 +62,7 @@ export const RecordTableRow = ({
       draggableIndex={rowIndexForDrag}
       focusIndex={rowIndexForFocus}
     >
-      {isRowFocusActive && isFocused && (
+      {isRecordTableRowFocusActive && isRecordTableRowFocused && (
         <>
           <RecordTableRowHotkeyEffect />
           <RecordTableRowArrowKeysEffect />

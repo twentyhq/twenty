@@ -30,7 +30,7 @@ export const WorkflowRunVisualizerEffect = ({
   const { getIcon } = useIcons();
 
   const workflowRun = useWorkflowRun({ workflowRunId });
-  const setWorkflowRunId = useSetAtomComponentState(
+  const setWorkflowVisualizerWorkflowRunId = useSetAtomComponentState(
     workflowVisualizerWorkflowRunIdComponentState,
   );
 
@@ -72,8 +72,8 @@ export const WorkflowRunVisualizerEffect = ({
   const store = useStore();
 
   useEffect(() => {
-    setWorkflowRunId(workflowRunId);
-  }, [setWorkflowRunId, workflowRunId]);
+    setWorkflowVisualizerWorkflowRunId(workflowRunId);
+  }, [setWorkflowVisualizerWorkflowRunId, workflowRunId]);
 
   useEffect(() => {
     if (!isDefined(workflowRun)) {

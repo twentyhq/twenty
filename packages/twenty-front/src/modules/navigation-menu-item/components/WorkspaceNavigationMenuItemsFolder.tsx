@@ -113,7 +113,7 @@ export const WorkspaceNavigationMenuItemsFolder = ({
   const [openNavigationMenuItemFolderIds, setOpenNavigationMenuItemFolderIds] =
     useAtomState(openNavigationMenuItemFolderIdsState);
 
-  const setCurrentFolderId = useSetAtomState(
+  const setCurrentNavigationMenuItemFolderId = useSetAtomState(
     currentNavigationMenuItemFolderIdState,
   );
   const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
@@ -135,7 +135,9 @@ export const WorkspaceNavigationMenuItemsFolder = ({
 
   const handleToggle = () => {
     if (isMobile) {
-      setCurrentFolderId((prev) => (prev === folderId ? null : folderId));
+      setCurrentNavigationMenuItemFolderId((prev) =>
+        prev === folderId ? null : folderId,
+      );
     } else {
       setOpenNavigationMenuItemFolderIds((current) =>
         isOpen

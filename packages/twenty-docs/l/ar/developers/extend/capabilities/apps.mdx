@@ -165,7 +165,7 @@ export default defineObject({
 
 ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
 
-* `yarn twenty app:dev` سيولّد تلقائيًا عميل API مضبوط الأنواع في `node_modules/twenty-sdk/generated` (عميل Twenty مضبوط الأنواع + أنواع مساحة العمل).
+* سيقوم `yarn twenty app:dev` بتوليد عميلين API مضبوطي الأنواع تلقائيًا في `node_modules/twenty-sdk/generated`: `CoreApiClient` (لبيانات مساحة العمل عبر `/graphql`) و`MetadataApiClient` (لتكوين مساحة العمل وتحميل الملفات عبر `/metadata`).
 * `yarn twenty entity:add` سيضيف ملفات تعريف الكيانات ضمن `src/` لكائناتك المخصّصة، والوظائف، ومكوّنات الواجهة الأمامية، والأدوار، والمهارات، وغير ذلك.
 
 ## المصادقة
@@ -426,10 +426,10 @@ export default defineRole({
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '~/generated';
+import { CoreApiClient, type Person } from 'twenty-sdk/generated';
 
 const handler = async (params: RoutePayload) => {
-  const client = new Twenty(); // generated typed client
+  const client = new CoreApiClient();
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
     : 'Hello world';
@@ -644,10 +644,10 @@ const handler = async (event: RoutePayload) => {
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import Twenty from '~/generated';
+import { CoreApiClient } from 'twenty-sdk/generated';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
-  const client = new Twenty();
+  const client = new CoreApiClient();
 
   const result = await client.mutation({
     createTask: {
@@ -705,7 +705,7 @@ export default defineLogicFunction({
 تتيح لك المكوّنات الأمامية إنشاء مكوّنات React مخصّصة تُعرَض داخل واجهة مستخدم Twenty. استخدم `defineFrontComponent()` لتعريف مكوّنات مع تحقّق مدمج:
 
 ```typescript
-// src/my-widget.front-component.tsx
+// src/front-components/my-widget.tsx
 import { defineFrontComponent } from 'twenty-sdk';
 
 const MyWidget = () => {
@@ -728,14 +728,13 @@ export default defineFrontComponent({
 النقاط الرئيسية:
 
 * المكوّنات الأمامية هي مكوّنات React تُعرَض ضمن سياقات معزولة داخل Twenty.
-* استخدم لاحقة الملف `*.front-component.tsx` للاكتشاف التلقائي.
 * يشير الحقل `component` إلى مكوّن React الخاص بك.
 * يتم بناء المكوّنات ومزامنتها تلقائيًا أثناء `yarn twenty app:dev`.
 
 يمكنك إنشاء مكوّنات أمامية جديدة بطريقتين:
 
 * **مُنشأ بالقالب**: شغّل `yarn twenty entity:add` واختر خيار إضافة مكوّن أمامي جديد.
-* **يدوي**: أنشئ ملفًا جديدًا `*.front-component.tsx` واستخدم `defineFrontComponent()`.
+* **Manual**: Create a new `.tsx` file and use `defineFrontComponent()`, following the same pattern.
 
 ### المهارات
 
@@ -772,18 +771,24 @@ export default defineSkill({
 * **مُنشأ بالقالب**: شغِّل `yarn twenty entity:add` واختر خيار إضافة مهارة جديدة.
 * **يدوي**: أنشئ ملفًا جديدًا واستخدم `defineSkill()` مع اتباع النمط نفسه.
 
-### عميل مُولَّد مضبوط الأنواع
+### عملاء مُولَّدون مضبوطو الأنواع
 
-يُولَّد العميل مضبوط الأنواع تلقائيًا بواسطة `yarn twenty app:dev` ويُخزَّن في `node_modules/twenty-sdk/generated` استنادًا إلى مخطط مساحة العمل لديك. استخدمه في وظائفك:
+يتم توليد عميلين مضبوطي الأنواع تلقائيًا بواسطة `yarn twenty app:dev` وتخزينهما في `node_modules/twenty-sdk/generated` استنادًا إلى مخطط مساحة العمل لديك:
+
+* **`CoreApiClient`** — يُجري استعلامات إلى نقطة النهاية `/graphql` للحصول على بيانات مساحة العمل
+* **`MetadataApiClient`** — queries the `/metadata` endpoint for workspace configuration and file uploads
 
 ```typescript
-import Twenty from '~/generated';
+import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
 
-const client = new Twenty();
+const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
+
+const metadataClient = new MetadataApiClient();
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-يُعاد توليد العميل تلقائيًا بواسطة `yarn twenty app:dev` كلما تغيّرت كائناتك أو حقولك.
+Both clients are re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
 
 #### بيانات الاعتماد وقت التشغيل في الوظائف المنطقية
 
@@ -800,17 +805,17 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 
 #### رفع الملفات
 
-يتضمن العميل `Twenty` المُولَّد طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع ملف ضمن كائنات مساحة العمل الخاصة بك. نظرًا لأن عملاء GraphQL القياسيون لا يدعمون تحميل الملفات متعددة الأجزاء افتراضيًا، يوفر العميل هذه الطريقة المخصصة التي تطبق [مواصفة طلب GraphQL متعدد الأجزاء](https://github.com/jaydenseric/graphql-multipart-request-spec) في الخلفية.
+The generated `MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. نظرًا لأن عملاء GraphQL القياسيون لا يدعمون تحميل الملفات متعددة الأجزاء افتراضيًا، يوفر العميل هذه الطريقة المخصصة التي تطبق [مواصفة طلب GraphQL متعدد الأجزاء](https://github.com/jaydenseric/graphql-multipart-request-spec) في الخلفية.
 
 ```typescript
-import Twenty from '~/generated';
+import { MetadataApiClient } from 'twenty-sdk/generated';
 import * as fs from 'fs';
 
-const client = new Twenty();
+const metadataClient = new MetadataApiClient();
 
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
-const uploadedFile = await client.uploadFile(
+const uploadedFile = await metadataClient.uploadFile(
   fileBuffer,                                         // file contents as a Buffer
   'invoice.pdf',                                      // filename
   'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
@@ -841,7 +846,7 @@ uploadFile(
 
 النقاط الرئيسية:
 
-* ترسل هذه الطريقة الملف إلى **نقطة نهاية البيانات الوصفية** (وليست نقطة النهاية الرئيسية لـ GraphQL)، حيث تُنفَّذ عملية الرفع.
+* The `uploadFile` method is available on `MetadataApiClient` because the upload mutation is resolved by the `/metadata` endpoint.
 * تستخدم `universalIdentifier` الخاص بالحقل (وليس المعرّف الخاص بمساحة العمل)، ليعمل كود الرفع لديك عبر أي مساحة عمل مُثبَّت فيها تطبيقك — بما يتماشى مع كيفية إشارة التطبيقات إلى الحقول في كل مكان آخر.
 * العنوان `url` المُعاد هو عنوان URL موقّع يمكنك استخدامه للوصول إلى الملف المرفوع.
 

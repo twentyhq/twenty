@@ -8,17 +8,17 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 export const SeeDeletedRecordsNoSelectionRecordAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
-  if (!currentViewId) {
+  if (!contextStoreCurrentViewId) {
     throw new Error('Current view ID is not defined');
   }
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem.namePlural,
-    currentViewId,
+    contextStoreCurrentViewId,
   );
 
   const { handleToggleTrashColumnFilter, toggleSoftDeleteFilterState } =

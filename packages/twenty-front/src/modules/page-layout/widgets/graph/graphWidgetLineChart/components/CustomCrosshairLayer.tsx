@@ -41,7 +41,7 @@ export const CustomCrosshairLayer = ({
   onRectLeave,
 }: CustomCrosshairLayerProps) => {
   const theme = useTheme();
-  const crosshairX = useAtomComponentStateValue(
+  const graphWidgetLineCrosshairX = useAtomComponentStateValue(
     graphWidgetLineCrosshairXComponentState,
   );
 
@@ -109,7 +109,7 @@ export const CustomCrosshairLayer = ({
       return;
     }
 
-    if (sliceData.sliceX === crosshairX) {
+    if (sliceData.sliceX === graphWidgetLineCrosshairX) {
       return;
     }
 
@@ -140,18 +140,26 @@ export const CustomCrosshairLayer = ({
 
   return (
     <g>
-      {isDefined(crosshairX) && (
+      {isDefined(graphWidgetLineCrosshairX) && (
         <motion.line
-          x1={crosshairX}
-          x2={crosshairX}
+          x1={graphWidgetLineCrosshairX}
+          x2={graphWidgetLineCrosshairX}
           y1={0}
           y2={innerHeight}
           stroke={theme.font.color.primary}
           strokeWidth={LINE_CHART_CONSTANTS.CROSSHAIR_STROKE_WIDTH}
           strokeOpacity={LINE_CHART_CONSTANTS.CROSSHAIR_STROKE_OPACITY}
           strokeDasharray={LINE_CHART_CONSTANTS.CROSSHAIR_DASH_ARRAY}
-          initial={{ x1: crosshairX, x2: crosshairX, opacity: 0 }}
-          animate={{ x1: crosshairX, x2: crosshairX, opacity: 0.5 }}
+          initial={{
+            x1: graphWidgetLineCrosshairX,
+            x2: graphWidgetLineCrosshairX,
+            opacity: 0,
+          }}
+          animate={{
+            x1: graphWidgetLineCrosshairX,
+            x2: graphWidgetLineCrosshairX,
+            opacity: 0.5,
+          }}
           exit={{ opacity: 0 }}
           transition={transition}
           pointerEvents="none"

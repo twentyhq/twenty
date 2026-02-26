@@ -46,11 +46,11 @@ export const useResizeTableHeader = () => {
     number | null
   >(null);
 
-  const [resizedFieldMetadataItemId, setResizedFieldMetadataItemId] =
+  const [resizedFieldMetadataId, setResizedFieldMetadataId] =
     useAtomComponentState(resizedFieldMetadataIdComponentState);
 
   const recordField = visibleRecordFields.find(
-    findByProperty('fieldMetadataItemId', resizedFieldMetadataItemId),
+    findByProperty('fieldMetadataItemId', resizedFieldMetadataId),
   );
 
   const { resetTableRowSelection } = useResetTableRowSelection();
@@ -144,7 +144,7 @@ export const useResizeTableHeader = () => {
   const handleResizeHandlerEnd = useCallback(async () => {
     throwIfNotDefined(recordField, 'recordField');
 
-    if (!resizedFieldMetadataItemId) return;
+    if (!resizedFieldMetadataId) return;
 
     const currentResizeFieldOffset = store.get(resizeFieldOffset);
 
@@ -157,10 +157,10 @@ export const useResizeTableHeader = () => {
 
     store.set(resizeFieldOffset, 0);
     setInitialPointerPositionX(null);
-    setResizedFieldMetadataItemId(null);
+    setResizedFieldMetadataId(null);
 
     if (nextWidth !== recordField.size) {
-      const updatedRecordField = updateRecordField(resizedFieldMetadataItemId, {
+      const updatedRecordField = updateRecordField(resizedFieldMetadataId, {
         size: nextWidth,
       });
 
@@ -170,17 +170,17 @@ export const useResizeTableHeader = () => {
     setDragSelectionStartEnabled(true);
   }, [
     saveRecordFields,
-    resizedFieldMetadataItemId,
+    resizedFieldMetadataId,
     resizeFieldOffset,
     store,
-    setResizedFieldMetadataItemId,
+    setResizedFieldMetadataId,
     updateRecordField,
     setDragSelectionStartEnabled,
     recordField,
   ]);
 
   useTrackPointer({
-    shouldTrackPointer: resizedFieldMetadataItemId !== null,
+    shouldTrackPointer: resizedFieldMetadataId !== null,
     onMouseDown: handleResizeHandlerStart,
     onMouseMove: handleResizeHandlerMove,
     onMouseUp: handleResizeHandlerEnd,

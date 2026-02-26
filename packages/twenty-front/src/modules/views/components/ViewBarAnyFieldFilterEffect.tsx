@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarAnyFieldFilterEffect = () => {
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -20,7 +20,7 @@ export const ViewBarAnyFieldFilterEffect = () => {
   const currentView = useAtomFamilySelectorValue(
     coreViewFromViewIdFamilySelector,
     {
-      viewId: currentViewId ?? '',
+      viewId: contextStoreCurrentViewId ?? '',
     },
   );
 
@@ -28,7 +28,7 @@ export const ViewBarAnyFieldFilterEffect = () => {
     useAtomComponentFamilyState(
       hasInitializedAnyFieldFilterComponentFamilyState,
       {
-        viewId: currentViewId ?? undefined,
+        viewId: contextStoreCurrentViewId ?? undefined,
       },
     );
 
@@ -49,7 +49,7 @@ export const ViewBarAnyFieldFilterEffect = () => {
     }
   }, [
     setAnyFieldFilterValue,
-    currentViewId,
+    contextStoreCurrentViewId,
     hasInitializedAnyFieldFilter,
     setHasInitializedAnyFieldFilter,
     currentView,

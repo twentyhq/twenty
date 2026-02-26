@@ -18,7 +18,7 @@ const StyledContainer = styled.div`
 export const CommandMenuPageLayoutChartSettings = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
-  const draftPageLayout = useAtomComponentStateValue(
+  const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
@@ -28,7 +28,7 @@ export const CommandMenuPageLayoutChartSettings = () => {
     pageLayoutId,
   );
 
-  const widgetInEditMode = draftPageLayout.tabs
+  const widgetInEditMode = pageLayoutDraft.tabs
     .flatMap((tab) => tab.widgets)
     .find((widget) => widget.id === pageLayoutEditingWidgetId);
 

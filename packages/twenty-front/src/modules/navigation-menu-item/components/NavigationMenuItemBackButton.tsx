@@ -36,14 +36,14 @@ export const NavigationMenuItemBackButton = ({
   folderName,
 }: NavigationMenuItemBackButtonProps) => {
   const theme = useTheme();
-  const setCurrentFolderId = useSetAtomState(
+  const setCurrentNavigationMenuItemFolderId = useSetAtomState(
     currentNavigationMenuItemFolderIdState,
   );
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentFolderId(null);
+    setCurrentNavigationMenuItemFolderId(null);
   };
 
   return (

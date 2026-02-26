@@ -27,11 +27,11 @@ export const PageLayoutTabListReorderableTab = ({
   disabled,
   onSelect,
 }: PageLayoutTabListReorderableTabProps) => {
-  const tabSettingsOpenTabId = useAtomComponentStateValue(
+  const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
     pageLayoutTabSettingsOpenTabIdComponentState,
   );
 
-  const isSettingsOpenForThisTab = tabSettingsOpenTabId === tab.id;
+  const isSettingsOpenForThisTab = pageLayoutTabSettingsOpenTabId === tab.id;
   return (
     <Draggable draggableId={tab.id} index={index} isDragDisabled={disabled}>
       {(draggableProvided, draggableSnapshot) => (

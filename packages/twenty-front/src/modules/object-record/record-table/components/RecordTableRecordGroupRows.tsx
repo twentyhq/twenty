@@ -22,7 +22,7 @@ export const RecordTableRecordGroupRows = () => {
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const recordIdsByGroup = useAtomComponentFamilyStateValue(
+  const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     currentRecordGroupId,
   );
@@ -47,7 +47,7 @@ export const RecordTableRecordGroupRows = () => {
 
   return (
     <>
-      {recordIdsByGroup.map((recordId, rowIndexInGroup) => {
+      {recordIndexRecordIdsByGroup.map((recordId, rowIndexInGroup) => {
         const rowIndex = rowIndexMap.get(recordId);
 
         if (!isDefined(rowIndex)) {

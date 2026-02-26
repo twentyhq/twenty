@@ -12,17 +12,17 @@ import { isDefined } from 'twenty-shared/utils';
 export const HideDeletedRecordsNoSelectionRecordAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
-  if (!currentViewId) {
+  if (!contextStoreCurrentViewId) {
     throw new Error('Current view ID is not defined');
   }
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem.namePlural,
-    currentViewId,
+    contextStoreCurrentViewId,
   );
 
   const { toggleSoftDeleteFilterState } = useHandleToggleTrashColumnFilter({

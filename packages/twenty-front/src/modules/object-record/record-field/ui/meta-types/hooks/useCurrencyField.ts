@@ -30,7 +30,7 @@ export const useCurrencyField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldCurrencyValue>();
 
-  const draftValue = useAtomComponentStateValue(
+  const recordFieldInputDraftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
@@ -42,7 +42,7 @@ export const useCurrencyField = () => {
   return {
     fieldDefinition,
     fieldValue,
-    draftValue,
+    draftValue: recordFieldInputDraftValue,
     setDraftValue,
     setFieldValue,
     defaultValue,

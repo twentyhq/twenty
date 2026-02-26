@@ -14362,10 +14362,10 @@ msgstr "Les vues de l'espace de travail nécessitent l'autorisation de gestion d
 msgid "Workspaces"
 msgstr "Espaces de travail"
 
-#. js-lingui-id: F7iCiM
+#. js-lingui-id: QPsQMb
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
-msgid "Would you like to remove {recordGroupSort} group sorting?"
-msgstr "Souhaitez-vous supprimer le tri de groupe {recordGroupSort} ?"
+msgid "Would you like to remove {recordIndexRecordGroupSort} group sorting?"
+msgstr ""
 
 #. js-lingui-id: 5iSD9O
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx

@@ -17,7 +17,7 @@ export const EventFieldDiffValueEffect = ({
   mainObjectMetadataItem: ObjectMetadataItem;
   fieldMetadataItem: FieldMetadataItem;
 }) => {
-  const setEntity = useSetAtomFamilyState(
+  const setRecordStore = useSetAtomFamilyState(
     recordStoreFamilyState,
     diffArtificialRecordStoreId,
   );
@@ -31,13 +31,13 @@ export const EventFieldDiffValueEffect = ({
       [fieldMetadataItem.name]: diffRecord,
     };
 
-    setEntity(forgedObjectRecord);
+    setRecordStore(forgedObjectRecord);
   }, [
     diffRecord,
     diffArtificialRecordStoreId,
     fieldMetadataItem.name,
     mainObjectMetadataItem.nameSingular,
-    setEntity,
+    setRecordStore,
   ]);
 
   return <></>;

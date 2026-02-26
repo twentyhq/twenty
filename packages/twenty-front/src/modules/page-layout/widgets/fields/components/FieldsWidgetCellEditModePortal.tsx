@@ -25,15 +25,18 @@ export const FieldsWidgetCellEditModePortal = ({
     RecordFieldListComponentInstanceContext,
   );
 
-  const editModePosition = useAtomComponentStateValue(
+  const recordFieldListCellEditModePosition = useAtomComponentStateValue(
     recordFieldListCellEditModePositionComponentState,
   );
 
-  const editedFieldMetadataItem = isDefined(editModePosition)
-    ? flattenedFieldMetadataItems.at(editModePosition)
+  const editedFieldMetadataItem = isDefined(recordFieldListCellEditModePosition)
+    ? flattenedFieldMetadataItems.at(recordFieldListCellEditModePosition)
     : undefined;
 
-  if (!isDefined(editModePosition) || !isDefined(editedFieldMetadataItem)) {
+  if (
+    !isDefined(recordFieldListCellEditModePosition) ||
+    !isDefined(editedFieldMetadataItem)
+  ) {
     return null;
   }
 
