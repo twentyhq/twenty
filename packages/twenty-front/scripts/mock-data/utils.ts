@@ -24,6 +24,7 @@ export const graphqlRequest = async (
   endpoint: string,
   query: string,
   token?: string,
+  variables?: Record<string, unknown>,
 ): Promise<unknown> => {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -37,7 +38,7 @@ export const graphqlRequest = async (
   const response = await fetch(`${SERVER_BASE_URL}${endpoint}`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query, variables }),
   });
 
   const json = (await response.json()) as {

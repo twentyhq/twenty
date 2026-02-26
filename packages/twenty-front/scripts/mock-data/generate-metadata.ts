@@ -153,4 +153,8 @@ export const generateMetadata = async (token: string) => {
     "import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';",
     metadata,
   );
+
+  return metadata as {
+    objects: { edges: { node: Record<string, unknown> }[] };
+  };
 };
