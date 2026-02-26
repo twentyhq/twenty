@@ -2,7 +2,13 @@ import { type ApplicationVariables } from './applicationVariablesType';
 import { type ServerVariables } from './serverVariablesType';
 import { type SyncableEntityOptions } from './syncableEntityOptionsType';
 
-export type ApplicationMarketplaceData = {
+export type ApplicationManifest = SyncableEntityOptions & {
+  defaultRoleUniversalIdentifier: string;
+  displayName: string;
+  description: string;
+  icon?: string;
+  applicationVariables?: ApplicationVariables;
+  serverVariables?: ServerVariables;
   author?: string;
   category?: string;
   logo?: string;
@@ -11,16 +17,6 @@ export type ApplicationMarketplaceData = {
   providers?: string[];
   websiteUrl?: string;
   termsUrl?: string;
-};
-
-export type ApplicationManifest = SyncableEntityOptions & {
-  defaultRoleUniversalIdentifier: string;
-  displayName: string;
-  description: string;
-  icon?: string;
-  applicationVariables?: ApplicationVariables;
-  serverVariables?: ServerVariables;
-  marketplaceData?: ApplicationMarketplaceData;
   preInstallLogicFunctionUniversalIdentifier?: string;
   postInstallLogicFunctionUniversalIdentifier?: string;
   packageJsonChecksum: string | null;
