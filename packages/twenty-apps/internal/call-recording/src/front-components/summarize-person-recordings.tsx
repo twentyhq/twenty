@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { SummaryViewer } from 'src/components/SummaryViewer';
+import { SummaryViewerSkeleton } from 'src/components/SummaryViewerSkeleton';
 import {
   SUMMARIZE_PERSON_RECORDINGS_COMMAND_UNIVERSAL_IDENTIFIER,
   SUMMARIZE_PERSON_RECORDINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
@@ -155,7 +156,7 @@ const SummarizePersonRecordings = () => {
   }, [personRecordId]);
 
   if (loading) {
-    return <SummaryViewer markdown="*Generating summary...*" />;
+    return <SummaryViewerSkeleton />;
   }
 
   if (isDefined(error)) {

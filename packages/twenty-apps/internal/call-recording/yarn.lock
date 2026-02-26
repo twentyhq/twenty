@@ -3241,6 +3241,7 @@ __metadata:
     "@types/react": "npm:^18.2.0"
     eslint: "npm:^9.32.0"
     react: "npm:^18.2.0"
+    react-loading-skeleton: "npm:^3.5.0"
     react-markdown: "npm:^10.1.0"
     twenty-sdk: "portal:../../../twenty-sdk"
     typescript: "npm:^5.9.3"
@@ -6413,6 +6414,15 @@ __metadata:
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: 10c0/33977da7a5f1a287936a0c85639fec6ca74f4f15ef1e59a6bc20338fc73dc69555381e211f7a3529b8150a1f71e4225525b41b60b52965bda53ce7d47377ada1
+  languageName: node
+  linkType: hard
+
+"react-loading-skeleton@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "react-loading-skeleton@npm:3.5.0"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 10c0/a081f561c9700fead6ba98b91e3fe77a36a680e3fd69dbf4eecbaa5fabcb7173049c6d6fb7487355331a770bed432356edaa147702f3d46ddf0d6caa623e779f
   languageName: node
   linkType: hard
 

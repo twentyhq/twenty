@@ -1,4 +1,6 @@
+import { CallRecordingViewerSkeleton } from 'src/components/CallRecordingViewerSkeleton';
 import { MediaPlayer } from 'src/components/MediaPlayer';
+import { SummaryViewerSkeleton } from 'src/components/SummaryViewerSkeleton';
 import { TranscriptViewer } from 'src/components/TranscriptViewer';
 import { CALL_RECORDING_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-viewer-front-component-universal-identifier';
 import { useCallRecording } from 'src/hooks/useCallRecording';
@@ -17,7 +19,7 @@ export const CallRecordingViewer = () => {
   } = useTranscript(transcriptFileUrl);
 
   if (loading) {
-    return;
+    return <CallRecordingViewerSkeleton />;
   }
 
   if (isDefined(error)) {
@@ -44,7 +46,7 @@ export const CallRecordingViewer = () => {
         extension={recordingFileExtension}
       />
       {transcriptLoading ? (
-        <div>Loading transcript...</div>
+        <SummaryViewerSkeleton />
       ) : (
         <TranscriptViewer entries={transcriptEntries} />
       )}
