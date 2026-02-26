@@ -338,12 +338,12 @@ export abstract class WorkspaceEntityMigrationBuilderService<
   }: UniversalFlatEntityValidationArgs<T>): FlatEntityValidationError[] {
     if (
       !uuidValidate(universalIdentifier) ||
-      uuidVersion(universalIdentifier) !== 4
+      uuidVersion(universalIdentifier) < 4
     ) {
       return [
         {
           code: FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
-          message: `Invalid universalIdentifier: "${universalIdentifier}" is not a valid UUID v4`,
+          message: `Invalid universalIdentifier: "${universalIdentifier}" is not a valid UUID, uuid version should be greater than 4`,
           value: universalIdentifier,
         },
       ];

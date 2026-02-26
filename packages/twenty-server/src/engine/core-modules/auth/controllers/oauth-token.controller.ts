@@ -102,6 +102,8 @@ export class OAuthTokenController {
         break;
     }
 
-    res.status('error' in result ? 400 : 200).json(result);
+    res.status('error' in result ? 400 : 200);
+
+    return result;
   }
 }

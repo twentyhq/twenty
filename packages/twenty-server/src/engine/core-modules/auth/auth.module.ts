@@ -15,6 +15,7 @@ import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/g
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { OAuthDiscoveryController } from 'src/engine/core-modules/auth/controllers/oauth-discovery.controller';
+import { OAuthPropagatorController } from 'src/engine/core-modules/auth/controllers/oauth-propagator.controller';
 import { OAuthTokenController } from 'src/engine/core-modules/auth/controllers/oauth-token.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
@@ -131,6 +132,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MicrosoftAuthController,
     GoogleAPIsAuthController,
     MicrosoftAPIsAuthController,
+    OAuthPropagatorController,
     SSOAuthController,
     OAuthTokenController,
     OAuthDiscoveryController,

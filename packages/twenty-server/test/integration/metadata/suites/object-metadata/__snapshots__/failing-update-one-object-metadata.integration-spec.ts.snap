@@ -65,7 +65,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a uuid 1
       "userFriendlyMessage": "An error occurred.",
       "value": "not-a-uuid",
     },
-    "message": "Invalid UUID: 'not-a-valid-uuid'",
+    "message": "Invalid UUID: 'not-a-uuid'",
     "name": "ValidationError",
   },
 ]
