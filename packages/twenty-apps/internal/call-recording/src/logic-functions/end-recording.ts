@@ -8,7 +8,7 @@ import {
 } from 'src/utils/match-participants';
 import { summarizeTranscript } from 'src/utils/summarize-transcript';
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
 import { z } from 'zod';
 
 interface EndRecordingBody {
@@ -76,7 +76,7 @@ const downloadFile = async (
 };
 
 const processTranscript = async (
-  client: InstanceType<typeof CoreApiClient>,
+  metadataClient: InstanceType<typeof MetadataApiClient>,
   transcriptUrl: string | undefined,
 ): Promise<
   | {
@@ -91,7 +91,7 @@ const processTranscript = async (
 
   const { buffer, contentType, fileName } = await downloadFile(transcriptUrl);
 
-  const uploadedTranscript = await client.uploadFile(
+  const uploadedTranscript = await metadataClient.uploadFile(
     buffer,
     fileName,
     contentType,
@@ -120,6 +120,7 @@ const handler = async (event: any) => {
   }
 
   const client = new CoreApiClient();
+  const metadataClient = new MetadataApiClient();
 
   const { callRecording } = await client.query({
     callRecording: {
@@ -142,14 +143,17 @@ const handler = async (event: any) => {
 
   const { buffer, contentType, fileName } = await downloadFile(body.audioUrl);
 
-  const uploadedRecording = await client.uploadFile(
+  const uploadedRecording = await metadataClient.uploadFile(
     buffer,
     fileName,
     contentType,
     RECORDING_FILE_FIELD_UNIVERSAL_IDENTIFIER,
   );
 
-  const transcriptData = await processTranscript(client, body.transcriptUrl);
+  const transcriptData = await processTranscript(
+    metadataClient,
+    body.transcriptUrl,
+  );
 
   const callName = body.participants?.length
     ? `Call ${body.participants
