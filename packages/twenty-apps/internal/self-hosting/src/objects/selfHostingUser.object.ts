@@ -1,14 +1,43 @@
-import { FieldType, defineObject } from 'twenty-sdk';
+import {
+  defineObject,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
 import { UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers.constant';
+
+import { SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER } from 'src/fields/self-hosting-user-id';
+
+export const SELF_HOSTING_USER_NAME_SINGULAR = 'selfHostingUser';
 
 export default defineObject({
   universalIdentifier:
     UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.universalIdentifier,
-  nameSingular: 'selfHostingUser',
+  nameSingular: SELF_HOSTING_USER_NAME_SINGULAR,
   namePlural: 'selfHostingUsers',
   labelSingular: 'Self Hosting User',
   labelPlural: 'Self Hosting Users',
   fields: [
+    {
+      type: FieldType.RELATION,
+      name: 'personId',
+      label: 'Person',
+      description: 'Person id matching with the self hosting user',
+      relationTargetFieldMetadataUniversalIdentifier:
+        SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER,
+      relationTargetObjectMetadataUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+      isNullable: true,
+      universalIdentifier:
+        UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId
+          .universalIdentifier,
+      universalSettings: {
+        joinColumnName: 'personId',
+        onDelete: OnDeleteAction.SET_NULL,
+        relationType: RelationType.MANY_TO_ONE,
+      },
+    },
     {
       type: FieldType.FULL_NAME,
       name: 'name',

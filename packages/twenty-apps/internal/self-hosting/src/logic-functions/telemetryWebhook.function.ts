@@ -123,7 +123,7 @@ export const main = async (
 export default defineLogicFunction({
   universalIdentifier: '10104201-622b-4a5e-9f27-8f2af19b2a3c',
   name: 'telemetry-webhook',
-  timeoutSeconds: 5,
+  timeoutSeconds: 10,
   handler: main,
   httpRouteTriggerSettings: {
     path: '/webhook/telemetry',

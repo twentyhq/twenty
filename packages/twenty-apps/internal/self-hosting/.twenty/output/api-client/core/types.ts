@@ -32997,6 +32997,9 @@ export default {
             "companyId": [
                 22
             ],
+            "selfHostingUserId": [
+                22
+            ],
             "attachments": [
                 118,
                 {
@@ -33215,6 +33218,9 @@ export default {
                         "[TimelineActivityOrderByInput]"
                     ]
                 }
+            ],
+            "selfHostingUser": [
+                595
             ],
             "__typename": [
                 1
@@ -33904,6 +33910,12 @@ export default {
             "company": [
                 221
             ],
+            "selfHostingUserId": [
+                22
+            ],
+            "selfHostingUser": [
+                599
+            ],
             "__typename": [
                 1
             ]
@@ -33966,6 +33978,12 @@ export default {
             "company": [
                 221
             ],
+            "selfHostingUserId": [
+                22
+            ],
+            "selfHostingUser": [
+                599
+            ],
             "__typename": [
                 1
             ]
@@ -34023,6 +34041,9 @@ export default {
                 131
             ],
             "companyId": [
+                33
+            ],
+            "selfHostingUserId": [
                 33
             ],
             "and": [
@@ -34096,6 +34117,12 @@ export default {
             "company": [
                 228
             ],
+            "selfHostingUserId": [
+                59
+            ],
+            "selfHostingUser": [
+                605
+            ],
             "__typename": [
                 1
             ]
@@ -34160,6 +34187,12 @@ export default {
             ],
             "company": [
                 229
+            ],
+            "selfHostingUserId": [
+                59
+            ],
+            "selfHostingUser": [
+                606
             ],
             "__typename": [
                 1
@@ -34448,6 +34481,12 @@ export default {
             "company": [
                 228
             ],
+            "selfHostingUserId": [
+                59
+            ],
+            "selfHostingUser": [
+                605
+            ],
             "__typename": [
                 1
             ]
@@ -34506,6 +34545,9 @@ export default {
             ],
             "company": [
                 231
+            ],
+            "selfHostingUser": [
+                608
             ],
             "__typename": [
                 1
@@ -44848,6 +44890,9 @@ export default {
             ]
         },
         "SelfHostingUser": {
+            "companyFundingTotalAmountPrinted": [
+                1
+            ],
             "name": [
                 69
             ],
@@ -44926,9 +44971,6 @@ export default {
             "companyFundingTotalAmount": [
                 13
             ],
-            "companyFundingTotalAmountPrinted": [
-                1
-            ],
             "companyIndustries": [
                 1
             ],
@@ -44970,6 +45012,9 @@ export default {
             ],
             "searchVector": [
                 115
+            ],
+            "personId": [
+                453
             ],
             "timelineActivities": [
                 500,
@@ -45124,6 +45169,21 @@ export default {
         "SelfHostingUserConnection": {
             "totalCount": [
                 10
+            ],
+            "countUniqueValuesCompanyFundingTotalAmountPrinted": [
+                10
+            ],
+            "countEmptyCompanyFundingTotalAmountPrinted": [
+                10
+            ],
+            "countNotEmptyCompanyFundingTotalAmountPrinted": [
+                10
+            ],
+            "percentageEmptyCompanyFundingTotalAmountPrinted": [
+                13
+            ],
+            "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
+                13
             ],
             "countUniqueValuesName": [
                 10
@@ -45597,21 +45657,6 @@ export default {
                 13
             ],
             "sumCompanyFundingTotalAmount": [
-                13
-            ],
-            "countUniqueValuesCompanyFundingTotalAmountPrinted": [
-                10
-            ],
-            "countEmptyCompanyFundingTotalAmountPrinted": [
-                10
-            ],
-            "countNotEmptyCompanyFundingTotalAmountPrinted": [
-                10
-            ],
-            "percentageEmptyCompanyFundingTotalAmountPrinted": [
-                13
-            ],
-            "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
                 13
             ],
             "countUniqueValuesCompanyIndustries": [
@@ -45856,6 +45901,21 @@ export default {
             "totalCount": [
                 10
             ],
+            "countUniqueValuesCompanyFundingTotalAmountPrinted": [
+                10
+            ],
+            "countEmptyCompanyFundingTotalAmountPrinted": [
+                10
+            ],
+            "countNotEmptyCompanyFundingTotalAmountPrinted": [
+                10
+            ],
+            "percentageEmptyCompanyFundingTotalAmountPrinted": [
+                13
+            ],
+            "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
+                13
+            ],
             "countUniqueValuesName": [
                 10
             ],
@@ -46328,21 +46388,6 @@ export default {
                 13
             ],
             "sumCompanyFundingTotalAmount": [
-                13
-            ],
-            "countUniqueValuesCompanyFundingTotalAmountPrinted": [
-                10
-            ],
-            "countEmptyCompanyFundingTotalAmountPrinted": [
-                10
-            ],
-            "countNotEmptyCompanyFundingTotalAmountPrinted": [
-                10
-            ],
-            "percentageEmptyCompanyFundingTotalAmountPrinted": [
-                13
-            ],
-            "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
                 13
             ],
             "countUniqueValuesCompanyIndustries": [
@@ -46614,6 +46659,9 @@ export default {
             ]
         },
         "SelfHostingUserCreateInput": {
+            "companyFundingTotalAmountPrinted": [
+                1
+            ],
             "name": [
                 70
             ],
@@ -46692,9 +46740,6 @@ export default {
             "companyFundingTotalAmount": [
                 13
             ],
-            "companyFundingTotalAmountPrinted": [
-                1
-            ],
             "companyIndustries": [
                 1
             ],
@@ -46737,11 +46782,17 @@ export default {
             "searchVector": [
                 115
             ],
+            "personId": [
+                457
+            ],
             "__typename": [
                 1
             ]
         },
         "SelfHostingUserUpdateInput": {
+            "companyFundingTotalAmountPrinted": [
+                1
+            ],
             "name": [
                 71
             ],
@@ -46820,9 +46871,6 @@ export default {
             "companyFundingTotalAmount": [
                 13
             ],
-            "companyFundingTotalAmountPrinted": [
-                1
-            ],
             "companyIndustries": [
                 1
             ],
@@ -46865,11 +46913,17 @@ export default {
             "searchVector": [
                 115
             ],
+            "personId": [
+                457
+            ],
             "__typename": [
                 1
             ]
         },
         "SelfHostingUserFilterInput": {
+            "companyFundingTotalAmountPrinted": [
+                56
+            ],
             "name": [
                 72
             ],
@@ -46948,9 +47002,6 @@ export default {
             "companyFundingTotalAmount": [
                 130
             ],
-            "companyFundingTotalAmountPrinted": [
-                56
-            ],
             "companyIndustries": [
                 56
             ],
@@ -46993,6 +47044,9 @@ export default {
             "searchVector": [
                 131
             ],
+            "personId": [
+                33
+            ],
             "and": [
                 604
             ],
@@ -47007,6 +47061,9 @@ export default {
             ]
         },
         "SelfHostingUserOrderByInput": {
+            "companyFundingTotalAmountPrinted": [
+                59
+            ],
             "name": [
                 73
             ],
@@ -47085,9 +47142,6 @@ export default {
             "companyFundingTotalAmount": [
                 59
             ],
-            "companyFundingTotalAmountPrinted": [
-                59
-            ],
             "companyIndustries": [
                 59
             ],
@@ -47129,6 +47183,9 @@ export default {
             ],
             "searchVector": [
                 59
+            ],
+            "personId": [
+                464
             ],
             "__typename": [
                 1
@@ -47138,6 +47195,9 @@ export default {
             "aggregate": [
                 607
             ],
+            "companyFundingTotalAmountPrinted": [
+                59
+            ],
             "name": [
                 73
             ],
@@ -47216,9 +47276,6 @@ export default {
             "companyFundingTotalAmount": [
                 59
             ],
-            "companyFundingTotalAmountPrinted": [
-                59
-            ],
             "companyIndustries": [
                 59
             ],
@@ -47261,12 +47318,30 @@ export default {
             "searchVector": [
                 59
             ],
+            "personId": [
+                465
+            ],
             "__typename": [
                 1
             ]
         },
         "SelfHostingUserOrderByWithGroupByAggregateInput": {
             "totalCount": [
+                59
+            ],
+            "countUniqueValuesCompanyFundingTotalAmountPrinted": [
+                59
+            ],
+            "countEmptyCompanyFundingTotalAmountPrinted": [
+                59
+            ],
+            "countNotEmptyCompanyFundingTotalAmountPrinted": [
+                59
+            ],
+            "percentageEmptyCompanyFundingTotalAmountPrinted": [
+                59
+            ],
+            "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
                 59
             ],
             "countUniqueValuesName": [
@@ -47743,21 +47818,6 @@ export default {
             "sumCompanyFundingTotalAmount": [
                 59
             ],
-            "countUniqueValuesCompanyFundingTotalAmountPrinted": [
-                59
-            ],
-            "countEmptyCompanyFundingTotalAmountPrinted": [
-                59
-            ],
-            "countNotEmptyCompanyFundingTotalAmountPrinted": [
-                59
-            ],
-            "percentageEmptyCompanyFundingTotalAmountPrinted": [
-                59
-            ],
-            "percentageNotEmptyCompanyFundingTotalAmountPrinted": [
-                59
-            ],
             "countUniqueValuesCompanyIndustries": [
                 59
             ],
@@ -47986,11 +48046,17 @@ export default {
             "percentageNotEmptySearchVector": [
                 59
             ],
+            "personId": [
+                464
+            ],
             "__typename": [
                 1
             ]
         },
         "SelfHostingUserGroupByInput": {
+            "companyFundingTotalAmountPrinted": [
+                6
+            ],
             "name": [
                 74
             ],
@@ -48069,9 +48135,6 @@ export default {
             "companyFundingTotalAmount": [
                 6
             ],
-            "companyFundingTotalAmountPrinted": [
-                6
-            ],
             "companyIndustries": [
                 6
             ],
@@ -48113,6 +48176,9 @@ export default {
             ],
             "searchVector": [
                 6
+            ],
+            "personId": [
+                467
             ],
             "__typename": [
                 1

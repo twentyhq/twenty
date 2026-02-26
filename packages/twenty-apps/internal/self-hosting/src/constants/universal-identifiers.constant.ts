@@ -5,6 +5,9 @@ export const UNIVERSAL_IDENTIFIERS = {
       fields: {
         name: { universalIdentifier: '682cccbf-9f37-4290-a94c-902c771f61e4' },
         email: { universalIdentifier: 'a4b7892c-431a-4d44-973e-a5481652704f' },
+        personId: {
+          universalIdentifier: 'b453a43c-1512-48ca-8604-db750ad3ffb8',
+        },
         domain: {
           universalIdentifier: '1dfa7d4e-c8f5-4639-b58e-3392a8789f76',
         },

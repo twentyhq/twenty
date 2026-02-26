@@ -1,8 +1,425 @@
 import { createRequire as __createRequire } from 'module';
 const require = __createRequire(import.meta.url);
 
-// src/logic-functions/telemetryWebhook.function.ts
-import { defineLogicFunction } from "twenty-sdk";
+// src/logic-functions/match-telemetry-event-with-people.ts
+import {
+  defineLogicFunction
+} from "twenty-sdk";
+
+// src/objects/selfHostingUser.object.ts
+import {
+  defineObject,
+  FieldType as FieldType2,
+  RelationType as RelationType2,
+  OnDeleteAction as OnDeleteAction2,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS as STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS2
+} from "twenty-sdk";
+
+// src/constants/universal-identifiers.constant.ts
+var UNIVERSAL_IDENTIFIERS = {
+  objects: {
+    selfHostingUser: {
+      universalIdentifier: "06f3fb53-599e-4c6b-9df6-8f731973afd7",
+      fields: {
+        name: { universalIdentifier: "682cccbf-9f37-4290-a94c-902c771f61e4" },
+        email: { universalIdentifier: "a4b7892c-431a-4d44-973e-a5481652704f" },
+        personId: {
+          universalIdentifier: "b453a43c-1512-48ca-8604-db750ad3ffb8"
+        },
+        domain: {
+          universalIdentifier: "1dfa7d4e-c8f5-4639-b58e-3392a8789f76"
+        },
+        userWorkspaceId: {
+          universalIdentifier: "297a7d6b-e407-4b2d-8c03-8964bc1b7805"
+        },
+        userId: {
+          universalIdentifier: "5c7ba3ce-1473-4e3d-8e7c-31816fcb87d8"
+        },
+        locale: {
+          universalIdentifier: "7b39df37-a22e-4f38-ae77-91cf3ee7c076"
+        },
+        serverUrl: {
+          universalIdentifier: "f2516b77-2912-4cbb-8838-46ac5a5465d9"
+        },
+        numberOfEmailsWithSameDomain: {
+          universalIdentifier: "0bf05db0-6771-4400-91ca-1579ec11e76e"
+        },
+        isEnriched: {
+          universalIdentifier: "fefe9fd6-23ae-4046-b60b-64d17e9ff7ed"
+        },
+        triedToBeEnriched: {
+          universalIdentifier: "d32c8cc3-8855-453d-bb7d-9c9c0b3f2128"
+        },
+        isPersonalEmail: {
+          universalIdentifier: "f4568391-9474-4ed8-8cbb-e36d86e0f5f9"
+        },
+        isTwenty: {
+          universalIdentifier: "b1acef1f-7c10-47a9-899e-aaca45b36e04"
+        },
+        personCity: {
+          universalIdentifier: "ca733484-e595-4257-9ca9-9a7802fb8bcb"
+        },
+        personCountry: {
+          universalIdentifier: "18c06357-1b50-4d5b-82cf-1f71f286fbe4"
+        },
+        personJobFunction: {
+          universalIdentifier: "26e7e2c7-ea83-41e0-8c07-1fc2549a3fb4"
+        },
+        personJobTitle: {
+          universalIdentifier: "177908e9-1ca6-4762-9518-0df966d3e9fc"
+        },
+        personLinkedIn: {
+          universalIdentifier: "3515683f-7f9f-4b6d-9b16-614824d277b7"
+        },
+        personSeniority: {
+          universalIdentifier: "8b63855a-5915-4d6a-a6ed-ef7d8f8e5dd1"
+        },
+        companyAlexaRank: {
+          universalIdentifier: "7c61335b-cd4b-4eae-8b02-0db746913e36"
+        },
+        companyAnnualRevenue: {
+          universalIdentifier: "a2367973-aa12-42c2-9577-fe868f61b83b"
+        },
+        companyAnnualRevenuePrinted: {
+          universalIdentifier: "bc02b6af-8f48-4fde-920d-1fd3e2a8557b"
+        },
+        companyDescription: {
+          universalIdentifier: "a9bb622e-56b6-42ba-8b03-17a47d707409"
+        },
+        companyEmployees: {
+          universalIdentifier: "8e1dbc58-d444-470f-b8fe-9eed8da4b59e"
+        },
+        companyFoundedYear: {
+          universalIdentifier: "3cf95527-5064-43ab-bf5e-421eb45fac5f"
+        },
+        companyFundingLatestStage: {
+          universalIdentifier: "a7dcd92a-6811-490b-a8dd-fad1c19091a1"
+        },
+        companyFundingTotalAmount: {
+          universalIdentifier: "6fca8a11-b49a-4081-a7c9-9646f43ad7aa"
+        },
+        companyFundingTotalAmountPrinted: {
+          universalIdentifier: "0078f0f0-2262-4c74-aaf8-4061c6c8a1f3"
+        },
+        companyIndustries: {
+          universalIdentifier: "6b971b9c-6ef5-4497-989e-f9a7c72720cf"
+        },
+        companyIndustry: {
+          universalIdentifier: "ab84e651-d35b-4e02-8d69-1740af3e22f7"
+        },
+        companyLinkedIn: {
+          universalIdentifier: "4c44b956-f880-434f-b4cd-854b82076e56"
+        },
+        companyName: {
+          universalIdentifier: "1a25412b-f9ce-4406-ac53-f20d1ab8c5ea"
+        },
+        companyTags: {
+          universalIdentifier: "ceb64d0b-1203-4c6d-af00-39b668f5f891"
+        },
+        companyTech: {
+          universalIdentifier: "11dd57c3-06bb-4722-bb65-96d0a899ca91"
+        }
+      }
+    }
+  },
+  roles: {
+    defaultRole: {
+      universalIdentifier: "66972e19-9fdb-4336-87ce-442a17fd179c"
+    }
+  },
+  views: {
+    selfHostingUserView: {
+      universalIdentifier: "e903f0ee-52cb-4537-aca8-8940e30b023d"
+    }
+  }
+};
+
+// src/fields/self-hosting-user-id.ts
+import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS
+} from "twenty-sdk";
+var SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER = "9507f244-fdea-47d5-a734-725d4dae43da";
+var self_hosting_user_id_default = defineField({
+  universalIdentifier: SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER,
+  name: "selfHostingUser",
+  label: "Self hosting user id",
+  type: FieldType.RELATION,
+  relationTargetFieldMetadataUniversalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId.universalIdentifier,
+  relationTargetObjectMetadataUniversalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.universalIdentifier,
+  objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  description: "Self hosting user related to the person",
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    joinColumnName: "selfHostingUserId",
+    onDelete: OnDeleteAction.SET_NULL
+  }
+});
+
+// src/objects/selfHostingUser.object.ts
+var SELF_HOSTING_USER_NAME_SINGULAR = "selfHostingUser";
+var selfHostingUser_object_default = defineObject({
+  universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.universalIdentifier,
+  nameSingular: SELF_HOSTING_USER_NAME_SINGULAR,
+  namePlural: "selfHostingUsers",
+  labelSingular: "Self Hosting User",
+  labelPlural: "Self Hosting Users",
+  fields: [
+    {
+      type: FieldType2.RELATION,
+      name: "personId",
+      label: "Person",
+      description: "Person id matching with the self hosting user",
+      relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER,
+      relationTargetObjectMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS2.person.universalIdentifier,
+      isNullable: true,
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId.universalIdentifier,
+      universalSettings: {
+        joinColumnName: "personId",
+        onDelete: OnDeleteAction2.SET_NULL,
+        relationType: RelationType2.MANY_TO_ONE
+      }
+    },
+    {
+      type: FieldType2.FULL_NAME,
+      name: "name",
+      label: "Name",
+      description: "Name of the self hosting user",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.name.universalIdentifier
+    },
+    {
+      type: FieldType2.EMAILS,
+      name: "email",
+      label: "Email",
+      description: "The email of the self hosting user",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.email.universalIdentifier
+    },
+    {
+      type: FieldType2.LINKS,
+      name: "domain",
+      label: "Domain",
+      description: "Domain extracted from the email address (e.g. domain.com / https://domain.com/)",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.domain.universalIdentifier
+    },
+    {
+      type: FieldType2.UUID,
+      name: "userWorkspaceId",
+      label: "User workspace Id",
+      description: "User workspace id of the self hosting user",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.userWorkspaceId.universalIdentifier
+    },
+    {
+      type: FieldType2.UUID,
+      name: "userId",
+      label: "User Id",
+      description: "User id of the self hosting user",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.userId.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "locale",
+      label: "Locale",
+      description: "Locale of the self hosting user",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.locale.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "serverUrl",
+      label: "Server url",
+      description: "Server url of the self hosting user",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.serverUrl.universalIdentifier
+    },
+    {
+      type: FieldType2.NUMBER,
+      name: "numberOfEmailsWithSameDomain",
+      label: "Number of Emails with Same Domain",
+      description: "Aggregated count of self hosting users sharing the same business domain",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.numberOfEmailsWithSameDomain.universalIdentifier
+    },
+    {
+      type: FieldType2.BOOLEAN,
+      name: "isEnriched",
+      label: "Is Enriched",
+      description: "Whether the record has been enriched",
+      defaultValue: false,
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.isEnriched.universalIdentifier
+    },
+    {
+      type: FieldType2.BOOLEAN,
+      name: "triedToBeEnriched",
+      label: "Tried to Be Enriched",
+      description: "Whether an enrichment attempt has been made",
+      defaultValue: false,
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.triedToBeEnriched.universalIdentifier
+    },
+    {
+      type: FieldType2.BOOLEAN,
+      name: "isPersonalEmail",
+      label: "Is Personal Email",
+      description: "Whether the email is a personal email address",
+      defaultValue: true,
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.isPersonalEmail.universalIdentifier
+    },
+    {
+      type: FieldType2.BOOLEAN,
+      name: "isTwenty",
+      label: "Is Twenty",
+      description: "Whether the user is from Twenty",
+      defaultValue: false,
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.isTwenty.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "personCity",
+      label: "Person City",
+      description: "City of the person",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personCity.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "personCountry",
+      label: "Person Country",
+      description: "Country of the person",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personCountry.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "personJobFunction",
+      label: "Person Job Function",
+      description: "Job function of the person",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personJobFunction.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "personJobTitle",
+      label: "Person Job Title",
+      description: "Job title of the person",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personJobTitle.universalIdentifier
+    },
+    {
+      type: FieldType2.LINKS,
+      name: "personLinkedIn",
+      label: "Person LinkedIn",
+      description: "LinkedIn profile of the person",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personLinkedIn.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "personSeniority",
+      label: "Person Seniority",
+      description: "Seniority level of the person",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personSeniority.universalIdentifier
+    },
+    {
+      type: FieldType2.NUMBER,
+      name: "companyAlexaRank",
+      label: "Company Alexa Rank",
+      description: "Alexa rank of the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyAlexaRank.universalIdentifier
+    },
+    {
+      type: FieldType2.CURRENCY,
+      name: "companyAnnualRevenue",
+      label: "Company Annual Revenue",
+      description: "Annual revenue of the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyAnnualRevenue.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "companyAnnualRevenuePrinted",
+      label: "Company Annual Revenue Printed",
+      description: "Formatted annual revenue of the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyAnnualRevenuePrinted.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "companyDescription",
+      label: "Company Description",
+      description: "Description of the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyDescription.universalIdentifier
+    },
+    {
+      type: FieldType2.NUMBER,
+      name: "companyEmployees",
+      label: "Company Employees",
+      description: "Number of employees at the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyEmployees.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "companyFoundedYear",
+      label: "Company Founded Year",
+      description: "Year the company was founded",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyFoundedYear.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "companyFundingLatestStage",
+      label: "Company Funding Latest Stage",
+      description: "Latest funding stage of the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyFundingLatestStage.universalIdentifier
+    },
+    {
+      type: FieldType2.NUMBER,
+      name: "companyFundingTotalAmount",
+      label: "Company Funding Total Amount",
+      description: "Total funding amount of the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyFundingTotalAmount.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "companyFundingTotalAmountPrinted",
+      label: "Company Funding Total Amount Printed",
+      description: "Formatted total funding amount of the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyFundingTotalAmountPrinted.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "companyIndustries",
+      label: "Company Industries",
+      description: "Industries the company operates in",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyIndustries.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "companyIndustry",
+      label: "Company Industry",
+      description: "Primary industry of the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyIndustry.universalIdentifier
+    },
+    {
+      type: FieldType2.LINKS,
+      name: "companyLinkedIn",
+      label: "Company LinkedIn",
+      description: "LinkedIn page of the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyLinkedIn.universalIdentifier
+    },
+    {
+      type: FieldType2.TEXT,
+      name: "companyName",
+      label: "Company Name",
+      description: "Name of the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyName.universalIdentifier
+    },
+    {
+      type: FieldType2.ARRAY,
+      name: "companyTags",
+      label: "Company Tags",
+      description: "Tags associated with the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyTags.universalIdentifier
+    },
+    {
+      type: FieldType2.ARRAY,
+      name: "companyTech",
+      label: "Company Tech",
+      description: "Technologies used by the company",
+      universalIdentifier: UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.companyTech.universalIdentifier
+    }
+  ]
+});
 
 // node_modules/twenty-sdk/generated/core/runtime/error.ts
 var GenqlError = class extends Error {
@@ -59102,117 +59519,82 @@ var defaultOptions2 = {
   }
 };
 
-// src/logic-functions/telemetryWebhook.function.ts
-var main = async (params) => {
-  try {
-    const {
-      action,
-      workspaceId,
-      userWorkspaceId,
-      userId,
-      userEmail,
-      userFirstName,
-      userLastName,
-      locale,
-      serverUrl
-    } = params.body || {};
-    if (action !== "user_signup") {
-      return {
-        success: true,
-        message: `Event type '${action}' ignored`
-      };
-    }
-    if (!userEmail) {
-      return {
-        success: true,
-        message: "No email found in telemetry event"
-      };
-    }
-    if (userEmail.toLowerCase().includes("example") || userEmail.toLowerCase().includes("test")) {
-      return {
-        success: true,
-        message: `Email '${userEmail}' ignored (contains test/example data)`
-      };
-    }
-    const client = new CoreApiClient();
-    let existingSelfHostingUserId = void 0;
-    try {
-      const { selfHostingUser: existingSelfHostingUser } = await client.query({
-        selfHostingUser: {
-          __args: {
-            filter: {
-              email: { primaryEmail: { eq: userEmail } }
-            }
-          },
-          id: true
+// src/logic-functions/match-telemetry-event-with-people.ts
+var handler = async (params) => {
+  const [object, action] = params.name.split(".");
+  if (object !== SELF_HOSTING_USER_NAME_SINGULAR) {
+    return;
+  }
+  if (!["created", "updated"].includes(action)) {
+    return;
+  }
+  const email = params.properties.after.email?.primaryEmail;
+  if (!email) {
+    return;
+  }
+  const client = new CoreApiClient();
+  const { people } = await client.query({
+    people: {
+      __args: {
+        filter: {
+          emails: {
+            primaryEmail: { eq: email }
+          }
         }
-      });
-      existingSelfHostingUserId = existingSelfHostingUser?.id;
-    } catch {
-    }
-    if (existingSelfHostingUserId) {
-      await client.mutation({
-        updateSelfHostingUser: {
-          __args: {
-            id: existingSelfHostingUserId,
-            data: {
-              name: { firstName: userFirstName, lastName: userLastName },
-              email: { primaryEmail: userEmail, additionalEmails: null },
-              userWorkspaceId,
-              userId,
-              locale,
-              serverUrl
+      },
+      edges: {
+        node: {
+          id: true,
+          selfHostingUsers: {
+            edges: {
+              node: {
+                id: true
+              }
             }
-          },
-          id: true
+          }
         }
-      });
-      return {
-        success: true,
-        message: `Self hosting user ${existingSelfHostingUserId} updated`
-      };
+      }
     }
-    const { createSelfHostingUser } = await client.mutation({
-      createSelfHostingUser: {
+  });
+  let personId = people?.edges[0].node.id;
+  if (!personId) {
+    const person = await client.mutation({
+      createPerson: {
         __args: {
           data: {
-            name: { firstName: userFirstName, lastName: userLastName },
-            email: { primaryEmail: userEmail, additionalEmails: null },
-            workspaceId,
-            userWorkspaceId,
-            userId,
-            locale,
-            serverUrl
+            emails: {
+              primaryEmail: email
+            }
           }
         },
         id: true
       }
     });
-    return {
-      success: true,
-      message: `Self hosting user ${createSelfHostingUser?.id} created`
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: "Failed to process telemetry event",
-      error: error instanceof Error ? error.message : String(error)
-    };
+    personId = person.createPerson?.id;
   }
+  await client.mutation({
+    updateSelfHostingUser: {
+      __args: {
+        id: params.properties.after.id,
+        data: {
+          personId: { connect: { where: { id: personId } } }
+        }
+      },
+      id: true
+    }
+  });
 };
-var telemetryWebhook_function_default = defineLogicFunction({
-  universalIdentifier: "10104201-622b-4a5e-9f27-8f2af19b2a3c",
-  name: "telemetry-webhook",
+var match_telemetry_event_with_people_default = defineLogicFunction({
+  universalIdentifier: "87f0293a-997a-4c7b-85e2-e77462ccf0c5",
+  name: "match-telemetry-event-with-people",
+  description: "Add a description for your logic function",
   timeoutSeconds: 10,
-  handler: main,
-  httpRouteTriggerSettings: {
-    path: "/webhook/telemetry",
-    httpMethod: "POST",
-    isAuthRequired: false
+  handler,
+  databaseEventTriggerSettings: {
+    eventName: `${SELF_HOSTING_USER_NAME_SINGULAR}.*`
   }
 });
 export {
-  telemetryWebhook_function_default as default,
-  main
+  match_telemetry_event_with_people_default as default
 };
-//# sourceMappingURL=telemetryWebhook.function.mjs.map
+//# sourceMappingURL=match-telemetry-event-with-people.mjs.map

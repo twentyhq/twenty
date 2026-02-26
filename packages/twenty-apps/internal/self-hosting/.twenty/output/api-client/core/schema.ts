@@ -8730,6 +8730,8 @@ export interface Person {
     searchVector?: Scalars['TSVector']
     /** Contact's company */
     companyId?: Scalars['ID']
+    /** Self hosting user related to the person */
+    selfHostingUserId?: Scalars['ID']
     /** Attachments linked to the contact. */
     attachments?: AttachmentConnection
     /** Calendar Event Participants */
@@ -8748,6 +8750,8 @@ export interface Person {
     taskTargets?: TaskTargetConnection
     /** Events linked to the person */
     timelineActivities?: TimelineActivityConnection
+    /** Self hosting user related to the person */
+    selfHostingUser?: SelfHostingUser
     __typename: 'Person'
 }
 
@@ -12307,6 +12311,8 @@ export interface WorkspaceMemberGroupByConnection {
 }
 
 export interface SelfHostingUser {
+    /** Formatted total funding amount of the company */
+    companyFundingTotalAmountPrinted?: Scalars['String']
     /** Name of the self hosting user */
     name?: FullName
     /** The email of the self hosting user */
@@ -12359,8 +12365,6 @@ export interface SelfHostingUser {
     companyFundingLatestStage?: Scalars['String']
     /** Total funding amount of the company */
     companyFundingTotalAmount?: Scalars['Float']
-    /** Formatted total funding amount of the company */
-    companyFundingTotalAmountPrinted?: Scalars['String']
     /** Industries the company operates in */
     companyIndustries?: Scalars['String']
     /** Primary industry of the company */
@@ -12389,6 +12393,8 @@ export interface SelfHostingUser {
     position: Scalars['Position']
     /** Search vector */
     searchVector?: Scalars['TSVector']
+    /** Person id matching with the self hosting user */
+    personId?: Person
     /** Self Hosting Users tied to the SelfHostingUser */
     timelineActivities?: TimelineActivityConnection
     /** Self Hosting Users tied to the SelfHostingUser */
@@ -12411,6 +12417,16 @@ export interface SelfHostingUserEdge {
 export interface SelfHostingUserConnection {
     /** Total number of records in the connection */
     totalCount?: Scalars['Int']
+    /** Number of unique values for companyFundingTotalAmountPrinted */
+    countUniqueValuesCompanyFundingTotalAmountPrinted?: Scalars['Int']
+    /** Number of empty values for companyFundingTotalAmountPrinted */
+    countEmptyCompanyFundingTotalAmountPrinted?: Scalars['Int']
+    /** Number of non-empty values for companyFundingTotalAmountPrinted */
+    countNotEmptyCompanyFundingTotalAmountPrinted?: Scalars['Int']
+    /** Percentage of empty values for companyFundingTotalAmountPrinted */
+    percentageEmptyCompanyFundingTotalAmountPrinted?: Scalars['Float']
+    /** Percentage of non-empty values for companyFundingTotalAmountPrinted */
+    percentageNotEmptyCompanyFundingTotalAmountPrinted?: Scalars['Float']
     /** Number of unique values for name */
     countUniqueValuesName?: Scalars['Int']
     /** Number of empty values for name */
@@ -12727,16 +12743,6 @@ export interface SelfHostingUserConnection {
     avgCompanyFundingTotalAmount?: Scalars['Float']
     /** Sum of amounts contained in the field companyFundingTotalAmount */
     sumCompanyFundingTotalAmount?: Scalars['Float']
-    /** Number of unique values for companyFundingTotalAmountPrinted */
-    countUniqueValuesCompanyFundingTotalAmountPrinted?: Scalars['Int']
-    /** Number of empty values for companyFundingTotalAmountPrinted */
-    countEmptyCompanyFundingTotalAmountPrinted?: Scalars['Int']
-    /** Number of non-empty values for companyFundingTotalAmountPrinted */
-    countNotEmptyCompanyFundingTotalAmountPrinted?: Scalars['Int']
-    /** Percentage of empty values for companyFundingTotalAmountPrinted */
-    percentageEmptyCompanyFundingTotalAmountPrinted?: Scalars['Float']
-    /** Percentage of non-empty values for companyFundingTotalAmountPrinted */
-    percentageNotEmptyCompanyFundingTotalAmountPrinted?: Scalars['Float']
     /** Number of unique values for companyIndustries */
     countUniqueValuesCompanyIndustries?: Scalars['Int']
     /** Number of empty values for companyIndustries */
@@ -12897,6 +12903,16 @@ export interface SelfHostingUserConnection {
 export interface SelfHostingUserGroupByConnection {
     /** Total number of records in the connection */
     totalCount?: Scalars['Int']
+    /** Number of unique values for companyFundingTotalAmountPrinted */
+    countUniqueValuesCompanyFundingTotalAmountPrinted?: Scalars['Int']
+    /** Number of empty values for companyFundingTotalAmountPrinted */
+    countEmptyCompanyFundingTotalAmountPrinted?: Scalars['Int']
+    /** Number of non-empty values for companyFundingTotalAmountPrinted */
+    countNotEmptyCompanyFundingTotalAmountPrinted?: Scalars['Int']
+    /** Percentage of empty values for companyFundingTotalAmountPrinted */
+    percentageEmptyCompanyFundingTotalAmountPrinted?: Scalars['Float']
+    /** Percentage of non-empty values for companyFundingTotalAmountPrinted */
+    percentageNotEmptyCompanyFundingTotalAmountPrinted?: Scalars['Float']
     /** Number of unique values for name */
     countUniqueValuesName?: Scalars['Int']
     /** Number of empty values for name */
@@ -13213,16 +13229,6 @@ export interface SelfHostingUserGroupByConnection {
     avgCompanyFundingTotalAmount?: Scalars['Float']
     /** Sum of amounts contained in the field companyFundingTotalAmount */
     sumCompanyFundingTotalAmount?: Scalars['Float']
-    /** Number of unique values for companyFundingTotalAmountPrinted */
-    countUniqueValuesCompanyFundingTotalAmountPrinted?: Scalars['Int']
-    /** Number of empty values for companyFundingTotalAmountPrinted */
-    countEmptyCompanyFundingTotalAmountPrinted?: Scalars['Int']
-    /** Number of non-empty values for companyFundingTotalAmountPrinted */
-    countNotEmptyCompanyFundingTotalAmountPrinted?: Scalars['Int']
-    /** Percentage of empty values for companyFundingTotalAmountPrinted */
-    percentageEmptyCompanyFundingTotalAmountPrinted?: Scalars['Float']
-    /** Percentage of non-empty values for companyFundingTotalAmountPrinted */
-    percentageNotEmptyCompanyFundingTotalAmountPrinted?: Scalars['Float']
     /** Number of unique values for companyIndustries */
     countUniqueValuesCompanyIndustries?: Scalars['Int']
     /** Number of empty values for companyIndustries */
@@ -30721,6 +30727,8 @@ export interface PersonGenqlSelection{
     searchVector?: boolean | number
     /** Contact's company */
     companyId?: boolean | number
+    /** Self hosting user related to the person */
+    selfHostingUserId?: boolean | number
     /** Attachments linked to the contact. */
     attachments?: (AttachmentConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (AttachmentFilterInput | null), orderBy?: ((AttachmentOrderByInput | null)[] | null)} })
     /** Calendar Event Participants */
@@ -30739,6 +30747,8 @@ export interface PersonGenqlSelection{
     taskTargets?: (TaskTargetConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (TaskTargetFilterInput | null), orderBy?: ((TaskTargetOrderByInput | null)[] | null)} })
     /** Events linked to the person */
     timelineActivities?: (TimelineActivityConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (TimelineActivityFilterInput | null), orderBy?: ((TimelineActivityOrderByInput | null)[] | null)} })
+    /** Self hosting user related to the person */
+    selfHostingUser?: SelfHostingUserGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -31199,7 +31209,11 @@ searchVector?: (Scalars['TSVector'] | null),
 /** Contact's company */
 companyId?: (Scalars['ID'] | null),
 /** Contact's company */
-company?: (CompanyRelationInput | null)}
+company?: (CompanyRelationInput | null),
+/** Self hosting user related to the person */
+selfHostingUserId?: (Scalars['ID'] | null),
+/** Self hosting user related to the person */
+selfHostingUser?: (SelfHostingUserRelationInput | null)}
 
 
 /** A person */
@@ -31241,7 +31255,11 @@ searchVector?: (Scalars['TSVector'] | null),
 /** Contact's company */
 companyId?: (Scalars['ID'] | null),
 /** Contact's company */
-company?: (CompanyRelationInput | null)}
+company?: (CompanyRelationInput | null),
+/** Self hosting user related to the person */
+selfHostingUserId?: (Scalars['ID'] | null),
+/** Self hosting user related to the person */
+selfHostingUser?: (SelfHostingUserRelationInput | null)}
 
 
 /** A person */
@@ -31281,7 +31299,9 @@ updatedBy?: (ActorFilterInput | null),
 /** Field used for full-text search */
 searchVector?: (TSVectorFilter | null),
 /** Contact's company */
-companyId?: (UUIDFilter | null),and?: ((PersonFilterInput | null)[] | null),or?: ((PersonFilterInput | null)[] | null),not?: (PersonFilterInput | null)}
+companyId?: (UUIDFilter | null),
+/** Self hosting user related to the person */
+selfHostingUserId?: (UUIDFilter | null),and?: ((PersonFilterInput | null)[] | null),or?: ((PersonFilterInput | null)[] | null),not?: (PersonFilterInput | null)}
 
 
 /** A person */
@@ -31323,7 +31343,11 @@ searchVector?: (OrderByDirection | null),
 /** Contact's company */
 companyId?: (OrderByDirection | null),
 /** Order by fields of the related company */
-company?: (CompanyOrderByInput | null)}
+company?: (CompanyOrderByInput | null),
+/** Self hosting user related to the person */
+selfHostingUserId?: (OrderByDirection | null),
+/** Order by fields of the related selfHostingUser */
+selfHostingUser?: (SelfHostingUserOrderByInput | null)}
 
 
 /** A person */
@@ -31367,7 +31391,11 @@ searchVector?: (OrderByDirection | null),
 /** Contact's company */
 companyId?: (OrderByDirection | null),
 /** Order by fields of the related company */
-company?: (CompanyOrderByWithGroupByInput | null)}
+company?: (CompanyOrderByWithGroupByInput | null),
+/** Self hosting user related to the person */
+selfHostingUserId?: (OrderByDirection | null),
+/** Order by fields of the related selfHostingUser */
+selfHostingUser?: (SelfHostingUserOrderByWithGroupByInput | null)}
 
 
 /** Aggregate-based ordering */
@@ -31559,7 +31587,11 @@ percentageNotEmptySearchVector?: (OrderByDirection | null),
 /** Contact's company */
 companyId?: (OrderByDirection | null),
 /** Order by fields of the related company */
-company?: (CompanyOrderByInput | null)}
+company?: (CompanyOrderByInput | null),
+/** Self hosting user related to the person */
+selfHostingUserId?: (OrderByDirection | null),
+/** Order by fields of the related selfHostingUser */
+selfHostingUser?: (SelfHostingUserOrderByInput | null)}
 
 
 /** A person */
@@ -31599,7 +31631,9 @@ updatedBy?: (ActorGroupByInput | null),
 /** Field used for full-text search */
 searchVector?: (Scalars['Boolean'] | null),
 /** Group by fields of the related company */
-company?: (CompanyGroupByInput | null)}
+company?: (CompanyGroupByInput | null),
+/** Group by fields of the related selfHostingUser */
+selfHostingUser?: (SelfHostingUserGroupByInput | null)}
 
 
 /** A task */
@@ -38027,6 +38061,8 @@ createdBy?: (ActorGroupByInput | null),
 updatedBy?: (ActorGroupByInput | null)}
 
 export interface SelfHostingUserGenqlSelection{
+    /** Formatted total funding amount of the company */
+    companyFundingTotalAmountPrinted?: boolean | number
     /** Name of the self hosting user */
     name?: FullNameGenqlSelection
     /** The email of the self hosting user */
@@ -38079,8 +38115,6 @@ export interface SelfHostingUserGenqlSelection{
     companyFundingLatestStage?: boolean | number
     /** Total funding amount of the company */
     companyFundingTotalAmount?: boolean | number
-    /** Formatted total funding amount of the company */
-    companyFundingTotalAmountPrinted?: boolean | number
     /** Industries the company operates in */
     companyIndustries?: boolean | number
     /** Primary industry of the company */
@@ -38109,6 +38143,8 @@ export interface SelfHostingUserGenqlSelection{
     position?: boolean | number
     /** Search vector */
     searchVector?: boolean | number
+    /** Person id matching with the self hosting user */
+    personId?: PersonGenqlSelection
     /** Self Hosting Users tied to the SelfHostingUser */
     timelineActivities?: (TimelineActivityConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (TimelineActivityFilterInput | null), orderBy?: ((TimelineActivityOrderByInput | null)[] | null)} })
     /** Self Hosting Users tied to the SelfHostingUser */
@@ -38133,6 +38169,16 @@ export interface SelfHostingUserEdgeGenqlSelection{
 export interface SelfHostingUserConnectionGenqlSelection{
     /** Total number of records in the connection */
     totalCount?: boolean | number
+    /** Number of unique values for companyFundingTotalAmountPrinted */
+    countUniqueValuesCompanyFundingTotalAmountPrinted?: boolean | number
+    /** Number of empty values for companyFundingTotalAmountPrinted */
+    countEmptyCompanyFundingTotalAmountPrinted?: boolean | number
+    /** Number of non-empty values for companyFundingTotalAmountPrinted */
+    countNotEmptyCompanyFundingTotalAmountPrinted?: boolean | number
+    /** Percentage of empty values for companyFundingTotalAmountPrinted */
+    percentageEmptyCompanyFundingTotalAmountPrinted?: boolean | number
+    /** Percentage of non-empty values for companyFundingTotalAmountPrinted */
+    percentageNotEmptyCompanyFundingTotalAmountPrinted?: boolean | number
     /** Number of unique values for name */
     countUniqueValuesName?: boolean | number
     /** Number of empty values for name */
@@ -38449,16 +38495,6 @@ export interface SelfHostingUserConnectionGenqlSelection{
     avgCompanyFundingTotalAmount?: boolean | number
     /** Sum of amounts contained in the field companyFundingTotalAmount */
     sumCompanyFundingTotalAmount?: boolean | number
-    /** Number of unique values for companyFundingTotalAmountPrinted */
-    countUniqueValuesCompanyFundingTotalAmountPrinted?: boolean | number
-    /** Number of empty values for companyFundingTotalAmountPrinted */
-    countEmptyCompanyFundingTotalAmountPrinted?: boolean | number
-    /** Number of non-empty values for companyFundingTotalAmountPrinted */
-    countNotEmptyCompanyFundingTotalAmountPrinted?: boolean | number
-    /** Percentage of empty values for companyFundingTotalAmountPrinted */
-    percentageEmptyCompanyFundingTotalAmountPrinted?: boolean | number
-    /** Percentage of non-empty values for companyFundingTotalAmountPrinted */
-    percentageNotEmptyCompanyFundingTotalAmountPrinted?: boolean | number
     /** Number of unique values for companyIndustries */
     countUniqueValuesCompanyIndustries?: boolean | number
     /** Number of empty values for companyIndustries */
@@ -38620,6 +38656,16 @@ export interface SelfHostingUserConnectionGenqlSelection{
 export interface SelfHostingUserGroupByConnectionGenqlSelection{
     /** Total number of records in the connection */
     totalCount?: boolean | number
+    /** Number of unique values for companyFundingTotalAmountPrinted */
+    countUniqueValuesCompanyFundingTotalAmountPrinted?: boolean | number
+    /** Number of empty values for companyFundingTotalAmountPrinted */
+    countEmptyCompanyFundingTotalAmountPrinted?: boolean | number
+    /** Number of non-empty values for companyFundingTotalAmountPrinted */
+    countNotEmptyCompanyFundingTotalAmountPrinted?: boolean | number
+    /** Percentage of empty values for companyFundingTotalAmountPrinted */
+    percentageEmptyCompanyFundingTotalAmountPrinted?: boolean | number
+    /** Percentage of non-empty values for companyFundingTotalAmountPrinted */
+    percentageNotEmptyCompanyFundingTotalAmountPrinted?: boolean | number
     /** Number of unique values for name */
     countUniqueValuesName?: boolean | number
     /** Number of empty values for name */
@@ -38936,16 +38982,6 @@ export interface SelfHostingUserGroupByConnectionGenqlSelection{
     avgCompanyFundingTotalAmount?: boolean | number
     /** Sum of amounts contained in the field companyFundingTotalAmount */
     sumCompanyFundingTotalAmount?: boolean | number
-    /** Number of unique values for companyFundingTotalAmountPrinted */
-    countUniqueValuesCompanyFundingTotalAmountPrinted?: boolean | number
-    /** Number of empty values for companyFundingTotalAmountPrinted */
-    countEmptyCompanyFundingTotalAmountPrinted?: boolean | number
-    /** Number of non-empty values for companyFundingTotalAmountPrinted */
-    countNotEmptyCompanyFundingTotalAmountPrinted?: boolean | number
-    /** Percentage of empty values for companyFundingTotalAmountPrinted */
-    percentageEmptyCompanyFundingTotalAmountPrinted?: boolean | number
-    /** Percentage of non-empty values for companyFundingTotalAmountPrinted */
-    percentageNotEmptyCompanyFundingTotalAmountPrinted?: boolean | number
     /** Number of unique values for companyIndustries */
     countUniqueValuesCompanyIndustries?: boolean | number
     /** Number of empty values for companyIndustries */
@@ -39120,6 +39156,8 @@ export interface SelfHostingUserWhereUniqueInput {
 id?: (Scalars['ID'] | null)}
 
 export interface SelfHostingUserCreateInput {
+/** Formatted total funding amount of the company */
+companyFundingTotalAmountPrinted?: (Scalars['String'] | null),
 /** Name of the self hosting user */
 name?: (FullNameCreateInput | null),
 /** The email of the self hosting user */
@@ -39172,8 +39210,6 @@ companyFoundedYear?: (Scalars['String'] | null),
 companyFundingLatestStage?: (Scalars['String'] | null),
 /** Total funding amount of the company */
 companyFundingTotalAmount?: (Scalars['Float'] | null),
-/** Formatted total funding amount of the company */
-companyFundingTotalAmountPrinted?: (Scalars['String'] | null),
 /** Industries the company operates in */
 companyIndustries?: (Scalars['String'] | null),
 /** Primary industry of the company */
@@ -39201,9 +39237,13 @@ updatedBy?: (ActorCreateInput | null),
 /** Position */
 position?: (Scalars['Position'] | null),
 /** Search vector */
-searchVector?: (Scalars['TSVector'] | null)}
+searchVector?: (Scalars['TSVector'] | null),
+/** Person id matching with the self hosting user */
+personId?: (PersonRelationInput | null)}
 
 export interface SelfHostingUserUpdateInput {
+/** Formatted total funding amount of the company */
+companyFundingTotalAmountPrinted?: (Scalars['String'] | null),
 /** Name of the self hosting user */
 name?: (FullNameUpdateInput | null),
 /** The email of the self hosting user */
@@ -39256,8 +39296,6 @@ companyFoundedYear?: (Scalars['String'] | null),
 companyFundingLatestStage?: (Scalars['String'] | null),
 /** Total funding amount of the company */
 companyFundingTotalAmount?: (Scalars['Float'] | null),
-/** Formatted total funding amount of the company */
-companyFundingTotalAmountPrinted?: (Scalars['String'] | null),
 /** Industries the company operates in */
 companyIndustries?: (Scalars['String'] | null),
 /** Primary industry of the company */
@@ -39285,9 +39323,13 @@ updatedBy?: (ActorUpdateInput | null),
 /** Position */
 position?: (Scalars['Position'] | null),
 /** Search vector */
-searchVector?: (Scalars['TSVector'] | null)}
+searchVector?: (Scalars['TSVector'] | null),
+/** Person id matching with the self hosting user */
+personId?: (PersonRelationInput | null)}
 
 export interface SelfHostingUserFilterInput {
+/** Formatted total funding amount of the company */
+companyFundingTotalAmountPrinted?: (StringFilter | null),
 /** Name of the self hosting user */
 name?: (FullNameFilterInput | null),
 /** The email of the self hosting user */
@@ -39340,8 +39382,6 @@ companyFoundedYear?: (StringFilter | null),
 companyFundingLatestStage?: (StringFilter | null),
 /** Total funding amount of the company */
 companyFundingTotalAmount?: (FloatFilter | null),
-/** Formatted total funding amount of the company */
-companyFundingTotalAmountPrinted?: (StringFilter | null),
 /** Industries the company operates in */
 companyIndustries?: (StringFilter | null),
 /** Primary industry of the company */
@@ -39369,9 +39409,13 @@ updatedBy?: (ActorFilterInput | null),
 /** Position */
 position?: (FloatFilter | null),
 /** Search vector */
-searchVector?: (TSVectorFilter | null),and?: ((SelfHostingUserFilterInput | null)[] | null),or?: ((SelfHostingUserFilterInput | null)[] | null),not?: (SelfHostingUserFilterInput | null)}
+searchVector?: (TSVectorFilter | null),
+/** Person id matching with the self hosting user */
+personId?: (UUIDFilter | null),and?: ((SelfHostingUserFilterInput | null)[] | null),or?: ((SelfHostingUserFilterInput | null)[] | null),not?: (SelfHostingUserFilterInput | null)}
 
 export interface SelfHostingUserOrderByInput {
+/** Formatted total funding amount of the company */
+companyFundingTotalAmountPrinted?: (OrderByDirection | null),
 /** Name of the self hosting user */
 name?: (FullNameOrderByInput | null),
 /** The email of the self hosting user */
@@ -39424,8 +39468,6 @@ companyFoundedYear?: (OrderByDirection | null),
 companyFundingLatestStage?: (OrderByDirection | null),
 /** Total funding amount of the company */
 companyFundingTotalAmount?: (OrderByDirection | null),
-/** Formatted total funding amount of the company */
-companyFundingTotalAmountPrinted?: (OrderByDirection | null),
 /** Industries the company operates in */
 companyIndustries?: (OrderByDirection | null),
 /** Primary industry of the company */
@@ -39453,11 +39495,15 @@ updatedBy?: (ActorOrderByInput | null),
 /** Position */
 position?: (OrderByDirection | null),
 /** Search vector */
-searchVector?: (OrderByDirection | null)}
+searchVector?: (OrderByDirection | null),
+/** Order by fields of the related person */
+personId?: (PersonOrderByInput | null)}
 
 export interface SelfHostingUserOrderByWithGroupByInput {
 /** Order by aggregate values */
 aggregate?: (SelfHostingUserOrderByWithGroupByAggregateInput | null),
+/** Formatted total funding amount of the company */
+companyFundingTotalAmountPrinted?: (OrderByDirection | null),
 /** Name of the self hosting user */
 name?: (FullNameOrderByInput | null),
 /** The email of the self hosting user */
@@ -39510,8 +39556,6 @@ companyFoundedYear?: (OrderByDirection | null),
 companyFundingLatestStage?: (OrderByDirection | null),
 /** Total funding amount of the company */
 companyFundingTotalAmount?: (OrderByDirection | null),
-/** Formatted total funding amount of the company */
-companyFundingTotalAmountPrinted?: (OrderByDirection | null),
 /** Industries the company operates in */
 companyIndustries?: (OrderByDirection | null),
 /** Primary industry of the company */
@@ -39539,13 +39583,25 @@ updatedBy?: (ActorOrderByInput | null),
 /** Position */
 position?: (OrderByDirection | null),
 /** Search vector */
-searchVector?: (OrderByDirection | null)}
+searchVector?: (OrderByDirection | null),
+/** Order by fields of the related person */
+personId?: (PersonOrderByWithGroupByInput | null)}
 
 
 /** Aggregate-based ordering */
 export interface SelfHostingUserOrderByWithGroupByAggregateInput {
 /** Total number of records in the connection */
 totalCount?: (OrderByDirection | null),
+/** Number of unique values for companyFundingTotalAmountPrinted */
+countUniqueValuesCompanyFundingTotalAmountPrinted?: (OrderByDirection | null),
+/** Number of empty values for companyFundingTotalAmountPrinted */
+countEmptyCompanyFundingTotalAmountPrinted?: (OrderByDirection | null),
+/** Number of non-empty values for companyFundingTotalAmountPrinted */
+countNotEmptyCompanyFundingTotalAmountPrinted?: (OrderByDirection | null),
+/** Percentage of empty values for companyFundingTotalAmountPrinted */
+percentageEmptyCompanyFundingTotalAmountPrinted?: (OrderByDirection | null),
+/** Percentage of non-empty values for companyFundingTotalAmountPrinted */
+percentageNotEmptyCompanyFundingTotalAmountPrinted?: (OrderByDirection | null),
 /** Number of unique values for name */
 countUniqueValuesName?: (OrderByDirection | null),
 /** Number of empty values for name */
@@ -39862,16 +39918,6 @@ maxCompanyFundingTotalAmount?: (OrderByDirection | null),
 avgCompanyFundingTotalAmount?: (OrderByDirection | null),
 /** Sum of amounts contained in the field companyFundingTotalAmount */
 sumCompanyFundingTotalAmount?: (OrderByDirection | null),
-/** Number of unique values for companyFundingTotalAmountPrinted */
-countUniqueValuesCompanyFundingTotalAmountPrinted?: (OrderByDirection | null),
-/** Number of empty values for companyFundingTotalAmountPrinted */
-countEmptyCompanyFundingTotalAmountPrinted?: (OrderByDirection | null),
-/** Number of non-empty values for companyFundingTotalAmountPrinted */
-countNotEmptyCompanyFundingTotalAmountPrinted?: (OrderByDirection | null),
-/** Percentage of empty values for companyFundingTotalAmountPrinted */
-percentageEmptyCompanyFundingTotalAmountPrinted?: (OrderByDirection | null),
-/** Percentage of non-empty values for companyFundingTotalAmountPrinted */
-percentageNotEmptyCompanyFundingTotalAmountPrinted?: (OrderByDirection | null),
 /** Number of unique values for companyIndustries */
 countUniqueValuesCompanyIndustries?: (OrderByDirection | null),
 /** Number of empty values for companyIndustries */
@@ -40023,9 +40069,13 @@ countNotEmptySearchVector?: (OrderByDirection | null),
 /** Percentage of empty values for searchVector */
 percentageEmptySearchVector?: (OrderByDirection | null),
 /** Percentage of non-empty values for searchVector */
-percentageNotEmptySearchVector?: (OrderByDirection | null)}
+percentageNotEmptySearchVector?: (OrderByDirection | null),
+/** Order by fields of the related person */
+personId?: (PersonOrderByInput | null)}
 
 export interface SelfHostingUserGroupByInput {
+/** Formatted total funding amount of the company */
+companyFundingTotalAmountPrinted?: (Scalars['Boolean'] | null),
 /** Name of the self hosting user */
 name?: (FullNameGroupByInput | null),
 /** The email of the self hosting user */
@@ -40078,8 +40128,6 @@ companyFoundedYear?: (Scalars['Boolean'] | null),
 companyFundingLatestStage?: (Scalars['Boolean'] | null),
 /** Total funding amount of the company */
 companyFundingTotalAmount?: (Scalars['Boolean'] | null),
-/** Formatted total funding amount of the company */
-companyFundingTotalAmountPrinted?: (Scalars['Boolean'] | null),
 /** Industries the company operates in */
 companyIndustries?: (Scalars['Boolean'] | null),
 /** Primary industry of the company */
@@ -40107,7 +40155,9 @@ updatedBy?: (ActorGroupByInput | null),
 /** Position */
 position?: (Scalars['Boolean'] | null),
 /** Search vector */
-searchVector?: (Scalars['Boolean'] | null)}
+searchVector?: (Scalars['Boolean'] | null),
+/** Group by fields of the related person */
+personId?: (PersonGroupByInput | null)}
 
 
     const TimelineCalendarEventParticipant_possibleTypes: string[] = ['TimelineCalendarEventParticipant']

@@ -38,6 +38,15 @@ export default defineView({
       size: 200,
     },
     {
+      universalIdentifier: '0f9e4f63-3664-443a-9f06-8a6cc04c1d90',
+      fieldMetadataUniversalIdentifier:
+        UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personId
+          .universalIdentifier,
+      position: 2.1,
+      isVisible: true,
+      size: 200,
+    },
+    {
       universalIdentifier: 'dcf88ae8-e71d-452f-b51e-d88cbc6dd273',
       fieldMetadataUniversalIdentifier:
         UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.userWorkspaceId
