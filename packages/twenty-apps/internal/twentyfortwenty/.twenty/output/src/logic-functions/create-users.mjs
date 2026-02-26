@@ -34464,6 +34464,33 @@ var types_default = {
           ]
         }
       ],
+      "cloudUsers2": [
+        598,
+        {
+          "first": [
+            10
+          ],
+          "last": [
+            10
+          ],
+          "offset": [
+            10
+          ],
+          "before": [
+            1
+          ],
+          "after": [
+            1
+          ],
+          "filter": [
+            605
+          ],
+          "orderBy": [
+            607,
+            "[CloudUser2OrderByInput]"
+          ]
+        }
+      ],
       "__typename": [
         1
       ]
@@ -46406,7 +46433,13 @@ var types_default = {
       "fullName": [
         69
       ],
+      "isActiveL24h": [
+        6
+      ],
       "isActiveL30d": [
+        6
+      ],
+      "isActiveL7d": [
         6
       ],
       "isTwenty": [
@@ -46454,11 +46487,8 @@ var types_default = {
       "searchVector": [
         115
       ],
-      "isActiveL24h": [
-        6
-      ],
-      "isActiveL7d": [
-        6
+      "personId": [
+        22
       ],
       "timelineActivities": [
         500,
@@ -46622,6 +46652,9 @@ var types_default = {
           ]
         }
       ],
+      "person": [
+        453
+      ],
       "__typename": [
         1
       ]
@@ -46776,6 +46809,27 @@ var types_default = {
       "percentageNotEmptyFullName": [
         13
       ],
+      "countUniqueValuesIsActiveL24h": [
+        10
+      ],
+      "countEmptyIsActiveL24h": [
+        10
+      ],
+      "countNotEmptyIsActiveL24h": [
+        10
+      ],
+      "percentageEmptyIsActiveL24h": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL24h": [
+        13
+      ],
+      "countTrueIsActiveL24h": [
+        10
+      ],
+      "countFalseIsActiveL24h": [
+        10
+      ],
       "countUniqueValuesIsActiveL30d": [
         10
       ],
@@ -46795,6 +46849,27 @@ var types_default = {
         10
       ],
       "countFalseIsActiveL30d": [
+        10
+      ],
+      "countUniqueValuesIsActiveL7d": [
+        10
+      ],
+      "countEmptyIsActiveL7d": [
+        10
+      ],
+      "countNotEmptyIsActiveL7d": [
+        10
+      ],
+      "percentageEmptyIsActiveL7d": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL7d": [
+        13
+      ],
+      "countTrueIsActiveL7d": [
+        10
+      ],
+      "countFalseIsActiveL7d": [
         10
       ],
       "countUniqueValuesIsTwenty": [
@@ -47111,48 +47186,6 @@ var types_default = {
       ],
       "percentageNotEmptySearchVector": [
         13
-      ],
-      "countUniqueValuesIsActiveL24h": [
-        10
-      ],
-      "countEmptyIsActiveL24h": [
-        10
-      ],
-      "countNotEmptyIsActiveL24h": [
-        10
-      ],
-      "percentageEmptyIsActiveL24h": [
-        13
-      ],
-      "percentageNotEmptyIsActiveL24h": [
-        13
-      ],
-      "countTrueIsActiveL24h": [
-        10
-      ],
-      "countFalseIsActiveL24h": [
-        10
-      ],
-      "countUniqueValuesIsActiveL7d": [
-        10
-      ],
-      "countEmptyIsActiveL7d": [
-        10
-      ],
-      "countNotEmptyIsActiveL7d": [
-        10
-      ],
-      "percentageEmptyIsActiveL7d": [
-        13
-      ],
-      "percentageNotEmptyIsActiveL7d": [
-        13
-      ],
-      "countTrueIsActiveL7d": [
-        10
-      ],
-      "countFalseIsActiveL7d": [
-        10
       ],
       "edges": [
         597
@@ -47303,6 +47336,27 @@ var types_default = {
       "percentageNotEmptyFullName": [
         13
       ],
+      "countUniqueValuesIsActiveL24h": [
+        10
+      ],
+      "countEmptyIsActiveL24h": [
+        10
+      ],
+      "countNotEmptyIsActiveL24h": [
+        10
+      ],
+      "percentageEmptyIsActiveL24h": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL24h": [
+        13
+      ],
+      "countTrueIsActiveL24h": [
+        10
+      ],
+      "countFalseIsActiveL24h": [
+        10
+      ],
       "countUniqueValuesIsActiveL30d": [
         10
       ],
@@ -47322,6 +47376,27 @@ var types_default = {
         10
       ],
       "countFalseIsActiveL30d": [
+        10
+      ],
+      "countUniqueValuesIsActiveL7d": [
+        10
+      ],
+      "countEmptyIsActiveL7d": [
+        10
+      ],
+      "countNotEmptyIsActiveL7d": [
+        10
+      ],
+      "percentageEmptyIsActiveL7d": [
+        13
+      ],
+      "percentageNotEmptyIsActiveL7d": [
+        13
+      ],
+      "countTrueIsActiveL7d": [
+        10
+      ],
+      "countFalseIsActiveL7d": [
         10
       ],
       "countUniqueValuesIsTwenty": [
@@ -47639,48 +47714,6 @@ var types_default = {
       "percentageNotEmptySearchVector": [
         13
       ],
-      "countUniqueValuesIsActiveL24h": [
-        10
-      ],
-      "countEmptyIsActiveL24h": [
-        10
-      ],
-      "countNotEmptyIsActiveL24h": [
-        10
-      ],
-      "percentageEmptyIsActiveL24h": [
-        13
-      ],
-      "percentageNotEmptyIsActiveL24h": [
-        13
-      ],
-      "countTrueIsActiveL24h": [
-        10
-      ],
-      "countFalseIsActiveL24h": [
-        10
-      ],
-      "countUniqueValuesIsActiveL7d": [
-        10
-      ],
-      "countEmptyIsActiveL7d": [
-        10
-      ],
-      "countNotEmptyIsActiveL7d": [
-        10
-      ],
-      "percentageEmptyIsActiveL7d": [
-        13
-      ],
-      "percentageNotEmptyIsActiveL7d": [
-        13
-      ],
-      "countTrueIsActiveL7d": [
-        10
-      ],
-      "countFalseIsActiveL7d": [
-        10
-      ],
       "edges": [
         597
       ],
@@ -47743,7 +47776,13 @@ var types_default = {
       "fullName": [
         70
       ],
+      "isActiveL24h": [
+        6
+      ],
       "isActiveL30d": [
+        6
+      ],
+      "isActiveL7d": [
         6
       ],
       "isTwenty": [
@@ -47791,11 +47830,11 @@ var types_default = {
       "searchVector": [
         115
       ],
-      "isActiveL24h": [
-        6
+      "personId": [
+        22
       ],
-      "isActiveL7d": [
-        6
+      "person": [
+        457
       ],
       "__typename": [
         1
@@ -47823,7 +47862,13 @@ var types_default = {
       "fullName": [
         71
       ],
+      "isActiveL24h": [
+        6
+      ],
       "isActiveL30d": [
+        6
+      ],
+      "isActiveL7d": [
         6
       ],
       "isTwenty": [
@@ -47871,11 +47916,11 @@ var types_default = {
       "searchVector": [
         115
       ],
-      "isActiveL24h": [
-        6
+      "personId": [
+        22
       ],
-      "isActiveL7d": [
-        6
+      "person": [
+        457
       ],
       "__typename": [
         1
@@ -47903,7 +47948,13 @@ var types_default = {
       "fullName": [
         72
       ],
+      "isActiveL24h": [
+        179
+      ],
       "isActiveL30d": [
+        179
+      ],
+      "isActiveL7d": [
         179
       ],
       "isTwenty": [
@@ -47951,11 +48002,8 @@ var types_default = {
       "searchVector": [
         131
       ],
-      "isActiveL24h": [
-        179
-      ],
-      "isActiveL7d": [
-        179
+      "personId": [
+        33
       ],
       "and": [
         605
@@ -48015,7 +48063,13 @@ var types_default = {
       "fullName": [
         73
       ],
+      "isActiveL24h": [
+        59
+      ],
       "isActiveL30d": [
+        59
+      ],
+      "isActiveL7d": [
         59
       ],
       "isTwenty": [
@@ -48063,11 +48117,11 @@ var types_default = {
       "searchVector": [
         59
       ],
-      "isActiveL24h": [
+      "personId": [
         59
       ],
-      "isActiveL7d": [
-        59
+      "person": [
+        464
       ],
       "__typename": [
         1
@@ -48098,7 +48152,13 @@ var types_default = {
       "fullName": [
         73
       ],
+      "isActiveL24h": [
+        59
+      ],
       "isActiveL30d": [
+        59
+      ],
+      "isActiveL7d": [
         59
       ],
       "isTwenty": [
@@ -48146,11 +48206,11 @@ var types_default = {
       "searchVector": [
         59
       ],
-      "isActiveL24h": [
+      "personId": [
         59
       ],
-      "isActiveL7d": [
-        59
+      "person": [
+        465
       ],
       "__typename": [
         1
@@ -48295,6 +48355,27 @@ var types_default = {
       "percentageNotEmptyFullName": [
         59
       ],
+      "countUniqueValuesIsActiveL24h": [
+        59
+      ],
+      "countEmptyIsActiveL24h": [
+        59
+      ],
+      "countNotEmptyIsActiveL24h": [
+        59
+      ],
+      "percentageEmptyIsActiveL24h": [
+        59
+      ],
+      "percentageNotEmptyIsActiveL24h": [
+        59
+      ],
+      "countTrueIsActiveL24h": [
+        59
+      ],
+      "countFalseIsActiveL24h": [
+        59
+      ],
       "countUniqueValuesIsActiveL30d": [
         59
       ],
@@ -48314,6 +48395,27 @@ var types_default = {
         59
       ],
       "countFalseIsActiveL30d": [
+        59
+      ],
+      "countUniqueValuesIsActiveL7d": [
+        59
+      ],
+      "countEmptyIsActiveL7d": [
+        59
+      ],
+      "countNotEmptyIsActiveL7d": [
+        59
+      ],
+      "percentageEmptyIsActiveL7d": [
+        59
+      ],
+      "percentageNotEmptyIsActiveL7d": [
+        59
+      ],
+      "countTrueIsActiveL7d": [
+        59
+      ],
+      "countFalseIsActiveL7d": [
         59
       ],
       "countUniqueValuesIsTwenty": [
@@ -48631,47 +48733,11 @@ var types_default = {
       "percentageNotEmptySearchVector": [
         59
       ],
-      "countUniqueValuesIsActiveL24h": [
+      "personId": [
         59
       ],
-      "countEmptyIsActiveL24h": [
-        59
-      ],
-      "countNotEmptyIsActiveL24h": [
-        59
-      ],
-      "percentageEmptyIsActiveL24h": [
-        59
-      ],
-      "percentageNotEmptyIsActiveL24h": [
-        59
-      ],
-      "countTrueIsActiveL24h": [
-        59
-      ],
-      "countFalseIsActiveL24h": [
-        59
-      ],
-      "countUniqueValuesIsActiveL7d": [
-        59
-      ],
-      "countEmptyIsActiveL7d": [
-        59
-      ],
-      "countNotEmptyIsActiveL7d": [
-        59
-      ],
-      "percentageEmptyIsActiveL7d": [
-        59
-      ],
-      "percentageNotEmptyIsActiveL7d": [
-        59
-      ],
-      "countTrueIsActiveL7d": [
-        59
-      ],
-      "countFalseIsActiveL7d": [
-        59
+      "person": [
+        464
       ],
       "__typename": [
         1
@@ -48699,7 +48765,13 @@ var types_default = {
       "fullName": [
         74
       ],
+      "isActiveL24h": [
+        6
+      ],
       "isActiveL30d": [
+        6
+      ],
+      "isActiveL7d": [
         6
       ],
       "isTwenty": [
@@ -48747,11 +48819,8 @@ var types_default = {
       "searchVector": [
         6
       ],
-      "isActiveL24h": [
-        6
-      ],
-      "isActiveL7d": [
-        6
+      "person": [
+        467
       ],
       "__typename": [
         1
@@ -54333,6 +54402,14 @@ var types_default = {
   }
 };
 
+// node_modules/twenty-sdk/generated/schema.ts
+var enumCloudUser2ActivityStatusEnum = {
+  ACTIVE: "ACTIVE",
+  RECENT: "RECENT",
+  DORMANT: "DORMANT",
+  INACTIVE: "INACTIVE"
+};
+
 // node_modules/twenty-sdk/generated/index.ts
 var typeMap = linkTypeMap(types_default);
 var createClient2 = function(options) {
@@ -54400,9 +54477,6 @@ var Twenty = class {
     return result.data.uploadFilesFieldFileByUniversalIdentifier;
   }
 };
-
-// src/logic-functions/create-users.ts
-import { isDefined } from "twenty-shared/utils";
 
 // node_modules/zod/v4/classic/external.js
 var external_exports = {};
@@ -68173,12 +68247,7 @@ function date4(params) {
 config(en_default());
 
 // src/logic-functions/create-users.ts
-var client = new Twenty({
-  url: "https://twentyfortwenty.twenty.com",
-  headers: {
-    Authorization: `Bearer ${"lol"}`
-  }
-});
+var client = new Twenty();
 var applicationConfigSchema = external_exports.object({
   CLICKHOUSE_DATABASE: external_exports.string().nonempty(),
   CLICKHOUSE_URL: external_exports.url(),
@@ -68229,9 +68298,9 @@ var clickHouseUserSchema = external_exports.object({
   isActiveLast30d: external_exports.boolean(),
   isActiveLast7d: external_exports.boolean(),
   isActiveLast24h: external_exports.boolean(),
-  activityStatus: external_exports.string().transform((val) => val.toUpperCase()),
+  activityStatus: external_exports.string().transform((val) => val.toUpperCase()).pipe(external_exports.enum(enumCloudUser2ActivityStatusEnum)),
   avgDailyPageviewsLast30d: external_exports.coerce.number(),
-  isTwenty: external_exports.coerce.number(),
+  isTwenty: external_exports.coerce.boolean(),
   maxWorkspaceMembers: external_exports.coerce.number(),
   inTrial: external_exports.boolean()
 });
@@ -68242,15 +68311,16 @@ var fetchUsersFromClickHouse = async () => {
     clickHouseUsername,
     clickHousePassword
   } = getApplicationConfig();
+  const startDate = "'2026-02-04 14:28:52.000'";
   const findUsersWithRecentActivity = `
     SELECT
       *
     FROM
       ${clickHouseDatabase}.user
     WHERE
-      lastActivityDate >= now() - INTERVAL 500 MINUTE
+      lastActivityDate >= ${startDate} - INTERVAL 500 MINUTE
         AND
-      lastActivityDate <= now()
+      lastActivityDate <= ${startDate}
     FORMAT
       JSONEachRow;
   `;
@@ -68270,10 +68340,13 @@ var fetchUsersFromClickHouse = async () => {
   }
   const text = await res.text();
   const rows = text.trim().split("\n").filter((line) => line.trim()).map((line) => JSON.parse(line));
-  const users = external_exports.array(clickHouseUserSchema).nonempty().parse(rows);
+  const users = external_exports.array(clickHouseUserSchema).parse(rows);
   return { users };
 };
 var fetchAllPeopleFromTwentyByEmail = async (emails) => {
+  if (emails.length === 0) {
+    return [];
+  }
   const allPeople = await client.query({
     people: {
       edges: {
@@ -68297,18 +68370,85 @@ var fetchAllPeopleFromTwentyByEmail = async (emails) => {
   });
   return allPeople.people?.edges.map((edge) => edge.node) ?? [];
 };
+var createOrUpdateCloudUser = async ({
+  user,
+  personId
+}) => {
+  const cloudUser = await client.mutation({
+    createCloudUser2: {
+      __args: {
+        id: user.userId,
+        data: {
+          name: user.fullName,
+          email: {
+            primaryEmail: user.email
+          },
+          personId,
+          fullName: {
+            lastName: user.lastName,
+            firstName: user.firstName
+          },
+          isTwenty: user.isTwenty,
+          userTenure: user.userAgeDays,
+          isActiveL7d: user.isActiveLast7d,
+          isActiveL24h: user.isActiveLast24h,
+          isActiveL30d: user.isActiveLast30d,
+          pageViewsL7d: user.pageviewsLast7d,
+          pageViewsL24h: user.pageviewsLast24h,
+          pageViewsL30d: user.pageviewsLast30d,
+          activityStatus: user.activityStatus,
+          workspaceCount: user.workspaceCount,
+          lastActivityDate: user.lastActivityDate,
+          dataLastUpdatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+          avgDailyPageviewsLast30d: user.avgDailyPageviewsLast30d,
+          daysSinceLastActivity: user.daysSinceLastActivity
+        },
+        upsert: true
+      },
+      __scalar: true
+    }
+  });
+  return cloudUser;
+};
 var handler = async () => {
-  const now = /* @__PURE__ */ new Date();
   try {
     const { users } = await fetchUsersFromClickHouse();
+    console.log("fetch users from clickhouse", users);
     const emails = users.map((user) => user.email);
+    console.log("fetch people from twenty with emails", emails);
     const people = await fetchAllPeopleFromTwentyByEmail(emails);
+    console.log("fetched people from twenty", people);
     for (const user of users) {
       const matchingPerson = people.find(
-        (person) => isDefined(person.emails?.primaryEmail) && person.emails.primaryEmail.toLowerCase() === user.email.toLowerCase()
+        (person) => person.emails?.primaryEmail !== void 0 && person.emails.primaryEmail.toLowerCase() === user.email.toLowerCase()
       );
-      if (isDefined(matchingPerson)) {
+      if (matchingPerson !== void 0) {
+        await createOrUpdateCloudUser({
+          user,
+          personId: matchingPerson.id
+        });
       } else {
+        const newPerson = await client.mutation({
+          createPerson: {
+            __args: {
+              data: {
+                name: {
+                  firstName: user.firstName,
+                  lastName: user.lastName
+                },
+                emails: {
+                  primaryEmail: user.email
+                }
+              }
+            },
+            id: true
+          }
+        });
+        const personId = newPerson.createPerson?.id;
+        if (personId === void 0) {
+          throw new Error(`Failed to create person for user ${user.email}`);
+        }
+        await createOrUpdateCloudUser({ user, personId });
       }
     }
     return {
@@ -68323,7 +68463,7 @@ var create_users_default = defineLogicFunction({
   universalIdentifier: "3897e059-715e-4a4b-b165-c44f17d2e30a",
   name: "product-data-create-users",
   description: "A simple logic function",
-  timeoutSeconds: 5,
+  timeoutSeconds: 120,
   handler,
   cronTriggerSettings: {
     pattern: "*/10 * * * *"

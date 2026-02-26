@@ -748,9 +748,9 @@ export interface Address {
 export type ActorSourceEnum = 'EMAIL' | 'CALENDAR' | 'WORKFLOW' | 'AGENT' | 'API' | 'IMPORT' | 'MANUAL' | 'SYSTEM' | 'WEBHOOK' | 'APPLICATION'
 
 export interface Actor {
-    source?: ActorSourceEnum
+    source: ActorSourceEnum
     workspaceMemberId?: Scalars['UUID']
-    name?: Scalars['String']
+    name: Scalars['String']
     context?: Scalars['JSON']
     __typename: 'Actor'
 }
@@ -8879,6 +8879,7 @@ export interface Person {
     taskTargets?: TaskTargetConnection
     /** Events linked to the person */
     timelineActivities?: TimelineActivityConnection
+    cloudUsers2?: CloudUser2Connection
     __typename: 'Person'
 }
 
@@ -12544,7 +12545,9 @@ export interface CloudUser2 {
     daysSinceLastActivity?: Scalars['Float']
     email?: Emails
     fullName?: FullName
+    isActiveL24h?: Scalars['Boolean']
     isActiveL30d?: Scalars['Boolean']
+    isActiveL7d?: Scalars['Boolean']
     isTwenty?: Scalars['Boolean']
     lastActivityDate?: Scalars['DateTime']
     pageViewsL24h?: Scalars['Float']
@@ -12567,8 +12570,7 @@ export interface CloudUser2 {
     position: Scalars['Position']
     /** Search vector */
     searchVector?: Scalars['TSVector']
-    isActiveL24h?: Scalars['Boolean']
-    isActiveL7d?: Scalars['Boolean']
+    personId?: Scalars['ID']
     /** Cloud users 2 tied to the CloudUser2 */
     timelineActivities?: TimelineActivityConnection
     /** Cloud users 2 tied to the CloudUser2 */
@@ -12580,6 +12582,7 @@ export interface CloudUser2 {
     /** Cloud users 2 tied to the CloudUser2 */
     taskTargets?: TaskTargetConnection
     cloudUserWorkspaces2?: CloudUserWorkspace2Connection
+    person?: Person
     __typename: 'CloudUser2'
 }
 
@@ -12682,6 +12685,20 @@ export interface CloudUser2Connection {
     percentageEmptyFullName?: Scalars['Float']
     /** Percentage of non-empty values for fullName */
     percentageNotEmptyFullName?: Scalars['Float']
+    /** Number of unique values for isActiveL24h */
+    countUniqueValuesIsActiveL24h?: Scalars['Int']
+    /** Number of empty values for isActiveL24h */
+    countEmptyIsActiveL24h?: Scalars['Int']
+    /** Number of non-empty values for isActiveL24h */
+    countNotEmptyIsActiveL24h?: Scalars['Int']
+    /** Percentage of empty values for isActiveL24h */
+    percentageEmptyIsActiveL24h?: Scalars['Float']
+    /** Percentage of non-empty values for isActiveL24h */
+    percentageNotEmptyIsActiveL24h?: Scalars['Float']
+    /** Count of true values in the field isActiveL24h */
+    countTrueIsActiveL24h?: Scalars['Int']
+    /** Count of false values in the field isActiveL24h */
+    countFalseIsActiveL24h?: Scalars['Int']
     /** Number of unique values for isActiveL30d */
     countUniqueValuesIsActiveL30d?: Scalars['Int']
     /** Number of empty values for isActiveL30d */
@@ -12696,6 +12713,20 @@ export interface CloudUser2Connection {
     countTrueIsActiveL30d?: Scalars['Int']
     /** Count of false values in the field isActiveL30d */
     countFalseIsActiveL30d?: Scalars['Int']
+    /** Number of unique values for isActiveL7d */
+    countUniqueValuesIsActiveL7d?: Scalars['Int']
+    /** Number of empty values for isActiveL7d */
+    countEmptyIsActiveL7d?: Scalars['Int']
+    /** Number of non-empty values for isActiveL7d */
+    countNotEmptyIsActiveL7d?: Scalars['Int']
+    /** Percentage of empty values for isActiveL7d */
+    percentageEmptyIsActiveL7d?: Scalars['Float']
+    /** Percentage of non-empty values for isActiveL7d */
+    percentageNotEmptyIsActiveL7d?: Scalars['Float']
+    /** Count of true values in the field isActiveL7d */
+    countTrueIsActiveL7d?: Scalars['Int']
+    /** Count of false values in the field isActiveL7d */
+    countFalseIsActiveL7d?: Scalars['Int']
     /** Number of unique values for isTwenty */
     countUniqueValuesIsTwenty?: Scalars['Int']
     /** Number of empty values for isTwenty */
@@ -12906,34 +12937,6 @@ export interface CloudUser2Connection {
     percentageEmptySearchVector?: Scalars['Float']
     /** Percentage of non-empty values for searchVector */
     percentageNotEmptySearchVector?: Scalars['Float']
-    /** Number of unique values for isActiveL24h */
-    countUniqueValuesIsActiveL24h?: Scalars['Int']
-    /** Number of empty values for isActiveL24h */
-    countEmptyIsActiveL24h?: Scalars['Int']
-    /** Number of non-empty values for isActiveL24h */
-    countNotEmptyIsActiveL24h?: Scalars['Int']
-    /** Percentage of empty values for isActiveL24h */
-    percentageEmptyIsActiveL24h?: Scalars['Float']
-    /** Percentage of non-empty values for isActiveL24h */
-    percentageNotEmptyIsActiveL24h?: Scalars['Float']
-    /** Count of true values in the field isActiveL24h */
-    countTrueIsActiveL24h?: Scalars['Int']
-    /** Count of false values in the field isActiveL24h */
-    countFalseIsActiveL24h?: Scalars['Int']
-    /** Number of unique values for isActiveL7d */
-    countUniqueValuesIsActiveL7d?: Scalars['Int']
-    /** Number of empty values for isActiveL7d */
-    countEmptyIsActiveL7d?: Scalars['Int']
-    /** Number of non-empty values for isActiveL7d */
-    countNotEmptyIsActiveL7d?: Scalars['Int']
-    /** Percentage of empty values for isActiveL7d */
-    percentageEmptyIsActiveL7d?: Scalars['Float']
-    /** Percentage of non-empty values for isActiveL7d */
-    percentageNotEmptyIsActiveL7d?: Scalars['Float']
-    /** Count of true values in the field isActiveL7d */
-    countTrueIsActiveL7d?: Scalars['Int']
-    /** Count of false values in the field isActiveL7d */
-    countFalseIsActiveL7d?: Scalars['Int']
     edges: CloudUser2Edge[]
     pageInfo: PageInfo
     __typename: 'CloudUser2Connection'
@@ -13032,6 +13035,20 @@ export interface CloudUser2GroupByConnection {
     percentageEmptyFullName?: Scalars['Float']
     /** Percentage of non-empty values for fullName */
     percentageNotEmptyFullName?: Scalars['Float']
+    /** Number of unique values for isActiveL24h */
+    countUniqueValuesIsActiveL24h?: Scalars['Int']
+    /** Number of empty values for isActiveL24h */
+    countEmptyIsActiveL24h?: Scalars['Int']
+    /** Number of non-empty values for isActiveL24h */
+    countNotEmptyIsActiveL24h?: Scalars['Int']
+    /** Percentage of empty values for isActiveL24h */
+    percentageEmptyIsActiveL24h?: Scalars['Float']
+    /** Percentage of non-empty values for isActiveL24h */
+    percentageNotEmptyIsActiveL24h?: Scalars['Float']
+    /** Count of true values in the field isActiveL24h */
+    countTrueIsActiveL24h?: Scalars['Int']
+    /** Count of false values in the field isActiveL24h */
+    countFalseIsActiveL24h?: Scalars['Int']
     /** Number of unique values for isActiveL30d */
     countUniqueValuesIsActiveL30d?: Scalars['Int']
     /** Number of empty values for isActiveL30d */
@@ -13046,6 +13063,20 @@ export interface CloudUser2GroupByConnection {
     countTrueIsActiveL30d?: Scalars['Int']
     /** Count of false values in the field isActiveL30d */
     countFalseIsActiveL30d?: Scalars['Int']
+    /** Number of unique values for isActiveL7d */
+    countUniqueValuesIsActiveL7d?: Scalars['Int']
+    /** Number of empty values for isActiveL7d */
+    countEmptyIsActiveL7d?: Scalars['Int']
+    /** Number of non-empty values for isActiveL7d */
+    countNotEmptyIsActiveL7d?: Scalars['Int']
+    /** Percentage of empty values for isActiveL7d */
+    percentageEmptyIsActiveL7d?: Scalars['Float']
+    /** Percentage of non-empty values for isActiveL7d */
+    percentageNotEmptyIsActiveL7d?: Scalars['Float']
+    /** Count of true values in the field isActiveL7d */
+    countTrueIsActiveL7d?: Scalars['Int']
+    /** Count of false values in the field isActiveL7d */
+    countFalseIsActiveL7d?: Scalars['Int']
     /** Number of unique values for isTwenty */
     countUniqueValuesIsTwenty?: Scalars['Int']
     /** Number of empty values for isTwenty */
@@ -13256,34 +13287,6 @@ export interface CloudUser2GroupByConnection {
     percentageEmptySearchVector?: Scalars['Float']
     /** Percentage of non-empty values for searchVector */
     percentageNotEmptySearchVector?: Scalars['Float']
-    /** Number of unique values for isActiveL24h */
-    countUniqueValuesIsActiveL24h?: Scalars['Int']
-    /** Number of empty values for isActiveL24h */
-    countEmptyIsActiveL24h?: Scalars['Int']
-    /** Number of non-empty values for isActiveL24h */
-    countNotEmptyIsActiveL24h?: Scalars['Int']
-    /** Percentage of empty values for isActiveL24h */
-    percentageEmptyIsActiveL24h?: Scalars['Float']
-    /** Percentage of non-empty values for isActiveL24h */
-    percentageNotEmptyIsActiveL24h?: Scalars['Float']
-    /** Count of true values in the field isActiveL24h */
-    countTrueIsActiveL24h?: Scalars['Int']
-    /** Count of false values in the field isActiveL24h */
-    countFalseIsActiveL24h?: Scalars['Int']
-    /** Number of unique values for isActiveL7d */
-    countUniqueValuesIsActiveL7d?: Scalars['Int']
-    /** Number of empty values for isActiveL7d */
-    countEmptyIsActiveL7d?: Scalars['Int']
-    /** Number of non-empty values for isActiveL7d */
-    countNotEmptyIsActiveL7d?: Scalars['Int']
-    /** Percentage of empty values for isActiveL7d */
-    percentageEmptyIsActiveL7d?: Scalars['Float']
-    /** Percentage of non-empty values for isActiveL7d */
-    percentageNotEmptyIsActiveL7d?: Scalars['Float']
-    /** Count of true values in the field isActiveL7d */
-    countTrueIsActiveL7d?: Scalars['Int']
-    /** Count of false values in the field isActiveL7d */
-    countFalseIsActiveL7d?: Scalars['Int']
     edges: CloudUser2Edge[]
     pageInfo: PageInfo
     groupByDimensionValues: Scalars['JSON']
@@ -15958,7 +15961,7 @@ export interface ActorGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ActorCreateInput {source?: (ActorSourceEnum | null),context?: (Scalars['JSON'] | null)}
+export interface ActorCreateInput {source: ActorSourceEnum,context?: (Scalars['JSON'] | null)}
 
 export interface ActorUpdateInput {source?: (ActorSourceEnum | null),context?: (Scalars['JSON'] | null)}
 
@@ -32681,6 +32684,7 @@ export interface PersonGenqlSelection{
     taskTargets?: (TaskTargetConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (TaskTargetFilterInput | null), orderBy?: ((TaskTargetOrderByInput | null)[] | null)} })
     /** Events linked to the person */
     timelineActivities?: (TimelineActivityConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (TimelineActivityFilterInput | null), orderBy?: ((TimelineActivityOrderByInput | null)[] | null)} })
+    cloudUsers2?: (CloudUser2ConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (CloudUser2FilterInput | null), orderBy?: ((CloudUser2OrderByInput | null)[] | null)} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -40169,7 +40173,9 @@ export interface CloudUser2GenqlSelection{
     daysSinceLastActivity?: boolean | number
     email?: EmailsGenqlSelection
     fullName?: FullNameGenqlSelection
+    isActiveL24h?: boolean | number
     isActiveL30d?: boolean | number
+    isActiveL7d?: boolean | number
     isTwenty?: boolean | number
     lastActivityDate?: boolean | number
     pageViewsL24h?: boolean | number
@@ -40192,8 +40198,7 @@ export interface CloudUser2GenqlSelection{
     position?: boolean | number
     /** Search vector */
     searchVector?: boolean | number
-    isActiveL24h?: boolean | number
-    isActiveL7d?: boolean | number
+    personId?: boolean | number
     /** Cloud users 2 tied to the CloudUser2 */
     timelineActivities?: (TimelineActivityConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (TimelineActivityFilterInput | null), orderBy?: ((TimelineActivityOrderByInput | null)[] | null)} })
     /** Cloud users 2 tied to the CloudUser2 */
@@ -40205,6 +40210,7 @@ export interface CloudUser2GenqlSelection{
     /** Cloud users 2 tied to the CloudUser2 */
     taskTargets?: (TaskTargetConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (TaskTargetFilterInput | null), orderBy?: ((TaskTargetOrderByInput | null)[] | null)} })
     cloudUserWorkspaces2?: (CloudUserWorkspace2ConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (CloudUserWorkspace2FilterInput | null), orderBy?: ((CloudUserWorkspace2OrderByInput | null)[] | null)} })
+    person?: PersonGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -40309,6 +40315,20 @@ export interface CloudUser2ConnectionGenqlSelection{
     percentageEmptyFullName?: boolean | number
     /** Percentage of non-empty values for fullName */
     percentageNotEmptyFullName?: boolean | number
+    /** Number of unique values for isActiveL24h */
+    countUniqueValuesIsActiveL24h?: boolean | number
+    /** Number of empty values for isActiveL24h */
+    countEmptyIsActiveL24h?: boolean | number
+    /** Number of non-empty values for isActiveL24h */
+    countNotEmptyIsActiveL24h?: boolean | number
+    /** Percentage of empty values for isActiveL24h */
+    percentageEmptyIsActiveL24h?: boolean | number
+    /** Percentage of non-empty values for isActiveL24h */
+    percentageNotEmptyIsActiveL24h?: boolean | number
+    /** Count of true values in the field isActiveL24h */
+    countTrueIsActiveL24h?: boolean | number
+    /** Count of false values in the field isActiveL24h */
+    countFalseIsActiveL24h?: boolean | number
     /** Number of unique values for isActiveL30d */
     countUniqueValuesIsActiveL30d?: boolean | number
     /** Number of empty values for isActiveL30d */
@@ -40323,6 +40343,20 @@ export interface CloudUser2ConnectionGenqlSelection{
     countTrueIsActiveL30d?: boolean | number
     /** Count of false values in the field isActiveL30d */
     countFalseIsActiveL30d?: boolean | number
+    /** Number of unique values for isActiveL7d */
+    countUniqueValuesIsActiveL7d?: boolean | number
+    /** Number of empty values for isActiveL7d */
+    countEmptyIsActiveL7d?: boolean | number
+    /** Number of non-empty values for isActiveL7d */
+    countNotEmptyIsActiveL7d?: boolean | number
+    /** Percentage of empty values for isActiveL7d */
+    percentageEmptyIsActiveL7d?: boolean | number
+    /** Percentage of non-empty values for isActiveL7d */
+    percentageNotEmptyIsActiveL7d?: boolean | number
+    /** Count of true values in the field isActiveL7d */
+    countTrueIsActiveL7d?: boolean | number
+    /** Count of false values in the field isActiveL7d */
+    countFalseIsActiveL7d?: boolean | number
     /** Number of unique values for isTwenty */
     countUniqueValuesIsTwenty?: boolean | number
     /** Number of empty values for isTwenty */
@@ -40533,34 +40567,6 @@ export interface CloudUser2ConnectionGenqlSelection{
     percentageEmptySearchVector?: boolean | number
     /** Percentage of non-empty values for searchVector */
     percentageNotEmptySearchVector?: boolean | number
-    /** Number of unique values for isActiveL24h */
-    countUniqueValuesIsActiveL24h?: boolean | number
-    /** Number of empty values for isActiveL24h */
-    countEmptyIsActiveL24h?: boolean | number
-    /** Number of non-empty values for isActiveL24h */
-    countNotEmptyIsActiveL24h?: boolean | number
-    /** Percentage of empty values for isActiveL24h */
-    percentageEmptyIsActiveL24h?: boolean | number
-    /** Percentage of non-empty values for isActiveL24h */
-    percentageNotEmptyIsActiveL24h?: boolean | number
-    /** Count of true values in the field isActiveL24h */
-    countTrueIsActiveL24h?: boolean | number
-    /** Count of false values in the field isActiveL24h */
-    countFalseIsActiveL24h?: boolean | number
-    /** Number of unique values for isActiveL7d */
-    countUniqueValuesIsActiveL7d?: boolean | number
-    /** Number of empty values for isActiveL7d */
-    countEmptyIsActiveL7d?: boolean | number
-    /** Number of non-empty values for isActiveL7d */
-    countNotEmptyIsActiveL7d?: boolean | number
-    /** Percentage of empty values for isActiveL7d */
-    percentageEmptyIsActiveL7d?: boolean | number
-    /** Percentage of non-empty values for isActiveL7d */
-    percentageNotEmptyIsActiveL7d?: boolean | number
-    /** Count of true values in the field isActiveL7d */
-    countTrueIsActiveL7d?: boolean | number
-    /** Count of false values in the field isActiveL7d */
-    countFalseIsActiveL7d?: boolean | number
     edges?: CloudUser2EdgeGenqlSelection
     pageInfo?: PageInfoGenqlSelection
     __typename?: boolean | number
@@ -40660,6 +40666,20 @@ export interface CloudUser2GroupByConnectionGenqlSelection{
     percentageEmptyFullName?: boolean | number
     /** Percentage of non-empty values for fullName */
     percentageNotEmptyFullName?: boolean | number
+    /** Number of unique values for isActiveL24h */
+    countUniqueValuesIsActiveL24h?: boolean | number
+    /** Number of empty values for isActiveL24h */
+    countEmptyIsActiveL24h?: boolean | number
+    /** Number of non-empty values for isActiveL24h */
+    countNotEmptyIsActiveL24h?: boolean | number
+    /** Percentage of empty values for isActiveL24h */
+    percentageEmptyIsActiveL24h?: boolean | number
+    /** Percentage of non-empty values for isActiveL24h */
+    percentageNotEmptyIsActiveL24h?: boolean | number
+    /** Count of true values in the field isActiveL24h */
+    countTrueIsActiveL24h?: boolean | number
+    /** Count of false values in the field isActiveL24h */
+    countFalseIsActiveL24h?: boolean | number
     /** Number of unique values for isActiveL30d */
     countUniqueValuesIsActiveL30d?: boolean | number
     /** Number of empty values for isActiveL30d */
@@ -40674,6 +40694,20 @@ export interface CloudUser2GroupByConnectionGenqlSelection{
     countTrueIsActiveL30d?: boolean | number
     /** Count of false values in the field isActiveL30d */
     countFalseIsActiveL30d?: boolean | number
+    /** Number of unique values for isActiveL7d */
+    countUniqueValuesIsActiveL7d?: boolean | number
+    /** Number of empty values for isActiveL7d */
+    countEmptyIsActiveL7d?: boolean | number
+    /** Number of non-empty values for isActiveL7d */
+    countNotEmptyIsActiveL7d?: boolean | number
+    /** Percentage of empty values for isActiveL7d */
+    percentageEmptyIsActiveL7d?: boolean | number
+    /** Percentage of non-empty values for isActiveL7d */
+    percentageNotEmptyIsActiveL7d?: boolean | number
+    /** Count of true values in the field isActiveL7d */
+    countTrueIsActiveL7d?: boolean | number
+    /** Count of false values in the field isActiveL7d */
+    countFalseIsActiveL7d?: boolean | number
     /** Number of unique values for isTwenty */
     countUniqueValuesIsTwenty?: boolean | number
     /** Number of empty values for isTwenty */
@@ -40884,34 +40918,6 @@ export interface CloudUser2GroupByConnectionGenqlSelection{
     percentageEmptySearchVector?: boolean | number
     /** Percentage of non-empty values for searchVector */
     percentageNotEmptySearchVector?: boolean | number
-    /** Number of unique values for isActiveL24h */
-    countUniqueValuesIsActiveL24h?: boolean | number
-    /** Number of empty values for isActiveL24h */
-    countEmptyIsActiveL24h?: boolean | number
-    /** Number of non-empty values for isActiveL24h */
-    countNotEmptyIsActiveL24h?: boolean | number
-    /** Percentage of empty values for isActiveL24h */
-    percentageEmptyIsActiveL24h?: boolean | number
-    /** Percentage of non-empty values for isActiveL24h */
-    percentageNotEmptyIsActiveL24h?: boolean | number
-    /** Count of true values in the field isActiveL24h */
-    countTrueIsActiveL24h?: boolean | number
-    /** Count of false values in the field isActiveL24h */
-    countFalseIsActiveL24h?: boolean | number
-    /** Number of unique values for isActiveL7d */
-    countUniqueValuesIsActiveL7d?: boolean | number
-    /** Number of empty values for isActiveL7d */
-    countEmptyIsActiveL7d?: boolean | number
-    /** Number of non-empty values for isActiveL7d */
-    countNotEmptyIsActiveL7d?: boolean | number
-    /** Percentage of empty values for isActiveL7d */
-    percentageEmptyIsActiveL7d?: boolean | number
-    /** Percentage of non-empty values for isActiveL7d */
-    percentageNotEmptyIsActiveL7d?: boolean | number
-    /** Count of true values in the field isActiveL7d */
-    countTrueIsActiveL7d?: boolean | number
-    /** Count of false values in the field isActiveL7d */
-    countFalseIsActiveL7d?: boolean | number
     edges?: CloudUser2EdgeGenqlSelection
     pageInfo?: PageInfoGenqlSelection
     groupByDimensionValues?: boolean | number
@@ -40935,7 +40941,7 @@ id?: (Scalars['ID'] | null)}
 
 export interface CloudUser2CreateInput {
 /** Id */
-id?: (Scalars['ID'] | null),activityStatus?: (CloudUser2ActivityStatusEnum | null),avgDailyPageviewsLast30d?: (Scalars['Float'] | null),dataLastUpdatedAt?: (Scalars['DateTime'] | null),daysSinceLastActivity?: (Scalars['Float'] | null),email?: (EmailsCreateInput | null),fullName?: (FullNameCreateInput | null),isActiveL30d?: (Scalars['Boolean'] | null),isTwenty?: (Scalars['Boolean'] | null),lastActivityDate?: (Scalars['DateTime'] | null),pageViewsL24h?: (Scalars['Float'] | null),pageViewsL30d?: (Scalars['Float'] | null),pageViewsL7d?: (Scalars['Float'] | null),updatedBy?: (ActorCreateInput | null),userTenure?: (Scalars['Float'] | null),workspaceCount?: (Scalars['Float'] | null),
+id?: (Scalars['ID'] | null),activityStatus?: (CloudUser2ActivityStatusEnum | null),avgDailyPageviewsLast30d?: (Scalars['Float'] | null),dataLastUpdatedAt?: (Scalars['DateTime'] | null),daysSinceLastActivity?: (Scalars['Float'] | null),email?: (EmailsCreateInput | null),fullName?: (FullNameCreateInput | null),isActiveL24h?: (Scalars['Boolean'] | null),isActiveL30d?: (Scalars['Boolean'] | null),isActiveL7d?: (Scalars['Boolean'] | null),isTwenty?: (Scalars['Boolean'] | null),lastActivityDate?: (Scalars['DateTime'] | null),pageViewsL24h?: (Scalars['Float'] | null),pageViewsL30d?: (Scalars['Float'] | null),pageViewsL7d?: (Scalars['Float'] | null),updatedBy?: (ActorCreateInput | null),userTenure?: (Scalars['Float'] | null),workspaceCount?: (Scalars['Float'] | null),
 /** Name */
 name?: (Scalars['String'] | null),
 /** Creation date */
@@ -40949,11 +40955,11 @@ createdBy?: (ActorCreateInput | null),
 /** Position */
 position?: (Scalars['Position'] | null),
 /** Search vector */
-searchVector?: (Scalars['TSVector'] | null),isActiveL24h?: (Scalars['Boolean'] | null),isActiveL7d?: (Scalars['Boolean'] | null)}
+searchVector?: (Scalars['TSVector'] | null),personId?: (Scalars['ID'] | null),person?: (PersonRelationInput | null)}
 
 export interface CloudUser2UpdateInput {
 /** Id */
-id?: (Scalars['ID'] | null),activityStatus?: (CloudUser2ActivityStatusEnum | null),avgDailyPageviewsLast30d?: (Scalars['Float'] | null),dataLastUpdatedAt?: (Scalars['DateTime'] | null),daysSinceLastActivity?: (Scalars['Float'] | null),email?: (EmailsUpdateInput | null),fullName?: (FullNameUpdateInput | null),isActiveL30d?: (Scalars['Boolean'] | null),isTwenty?: (Scalars['Boolean'] | null),lastActivityDate?: (Scalars['DateTime'] | null),pageViewsL24h?: (Scalars['Float'] | null),pageViewsL30d?: (Scalars['Float'] | null),pageViewsL7d?: (Scalars['Float'] | null),updatedBy?: (ActorUpdateInput | null),userTenure?: (Scalars['Float'] | null),workspaceCount?: (Scalars['Float'] | null),
+id?: (Scalars['ID'] | null),activityStatus?: (CloudUser2ActivityStatusEnum | null),avgDailyPageviewsLast30d?: (Scalars['Float'] | null),dataLastUpdatedAt?: (Scalars['DateTime'] | null),daysSinceLastActivity?: (Scalars['Float'] | null),email?: (EmailsUpdateInput | null),fullName?: (FullNameUpdateInput | null),isActiveL24h?: (Scalars['Boolean'] | null),isActiveL30d?: (Scalars['Boolean'] | null),isActiveL7d?: (Scalars['Boolean'] | null),isTwenty?: (Scalars['Boolean'] | null),lastActivityDate?: (Scalars['DateTime'] | null),pageViewsL24h?: (Scalars['Float'] | null),pageViewsL30d?: (Scalars['Float'] | null),pageViewsL7d?: (Scalars['Float'] | null),updatedBy?: (ActorUpdateInput | null),userTenure?: (Scalars['Float'] | null),workspaceCount?: (Scalars['Float'] | null),
 /** Name */
 name?: (Scalars['String'] | null),
 /** Creation date */
@@ -40967,11 +40973,11 @@ createdBy?: (ActorUpdateInput | null),
 /** Position */
 position?: (Scalars['Position'] | null),
 /** Search vector */
-searchVector?: (Scalars['TSVector'] | null),isActiveL24h?: (Scalars['Boolean'] | null),isActiveL7d?: (Scalars['Boolean'] | null)}
+searchVector?: (Scalars['TSVector'] | null),personId?: (Scalars['ID'] | null),person?: (PersonRelationInput | null)}
 
 export interface CloudUser2FilterInput {
 /** Id */
-id?: (UUIDFilter | null),activityStatus?: (CloudUser2ActivityStatusEnumFilter | null),avgDailyPageviewsLast30d?: (FloatFilter | null),dataLastUpdatedAt?: (Scalars['DateTime'] | null),daysSinceLastActivity?: (FloatFilter | null),email?: (EmailsFilterInput | null),fullName?: (FullNameFilterInput | null),isActiveL30d?: (BooleanFilter | null),isTwenty?: (BooleanFilter | null),lastActivityDate?: (Scalars['DateTime'] | null),pageViewsL24h?: (FloatFilter | null),pageViewsL30d?: (FloatFilter | null),pageViewsL7d?: (FloatFilter | null),updatedBy?: (ActorFilterInput | null),userTenure?: (FloatFilter | null),workspaceCount?: (FloatFilter | null),
+id?: (UUIDFilter | null),activityStatus?: (CloudUser2ActivityStatusEnumFilter | null),avgDailyPageviewsLast30d?: (FloatFilter | null),dataLastUpdatedAt?: (Scalars['DateTime'] | null),daysSinceLastActivity?: (FloatFilter | null),email?: (EmailsFilterInput | null),fullName?: (FullNameFilterInput | null),isActiveL24h?: (BooleanFilter | null),isActiveL30d?: (BooleanFilter | null),isActiveL7d?: (BooleanFilter | null),isTwenty?: (BooleanFilter | null),lastActivityDate?: (Scalars['DateTime'] | null),pageViewsL24h?: (FloatFilter | null),pageViewsL30d?: (FloatFilter | null),pageViewsL7d?: (FloatFilter | null),updatedBy?: (ActorFilterInput | null),userTenure?: (FloatFilter | null),workspaceCount?: (FloatFilter | null),
 /** Name */
 name?: (StringFilter | null),
 /** Creation date */
@@ -40985,13 +40991,13 @@ createdBy?: (ActorFilterInput | null),
 /** Position */
 position?: (FloatFilter | null),
 /** Search vector */
-searchVector?: (TSVectorFilter | null),isActiveL24h?: (BooleanFilter | null),isActiveL7d?: (BooleanFilter | null),and?: ((CloudUser2FilterInput | null)[] | null),or?: ((CloudUser2FilterInput | null)[] | null),not?: (CloudUser2FilterInput | null)}
+searchVector?: (TSVectorFilter | null),personId?: (UUIDFilter | null),and?: ((CloudUser2FilterInput | null)[] | null),or?: ((CloudUser2FilterInput | null)[] | null),not?: (CloudUser2FilterInput | null)}
 
 export interface CloudUser2ActivityStatusEnumFilter {eq?: (CloudUser2ActivityStatusEnum | null),neq?: (CloudUser2ActivityStatusEnum | null),in?: ((CloudUser2ActivityStatusEnum | null)[] | null),containsAny?: ((CloudUser2ActivityStatusEnum | null)[] | null),is?: (FilterIs | null),isEmptyArray?: (Scalars['Boolean'] | null)}
 
 export interface CloudUser2OrderByInput {
 /** Id */
-id?: (OrderByDirection | null),activityStatus?: (OrderByDirection | null),avgDailyPageviewsLast30d?: (OrderByDirection | null),dataLastUpdatedAt?: (OrderByDirection | null),daysSinceLastActivity?: (OrderByDirection | null),email?: (EmailsOrderByInput | null),fullName?: (FullNameOrderByInput | null),isActiveL30d?: (OrderByDirection | null),isTwenty?: (OrderByDirection | null),lastActivityDate?: (OrderByDirection | null),pageViewsL24h?: (OrderByDirection | null),pageViewsL30d?: (OrderByDirection | null),pageViewsL7d?: (OrderByDirection | null),updatedBy?: (ActorOrderByInput | null),userTenure?: (OrderByDirection | null),workspaceCount?: (OrderByDirection | null),
+id?: (OrderByDirection | null),activityStatus?: (OrderByDirection | null),avgDailyPageviewsLast30d?: (OrderByDirection | null),dataLastUpdatedAt?: (OrderByDirection | null),daysSinceLastActivity?: (OrderByDirection | null),email?: (EmailsOrderByInput | null),fullName?: (FullNameOrderByInput | null),isActiveL24h?: (OrderByDirection | null),isActiveL30d?: (OrderByDirection | null),isActiveL7d?: (OrderByDirection | null),isTwenty?: (OrderByDirection | null),lastActivityDate?: (OrderByDirection | null),pageViewsL24h?: (OrderByDirection | null),pageViewsL30d?: (OrderByDirection | null),pageViewsL7d?: (OrderByDirection | null),updatedBy?: (ActorOrderByInput | null),userTenure?: (OrderByDirection | null),workspaceCount?: (OrderByDirection | null),
 /** Name */
 name?: (OrderByDirection | null),
 /** Creation date */
@@ -41005,13 +41011,15 @@ createdBy?: (ActorOrderByInput | null),
 /** Position */
 position?: (OrderByDirection | null),
 /** Search vector */
-searchVector?: (OrderByDirection | null),isActiveL24h?: (OrderByDirection | null),isActiveL7d?: (OrderByDirection | null)}
+searchVector?: (OrderByDirection | null),personId?: (OrderByDirection | null),
+/** Order by fields of the related person */
+person?: (PersonOrderByInput | null)}
 
 export interface CloudUser2OrderByWithGroupByInput {
 /** Order by aggregate values */
 aggregate?: (CloudUser2OrderByWithGroupByAggregateInput | null),
 /** Id */
-id?: (OrderByDirection | null),activityStatus?: (OrderByDirection | null),avgDailyPageviewsLast30d?: (OrderByDirection | null),dataLastUpdatedAt?: (OrderByDateGranularityInput | null),daysSinceLastActivity?: (OrderByDirection | null),email?: (EmailsOrderByInput | null),fullName?: (FullNameOrderByInput | null),isActiveL30d?: (OrderByDirection | null),isTwenty?: (OrderByDirection | null),lastActivityDate?: (OrderByDateGranularityInput | null),pageViewsL24h?: (OrderByDirection | null),pageViewsL30d?: (OrderByDirection | null),pageViewsL7d?: (OrderByDirection | null),updatedBy?: (ActorOrderByInput | null),userTenure?: (OrderByDirection | null),workspaceCount?: (OrderByDirection | null),
+id?: (OrderByDirection | null),activityStatus?: (OrderByDirection | null),avgDailyPageviewsLast30d?: (OrderByDirection | null),dataLastUpdatedAt?: (OrderByDateGranularityInput | null),daysSinceLastActivity?: (OrderByDirection | null),email?: (EmailsOrderByInput | null),fullName?: (FullNameOrderByInput | null),isActiveL24h?: (OrderByDirection | null),isActiveL30d?: (OrderByDirection | null),isActiveL7d?: (OrderByDirection | null),isTwenty?: (OrderByDirection | null),lastActivityDate?: (OrderByDateGranularityInput | null),pageViewsL24h?: (OrderByDirection | null),pageViewsL30d?: (OrderByDirection | null),pageViewsL7d?: (OrderByDirection | null),updatedBy?: (ActorOrderByInput | null),userTenure?: (OrderByDirection | null),workspaceCount?: (OrderByDirection | null),
 /** Name */
 name?: (OrderByDirection | null),
 /** Creation date */
@@ -41025,7 +41033,9 @@ createdBy?: (ActorOrderByInput | null),
 /** Position */
 position?: (OrderByDirection | null),
 /** Search vector */
-searchVector?: (OrderByDirection | null),isActiveL24h?: (OrderByDirection | null),isActiveL7d?: (OrderByDirection | null)}
+searchVector?: (OrderByDirection | null),personId?: (OrderByDirection | null),
+/** Order by fields of the related person */
+person?: (PersonOrderByWithGroupByInput | null)}
 
 
 /** Aggregate-based ordering */
@@ -41122,6 +41132,20 @@ countNotEmptyFullName?: (OrderByDirection | null),
 percentageEmptyFullName?: (OrderByDirection | null),
 /** Percentage of non-empty values for fullName */
 percentageNotEmptyFullName?: (OrderByDirection | null),
+/** Number of unique values for isActiveL24h */
+countUniqueValuesIsActiveL24h?: (OrderByDirection | null),
+/** Number of empty values for isActiveL24h */
+countEmptyIsActiveL24h?: (OrderByDirection | null),
+/** Number of non-empty values for isActiveL24h */
+countNotEmptyIsActiveL24h?: (OrderByDirection | null),
+/** Percentage of empty values for isActiveL24h */
+percentageEmptyIsActiveL24h?: (OrderByDirection | null),
+/** Percentage of non-empty values for isActiveL24h */
+percentageNotEmptyIsActiveL24h?: (OrderByDirection | null),
+/** Count of true values in the field isActiveL24h */
+countTrueIsActiveL24h?: (OrderByDirection | null),
+/** Count of false values in the field isActiveL24h */
+countFalseIsActiveL24h?: (OrderByDirection | null),
 /** Number of unique values for isActiveL30d */
 countUniqueValuesIsActiveL30d?: (OrderByDirection | null),
 /** Number of empty values for isActiveL30d */
@@ -41136,6 +41160,20 @@ percentageNotEmptyIsActiveL30d?: (OrderByDirection | null),
 countTrueIsActiveL30d?: (OrderByDirection | null),
 /** Count of false values in the field isActiveL30d */
 countFalseIsActiveL30d?: (OrderByDirection | null),
+/** Number of unique values for isActiveL7d */
+countUniqueValuesIsActiveL7d?: (OrderByDirection | null),
+/** Number of empty values for isActiveL7d */
+countEmptyIsActiveL7d?: (OrderByDirection | null),
+/** Number of non-empty values for isActiveL7d */
+countNotEmptyIsActiveL7d?: (OrderByDirection | null),
+/** Percentage of empty values for isActiveL7d */
+percentageEmptyIsActiveL7d?: (OrderByDirection | null),
+/** Percentage of non-empty values for isActiveL7d */
+percentageNotEmptyIsActiveL7d?: (OrderByDirection | null),
+/** Count of true values in the field isActiveL7d */
+countTrueIsActiveL7d?: (OrderByDirection | null),
+/** Count of false values in the field isActiveL7d */
+countFalseIsActiveL7d?: (OrderByDirection | null),
 /** Number of unique values for isTwenty */
 countUniqueValuesIsTwenty?: (OrderByDirection | null),
 /** Number of empty values for isTwenty */
@@ -41345,39 +41383,13 @@ countNotEmptySearchVector?: (OrderByDirection | null),
 /** Percentage of empty values for searchVector */
 percentageEmptySearchVector?: (OrderByDirection | null),
 /** Percentage of non-empty values for searchVector */
-percentageNotEmptySearchVector?: (OrderByDirection | null),
-/** Number of unique values for isActiveL24h */
-countUniqueValuesIsActiveL24h?: (OrderByDirection | null),
-/** Number of empty values for isActiveL24h */
-countEmptyIsActiveL24h?: (OrderByDirection | null),
-/** Number of non-empty values for isActiveL24h */
-countNotEmptyIsActiveL24h?: (OrderByDirection | null),
-/** Percentage of empty values for isActiveL24h */
-percentageEmptyIsActiveL24h?: (OrderByDirection | null),
-/** Percentage of non-empty values for isActiveL24h */
-percentageNotEmptyIsActiveL24h?: (OrderByDirection | null),
-/** Count of true values in the field isActiveL24h */
-countTrueIsActiveL24h?: (OrderByDirection | null),
-/** Count of false values in the field isActiveL24h */
-countFalseIsActiveL24h?: (OrderByDirection | null),
-/** Number of unique values for isActiveL7d */
-countUniqueValuesIsActiveL7d?: (OrderByDirection | null),
-/** Number of empty values for isActiveL7d */
-countEmptyIsActiveL7d?: (OrderByDirection | null),
-/** Number of non-empty values for isActiveL7d */
-countNotEmptyIsActiveL7d?: (OrderByDirection | null),
-/** Percentage of empty values for isActiveL7d */
-percentageEmptyIsActiveL7d?: (OrderByDirection | null),
-/** Percentage of non-empty values for isActiveL7d */
-percentageNotEmptyIsActiveL7d?: (OrderByDirection | null),
-/** Count of true values in the field isActiveL7d */
-countTrueIsActiveL7d?: (OrderByDirection | null),
-/** Count of false values in the field isActiveL7d */
-countFalseIsActiveL7d?: (OrderByDirection | null)}
+percentageNotEmptySearchVector?: (OrderByDirection | null),personId?: (OrderByDirection | null),
+/** Order by fields of the related person */
+person?: (PersonOrderByInput | null)}
 
 export interface CloudUser2GroupByInput {
 /** Id */
-id?: (Scalars['Boolean'] | null),activityStatus?: (Scalars['Boolean'] | null),avgDailyPageviewsLast30d?: (Scalars['Boolean'] | null),dataLastUpdatedAt?: (GroupByDateGranularityInput | null),daysSinceLastActivity?: (Scalars['Boolean'] | null),email?: (EmailsGroupByInput | null),fullName?: (FullNameGroupByInput | null),isActiveL30d?: (Scalars['Boolean'] | null),isTwenty?: (Scalars['Boolean'] | null),lastActivityDate?: (GroupByDateGranularityInput | null),pageViewsL24h?: (Scalars['Boolean'] | null),pageViewsL30d?: (Scalars['Boolean'] | null),pageViewsL7d?: (Scalars['Boolean'] | null),updatedBy?: (ActorGroupByInput | null),userTenure?: (Scalars['Boolean'] | null),workspaceCount?: (Scalars['Boolean'] | null),
+id?: (Scalars['Boolean'] | null),activityStatus?: (Scalars['Boolean'] | null),avgDailyPageviewsLast30d?: (Scalars['Boolean'] | null),dataLastUpdatedAt?: (GroupByDateGranularityInput | null),daysSinceLastActivity?: (Scalars['Boolean'] | null),email?: (EmailsGroupByInput | null),fullName?: (FullNameGroupByInput | null),isActiveL24h?: (Scalars['Boolean'] | null),isActiveL30d?: (Scalars['Boolean'] | null),isActiveL7d?: (Scalars['Boolean'] | null),isTwenty?: (Scalars['Boolean'] | null),lastActivityDate?: (GroupByDateGranularityInput | null),pageViewsL24h?: (Scalars['Boolean'] | null),pageViewsL30d?: (Scalars['Boolean'] | null),pageViewsL7d?: (Scalars['Boolean'] | null),updatedBy?: (ActorGroupByInput | null),userTenure?: (Scalars['Boolean'] | null),workspaceCount?: (Scalars['Boolean'] | null),
 /** Name */
 name?: (Scalars['Boolean'] | null),
 /** Creation date */
@@ -41391,7 +41403,9 @@ createdBy?: (ActorGroupByInput | null),
 /** Position */
 position?: (Scalars['Boolean'] | null),
 /** Search vector */
-searchVector?: (Scalars['Boolean'] | null),isActiveL24h?: (Scalars['Boolean'] | null),isActiveL7d?: (Scalars['Boolean'] | null)}
+searchVector?: (Scalars['Boolean'] | null),
+/** Group by fields of the related person */
+person?: (PersonGroupByInput | null)}
 
 export interface CloudUserWorkspace2GenqlSelection{
     twentyUserIdentifier?: boolean | number

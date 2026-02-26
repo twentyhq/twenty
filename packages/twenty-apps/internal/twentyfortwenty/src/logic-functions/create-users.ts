@@ -1,21 +1,15 @@
 import { defineLogicFunction } from 'twenty-sdk';
-import Twenty from 'twenty-sdk/generated';
-import { isDefined } from 'twenty-shared/utils';
+import Twenty, { enumCloudUser2ActivityStatusEnum } from 'twenty-sdk/generated';
 import { z } from 'zod';
 
-const client = new Twenty({
-  url: 'https://twentyfortwenty.twenty.com',
-  headers: {
-    Authorization: `Bearer ${'lol'}`,
-  }
-});
+const client = new Twenty();
 
 const applicationConfigSchema = z.object({
   CLICKHOUSE_DATABASE: z.string().nonempty(),
   CLICKHOUSE_URL: z.url(),
   CLICKHOUSE_USERNAME: z.string().nonempty(),
   CLICKHOUSE_PASSWORD: z.string().nonempty(),
-});
+})
 
 const getApplicationConfig = () => {
   const env = applicationConfigSchema.parse({
@@ -63,9 +57,12 @@ const clickHouseUserSchema = z.object({
   isActiveLast30d: z.boolean(),
   isActiveLast7d: z.boolean(),
   isActiveLast24h: z.boolean(),
-  activityStatus: z.string().transform((val) => val.toUpperCase()),
+  activityStatus: z
+    .string()
+    .transform((val) => val.toUpperCase())
+    .pipe(z.enum(enumCloudUser2ActivityStatusEnum)),
   avgDailyPageviewsLast30d: z.coerce.number(),
-  isTwenty: z.coerce.number(),
+  isTwenty: z.coerce.boolean(),
   maxWorkspaceMembers: z.coerce.number(),
   inTrial: z.boolean(),
 });
@@ -82,15 +79,18 @@ const fetchUsersFromClickHouse = async (): Promise<{
     clickHousePassword,
   } = getApplicationConfig();
 
+  // const startDate = 'now()'
+  const startDate = "'2026-02-04 14:28:52.000'"
+
   const findUsersWithRecentActivity = `
     SELECT
       *
     FROM
       ${clickHouseDatabase}.user
     WHERE
-      lastActivityDate >= now() - INTERVAL 500 MINUTE
+      lastActivityDate >= ${startDate} - INTERVAL 500 MINUTE
         AND
-      lastActivityDate <= now()
+      lastActivityDate <= ${startDate}
     FORMAT
       JSONEachRow;
   `;
@@ -124,12 +124,16 @@ const fetchUsersFromClickHouse = async (): Promise<{
     .filter((line) => line.trim()) // Filter out empty lines
     .map((line) => JSON.parse(line));
 
-  const users = z.array(clickHouseUserSchema).nonempty().parse(rows);
+  const users = z.array(clickHouseUserSchema).parse(rows);
 
   return { users };
 };
 
 const fetchAllPeopleFromTwentyByEmail = async (emails: string[]) => {
+  if (emails.length === 0) {
+    return [];
+  }
+
   const allPeople = await client.query({
     people: {
       edges: {
@@ -155,28 +159,102 @@ const fetchAllPeopleFromTwentyByEmail = async (emails: string[]) => {
   return allPeople.people?.edges.map((edge) => edge.node) ?? [];
 };
 
-const handler = async (): Promise<{ message: string }> => {
-  const now = new Date();
+const createOrUpdateCloudUser = async ({
+  user,
+  personId,
+}: {
+  user: ClickHouseUser;
+  personId: string;
+}) => {
+  const cloudUser = await client.mutation({
+    createCloudUser2: {
+      __args: {
+        id: user.userId,
+        data: {
+          name: user.fullName,
+          email: {
+            primaryEmail: user.email,
+          },
+          personId,
+          fullName: {
+            lastName: user.lastName,
+            firstName: user.firstName,
+          },
+          isTwenty: user.isTwenty,
+          userTenure: user.userAgeDays,
+          isActiveL7d: user.isActiveLast7d,
+          isActiveL24h: user.isActiveLast24h,
+          isActiveL30d: user.isActiveLast30d,
+          pageViewsL7d: user.pageviewsLast7d,
+          pageViewsL24h: user.pageviewsLast24h,
+          pageViewsL30d: user.pageviewsLast30d,
+          activityStatus: user.activityStatus,
+          workspaceCount: user.workspaceCount,
+          lastActivityDate: user.lastActivityDate,
+          dataLastUpdatedAt: new Date().toISOString(),
+          avgDailyPageviewsLast30d: user.avgDailyPageviewsLast30d,
+          daysSinceLastActivity: user.daysSinceLastActivity,
+        },
+        upsert: true,
+      },
+      __scalar: true
+    },
+  });
 
+  return cloudUser;
+};
+
+const handler = async (): Promise<{ message: string }> => {
   try {
     const { users } = await fetchUsersFromClickHouse();
 
+    console.log('fetch users from clickhouse', users);
+
     const emails = users.map((user) => user.email);
 
+    console.log('fetch people from twenty with emails', emails);
+
     const people = await fetchAllPeopleFromTwentyByEmail(emails);
+
+    console.log('fetched people from twenty', people);
 
     for (const user of users) {
       const matchingPerson = people.find(
         (person) =>
-          isDefined(person.emails?.primaryEmail) &&
+          person.emails?.primaryEmail !== undefined &&
           person.emails.primaryEmail.toLowerCase() === user.email.toLowerCase(),
       );
 
-      if (isDefined(matchingPerson)) {
-        // update cloud user
+      if (matchingPerson !== undefined) {
+        await createOrUpdateCloudUser({
+          user,
+          personId: matchingPerson.id,
+        });
       } else {
-        // create people
-        // create or update cloud user
+        const newPerson = await client.mutation({
+          createPerson: {
+            __args: {
+              data: {
+                name: {
+                  firstName: user.firstName,
+                  lastName: user.lastName,
+                },
+                emails: {
+                  primaryEmail: user.email,
+                },
+              },
+            },
+            id: true,
+          },
+        });
+
+        const personId = newPerson.createPerson?.id;
+
+        if (personId === undefined) {
+          throw new Error(`Failed to create person for user ${user.email}`);
+        }
+
+        await createOrUpdateCloudUser({ user, personId });
       }
     }
 
@@ -194,7 +272,7 @@ export default defineLogicFunction({
   universalIdentifier: '3897e059-715e-4a4b-b165-c44f17d2e30a',
   name: 'product-data-create-users',
   description: 'A simple logic function',
-  timeoutSeconds: 5,
+  timeoutSeconds: 120,
   handler,
   cronTriggerSettings: {
     pattern: '*/10 * * * *',
