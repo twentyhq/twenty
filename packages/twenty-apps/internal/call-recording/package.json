@@ -16,6 +16,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "react-markdown": "^10.1.0",
     "twenty-sdk": "portal:../../../twenty-sdk"
   },
   "devDependencies": {
