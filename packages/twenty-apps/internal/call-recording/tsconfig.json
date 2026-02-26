@@ -6,6 +6,7 @@
     "outDir": "./dist",
     "rootDir": ".",
     "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,

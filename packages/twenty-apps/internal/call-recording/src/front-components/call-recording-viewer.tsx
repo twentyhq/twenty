@@ -1,0 +1,66 @@
+import { useState } from 'react';
+import { MediaPlayer } from 'src/components/MediaPlayer';
+import { TranscriptViewer } from 'src/components/TranscriptViewer';
+import { CALL_RECORDING_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-viewer-front-component-universal-identifier';
+import { useCallRecording } from 'src/hooks/useCallRecording';
+import { useTranscript } from 'src/hooks/useTranscript';
+import { defineFrontComponent } from 'twenty-sdk';
+import { isDefined } from 'twenty-shared/utils';
+
+export const CallRecordingViewer = () => {
+  const { callRecording, loading, error } = useCallRecording();
+  const [currentTimeSeconds, setCurrentTimeSeconds] = useState(0);
+
+  const transcriptFileUrl = callRecording?.transcriptFile[0]?.url;
+
+  const {
+    entries: transcriptEntries,
+    loading: transcriptLoading,
+  } = useTranscript(transcriptFileUrl);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isDefined(error)) {
+    throw error;
+  }
+
+  const recordingFile = callRecording?.recordingFile[0];
+
+  const recordingFileUrl = recordingFile?.url;
+  const recordingFileExtension = recordingFile?.extension;
+
+  if (!isDefined(recordingFileUrl)) {
+    throw new Error('Recording file url not found');
+  }
+
+  if (!isDefined(recordingFileExtension)) {
+    throw new Error('Recording file extension not found');
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <MediaPlayer
+        url={recordingFileUrl}
+        extension={recordingFileExtension}
+        onTimeUpdate={setCurrentTimeSeconds}
+      />
+      {transcriptLoading ? (
+        <div>Loading transcript...</div>
+      ) : (
+        <TranscriptViewer
+          entries={transcriptEntries}
+          currentTimeSeconds={currentTimeSeconds}
+        />
+      )}
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: CALL_RECORDING_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  name: 'Call Recording Viewer',
+  description: 'A viewer for call recordings',
+  component: CallRecordingViewer,
+});

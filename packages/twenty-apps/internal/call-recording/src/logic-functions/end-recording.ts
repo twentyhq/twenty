@@ -20,6 +20,11 @@ interface EndRecordingBody {
 
 type UploadedFileRef = { fileId: string; label: string };
 
+const timestampSchema = z.object({
+  relative: z.number(),
+  absolute: z.string(),
+});
+
 const transcriptEntrySchema = z.object({
   participant: z.object({
     name: z.string().nullable(),
@@ -27,6 +32,8 @@ const transcriptEntrySchema = z.object({
   words: z.array(
     z.object({
       text: z.string(),
+      start_timestamp: timestampSchema.optional(),
+      end_timestamp: timestampSchema.optional(),
     }),
   ),
 });

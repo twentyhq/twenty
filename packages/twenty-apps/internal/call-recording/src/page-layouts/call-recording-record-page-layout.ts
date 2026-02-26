@@ -1,4 +1,4 @@
-import { MEDIA_PLAYER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/media-player-front-component-universal-identifier';
+import { CALL_RECORDING_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-viewer-front-component-universal-identifier';
 import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
 
@@ -22,7 +22,7 @@ export default definePageLayout({
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
-              MEDIA_PLAYER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+              CALL_RECORDING_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
           },
         },
       ],
