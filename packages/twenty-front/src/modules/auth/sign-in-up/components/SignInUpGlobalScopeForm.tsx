@@ -124,6 +124,10 @@ const StyledActionLinkContainer = styled.div`
   justify-content: center;
 `;
 
+const StyledForgotPasswordLinkContainer = styled(StyledActionLinkContainer)`
+  padding-top: ${({ theme }) => theme.spacing(4)};
+`;
+
 export const SignInUpGlobalScopeForm = () => {
   const authProviders = useAtomStateValue(authProvidersState);
   const signInUpStep = useAtomStateValue(signInUpStepState);
@@ -236,13 +240,13 @@ export const SignInUpGlobalScopeForm = () => {
             <SignInUpWithCredentials isGlobalScope />
           </FormProvider>
           {signInUpStep === SignInUpStep.Password && (
-            <StyledActionLinkContainer>
+            <StyledForgotPasswordLinkContainer>
               <ClickToActionLink
                 onClick={handleResetPassword(form.getValues('email'))}
               >
                 <Trans>Forgot your password?</Trans>
               </ClickToActionLink>
-            </StyledActionLinkContainer>
+            </StyledForgotPasswordLinkContainer>
           )}
         </StyledContentContainer>
       )}
