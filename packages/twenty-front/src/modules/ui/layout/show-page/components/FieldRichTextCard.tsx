@@ -1,13 +1,13 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 const ActivityRichTextEditor = lazy(() =>
@@ -48,7 +48,7 @@ const LoadingSkeleton = () => {
 
 export const FieldRichTextCard = () => {
   const targetRecord = useTargetRecord();
-  const activityBodyV2 = useFamilySelectorValueV2(recordStoreFamilySelectorV2, {
+  const activityBodyV2 = useAtomFamilySelectorValue(recordStoreFamilySelector, {
     recordId: targetRecord.id,
     fieldName: 'bodyV2',
   });

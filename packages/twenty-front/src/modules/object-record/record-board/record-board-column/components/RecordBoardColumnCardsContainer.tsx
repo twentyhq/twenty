@@ -10,7 +10,7 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnLoadingSkeletonCards';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -33,12 +33,12 @@ export const RecordBoardColumnCardsContainer = ({
 }: RecordBoardColumnCardsContainerProps) => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const recordIds = useRecoilComponentFamilyValueV2(
+  const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
   );
 
-  const recordBoardShouldFetchMoreInColumn = useRecoilComponentFamilyValueV2(
+  const recordBoardShouldFetchMoreInColumn = useAtomComponentFamilyStateValue(
     recordBoardShouldFetchMoreInColumnComponentFamilyState,
     recordBoardColumnId,
   );
@@ -49,7 +49,7 @@ export const RecordBoardColumnCardsContainer = ({
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
-      {recordIds.map((recordId, index) => (
+      {recordIndexRecordIdsByGroup.map((recordId, index) => (
         <RecordBoardCardDraggableContainer
           key={recordId}
           recordId={recordId}
@@ -61,7 +61,7 @@ export const RecordBoardColumnCardsContainer = ({
       ) : null}
       <Draggable
         draggableId={`new-${columnDefinition.id}-bottom`}
-        index={recordIds.length}
+        index={recordIndexRecordIdsByGroup.length}
         isDragDisabled={true}
       >
         {(draggableProvided) => (

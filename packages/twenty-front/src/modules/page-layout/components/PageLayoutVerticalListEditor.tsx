@@ -5,7 +5,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import styled from '@emotion/styled';
 import {
   DragDropContext,
@@ -61,17 +61,17 @@ export const PageLayoutVerticalListEditor = ({
     isInRightDrawer,
   });
 
-  const setDraggingWidgetId = useSetRecoilComponentStateV2(
+  const setPageLayoutDraggingWidgetId = useSetAtomComponentState(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
   return (
     <DragDropContext
       onDragStart={(result) => {
-        setDraggingWidgetId(result.draggableId);
+        setPageLayoutDraggingWidgetId(result.draggableId);
       }}
       onDragEnd={(result) => {
-        setDraggingWidgetId(null);
+        setPageLayoutDraggingWidgetId(null);
         onReorder(result);
       }}
     >

@@ -2,10 +2,10 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useRedirectToWorkspaceDomain = () => {
-  const isMultiWorkspaceEnabled = useRecoilValueV2(
+  const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();

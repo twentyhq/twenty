@@ -10,9 +10,9 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 As ações definem o que acontece após um gatilho ser acionado. Você pode encadear várias ações para criar automações complexas.
 
 <Tip>
-  * Use o seletor de variáveis (clique no ícone `(x+)`) para explorar os dados disponíveis de etapas anteriores
-  * Passe o cursor sobre qualquer campo de entrada para ver de qual etapa uma variável vem — útil quando o mesmo campo (por exemplo, ID) existe em várias etapas anteriores
-  * Dê a cada ação um nome descritivo para facilitar a manutenção
+* Use o seletor de variáveis (clique no ícone `(x+)`) para explorar os dados disponíveis de etapas anteriores
+* Passe o cursor sobre qualquer campo de entrada para ver de qual etapa uma variável vem — útil quando o mesmo campo (por exemplo, ID) existe em várias etapas anteriores
+* Dê a cada ação um nome descritivo para facilitar a manutenção
 </Tip>
 
 ## Ações em Registros
@@ -71,7 +71,7 @@ Encontra registros dentro de um objeto selecionado usando condições de filtro.
 **Saída**: Retorna registros correspondentes que podem ser usados em etapas subsequentes.
 
 <Note>
-  **Limite**: Search Records retorna no máximo **200 registros**. Se você precisar processar mais, adicione filtros específicos para reduzir os resultados ou use fluxos de trabalho agendados para processar em lotes.
+**Limite**: Search Records retorna no máximo **200 registros**. Se você precisar processar mais, adicione filtros específicos para reduzir os resultados ou use fluxos de trabalho agendados para processar em lotes.
 </Note>
 
 **Melhor prática**: Use [ramificações](/l/pt/user-guide/workflows/capabilities/workflow-branches) após Search Records para lidar com os cenários "encontrado" vs "não encontrado".
@@ -89,7 +89,7 @@ Cria um novo registro ou atualiza um existente com base em critérios de corresp
 * Preencha os valores dos campos. Não se esqueça de preencher pelo menos um dos identificadores únicos.
 
 <Note>
-  **A correspondência geralmente funciona ainda melhor ao adicionar apenas um identificador único.** Por exemplo, a captura de tela abaixo fará a correspondência de empresas com base no domínio delas. O ID não é necessariamente obrigatório.
+**A correspondência geralmente funciona ainda melhor ao adicionar apenas um identificador único.** Por exemplo, a captura de tela abaixo fará a correspondência de empresas com base no domínio delas. O ID não é necessariamente obrigatório.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
@@ -116,8 +116,8 @@ Cria um novo registro ou atualiza um existente com base em critérios de corresp
 * Defina as ações a serem realizadas em cada registro no loop.
 
 <Note>
-  - Você pode adicionar várias ações dentro de um iterador.
-  - Ao usar ramificações dentro de um iterador, certifique-se de que a última etapa de cada ramificação se conecte de volta ao iterador para fechar o loop.
+- Você pode adicionar várias ações dentro de um iterador.
+- Ao usar ramificações dentro de um iterador, certifique-se de que a última etapa de cada ramificação se conecte de volta ao iterador para fechar o loop.
 </Note>
 
 * Acesse os campos de `Current Item`: para usar campos do registro que está sendo processado no momento, clique na etapa **Iterator** e, em seguida, selecione **Current item**. A lista de campos disponíveis desse registro será exibida e poderá ser selecionada para uso em ações subsequentes.
@@ -135,8 +135,8 @@ Filtra registros com base em condições especificadas, permitindo que apenas os
 * Configure quais registros devem passar para as etapas subsequentes
 
 <Note>
-  1. **Saída**: Nós de filtro não retornam dados — eles atuam como portões. Se as condições forem atendidas, o fluxo de trabalho continua. Caso contrário, o fluxo de trabalho para nessa ramificação.
-  2. O operador `IS` pode ser usado com campos numéricos. Ele funciona como um `EQUAL`.
+1. **Saída**: Nós de filtro não retornam dados — eles atuam como portões. Se as condições forem atendidas, o fluxo de trabalho continua. Caso contrário, o fluxo de trabalho para nessa ramificação.
+2. O operador `IS` pode ser usado com campos numéricos. Ele funciona como um `EQUAL`.
 </Note>
 
 ### Atraso
@@ -167,7 +167,7 @@ Pausa a execução do fluxo de trabalho por uma duração especificada ou até u
 * Agende ações para o horário comercial
 
 <Note>
-  A data programada não pode estar no passado. Se for usado um campo de data de uma etapa anterior e a data já tiver passado, o fluxo de trabalho falhará.
+A data programada não pode estar no passado. Se for usado um campo de data de uma etapa anterior e a data já tiver passado, o fluxo de trabalho falhará.
 </Note>
 
 **Limites e Créditos**:
@@ -190,7 +190,7 @@ Não é adequado para newsletters (que exigem formatação mais rica) ou sequên
 * Selecione a conta de e-mail do remetente
 
 <Note>
-  Você só pode enviar e-mails de caixas de correio sincronizadas com a sua própria conta Twenty. O envio a partir das caixas de correio de outros membros da equipe (por exemplo, o e-mail do proprietário da conta) está no roadmap.
+Você só pode enviar e-mails de caixas de correio sincronizadas com a sua própria conta Twenty. O envio a partir das caixas de correio de outros membros da equipe (por exemplo, o e-mail do proprietário da conta) está no roadmap.
 </Note>
 
 Para todas as etapas a seguir, você pode referenciar variáveis de etapas anteriores para personalização.
@@ -198,14 +198,14 @@ Para todas as etapas a seguir, você pode referenciar variáveis de etapas anter
 * Insira o endereço de email do destinatário.
 
 <Note>
-  No momento, é possível apenas um destinatário.
+No momento, é possível apenas um destinatário.
 </Note>
 
 * Defina o assunto.
 * Componha o corpo da mensagem. Você pode formatar links, criar listas numeradas, listas com marcadores e adicionar anexos.
 
 <Note>
-  Adicionar assinaturas em HTML não é possível no momento.
+Adicionar assinaturas em HTML não é possível no momento.
 </Note>
 
 ### Formulário
@@ -213,7 +213,7 @@ Para todas as etapas a seguir, você pode referenciar variáveis de etapas anter
 Apresenta um formulário durante a execução do fluxo de trabalho para coletar a entrada do usuário. As respostas podem então ser usadas em etapas subsequentes para criar registros, enviar e-mails ou executar qualquer outra ação com base na entrada.
 
 <Warning>
-  **Os formulários são projetados apenas para gatilhos manuais**. Para fluxos de trabalho com outros gatilhos (Registro Criado, Atualizado, etc.), os formulários só são acessíveis via a interface de execução do fluxo de trabalho, o que não é a experiência esperada do usuário. Um centro de notificações será lançado em 2026 para suportar adequadamente os formulários em fluxos de trabalho automatizados.
+**Os formulários são projetados apenas para gatilhos manuais**. Para fluxos de trabalho com outros gatilhos (Registro Criado, Atualizado, etc.), os formulários só são acessíveis via a interface de execução do fluxo de trabalho, o que não é a experiência esperada do usuário. Um centro de notificações será lançado em 2026 para suportar adequadamente os formulários em fluxos de trabalho automatizados.
 </Warning>
 
 **Configuração**:
@@ -234,7 +234,7 @@ Apresenta um formulário durante a execução do fluxo de trabalho para coletar 
 * Preencha o formulário exibido no painel lateral e clique em `Submit`.
 
 <Note>
-  Os campos não podem ser tornados obrigatórios.
+Os campos não podem ser tornados obrigatórios.
 </Note>
 
 <VimeoEmbed videoId="1147277989" title="Demonstração em vídeo" />
@@ -256,15 +256,15 @@ Executa JavaScript personalizado dentro do seu fluxo de trabalho.
 * Teste o código diretamente na etapa
 
 <Note>
-  Se você precisar usar chaves de API externas em seu código, deverá inseri-las diretamente no corpo da função. Você não pode configurar chaves de API em outro lugar e referenciá-las na função de lógica.
+Se você precisar usar chaves de API externas em seu código, deverá inseri-las diretamente no corpo da função. Você não pode configurar chaves de API em outro lugar e referenciá-las na função de lógica.
 </Note>
 
 <Tip>
-  **Trabalhando com arrays?** Arrays de sistemas externos ou de etapas anteriores podem vir como strings. Veja [Como lidar com arrays em ações de código](/l/pt/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) para a solução.
+**Trabalhando com arrays?** Arrays de sistemas externos ou de etapas anteriores podem vir como strings. Veja [Como lidar com arrays em ações de código](/l/pt/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) para a solução.
 </Tip>
 
 <Tip>
-  Clique no ícone quadrado no canto superior direito do editor de código para exibi-lo em tela cheia — útil, já que a largura padrão do editor é limitada.
+Clique no ícone quadrado no canto superior direito do editor de código para exibi-lo em tela cheia — útil, já que a largura padrão do editor é limitada.
 </Tip>
 
 ### Requisição HTTP
@@ -303,9 +303,9 @@ Executa um agente de IA dentro do seu fluxo de trabalho para realizar tarefas in
 **Saída**: A resposta do agente de IA está disponível para uso em etapas subsequentes. Se o agente tiver um esquema de saída estruturado, a resposta seguirá esse formato.
 
 <Note>
-  As ações do Agente de IA consomem créditos de fluxo de trabalho com base no modelo de IA usado. Veja [Créditos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-credits) para obter detalhes.
+As ações do Agente de IA consomem créditos de fluxo de trabalho com base no modelo de IA usado. Veja [Créditos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-credits) para obter detalhes.
 </Note>
 
 <Note>
-  Os agentes de IA respeitam permissões baseadas em funções. Você pode atribuir funções específicas aos agentes em **Configurações → Funções** para controlar a quais dados eles podem acessar. Veja [Permissões](/l/pt/user-guide/permissions-access/capabilities/permissions) para obter detalhes.
+Os agentes de IA respeitam permissões baseadas em funções. Você pode atribuir funções específicas aos agentes em **Configurações → Funções** para controlar a quais dados eles podem acessar. Veja [Permissões](/l/pt/user-guide/permissions-access/capabilities/permissions) para obter detalhes.
 </Note>

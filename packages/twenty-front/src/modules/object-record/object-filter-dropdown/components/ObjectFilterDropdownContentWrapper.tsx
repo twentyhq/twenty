@@ -3,13 +3,13 @@ import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filte
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
 export const ObjectFilterDropdownContentWrapper = ({
   children,
 }: React.PropsWithChildren) => {
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
+  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 

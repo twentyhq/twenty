@@ -1,5 +1,5 @@
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect } from 'react';
 
 type GraphWidgetChartHasTooManyGroupsEffectProps = {
@@ -9,7 +9,7 @@ type GraphWidgetChartHasTooManyGroupsEffectProps = {
 export const GraphWidgetChartHasTooManyGroupsEffect = ({
   hasTooManyGroups,
 }: GraphWidgetChartHasTooManyGroupsEffectProps) => {
-  const setHasWidgetTooManyGroups = useSetRecoilComponentStateV2(
+  const setHasWidgetTooManyGroups = useSetAtomComponentState(
     hasWidgetTooManyGroupsComponentState,
   );
 

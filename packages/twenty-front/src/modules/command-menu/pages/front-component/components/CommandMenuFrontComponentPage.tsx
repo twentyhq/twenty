@@ -1,7 +1,7 @@
 import { Suspense, lazy } from 'react';
 
 import { viewableFrontComponentIdComponentState } from '@/command-menu/pages/front-component/states/viewableFrontComponentIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 const FrontComponentRenderer = lazy(() =>
@@ -11,7 +11,7 @@ const FrontComponentRenderer = lazy(() =>
 );
 
 export const CommandMenuFrontComponentPage = () => {
-  const viewableFrontComponentId = useRecoilComponentValueV2(
+  const viewableFrontComponentId = useAtomComponentStateValue(
     viewableFrontComponentIdComponentState,
   );
 

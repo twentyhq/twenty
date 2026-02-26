@@ -6,7 +6,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { t } from '@lingui/core/macro';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
@@ -29,8 +29,8 @@ export const useHandleToggleTrashColumnFilter = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
 
-  const isSoftDeleteFilterActiveComponentRecoilState =
-    useRecoilComponentStateCallbackStateV2(
+  const isSoftDeleteFilterActiveComponentAtom =
+    useAtomComponentStateCallbackState(
       isSoftDeleteFilterActiveComponentState,
       viewBarId,
     );
@@ -72,9 +72,9 @@ export const useHandleToggleTrashColumnFilter = ({
 
   const toggleSoftDeleteFilterState = useCallback(
     (currentState: boolean) => {
-      store.set(isSoftDeleteFilterActiveComponentRecoilState, currentState);
+      store.set(isSoftDeleteFilterActiveComponentAtom, currentState);
     },
-    [isSoftDeleteFilterActiveComponentRecoilState, store],
+    [isSoftDeleteFilterActiveComponentAtom, store],
   );
   return {
     handleToggleTrashColumnFilter,

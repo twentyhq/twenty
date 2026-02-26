@@ -6,24 +6,29 @@ Tento dokument popisuje osvědčené postupy, které byste měli dodržovat při
 
 ## Správa stavu
 
-React a Recoil zajišťují správu stavu v kódu.
+React a Jotai zajišťují správu stavu v kódu.
 
-### Použijte `useRecoilState` k ukládání stavu
+### Použijte `useAtomState` k ukládání stavu
 
 Je dobrým zvykem vytvořit tolik atomů, kolik potřebujete ke správě stavu.
 
 <Warning>
-  Je lepší použít více atomů než se snažit být příliš stručný s prop drilling.
+
+Je lepší použít více atomů než se snažit být příliš stručný s prop drilling.
+
 </Warning>
 
 ```tsx
-export const myAtomState = atom({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
   key: 'myAtomState',
-  default: 'default value',
+  defaultValue: 'default value',
 });
 
 export const MyComponent = () => {
-  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+  const [myAtom, setMyAtom] = useAtomState(myAtomState);
 
   return (
     <div>
@@ -40,7 +45,7 @@ export const MyComponent = () => {
 
 Vyhněte se používání `useRef` k ukládání stavu.
 
-If you want to store state, you should use `useState` or `useRecoilState`.
+If you want to store state, you should use `useState` or `useAtomState`.
 
 Podívejte se, jak spravovat překreslení, pokud máte pocit, že potřebujete `useRef`, abyste zabránili některým překreslením.
 
@@ -80,8 +85,8 @@ Stejný postup můžete aplikovat na logiku získávání dat pomocí Apollo hoo
 // ❌ Špatně, způsobí překreslení i když se data nemění,
 //    protože useEffect je třeba přehodnotit
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -93,9 +98,7 @@ export const PageComponent = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
-    <PageComponent />
-  </RecoilRoot>
+  <PageComponent />
 );},{
 ```
 
@@ -103,14 +106,14 @@ export const App = () => (
 // ✅ Dobře, nezpůsobí překreslení, pokud se data nemění,
 //   protože useEffect je přehodnoceno v další sourozené komponentě
 export const PageComponent = () => {
-  const [data, setData] = useRecoilState(dataState);
+  const [data, setData] = useAtomState(dataState);
 
   return <div>{data}</div>;
 };
 
 export const PageData = () => {
-  const [data, setData] = useRecoilState(dataState);
-  const [someDependency] = useRecoilState(someDependencyState);
+  const [data, setData] = useAtomState(dataState);
+  const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
     if(someDependency !== data) {
@@ -122,14 +125,14 @@ export const PageData = () => {
 };
 
 export const App = () => (
-  <RecoilRoot>
+  <>
     <PageData />
     <PageComponent />
-  </RecoilRoot>
+  </>
 );
 ```
 
-### Použijte Recoil family states a Recoil family selectors
+### Použijte atom family states a atom family selectors
 
 Stavy rodiny třísek a selektory jsou skvělý způsob, jak se vyhnout překreslování.
 

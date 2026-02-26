@@ -1,10 +1,10 @@
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { useMapViewFiltersToFilters } from './useMapViewFiltersToFilters';
 
 export const useApplyViewFiltersToCurrentRecordFilters = () => {
-  const setCurrentRecordFilters = useSetRecoilComponentStateV2(
+  const setCurrentRecordFilters = useSetAtomComponentState(
     currentRecordFiltersComponentState,
   );
 

@@ -2,7 +2,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   CommandBlock,
   H2Title,
@@ -20,7 +20,7 @@ const StyledButtonContainer = styled.div`
 export const SettingsApplicationsCreateTab = () => {
   const { t } = useLingui();
 
-  const currentWorkspaceMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { copyToClipboard } = useCopyToClipboard();
 

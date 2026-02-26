@@ -1,5 +1,5 @@
 import { workflowRunIteratorSubStepIterationIndexComponentState } from '@/command-menu/pages/workflow/step/view-run/states/workflowRunIteratorSubStepIterationIndexComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
@@ -29,7 +29,7 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     (step) => step.id === stepId,
   );
 
-  const workflowRunIteratorSubStepIterationIndex = useRecoilComponentValueV2(
+  const workflowRunIteratorSubStepIterationIndex = useAtomComponentStateValue(
     workflowRunIteratorSubStepIterationIndexComponentState,
   );
 

@@ -1,9 +1,9 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
 export const hasInitializedFieldsWidgetGroupsDraftComponentState =
-  createComponentStateV2<Record<string, boolean>>({
+  createAtomComponentState<Record<string, boolean>>({
     key: 'hasInitializedFieldsWidgetGroupsDraftComponentState',
     defaultValue: {},
     componentInstanceContext: PageLayoutComponentInstanceContext,

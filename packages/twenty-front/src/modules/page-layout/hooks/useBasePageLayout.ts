@@ -20,7 +20,7 @@ import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID } from '@/page-layout/constants
 import { recordPageLayoutFromIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutFromIdFamilySelector';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useQuery } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -64,7 +64,7 @@ export const useBasePageLayout = (
 ): PageLayout | undefined => {
   const isDefaultLayout = isDefaultLayoutId(pageLayoutId);
 
-  const cachedRecordPageLayout = useFamilySelectorValueV2(
+  const cachedRecordPageLayout = useAtomFamilySelectorValue(
     recordPageLayoutFromIdFamilySelector,
     { pageLayoutId },
   );

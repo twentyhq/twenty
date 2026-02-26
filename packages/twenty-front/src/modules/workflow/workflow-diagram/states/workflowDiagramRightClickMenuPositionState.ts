@@ -1,4 +1,4 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 type WorkflowDiagramRightClickMenuPositionState =
@@ -9,7 +9,7 @@ type WorkflowDiagramRightClickMenuPositionState =
   | undefined;
 
 export const workflowDiagramRightClickMenuPositionState =
-  createComponentStateV2<WorkflowDiagramRightClickMenuPositionState>({
+  createAtomComponentState<WorkflowDiagramRightClickMenuPositionState>({
     key: 'workflowDiagramRightClickMenuPositionState',
     defaultValue: undefined,
     componentInstanceContext: WorkflowVisualizerComponentInstanceContext,

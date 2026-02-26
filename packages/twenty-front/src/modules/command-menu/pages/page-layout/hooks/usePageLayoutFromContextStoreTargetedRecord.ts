@@ -1,25 +1,25 @@
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const usePageLayoutIdFromContextStoreTargetedRecord = () => {
-  const targetedRecordsRule = useRecoilComponentValueV2(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
   if (
     !(
-      targetedRecordsRule.mode === 'selection' &&
-      targetedRecordsRule.selectedRecordIds.length === 1
+      contextStoreTargetedRecordsRule.mode === 'selection' &&
+      contextStoreTargetedRecordsRule.selectedRecordIds.length === 1
     )
   ) {
-    throw new Error('Only one record should be selected');
+    throw new Error('Only one recordStore should be selected');
   }
 
-  const recordId: string = targetedRecordsRule.selectedRecordIds[0];
+  const recordId: string = contextStoreTargetedRecordsRule.selectedRecordIds[0];
 
-  const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  return { pageLayoutId: record?.pageLayoutId };
+  return { pageLayoutId: recordStore?.pageLayoutId };
 };

@@ -1,9 +1,9 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const singleRecordPickerSearchableObjectMetadataItemsComponentState =
-  createComponentStateV2<ObjectMetadataItem[]>({
+  createAtomComponentState<ObjectMetadataItem[]>({
     key: 'singleRecordPickerSearchableObjectMetadataItemsComponentState',
     defaultValue: [],
     componentInstanceContext: SingleRecordPickerComponentInstanceContext,

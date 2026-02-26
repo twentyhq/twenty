@@ -6,7 +6,7 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
 type ObjectFilterDropdownNumberInputProps = {
   filterDropdownId: string;
@@ -15,7 +15,7 @@ type ObjectFilterDropdownNumberInputProps = {
 export const ObjectFilterDropdownNumberInput = ({
   filterDropdownId,
 }: ObjectFilterDropdownNumberInputProps) => {
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentSelectorValueV2(
+  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
 

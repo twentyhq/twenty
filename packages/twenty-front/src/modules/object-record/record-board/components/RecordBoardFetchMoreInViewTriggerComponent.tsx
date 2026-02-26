@@ -10,9 +10,9 @@ import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewType } from '@/views/types/ViewType';
 
 const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
@@ -21,15 +21,14 @@ const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
 `;
 
 export const RecordBoardFetchMoreInViewTriggerComponent = () => {
-  const [shouldFetchMore, setShouldFetchMore] = useRecoilComponentStateV2(
-    recordBoardShouldFetchMoreComponentState,
-  );
+  const [recordBoardShouldFetchMore, setRecordBoardShouldFetchMore] =
+    useAtomComponentState(recordBoardShouldFetchMoreComponentState);
 
-  const isInitialLoading = useRecoilComponentValueV2(
+  const recordIndexRecordGroupsAreInInitialLoading = useAtomComponentStateValue(
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
   );
 
-  const isFetchingMore = useRecoilComponentValueV2(
+  const recordBoardIsFetchingMore = useAtomComponentStateValue(
     recordBoardIsFetchingMoreComponentState,
   );
 
@@ -40,7 +39,7 @@ export const RecordBoardFetchMoreInViewTriggerComponent = () => {
     root: scrollWrapperHTMLElement,
   });
 
-  const visibleRecordGroupIds = useRecoilComponentFamilySelectorValueV2(
+  const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
     ViewType.Kanban,
   );
@@ -52,19 +51,22 @@ export const RecordBoardFetchMoreInViewTriggerComponent = () => {
     1;
 
   useEffect(() => {
-    if (!isInitialLoading && !isFetchingMore) {
+    if (
+      !recordIndexRecordGroupsAreInInitialLoading &&
+      !recordBoardIsFetchingMore
+    ) {
       const newShouldFetchMore = inView;
 
-      if (shouldFetchMore !== newShouldFetchMore) {
-        setShouldFetchMore(newShouldFetchMore);
+      if (recordBoardShouldFetchMore !== newShouldFetchMore) {
+        setRecordBoardShouldFetchMore(newShouldFetchMore);
       }
     }
   }, [
-    shouldFetchMore,
-    setShouldFetchMore,
+    recordBoardShouldFetchMore,
+    setRecordBoardShouldFetchMore,
     inView,
-    isInitialLoading,
-    isFetchingMore,
+    recordIndexRecordGroupsAreInInitialLoading,
+    recordBoardIsFetchingMore,
   ]);
 
   return (

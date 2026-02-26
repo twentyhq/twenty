@@ -1,7 +1,7 @@
 import { useSingleRecordPickerPerformSearch } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerPerformSearch';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useSingleRecordPickerRecords = ({
   objectNameSingulars,
@@ -10,16 +10,18 @@ export const useSingleRecordPickerRecords = ({
   objectNameSingulars: string[];
   excludedRecordIds?: string[];
 }) => {
-  const recordPickerSearchFilter = useRecoilComponentValueV2(
+  const singleRecordPickerSearchFilter = useAtomComponentStateValue(
     singleRecordPickerSearchFilterComponentState,
   );
 
-  const selectedRecordId = useRecoilComponentValueV2(
+  const singleRecordPickerSelectedId = useAtomComponentStateValue(
     singleRecordPickerSelectedIdComponentState,
   );
   const { pickableMorphItems, loading } = useSingleRecordPickerPerformSearch({
-    searchFilter: recordPickerSearchFilter,
-    selectedIds: selectedRecordId ? [selectedRecordId] : [],
+    searchFilter: singleRecordPickerSearchFilter,
+    selectedIds: singleRecordPickerSelectedId
+      ? [singleRecordPickerSelectedId]
+      : [],
     excludedRecordIds: excludedRecordIds,
     objectNameSingulars,
   });

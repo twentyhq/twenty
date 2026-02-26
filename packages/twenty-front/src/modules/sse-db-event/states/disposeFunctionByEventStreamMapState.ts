@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const disposeFunctionForEventStreamState = createStateV2<{
+export const disposeFunctionForEventStreamState = createAtomState<{
   dispose: () => void;
 } | null>({
   key: 'disposeFunctionForEventStreamState',

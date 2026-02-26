@@ -11,9 +11,9 @@ import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,24 +31,25 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
   );
   const showAuthModal = useShowAuthModal();
   const isSettingsPage = useIsSettingsPage();
-  const currentWorkspace = useRecoilValueV2(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isWorkspaceActive =
     currentWorkspace?.activationStatus === WorkspaceActivationStatus.ACTIVE;
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const setIsPrefetchFavoritesLoaded = useSetFamilyRecoilStateV2(
+  const setPrefetchIsLoaded = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavorites,
   );
 
-  const setIsPrefetchFavoritesFoldersLoaded = useSetFamilyRecoilStateV2(
+  // eslint-disable-next-line twenty/matching-state-variable
+  const setPrefetchIsLoadedFolders = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavoritesFolders,
   );
 
-  const setFavoritesState = useSetRecoilStateV2(prefetchFavoritesState);
-  const setFavoriteFoldersState = useSetRecoilStateV2(
+  const setPrefetchFavorites = useSetAtomState(prefetchFavoritesState);
+  const setPrefetchFavoriteFolders = useSetAtomState(
     prefetchFavoriteFoldersState,
   );
 
@@ -92,10 +93,10 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
     (newFavorites: Favorite[]) => {
       const existingFavorites = store.get(prefetchFavoritesState.atom);
       if (!isDeeplyEqual(existingFavorites, newFavorites)) {
-        setFavoritesState(newFavorites);
+        setPrefetchFavorites(newFavorites);
       }
     },
-    [setFavoritesState, store],
+    [setPrefetchFavorites, store],
   );
 
   const setPrefetchFavoriteFoldersStateIfChanged = useCallback(
@@ -104,34 +105,30 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
         prefetchFavoriteFoldersState.atom,
       );
       if (!isDeeplyEqual(existingFavoriteFolders, newFavoriteFolders)) {
-        setFavoriteFoldersState(newFavoriteFolders);
+        setPrefetchFavoriteFolders(newFavoriteFolders);
       }
     },
-    [setFavoriteFoldersState, store],
+    [setPrefetchFavoriteFolders, store],
   );
 
   useEffect(() => {
     if (isDefined(favorites)) {
       setPrefetchFavoritesStateIfChanged(favorites as Favorite[]);
-      setIsPrefetchFavoritesLoaded(true);
+      setPrefetchIsLoaded(true);
     }
-  }, [
-    favorites,
-    setPrefetchFavoritesStateIfChanged,
-    setIsPrefetchFavoritesLoaded,
-  ]);
+  }, [favorites, setPrefetchFavoritesStateIfChanged, setPrefetchIsLoaded]);
 
   useEffect(() => {
     if (isDefined(favoriteFolders)) {
       setPrefetchFavoriteFoldersStateIfChanged(
         favoriteFolders as FavoriteFolder[],
       );
-      setIsPrefetchFavoritesFoldersLoaded(true);
+      setPrefetchIsLoadedFolders(true);
     }
   }, [
     favoriteFolders,
     setPrefetchFavoriteFoldersStateIfChanged,
-    setIsPrefetchFavoritesFoldersLoaded,
+    setPrefetchIsLoadedFolders,
   ]);
 
   return <></>;

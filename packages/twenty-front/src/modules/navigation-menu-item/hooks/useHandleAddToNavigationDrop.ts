@@ -13,13 +13,13 @@ import { useAddRecordToNavigationMenuDraft } from '@/navigation-menu-item/hooks/
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
-import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
-import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -35,22 +35,22 @@ export const useHandleAddToNavigationDrop = () => {
   const { addFolderToDraft } = useAddFolderToNavigationMenuDraft();
   const { addLinkToDraft } = useAddLinkToNavigationMenuDraft();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
-  const navigationMenuItemsDraft = useRecoilValueV2(
-    navigationMenuItemsDraftStateV2,
+  const navigationMenuItemsDraft = useAtomStateValue(
+    navigationMenuItemsDraftState,
   );
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const coreViews = useRecoilValueV2(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsState);
   const { getIcon } = useIcons();
-  const setSelectedNavigationMenuItemInEditMode = useSetRecoilStateV2(
-    selectedNavigationMenuItemInEditModeStateV2,
+  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
+    selectedNavigationMenuItemInEditModeState,
   );
-  const setIsNavigationMenuInEditMode = useSetRecoilStateV2(
-    isNavigationMenuInEditModeStateV2,
+  const setIsNavigationMenuInEditMode = useSetAtomState(
+    isNavigationMenuInEditModeState,
   );
-  const setOpenNavigationMenuItemFolderIds = useSetRecoilStateV2(
-    openNavigationMenuItemFolderIdsStateV2,
+  const setOpenNavigationMenuItemFolderIds = useSetAtomState(
+    openNavigationMenuItemFolderIdsState,
   );
 
   const handleAddToNavigationDrop = useCallback(
@@ -65,7 +65,7 @@ export const useHandleAddToNavigationDrop = () => {
       }
 
       const payload =
-        store.get(addToNavPayloadRegistryStateV2.atom).get(draggableId) ?? null;
+        store.get(addToNavPayloadRegistryState.atom).get(draggableId) ?? null;
       if (!payload) {
         return;
       }

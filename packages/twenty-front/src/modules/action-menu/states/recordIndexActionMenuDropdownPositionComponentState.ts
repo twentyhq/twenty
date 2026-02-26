@@ -1,9 +1,9 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { type PositionType } from '@/action-menu/types/PositionType';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const recordIndexActionMenuDropdownPositionComponentState =
-  createComponentStateV2<PositionType>({
+  createAtomComponentState<PositionType>({
     key: 'recordIndexActionMenuDropdownPositionComponentState',
     defaultValue: {
       x: null,

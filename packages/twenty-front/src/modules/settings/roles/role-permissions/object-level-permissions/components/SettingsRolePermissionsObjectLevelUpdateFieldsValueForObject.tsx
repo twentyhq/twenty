@@ -2,7 +2,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filterUserFacingFieldMetadataItems';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useLingui } from '@lingui/react/macro';
 
 type SettingsRolePermissionsObjectLevelUpdateFieldsValueForObjectProps = {
@@ -16,7 +16,7 @@ export const SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject = ({
 }: SettingsRolePermissionsObjectLevelUpdateFieldsValueForObjectProps) => {
   const { t } = useLingui();
 
-  const settingsDraftRole = useFamilyRecoilValueV2(
+  const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
   );

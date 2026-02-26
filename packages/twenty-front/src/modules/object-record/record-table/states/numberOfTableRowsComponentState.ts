@@ -1,8 +1,10 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const numberOfTableRowsComponentState = createComponentStateV2<number>({
-  key: 'numberOfTableRowsComponentState',
-  defaultValue: 0,
-  componentInstanceContext: RecordTableComponentInstanceContext,
-});
+export const numberOfTableRowsComponentState = createAtomComponentState<number>(
+  {
+    key: 'numberOfTableRowsComponentState',
+    defaultValue: 0,
+    componentInstanceContext: RecordTableComponentInstanceContext,
+  },
+);

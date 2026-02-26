@@ -8,9 +8,9 @@ import { useLegendItemToggle } from '@/page-layout/widgets/graph/hooks/useLegend
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHighlightedLegendIdComponentState';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -146,19 +146,18 @@ export const GraphWidgetLegend = ({
 
   const theme = useTheme();
 
-  const isPageLayoutInEditMode = useRecoilComponentValueV2(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
   const isInteractive = !isPageLayoutInEditMode;
 
-  const setHighlightedLegendId = useSetRecoilComponentStateV2(
+  const setGraphWidgetHighlightedLegendId = useSetAtomComponentState(
     graphWidgetHighlightedLegendIdComponentState,
   );
 
-  const [hiddenLegendIds, setHiddenLegendIds] = useRecoilComponentStateV2(
-    graphWidgetHiddenLegendIdsComponentState,
-  );
+  const [graphWidgetHiddenLegendIds, setGraphWidgetHiddenLegendIds] =
+    useAtomComponentState(graphWidgetHiddenLegendIdsComponentState);
 
   const itemIds = items.map((item) => item.id);
 
@@ -167,22 +166,22 @@ export const GraphWidgetLegend = ({
     isInteractive,
   });
 
-  if (isPageLayoutInEditMode && hiddenLegendIds.length > 0) {
-    setHiddenLegendIds([]);
+  if (isPageLayoutInEditMode && graphWidgetHiddenLegendIds.length > 0) {
+    setGraphWidgetHiddenLegendIds([]);
   }
 
   const handleLegendItemMouseEnter = (itemId: string) => {
     if (!isInteractive) {
       return;
     }
-    setHighlightedLegendId(itemId);
+    setGraphWidgetHighlightedLegendId(itemId);
   };
 
   const handleLegendItemMouseLeave = () => {
     if (!isInteractive) {
       return;
     }
-    setHighlightedLegendId(null);
+    setGraphWidgetHighlightedLegendId(null);
   };
 
   const shouldShowLegend = show && items.length > 1;
@@ -302,7 +301,9 @@ export const GraphWidgetLegend = ({
                   centered={!needsPagination}
                 >
                   {visibleItems.map((item) => {
-                    const isHidden = hiddenLegendIds.includes(item.id);
+                    const isHidden = graphWidgetHiddenLegendIds.includes(
+                      item.id,
+                    );
                     return (
                       <StyledLegendItem
                         key={item.id}

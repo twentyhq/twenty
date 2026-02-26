@@ -1,18 +1,18 @@
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import type { PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
-  const pageLayoutDraft = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraft = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
     pageLayoutIdFromProps,
   );
 
-  const currentlyEditingWidgetId = useRecoilComponentValueV2(
+  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutIdFromProps,
   );
@@ -33,7 +33,7 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
         tabs: prev.tabs.map((tab) => ({
           ...tab,
           widgets: tab.widgets.map((widget) =>
-            widget.id === currentlyEditingWidgetId
+            widget.id === pageLayoutEditingWidgetId
               ? {
                   ...widget,
                   objectMetadataId: objectMetadataId ?? widget.objectMetadataId,
@@ -47,7 +47,7 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
         })),
       });
     },
-    [pageLayoutDraft, currentlyEditingWidgetId, store],
+    [pageLayoutDraft, pageLayoutEditingWidgetId, store],
   );
 
   return { updateCurrentWidgetConfig };

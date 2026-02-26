@@ -1,7 +1,6 @@
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -13,15 +12,15 @@ import { useCallback } from 'react';
 export const useUpdateObjectViewOptions = () => {
   const store = useStore();
 
-  const setRecordIndexOpenRecordIn = useSetRecoilStateV2(
+  const setRecordIndexOpenRecordIn = useSetAtomState(
     recordIndexOpenRecordInState,
   );
 
-  const setRecordIndexViewName = useSetRecoilComponentStateV2(
+  const setViewPickerInputName = useSetAtomComponentState(
     viewPickerInputNameComponentState,
   );
 
-  const setRecordIndexViewIcon = useSetRecoilComponentStateV2(
+  const setViewPickerSelectedIcon = useSetAtomComponentState(
     viewPickerSelectedIconComponentState,
   );
 
@@ -31,7 +30,7 @@ export const useUpdateObjectViewOptions = () => {
     (openRecordIn: ViewOpenRecordInType, view: GraphQLView | undefined) => {
       if (!view) return;
       setRecordIndexOpenRecordIn(openRecordIn);
-      store.set(recordIndexOpenRecordInStateV2.atom, openRecordIn);
+      store.set(recordIndexOpenRecordInState.atom, openRecordIn);
       updateCurrentView({
         openRecordIn,
       });
@@ -42,23 +41,23 @@ export const useUpdateObjectViewOptions = () => {
   const setAndPersistViewName = useCallback(
     (viewName: string, view: GraphQLView | undefined) => {
       if (!view) return;
-      setRecordIndexViewName(viewName);
+      setViewPickerInputName(viewName);
       updateCurrentView({
         name: viewName,
       });
     },
-    [setRecordIndexViewName, updateCurrentView],
+    [setViewPickerInputName, updateCurrentView],
   );
 
   const setAndPersistViewIcon = useCallback(
     (viewIcon: string, view: GraphQLView | undefined) => {
       if (!view) return;
-      setRecordIndexViewIcon(viewIcon);
+      setViewPickerSelectedIcon(viewIcon);
       updateCurrentView({
         icon: viewIcon,
       });
     },
-    [setRecordIndexViewIcon, updateCurrentView],
+    [setViewPickerSelectedIcon, updateCurrentView],
   );
 
   return {

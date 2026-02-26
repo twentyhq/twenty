@@ -9,7 +9,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -35,19 +35,19 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
 
   const { getIcon } = useIcons();
 
-  const aggregateOperation = useRecoilComponentValueV2(
+  const aggregateOperation = useAtomComponentStateValue(
     aggregateOperationComponentState,
   );
 
-  const availableFieldsIdsForAggregateOperation = useRecoilComponentValueV2(
+  const availableFieldIdsForAggregateOperation = useAtomComponentStateValue(
     availableFieldIdsForAggregateOperationComponentState,
   );
 
-  const recordIndexGroupAggregateOperation = useRecoilComponentValueV2(
+  const recordIndexGroupAggregateOperation = useAtomComponentStateValue(
     recordIndexGroupAggregateOperationComponentState,
   );
 
-  const recordIndexGroupAggregateFieldMetadataItem = useRecoilComponentValueV2(
+  const recordIndexGroupAggregateFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupAggregateFieldMetadataItemComponentState,
   );
 
@@ -72,7 +72,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
         {getAggregateOperationLabel(aggregateOperation)}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
-        {availableFieldsIdsForAggregateOperation.map((fieldId) => {
+        {availableFieldIdsForAggregateOperation.map((fieldId) => {
           const fieldMetadata = objectMetadataItem.fields.find(
             (field) => field.id === fieldId,
           );

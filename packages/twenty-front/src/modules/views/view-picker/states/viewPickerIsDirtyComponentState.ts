@@ -1,8 +1,9 @@
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
-export const viewPickerIsDirtyComponentState = createComponentStateV2<boolean>({
-  key: 'viewPickerIsDirtyComponentState',
-  defaultValue: false,
-  componentInstanceContext: ViewComponentInstanceContext,
-});
+export const viewPickerIsDirtyComponentState =
+  createAtomComponentState<boolean>({
+    key: 'viewPickerIsDirtyComponentState',
+    defaultValue: false,
+    componentInstanceContext: ViewComponentInstanceContext,
+  });

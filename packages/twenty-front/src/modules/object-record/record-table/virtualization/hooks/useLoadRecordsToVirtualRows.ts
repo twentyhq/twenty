@@ -8,28 +8,28 @@ import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/
 import { dataLoadingStatusByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentState';
 import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 export const useLoadRecordsToVirtualRows = () => {
-  const recordIdByRealIndex = useRecoilComponentStateCallbackStateV2(
+  const recordIdByRealIndex = useAtomComponentStateCallbackState(
     recordIdByRealIndexComponentState,
   );
 
-  const dataLoadingStatusByRealIndex = useRecoilComponentStateCallbackStateV2(
+  const dataLoadingStatusByRealIndex = useAtomComponentStateCallbackState(
     dataLoadingStatusByRealIndexComponentState,
   );
 
   const recordIndexRecordIdsByGroupFamilyState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const hasUserSelectedAllRows = useRecoilComponentStateCallbackStateV2(
+  const hasUserSelectedAllRows = useAtomComponentStateCallbackState(
     hasUserSelectedAllRowsComponentState,
   );
 
-  const isRowSelectedFamilyState = useRecoilComponentFamilyStateCallbackStateV2(
+  const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
     isRowSelectedComponentFamilyState,
   );
 

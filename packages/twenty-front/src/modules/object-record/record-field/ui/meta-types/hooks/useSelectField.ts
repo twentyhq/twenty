@@ -1,12 +1,12 @@
 import { useContext } from 'react';
 
 import { useRecordFieldInput } from '@/object-record/record-field/ui/hooks/useRecordFieldInput';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
-import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { type FieldSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
@@ -20,8 +20,8 @@ export const useSelectField = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const [fieldValue, setFieldValue] = useFamilySelectorStateV2(
-    recordStoreFamilySelectorV2,
+  const [fieldValue, setFieldValue] = useAtomFamilySelectorState(
+    recordStoreFamilySelector,
     { recordId, fieldName },
   );
 
@@ -29,7 +29,7 @@ export const useSelectField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldSelectValue>();
 
-  const draftValue = useRecoilComponentValueV2(
+  const recordFieldInputDraftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
@@ -37,7 +37,7 @@ export const useSelectField = () => {
     recordId,
     fieldDefinition,
     fieldValue: fieldSelectValue,
-    draftValue,
+    draftValue: recordFieldInputDraftValue,
     setDraftValue,
     setFieldValue,
   };

@@ -14,44 +14,44 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useTriggerRecordBoardInitialQuery = () => {
-  const recordGroupDefinitions = useRecoilComponentSelectorValueV2(
+  const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
   );
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const recordIndexGroupFieldMetadataItem = useRecoilComponentValueV2(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const setLastRecordBoardQueryIdentifier = useSetRecoilComponentStateV2(
+  const setLastRecordBoardQueryIdentifier = useSetAtomComponentState(
     lastRecordBoardQueryIdentifierComponentState,
   );
 
   const recordBoardShouldFetchMoreInColumnFamilyCallbackState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       recordBoardShouldFetchMoreInColumnComponentFamilyState,
     );
 
   const recordIndexRecordGroupsAreInInitialLoading =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       recordIndexRecordGroupsAreInInitialLoadingComponentState,
     );
 
   const store = useStore();
 
-  const setRecordBoardCurrentGroupByQueryOffset = useSetRecoilComponentStateV2(
+  const setRecordBoardCurrentGroupByQueryOffset = useSetAtomComponentState(
     recordBoardCurrentGroupByQueryOffsetComponentState,
   );
 

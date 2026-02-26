@@ -6,20 +6,20 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
   const { focusRecordTableCell } = useFocusRecordTableCell(recordTableId);
 
-  const focusPosition = useRecoilComponentStateCallbackStateV2(
+  const focusPosition = useAtomComponentStateCallbackState(
     recordTableFocusPositionComponentState,
     recordTableId,
   );
 
-  const recordIndexAllRecordIds = useRecoilComponentSelectorCallbackStateV2(
+  const recordIndexAllRecordIds = useAtomComponentSelectorCallbackState(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
@@ -65,7 +65,7 @@ export const useRecordTableMoveFocusedCell = (recordTableId?: string) => {
     });
   }, [recordIndexAllRecordIds, focusRecordTableCell, focusPosition, store]);
 
-  const currentRecordFields = useRecoilComponentStateCallbackStateV2(
+  const currentRecordFields = useAtomComponentStateCallbackState(
     currentRecordFieldsComponentState,
     recordTableId,
   );

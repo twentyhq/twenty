@@ -19,7 +19,7 @@ import { isFilterOnActorWorkspaceMemberSubField } from '@/object-record/object-f
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isExpectedSubFieldName } from 'twenty-shared/utils';
 
@@ -32,7 +32,7 @@ export const AdvancedFilterDropdownFilterInput = ({
   filterDropdownId,
   recordFilter,
 }: AdvancedFilterDropdownFilterInputProps) => {
-  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
+  const subFieldNameUsedInDropdown = useAtomComponentStateValue(
     subFieldNameUsedInDropdownComponentState,
   );
 

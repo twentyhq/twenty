@@ -3,9 +3,9 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizationBecauseDataChanged';
 import { lastProcessedFieldMetadataUpdateIdComponentState } from '@/object-record/record-table/virtualization/states/lastProcessedFieldMetadataUpdateIdComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect } from 'react';
 
 export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
@@ -14,20 +14,18 @@ export const RecordTableVirtualizedFieldMetadataUpdateEffect = () => {
   const { resetVirtualizationBecauseDataChanged } =
     useResetVirtualizationBecauseDataChanged(objectNameSingular);
 
-  const visibleRecordFields = useRecoilComponentSelectorValueV2(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 
-  const lastFieldMetadataItemUpdate = useRecoilValueV2(
+  const lastFieldMetadataItemUpdate = useAtomStateValue(
     lastFieldMetadataItemUpdateState,
   );
 
   const [
     lastProcessedFieldMetadataUpdateId,
     setLastProcessedFieldMetadataUpdateId,
-  ] = useRecoilComponentStateV2(
-    lastProcessedFieldMetadataUpdateIdComponentState,
-  );
+  ] = useAtomComponentState(lastProcessedFieldMetadataUpdateIdComponentState);
 
   useEffect(() => {
     if (!lastFieldMetadataItemUpdate) {

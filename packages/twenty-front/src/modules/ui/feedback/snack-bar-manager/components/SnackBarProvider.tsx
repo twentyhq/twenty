@@ -6,7 +6,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { snackBarInternalComponentState } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { SnackBar } from './SnackBar';
 
@@ -27,7 +27,7 @@ const StyledSnackBarContainer = styled.div`
 `;
 
 export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
-  const snackBarInternal = useRecoilComponentValueV2(
+  const snackBarInternal = useAtomComponentStateValue(
     snackBarInternalComponentState,
   );
 

@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { ViewKey } from '@/views/types/ViewKey';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
@@ -14,7 +14,7 @@ type NavigationMenuItemDraft = {
 export const useNavigationMenuObjectMetadataFromDraft = (
   currentDraft: NavigationMenuItemDraft[],
 ) => {
-  const coreViews = useRecoilValueV2(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsState);
   const views = coreViews.map(convertCoreViewToView);
 
   const objectMetadataIdsInWorkspace = currentDraft.reduce<Set<string>>(

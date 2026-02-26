@@ -29,8 +29,8 @@ import {
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
 
@@ -89,12 +89,12 @@ export const useFetchMoreRecordsWithPagination = <
     orderBy,
   });
 
-  const hasNextPage = useFamilyRecoilValueV2(
+  const hasNextPage = useAtomFamilyStateValue(
     hasNextPageFamilyState,
     queryIdentifier,
   );
 
-  const setIsFetchingMoreObjects = useSetFamilyRecoilStateV2(
+  const setIsFetchingMoreRecords = useSetAtomFamilyState(
     isFetchingMoreRecordsFamilyState,
     queryIdentifier,
   );
@@ -119,7 +119,7 @@ export const useFetchMoreRecordsWithPagination = <
       hasNextPageLocal ||
       (!isAggregationEnabled(objectMetadataItem) && !error)
     ) {
-      setIsFetchingMoreObjects(true);
+      setIsFetchingMoreRecords(true);
 
       try {
         const { data: fetchMoreDataResult } = await fetchMore({
@@ -193,13 +193,13 @@ export const useFetchMoreRecordsWithPagination = <
         handleFindManyRecordsError(error as ApolloError);
         return { error: error as ApolloError };
       } finally {
-        setIsFetchingMoreObjects(false);
+        setIsFetchingMoreRecords(false);
       }
     }
   }, [
     objectMetadataItem,
     error,
-    setIsFetchingMoreObjects,
+    setIsFetchingMoreRecords,
     fetchMore,
     filter,
     orderBy,

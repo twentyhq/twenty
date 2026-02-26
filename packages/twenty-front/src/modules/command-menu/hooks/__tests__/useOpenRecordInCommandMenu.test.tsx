@@ -12,7 +12,7 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
@@ -52,27 +52,28 @@ const renderHooks = () => {
     () => {
       const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-      const viewableRecordId = useRecoilComponentValueV2(
+      const viewableRecordId = useAtomComponentStateValue(
         viewableRecordIdComponentState,
         'mocked-uuid',
       );
-      const viewableRecordNameSingular = useRecoilComponentValueV2(
+      const viewableRecordNameSingular = useAtomComponentStateValue(
         viewableRecordNameSingularComponentState,
         'mocked-uuid',
       );
-      const currentObjectMetadataItemId = useRecoilComponentValueV2(
-        contextStoreCurrentObjectMetadataItemIdComponentState,
-        'mocked-uuid',
-      );
-      const targetedRecordsRule = useRecoilComponentValueV2(
+      const contextStoreCurrentObjectMetadataItemId =
+        useAtomComponentStateValue(
+          contextStoreCurrentObjectMetadataItemIdComponentState,
+          'mocked-uuid',
+        );
+      const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
         contextStoreTargetedRecordsRuleComponentState,
         'mocked-uuid',
       );
-      const numberOfSelectedRecords = useRecoilComponentValueV2(
+      const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
         contextStoreNumberOfSelectedRecordsComponentState,
         'mocked-uuid',
       );
-      const currentViewType = useRecoilComponentValueV2(
+      const contextStoreCurrentViewType = useAtomComponentStateValue(
         contextStoreCurrentViewTypeComponentState,
         'mocked-uuid',
       );
@@ -82,10 +83,10 @@ const renderHooks = () => {
         openRecordInCommandMenu,
         viewableRecordId,
         viewableRecordNameSingular,
-        currentObjectMetadataItemId,
-        targetedRecordsRule,
-        numberOfSelectedRecords,
-        currentViewType,
+        contextStoreCurrentObjectMetadataItemId,
+        contextStoreTargetedRecordsRule,
+        contextStoreNumberOfSelectedRecords,
+        contextStoreCurrentViewType,
         getIcon,
       };
     },
@@ -116,15 +117,17 @@ describe('useOpenRecordInCommandMenu', () => {
 
     expect(result.current.viewableRecordId).toBe(recordId);
     expect(result.current.viewableRecordNameSingular).toBe(objectNameSingular);
-    expect(result.current.currentObjectMetadataItemId).toBe(
+    expect(result.current.contextStoreCurrentObjectMetadataItemId).toBe(
       personMockObjectMetadataItem.id,
     );
-    expect(result.current.targetedRecordsRule).toEqual({
+    expect(result.current.contextStoreTargetedRecordsRule).toEqual({
       mode: 'selection',
       selectedRecordIds: [recordId],
     });
-    expect(result.current.numberOfSelectedRecords).toBe(1);
-    expect(result.current.currentViewType).toBe(ContextStoreViewType.ShowPage);
+    expect(result.current.contextStoreNumberOfSelectedRecords).toBe(1);
+    expect(result.current.contextStoreCurrentViewType).toBe(
+      ContextStoreViewType.ShowPage,
+    );
 
     const commandMenuNavigationMorphItemsByPage = jotaiStore.get(
       commandMenuNavigationMorphItemsByPageState.atom,

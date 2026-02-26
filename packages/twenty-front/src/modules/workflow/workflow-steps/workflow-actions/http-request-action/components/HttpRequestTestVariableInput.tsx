@@ -3,8 +3,8 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useSetFamilyRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetFamilyRecoilStateV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
 import { t } from '@lingui/core/macro';
 import styled from '@emotion/styled';
@@ -26,11 +26,11 @@ export const HttpRequestTestVariableInput = ({
   actionId,
   readonly,
 }: HttpRequestTestVariableInputProps) => {
-  const httpRequestTestData = useFamilyRecoilValueV2(
+  const httpRequestTestData = useAtomFamilyStateValue(
     httpRequestTestDataFamilyState,
     actionId,
   );
-  const setHttpRequestTestData = useSetFamilyRecoilStateV2(
+  const setHttpRequestTestData = useSetAtomFamilyState(
     httpRequestTestDataFamilyState,
     actionId,
   );

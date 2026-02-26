@@ -18,9 +18,9 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -31,20 +31,20 @@ export const useProcessTableWithoutGroupRecordDrop = () => {
 
   const { updateOneRecord } = useUpdateOneRecord();
 
-  const allRecordIdsWithoutGroup = useRecoilComponentSelectorCallbackStateV2(
+  const allRecordIdsWithoutGroup = useAtomComponentSelectorCallbackState(
     allRecordIdsWithoutGroupsComponentSelector,
   );
 
-  const selectedRowIds = useRecoilComponentSelectorCallbackStateV2(
+  const selectedRowIds = useAtomComponentSelectorCallbackState(
     selectedRowIdsComponentSelector,
   );
 
-  const originalDragSelection = useRecoilComponentStateCallbackStateV2(
+  const originalDragSelection = useAtomComponentStateCallbackState(
     originalDragSelectionComponentState,
     recordIndexId,
   );
 
-  const currentRecordSorts = useRecoilComponentValueV2(
+  const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
   );
 

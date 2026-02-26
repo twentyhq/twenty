@@ -13,9 +13,9 @@ export type FlatEntityValidationError<TCode extends string = string> = {
 
 export type FailedFlatEntityValidation<
   TMetadataName extends AllMetadataName,
-  TAcionType extends WorkspaceMigrationActionType,
+  TActionType extends WorkspaceMigrationActionType,
 > = {
-  type: TAcionType;
+  type: TActionType;
   metadataName: TMetadataName;
   errors: FlatEntityValidationError[];
   flatEntityMinimalInformation: Partial<MetadataFlatEntity<TMetadataName>>;

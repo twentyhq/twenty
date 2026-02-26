@@ -4,17 +4,17 @@ import { useStore } from 'jotai';
 import { activeRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/activeRecordBoardCardIndexesComponentState';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { type BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useActiveRecordBoardCard = (recordBoardId?: string) => {
-  const isCardActiveState = useRecoilComponentFamilyStateCallbackStateV2(
+  const isCardActiveState = useAtomComponentFamilyStateCallbackState(
     isRecordBoardCardActiveComponentFamilyState,
     recordBoardId,
   );
 
-  const activeBoardCardIndexesState = useRecoilComponentStateCallbackStateV2(
+  const activeBoardCardIndexesState = useAtomComponentStateCallbackState(
     activeRecordBoardCardIndexesComponentState,
     recordBoardId,
   );

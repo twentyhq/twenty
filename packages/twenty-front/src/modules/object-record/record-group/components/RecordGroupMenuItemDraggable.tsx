@@ -3,7 +3,7 @@ import {
   type RecordGroupDefinition,
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
@@ -14,7 +14,7 @@ type RecordGroupMenuItemDraggableProps = {
   recordGroupId: string;
   showDragGrip?: boolean;
   isDraggable?: boolean;
-  onVisibilityChange: (recordGroup: RecordGroupDefinition) => void;
+  onVisibilityChange: (recordGroupDefinition: RecordGroupDefinition) => void;
   isVisibleLimitReached?: boolean;
 };
 
@@ -25,37 +25,38 @@ export const RecordGroupMenuItemDraggable = ({
   onVisibilityChange,
   isVisibleLimitReached = false,
 }: RecordGroupMenuItemDraggableProps) => {
-  const recordGroup = useFamilyRecoilValueV2(
+  const recordGroupDefinition = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
     recordGroupId,
   );
 
-  if (!isDefined(recordGroup)) {
+  if (!isDefined(recordGroupDefinition)) {
     return null;
   }
 
-  const isNoValue = recordGroup.type === RecordGroupDefinitionType.NoValue;
+  const isNoValue =
+    recordGroupDefinition.type === RecordGroupDefinitionType.NoValue;
 
-  const getIconButtons = (recordGroup: RecordGroupDefinition) => {
-    const groupValue = recordGroup.value;
+  const getIconButtons = (recordGroupDefinition: RecordGroupDefinition) => {
+    const groupValue = recordGroupDefinition.value;
 
-    if (!recordGroup.isVisible && isVisibleLimitReached) {
+    if (!recordGroupDefinition.isVisible && isVisibleLimitReached) {
       return undefined;
     }
 
     const iconButtons = [
       {
-        Icon: recordGroup.isVisible ? IconEyeOff : IconEye,
-        ariaLabel: recordGroup.isVisible
+        Icon: recordGroupDefinition.isVisible ? IconEyeOff : IconEye,
+        ariaLabel: recordGroupDefinition.isVisible
           ? t`Hide group ${groupValue}`
           : t`Show group ${groupValue}`,
-        dataTestId: recordGroup.isVisible
-          ? `hide-group-${recordGroup.value?.toLowerCase().replace(' ', '-') ?? ''}`
-          : `show-group-${recordGroup.value?.toLowerCase().replace(' ', '-') ?? ''}`,
+        dataTestId: recordGroupDefinition.isVisible
+          ? `hide-group-${recordGroupDefinition.value?.toLowerCase().replace(' ', '-') ?? ''}`
+          : `show-group-${recordGroupDefinition.value?.toLowerCase().replace(' ', '-') ?? ''}`,
         onClick: () =>
           onVisibilityChange({
-            ...recordGroup,
-            isVisible: !recordGroup.isVisible,
+            ...recordGroupDefinition,
+            isVisible: !recordGroupDefinition.isVisible,
           }),
       },
     ].filter(isDefined);
@@ -65,29 +66,29 @@ export const RecordGroupMenuItemDraggable = ({
 
   return (
     <MenuItemDraggable
-      key={recordGroup.id}
+      key={recordGroupDefinition.id}
       text={
         <Tag
           variant={
-            recordGroup.type !== RecordGroupDefinitionType.NoValue
+            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
               ? 'solid'
               : 'outline'
           }
           color={
-            recordGroup.type !== RecordGroupDefinitionType.NoValue
-              ? recordGroup.color
+            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
+              ? recordGroupDefinition.color
               : 'transparent'
           }
-          text={recordGroup.title}
+          text={recordGroupDefinition.title}
           weight={
-            recordGroup.type !== RecordGroupDefinitionType.NoValue
+            recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
               ? 'regular'
               : 'medium'
           }
         />
       }
       accent={isNoValue || showDragGrip ? 'placeholder' : 'default'}
-      iconButtons={getIconButtons(recordGroup)}
+      iconButtons={getIconButtons(recordGroupDefinition)}
       gripMode={isNoValue || showDragGrip ? 'always' : 'never'}
       isDragDisabled={!isDraggable}
     />

@@ -24,8 +24,8 @@ import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterP
 import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useRef } from 'react';
@@ -100,15 +100,15 @@ type PageLayoutGridLayoutProps = {
 };
 
 export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
-  const setPageLayoutCurrentBreakpoint = useSetRecoilComponentStateV2(
+  const setPageLayoutCurrentBreakpoint = useSetAtomComponentState(
     pageLayoutCurrentBreakpointComponentState,
   );
 
-  const setDraggingWidgetId = useSetRecoilComponentStateV2(
+  const setPageLayoutDraggingWidgetId = useSetAtomComponentState(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const setResizingWidgetId = useSetRecoilComponentStateV2(
+  const setPageLayoutResizingWidgetId = useSetAtomComponentState(
     pageLayoutResizingWidgetIdComponentState,
   );
 
@@ -126,18 +126,18 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
-  const isPageLayoutInEditMode = useRecoilComponentValueV2(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
-  const pageLayoutCurrentLayouts = useRecoilComponentValueV2(
+  const pageLayoutCurrentLayouts = useAtomComponentStateValue(
     pageLayoutCurrentLayoutsComponentState,
   );
 
-  const pageLayoutDraggedArea = useRecoilComponentValueV2(
+  const pageLayoutDraggedArea = useAtomComponentStateValue(
     pageLayoutDraggedAreaComponentState,
   );
-  const draggingWidgetId = useRecoilComponentValueV2(
+  const pageLayoutDraggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
@@ -167,7 +167,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     [activeTabWidgets, hasPendingPlaceholder],
   );
 
-  const shouldDisableTransitions = !isDefined(draggingWidgetId);
+  const shouldDisableTransitions = !isDefined(pageLayoutDraggingWidgetId);
 
   return (
     <StyledGridContainer
@@ -202,16 +202,16 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
         }
         resizeHandles={['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw']}
         onDragStart={(_layout, _oldItem, newItem) => {
-          setDraggingWidgetId(newItem.i);
+          setPageLayoutDraggingWidgetId(newItem.i);
         }}
         onDragStop={() => {
-          setDraggingWidgetId(null);
+          setPageLayoutDraggingWidgetId(null);
         }}
         onResizeStart={(_layout, _oldItem, newItem) => {
-          setResizingWidgetId(newItem.i);
+          setPageLayoutResizingWidgetId(newItem.i);
         }}
         onResizeStop={() => {
-          setResizingWidgetId(null);
+          setPageLayoutResizingWidgetId(null);
         }}
         onLayoutChange={handleLayoutChangeWithoutPendingPlaceholder}
         onBreakpointChange={(newBreakpoint) =>

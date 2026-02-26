@@ -159,7 +159,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Internally, the currently selected scope is stored in a Recoil state that is shared across the application :
+Internally, the currently selected scope is stored in a Jotai atom that is shared across the application :
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -168,10 +168,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-But this Recoil state should never be handled manually ! We'll see how to use it in the next section.
+But this atom should never be handled manually ! We'll see how to use it in the next section.
 
 ## How is it working internally?
 
 We made a thin wrapper on top of [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) that makes it more performant and avoids unnecessary re-renders.
 
-We also create a Recoil state to handle the hotkey scope state and make it available everywhere in the application.
+We also create a Jotai atom to handle the hotkey scope state and make it available everywhere in the application.

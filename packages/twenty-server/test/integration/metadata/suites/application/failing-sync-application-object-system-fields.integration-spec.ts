@@ -1,4 +1,5 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
@@ -20,37 +21,12 @@ type TestContext = {
 
 type SyncApplicationTestingContext = EachTestingContext<TestContext>[];
 
-const buildBaseManifest = (
-  overrides: Pick<Manifest, 'objects' | 'fields'>,
-): Manifest => ({
-  application: {
-    apiClientChecksum: '',
-    marketplaceData: undefined,
-    universalIdentifier: TEST_APP_ID,
-    defaultRoleUniversalIdentifier: TEST_ROLE_ID,
-    displayName: 'Test System Fields App',
-    description: 'App for testing system field validation',
-    icon: 'IconTestPipe',
-    applicationVariables: {},
-    packageJsonChecksum: null,
-    yarnLockChecksum: null,
-  },
-  roles: [
-    {
-      universalIdentifier: TEST_ROLE_ID,
-      label: 'Test Role',
-      description: 'A test role',
-    },
-  ],
-  logicFunctions: [],
-  frontComponents: [],
-  publicAssets: [],
-  views: [],
-  navigationMenuItems: [],
-  pageLayouts: [],
-  skills: [],
-  ...overrides,
-});
+const buildManifest = (overrides: Pick<Manifest, 'objects' | 'fields'>) =>
+  buildBaseManifest({
+    appId: TEST_APP_ID,
+    roleId: TEST_ROLE_ID,
+    overrides,
+  });
 
 const buildObjectWithLabelField = ({
   nameSingular,
@@ -104,7 +80,7 @@ const failingSyncApplicationSystemFieldsTestCases: SyncApplicationTestingContext
       title:
         'when object is created without any system fields (missing all 8 system fields)',
       context: {
-        manifest: buildBaseManifest(
+        manifest: buildManifest(
           buildObjectWithLabelField({
             nameSingular: 'noSystemFieldsObject',
             namePlural: 'noSystemFieldsObjects',
@@ -118,7 +94,7 @@ const failingSyncApplicationSystemFieldsTestCases: SyncApplicationTestingContext
     {
       title: 'when object has id field with wrong type (TEXT instead of UUID)',
       context: {
-        manifest: buildBaseManifest(
+        manifest: buildManifest(
           buildObjectWithLabelField({
             nameSingular: 'wrongIdTypeObject',
             namePlural: 'wrongIdTypeObjects',
@@ -140,26 +116,15 @@ const failingSyncApplicationSystemFieldsTestCases: SyncApplicationTestingContext
       },
     },
     {
-      title:
-        'when object has createdAt field with wrong type (TEXT instead of DATE_TIME)',
+      title: 'when object miss default fields',
       context: {
-        manifest: buildBaseManifest(
+        manifest: buildManifest(
           buildObjectWithLabelField({
             nameSingular: 'wrongCreatedAtObject',
             namePlural: 'wrongCreatedAtObjects',
             labelSingular: 'Wrong CreatedAt Object',
             labelPlural: 'Wrong CreatedAt Objects',
             description: 'Object with wrong createdAt field type',
-            additionalFields: [
-              {
-                universalIdentifier: uuidv4(),
-                type: FieldMetadataType.TEXT,
-                name: 'createdAt',
-                label: 'Created At',
-                description: 'Created at field with wrong type',
-                icon: 'IconCalendar',
-              },
-            ],
           }),
         ),
       },
@@ -168,7 +133,7 @@ const failingSyncApplicationSystemFieldsTestCases: SyncApplicationTestingContext
       title:
         'when object has position field with wrong type (TEXT instead of POSITION)',
       context: {
-        manifest: buildBaseManifest(
+        manifest: buildManifest(
           buildObjectWithLabelField({
             nameSingular: 'wrongPositionObject',
             namePlural: 'wrongPositionObjects',
@@ -240,7 +205,7 @@ describe('Sync application should fail due to object system fields integrity', (
       description: 'Object for testing system field deletion',
     });
 
-    const validManifest = buildBaseManifest({
+    const validManifest = buildManifest({
       objects: [testObject],
       fields: [],
     });
@@ -250,7 +215,7 @@ describe('Sync application should fail due to object system fields integrity', (
       expectToFail: false,
     });
 
-    const manifestWithDeletedIdField = buildBaseManifest({
+    const manifestWithDeletedIdField = buildManifest({
       objects: [
         {
           ...testObject,
@@ -277,7 +242,7 @@ describe('Sync application should fail due to object system fields integrity', (
       description: 'Object for testing system field update',
     });
 
-    const validManifest = buildBaseManifest({
+    const validManifest = buildManifest({
       objects: [testObject],
       fields: [],
     });
@@ -287,7 +252,7 @@ describe('Sync application should fail due to object system fields integrity', (
       expectToFail: false,
     });
 
-    const manifestWithUpdatedIdField = buildBaseManifest({
+    const manifestWithUpdatedIdField = buildManifest({
       objects: [
         {
           ...testObject,

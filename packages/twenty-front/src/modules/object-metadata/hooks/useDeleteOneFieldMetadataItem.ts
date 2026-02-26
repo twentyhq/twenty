@@ -8,8 +8,8 @@ import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/obje
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
@@ -27,18 +27,18 @@ export const useDeleteOneFieldMetadataItem = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const setRecordIndexGroupAggregateOperation = useSetRecoilComponentStateV2(
+  const setRecordIndexGroupAggregateOperation = useSetAtomComponentState(
     recordIndexGroupAggregateOperationComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const recordIndexGroupAggregateFieldMetadataItem = useRecoilComponentValueV2(
+  const recordIndexGroupAggregateFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupAggregateFieldMetadataItemComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const setRecordIndexGroupAggregateFieldMetadataItem =
-    useSetRecoilComponentStateV2(
+    useSetAtomComponentState(
       recordIndexGroupAggregateFieldMetadataItemComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     );

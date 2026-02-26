@@ -1,9 +1,9 @@
 import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { type ComputedDatum } from '@nivo/pie';
 
-export const graphWidgetPieTooltipComponentState = createComponentStateV2<{
+export const graphWidgetPieTooltipComponentState = createAtomComponentState<{
   datum: ComputedDatum<PieChartDataItemWithColor>;
   offsetLeft: number;
   offsetTop: number;

@@ -9,7 +9,7 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { reInjectDynamicRelationWidgetsFromDraft } from '@/page-layout/utils/reInjectDynamicRelationWidgetsFromDraft';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,19 +21,18 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
     pageLayoutIdFromProps,
   );
 
-  const pageLayoutPersistedCallbackState =
-    useRecoilComponentStateCallbackStateV2(
-      pageLayoutPersistedComponentState,
-      pageLayoutId,
-    );
+  const pageLayoutPersistedCallbackState = useAtomComponentStateCallbackState(
+    pageLayoutPersistedComponentState,
+    pageLayoutId,
+  );
 
   const pageLayoutCurrentLayoutsCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       pageLayoutCurrentLayoutsComponentState,
       pageLayoutId,
     );
 
-  const pageLayoutDraftCallbackState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraftCallbackState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );

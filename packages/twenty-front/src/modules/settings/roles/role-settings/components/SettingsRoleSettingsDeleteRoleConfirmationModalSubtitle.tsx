@@ -1,5 +1,5 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
 
 type SettingsRoleSettingsDeleteRoleConfirmationModalSubtitleProps = {
@@ -9,7 +9,7 @@ type SettingsRoleSettingsDeleteRoleConfirmationModalSubtitleProps = {
 export const SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle = ({
   roleId,
 }: SettingsRoleSettingsDeleteRoleConfirmationModalSubtitleProps) => {
-  const settingsDraftRole = useFamilyRecoilValueV2(
+  const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
   );

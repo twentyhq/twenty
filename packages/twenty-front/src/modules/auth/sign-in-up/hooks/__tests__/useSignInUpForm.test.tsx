@@ -8,7 +8,6 @@ import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 
 const TestWrapper = ({
   children,
@@ -25,9 +24,7 @@ const TestWrapper = ({
   );
   return (
     <MemoryRouter initialEntries={[initialEntry]}>
-      <JotaiProvider store={jotaiStore}>
-        <RecoilRoot>{children}</RecoilRoot>
-      </JotaiProvider>
+      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
     </MemoryRouter>
   );
 };

@@ -3,27 +3,27 @@ import { useContext, useEffect } from 'react';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { focusedRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/focusedRecordBoardCardIndexesComponentState';
 import { isRecordBoardCardFocusActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCardFocusActiveComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const RecordBoardScrollToFocusedCardEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
 
-  const focusedCardIndexes = useRecoilComponentValueV2(
+  const focusedRecordBoardCardIndexes = useAtomComponentStateValue(
     focusedRecordBoardCardIndexesComponentState,
     recordBoardId,
   );
 
-  const isFocusActive = useRecoilComponentValueV2(
+  const isRecordBoardCardFocusActive = useAtomComponentStateValue(
     isRecordBoardCardFocusActiveComponentState,
     recordBoardId,
   );
 
   useEffect(() => {
-    if (!isFocusActive || !focusedCardIndexes) {
+    if (!isRecordBoardCardFocusActive || !focusedRecordBoardCardIndexes) {
       return;
     }
 
-    const { rowIndex, columnIndex } = focusedCardIndexes;
+    const { rowIndex, columnIndex } = focusedRecordBoardCardIndexes;
 
     const focusElement = document.getElementById(
       `record-board-card-${columnIndex}-${rowIndex}`,
@@ -36,7 +36,7 @@ export const RecordBoardScrollToFocusedCardEffect = () => {
     if (focusElement instanceof HTMLElement) {
       focusElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-  }, [focusedCardIndexes, isFocusActive]);
+  }, [focusedRecordBoardCardIndexes, isRecordBoardCardFocusActive]);
 
   return null;
 };

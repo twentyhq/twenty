@@ -119,6 +119,7 @@ export class PageLayoutUpdateService {
     const {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFrontComponentMaps,
       flatViewFieldGroupMaps,
       flatViewMaps,
     } =
@@ -128,6 +129,7 @@ export class PageLayoutUpdateService {
           flatMapsKeys: [
             'flatObjectMetadataMaps',
             'flatFieldMetadataMaps',
+            'flatFrontComponentMaps',
             'flatViewFieldGroupMaps',
             'flatViewMaps',
           ],
@@ -154,6 +156,7 @@ export class PageLayoutUpdateService {
         workspaceCustomApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         flatFieldMetadataMaps,
+        flatFrontComponentMaps,
         flatViewFieldGroupMaps,
         flatViewMaps,
       });
@@ -367,6 +370,7 @@ export class PageLayoutUpdateService {
     workspaceCustomApplicationId,
     workspaceCustomApplicationUniversalIdentifier,
     flatFieldMetadataMaps,
+    flatFrontComponentMaps,
     flatViewFieldGroupMaps,
     flatViewMaps,
   }: {
@@ -378,6 +382,7 @@ export class PageLayoutUpdateService {
     AllFlatEntityMaps,
     | 'flatObjectMetadataMaps'
     | 'flatFieldMetadataMaps'
+    | 'flatFrontComponentMaps'
     | 'flatViewFieldGroupMaps'
     | 'flatViewMaps'
     | 'flatPageLayoutTabMaps'
@@ -402,6 +407,7 @@ export class PageLayoutUpdateService {
           workspaceCustomApplicationId,
           workspaceCustomApplicationUniversalIdentifier,
           flatFieldMetadataMaps,
+          flatFrontComponentMaps,
           flatViewFieldGroupMaps,
           flatViewMaps,
         });
@@ -427,6 +433,7 @@ export class PageLayoutUpdateService {
     workspaceCustomApplicationId,
     workspaceCustomApplicationUniversalIdentifier,
     flatFieldMetadataMaps,
+    flatFrontComponentMaps,
     flatViewFieldGroupMaps,
     flatViewMaps,
   }: {
@@ -439,6 +446,7 @@ export class PageLayoutUpdateService {
     AllFlatEntityMaps,
     | 'flatObjectMetadataMaps'
     | 'flatFieldMetadataMaps'
+    | 'flatFrontComponentMaps'
     | 'flatViewFieldGroupMaps'
     | 'flatViewMaps'
     | 'flatPageLayoutTabMaps'
@@ -509,6 +517,8 @@ export class PageLayoutUpdateService {
               configuration: widgetInput.configuration,
               fieldMetadataUniversalIdentifierById:
                 flatFieldMetadataMaps.universalIdentifierById,
+              frontComponentUniversalIdentifierById:
+                flatFrontComponentMaps.universalIdentifierById,
               viewFieldGroupUniversalIdentifierById:
                 flatViewFieldGroupMaps.universalIdentifierById,
               viewUniversalIdentifierById: flatViewMaps.universalIdentifierById,
@@ -556,6 +566,8 @@ export class PageLayoutUpdateService {
                 configuration: updatedConfiguration,
                 fieldMetadataUniversalIdentifierById:
                   flatFieldMetadataMaps.universalIdentifierById,
+                frontComponentUniversalIdentifierById:
+                  flatFrontComponentMaps.universalIdentifierById,
                 viewFieldGroupUniversalIdentifierById:
                   flatViewFieldGroupMaps.universalIdentifierById,
                 viewUniversalIdentifierById:
@@ -606,6 +618,8 @@ export class PageLayoutUpdateService {
                 configuration: restoredConfiguration,
                 fieldMetadataUniversalIdentifierById:
                   flatFieldMetadataMaps.universalIdentifierById,
+                frontComponentUniversalIdentifierById:
+                  flatFrontComponentMaps.universalIdentifierById,
                 viewFieldGroupUniversalIdentifierById:
                   flatViewFieldGroupMaps.universalIdentifierById,
                 viewUniversalIdentifierById:

@@ -1,6 +1,6 @@
-import { createFamilyStateV2 } from '@/ui/utilities/state/jotai/utils/createFamilyStateV2';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const shouldWorkflowRefetchRequestFamilyState = createFamilyStateV2<
+export const shouldWorkflowRefetchRequestFamilyState = createAtomFamilyState<
   boolean,
   string
 >({

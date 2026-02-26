@@ -16,7 +16,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
@@ -53,13 +53,13 @@ export const MultipleRecordPicker = ({
   );
 
   const multipleRecordPickerSearchFilterState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       multipleRecordPickerSearchFilterComponentState,
       componentInstanceId,
     );
 
   const multipleRecordPickerPickableMorphItemsState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       multipleRecordPickerPickableMorphItemsComponentState,
       componentInstanceId,
     );

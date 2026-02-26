@@ -255,6 +255,13 @@
         }
       }
     },
+    "mock:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "dotenv npx tsx scripts/generate-mock-data.ts"
+      }
+    },
     "chromatic": {
       "configurations": {
         "ci": {}

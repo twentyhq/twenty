@@ -2,7 +2,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 type RecordShowParentViewComponentState = {
   parentViewComponentId: string;
@@ -13,10 +13,10 @@ type RecordShowParentViewComponentState = {
 };
 
 export const contextStoreRecordShowParentViewComponentState =
-  createComponentStateV2<RecordShowParentViewComponentState | undefined | null>(
-    {
-      key: 'contextStoreRecordShowParentViewComponentState',
-      defaultValue: undefined,
-      componentInstanceContext: ContextStoreComponentInstanceContext,
-    },
-  );
+  createAtomComponentState<
+    RecordShowParentViewComponentState | undefined | null
+  >({
+    key: 'contextStoreRecordShowParentViewComponentState',
+    defaultValue: undefined,
+    componentInstanceContext: ContextStoreComponentInstanceContext,
+  });

@@ -2,19 +2,18 @@ import { useCallback } from 'react';
 
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 
 export const useEmptyRecordFilter = (componentInstanceId?: string) => {
   const store = useStore();
-  const objectFilterDropdownSearchInput =
-    useRecoilComponentStateCallbackStateV2(
-      objectFilterDropdownSearchInputComponentState,
-      componentInstanceId,
-    );
+  const objectFilterDropdownSearchInput = useAtomComponentStateCallbackState(
+    objectFilterDropdownSearchInputComponentState,
+    componentInstanceId,
+  );
 
   const objectFilterDropdownCurrentRecordFilter =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       objectFilterDropdownCurrentRecordFilterComponentState,
       componentInstanceId,
     );

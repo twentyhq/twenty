@@ -1,7 +1,7 @@
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const recordPageLayoutsState = createStateV2<PageLayout[]>({
+export const recordPageLayoutsState = createAtomState<PageLayout[]>({
   key: 'recordPageLayoutsState',
   defaultValue: [],
 });

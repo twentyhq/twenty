@@ -9,9 +9,9 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
@@ -39,27 +39,29 @@ export const SingleRecordPickerMenuItem = ({
   const selectableListComponentInstanceId =
     getSingleRecordPickerSelectableListId(recordPickerComponentInstanceId);
 
-  const isSelectedByKeyboard = useRecoilComponentFamilyValueV2(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     morphItem.recordId,
     selectableListComponentInstanceId,
   );
 
-  const searchRecord = useFamilyRecoilValueV2(
+  const searchRecordStore = useAtomFamilyStateValue(
     searchRecordStoreFamilyState,
     morphItem.recordId,
   );
 
-  const searchableObjectMetadataItems = useRecoilComponentValueV2(
-    singleRecordPickerSearchableObjectMetadataItemsComponentState,
-    recordPickerComponentInstanceId,
-  );
+  const singleRecordPickerSearchableObjectMetadataItems =
+    useAtomComponentStateValue(
+      singleRecordPickerSearchableObjectMetadataItemsComponentState,
+      recordPickerComponentInstanceId,
+    );
 
-  if (!isDefined(searchRecord)) {
+  if (!isDefined(searchRecordStore)) {
     return null;
   }
 
-  const showObjectName = searchableObjectMetadataItems.length > 1;
+  const showObjectName =
+    singleRecordPickerSearchableObjectMetadataItems.length > 1;
 
   return (
     <StyledSelectableItem
@@ -72,21 +74,23 @@ export const SingleRecordPickerMenuItem = ({
       <MenuItemSelectAvatar
         testId="menu-item"
         onClick={() => onMorphItemSelected(morphItem)}
-        text={searchRecord.label}
+        text={searchRecordStore.label}
         selected={isRecordSelected}
-        focused={isSelectedByKeyboard}
+        focused={isSelectedItemId}
         avatar={
           <Avatar
-            avatarUrl={searchRecord.imageUrl}
+            avatarUrl={searchRecordStore.imageUrl}
             placeholderColorSeed={morphItem.recordId}
-            placeholder={searchRecord.label}
+            placeholder={searchRecordStore.label}
             size="md"
-            type={getAvatarType(searchRecord.objectNameSingular) ?? 'rounded'}
+            type={
+              getAvatarType(searchRecordStore.objectNameSingular) ?? 'rounded'
+            }
           />
         }
         contextualText={
           showObjectName
-            ? capitalize(searchRecord.objectLabelSingular)
+            ? capitalize(searchRecordStore.objectLabelSingular)
             : undefined
         }
       />

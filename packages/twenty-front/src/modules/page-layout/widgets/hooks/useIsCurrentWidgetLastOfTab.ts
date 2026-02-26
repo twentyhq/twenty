@@ -4,14 +4,14 @@ import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVis
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useIsCurrentWidgetLastOfTab = (widgetId: string): boolean => {
   const { currentPageLayout } = useCurrentPageLayout();
   const isMobile = useIsMobile();
   const { isInRightDrawer } = useLayoutRenderingContext();
-  const isPageLayoutInEditMode = useRecoilComponentValueV2(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 

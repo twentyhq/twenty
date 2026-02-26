@@ -6,12 +6,12 @@ import { useCallback, useState } from 'react';
 import { isSlashMenuOpenComponentState } from '@/blocknote-editor/states/isSlashMenuOpenComponentState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 export const BlockEditorDropdownFocusEffect = () => {
   const [prevShowing, setPrevShowing] = useState<boolean | null>(null);
 
-  const isSlashMenuOpenState = useRecoilComponentStateCallbackStateV2(
+  const isSlashMenuOpenState = useAtomComponentStateCallbackState(
     isSlashMenuOpenComponentState,
   );
 

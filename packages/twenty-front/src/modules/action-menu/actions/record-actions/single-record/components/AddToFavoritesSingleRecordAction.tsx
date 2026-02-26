@@ -3,7 +3,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const AddToFavoritesSingleRecordAction = () => {
@@ -13,17 +13,14 @@ export const AddToFavoritesSingleRecordAction = () => {
 
   const { createFavorite } = useCreateFavorite();
 
-  const selectedRecord = useFamilyRecoilValueV2(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const handleClick = () => {
-    if (!isDefined(selectedRecord)) {
+    if (!isDefined(recordStore)) {
       return;
     }
 
-    createFavorite(selectedRecord, objectMetadataItem.nameSingular);
+    createFavorite(recordStore, objectMetadataItem.nameSingular);
   };
 
   return <Action onClick={handleClick} />;

@@ -3,7 +3,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -19,7 +19,7 @@ import { useStore } from 'jotai';
 export const useUpdateViewAggregate = () => {
   const store = useStore();
   const { canPersistChanges } = useCanPersistViewChanges();
-  const currentViewId = useRecoilComponentValueV2(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();
@@ -47,12 +47,12 @@ export const useUpdateViewAggregate = () => {
           )
         : null;
 
-      if (!isDefined(currentViewId)) {
+      if (!isDefined(contextStoreCurrentViewId)) {
         return;
       }
 
       const updatedViewResult = await performViewAPIUpdate({
-        id: currentViewId,
+        id: contextStoreCurrentViewId,
         input: {
           kanbanAggregateOperationFieldMetadataId,
           kanbanAggregateOperation: convertedKanbanAggregateOperation,
@@ -81,7 +81,7 @@ export const useUpdateViewAggregate = () => {
     },
     [
       canPersistChanges,
-      currentViewId,
+      contextStoreCurrentViewId,
       performViewAPIUpdate,
       loadRecordIndexStates,
       store,

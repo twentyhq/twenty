@@ -2,14 +2,13 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { getRecordAggregateDisplayLabel } from '@/object-record/record-index/utils/getRecordndexAggregateDisplayLabel';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 
 export const useSetRecordIndexAggregateDisplayLabel = () => {
-  const recordIndexAggregateDisplayLabel =
-    useRecoilComponentStateCallbackStateV2(
-      recordIndexAggregateDisplayLabelComponentState,
-    );
+  const recordIndexAggregateDisplayLabel = useAtomComponentStateCallbackState(
+    recordIndexAggregateDisplayLabelComponentState,
+  );
 
   const store = useStore();
 

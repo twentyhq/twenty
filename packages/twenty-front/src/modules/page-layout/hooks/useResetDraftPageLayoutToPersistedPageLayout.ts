@@ -8,7 +8,7 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,17 +25,17 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
   const tabListComponentInstanceId =
     getTabListInstanceIdFromPageLayoutId(componentInstanceId);
 
-  const pageLayoutDraftState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
     componentInstanceId,
   );
 
-  const pageLayoutPersistedState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutPersistedState = useAtomComponentStateCallbackState(
     pageLayoutPersistedComponentState,
     componentInstanceId,
   );
 
-  const pageLayoutCurrentLayoutsState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
     pageLayoutCurrentLayoutsComponentState,
     componentInstanceId,
   );
@@ -44,16 +44,15 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
     instanceId: tabListComponentInstanceId,
   });
 
-  const fieldsWidgetGroupsDraftState = useRecoilComponentStateCallbackStateV2(
+  const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsDraftComponentState,
     componentInstanceId,
   );
 
-  const fieldsWidgetGroupsPersistedState =
-    useRecoilComponentStateCallbackStateV2(
-      fieldsWidgetGroupsPersistedComponentState,
-      componentInstanceId,
-    );
+  const fieldsWidgetGroupsPersistedState = useAtomComponentStateCallbackState(
+    fieldsWidgetGroupsPersistedComponentState,
+    componentInstanceId,
+  );
 
   const resetDraftPageLayoutToPersistedPageLayout = useCallback(() => {
     const pageLayoutPersisted = store.get(pageLayoutPersistedState);

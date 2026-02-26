@@ -1,7 +1,7 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -9,11 +9,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { useMapViewFiltersToFilters } from './useMapViewFiltersToFilters';
 
 export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
-  const currentViewId = useRecoilComponentValueV2(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
-  const setCurrentRecordFilters = useSetRecoilComponentStateV2(
+  const setCurrentRecordFilters = useSetAtomComponentState(
     currentRecordFiltersComponentState,
   );
 
@@ -24,7 +24,7 @@ export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
   const applyCurrentViewFiltersToCurrentRecordFilters = useCallback(() => {
     const currentView = store.get(
       coreViewFromViewIdFamilySelector.selectorFamily({
-        viewId: currentViewId ?? '',
+        viewId: contextStoreCurrentViewId ?? '',
       }),
     );
 
@@ -34,7 +34,7 @@ export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
       );
     }
   }, [
-    currentViewId,
+    contextStoreCurrentViewId,
     mapViewFiltersToRecordFilters,
     setCurrentRecordFilters,
     store,

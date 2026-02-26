@@ -4,11 +4,11 @@ import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveField
 import { RecordFieldsComponentInstanceContext } from '@/object-record/record-field/states/context/RecordFieldsComponentInstanceContext';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
+import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 import { findById } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
-export const visibleRecordFieldsComponentSelector = createComponentSelectorV2<
+export const visibleRecordFieldsComponentSelector = createAtomComponentSelector<
   RecordField[]
 >({
   key: 'visibleRecordFieldsComponentSelector',

@@ -14,29 +14,29 @@ import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-t
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
 import { RECORD_TABLE_VIRTUALIZATION_BODY_PLACEHOLDER_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedBodyPlaceholder';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableColumnWidthEffect = () => {
-  const [resizedFieldMetadataItemId] = useRecoilComponentStateV2(
+  const [resizedFieldMetadataId] = useAtomComponentState(
     resizedFieldMetadataIdComponentState,
   );
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const shouldCompactRecordTableFirstColumn = useRecoilComponentValueV2(
+  const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
     shouldCompactRecordTableFirstColumnComponentState,
   );
 
-  const recordTableWidth = useRecoilComponentValueV2(
+  const recordTableWidth = useAtomComponentStateValue(
     recordTableWidthComponentState,
   );
 
   useEffect(() => {
-    if (isDefined(resizedFieldMetadataItemId)) {
+    if (isDefined(resizedFieldMetadataId)) {
       return;
     }
 
@@ -98,7 +98,7 @@ export const RecordTableColumnWidthEffect = () => {
       );
     }
   }, [
-    resizedFieldMetadataItemId,
+    resizedFieldMetadataId,
     visibleRecordFields,
     recordTableWidth,
     shouldCompactRecordTableFirstColumn,

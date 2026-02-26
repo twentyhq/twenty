@@ -1,15 +1,15 @@
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useWorkflowVersionIdOrThrow = () => {
-  const workflowVersionId = useRecoilComponentValueV2(
+  const workflowVisualizerWorkflowVersionId = useAtomComponentStateValue(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
 
-  if (!isDefined(workflowVersionId)) {
+  if (!isDefined(workflowVisualizerWorkflowVersionId)) {
     throw new Error('Expected the workflow version ID to be defined');
   }
 
-  return workflowVersionId;
+  return workflowVisualizerWorkflowVersionId;
 };

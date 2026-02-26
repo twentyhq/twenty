@@ -7,7 +7,7 @@ import { type ReactNode, useCallback } from 'react';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecoilComponentSelectorCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorCallbackStateV2';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useStore } from 'jotai';
 
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
@@ -23,7 +23,7 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
   const { recordIndexId } = useRecordIndexContextOrThrow();
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const selectedRowIds = useRecoilComponentSelectorCallbackStateV2(
+  const selectedRowIds = useAtomComponentSelectorCallbackState(
     selectedRowIdsComponentSelector,
     recordTableId,
   );

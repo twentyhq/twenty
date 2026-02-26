@@ -12,10 +12,10 @@ import { RecordCardHeaderContainer } from '@/object-record/record-card/component
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
@@ -54,26 +54,25 @@ export const RecordBoardCardHeader = () => {
 
   const isCompactModeActive = currentView?.isCompact ?? false;
 
-  const [isCardExpanded, setIsCardExpanded] = useRecoilComponentStateV2(
-    recordBoardCardIsExpandedComponentState,
-  );
+  const [recordBoardCardIsExpanded, setRecordBoardCardIsExpanded] =
+    useAtomComponentState(recordBoardCardIsExpandedComponentState);
 
   const { checkIfLastUnselectAndCloseDropdown } =
     useRecordBoardSelection(recordBoardId);
 
-  const [isCurrentCardSelected, setIsCurrentCardSelected] =
-    useRecoilComponentFamilyStateV2(
+  const [isRecordBoardCardSelected, setIsRecordBoardCardSelected] =
+    useAtomComponentFamilyState(
       isRecordBoardCardSelectedComponentFamilyState,
       recordId,
     );
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
-  const recordIndexOpenRecordIn = useRecoilValueV2(
+  const recordIndexOpenRecordIn = useAtomStateValue(
     recordIndexOpenRecordInState,
   );
 
-  const record = useFamilyRecoilValueV2(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const triggerEvent =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
@@ -84,10 +83,10 @@ export const RecordBoardCardHeader = () => {
     <RecordCardHeaderContainer isCompact={isCompactModeActive}>
       <StyledRecordChipContainer>
         <StopPropagationContainer>
-          {isDefined(record) && (
+          {isDefined(recordStore) && (
             <RecordChip
               objectNameSingular={objectMetadataItem.nameSingular}
-              record={record}
+              record={recordStore}
               variant={ChipVariant.Transparent}
               onClick={() => {
                 activateBoardCard({ rowIndex, columnIndex });
@@ -104,10 +103,10 @@ export const RecordBoardCardHeader = () => {
         <StyledCompactIconContainer className="compact-icon-container">
           <StopPropagationContainer>
             <LightIconButton
-              Icon={isCardExpanded ? IconEyeOff : IconEye}
+              Icon={recordBoardCardIsExpanded ? IconEyeOff : IconEye}
               accent="tertiary"
               onClick={() => {
-                setIsCardExpanded(!isCardExpanded);
+                setRecordBoardCardIsExpanded(!recordBoardCardIsExpanded);
               }}
             />
           </StopPropagationContainer>
@@ -117,9 +116,9 @@ export const RecordBoardCardHeader = () => {
         <StopPropagationContainer>
           <Checkbox
             hoverable
-            checked={isCurrentCardSelected}
+            checked={isRecordBoardCardSelected}
             onChange={(value) => {
-              setIsCurrentCardSelected(value.target.checked);
+              setIsRecordBoardCardSelected(value.target.checked);
               checkIfLastUnselectAndCloseDropdown();
             }}
             variant={CheckboxVariant.Secondary}

@@ -1,18 +1,18 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyCurrentViewAnyFieldFilterToAnyFieldFilter = () => {
-  const currentViewId = useRecoilComponentValueV2(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
-  const setAnyFieldFilterValue = useSetRecoilComponentStateV2(
+  const setAnyFieldFilterValue = useSetAtomComponentState(
     anyFieldFilterValueComponentState,
   );
 
@@ -21,14 +21,14 @@ export const useApplyCurrentViewAnyFieldFilterToAnyFieldFilter = () => {
   const applyCurrentViewAnyFieldFilterToAnyFieldFilter = useCallback(() => {
     const currentView = store.get(
       coreViewFromViewIdFamilySelector.selectorFamily({
-        viewId: currentViewId ?? '',
+        viewId: contextStoreCurrentViewId ?? '',
       }),
     );
 
     if (isDefined(currentView)) {
       setAnyFieldFilterValue(currentView.anyFieldFilterValue ?? '');
     }
-  }, [currentViewId, setAnyFieldFilterValue, store]);
+  }, [contextStoreCurrentViewId, setAnyFieldFilterValue, store]);
 
   return {
     applyCurrentViewAnyFieldFilterToAnyFieldFilter,

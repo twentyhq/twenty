@@ -6,7 +6,7 @@ import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/re
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const MultipleRecordPickerSearchInput = () => {
@@ -14,8 +14,10 @@ export const MultipleRecordPickerSearchInput = () => {
     MultipleRecordPickerComponentInstanceContext,
   );
 
-  const [recordPickerSearchFilter, setRecordPickerSearchFilter] =
-    useRecoilComponentStateV2(multipleRecordPickerSearchFilterComponentState);
+  const [
+    multipleRecordPickerSearchFilter,
+    setMultipleRecordPickerSearchFilter,
+  ] = useAtomComponentState(multipleRecordPickerSearchFilterComponentState);
 
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
@@ -43,13 +45,13 @@ export const MultipleRecordPickerSearchInput = () => {
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSearchFilter = event.currentTarget.value;
-    setRecordPickerSearchFilter(newSearchFilter);
+    setMultipleRecordPickerSearchFilter(newSearchFilter);
     debouncedSearch(newSearchFilter);
   };
 
   return (
     <DropdownMenuSearchInput
-      value={recordPickerSearchFilter}
+      value={multipleRecordPickerSearchFilter}
       onChange={handleFilterChange}
       autoFocus
     />

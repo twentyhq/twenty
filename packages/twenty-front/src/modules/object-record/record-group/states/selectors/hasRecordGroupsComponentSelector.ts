@@ -1,10 +1,10 @@
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 
-import { createComponentSelectorV2 } from '@/ui/utilities/state/jotai/utils/createComponentSelectorV2';
+import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 export const hasRecordGroupsComponentSelector =
-  createComponentSelectorV2<boolean>({
+  createAtomComponentSelector<boolean>({
     key: 'hasRecordGroupsComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:

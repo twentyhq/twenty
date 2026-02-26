@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -18,25 +18,25 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
   const viewPickerIsPersistingCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       viewPickerIsPersistingComponentState,
       viewBarInstanceId,
     );
 
-  const viewPickerIsDirtyCallbackState = useRecoilComponentStateCallbackStateV2(
+  const viewPickerIsDirtyCallbackState = useAtomComponentStateCallbackState(
     viewPickerIsDirtyComponentState,
     viewBarInstanceId,
   );
 
   const viewPickerReferenceViewIdCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       viewPickerReferenceViewIdComponentState,
       viewBarInstanceId,
     );
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const viewsOnCurrentObject = useFamilySelectorValueV2(
+  const viewsOnCurrentObject = useAtomFamilySelectorValue(
     coreViewsFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );

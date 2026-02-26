@@ -1,8 +1,8 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 import { type ProfilingDataPoint } from '~/testing/profiling/types/ProfilingDataPoint';
 
-export const profilingSessionDataPointsState = createStateV2<
+export const profilingSessionDataPointsState = createAtomState<
   ProfilingDataPoint[]
 >({
   key: 'profilingSessionDataPointsState',

@@ -1,8 +1,10 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const scrollAtRealIndexComponentState = createComponentStateV2<number>({
-  key: 'scrollAtRealIndexComponentState',
-  componentInstanceContext: RecordTableComponentInstanceContext,
-  defaultValue: 0,
-});
+export const scrollAtRealIndexComponentState = createAtomComponentState<number>(
+  {
+    key: 'scrollAtRealIndexComponentState',
+    componentInstanceContext: RecordTableComponentInstanceContext,
+    defaultValue: 0,
+  },
+);

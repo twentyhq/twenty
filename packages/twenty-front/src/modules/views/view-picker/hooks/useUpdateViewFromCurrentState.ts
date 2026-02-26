@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
@@ -16,30 +16,26 @@ export const useUpdateViewFromCurrentState = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
-  const viewPickerInputNameCallbackState =
-    useRecoilComponentStateCallbackStateV2(viewPickerInputNameComponentState);
+  const viewPickerInputNameCallbackState = useAtomComponentStateCallbackState(
+    viewPickerInputNameComponentState,
+  );
 
   const viewPickerSelectedIconCallbackState =
-    useRecoilComponentStateCallbackStateV2(
-      viewPickerSelectedIconComponentState,
-    );
+    useAtomComponentStateCallbackState(viewPickerSelectedIconComponentState);
 
   const viewPickerIsPersistingCallbackState =
-    useRecoilComponentStateCallbackStateV2(
-      viewPickerIsPersistingComponentState,
-    );
+    useAtomComponentStateCallbackState(viewPickerIsPersistingComponentState);
 
-  const viewPickerIsDirtyCallbackState = useRecoilComponentStateCallbackStateV2(
+  const viewPickerIsDirtyCallbackState = useAtomComponentStateCallbackState(
     viewPickerIsDirtyComponentState,
   );
 
   const viewPickerReferenceViewIdCallbackState =
-    useRecoilComponentStateCallbackStateV2(
-      viewPickerReferenceViewIdComponentState,
-    );
+    useAtomComponentStateCallbackState(viewPickerReferenceViewIdComponentState);
 
-  const viewPickerVisibilityCallbackState =
-    useRecoilComponentStateCallbackStateV2(viewPickerVisibilityComponentState);
+  const viewPickerVisibilityCallbackState = useAtomComponentStateCallbackState(
+    viewPickerVisibilityComponentState,
+  );
 
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();
 

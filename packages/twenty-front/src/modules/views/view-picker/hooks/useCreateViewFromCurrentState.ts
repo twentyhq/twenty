@@ -1,4 +1,4 @@
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useCreateViewFromCurrentView } from '@/views/hooks/useCreateViewFromCurrentView';
 import { ViewType } from '@/views/types/ViewType';
@@ -19,43 +19,41 @@ import { isDefined } from 'twenty-shared/utils';
 export const useCreateViewFromCurrentState = () => {
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
-  const viewPickerInputNameCallbackState =
-    useRecoilComponentStateCallbackStateV2(viewPickerInputNameComponentState);
+  const viewPickerInputNameCallbackState = useAtomComponentStateCallbackState(
+    viewPickerInputNameComponentState,
+  );
 
   const viewPickerSelectedIconCallbackState =
-    useRecoilComponentStateCallbackStateV2(
-      viewPickerSelectedIconComponentState,
-    );
+    useAtomComponentStateCallbackState(viewPickerSelectedIconComponentState);
 
-  const viewPickerTypeCallbackState = useRecoilComponentStateCallbackStateV2(
+  const viewPickerTypeCallbackState = useAtomComponentStateCallbackState(
     viewPickerTypeComponentState,
   );
 
   const viewPickerMainGroupByFieldMetadataIdCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       viewPickerMainGroupByFieldMetadataIdComponentState,
     );
 
   const viewPickerCalendarFieldMetadataIdCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       viewPickerCalendarFieldMetadataIdComponentState,
     );
 
   const viewPickerIsPersistingCallbackState =
-    useRecoilComponentStateCallbackStateV2(
-      viewPickerIsPersistingComponentState,
-    );
+    useAtomComponentStateCallbackState(viewPickerIsPersistingComponentState);
 
-  const viewPickerIsDirtyCallbackState = useRecoilComponentStateCallbackStateV2(
+  const viewPickerIsDirtyCallbackState = useAtomComponentStateCallbackState(
     viewPickerIsDirtyComponentState,
   );
 
-  const viewPickerModeCallbackState = useRecoilComponentStateCallbackStateV2(
+  const viewPickerModeCallbackState = useAtomComponentStateCallbackState(
     viewPickerModeComponentState,
   );
 
-  const viewPickerVisibilityCallbackState =
-    useRecoilComponentStateCallbackStateV2(viewPickerVisibilityComponentState);
+  const viewPickerVisibilityCallbackState = useAtomComponentStateCallbackState(
+    viewPickerVisibilityComponentState,
+  );
 
   const { createViewFromCurrentView } = useCreateViewFromCurrentView();
   const { changeView } = useChangeView();

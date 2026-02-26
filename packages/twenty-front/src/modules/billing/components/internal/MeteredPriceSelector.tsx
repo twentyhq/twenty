@@ -7,7 +7,7 @@ import {
   type MeteredBillingPrice,
 } from '@/billing/types/billing-price-tiers.type';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -48,7 +48,7 @@ export const MeteredPriceSelector = ({
   const { currentMeteredBillingPrice } = useCurrentMetered();
   const { formatNumber } = useNumberFormat();
 
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilStateV2(
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
 

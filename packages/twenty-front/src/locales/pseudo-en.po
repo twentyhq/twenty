@@ -14353,9 +14353,9 @@ msgstr ""
 msgid "Workspaces"
 msgstr ""
 
-#. js-lingui-id: F7iCiM
+#. js-lingui-id: QPsQMb
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
-msgid "Would you like to remove {recordGroupSort} group sorting?"
+msgid "Would you like to remove {recordIndexRecordGroupSort} group sorting?"
 msgstr ""
 
 #. js-lingui-id: 5iSD9O

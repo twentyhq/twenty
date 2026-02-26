@@ -3,46 +3,46 @@ import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { focusedRecordTableRowIndexComponentState } from '@/object-record/record-table/states/focusedRecordTableRowIndexComponentState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableScrollToFocusedRowEffect = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const focusedRowIndex = useRecoilComponentValueV2(
+  const focusedRecordTableRowIndex = useAtomComponentStateValue(
     focusedRecordTableRowIndexComponentState,
     recordTableId,
   );
 
-  const isRowFocusActive = useRecoilComponentValueV2(
+  const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
     recordTableId,
   );
 
-  const allRecordIds = useRecoilComponentSelectorValueV2(
+  const allRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
 
   useEffect(() => {
     if (
-      !isRowFocusActive ||
-      !isDefined(focusedRowIndex) ||
+      !isRecordTableRowFocusActive ||
+      !isDefined(focusedRecordTableRowIndex) ||
       !allRecordIds?.length
     ) {
       return;
     }
 
-    const recordId = allRecordIds[focusedRowIndex];
+    const recordId = allRecordIds[focusedRecordTableRowIndex];
 
     if (!recordId) {
       return;
     }
 
     const focusElement = document.getElementById(
-      `record-table-cell-0-${focusedRowIndex}`,
+      `record-table-cell-0-${focusedRecordTableRowIndex}`,
     );
 
     if (!focusElement) {
@@ -59,7 +59,7 @@ export const RecordTableScrollToFocusedRowEffect = () => {
         focusElement.style.scrollMarginBottom = '';
       }
     };
-  }, [focusedRowIndex, isRowFocusActive, allRecordIds]);
+  }, [focusedRecordTableRowIndex, isRecordTableRowFocusActive, allRecordIds]);
 
   return null;
 };

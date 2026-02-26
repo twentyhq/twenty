@@ -4,10 +4,10 @@ import {
   COMMAND_MENU_WIDTH_VAR,
   commandMenuWidthState,
 } from '@/command-menu/states/commandMenuWidthState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const CommandMenuWidthEffect = () => {
-  const commandMenuWidth = useRecoilValueV2(commandMenuWidthState);
+  const commandMenuWidth = useAtomStateValue(commandMenuWidthState);
 
   useEffect(() => {
     document.documentElement.style.setProperty(

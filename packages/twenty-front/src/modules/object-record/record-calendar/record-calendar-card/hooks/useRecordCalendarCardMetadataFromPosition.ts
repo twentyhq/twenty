@@ -3,22 +3,22 @@ import { recordCalendarCardEditModePositionComponentState } from '@/object-recor
 import { recordCalendarCardHoverPositionComponentState } from '@/object-record/record-calendar/record-calendar-card/states/recordCalendarCardHoverPositionComponentState';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordCalendarCardMetadataFromPosition = () => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
-  const hoverPosition = useRecoilComponentValueV2(
+  const recordCalendarCardHoverPosition = useAtomComponentStateValue(
     recordCalendarCardHoverPositionComponentState,
   );
 
-  const editModePosition = useRecoilComponentValueV2(
+  const recordCalendarCardEditModePosition = useAtomComponentStateValue(
     recordCalendarCardEditModePositionComponentState,
   );
 
-  const visibleRecordFields = useRecoilComponentSelectorValueV2(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 
@@ -29,12 +29,12 @@ export const useRecordCalendarCardMetadataFromPosition = () => {
       labelIdentifierFieldMetadataItem?.id !== recordField.fieldMetadataItemId,
   );
 
-  const hoveredRecordField = isDefined(hoverPosition)
-    ? visibleRecordFieldsFiltered.at(hoverPosition)
+  const hoveredRecordField = isDefined(recordCalendarCardHoverPosition)
+    ? visibleRecordFieldsFiltered.at(recordCalendarCardHoverPosition)
     : undefined;
 
-  const editedRecordField = isDefined(editModePosition)
-    ? visibleRecordFieldsFiltered.at(editModePosition)
+  const editedRecordField = isDefined(recordCalendarCardEditModePosition)
+    ? visibleRecordFieldsFiltered.at(recordCalendarCardEditModePosition)
     : undefined;
 
   const hoveredFieldMetadataItem = isDefined(hoveredRecordField)

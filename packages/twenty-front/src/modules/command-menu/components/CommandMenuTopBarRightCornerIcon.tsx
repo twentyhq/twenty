@@ -1,6 +1,6 @@
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -19,7 +19,7 @@ const StyledIconButton = styled(IconButton)`
 export const CommandMenuTopBarRightCornerIcon = () => {
   const isMobile = useIsMobile();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-  const commandMenuPage = useRecoilValueV2(commandMenuPageState);
+  const commandMenuPage = useAtomStateValue(commandMenuPageState);
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
   const { createChatThread } = useCreateNewAIChatThread();
 

@@ -8,7 +8,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -19,7 +19,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
@@ -39,16 +39,16 @@ const meta: Meta<typeof RecordCalendarMonth> = {
       )!;
       const instanceId = companyObjectMetadataItem.id;
 
-      const setCurrentRecordFields = useSetRecoilComponentStateV2(
+      const setCurrentRecordFields = useSetAtomComponentState(
         currentRecordFieldsComponentState,
         instanceId,
       );
 
-      const setCoreViews = useSetRecoilStateV2(coreViewsState);
+      const setCoreViews = useSetAtomState(coreViewsState);
 
       const mockCoreView = mockedCoreViewsData[0];
 
-      const setCurrentViewId = useSetRecoilComponentStateV2(
+      const setContextStoreCurrentViewId = useSetAtomComponentState(
         contextStoreCurrentViewIdComponentState,
         MAIN_CONTEXT_STORE_INSTANCE_ID,
       );
@@ -72,12 +72,12 @@ const meta: Meta<typeof RecordCalendarMonth> = {
 
       useEffect(() => {
         setCoreViews([mockCoreView]);
-        setCurrentViewId(mockCoreView.id);
+        setContextStoreCurrentViewId(mockCoreView.id);
         setCurrentRecordFields(columns);
         setIsLoaded(true);
       }, [
         setCoreViews,
-        setCurrentViewId,
+        setContextStoreCurrentViewId,
         setCurrentRecordFields,
         mockCoreView,
         columns,

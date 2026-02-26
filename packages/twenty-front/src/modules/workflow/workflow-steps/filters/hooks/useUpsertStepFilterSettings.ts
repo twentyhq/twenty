@@ -1,4 +1,4 @@
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
@@ -8,11 +8,11 @@ import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useUpsertStepFilterSettings = () => {
-  const currentStepFilterGroups = useRecoilComponentStateCallbackStateV2(
+  const currentStepFilterGroups = useAtomComponentStateCallbackState(
     currentStepFilterGroupsComponentState,
   );
 
-  const currentStepFilters = useRecoilComponentStateCallbackStateV2(
+  const currentStepFilters = useAtomComponentStateCallbackState(
     currentStepFiltersComponentState,
   );
   const { onFilterSettingsUpdate } = useContext(WorkflowStepFilterContext);

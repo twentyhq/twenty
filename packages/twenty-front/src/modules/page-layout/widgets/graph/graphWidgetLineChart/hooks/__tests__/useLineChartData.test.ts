@@ -5,15 +5,18 @@ import { renderHook } from '@testing-library/react';
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { type LineChartSeries } from '~/generated-metadata/graphql';
 
-const mockUseRecoilComponentValue = jest.fn();
-jest.mock('@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2', () => ({
-  useRecoilComponentValueV2: () => mockUseRecoilComponentValue(),
-}));
+const mockUseAtomComponentStateValue = jest.fn();
+jest.mock(
+  '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
+  () => ({
+    useAtomComponentStateValue: () => mockUseAtomComponentStateValue(),
+  }),
+);
 
 describe('useLineChartData', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseRecoilComponentValue.mockReturnValue([]);
+    mockUseAtomComponentStateValue.mockReturnValue([]);
   });
 
   const mockColorRegistry: GraphColorRegistry = {
@@ -190,7 +193,7 @@ describe('useLineChartData', () => {
   });
 
   it('should filter visible data based on hidden legend ids', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['series2']);
+    mockUseAtomComponentStateValue.mockReturnValue(['series2']);
 
     const { result } = renderHook(() =>
       useLineChartData({
@@ -208,7 +211,7 @@ describe('useLineChartData', () => {
   });
 
   it('should maintain colors after filtering', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['series1']);
+    mockUseAtomComponentStateValue.mockReturnValue(['series1']);
 
     const { result } = renderHook(() =>
       useLineChartData({
@@ -223,7 +226,7 @@ describe('useLineChartData', () => {
   });
 
   it('should keep all items in legend even when filtering', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['series1']);
+    mockUseAtomComponentStateValue.mockReturnValue(['series1']);
 
     const { result } = renderHook(() =>
       useLineChartData({
@@ -239,7 +242,7 @@ describe('useLineChartData', () => {
   });
 
   it('should maintain alignment between nivoData and colors when filtering', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['series1']);
+    mockUseAtomComponentStateValue.mockReturnValue(['series1']);
 
     const { result } = renderHook(() =>
       useLineChartData({
@@ -256,7 +259,10 @@ describe('useLineChartData', () => {
   });
 
   it('should handle hidden ids that do not exist in data', () => {
-    mockUseRecoilComponentValue.mockReturnValue(['nonexistent', 'alsoNotReal']);
+    mockUseAtomComponentStateValue.mockReturnValue([
+      'nonexistent',
+      'alsoNotReal',
+    ]);
 
     const { result } = renderHook(() =>
       useLineChartData({

@@ -16,7 +16,7 @@ import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBloc
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
@@ -45,10 +45,10 @@ export const StandaloneRichTextEditorContent = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
-  const isPageLayoutInEditModeState = useRecoilComponentStateCallbackStateV2(
+  const isPageLayoutInEditModeState = useAtomComponentStateCallbackState(
     isPageLayoutInEditModeComponentState,
   );
-  const pageLayoutEditingWidgetIdState = useRecoilComponentStateCallbackStateV2(
+  const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
     pageLayoutEditingWidgetIdComponentState,
   );
 

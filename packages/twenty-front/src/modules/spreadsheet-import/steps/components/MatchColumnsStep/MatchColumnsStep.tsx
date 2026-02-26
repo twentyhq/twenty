@@ -28,7 +28,7 @@ import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetCo
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { type SpreadsheetImportField } from '@/spreadsheet-import/types/SpreadsheetImportField';
-import { useFamilySelectorStateV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorStateV2';
+import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Trans, useLingui } from '@lingui/react/macro';
 
@@ -81,7 +81,7 @@ export const MatchColumnsStep = ({
   const dataExample = data.slice(0, 2);
   const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
   const [isLoading, setIsLoading] = useState(false);
-  const [columns, setColumns] = useFamilySelectorStateV2(
+  const [columns, setColumns] = useAtomFamilySelectorState(
     initialComputedColumnsSelector,
     headerValues,
   );

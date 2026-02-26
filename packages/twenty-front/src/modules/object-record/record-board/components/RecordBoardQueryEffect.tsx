@@ -12,9 +12,9 @@ import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-
 import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 import { useEffect } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -23,17 +23,17 @@ export const RecordBoardQueryEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const [lastRecordBoardQueryIdentifier, setLastRecordBoardQueryIdentifier] =
-    useRecoilComponentStateV2(lastRecordBoardQueryIdentifierComponentState);
+    useAtomComponentState(lastRecordBoardQueryIdentifierComponentState);
 
-  const [lastRecordGroupIds, setLastRecordGroupIds] = useRecoilComponentStateV2(
+  const [lastRecordGroupIds, setLastRecordGroupIds] = useAtomComponentState(
     lastRecordGroupIdsComponentState,
   );
 
-  const recordIndexRecordGroupsAreInInitialLoading = useRecoilComponentValueV2(
+  const recordIndexRecordGroupsAreInInitialLoading = useAtomComponentStateValue(
     recordIndexRecordGroupsAreInInitialLoadingComponentState,
   );
 
-  const setRecordBoardCurrentGroupByQueryOffset = useSetRecoilComponentStateV2(
+  const setRecordBoardCurrentGroupByQueryOffset = useSetAtomComponentState(
     recordBoardCurrentGroupByQueryOffsetComponentState,
   );
 
@@ -51,11 +51,11 @@ export const RecordBoardQueryEffect = () => {
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const [shouldFetchMore] = useRecoilComponentStateV2(
+  const [recordBoardShouldFetchMore] = useAtomComponentState(
     recordBoardShouldFetchMoreComponentState,
   );
 
-  const recordBoardIsFetchingMore = useRecoilComponentValueV2(
+  const recordBoardIsFetchingMore = useAtomComponentStateValue(
     recordBoardIsFetchingMoreComponentState,
   );
 
@@ -64,11 +64,11 @@ export const RecordBoardQueryEffect = () => {
   const { triggerRecordBoardInitialQuery } =
     useTriggerRecordBoardInitialQuery();
 
-  const recordGroupdIds = useRecoilComponentValueV2(
+  const recordGroupIds = useAtomComponentStateValue(
     recordGroupIdsComponentState,
   );
   const recordGroupIdsHaveChanged = !isDeeplyEqual(
-    [...recordGroupdIds].sort(),
+    [...recordGroupIds].sort(),
     [...lastRecordGroupIds].sort(),
   );
 
@@ -78,10 +78,10 @@ export const RecordBoardQueryEffect = () => {
       (queryIdentifierHasChanged || recordGroupIdsHaveChanged)
     ) {
       triggerRecordBoardInitialQuery();
-      setLastRecordGroupIds(recordGroupdIds);
+      setLastRecordGroupIds(recordGroupIds);
     } else if (
       !recordIndexRecordGroupsAreInInitialLoading &&
-      shouldFetchMore &&
+      recordBoardShouldFetchMore &&
       !queryIdentifierHasChanged &&
       !recordBoardIsFetchingMore
     ) {
@@ -95,11 +95,11 @@ export const RecordBoardQueryEffect = () => {
     setRecordBoardCurrentGroupByQueryOffset,
     scrollWrapperHTMLElement,
     recordIndexRecordGroupsAreInInitialLoading,
-    shouldFetchMore,
+    recordBoardShouldFetchMore,
     recordBoardIsFetchingMore,
     triggerRecordBoardFetchMore,
     setLastRecordGroupIds,
-    recordGroupdIds,
+    recordGroupIds,
     recordGroupIdsHaveChanged,
   ]);
 

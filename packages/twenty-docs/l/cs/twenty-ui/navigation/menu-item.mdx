@@ -10,49 +10,57 @@ image: /images/user-guide/kanban-views/kanban.png
 Univerzální položka menu navržená k použití v menu nebo navigačním seznamu.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { IconBell } from "@tabler/icons-react";
-    import { IconAlertCircle } from "@tabler/icons-react";
-    import { MenuItem } from "twenty-ui/display";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
-      const handleMenuItemClick = (event) => {
-        console.log("Menu item clicked!", event);
-      };
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItem } from "twenty-ui/display";
 
-      const handleButtonClick = (event) => {
-        console.log("Icon button clicked!", event);
-      };
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
 
-      return (
-        <MenuItem
-          LeftIcon={IconBell}
-          accent="default"
-          text="Menu item text"
-          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
-          isTooltipOpen={true}
-          testId="menu-item-1"
-          onClick={handleMenuItemClick}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+  const handleButtonClick = (event) => {
+    console.log("Icon button clicked!", event);
+  };
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti       | Typ                | Popis                                                                                     |
-    | ---------------- | ------------------ | ----------------------------------------------------------------------------------------- |
-    | Levá ikona       | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu                                 |
-    | akcent           | řetězec            | Určuje barvu akcentu položky menu. Možnosti zahrnují: `default`, `danger` a `placeholder` |
-    | text             | textový řetězec    | Textový obsah položky menu                                                                |
-    | ikonová tlačítka | pole               | Seznam objektů představujících další ikony tlačítek spojené s položkou menu               |
-    | isTooltipOpen    | booleovská hodnota | Řídí viditelnost tooltipu spojeného s položkou menu                                       |
-    | testId           | řetězec            | Atribut data-testid pro testovací účely                                                   |
-    | onClick          | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu                              |
-    | className        | řetězec            | Volitelný název pro dodatečné stylování                                                   |
-  </Tab>
+  return (
+    <MenuItem
+      LeftIcon={IconBell}
+      accent="default"
+      text="Menu item text"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={true}
+      testId="menu-item-1"
+      onClick={handleMenuItemClick}
+      className
+    />
+  );
+};
+```
+
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti       | Typ                | Popis                                                                                     |
+| ---------------- | ------------------ | ----------------------------------------------------------------------------------------- |
+| Levá ikona       | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu                                 |
+| akcent           | řetězec            | Určuje barvu akcentu položky menu. Možnosti zahrnují: `default`, `danger` a `placeholder` |
+| text             | textový řetězec    | Textový obsah položky menu                                                                |
+| ikonová tlačítka | pole               | Seznam objektů představujících další ikony tlačítek spojené s položkou menu               |
+| isTooltipOpen    | booleovská hodnota | Řídí viditelnost tooltipu spojeného s položkou menu                                       |
+| testId           | řetězec            | Atribut data-testid pro testovací účely                                                   |
+| onClick          | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu                              |
+| className        | řetězec            | Volitelný název pro dodatečné stylování                                                   |
+
+
+
+
+</Tab>
 </Tabs>
 
 ## Varianty
@@ -64,42 +72,49 @@ Různé varianty komponenty položky menu zahrnují následující:
 Položka menu ve stylu příkazu v menu pro označení klávesových zkratek.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { IconBell } from "@tabler/icons-react";
-    import { MenuItemCommand } from "twenty-ui/display";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
-      const handleCommandClick = () => {
-        console.log("Command clicked!");
-      };
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemCommand } from "twenty-ui/display";
 
-      return (
-        <MenuItemCommand
-          LeftIcon={IconBell}
-          text="First Option"
-          firstHotKey="⌘"
-          secondHotKey="1"
-          isSelected={true}
-          onClick={handleCommandClick}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleCommandClick = () => {
+    console.log("Command clicked!");
+  };
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti   | Typ                | Popis                                                        |
-    | ------------ | ------------------ | ------------------------------------------------------------ |
-    | Levá ikona   | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu    |
-    | text         | řetězec            | Textový obsah položky menu                                   |
-    | firstHotKey  | řetězec            | První klávesová zkratka spojená s příkazem                   |
-    | secondHotKey | řetězec            | Druhá klávesová zkratka spojená s příkazem                   |
-    | isSelected   | booleovská hodnota | Určuje, zda je položka menu vybrána nebo zvýrazněna          |
-    | onClick      | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu |
-    | className    | řetězec            | Volitelný název pro dodatečné stylování                      |
-  </Tab>
+  return (
+    <MenuItemCommand
+      LeftIcon={IconBell}
+      text="First Option"
+      firstHotKey="⌘"
+      secondHotKey="1"
+      isSelected={true}
+      onClick={handleCommandClick}
+      className
+    />
+  );
+};
+```
+
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti   | Typ                | Popis                                                        |
+| ------------ | ------------------ | ------------------------------------------------------------ |
+| Levá ikona   | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu    |
+| text         | řetězec            | Textový obsah položky menu                                   |
+| firstHotKey  | řetězec            | První klávesová zkratka spojená s příkazem                   |
+| secondHotKey | řetězec            | Druhá klávesová zkratka spojená s příkazem                   |
+| isSelected   | booleovská hodnota | Určuje, zda je položka menu vybrána nebo zvýrazněna          |
+| onClick      | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu |
+| className    | řetězec            | Volitelný název pro dodatečné stylování                      |
+
+
+
+</Tab>
 </Tabs>
 
 ### Přetahovatelný
@@ -107,45 +122,52 @@ Položka menu ve stylu příkazu v menu pro označení klávesových zkratek.
 Komponenta položky menu s možností přetahování, určená k použití v nabídce nebo seznamu, kde je možné položky přetahovat, a prostřednictvím tlačítek s ikonami lze provádět další akce.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { IconBell } from "@tabler/icons-react";
-    import { IconAlertCircle } from "@tabler/icons-react";
-    import { MenuItemDraggable } from "twenty-ui/display";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
-      const handleMenuItemClick = (event) => {
-        console.log("Menu item clicked!", event);
-      };
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItemDraggable } from "twenty-ui/display";
 
-      return (
-        <MenuItemDraggable
-          LeftIcon={IconBell}
-          accent="default"
-          iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
-          isTooltipOpen={false}
-          onClick={handleMenuItemClick}
-          text="Menu item draggable"
-          isDragDisabled={false}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti       | Typ                | Popis                                                                        |
-    | ---------------- | ------------------ | ---------------------------------------------------------------------------- |
-    | Levá ikona       | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu                    |
-    | akcent           | řetězec            | Barva akcentu položky menu. Může být `default`, `placeholder`, nebo `danger` |
-    | ikonová tlačítka | pole               | Seznam objektů představujících další ikony tlačítek spojené s položkou menu  |
-    | isTooltipOpen    | booleovská hodnota | Řídí viditelnost tooltipu spojeného s položkou menu                          |
-    | onClick          | funkce             | Funkce zpětného volání spuštěná při kliknutí na odkaz                        |
-    | text             | řetězec            | Textový obsah položky menu                                                   |
-    | isDragDisabled   | booleovská hodnota | Určuje, zda je táhnutí zakázáno                                              |
-    | className        | řetězec            | Volitelný název pro dodatečné stylování                                      |
-  </Tab>
+  return (
+    <MenuItemDraggable
+      LeftIcon={IconBell}
+      accent="default"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={false}
+      onClick={handleMenuItemClick}
+      text="Menu item draggable"
+      isDragDisabled={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti       | Typ                | Popis                                                                        |
+| ---------------- | ------------------ | ---------------------------------------------------------------------------- |
+| Levá ikona       | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu                    |
+| akcent           | řetězec            | Barva akcentu položky menu. Může být `default`, `placeholder`, nebo `danger` |
+| ikonová tlačítka | pole               | Seznam objektů představujících další ikony tlačítek spojené s položkou menu  |
+| isTooltipOpen    | booleovská hodnota | Řídí viditelnost tooltipu spojeného s položkou menu                          |
+| onClick          | funkce             | Funkce zpětného volání spuštěná při kliknutí na odkaz                        |
+| text             | řetězec            | Textový obsah položky menu                                                   |
+| isDragDisabled   | booleovská hodnota | Určuje, zda je táhnutí zakázáno                                              |
+| className        | řetězec            | Volitelný název pro dodatečné stylování                                      |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### Vícenásobný výběr
@@ -153,34 +175,41 @@ Komponenta položky menu s možností přetahování, určená k použití v nab
 Poskytuje způsob, jak implementovat funkci vícenásobného výběru s přidruženým zaškrtávacím políčkem.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { IconBell } from "@tabler/icons-react";
-    import { MenuItemMultiSelect } from "twenty-ui/display";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemMultiSelect } from "twenty-ui/display";
 
-      return (
-        <MenuItemMultiSelect
-          LeftIcon={IconBell}
-          text="First Option"
-          selected={false}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti    | Typ                | Popis                                                                 |
-    | ------------- | ------------------ | --------------------------------------------------------------------- |
-    | Levá ikona    | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu             |
-    | text          | řetězec            | Textový obsah položky menu                                            |
-    | vybráno       | booleovská hodnota | Určuje, zda je položka menu vybrána (zaškrtnuto)                      |
-    | poZměněVýběru | funkce             | Funkce zpětného volání spuštěná při změně stavu zaškrtávacího políčka |
-    | className     | řetězec            | Volitelný název pro dodatečné stylování                               |
-  </Tab>
+  return (
+    <MenuItemMultiSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti    | Typ                | Popis                                                                 |
+| ------------- | ------------------ | --------------------------------------------------------------------- |
+| Levá ikona    | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu             |
+| text          | řetězec            | Textový obsah položky menu                                            |
+| vybráno       | booleovská hodnota | Určuje, zda je položka menu vybrána (zaškrtnuto)                      |
+| poZměněVýběru | funkce             | Funkce zpětného volání spuštěná při změně stavu zaškrtávacího políčka |
+| className     | řetězec            | Volitelný název pro dodatečné stylování                               |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### Vícenásobný výběr s avatarem
@@ -188,35 +217,42 @@ Poskytuje způsob, jak implementovat funkci vícenásobného výběru s přidru�
 Položka menu pro vícenásobný výběr s avatarem, zaškrtávacím políčkem pro výběr a textovým obsahem.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
-      const imageUrl =
-        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+```jsx
+import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
 
-      return (
-        <MenuItemMultiSelectAvatar
-          avatar={<img src={imageUrl} alt="Avatar" />}
-          text="First Option"
-          selected={false}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti    | Typ                | Popis                                                                 |
-    | ------------- | ------------------ | --------------------------------------------------------------------- |
-    | avatar        | `ReactNode`        | Avatar nebo ikona, která má být zobrazena na levé straně položky menu |
-    | text          | řetězec            | Textový obsah položky menu                                            |
-    | vybráno       | booleovská hodnota | Určuje, zda je položka menu vybrána (zaškrtnuto)                      |
-    | poZměněVýběru | funkce             | Funkce zpětného volání spuštěná při změně stavu zaškrtávacího políčka |
-    | className     | řetězec            | Volitelný název pro dodatečné stylování                               |
-  </Tab>
+  return (
+    <MenuItemMultiSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti    | Typ                | Popis                                                                 |
+| ------------- | ------------------ | --------------------------------------------------------------------- |
+| avatar        | `ReactNode`        | Avatar nebo ikona, která má být zobrazena na levé straně položky menu |
+| text          | řetězec            | Textový obsah položky menu                                            |
+| vybráno       | booleovská hodnota | Určuje, zda je položka menu vybrána (zaškrtnuto)                      |
+| poZměněVýběru | funkce             | Funkce zpětného volání spuštěná při změně stavu zaškrtávacího políčka |
+| className     | řetězec            | Volitelný název pro dodatečné stylování                               |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### Navigovat
@@ -224,36 +260,43 @@ Položka menu pro vícenásobný výběr s avatarem, zaškrtávacím políčkem 
 Položka menu s volitelnou levou ikonou, textovým obsahem a ikonou šipky vpravo.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { IconBell } from "@tabler/icons-react";
-    import { MenuItemNavigate } from "twenty-ui/display";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
-      const handleNavigation = () => {
-        console.log("Navigate to another page");
-      };
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemNavigate } from "twenty-ui/display";
 
-      return (
-        <MenuItemNavigate
-          LeftIcon={IconBell}
-          text="First Option"
-          onClick={handleNavigation}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleNavigation = () => {
+    console.log("Navigate to another page");
+  };
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti | Typ             | Popis                                                        |
-    | ---------- | --------------- | ------------------------------------------------------------ |
-    | LeváIkona  | KomponentaIkony | Volitelná levá ikona zobrazená před textem v položce menu    |
-    | text       | řetězec         | Textový obsah položky menu                                   |
-    | poKliknutí | funkce          | Funkce zpětného volání spuštěná při kliknutí na položku menu |
-    | className  | řetězec         | Volitelný název pro dodatečné stylování                      |
-  </Tab>
+  return (
+    <MenuItemNavigate
+      LeftIcon={IconBell}
+      text="First Option"
+      onClick={handleNavigation}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti | Typ             | Popis                                                        |
+| ---------- | --------------- | ------------------------------------------------------------ |
+| LeváIkona  | KomponentaIkony | Volitelná levá ikona zobrazená před textem v položce menu    |
+| text       | řetězec         | Textový obsah položky menu                                   |
+| poKliknutí | funkce          | Funkce zpětného volání spuštěná při kliknutí na položku menu |
+| className  | řetězec         | Volitelný název pro dodatečné stylování                      |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### Vybrat
@@ -261,42 +304,49 @@ Položka menu s volitelnou levou ikonou, textovým obsahem a ikonou šipky vprav
 Výběrová položka menu, s volitelným levým obsahem (ikonou a textem) a indikátorem (ikonou zaškrtnutí) pro vybraný stav.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { IconBell } from "@tabler/icons-react";
-    import { MenuItemSelect } from "twenty-ui/display";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
-      const handleSelection = () => {
-        console.log("Menu item selected");
-      };
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemSelect } from "twenty-ui/display";
 
-      return (
-        <MenuItemSelect
-          LeftIcon={IconBell}
-          text="First Option"
-          selected={true}
-          disabled={false}
-          hovered={false}
-          onClick={handleSelection}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti | Typ                | Popis                                                        |
-    | ---------- | ------------------ | ------------------------------------------------------------ |
-    | LeváIkona  | KomponentaIkony    | Volitelná levá ikona zobrazená před textem v položce menu    |
-    | text       | řetězec            | Textový obsah položky menu                                   |
-    | vybráno    | booleovská hodnota | Určuje, zda je položka menu vybrána (zaškrtnuto)             |
-    | neaktivní  | booleovská hodnota | Určuje, zda je položka menu neaktivní                        |
-    | zvýrazněno | booleovská hodnota | Určuje, zda je položka menu aktuálně přejeta kurzorem        |
-    | poKliknutí | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu |
-    | className  | řetězec            | Volitelný název pro dodatečné stylování                      |
-  </Tab>
+  return (
+    <MenuItemSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti | Typ                | Popis                                                        |
+| ---------- | ------------------ | ------------------------------------------------------------ |
+| LeváIkona  | KomponentaIkony    | Volitelná levá ikona zobrazená před textem v položce menu    |
+| text       | řetězec            | Textový obsah položky menu                                   |
+| vybráno    | booleovská hodnota | Určuje, zda je položka menu vybrána (zaškrtnuto)             |
+| neaktivní  | booleovská hodnota | Určuje, zda je položka menu neaktivní                        |
+| zvýrazněno | booleovská hodnota | Určuje, zda je položka menu aktuálně přejeta kurzorem        |
+| poKliknutí | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu |
+| className  | řetězec            | Volitelný název pro dodatečné stylování                      |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### Vybrat Avatar
@@ -304,47 +354,54 @@ Výběrová položka menu, s volitelným levým obsahem (ikonou a textem) a indi
 Výběrová položka menu s avatarem, s volitelným levým obsahem (avatar a text) a indikátorem (ikonou zaškrtnutí) pro vybraný stav.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { MenuItemSelectAvatar } from "twenty-ui/display";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
-      const imageUrl =
-        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+```jsx
+import { MenuItemSelectAvatar } from "twenty-ui/display";
 
-      const handleSelection = () => {
-        console.log("Menu item selected");
-      };
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
 
-      return (
-        <MenuItemSelectAvatar
-          avatar={<img src={imageUrl} alt="Avatar" />}
-          text="First Option"
-          selected={true}
-          disabled={false}
-          hovered={false}
-          testId="menu-item-test"
-          onClick={handleSelection}
-          className
-        />
-      );
-    };
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
 
-    ```
-  </Tab>
+  return (
+    <MenuItemSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      testId="menu-item-test"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti | Typ                | Popis                                                             |
-    | ---------- | ------------------ | ----------------------------------------------------------------- |
-    | avatar     | `ReactNode`        | Avatar nebo ikona, která se zobrazuje na levé straně položky menu |
-    | text       | řetězec            | Textový obsah položky menu                                        |
-    | vybráno    | booleovská hodnota | Označuje, zda je položka menu vybrána (zaškrtnuta)                |
-    | neaktivní  | booleovská hodnota | Označuje, zda je položka menu deaktivována                        |
-    | zvýrazněno | booleovská hodnota | Označuje, zda je položka menu aktuálně zvýrazněna                 |
-    | testId     | řetězec            | Atribut data-testid pro testovací účely                           |
-    | onClick    | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu      |
-    | className  | řetězec            | Volitelný název pro dodatečné stylování                           |
-  </Tab>
+```
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti | Typ                | Popis                                                             |
+| ---------- | ------------------ | ----------------------------------------------------------------- |
+| avatar     | `ReactNode`        | Avatar nebo ikona, která se zobrazuje na levé straně položky menu |
+| text       | řetězec            | Textový obsah položky menu                                        |
+| vybráno    | booleovská hodnota | Označuje, zda je položka menu vybrána (zaškrtnuta)                |
+| neaktivní  | booleovská hodnota | Označuje, zda je položka menu deaktivována                        |
+| zvýrazněno | booleovská hodnota | Označuje, zda je položka menu aktuálně zvýrazněna                 |
+| testId     | řetězec            | Atribut data-testid pro testovací účely                           |
+| onClick    | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu      |
+| className  | řetězec            | Volitelný název pro dodatečné stylování                           |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### Vybrat barvu
@@ -352,41 +409,48 @@ Výběrová položka menu s avatarem, s volitelným levým obsahem (avatar a tex
 Volitelná položka menu s ukázkou barvy pro situace, kdy chcete, aby uživatelé zvolili barvu z menu.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { MenuItemSelectColor } from "twenty-ui/display";
+<Tab title="Použití">
 
-    export const MyComponent = () => {
-      const handleSelection = () => {
-        console.log("Menu item selected");
-      };
+```jsx
+import { MenuItemSelectColor } from "twenty-ui/display";
 
-      return (
-        <MenuItemSelectColor
-          color="green"
-          selected={true}
-          disabled={false}
-          hovered={true}
-          variant="default"
-          onClick={handleSelection}
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti | Typ                | Popis                                                                                                                                                                   |
-    | ---------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | barva      | řetězec            | Barva motivu, která se zobrazí jako ukázka v položce menu. Možnosti zahrnují: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow` a `gray` |
-    | vybráno    | booleovská hodnota | Označuje, zda je položka menu vybrána (zaškrtnuta)                                                                                                                      |
-    | neaktivní  | booleovská hodnota | Označuje, zda je položka menu deaktivována                                                                                                                              |
-    | zvýrazněno | booleovská hodnota | Označuje, zda je položka menu aktuálně zvýrazněna                                                                                                                       |
-    | varianta   | řetězec            | Varianta ukázky barvy. Může být buďto `default` nebo `pipeline`                                                                                                         |
-    | onClick    | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu                                                                                                            |
-    | className  | řetězec            | Volitelný název pro dodatečné stylování                                                                                                                                 |
-  </Tab>
+  return (
+    <MenuItemSelectColor
+      color="green"
+      selected={true}
+      disabled={false}
+      hovered={true}
+      variant="default"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti | Typ                | Popis                                                                                                                                                                   |
+| ---------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| barva      | řetězec            | Barva motivu, která se zobrazí jako ukázka v položce menu. Možnosti zahrnují: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow` a `gray` |
+| vybráno    | booleovská hodnota | Označuje, zda je položka menu vybrána (zaškrtnuta)                                                                                                                      |
+| neaktivní  | booleovská hodnota | Označuje, zda je položka menu deaktivována                                                                                                                              |
+| zvýrazněno | booleovská hodnota | Označuje, zda je položka menu aktuálně zvýrazněna                                                                                                                       |
+| varianta   | řetězec            | Varianta ukázky barvy. Může být buďto `default` nebo `pipeline`                                                                                                         |
+| onClick    | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu                                                                                                            |
+| className  | řetězec            | Volitelný název pro dodatečné stylování                                                                                                                                 |
+
+
+
+
+</Tab>
 </Tabs>
 
 ### Přepnout
@@ -394,35 +458,42 @@ Volitelná položka menu s ukázkou barvy pro situace, kdy chcete, aby uživatel
 Položka menu s přidruženým přepínačem k umožnění nebo zakázání určité funkce
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { IconBell } from '@tabler/icons-react';
+<Tab title="Použití">
 
-    import { MenuItemToggle } from 'twenty-ui/display';
+```jsx
+import { IconBell } from '@tabler/icons-react';
 
-    export const MyComponent = () => {
+import { MenuItemToggle } from 'twenty-ui/display';
 
-      return (
-        <MenuItemToggle
-          LeftIcon={IconBell}
-          text="First Option"
-          toggled={true}
-          toggleSize="small"
-          className
-        />
-      );
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti       | Typ                | Popis                                                        |
-    | ---------------- | ------------------ | ------------------------------------------------------------ |
-    | Levá ikona       | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu    |
-    | text             | řetězec            | Textový obsah položky menu                                   |
-    | přepnuto         | booleovská hodnota | Označuje, zda je přepínač v "zapnutém" nebo "vypnutém" stavu |
-    | naZměnuPřepnutí  | funkce             | Funkce zpětného volání spuštěná při změně stavu přepínače    |
-    | velikostPřepnutí | řetězec            | Velikost přepínače. Může být buď \                           |
-    | className        | řetězec            | Volitelný název pro dodatečné stylování                      |
-  </Tab>
+  return (
+    <MenuItemToggle
+      LeftIcon={IconBell}
+      text="First Option"
+      toggled={true}
+      toggleSize="small"
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti       | Typ                | Popis                                                        |
+| ---------------- | ------------------ | ------------------------------------------------------------ |
+| Levá ikona       | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu    |
+| text             | řetězec            | Textový obsah položky menu                                   |
+| přepnuto         | booleovská hodnota | Označuje, zda je přepínač v "zapnutém" nebo "vypnutém" stavu |
+| naZměnuPřepnutí  | funkce             | Funkce zpětného volání spuštěná při změně stavu přepínače    |
+| velikostPřepnutí | řetězec            | Velikost přepínače. Může být buď \                           |
+| className        | řetězec            | Volitelný název pro dodatečné stylování                      |
+
+
+
+
+</Tab>
 </Tabs>

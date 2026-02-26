@@ -3,17 +3,17 @@ import { useStore } from 'jotai';
 
 import { activeRecordTableRowIndexComponentState } from '@/object-record/record-table/states/activeRecordTableRowIndexComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useActiveRecordTableRow = (recordTableId?: string) => {
-  const isRowActiveState = useRecoilComponentFamilyStateCallbackStateV2(
+  const isRowActiveState = useAtomComponentFamilyStateCallbackState(
     isRecordTableRowActiveComponentFamilyState,
     recordTableId,
   );
 
-  const activeRowIndexState = useRecoilComponentStateCallbackStateV2(
+  const activeRowIndexState = useAtomComponentStateCallbackState(
     activeRecordTableRowIndexComponentState,
     recordTableId,
   );

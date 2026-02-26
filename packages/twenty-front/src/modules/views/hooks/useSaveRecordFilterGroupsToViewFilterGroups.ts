@@ -1,5 +1,5 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewFilterGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -22,9 +22,7 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
   const { currentView } = useGetCurrentViewOnly();
 
   const currentRecordFilterGroupsCallbackState =
-    useRecoilComponentStateCallbackStateV2(
-      currentRecordFilterGroupsComponentState,
-    );
+    useAtomComponentStateCallbackState(currentRecordFilterGroupsComponentState);
 
   const store = useStore();
 

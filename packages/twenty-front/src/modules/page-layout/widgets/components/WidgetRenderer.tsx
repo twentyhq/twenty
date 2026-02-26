@@ -22,8 +22,8 @@ import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentFamilyStateV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type MouseEvent } from 'react';
@@ -50,27 +50,27 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
 
-  const isPageLayoutInEditMode = useRecoilComponentValueV2(
+  const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
   );
 
-  const draggingWidgetId = useRecoilComponentValueV2(
+  const pageLayoutDraggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const resizingWidgetId = useRecoilComponentValueV2(
+  const pageLayoutResizingWidgetId = useAtomComponentStateValue(
     pageLayoutResizingWidgetIdComponentState,
   );
 
-  const currentlyEditingWidgetId = useRecoilComponentValueV2(
+  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
   );
 
-  const isEditing = currentlyEditingWidgetId === widget.id;
+  const isEditing = pageLayoutEditingWidgetId === widget.id;
 
-  const isDragging = draggingWidgetId === widget.id;
+  const isDragging = pageLayoutDraggingWidgetId === widget.id;
 
-  const isResizing = resizingWidgetId === widget.id;
+  const isResizing = pageLayoutResizingWidgetId === widget.id;
 
   const { hasAccess, restriction } = useWidgetPermissions(widget);
 
@@ -109,17 +109,17 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     deletePageLayoutWidget(widget.id);
   };
 
-  const setIsHovered = useSetRecoilComponentFamilyStateV2(
+  const setWidgetCardHovered = useSetAtomComponentFamilyState(
     widgetCardHoveredComponentFamilyState,
     widget.id,
   );
 
   const handleMouseEnter = () => {
-    setIsHovered(true);
+    setWidgetCardHovered(true);
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
+    setWidgetCardHovered(false);
   };
 
   const variant = getWidgetCardVariant({

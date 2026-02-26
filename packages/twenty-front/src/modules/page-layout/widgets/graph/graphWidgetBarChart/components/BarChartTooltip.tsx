@@ -1,5 +1,5 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
@@ -30,7 +30,7 @@ export const BarChartTooltip = ({
   onMouseEnter,
   onMouseLeave,
 }: BarChartTooltipProps) => {
-  const tooltipState = useRecoilComponentValueV2(
+  const graphWidgetBarTooltip = useAtomComponentStateValue(
     graphWidgetBarTooltipComponentState,
   );
 
@@ -41,27 +41,27 @@ export const BarChartTooltip = ({
 
   const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
     ? () => {
-        if (isDefined(tooltipState)) {
-          onSliceClick(tooltipState.slice);
+        if (isDefined(graphWidgetBarTooltip)) {
+          onSliceClick(graphWidgetBarTooltip.slice);
         }
       }
     : undefined;
 
-  const tooltipData = !isDefined(tooltipState)
+  const tooltipData = !isDefined(graphWidgetBarTooltip)
     ? null
     : getBarChartTooltipData({
-        slice: tooltipState.slice,
+        slice: graphWidgetBarTooltip.slice,
         dataByIndexValue,
         enrichedKeys,
         formatOptions,
       });
 
-  const reference = !isDefined(tooltipState)
+  const reference = !isDefined(graphWidgetBarTooltip)
     ? null
     : createVirtualElementFromContainerOffset(
         containerElement,
-        tooltipState.offsetLeft,
-        tooltipState.offsetTop,
+        graphWidgetBarTooltip.offsetLeft,
+        graphWidgetBarTooltip.offsetTop,
       );
 
   return (

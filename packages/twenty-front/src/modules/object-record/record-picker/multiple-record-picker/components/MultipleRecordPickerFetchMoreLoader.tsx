@@ -11,9 +11,9 @@ import { multipleRecordPickerShouldShowInitialLoadingComponentState } from '@/ob
 import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
 import { multipleRecordPickerPaginationSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -38,35 +38,33 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
   const [
     multipleRecordPickerIsFetchingMore,
     setMultipleRecordPickerIsFetchingMore,
-  ] = useRecoilComponentStateV2(
-    multipleRecordPickerIsFetchingMoreComponentState,
-  );
+  ] = useAtomComponentState(multipleRecordPickerIsFetchingMoreComponentState);
 
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
 
-  const paginationState = useRecoilComponentSelectorValueV2(
+  const paginationState = useAtomComponentSelectorValue(
     multipleRecordPickerPaginationSelector,
     componentInstanceId,
   );
 
-  const isLoading = useRecoilComponentValueV2(
+  const multipleRecordPickerIsLoading = useAtomComponentStateValue(
     multipleRecordPickerIsLoadingComponentState,
     componentInstanceId,
   );
 
-  const searchFilter = useRecoilComponentValueV2(
+  const multipleRecordPickerSearchFilter = useAtomComponentStateValue(
     multipleRecordPickerSearchFilterComponentState,
     componentInstanceId,
   );
 
   const multipleRecordPickerShouldShowInitialLoading =
-    useRecoilComponentValueV2(
+    useAtomComponentStateValue(
       multipleRecordPickerShouldShowInitialLoadingComponentState,
     );
 
-  const multipleRecordPickerShouldShowSkeleton = useRecoilComponentValueV2(
+  const multipleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 
@@ -79,16 +77,22 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
       }),
     );
 
-    if (isLoading || !currentPaginationState.hasNextPage) {
+    if (multipleRecordPickerIsLoading || !currentPaginationState.hasNextPage) {
       return;
     }
 
     await performSearch({
       multipleRecordPickerInstanceId: componentInstanceId,
-      forceSearchFilter: searchFilter,
+      forceSearchFilter: multipleRecordPickerSearchFilter,
       loadMore: true,
     });
-  }, [componentInstanceId, performSearch, searchFilter, isLoading, store]);
+  }, [
+    componentInstanceId,
+    performSearch,
+    multipleRecordPickerSearchFilter,
+    multipleRecordPickerIsLoading,
+    store,
+  ]);
 
   const { ref } = useInView({
     onChange: useCallback(
@@ -109,7 +113,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     !paginationState.hasNextPage ||
     multipleRecordPickerShouldShowInitialLoading ||
     multipleRecordPickerShouldShowSkeleton ||
-    (isLoading && !multipleRecordPickerIsFetchingMore)
+    (multipleRecordPickerIsLoading && !multipleRecordPickerIsFetchingMore)
   ) {
     return null;
   }

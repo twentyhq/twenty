@@ -9,11 +9,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import QRCode from 'react-qr-code';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { IconCopy } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledMainContentContainer = styled.div`
@@ -70,8 +70,8 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
-  const qrCode = useRecoilValueV2(qrCodeState);
-  const setSignInUpStep = useSetRecoilStateV2(signInUpStepState);
+  const qrCode = useAtomStateValue(qrCodeState);
+  const setSignInUpStep = useSetAtomState(signInUpStepState);
 
   const handleClick = () => {
     setSignInUpStep(SignInUpStep.TwoFactorAuthenticationVerification);

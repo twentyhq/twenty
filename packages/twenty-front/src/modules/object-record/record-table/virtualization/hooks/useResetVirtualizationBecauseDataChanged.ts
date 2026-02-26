@@ -14,7 +14,7 @@ import { recordIdByRealIndexComponentState } from '@/object-record/record-table/
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
@@ -41,24 +41,26 @@ export const useResetVirtualizationBecauseDataChanged = (
   });
 
   const totalNumberOfRecordsToVirtualizeCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       totalNumberOfRecordsToVirtualizeComponentState,
     );
 
-  const dataPagesLoadedCallbackState = useRecoilComponentStateCallbackStateV2(
+  const dataPagesLoadedCallbackState = useAtomComponentStateCallbackState(
     dataPagesLoadedComponentState,
   );
 
   const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
 
-  const lastScrollPositionCallbackState =
-    useRecoilComponentStateCallbackStateV2(lastScrollPositionComponentState);
+  const lastScrollPositionCallbackState = useAtomComponentStateCallbackState(
+    lastScrollPositionComponentState,
+  );
 
-  const recordIdByRealIndexCallbackState =
-    useRecoilComponentStateCallbackStateV2(recordIdByRealIndexComponentState);
+  const recordIdByRealIndexCallbackState = useAtomComponentStateCallbackState(
+    recordIdByRealIndexComponentState,
+  );
 
   const dataLoadingStatusByRealIndexCallbackState =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       dataLoadingStatusByRealIndexComponentState,
     );
 

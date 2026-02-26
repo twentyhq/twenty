@@ -21,19 +21,17 @@ import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpC
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { labPublicFeatureFlagsStateV2 } from '@/client-config/states/labPublicFeatureFlagsStateV2';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useCallback } from 'react';
-import { isAttachmentPreviewEnabledStateV2 } from '@/client-config/states/isAttachmentPreviewEnabledStateV2';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { getClientConfig } from '@/client-config/utils/getClientConfig';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useStore } from 'jotai';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 type UseClientConfigResult = {
   data: { clientConfig: ClientConfig } | undefined;
@@ -44,92 +42,85 @@ type UseClientConfigResult = {
 };
 
 export const useClientConfig = (): UseClientConfigResult => {
-  const store = useStore();
-  const setIsAnalyticsEnabled = useSetRecoilStateV2(isAnalyticsEnabledState);
-  const setDomainConfiguration = useSetRecoilStateV2(domainConfigurationState);
-  const setAuthProviders = useSetRecoilStateV2(authProvidersState);
-  const setAiModels = useSetRecoilStateV2(aiModelsState);
+  const setIsAnalyticsEnabled = useSetAtomState(isAnalyticsEnabledState);
+  const setDomainConfiguration = useSetAtomState(domainConfigurationState);
+  const setAuthProviders = useSetAtomState(authProvidersState);
+  const setAiModels = useSetAtomState(aiModelsState);
 
-  const setIsDeveloperDefaultSignInPrefilled = useSetRecoilStateV2(
+  const setIsDeveloperDefaultSignInPrefilled = useSetAtomState(
     isDeveloperDefaultSignInPrefilledState,
   );
-  const setIsMultiWorkspaceEnabled = useSetRecoilStateV2(
+  const setIsMultiWorkspaceEnabled = useSetAtomState(
     isMultiWorkspaceEnabledState,
   );
-  const setIsEmailVerificationRequired = useSetRecoilStateV2(
+  const setIsEmailVerificationRequired = useSetAtomState(
     isEmailVerificationRequiredState,
   );
 
-  const setBilling = useSetRecoilStateV2(billingState);
-  const setSupportChat = useSetRecoilStateV2(supportChatState);
+  const setBilling = useSetAtomState(billingState);
+  const setSupportChat = useSetAtomState(supportChatState);
 
-  const setSentryConfig = useSetRecoilStateV2(sentryConfigState);
-  const [clientConfigApiStatus, setClientConfigApiStatus] = useRecoilStateV2(
+  const setSentryConfig = useSetAtomState(sentryConfigState);
+  const [clientConfigApiStatus, setClientConfigApiStatus] = useAtomState(
     clientConfigApiStatusState,
   );
 
-  const setCaptcha = useSetRecoilStateV2(captchaState);
+  const setCaptcha = useSetAtomState(captchaState);
 
-  const setChromeExtensionId = useSetRecoilStateV2(chromeExtensionIdState);
+  const setChromeExtensionId = useSetAtomState(chromeExtensionIdState);
 
-  const setApiConfig = useSetRecoilStateV2(apiConfigState);
+  const setApiConfig = useSetAtomState(apiConfigState);
 
-  const setCanManageFeatureFlags = useSetRecoilStateV2(
-    canManageFeatureFlagsState,
-  );
+  const setCanManageFeatureFlags = useSetAtomState(canManageFeatureFlagsState);
 
-  const setLabPublicFeatureFlags = useSetRecoilStateV2(
-    labPublicFeatureFlagsStateV2,
-  );
+  const setLabPublicFeatureFlags = useSetAtomState(labPublicFeatureFlagsState);
 
-  const setMicrosoftMessagingEnabled = useSetRecoilStateV2(
+  const setIsMicrosoftMessagingEnabled = useSetAtomState(
     isMicrosoftMessagingEnabledState,
   );
 
-  const setMicrosoftCalendarEnabled = useSetRecoilStateV2(
+  const setIsMicrosoftCalendarEnabled = useSetAtomState(
     isMicrosoftCalendarEnabledState,
   );
 
-  const setGoogleMessagingEnabled = useSetRecoilStateV2(
+  const setIsGoogleMessagingEnabled = useSetAtomState(
     isGoogleMessagingEnabledState,
   );
 
-  const setGoogleCalendarEnabled = useSetRecoilStateV2(
+  const setIsGoogleCalendarEnabled = useSetAtomState(
     isGoogleCalendarEnabledState,
   );
 
-  const setIsAttachmentPreviewEnabled = useSetRecoilStateV2(
+  const setIsAttachmentPreviewEnabled = useSetAtomState(
     isAttachmentPreviewEnabledState,
   );
 
-  const setIsConfigVariablesInDbEnabled = useSetRecoilStateV2(
+  const setIsConfigVariablesInDbEnabled = useSetAtomState(
     isConfigVariablesInDbEnabledState,
   );
 
-  const setCalendarBookingPageId = useSetRecoilStateV2(
-    calendarBookingPageIdState,
-  );
+  const setCalendarBookingPageId = useSetAtomState(calendarBookingPageIdState);
 
-  const setIsImapSmtpCaldavEnabled = useSetRecoilStateV2(
+  const setIsImapSmtpCaldavEnabled = useSetAtomState(
     isImapSmtpCaldavEnabledState,
   );
-  const setIsEmailingDomainsEnabled = useSetRecoilStateV2(
+  const setIsEmailingDomainsEnabled = useSetAtomState(
     isEmailingDomainsEnabledState,
   );
 
-  const setAllowRequestsToTwentyIcons = useSetRecoilStateV2(
+  const setAllowRequestsToTwentyIcons = useSetAtomState(
     allowRequestsToTwentyIconsState,
   );
 
-  const setIsCloudflareIntegrationEnabled = useSetRecoilStateV2(
+  const setIsCloudflareIntegrationEnabled = useSetAtomState(
     isCloudflareIntegrationEnabledState,
   );
 
-  const setIsClickHouseConfigured = useSetRecoilStateV2(
+  const setIsClickHouseConfigured = useSetAtomState(
     isClickHouseConfiguredState,
   );
 
-  const setAppVersion = useSetRecoilStateV2(appVersionState);
+  const setAppVersion = useSetAtomState(appVersionState);
 
   const fetchClientConfig = useCallback(async () => {
     setClientConfigApiStatus((prev) => ({
@@ -187,15 +178,11 @@ export const useClientConfig = (): UseClientConfigResult => {
       });
       setCanManageFeatureFlags(clientConfig?.canManageFeatureFlags);
       setLabPublicFeatureFlags(clientConfig?.publicFeatureFlags);
-      setMicrosoftMessagingEnabled(clientConfig?.isMicrosoftMessagingEnabled);
-      setMicrosoftCalendarEnabled(clientConfig?.isMicrosoftCalendarEnabled);
-      setGoogleMessagingEnabled(clientConfig?.isGoogleMessagingEnabled);
-      setGoogleCalendarEnabled(clientConfig?.isGoogleCalendarEnabled);
+      setIsMicrosoftMessagingEnabled(clientConfig?.isMicrosoftMessagingEnabled);
+      setIsMicrosoftCalendarEnabled(clientConfig?.isMicrosoftCalendarEnabled);
+      setIsGoogleMessagingEnabled(clientConfig?.isGoogleMessagingEnabled);
+      setIsGoogleCalendarEnabled(clientConfig?.isGoogleCalendarEnabled);
       setIsAttachmentPreviewEnabled(clientConfig?.isAttachmentPreviewEnabled);
-      store.set(
-        isAttachmentPreviewEnabledStateV2.atom,
-        clientConfig?.isAttachmentPreviewEnabled,
-      );
       setIsConfigVariablesInDbEnabled(
         clientConfig?.isConfigVariablesInDbEnabled,
       );
@@ -235,8 +222,8 @@ export const useClientConfig = (): UseClientConfigResult => {
     setChromeExtensionId,
     setClientConfigApiStatus,
     setDomainConfiguration,
-    setGoogleCalendarEnabled,
-    setGoogleMessagingEnabled,
+    setIsGoogleCalendarEnabled,
+    setIsGoogleMessagingEnabled,
     setIsAnalyticsEnabled,
     setIsAttachmentPreviewEnabled,
     setIsConfigVariablesInDbEnabled,
@@ -248,12 +235,11 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsClickHouseConfigured,
     setIsCloudflareIntegrationEnabled,
     setLabPublicFeatureFlags,
-    setMicrosoftCalendarEnabled,
-    setMicrosoftMessagingEnabled,
+    setIsMicrosoftCalendarEnabled,
+    setIsMicrosoftMessagingEnabled,
     setSentryConfig,
     setSupportChat,
     setAllowRequestsToTwentyIcons,
-    store,
   ]);
 
   return {

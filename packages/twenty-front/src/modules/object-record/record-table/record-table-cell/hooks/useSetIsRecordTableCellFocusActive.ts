@@ -4,16 +4,16 @@ import { useStore } from 'jotai';
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 export const useSetIsRecordTableCellFocusActive = (recordTableId?: string) => {
   const store = useStore();
-  const isRecordTableCellFocusActive = useRecoilComponentStateCallbackStateV2(
+  const isRecordTableCellFocusActive = useAtomComponentStateCallbackState(
     isRecordTableCellFocusActiveComponentState,
     recordTableId,
   );
 
-  const recordTableFocusPosition = useRecoilComponentStateCallbackStateV2(
+  const recordTableFocusPosition = useAtomComponentStateCallbackState(
     recordTableFocusPositionComponentState,
     recordTableId,
   );

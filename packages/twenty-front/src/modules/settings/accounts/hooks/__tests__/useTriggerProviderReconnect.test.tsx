@@ -3,8 +3,6 @@ import {
   CalendarChannelVisibility,
 } from '~/generated/graphql';
 import { act, renderHook } from '@testing-library/react';
-import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
@@ -22,10 +20,6 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: jest.fn().mockImplementation(() => mockNavigate),
 }));
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
-);
-
 describe('useTriggerProviderReconnect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -33,9 +27,7 @@ describe('useTriggerProviderReconnect', () => {
 
   describe('IMAP_SMTP_CALDAV provider', () => {
     it('should navigate to new connection when no accountId is provided', async () => {
-      const { result } = renderHook(() => useTriggerProviderReconnect(), {
-        wrapper: Wrapper,
-      });
+      const { result } = renderHook(() => useTriggerProviderReconnect());
 
       await act(async () => {
         await result.current.triggerProviderReconnect(
@@ -50,9 +42,7 @@ describe('useTriggerProviderReconnect', () => {
     });
 
     it('should navigate to edit connection when accountId is provided', async () => {
-      const { result } = renderHook(() => useTriggerProviderReconnect(), {
-        wrapper: Wrapper,
-      });
+      const { result } = renderHook(() => useTriggerProviderReconnect());
 
       const accountId = 'test-account-id-123';
 
@@ -73,9 +63,7 @@ describe('useTriggerProviderReconnect', () => {
     });
 
     it('should ignore options parameter for IMAP_SMTP_CALDAV provider', async () => {
-      const { result } = renderHook(() => useTriggerProviderReconnect(), {
-        wrapper: Wrapper,
-      });
+      const { result } = renderHook(() => useTriggerProviderReconnect());
 
       const accountId = 'test-account-id-123';
       const options = {
@@ -103,9 +91,7 @@ describe('useTriggerProviderReconnect', () => {
 
   describe('OAuth providers', () => {
     it('should trigger OAuth for Google provider without options', async () => {
-      const { result } = renderHook(() => useTriggerProviderReconnect(), {
-        wrapper: Wrapper,
-      });
+      const { result } = renderHook(() => useTriggerProviderReconnect());
 
       await act(async () => {
         await result.current.triggerProviderReconnect(
@@ -123,9 +109,7 @@ describe('useTriggerProviderReconnect', () => {
     });
 
     it('should trigger OAuth for Microsoft provider without options', async () => {
-      const { result } = renderHook(() => useTriggerProviderReconnect(), {
-        wrapper: Wrapper,
-      });
+      const { result } = renderHook(() => useTriggerProviderReconnect());
 
       await act(async () => {
         await result.current.triggerProviderReconnect(
@@ -143,9 +127,7 @@ describe('useTriggerProviderReconnect', () => {
     });
 
     it('should trigger OAuth for Google provider with options', async () => {
-      const { result } = renderHook(() => useTriggerProviderReconnect(), {
-        wrapper: Wrapper,
-      });
+      const { result } = renderHook(() => useTriggerProviderReconnect());
 
       const options = {
         redirectLocation: '/custom-redirect',
@@ -173,9 +155,7 @@ describe('useTriggerProviderReconnect', () => {
     });
 
     it('should trigger OAuth for Microsoft provider with options', async () => {
-      const { result } = renderHook(() => useTriggerProviderReconnect(), {
-        wrapper: Wrapper,
-      });
+      const { result } = renderHook(() => useTriggerProviderReconnect());
 
       const options = {
         redirectLocation: '/another-redirect',
@@ -202,9 +182,7 @@ describe('useTriggerProviderReconnect', () => {
     });
 
     it('should ignore accountId parameter for OAuth providers', async () => {
-      const { result } = renderHook(() => useTriggerProviderReconnect(), {
-        wrapper: Wrapper,
-      });
+      const { result } = renderHook(() => useTriggerProviderReconnect());
 
       await act(async () => {
         await result.current.triggerProviderReconnect(
@@ -223,9 +201,7 @@ describe('useTriggerProviderReconnect', () => {
     });
 
     it('should pass skipMessageChannelConfiguration option to OAuth providers', async () => {
-      const { result } = renderHook(() => useTriggerProviderReconnect(), {
-        wrapper: Wrapper,
-      });
+      const { result } = renderHook(() => useTriggerProviderReconnect());
 
       const options = {
         skipMessageChannelConfiguration: true,
@@ -253,9 +229,7 @@ describe('useTriggerProviderReconnect', () => {
 
   describe('error handling', () => {
     it('should handle triggerApisOAuth errors gracefully', async () => {
-      const { result } = renderHook(() => useTriggerProviderReconnect(), {
-        wrapper: Wrapper,
-      });
+      const { result } = renderHook(() => useTriggerProviderReconnect());
 
       const error = new Error('OAuth failed');
       mockTriggerApisOAuth.mockRejectedValue(error);

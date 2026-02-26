@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   type CreateOidcIdentityProviderMutationVariables,
   type CreateSamlIdentityProviderMutationVariables,
@@ -15,7 +15,7 @@ export const useCreateSSOIdentityProvider = () => {
   const [createSamlIdentityProviderMutation] =
     useCreateSamlIdentityProviderMutation();
 
-  const setSSOIdentitiesProviders = useSetRecoilStateV2(
+  const setSSOIdentitiesProviders = useSetAtomState(
     SSOIdentitiesProvidersState,
   );
 

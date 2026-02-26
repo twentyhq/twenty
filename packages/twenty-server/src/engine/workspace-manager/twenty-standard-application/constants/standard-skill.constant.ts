@@ -1,33 +1,33 @@
 export const STANDARD_SKILL = {
   'workflow-building': {
-    universalIdentifier: '20202020-6155-838a-b64e-44a791fbdc13',
+    universalIdentifier: '20202020-297a-4721-a1f3-c79a30b5420e',
   },
   'data-manipulation': {
-    universalIdentifier: '20202020-e225-f5c7-3d56-45feaa36f2e6',
+    universalIdentifier: '20202020-0c39-4523-9543-e6c2a807937e',
   },
   'dashboard-building': {
-    universalIdentifier: '20202020-398f-0d7a-82db-4f43bc7e7044',
+    universalIdentifier: '20202020-ffdb-4623-abfb-036b9abeb121',
   },
   'metadata-building': {
-    universalIdentifier: '20202020-c66a-5fed-4a74-46e0b42a6332',
+    universalIdentifier: '20202020-7b80-4a14-8fb9-d1512b89c078',
   },
   research: {
-    universalIdentifier: '20202020-db75-4fca-6813-4c7db0f964a0',
+    universalIdentifier: '20202020-6b44-417e-a31f-5560b59d300a',
   },
   'code-interpreter': {
-    universalIdentifier: '20202020-5eb9-e775-cf4e-4f22be7be362',
+    universalIdentifier: '20202020-a97a-4069-8e44-fc18faea7b97',
   },
   xlsx: {
-    universalIdentifier: '20202020-2c7f-5b77-dfa4-494b84752ab7',
+    universalIdentifier: '20202020-b1ac-484f-bf27-82c2114f5707',
   },
   pdf: {
-    universalIdentifier: '20202020-c3d1-e0c9-2f93-45648b8bbd26',
+    universalIdentifier: '20202020-8c9e-454c-86a8-a0495f3c4f61',
   },
   docx: {
-    universalIdentifier: '20202020-6f15-2432-0537-4e23a2efd1cb',
+    universalIdentifier: '20202020-2d1f-43b6-b84e-ce8b1e7b2c3e',
   },
   pptx: {
-    universalIdentifier: '20202020-c81b-baf8-5255-4c34bd0eac9b',
+    universalIdentifier: '20202020-13b5-4e60-9359-b8519ef1c07d',
   },
 } as const satisfies Record<
   string,

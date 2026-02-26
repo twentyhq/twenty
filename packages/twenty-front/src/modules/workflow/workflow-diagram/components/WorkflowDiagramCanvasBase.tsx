@@ -1,10 +1,10 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { commandMenuWidthState } from '@/command-menu/states/commandMenuWidthState';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
 import { WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyNodeDefinition';
 import { useResetWorkflowInsertStepIds } from '@/workflow/workflow-diagram/hooks/useResetWorkflowInsertStepIds';
@@ -60,7 +60,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { useStore } from 'jotai';
@@ -170,31 +170,31 @@ export const WorkflowDiagramCanvasBase = ({
 
   const reactflow = useReactFlow();
 
-  const currentWorkflowDiagram = useRecoilComponentValueV2(
+  const workflowDiagram = useAtomComponentStateValue(
     workflowDiagramComponentState,
   );
-  const workflowDiagramPanOnDrag = useRecoilComponentValueV2(
+  const workflowDiagramPanOnDrag = useAtomComponentStateValue(
     workflowDiagramPanOnDragComponentState,
   );
-  const workflowDiagram = useRecoilComponentStateCallbackStateV2(
+  const workflowDiagramCallbackState = useAtomComponentStateCallbackState(
     workflowDiagramComponentState,
   );
-  const setWorkflowDiagram = useSetRecoilComponentStateV2(
+  const setWorkflowDiagram = useSetAtomComponentState(
     workflowDiagramComponentState,
   );
-  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+  const setWorkflowSelectedNode = useSetAtomComponentState(
     workflowSelectedNodeComponentState,
   );
   const { resetWorkflowInsertStepIds } = useResetWorkflowInsertStepIds();
   const workflowDiagramWaitingNodesDimensions =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       workflowDiagramWaitingNodesDimensionsComponentState,
     );
-  const setWorkflowDiagramWaitingNodesDimensions = useSetRecoilComponentStateV2(
+  const setWorkflowDiagramWaitingNodesDimensions = useSetAtomComponentState(
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
 
-  const workflowInsertStepIds = useRecoilComponentValueV2(
+  const workflowInsertStepIds = useAtomComponentStateValue(
     workflowInsertStepIdsComponentState,
   );
 
@@ -213,12 +213,12 @@ export const WorkflowDiagramCanvasBase = ({
   } | null>(null);
 
   const { nodes, edges } = useMemo(() => {
-    if (!isDefined(currentWorkflowDiagram)) {
+    if (!isDefined(workflowDiagram)) {
       return { nodes: [], edges: [] };
     }
 
-    const nodes = [...currentWorkflowDiagram.nodes];
-    const edges = [...currentWorkflowDiagram.edges];
+    const nodes = [...workflowDiagram.nodes];
+    const edges = [...workflowDiagram.edges];
 
     if (
       isDefined(workflowInsertStepIds.position) &&
@@ -255,9 +255,9 @@ export const WorkflowDiagramCanvasBase = ({
     }
 
     return { nodes, edges };
-  }, [currentWorkflowDiagram, workflowInsertStepIds]);
+  }, [workflowDiagram, workflowInsertStepIds]);
 
-  const isCommandMenuOpened = useRecoilValueV2(isCommandMenuOpenedStateV2);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const handleEdgesChange = (
@@ -357,10 +357,10 @@ export const WorkflowDiagramCanvasBase = ({
         isInRightDrawer,
         isCommandMenuOpened,
         workflowDiagramFlowInitialized,
-        workflowDiagram: store.get(workflowDiagram),
+        workflowDiagram: store.get(workflowDiagramCallbackState),
       });
     },
-    [setFlowViewport, workflowDiagram, store],
+    [setFlowViewport, workflowDiagramCallbackState, store],
   );
 
   useEffect(() => {
@@ -378,7 +378,7 @@ export const WorkflowDiagramCanvasBase = ({
 
   const handleNodesChanges = useCallback(
     (changes: NodeChange<WorkflowDiagramNode>[]) => {
-      const existingWorkflowDiagram = store.get(workflowDiagram);
+      const existingWorkflowDiagram = store.get(workflowDiagramCallbackState);
 
       const filteredChanges = changes.filter(
         (change) =>
@@ -399,7 +399,7 @@ export const WorkflowDiagramCanvasBase = ({
         };
       }
 
-      store.set(workflowDiagram, updatedWorkflowDiagram);
+      store.set(workflowDiagramCallbackState, updatedWorkflowDiagram);
 
       const currentWorkflowDiagramWaitingNodesDimensions = store.get(
         workflowDiagramWaitingNodesDimensions,
@@ -419,7 +419,7 @@ export const WorkflowDiagramCanvasBase = ({
       isCommandMenuOpened,
       setFlowViewport,
       workflowDiagramFlowInitialized,
-      workflowDiagram,
+      workflowDiagramCallbackState,
       workflowDiagramWaitingNodesDimensions,
       isInRightDrawer,
       store,

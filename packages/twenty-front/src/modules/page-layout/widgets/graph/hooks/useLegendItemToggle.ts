@@ -1,5 +1,5 @@
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useCallback } from 'react';
 
 type UseLegendItemToggleProps = {
@@ -11,7 +11,7 @@ export const useLegendItemToggle = ({
   itemIds,
   isInteractive,
 }: UseLegendItemToggleProps) => {
-  const setHiddenLegendIds = useSetRecoilComponentStateV2(
+  const setGraphWidgetHiddenLegendIds = useSetAtomComponentState(
     graphWidgetHiddenLegendIdsComponentState,
   );
 
@@ -19,7 +19,7 @@ export const useLegendItemToggle = ({
     (itemId: string) => {
       if (!isInteractive) return;
 
-      setHiddenLegendIds((previousHiddenIds) => {
+      setGraphWidgetHiddenLegendIds((previousHiddenIds) => {
         const hasStaleIds = previousHiddenIds.some(
           (id) => !itemIds.includes(id),
         );
@@ -40,7 +40,7 @@ export const useLegendItemToggle = ({
         return [...validHiddenIds, itemId];
       });
     },
-    [isInteractive, itemIds, setHiddenLegendIds],
+    [isInteractive, itemIds, setGraphWidgetHiddenLegendIds],
   );
 
   return { toggleLegendItem };

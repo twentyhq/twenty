@@ -11,12 +11,12 @@ import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIcon
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useUpdateFolderInDraft } from '@/navigation-menu-item/hooks/useUpdateFolderInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 
 const StyledClickableIconWrapper = styled.div`
   cursor: pointer;
@@ -26,14 +26,16 @@ export const CommandMenuFolderInfo = () => {
   const theme = useTheme();
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const commandMenuPageInfo = useRecoilValueV2(commandMenuPageInfoState);
-  const [shouldFocusTitleInput, setShouldFocusTitleInput] =
-    useRecoilComponentStateV2(
-      commandMenuShouldFocusTitleInputComponentState,
-      commandMenuPageInfo.instanceId,
-    );
-  const selectedNavigationMenuItemInEditMode = useRecoilValueV2(
-    selectedNavigationMenuItemInEditModeStateV2,
+  const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
+  const [
+    commandMenuShouldFocusTitleInput,
+    setCommandMenuShouldFocusTitleInput,
+  ] = useAtomComponentState(
+    commandMenuShouldFocusTitleInputComponentState,
+    commandMenuPageInfo.instanceId,
+  );
+  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemInEditModeState,
   );
   const items = useWorkspaceSectionItems();
   const { updateFolderInDraft } = useUpdateFolderInDraft();
@@ -106,8 +108,8 @@ export const CommandMenuFolderInfo = () => {
           onClickOutside={handleSave}
           onTab={handleSave}
           onShiftTab={handleSave}
-          shouldFocus={shouldFocusTitleInput}
-          onFocus={() => setShouldFocusTitleInput(false)}
+          shouldFocus={commandMenuShouldFocusTitleInput}
+          onFocus={() => setCommandMenuShouldFocusTitleInput(false)}
         />
       }
     />

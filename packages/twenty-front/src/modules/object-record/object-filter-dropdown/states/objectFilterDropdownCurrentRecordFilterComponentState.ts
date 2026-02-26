@@ -1,9 +1,9 @@
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 
 export const objectFilterDropdownCurrentRecordFilterComponentState =
-  createComponentStateV2<RecordFilter | undefined | null>({
+  createAtomComponentState<RecordFilter | undefined | null>({
     key: 'objectFilterDropdownCurrentRecordFilterComponentState',
     defaultValue: undefined,
     componentInstanceContext: ObjectFilterDropdownComponentInstanceContext,

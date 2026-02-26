@@ -10,19 +10,25 @@ image: /images/user-guide/tasks/tasks_header.png
 表示一个成功或已完成的动作。
 
 <Tabs>
-  <Tab title="**用法**">
-    ```jsx
-    import { Checkmark } from 'twenty-ui/display';
+<Tab title="**用法**">
 
-    export const MyComponent = () => {
-      return <Checkmark />;
-    };
-    ```
-  </Tab>
+```jsx
+import { Checkmark } from 'twenty-ui/display';
 
-  <Tab title="属性">
-    扩展了 `React.ComponentPropsWithoutRef<'div'>`，并接受常规 `div` 元素的所有属性。
-  </Tab>
+export const MyComponent = () => {
+  return <Checkmark />;
+};
+```
+
+
+</Tab>
+
+<Tab title="属性">
+
+扩展了 `React.ComponentPropsWithoutRef<'div'>`，并接受常规 `div` 元素的所有属性。
+
+</Tab>
+
 </Tabs>
 
 ## 动画对勾标记
@@ -30,29 +36,38 @@ image: /images/user-guide/tasks/tasks_header.png
 表示一个带有动画特性的对勾图标。
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { AnimatedCheckmark } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
-      return (
-        <AnimatedCheckmark
-          isAnimating={true}
-          color="green"
-          duration={0.5}
-          size={30}
-        />
-      );
-    };
-    ```
-  </Tab>
+<Tab title="用法">
 
-  <Tab title="属性">
-    | 属性          | 类型  | 描述             | 默认    |
-    | ----------- | --- | -------------- | ----- |
-    | isAnimating | 布尔值 | 控制对勾标记是否在动画中   | 假     |
-    | 颜色          | 字符串 | 对勾标记的颜色        |       |
-    | 持续时间        | 数字  | 动画的持续时间（以秒为单位） | 0.5 秒 |
-    | 大小          | 数字  | 对勾标记的大小        | 28 像素 |
-  </Tab>
+```jsx
+import { AnimatedCheckmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return (
+    <AnimatedCheckmark
+      isAnimating={true}
+      color="green"
+      duration={0.5}
+      size={30}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="属性">
+
+
+| 属性          | 类型  | 描述             | 默认    |
+| ----------- | --- | -------------- | ----- |
+| isAnimating | 布尔值 | 控制对勾标记是否在动画中   | 假     |
+| 颜色          | 字符串 | 对勾标记的颜色        |       |
+| 持续时间        | 数字  | 动画的持续时间（以秒为单位） | 0.5 秒 |
+| 大小          | 数字  | 对勾标记的大小        | 28 像素 |
+
+
+
+</Tab>
+
 </Tabs>

@@ -10,46 +10,54 @@ image: /images/user-guide/tips/light-bulb.png
 当用户与一个元素互动时显示额外信息的简要信息。
 
 <Tabs>
-  <Tab title="**用法**">
-    ```jsx
-    import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+<Tab title="**用法**">
 
-    export const MyComponent = () => {
-      return (
-        <>
-          <p id="hoverText" style={{ display: "inline-block" }}>
-            客户洞察
-          </p>
-          <AppTooltip
-            className
-            anchorSelect="#hoverText"
-            content="探索客户行为和偏好"
-            delayHide={0}
-            offset={6}
-            noArrow={false}
-            isOpen={true}
-            place="bottom"
-            positionStrategy="absolute"
-          />
-        </>
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
 
-  <Tab title="属性">
-    | 属性               | 类型                                       | 描述                                                                                                                                                 |
-    | ---------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | className        | 字符串                                      | 用于额外样式的可选 CSS 类                                                                                                                                    |
-    | anchorSelect     | CSS 选择器                                  | 工具提示的锚选择器（触发工具提示的元素）                                                                                                                               |
-    | 内容               | 字符串                                      | 您希望在工具提示中显示的内容                                                                                                                                     |
-    | delayHide        | 数字                                       | 在光标离开锚后隐藏工具提示的延迟时间（秒）                                                                                                                              |
-    | offset           | 数字                                       | 工具提示定位的像素偏移量                                                                                                                                       |
-    | noArrow          | 布尔值                                      | 如果为 `true`，则隐藏工具提示上的箭头                                                                                                                             |
-    | isOpen           | 布尔值                                      | 如果为 `true`，工具提示默认打开                                                                                                                                |
-    | place            | `PlacesType` 字符串来自 `react-tooltip`       | 指定工具提示的位置。 值包括 `bottom`、`left`、`right`、`top`、`top-start`、`top-end`、`right-start`、`right-end`、`bottom-start`、`bottom-end`、`left-start` 和 `left-end` |
-    | positionStrategy | `PositionStrategy` 字符串来自 `react-tooltip` | 工具提示的位置策略。 有两个值： `absolute` 和 `fixed`                                                                                                              |
-  </Tab>
+export const MyComponent = () => {
+  return (
+    <>
+      <p id="hoverText" style={{ display: "inline-block" }}>
+        客户洞察
+      </p>
+      <AppTooltip
+        className
+        anchorSelect="#hoverText"
+        content="探索客户行为和偏好"
+        delayHide={0}
+        offset={6}
+        noArrow={false}
+        isOpen={true}
+        place="bottom"
+        positionStrategy="absolute"
+      />
+    </>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="属性">
+
+
+| 属性               | 类型                                       | 描述                                                                                                                                                 |
+| ---------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className        | 字符串                                      | 用于额外样式的可选 CSS 类                                                                                                                                    |
+| anchorSelect     | CSS 选择器                                  | 工具提示的锚选择器（触发工具提示的元素）                                                                                                                               |
+| 内容               | 字符串                                      | 您希望在工具提示中显示的内容                                                                                                                                     |
+| delayHide        | 数字                                       | 在光标离开锚后隐藏工具提示的延迟时间（秒）                                                                                                                              |
+| offset           | 数字                                       | 工具提示定位的像素偏移量                                                                                                                                       |
+| noArrow          | 布尔值                                      | 如果为 `true`，则隐藏工具提示上的箭头                                                                                                                             |
+| isOpen           | 布尔值                                      | 如果为 `true`，工具提示默认打开                                                                                                                                |
+| place            | `PlacesType` 字符串来自 `react-tooltip`       | 指定工具提示的位置。 值包括 `bottom`、`left`、`right`、`top`、`top-start`、`top-end`、`right-start`、`right-end`、`bottom-start`、`bottom-end`、`left-start` 和 `left-end` |
+| positionStrategy | `PositionStrategy` 字符串来自 `react-tooltip` | 工具提示的位置策略。 有两个值： `absolute` 和 `fixed`                                                                                                              |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## 文本溢出与工具提示
@@ -57,22 +65,30 @@ image: /images/user-guide/tips/light-bulb.png
 处理文本溢出，并在文本溢出时显示工具提示。
 
 <Tabs>
-  <Tab title="用法">
-    ```jsx
-    import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+<Tab title="用法">
 
-    export const MyComponent = () => {
-      const crmTaskDescription =
-        'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+```jsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
-      return <OverflowingTextWithTooltip text={crmTaskDescription} />;
-    };
-    ```
-  </Tab>
+export const MyComponent = () => {
+  const crmTaskDescription =
+    'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
 
-  <Tab title="属性">
-    | 属性 | 类型  | 描述             |
-    | -- | --- | -------------- |
-    | 文本 | 字符串 | 想要在文本溢出区域显示的内容 |
-  </Tab>
+  return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+};
+```
+
+</Tab>
+
+<Tab title="属性">
+
+
+| 属性 | 类型  | 描述             |
+| -- | --- | -------------- |
+| 文本 | 字符串 | 想要在文本溢出区域显示的内容 |
+
+
+
+</Tab>
+
 </Tabs>

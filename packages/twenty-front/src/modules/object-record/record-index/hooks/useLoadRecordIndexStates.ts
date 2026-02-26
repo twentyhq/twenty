@@ -17,7 +17,6 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { recordIndexOpenRecordInStateV2 } from '@/object-record/record-index/states/recordIndexOpenRecordInStateV2';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
@@ -25,7 +24,7 @@ import { type ColumnDefinition } from '@/object-record/record-table/types/Column
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { hasInitializedCurrentRecordFieldsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFieldsComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { hasInitializedCurrentRecordSortsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordSortsComponentFamilyState';
@@ -43,27 +42,27 @@ export const useLoadRecordIndexStates = () => {
   const store = useStore();
 
   const contextStoreTargetedRecordsRuleAtom =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       contextStoreTargetedRecordsRuleComponentState,
     );
 
   const recordIndexGroupFieldMetadataItemAtom =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       recordIndexGroupFieldMetadataItemComponentState,
     );
 
   const recordIndexGroupAggregateOperationAtom =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       recordIndexGroupAggregateOperationComponentState,
     );
 
   const recordIndexGroupAggregateFieldMetadataItemAtom =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       recordIndexGroupAggregateFieldMetadataItemComponentState,
     );
 
   const recordIndexShouldHideEmptyRecordGroupsAtom =
-    useRecoilComponentStateCallbackStateV2(
+    useAtomComponentStateCallbackState(
       recordIndexShouldHideEmptyRecordGroupsComponentState,
     );
 
@@ -251,7 +250,6 @@ export const useLoadRecordIndexStates = () => {
 
           batchSet(recordIndexViewTypeState.atom, view.type);
           batchSet(recordIndexOpenRecordInState.atom, view.openRecordIn);
-          batchSet(recordIndexOpenRecordInStateV2.atom, view.openRecordIn);
 
           batchSet(
             recordIndexCalendarFieldMetadataIdState.atom,

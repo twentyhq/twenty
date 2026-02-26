@@ -1,5 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { DUPLICATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/duplicateWorkflowVersionStep';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';
@@ -16,7 +16,7 @@ export const useDuplicateWorkflowVersionStep = () => {
 
   const { updateWorkflowVersionCache } = useUpdateWorkflowVersionCache();
 
-  const setFlow = useSetRecoilComponentStateV2(flowComponentState);
+  const setFlow = useSetAtomComponentState(flowComponentState);
 
   const [mutate] = useMutation<
     DuplicateWorkflowVersionStepMutation,

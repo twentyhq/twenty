@@ -6,13 +6,13 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { useEmailPasswordResetLinkMutation } from '~/generated-metadata/graphql';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useHandleResetPassword = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const [emailPasswordResetLink] = useEmailPasswordResetLinkMutation();
-  const workspacePublicData = useRecoilValueV2(workspacePublicDataState);
-  const currentUser = useRecoilValueV2(currentUserState);
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
+  const currentUser = useAtomStateValue(currentUserState);
 
   const { t } = useLingui();
 

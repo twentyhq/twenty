@@ -1,6 +1,6 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const activeDropdownFocusIdState = createStateV2<string | null>({
+export const activeDropdownFocusIdState = createAtomState<string | null>({
   key: 'activeDropdownFocusIdState',
   defaultValue: null,
 });

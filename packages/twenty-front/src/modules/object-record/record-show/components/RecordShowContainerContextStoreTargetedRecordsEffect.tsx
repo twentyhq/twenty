@@ -1,6 +1,6 @@
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect } from 'react';
 
 export const RecordShowContainerContextStoreTargetedRecordsEffect = ({
@@ -8,11 +8,11 @@ export const RecordShowContainerContextStoreTargetedRecordsEffect = ({
 }: {
   recordId: string;
 }) => {
-  const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
+  const setContextStoreTargetedRecordsRule = useSetAtomComponentState(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
+  const setContextStoreNumberOfSelectedRecords = useSetAtomComponentState(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 

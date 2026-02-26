@@ -38,10 +38,20 @@ describe('AIBillingService', () => {
     cacheCreationCostPerMillionTokens: 3.75,
   };
 
+  const defaultTokenDetails = {
+    inputTokenDetails: {
+      noCacheTokens: 0,
+      cacheReadTokens: 0,
+      cacheWriteTokens: 0,
+    },
+    outputTokenDetails: { textTokens: 0, reasoningTokens: 0 },
+  };
+
   const mockTokenUsage = {
     inputTokens: 1000,
     outputTokens: 500,
     totalTokens: 1500,
+    ...defaultTokenDetails,
   };
 
   beforeEach(async () => {
@@ -92,7 +102,12 @@ describe('AIBillingService', () => {
           inputTokens: 1000,
           outputTokens: 500,
           totalTokens: 1500,
-          cachedInputTokens: 600,
+          inputTokenDetails: {
+            noCacheTokens: 400,
+            cacheReadTokens: 600,
+            cacheWriteTokens: 0,
+          },
+          outputTokenDetails: { textTokens: 500, reasoningTokens: 0 },
         },
       });
 
@@ -118,7 +133,12 @@ describe('AIBillingService', () => {
             inputTokens: 400,
             outputTokens: 500,
             totalTokens: 900,
-            cachedInputTokens: 600,
+            inputTokenDetails: {
+              noCacheTokens: 400,
+              cacheReadTokens: 600,
+              cacheWriteTokens: 0,
+            },
+            outputTokenDetails: { textTokens: 500, reasoningTokens: 0 },
           },
           cacheCreationTokens: 200,
         },
@@ -139,7 +159,12 @@ describe('AIBillingService', () => {
           inputTokens: 1000,
           outputTokens: 500,
           totalTokens: 2000,
-          reasoningTokens: 500,
+          inputTokenDetails: {
+            noCacheTokens: 0,
+            cacheReadTokens: 0,
+            cacheWriteTokens: 0,
+          },
+          outputTokenDetails: { textTokens: 0, reasoningTokens: 500 },
         },
       });
 
@@ -150,6 +175,42 @@ describe('AIBillingService', () => {
       // reasoningCost = (500/1M * 10.0) = 0.005
       // total = 0.0075
       expect(costInDollars).toBeCloseTo(0.0075);
+    });
+
+    it('should use outputTokenDetails.reasoningTokens when present (SDK-aligned shape)', () => {
+      const costInDollars = service.calculateCost('gpt-4o', {
+        usage: {
+          inputTokens: 1000,
+          outputTokens: 500,
+          totalTokens: 2000,
+          inputTokenDetails: {
+            noCacheTokens: 0,
+            cacheReadTokens: 0,
+            cacheWriteTokens: 0,
+          },
+          outputTokenDetails: { textTokens: 0, reasoningTokens: 500 },
+        },
+      });
+
+      expect(costInDollars).toBeCloseTo(0.0075);
+    });
+
+    it('should use inputTokenDetails.cacheReadTokens when present (SDK-aligned shape)', () => {
+      const costInDollars = service.calculateCost('gpt-4o', {
+        usage: {
+          inputTokens: 1000,
+          outputTokens: 500,
+          totalTokens: 1500,
+          inputTokenDetails: {
+            noCacheTokens: 400,
+            cacheReadTokens: 600,
+            cacheWriteTokens: 0,
+          },
+          outputTokenDetails: { textTokens: 500, reasoningTokens: 0 },
+        },
+      });
+
+      expect(costInDollars).toBeCloseTo(0.00675);
     });
 
     it('should fall back to input rate when cachedInputCostPerMillionTokens is undefined', () => {
@@ -163,7 +224,12 @@ describe('AIBillingService', () => {
           inputTokens: 1000,
           outputTokens: 500,
           totalTokens: 1500,
-          cachedInputTokens: 600,
+          inputTokenDetails: {
+            noCacheTokens: 400,
+            cacheReadTokens: 600,
+            cacheWriteTokens: 0,
+          },
+          outputTokenDetails: { textTokens: 500, reasoningTokens: 0 },
         },
       });
 
@@ -202,6 +268,12 @@ describe('AIBillingService', () => {
             outputTokens: 1000,
             totalTokens: 251_000,
             cachedInputTokens: 100_000,
+            inputTokenDetails: {
+              noCacheTokens: 0,
+              cacheReadTokens: 100_000,
+              cacheWriteTokens: 0,
+            },
+            outputTokenDetails: { textTokens: 1000, reasoningTokens: 0 },
           },
         },
       );
@@ -240,6 +312,7 @@ describe('AIBillingService', () => {
             inputTokens: 50_000,
             outputTokens: 1000,
             totalTokens: 51_000,
+            ...defaultTokenDetails,
           },
         },
       );

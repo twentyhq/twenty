@@ -1,8 +1,8 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { multipleRecordPickerSinglePickableMorphItemComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerSinglePickableMorphItemComponentFamilySelector';
-import { useFamilyRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilyRecoilValueV2';
-import { useRecoilComponentFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilySelectorValueV2';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordPickerGetRecordAndObjectMetadataItemFromRecordIdProps = {
@@ -15,17 +15,17 @@ export const useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId =
   }: UseRecordPickerGetRecordAndObjectMetadataItemFromRecordIdProps) => {
     const { objectMetadataItems } = useObjectMetadataItems();
 
-    const pickableMorphItem = useRecoilComponentFamilySelectorValueV2(
+    const pickableMorphItem = useAtomComponentFamilySelectorValue(
       multipleRecordPickerSinglePickableMorphItemComponentFamilySelector,
       recordId,
     );
 
-    const searchRecord = useFamilyRecoilValueV2(
+    const searchRecordStore = useAtomFamilyStateValue(
       searchRecordStoreFamilyState,
       recordId,
     );
 
-    if (!isDefined(pickableMorphItem) || !isDefined(searchRecord)) {
+    if (!isDefined(pickableMorphItem) || !isDefined(searchRecordStore)) {
       return { searchRecord: null, objectMetadataItem: null };
     }
 
@@ -38,5 +38,5 @@ export const useRecordPickerGetSearchRecordAndObjectMetadataItemFromRecordId =
       return { searchRecord: null, objectMetadataItem: null };
     }
 
-    return { searchRecord, objectMetadataItem };
+    return { searchRecord: searchRecordStore, objectMetadataItem };
   };

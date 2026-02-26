@@ -7,15 +7,15 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { usePersonAvatarUpload } from '@/object-record/record-show/hooks/usePersonAvatarUpload';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
-import { recordStoreIdentifierFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
@@ -38,11 +38,14 @@ export const SummaryCard = ({
     objectRecordId,
   });
 
-  const recordCreatedAt = useFamilySelectorValueV2(
-    recordStoreFamilySelectorV2,
-    { recordId: objectRecordId, fieldName: 'createdAt' },
+  const recordCreatedAt = useAtomFamilySelectorValue(
+    recordStoreFamilySelector,
+    {
+      recordId: objectRecordId,
+      fieldName: 'createdAt',
+    },
   ) as string | null;
-  const allowRequestsToTwentyIcons = useRecoilValueV2(
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
   const isFilesFieldMigrated = useIsFeatureEnabled(
@@ -57,8 +60,8 @@ export const SummaryCard = ({
 
   const isMobile = useIsMobile() || isInRightDrawer;
 
-  const recordIdentifier = useFamilySelectorValueV2(
-    recordStoreIdentifierFamilySelectorV2,
+  const recordIdentifier = useAtomFamilySelectorValue(
+    recordStoreIdentifierFamilySelector,
     {
       recordId: objectRecordId,
       allowRequestsToTwentyIcons,

@@ -3,7 +3,7 @@ import { useEndPageLayoutDragSelection } from '@/page-layout/hooks/useEndPageLay
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
 import { calculateGridBoundsFromSelectedCells } from '@/page-layout/utils/calculateGridBoundsFromSelectedCells';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
@@ -66,11 +66,11 @@ describe('useEndPageLayoutDragSelection', () => {
         endDragSelection: useEndPageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValueV2(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        draggedArea: useRecoilComponentValueV2(
+        draggedArea: useAtomComponentStateValue(
           pageLayoutDraggedAreaComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -117,11 +117,11 @@ describe('useEndPageLayoutDragSelection', () => {
         endDragSelection: useEndPageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValueV2(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        draggedArea: useRecoilComponentValueV2(
+        draggedArea: useAtomComponentStateValue(
           pageLayoutDraggedAreaComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -155,11 +155,11 @@ describe('useEndPageLayoutDragSelection', () => {
         endDragSelection: useEndPageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValueV2(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        draggedArea: useRecoilComponentValueV2(
+        draggedArea: useAtomComponentStateValue(
           pageLayoutDraggedAreaComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -211,7 +211,7 @@ describe('useEndPageLayoutDragSelection', () => {
         endDragSelection: useEndPageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValueV2(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
@@ -245,7 +245,7 @@ describe('useEndPageLayoutDragSelection', () => {
         endDragSelection: useEndPageLayoutDragSelection(
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        selectedCells: useRecoilComponentValueV2(
+        selectedCells: useAtomComponentStateValue(
           pageLayoutSelectedCellsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),

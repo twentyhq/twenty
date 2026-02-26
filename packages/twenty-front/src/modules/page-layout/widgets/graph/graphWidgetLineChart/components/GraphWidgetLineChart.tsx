@@ -25,7 +25,7 @@ import {
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -131,18 +131,18 @@ export const GraphWidgetLineChart = ({
 
   const hasClickableItems = isDefined(onSliceClick);
 
-  const setActiveLineTooltip = useSetRecoilComponentStateV2(
+  const setGraphWidgetLineTooltip = useSetAtomComponentState(
     graphWidgetLineTooltipComponentState,
   );
 
-  const setCrosshairX = useSetRecoilComponentStateV2(
+  const setGraphWidgetLineCrosshairX = useSetAtomComponentState(
     graphWidgetLineCrosshairXComponentState,
   );
 
   const hideTooltip = useCallback(() => {
-    setActiveLineTooltip(null);
-    setCrosshairX(null);
-  }, [setActiveLineTooltip, setCrosshairX]);
+    setGraphWidgetLineTooltip(null);
+    setGraphWidgetLineCrosshairX(null);
+  }, [setGraphWidgetLineTooltip, setGraphWidgetLineCrosshairX]);
 
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
 
@@ -189,8 +189,8 @@ export const GraphWidgetLineChart = ({
     const offsetTop = sliceData.mouseY + margins.top;
 
     debouncedHideTooltip.cancel();
-    setCrosshairX(sliceData.sliceX);
-    setActiveLineTooltip({
+    setGraphWidgetLineCrosshairX(sliceData.sliceX);
+    setGraphWidgetLineTooltip({
       slice,
       offsetLeft,
       offsetTop,

@@ -37,8 +37,8 @@ export class AIBillingService {
     const breakdown = computeCostBreakdown(model, {
       inputTokens: usage.inputTokens,
       outputTokens: usage.outputTokens,
-      reasoningTokens: usage.reasoningTokens,
-      cachedInputTokens: usage.cachedInputTokens,
+      reasoningTokens: usage.outputTokenDetails?.reasoningTokens,
+      cachedInputTokens: usage.inputTokenDetails?.cacheReadTokens,
       cacheCreationTokens,
     });
 

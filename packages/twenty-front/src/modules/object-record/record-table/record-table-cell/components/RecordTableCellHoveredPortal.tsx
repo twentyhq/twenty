@@ -1,7 +1,7 @@
 import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { useRecoilComponentSelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentSelectorValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
@@ -12,28 +12,28 @@ import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/r
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellHoveredPortal = () => {
-  const hoverPosition = useRecoilComponentValueV2(
+  const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 
-  const isRecordTableScrolledVertically = useRecoilComponentValueV2(
+  const isRecordTableScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const isRecordTableScrolledHorizontally = useRecoilComponentValueV2(
+  const isRecordTableScrolledHorizontally = useAtomComponentStateValue(
     isRecordTableScrolledHorizontallyComponentState,
   );
 
-  const hasRecordGroups = useRecoilComponentSelectorValueV2(
+  const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
 
-  if (!isDefined(hoverPosition)) {
+  if (!isDefined(recordTableHoverPosition)) {
     return null;
   }
 
-  const isOnFirstScrollableColumn = hoverPosition.column === 1;
-  const isOnLabelIdentifierStickyColumn = hoverPosition.column === 0;
+  const isOnFirstScrollableColumn = recordTableHoverPosition.column === 1;
+  const isOnLabelIdentifierStickyColumn = recordTableHoverPosition.column === 0;
 
   const zIndexForHoveredPortalOnFirstScrollableColumnWithoutGroups =
     isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
@@ -130,7 +130,7 @@ export const RecordTableCellHoveredPortal = () => {
     : zIndexForHoveredPortalWithoutGroups;
 
   return (
-    <RecordTableCellPortalWrapper position={hoverPosition}>
+    <RecordTableCellPortalWrapper position={recordTableHoverPosition}>
       <RecordTableCellPortalRootContainer zIndex={zIndex}>
         <RecordTableCellHoveredPortalContent />
       </RecordTableCellPortalRootContainer>

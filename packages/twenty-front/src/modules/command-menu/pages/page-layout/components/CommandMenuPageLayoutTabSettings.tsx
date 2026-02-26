@@ -11,8 +11,8 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -26,26 +26,29 @@ export const CommandMenuPageLayoutTabSettings = () => {
   const { closeCommandMenu } = useCommandMenu();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
-  const draft = useRecoilComponentValueV2(
+  const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const [openTabId, setOpenTabId] = useRecoilComponentStateV2(
-    pageLayoutTabSettingsOpenTabIdComponentState,
-    pageLayoutId,
-  );
+  const [pageLayoutTabSettingsOpenTabId, setPageLayoutTabSettingsOpenTabId] =
+    useAtomComponentState(
+      pageLayoutTabSettingsOpenTabIdComponentState,
+      pageLayoutId,
+    );
 
   const { moveLeft, moveRight } = useMovePageLayoutTab(pageLayoutId);
   const { deleteTab } = useDeletePageLayoutTab(pageLayoutId);
   const { duplicateTab } = useDuplicatePageLayoutTab(pageLayoutId);
 
-  if (!isDefined(openTabId)) {
+  if (!isDefined(pageLayoutTabSettingsOpenTabId)) {
     return null;
   }
 
-  const tabsSorted = sortTabsByPosition(draft.tabs);
-  const currentIndex = tabsSorted.findIndex((t) => t.id === openTabId);
+  const tabsSorted = sortTabsByPosition(pageLayoutDraft.tabs);
+  const currentIndex = tabsSorted.findIndex(
+    (t) => t.id === pageLayoutTabSettingsOpenTabId,
+  );
   if (currentIndex < 0) return null;
   const tab = tabsSorted[currentIndex];
   const canMoveLeft = currentIndex > 0;
@@ -54,7 +57,7 @@ export const CommandMenuPageLayoutTabSettings = () => {
 
   const handleDelete = () => {
     deleteTab(tab.id);
-    setOpenTabId(null);
+    setPageLayoutTabSettingsOpenTabId(null);
     closeCommandMenu();
   };
 

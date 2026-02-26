@@ -13,8 +13,8 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
-import { useRecoilComponentStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateCallbackStateV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useFocusedRecordTableRow = (recordTableId?: string) => {
@@ -23,28 +23,28 @@ export const useFocusedRecordTableRow = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const isRowFocusedState = useRecoilComponentFamilyStateCallbackStateV2(
+  const isRowFocusedState = useAtomComponentFamilyStateCallbackState(
     isRecordTableRowFocusedComponentFamilyState,
     recordTableIdFromContext,
   );
 
   const store = useStore();
-  const focusedRowIndex = useRecoilComponentStateCallbackStateV2(
+  const focusedRowIndex = useAtomComponentStateCallbackState(
     focusedRecordTableRowIndexComponentState,
     recordTableIdFromContext,
   );
 
-  const isRowFocusActive = useRecoilComponentStateCallbackStateV2(
+  const isRowFocusActive = useAtomComponentStateCallbackState(
     isRecordTableRowFocusActiveComponentState,
     recordTableIdFromContext,
   );
 
-  const focusedCellPosition = useRecoilComponentStateCallbackStateV2(
+  const focusedCellPosition = useAtomComponentStateCallbackState(
     recordTableFocusPositionComponentState,
     recordTableIdFromContext,
   );
 
-  const isRecordTableCellFocusActive = useRecoilComponentStateCallbackStateV2(
+  const isRecordTableCellFocusActive = useAtomComponentStateCallbackState(
     isRecordTableCellFocusActiveComponentState,
     recordTableIdFromContext,
   );

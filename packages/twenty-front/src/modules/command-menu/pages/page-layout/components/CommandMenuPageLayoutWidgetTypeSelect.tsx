@@ -16,8 +16,8 @@ import { useRemovePageLayoutWidgetAndPreservePosition } from '@/page-layout/hook
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client';
 import { t } from '@lingui/core/macro';
@@ -79,18 +79,18 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   );
 
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
-    useRecoilComponentStateV2(
+    useAtomComponentState(
       pageLayoutEditingWidgetIdComponentState,
       pageLayoutId,
     );
 
-  const draftPageLayout = useRecoilComponentValueV2(
+  const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
   const existingWidget = isDefined(pageLayoutEditingWidgetId)
-    ? draftPageLayout.tabs
+    ? pageLayoutDraft.tabs
         .flatMap((tab) => tab.widgets)
         .find((widget) => widget.id === pageLayoutEditingWidgetId)
     : undefined;

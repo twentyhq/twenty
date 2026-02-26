@@ -7,14 +7,14 @@ import { processGroupDrop } from '@/object-record/record-drag/utils/processGroup
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useUpdateDroppedRecordOnBoard } from '@/object-record/record-drag/hooks/useUpdateDroppedRecordOnBoard';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useRecoilComponentFamilyStateCallbackStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentFamilyStateCallbackStateV2';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 
 export const useProcessBoardCardDrop = () => {
   const store = useStore();
   const { selectFieldMetadataItem } = useContext(RecordBoardContext);
 
   const recordIndexRecordIdsByGroupCallbackFamilyState =
-    useRecoilComponentFamilyStateCallbackStateV2(
+    useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 

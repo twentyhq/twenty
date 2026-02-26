@@ -1,49 +1,49 @@
 import { multipleRecordPickerIsFetchingMoreComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsFetchingMoreComponentState';
 import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
 import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilComponentStateV2';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const MultipleRecordPickerLoadingEffect = () => {
   const [previousLoading, setPreviousLoading] = useState(false);
 
-  const loading = useRecoilComponentValueV2(
+  const multipleRecordPickerIsLoading = useAtomComponentStateValue(
     multipleRecordPickerIsLoadingComponentState,
   );
 
-  const setMultipleRecordPickerShowSkeleton = useSetRecoilComponentStateV2(
+  const setMultipleRecordPickerShouldShowSkeleton = useSetAtomComponentState(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 
-  const [multipleRecordPickerIsFetchingMore] = useRecoilComponentStateV2(
+  const [multipleRecordPickerIsFetchingMore] = useAtomComponentState(
     multipleRecordPickerIsFetchingMoreComponentState,
   );
 
   const debouncedShowPickerSearchSkeleton = useDebouncedCallback(
-    () => setMultipleRecordPickerShowSkeleton(true),
+    () => setMultipleRecordPickerShouldShowSkeleton(true),
     350,
   );
 
   useEffect(() => {
-    if (previousLoading !== loading) {
-      setPreviousLoading(loading);
+    if (previousLoading !== multipleRecordPickerIsLoading) {
+      setPreviousLoading(multipleRecordPickerIsLoading);
 
-      if (loading) {
+      if (multipleRecordPickerIsLoading) {
         if (!multipleRecordPickerIsFetchingMore) {
           debouncedShowPickerSearchSkeleton();
         }
       } else {
         debouncedShowPickerSearchSkeleton.cancel();
-        setMultipleRecordPickerShowSkeleton(false);
+        setMultipleRecordPickerShouldShowSkeleton(false);
       }
     }
   }, [
-    loading,
+    multipleRecordPickerIsLoading,
     previousLoading,
-    setMultipleRecordPickerShowSkeleton,
+    setMultipleRecordPickerShouldShowSkeleton,
     multipleRecordPickerIsFetchingMore,
     debouncedShowPickerSearchSkeleton,
   ]);

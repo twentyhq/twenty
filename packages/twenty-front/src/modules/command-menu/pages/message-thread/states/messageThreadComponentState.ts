@@ -1,9 +1,9 @@
 import { type MessageThread } from '@/activities/emails/types/MessageThread';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const messageThreadComponentState =
-  createComponentStateV2<MessageThread | null>({
+  createAtomComponentState<MessageThread | null>({
     key: 'messageThreadComponentState',
     defaultValue: null,
     componentInstanceContext: CommandMenuPageComponentInstanceContext,
