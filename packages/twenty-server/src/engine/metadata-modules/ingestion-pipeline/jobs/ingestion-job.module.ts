@@ -14,6 +14,7 @@ import { IngestionRelationResolverService } from 'src/engine/metadata-modules/in
 import { ConvosoCallPreprocessor } from 'src/engine/metadata-modules/ingestion-pipeline/preprocessors/convoso-call.preprocessor';
 import { ConvosoLeadPreprocessor } from 'src/engine/metadata-modules/ingestion-pipeline/preprocessors/convoso-lead.preprocessor';
 import { HealthSherpaPolicyPreprocessor } from 'src/engine/metadata-modules/ingestion-pipeline/preprocessors/healthsherpa-policy.preprocessor';
+import { OldCrmPolicyPreprocessor } from 'src/engine/metadata-modules/ingestion-pipeline/preprocessors/old-crm-policy.preprocessor';
 import { IngestionPreprocessorRegistry } from 'src/engine/metadata-modules/ingestion-pipeline/preprocessors/ingestion-preprocessor.registry';
 
 @Module({
@@ -35,6 +36,7 @@ import { IngestionPreprocessorRegistry } from 'src/engine/metadata-modules/inges
     HealthSherpaPolicyPreprocessor,
     ConvosoCallPreprocessor,
     ConvosoLeadPreprocessor,
+    OldCrmPolicyPreprocessor,
     IngestionPreprocessorRegistry,
   ],
 })

@@ -4,6 +4,7 @@ import { IngestionPipelineEntity } from 'src/engine/metadata-modules/ingestion-p
 import { ConvosoCallPreprocessor } from 'src/engine/metadata-modules/ingestion-pipeline/preprocessors/convoso-call.preprocessor';
 import { ConvosoLeadPreprocessor } from 'src/engine/metadata-modules/ingestion-pipeline/preprocessors/convoso-lead.preprocessor';
 import { HealthSherpaPolicyPreprocessor } from 'src/engine/metadata-modules/ingestion-pipeline/preprocessors/healthsherpa-policy.preprocessor';
+import { OldCrmPolicyPreprocessor } from 'src/engine/metadata-modules/ingestion-pipeline/preprocessors/old-crm-policy.preprocessor';
 
 export interface IngestionPreprocessor {
   preProcess(
@@ -21,6 +22,7 @@ export class IngestionPreprocessorRegistry {
     private readonly healthSherpaPolicyPreprocessor: HealthSherpaPolicyPreprocessor,
     private readonly convosoCallPreprocessor: ConvosoCallPreprocessor,
     private readonly convosoLeadPreprocessor: ConvosoLeadPreprocessor,
+    private readonly oldCrmPolicyPreprocessor: OldCrmPolicyPreprocessor,
   ) {}
 
   async preProcessRecords(
@@ -89,6 +91,10 @@ export class IngestionPreprocessorRegistry {
 
     if (pipelineName.includes('convoso') && pipelineName.includes('lead')) {
       return this.convosoLeadPreprocessor;
+    }
+
+    if (pipelineName.includes('old crm') || pipelineName.includes('legacy')) {
+      return this.oldCrmPolicyPreprocessor;
     }
 
     // No preprocessor for this pipeline
