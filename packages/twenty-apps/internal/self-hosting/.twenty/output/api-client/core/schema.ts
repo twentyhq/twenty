@@ -12308,27 +12308,19 @@ export interface WorkspaceMemberGroupByConnection {
 
 export interface SelfHostingUser {
     /** Name of the self hosting user */
-    name?: Scalars['String']
+    name?: FullName
     /** The email of the self hosting user */
     email?: Emails
-    /** Id */
-    id: Scalars['UUID']
-    /** Creation date */
-    createdAt: Scalars['DateTime']
-    /** Last time the record was changed */
-    updatedAt: Scalars['DateTime']
-    /** Deletion date */
-    deletedAt?: Scalars['DateTime']
-    /** The creator of the record */
-    createdBy: Actor
-    /** The workspace member who last updated the record */
-    updatedBy: Actor
-    /** Position */
-    position: Scalars['Position']
-    /** Search vector */
-    searchVector?: Scalars['TSVector']
     /** Domain extracted from the email address (e.g. domain.com / https://domain.com/) */
     domain?: Links
+    /** User workspace id of the self hosting user */
+    userWorkspaceId?: Scalars['UUID']
+    /** User id of the self hosting user */
+    userId?: Scalars['UUID']
+    /** Locale of the self hosting user */
+    locale?: Scalars['String']
+    /** Server url of the self hosting user */
+    serverUrl?: Scalars['String']
     /** Aggregated count of self hosting users sharing the same business domain */
     numberOfEmailsWithSameDomain?: Scalars['Float']
     /** Whether the record has been enriched */
@@ -12339,10 +12331,6 @@ export interface SelfHostingUser {
     isPersonalEmail?: Scalars['Boolean']
     /** Whether the user is from Twenty */
     isTwenty?: Scalars['Boolean']
-    /** First name of the person */
-    personFirstName?: Scalars['String']
-    /** Last name of the person */
-    personLastName?: Scalars['String']
     /** City of the person */
     personCity?: Scalars['String']
     /** Country of the person */
@@ -12385,6 +12373,22 @@ export interface SelfHostingUser {
     companyTags?: (Scalars['String'] | undefined)[]
     /** Technologies used by the company */
     companyTech?: (Scalars['String'] | undefined)[]
+    /** Id */
+    id: Scalars['UUID']
+    /** Creation date */
+    createdAt: Scalars['DateTime']
+    /** Last time the record was changed */
+    updatedAt: Scalars['DateTime']
+    /** Deletion date */
+    deletedAt?: Scalars['DateTime']
+    /** The creator of the record */
+    createdBy: Actor
+    /** The workspace member who last updated the record */
+    updatedBy: Actor
+    /** Position */
+    position: Scalars['Position']
+    /** Search vector */
+    searchVector?: Scalars['TSVector']
     /** Self Hosting Users tied to the SelfHostingUser */
     timelineActivities?: TimelineActivityConnection
     /** Self Hosting Users tied to the SelfHostingUser */
@@ -12427,98 +12431,6 @@ export interface SelfHostingUserConnection {
     percentageEmptyEmail?: Scalars['Float']
     /** Percentage of non-empty values for email */
     percentageNotEmptyEmail?: Scalars['Float']
-    /** Number of unique values for id */
-    countUniqueValuesId?: Scalars['Int']
-    /** Number of empty values for id */
-    countEmptyId?: Scalars['Int']
-    /** Number of non-empty values for id */
-    countNotEmptyId?: Scalars['Int']
-    /** Percentage of empty values for id */
-    percentageEmptyId?: Scalars['Float']
-    /** Percentage of non-empty values for id */
-    percentageNotEmptyId?: Scalars['Float']
-    /** Number of unique values for createdAt */
-    countUniqueValuesCreatedAt?: Scalars['Int']
-    /** Number of empty values for createdAt */
-    countEmptyCreatedAt?: Scalars['Int']
-    /** Number of non-empty values for createdAt */
-    countNotEmptyCreatedAt?: Scalars['Int']
-    /** Percentage of empty values for createdAt */
-    percentageEmptyCreatedAt?: Scalars['Float']
-    /** Percentage of non-empty values for createdAt */
-    percentageNotEmptyCreatedAt?: Scalars['Float']
-    /** Earliest date contained in the field createdAt */
-    minCreatedAt?: Scalars['DateTime']
-    /** Latest date contained in the field createdAt */
-    maxCreatedAt?: Scalars['DateTime']
-    /** Number of unique values for updatedAt */
-    countUniqueValuesUpdatedAt?: Scalars['Int']
-    /** Number of empty values for updatedAt */
-    countEmptyUpdatedAt?: Scalars['Int']
-    /** Number of non-empty values for updatedAt */
-    countNotEmptyUpdatedAt?: Scalars['Int']
-    /** Percentage of empty values for updatedAt */
-    percentageEmptyUpdatedAt?: Scalars['Float']
-    /** Percentage of non-empty values for updatedAt */
-    percentageNotEmptyUpdatedAt?: Scalars['Float']
-    /** Earliest date contained in the field updatedAt */
-    minUpdatedAt?: Scalars['DateTime']
-    /** Latest date contained in the field updatedAt */
-    maxUpdatedAt?: Scalars['DateTime']
-    /** Number of unique values for deletedAt */
-    countUniqueValuesDeletedAt?: Scalars['Int']
-    /** Number of empty values for deletedAt */
-    countEmptyDeletedAt?: Scalars['Int']
-    /** Number of non-empty values for deletedAt */
-    countNotEmptyDeletedAt?: Scalars['Int']
-    /** Percentage of empty values for deletedAt */
-    percentageEmptyDeletedAt?: Scalars['Float']
-    /** Percentage of non-empty values for deletedAt */
-    percentageNotEmptyDeletedAt?: Scalars['Float']
-    /** Earliest date contained in the field deletedAt */
-    minDeletedAt?: Scalars['DateTime']
-    /** Latest date contained in the field deletedAt */
-    maxDeletedAt?: Scalars['DateTime']
-    /** Number of unique values for createdBy */
-    countUniqueValuesCreatedBy?: Scalars['Int']
-    /** Number of empty values for createdBy */
-    countEmptyCreatedBy?: Scalars['Int']
-    /** Number of non-empty values for createdBy */
-    countNotEmptyCreatedBy?: Scalars['Int']
-    /** Percentage of empty values for createdBy */
-    percentageEmptyCreatedBy?: Scalars['Float']
-    /** Percentage of non-empty values for createdBy */
-    percentageNotEmptyCreatedBy?: Scalars['Float']
-    /** Number of unique values for updatedBy */
-    countUniqueValuesUpdatedBy?: Scalars['Int']
-    /** Number of empty values for updatedBy */
-    countEmptyUpdatedBy?: Scalars['Int']
-    /** Number of non-empty values for updatedBy */
-    countNotEmptyUpdatedBy?: Scalars['Int']
-    /** Percentage of empty values for updatedBy */
-    percentageEmptyUpdatedBy?: Scalars['Float']
-    /** Percentage of non-empty values for updatedBy */
-    percentageNotEmptyUpdatedBy?: Scalars['Float']
-    /** Number of unique values for position */
-    countUniqueValuesPosition?: Scalars['Int']
-    /** Number of empty values for position */
-    countEmptyPosition?: Scalars['Int']
-    /** Number of non-empty values for position */
-    countNotEmptyPosition?: Scalars['Int']
-    /** Percentage of empty values for position */
-    percentageEmptyPosition?: Scalars['Float']
-    /** Percentage of non-empty values for position */
-    percentageNotEmptyPosition?: Scalars['Float']
-    /** Number of unique values for searchVector */
-    countUniqueValuesSearchVector?: Scalars['Int']
-    /** Number of empty values for searchVector */
-    countEmptySearchVector?: Scalars['Int']
-    /** Number of non-empty values for searchVector */
-    countNotEmptySearchVector?: Scalars['Int']
-    /** Percentage of empty values for searchVector */
-    percentageEmptySearchVector?: Scalars['Float']
-    /** Percentage of non-empty values for searchVector */
-    percentageNotEmptySearchVector?: Scalars['Float']
     /** Number of unique values for domain */
     countUniqueValuesDomain?: Scalars['Int']
     /** Number of empty values for domain */
@@ -12529,6 +12441,46 @@ export interface SelfHostingUserConnection {
     percentageEmptyDomain?: Scalars['Float']
     /** Percentage of non-empty values for domain */
     percentageNotEmptyDomain?: Scalars['Float']
+    /** Number of unique values for userWorkspaceId */
+    countUniqueValuesUserWorkspaceId?: Scalars['Int']
+    /** Number of empty values for userWorkspaceId */
+    countEmptyUserWorkspaceId?: Scalars['Int']
+    /** Number of non-empty values for userWorkspaceId */
+    countNotEmptyUserWorkspaceId?: Scalars['Int']
+    /** Percentage of empty values for userWorkspaceId */
+    percentageEmptyUserWorkspaceId?: Scalars['Float']
+    /** Percentage of non-empty values for userWorkspaceId */
+    percentageNotEmptyUserWorkspaceId?: Scalars['Float']
+    /** Number of unique values for userId */
+    countUniqueValuesUserId?: Scalars['Int']
+    /** Number of empty values for userId */
+    countEmptyUserId?: Scalars['Int']
+    /** Number of non-empty values for userId */
+    countNotEmptyUserId?: Scalars['Int']
+    /** Percentage of empty values for userId */
+    percentageEmptyUserId?: Scalars['Float']
+    /** Percentage of non-empty values for userId */
+    percentageNotEmptyUserId?: Scalars['Float']
+    /** Number of unique values for locale */
+    countUniqueValuesLocale?: Scalars['Int']
+    /** Number of empty values for locale */
+    countEmptyLocale?: Scalars['Int']
+    /** Number of non-empty values for locale */
+    countNotEmptyLocale?: Scalars['Int']
+    /** Percentage of empty values for locale */
+    percentageEmptyLocale?: Scalars['Float']
+    /** Percentage of non-empty values for locale */
+    percentageNotEmptyLocale?: Scalars['Float']
+    /** Number of unique values for serverUrl */
+    countUniqueValuesServerUrl?: Scalars['Int']
+    /** Number of empty values for serverUrl */
+    countEmptyServerUrl?: Scalars['Int']
+    /** Number of non-empty values for serverUrl */
+    countNotEmptyServerUrl?: Scalars['Int']
+    /** Percentage of empty values for serverUrl */
+    percentageEmptyServerUrl?: Scalars['Float']
+    /** Percentage of non-empty values for serverUrl */
+    percentageNotEmptyServerUrl?: Scalars['Float']
     /** Number of unique values for numberOfEmailsWithSameDomain */
     countUniqueValuesNumberOfEmailsWithSameDomain?: Scalars['Int']
     /** Number of empty values for numberOfEmailsWithSameDomain */
@@ -12603,26 +12555,6 @@ export interface SelfHostingUserConnection {
     countTrueIsTwenty?: Scalars['Int']
     /** Count of false values in the field isTwenty */
     countFalseIsTwenty?: Scalars['Int']
-    /** Number of unique values for personFirstName */
-    countUniqueValuesPersonFirstName?: Scalars['Int']
-    /** Number of empty values for personFirstName */
-    countEmptyPersonFirstName?: Scalars['Int']
-    /** Number of non-empty values for personFirstName */
-    countNotEmptyPersonFirstName?: Scalars['Int']
-    /** Percentage of empty values for personFirstName */
-    percentageEmptyPersonFirstName?: Scalars['Float']
-    /** Percentage of non-empty values for personFirstName */
-    percentageNotEmptyPersonFirstName?: Scalars['Float']
-    /** Number of unique values for personLastName */
-    countUniqueValuesPersonLastName?: Scalars['Int']
-    /** Number of empty values for personLastName */
-    countEmptyPersonLastName?: Scalars['Int']
-    /** Number of non-empty values for personLastName */
-    countNotEmptyPersonLastName?: Scalars['Int']
-    /** Percentage of empty values for personLastName */
-    percentageEmptyPersonLastName?: Scalars['Float']
-    /** Percentage of non-empty values for personLastName */
-    percentageNotEmptyPersonLastName?: Scalars['Float']
     /** Number of unique values for personCity */
     countUniqueValuesPersonCity?: Scalars['Int']
     /** Number of empty values for personCity */
@@ -12865,6 +12797,98 @@ export interface SelfHostingUserConnection {
     percentageEmptyCompanyTech?: Scalars['Float']
     /** Percentage of non-empty values for companyTech */
     percentageNotEmptyCompanyTech?: Scalars['Float']
+    /** Number of unique values for id */
+    countUniqueValuesId?: Scalars['Int']
+    /** Number of empty values for id */
+    countEmptyId?: Scalars['Int']
+    /** Number of non-empty values for id */
+    countNotEmptyId?: Scalars['Int']
+    /** Percentage of empty values for id */
+    percentageEmptyId?: Scalars['Float']
+    /** Percentage of non-empty values for id */
+    percentageNotEmptyId?: Scalars['Float']
+    /** Number of unique values for createdAt */
+    countUniqueValuesCreatedAt?: Scalars['Int']
+    /** Number of empty values for createdAt */
+    countEmptyCreatedAt?: Scalars['Int']
+    /** Number of non-empty values for createdAt */
+    countNotEmptyCreatedAt?: Scalars['Int']
+    /** Percentage of empty values for createdAt */
+    percentageEmptyCreatedAt?: Scalars['Float']
+    /** Percentage of non-empty values for createdAt */
+    percentageNotEmptyCreatedAt?: Scalars['Float']
+    /** Earliest date contained in the field createdAt */
+    minCreatedAt?: Scalars['DateTime']
+    /** Latest date contained in the field createdAt */
+    maxCreatedAt?: Scalars['DateTime']
+    /** Number of unique values for updatedAt */
+    countUniqueValuesUpdatedAt?: Scalars['Int']
+    /** Number of empty values for updatedAt */
+    countEmptyUpdatedAt?: Scalars['Int']
+    /** Number of non-empty values for updatedAt */
+    countNotEmptyUpdatedAt?: Scalars['Int']
+    /** Percentage of empty values for updatedAt */
+    percentageEmptyUpdatedAt?: Scalars['Float']
+    /** Percentage of non-empty values for updatedAt */
+    percentageNotEmptyUpdatedAt?: Scalars['Float']
+    /** Earliest date contained in the field updatedAt */
+    minUpdatedAt?: Scalars['DateTime']
+    /** Latest date contained in the field updatedAt */
+    maxUpdatedAt?: Scalars['DateTime']
+    /** Number of unique values for deletedAt */
+    countUniqueValuesDeletedAt?: Scalars['Int']
+    /** Number of empty values for deletedAt */
+    countEmptyDeletedAt?: Scalars['Int']
+    /** Number of non-empty values for deletedAt */
+    countNotEmptyDeletedAt?: Scalars['Int']
+    /** Percentage of empty values for deletedAt */
+    percentageEmptyDeletedAt?: Scalars['Float']
+    /** Percentage of non-empty values for deletedAt */
+    percentageNotEmptyDeletedAt?: Scalars['Float']
+    /** Earliest date contained in the field deletedAt */
+    minDeletedAt?: Scalars['DateTime']
+    /** Latest date contained in the field deletedAt */
+    maxDeletedAt?: Scalars['DateTime']
+    /** Number of unique values for createdBy */
+    countUniqueValuesCreatedBy?: Scalars['Int']
+    /** Number of empty values for createdBy */
+    countEmptyCreatedBy?: Scalars['Int']
+    /** Number of non-empty values for createdBy */
+    countNotEmptyCreatedBy?: Scalars['Int']
+    /** Percentage of empty values for createdBy */
+    percentageEmptyCreatedBy?: Scalars['Float']
+    /** Percentage of non-empty values for createdBy */
+    percentageNotEmptyCreatedBy?: Scalars['Float']
+    /** Number of unique values for updatedBy */
+    countUniqueValuesUpdatedBy?: Scalars['Int']
+    /** Number of empty values for updatedBy */
+    countEmptyUpdatedBy?: Scalars['Int']
+    /** Number of non-empty values for updatedBy */
+    countNotEmptyUpdatedBy?: Scalars['Int']
+    /** Percentage of empty values for updatedBy */
+    percentageEmptyUpdatedBy?: Scalars['Float']
+    /** Percentage of non-empty values for updatedBy */
+    percentageNotEmptyUpdatedBy?: Scalars['Float']
+    /** Number of unique values for position */
+    countUniqueValuesPosition?: Scalars['Int']
+    /** Number of empty values for position */
+    countEmptyPosition?: Scalars['Int']
+    /** Number of non-empty values for position */
+    countNotEmptyPosition?: Scalars['Int']
+    /** Percentage of empty values for position */
+    percentageEmptyPosition?: Scalars['Float']
+    /** Percentage of non-empty values for position */
+    percentageNotEmptyPosition?: Scalars['Float']
+    /** Number of unique values for searchVector */
+    countUniqueValuesSearchVector?: Scalars['Int']
+    /** Number of empty values for searchVector */
+    countEmptySearchVector?: Scalars['Int']
+    /** Number of non-empty values for searchVector */
+    countNotEmptySearchVector?: Scalars['Int']
+    /** Percentage of empty values for searchVector */
+    percentageEmptySearchVector?: Scalars['Float']
+    /** Percentage of non-empty values for searchVector */
+    percentageNotEmptySearchVector?: Scalars['Float']
     edges: SelfHostingUserEdge[]
     pageInfo: PageInfo
     __typename: 'SelfHostingUserConnection'
@@ -12893,98 +12917,6 @@ export interface SelfHostingUserGroupByConnection {
     percentageEmptyEmail?: Scalars['Float']
     /** Percentage of non-empty values for email */
     percentageNotEmptyEmail?: Scalars['Float']
-    /** Number of unique values for id */
-    countUniqueValuesId?: Scalars['Int']
-    /** Number of empty values for id */
-    countEmptyId?: Scalars['Int']
-    /** Number of non-empty values for id */
-    countNotEmptyId?: Scalars['Int']
-    /** Percentage of empty values for id */
-    percentageEmptyId?: Scalars['Float']
-    /** Percentage of non-empty values for id */
-    percentageNotEmptyId?: Scalars['Float']
-    /** Number of unique values for createdAt */
-    countUniqueValuesCreatedAt?: Scalars['Int']
-    /** Number of empty values for createdAt */
-    countEmptyCreatedAt?: Scalars['Int']
-    /** Number of non-empty values for createdAt */
-    countNotEmptyCreatedAt?: Scalars['Int']
-    /** Percentage of empty values for createdAt */
-    percentageEmptyCreatedAt?: Scalars['Float']
-    /** Percentage of non-empty values for createdAt */
-    percentageNotEmptyCreatedAt?: Scalars['Float']
-    /** Earliest date contained in the field createdAt */
-    minCreatedAt?: Scalars['DateTime']
-    /** Latest date contained in the field createdAt */
-    maxCreatedAt?: Scalars['DateTime']
-    /** Number of unique values for updatedAt */
-    countUniqueValuesUpdatedAt?: Scalars['Int']
-    /** Number of empty values for updatedAt */
-    countEmptyUpdatedAt?: Scalars['Int']
-    /** Number of non-empty values for updatedAt */
-    countNotEmptyUpdatedAt?: Scalars['Int']
-    /** Percentage of empty values for updatedAt */
-    percentageEmptyUpdatedAt?: Scalars['Float']
-    /** Percentage of non-empty values for updatedAt */
-    percentageNotEmptyUpdatedAt?: Scalars['Float']
-    /** Earliest date contained in the field updatedAt */
-    minUpdatedAt?: Scalars['DateTime']
-    /** Latest date contained in the field updatedAt */
-    maxUpdatedAt?: Scalars['DateTime']
-    /** Number of unique values for deletedAt */
-    countUniqueValuesDeletedAt?: Scalars['Int']
-    /** Number of empty values for deletedAt */
-    countEmptyDeletedAt?: Scalars['Int']
-    /** Number of non-empty values for deletedAt */
-    countNotEmptyDeletedAt?: Scalars['Int']
-    /** Percentage of empty values for deletedAt */
-    percentageEmptyDeletedAt?: Scalars['Float']
-    /** Percentage of non-empty values for deletedAt */
-    percentageNotEmptyDeletedAt?: Scalars['Float']
-    /** Earliest date contained in the field deletedAt */
-    minDeletedAt?: Scalars['DateTime']
-    /** Latest date contained in the field deletedAt */
-    maxDeletedAt?: Scalars['DateTime']
-    /** Number of unique values for createdBy */
-    countUniqueValuesCreatedBy?: Scalars['Int']
-    /** Number of empty values for createdBy */
-    countEmptyCreatedBy?: Scalars['Int']
-    /** Number of non-empty values for createdBy */
-    countNotEmptyCreatedBy?: Scalars['Int']
-    /** Percentage of empty values for createdBy */
-    percentageEmptyCreatedBy?: Scalars['Float']
-    /** Percentage of non-empty values for createdBy */
-    percentageNotEmptyCreatedBy?: Scalars['Float']
-    /** Number of unique values for updatedBy */
-    countUniqueValuesUpdatedBy?: Scalars['Int']
-    /** Number of empty values for updatedBy */
-    countEmptyUpdatedBy?: Scalars['Int']
-    /** Number of non-empty values for updatedBy */
-    countNotEmptyUpdatedBy?: Scalars['Int']
-    /** Percentage of empty values for updatedBy */
-    percentageEmptyUpdatedBy?: Scalars['Float']
-    /** Percentage of non-empty values for updatedBy */
-    percentageNotEmptyUpdatedBy?: Scalars['Float']
-    /** Number of unique values for position */
-    countUniqueValuesPosition?: Scalars['Int']
-    /** Number of empty values for position */
-    countEmptyPosition?: Scalars['Int']
-    /** Number of non-empty values for position */
-    countNotEmptyPosition?: Scalars['Int']
-    /** Percentage of empty values for position */
-    percentageEmptyPosition?: Scalars['Float']
-    /** Percentage of non-empty values for position */
-    percentageNotEmptyPosition?: Scalars['Float']
-    /** Number of unique values for searchVector */
-    countUniqueValuesSearchVector?: Scalars['Int']
-    /** Number of empty values for searchVector */
-    countEmptySearchVector?: Scalars['Int']
-    /** Number of non-empty values for searchVector */
-    countNotEmptySearchVector?: Scalars['Int']
-    /** Percentage of empty values for searchVector */
-    percentageEmptySearchVector?: Scalars['Float']
-    /** Percentage of non-empty values for searchVector */
-    percentageNotEmptySearchVector?: Scalars['Float']
     /** Number of unique values for domain */
     countUniqueValuesDomain?: Scalars['Int']
     /** Number of empty values for domain */
@@ -12995,6 +12927,46 @@ export interface SelfHostingUserGroupByConnection {
     percentageEmptyDomain?: Scalars['Float']
     /** Percentage of non-empty values for domain */
     percentageNotEmptyDomain?: Scalars['Float']
+    /** Number of unique values for userWorkspaceId */
+    countUniqueValuesUserWorkspaceId?: Scalars['Int']
+    /** Number of empty values for userWorkspaceId */
+    countEmptyUserWorkspaceId?: Scalars['Int']
+    /** Number of non-empty values for userWorkspaceId */
+    countNotEmptyUserWorkspaceId?: Scalars['Int']
+    /** Percentage of empty values for userWorkspaceId */
+    percentageEmptyUserWorkspaceId?: Scalars['Float']
+    /** Percentage of non-empty values for userWorkspaceId */
+    percentageNotEmptyUserWorkspaceId?: Scalars['Float']
+    /** Number of unique values for userId */
+    countUniqueValuesUserId?: Scalars['Int']
+    /** Number of empty values for userId */
+    countEmptyUserId?: Scalars['Int']
+    /** Number of non-empty values for userId */
+    countNotEmptyUserId?: Scalars['Int']
+    /** Percentage of empty values for userId */
+    percentageEmptyUserId?: Scalars['Float']
+    /** Percentage of non-empty values for userId */
+    percentageNotEmptyUserId?: Scalars['Float']
+    /** Number of unique values for locale */
+    countUniqueValuesLocale?: Scalars['Int']
+    /** Number of empty values for locale */
+    countEmptyLocale?: Scalars['Int']
+    /** Number of non-empty values for locale */
+    countNotEmptyLocale?: Scalars['Int']
+    /** Percentage of empty values for locale */
+    percentageEmptyLocale?: Scalars['Float']
+    /** Percentage of non-empty values for locale */
+    percentageNotEmptyLocale?: Scalars['Float']
+    /** Number of unique values for serverUrl */
+    countUniqueValuesServerUrl?: Scalars['Int']
+    /** Number of empty values for serverUrl */
+    countEmptyServerUrl?: Scalars['Int']
+    /** Number of non-empty values for serverUrl */
+    countNotEmptyServerUrl?: Scalars['Int']
+    /** Percentage of empty values for serverUrl */
+    percentageEmptyServerUrl?: Scalars['Float']
+    /** Percentage of non-empty values for serverUrl */
+    percentageNotEmptyServerUrl?: Scalars['Float']
     /** Number of unique values for numberOfEmailsWithSameDomain */
     countUniqueValuesNumberOfEmailsWithSameDomain?: Scalars['Int']
     /** Number of empty values for numberOfEmailsWithSameDomain */
@@ -13069,26 +13041,6 @@ export interface SelfHostingUserGroupByConnection {
     countTrueIsTwenty?: Scalars['Int']
     /** Count of false values in the field isTwenty */
     countFalseIsTwenty?: Scalars['Int']
-    /** Number of unique values for personFirstName */
-    countUniqueValuesPersonFirstName?: Scalars['Int']
-    /** Number of empty values for personFirstName */
-    countEmptyPersonFirstName?: Scalars['Int']
-    /** Number of non-empty values for personFirstName */
-    countNotEmptyPersonFirstName?: Scalars['Int']
-    /** Percentage of empty values for personFirstName */
-    percentageEmptyPersonFirstName?: Scalars['Float']
-    /** Percentage of non-empty values for personFirstName */
-    percentageNotEmptyPersonFirstName?: Scalars['Float']
-    /** Number of unique values for personLastName */
-    countUniqueValuesPersonLastName?: Scalars['Int']
-    /** Number of empty values for personLastName */
-    countEmptyPersonLastName?: Scalars['Int']
-    /** Number of non-empty values for personLastName */
-    countNotEmptyPersonLastName?: Scalars['Int']
-    /** Percentage of empty values for personLastName */
-    percentageEmptyPersonLastName?: Scalars['Float']
-    /** Percentage of non-empty values for personLastName */
-    percentageNotEmptyPersonLastName?: Scalars['Float']
     /** Number of unique values for personCity */
     countUniqueValuesPersonCity?: Scalars['Int']
     /** Number of empty values for personCity */
@@ -13331,6 +13283,98 @@ export interface SelfHostingUserGroupByConnection {
     percentageEmptyCompanyTech?: Scalars['Float']
     /** Percentage of non-empty values for companyTech */
     percentageNotEmptyCompanyTech?: Scalars['Float']
+    /** Number of unique values for id */
+    countUniqueValuesId?: Scalars['Int']
+    /** Number of empty values for id */
+    countEmptyId?: Scalars['Int']
+    /** Number of non-empty values for id */
+    countNotEmptyId?: Scalars['Int']
+    /** Percentage of empty values for id */
+    percentageEmptyId?: Scalars['Float']
+    /** Percentage of non-empty values for id */
+    percentageNotEmptyId?: Scalars['Float']
+    /** Number of unique values for createdAt */
+    countUniqueValuesCreatedAt?: Scalars['Int']
+    /** Number of empty values for createdAt */
+    countEmptyCreatedAt?: Scalars['Int']
+    /** Number of non-empty values for createdAt */
+    countNotEmptyCreatedAt?: Scalars['Int']
+    /** Percentage of empty values for createdAt */
+    percentageEmptyCreatedAt?: Scalars['Float']
+    /** Percentage of non-empty values for createdAt */
+    percentageNotEmptyCreatedAt?: Scalars['Float']
+    /** Earliest date contained in the field createdAt */
+    minCreatedAt?: Scalars['DateTime']
+    /** Latest date contained in the field createdAt */
+    maxCreatedAt?: Scalars['DateTime']
+    /** Number of unique values for updatedAt */
+    countUniqueValuesUpdatedAt?: Scalars['Int']
+    /** Number of empty values for updatedAt */
+    countEmptyUpdatedAt?: Scalars['Int']
+    /** Number of non-empty values for updatedAt */
+    countNotEmptyUpdatedAt?: Scalars['Int']
+    /** Percentage of empty values for updatedAt */
+    percentageEmptyUpdatedAt?: Scalars['Float']
+    /** Percentage of non-empty values for updatedAt */
+    percentageNotEmptyUpdatedAt?: Scalars['Float']
+    /** Earliest date contained in the field updatedAt */
+    minUpdatedAt?: Scalars['DateTime']
+    /** Latest date contained in the field updatedAt */
+    maxUpdatedAt?: Scalars['DateTime']
+    /** Number of unique values for deletedAt */
+    countUniqueValuesDeletedAt?: Scalars['Int']
+    /** Number of empty values for deletedAt */
+    countEmptyDeletedAt?: Scalars['Int']
+    /** Number of non-empty values for deletedAt */
+    countNotEmptyDeletedAt?: Scalars['Int']
+    /** Percentage of empty values for deletedAt */
+    percentageEmptyDeletedAt?: Scalars['Float']
+    /** Percentage of non-empty values for deletedAt */
+    percentageNotEmptyDeletedAt?: Scalars['Float']
+    /** Earliest date contained in the field deletedAt */
+    minDeletedAt?: Scalars['DateTime']
+    /** Latest date contained in the field deletedAt */
+    maxDeletedAt?: Scalars['DateTime']
+    /** Number of unique values for createdBy */
+    countUniqueValuesCreatedBy?: Scalars['Int']
+    /** Number of empty values for createdBy */
+    countEmptyCreatedBy?: Scalars['Int']
+    /** Number of non-empty values for createdBy */
+    countNotEmptyCreatedBy?: Scalars['Int']
+    /** Percentage of empty values for createdBy */
+    percentageEmptyCreatedBy?: Scalars['Float']
+    /** Percentage of non-empty values for createdBy */
+    percentageNotEmptyCreatedBy?: Scalars['Float']
+    /** Number of unique values for updatedBy */
+    countUniqueValuesUpdatedBy?: Scalars['Int']
+    /** Number of empty values for updatedBy */
+    countEmptyUpdatedBy?: Scalars['Int']
+    /** Number of non-empty values for updatedBy */
+    countNotEmptyUpdatedBy?: Scalars['Int']
+    /** Percentage of empty values for updatedBy */
+    percentageEmptyUpdatedBy?: Scalars['Float']
+    /** Percentage of non-empty values for updatedBy */
+    percentageNotEmptyUpdatedBy?: Scalars['Float']
+    /** Number of unique values for position */
+    countUniqueValuesPosition?: Scalars['Int']
+    /** Number of empty values for position */
+    countEmptyPosition?: Scalars['Int']
+    /** Number of non-empty values for position */
+    countNotEmptyPosition?: Scalars['Int']
+    /** Percentage of empty values for position */
+    percentageEmptyPosition?: Scalars['Float']
+    /** Percentage of non-empty values for position */
+    percentageNotEmptyPosition?: Scalars['Float']
+    /** Number of unique values for searchVector */
+    countUniqueValuesSearchVector?: Scalars['Int']
+    /** Number of empty values for searchVector */
+    countEmptySearchVector?: Scalars['Int']
+    /** Number of non-empty values for searchVector */
+    countNotEmptySearchVector?: Scalars['Int']
+    /** Percentage of empty values for searchVector */
+    percentageEmptySearchVector?: Scalars['Float']
+    /** Percentage of non-empty values for searchVector */
+    percentageNotEmptySearchVector?: Scalars['Float']
     edges: SelfHostingUserEdge[]
     pageInfo: PageInfo
     groupByDimensionValues: Scalars['JSON']
@@ -37984,27 +38028,19 @@ updatedBy?: (ActorGroupByInput | null)}
 
 export interface SelfHostingUserGenqlSelection{
     /** Name of the self hosting user */
-    name?: boolean | number
+    name?: FullNameGenqlSelection
     /** The email of the self hosting user */
     email?: EmailsGenqlSelection
-    /** Id */
-    id?: boolean | number
-    /** Creation date */
-    createdAt?: boolean | number
-    /** Last time the record was changed */
-    updatedAt?: boolean | number
-    /** Deletion date */
-    deletedAt?: boolean | number
-    /** The creator of the record */
-    createdBy?: ActorGenqlSelection
-    /** The workspace member who last updated the record */
-    updatedBy?: ActorGenqlSelection
-    /** Position */
-    position?: boolean | number
-    /** Search vector */
-    searchVector?: boolean | number
     /** Domain extracted from the email address (e.g. domain.com / https://domain.com/) */
     domain?: LinksGenqlSelection
+    /** User workspace id of the self hosting user */
+    userWorkspaceId?: boolean | number
+    /** User id of the self hosting user */
+    userId?: boolean | number
+    /** Locale of the self hosting user */
+    locale?: boolean | number
+    /** Server url of the self hosting user */
+    serverUrl?: boolean | number
     /** Aggregated count of self hosting users sharing the same business domain */
     numberOfEmailsWithSameDomain?: boolean | number
     /** Whether the record has been enriched */
@@ -38015,10 +38051,6 @@ export interface SelfHostingUserGenqlSelection{
     isPersonalEmail?: boolean | number
     /** Whether the user is from Twenty */
     isTwenty?: boolean | number
-    /** First name of the person */
-    personFirstName?: boolean | number
-    /** Last name of the person */
-    personLastName?: boolean | number
     /** City of the person */
     personCity?: boolean | number
     /** Country of the person */
@@ -38061,6 +38093,22 @@ export interface SelfHostingUserGenqlSelection{
     companyTags?: boolean | number
     /** Technologies used by the company */
     companyTech?: boolean | number
+    /** Id */
+    id?: boolean | number
+    /** Creation date */
+    createdAt?: boolean | number
+    /** Last time the record was changed */
+    updatedAt?: boolean | number
+    /** Deletion date */
+    deletedAt?: boolean | number
+    /** The creator of the record */
+    createdBy?: ActorGenqlSelection
+    /** The workspace member who last updated the record */
+    updatedBy?: ActorGenqlSelection
+    /** Position */
+    position?: boolean | number
+    /** Search vector */
+    searchVector?: boolean | number
     /** Self Hosting Users tied to the SelfHostingUser */
     timelineActivities?: (TimelineActivityConnectionGenqlSelection & { __args?: {first?: (Scalars['Int'] | null), last?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null), before?: (Scalars['String'] | null), after?: (Scalars['String'] | null), filter?: (TimelineActivityFilterInput | null), orderBy?: ((TimelineActivityOrderByInput | null)[] | null)} })
     /** Self Hosting Users tied to the SelfHostingUser */
@@ -38105,98 +38153,6 @@ export interface SelfHostingUserConnectionGenqlSelection{
     percentageEmptyEmail?: boolean | number
     /** Percentage of non-empty values for email */
     percentageNotEmptyEmail?: boolean | number
-    /** Number of unique values for id */
-    countUniqueValuesId?: boolean | number
-    /** Number of empty values for id */
-    countEmptyId?: boolean | number
-    /** Number of non-empty values for id */
-    countNotEmptyId?: boolean | number
-    /** Percentage of empty values for id */
-    percentageEmptyId?: boolean | number
-    /** Percentage of non-empty values for id */
-    percentageNotEmptyId?: boolean | number
-    /** Number of unique values for createdAt */
-    countUniqueValuesCreatedAt?: boolean | number
-    /** Number of empty values for createdAt */
-    countEmptyCreatedAt?: boolean | number
-    /** Number of non-empty values for createdAt */
-    countNotEmptyCreatedAt?: boolean | number
-    /** Percentage of empty values for createdAt */
-    percentageEmptyCreatedAt?: boolean | number
-    /** Percentage of non-empty values for createdAt */
-    percentageNotEmptyCreatedAt?: boolean | number
-    /** Earliest date contained in the field createdAt */
-    minCreatedAt?: boolean | number
-    /** Latest date contained in the field createdAt */
-    maxCreatedAt?: boolean | number
-    /** Number of unique values for updatedAt */
-    countUniqueValuesUpdatedAt?: boolean | number
-    /** Number of empty values for updatedAt */
-    countEmptyUpdatedAt?: boolean | number
-    /** Number of non-empty values for updatedAt */
-    countNotEmptyUpdatedAt?: boolean | number
-    /** Percentage of empty values for updatedAt */
-    percentageEmptyUpdatedAt?: boolean | number
-    /** Percentage of non-empty values for updatedAt */
-    percentageNotEmptyUpdatedAt?: boolean | number
-    /** Earliest date contained in the field updatedAt */
-    minUpdatedAt?: boolean | number
-    /** Latest date contained in the field updatedAt */
-    maxUpdatedAt?: boolean | number
-    /** Number of unique values for deletedAt */
-    countUniqueValuesDeletedAt?: boolean | number
-    /** Number of empty values for deletedAt */
-    countEmptyDeletedAt?: boolean | number
-    /** Number of non-empty values for deletedAt */
-    countNotEmptyDeletedAt?: boolean | number
-    /** Percentage of empty values for deletedAt */
-    percentageEmptyDeletedAt?: boolean | number
-    /** Percentage of non-empty values for deletedAt */
-    percentageNotEmptyDeletedAt?: boolean | number
-    /** Earliest date contained in the field deletedAt */
-    minDeletedAt?: boolean | number
-    /** Latest date contained in the field deletedAt */
-    maxDeletedAt?: boolean | number
-    /** Number of unique values for createdBy */
-    countUniqueValuesCreatedBy?: boolean | number
-    /** Number of empty values for createdBy */
-    countEmptyCreatedBy?: boolean | number
-    /** Number of non-empty values for createdBy */
-    countNotEmptyCreatedBy?: boolean | number
-    /** Percentage of empty values for createdBy */
-    percentageEmptyCreatedBy?: boolean | number
-    /** Percentage of non-empty values for createdBy */
-    percentageNotEmptyCreatedBy?: boolean | number
-    /** Number of unique values for updatedBy */
-    countUniqueValuesUpdatedBy?: boolean | number
-    /** Number of empty values for updatedBy */
-    countEmptyUpdatedBy?: boolean | number
-    /** Number of non-empty values for updatedBy */
-    countNotEmptyUpdatedBy?: boolean | number
-    /** Percentage of empty values for updatedBy */
-    percentageEmptyUpdatedBy?: boolean | number
-    /** Percentage of non-empty values for updatedBy */
-    percentageNotEmptyUpdatedBy?: boolean | number
-    /** Number of unique values for position */
-    countUniqueValuesPosition?: boolean | number
-    /** Number of empty values for position */
-    countEmptyPosition?: boolean | number
-    /** Number of non-empty values for position */
-    countNotEmptyPosition?: boolean | number
-    /** Percentage of empty values for position */
-    percentageEmptyPosition?: boolean | number
-    /** Percentage of non-empty values for position */
-    percentageNotEmptyPosition?: boolean | number
-    /** Number of unique values for searchVector */
-    countUniqueValuesSearchVector?: boolean | number
-    /** Number of empty values for searchVector */
-    countEmptySearchVector?: boolean | number
-    /** Number of non-empty values for searchVector */
-    countNotEmptySearchVector?: boolean | number
-    /** Percentage of empty values for searchVector */
-    percentageEmptySearchVector?: boolean | number
-    /** Percentage of non-empty values for searchVector */
-    percentageNotEmptySearchVector?: boolean | number
     /** Number of unique values for domain */
     countUniqueValuesDomain?: boolean | number
     /** Number of empty values for domain */
@@ -38207,6 +38163,46 @@ export interface SelfHostingUserConnectionGenqlSelection{
     percentageEmptyDomain?: boolean | number
     /** Percentage of non-empty values for domain */
     percentageNotEmptyDomain?: boolean | number
+    /** Number of unique values for userWorkspaceId */
+    countUniqueValuesUserWorkspaceId?: boolean | number
+    /** Number of empty values for userWorkspaceId */
+    countEmptyUserWorkspaceId?: boolean | number
+    /** Number of non-empty values for userWorkspaceId */
+    countNotEmptyUserWorkspaceId?: boolean | number
+    /** Percentage of empty values for userWorkspaceId */
+    percentageEmptyUserWorkspaceId?: boolean | number
+    /** Percentage of non-empty values for userWorkspaceId */
+    percentageNotEmptyUserWorkspaceId?: boolean | number
+    /** Number of unique values for userId */
+    countUniqueValuesUserId?: boolean | number
+    /** Number of empty values for userId */
+    countEmptyUserId?: boolean | number
+    /** Number of non-empty values for userId */
+    countNotEmptyUserId?: boolean | number
+    /** Percentage of empty values for userId */
+    percentageEmptyUserId?: boolean | number
+    /** Percentage of non-empty values for userId */
+    percentageNotEmptyUserId?: boolean | number
+    /** Number of unique values for locale */
+    countUniqueValuesLocale?: boolean | number
+    /** Number of empty values for locale */
+    countEmptyLocale?: boolean | number
+    /** Number of non-empty values for locale */
+    countNotEmptyLocale?: boolean | number
+    /** Percentage of empty values for locale */
+    percentageEmptyLocale?: boolean | number
+    /** Percentage of non-empty values for locale */
+    percentageNotEmptyLocale?: boolean | number
+    /** Number of unique values for serverUrl */
+    countUniqueValuesServerUrl?: boolean | number
+    /** Number of empty values for serverUrl */
+    countEmptyServerUrl?: boolean | number
+    /** Number of non-empty values for serverUrl */
+    countNotEmptyServerUrl?: boolean | number
+    /** Percentage of empty values for serverUrl */
+    percentageEmptyServerUrl?: boolean | number
+    /** Percentage of non-empty values for serverUrl */
+    percentageNotEmptyServerUrl?: boolean | number
     /** Number of unique values for numberOfEmailsWithSameDomain */
     countUniqueValuesNumberOfEmailsWithSameDomain?: boolean | number
     /** Number of empty values for numberOfEmailsWithSameDomain */
@@ -38281,26 +38277,6 @@ export interface SelfHostingUserConnectionGenqlSelection{
     countTrueIsTwenty?: boolean | number
     /** Count of false values in the field isTwenty */
     countFalseIsTwenty?: boolean | number
-    /** Number of unique values for personFirstName */
-    countUniqueValuesPersonFirstName?: boolean | number
-    /** Number of empty values for personFirstName */
-    countEmptyPersonFirstName?: boolean | number
-    /** Number of non-empty values for personFirstName */
-    countNotEmptyPersonFirstName?: boolean | number
-    /** Percentage of empty values for personFirstName */
-    percentageEmptyPersonFirstName?: boolean | number
-    /** Percentage of non-empty values for personFirstName */
-    percentageNotEmptyPersonFirstName?: boolean | number
-    /** Number of unique values for personLastName */
-    countUniqueValuesPersonLastName?: boolean | number
-    /** Number of empty values for personLastName */
-    countEmptyPersonLastName?: boolean | number
-    /** Number of non-empty values for personLastName */
-    countNotEmptyPersonLastName?: boolean | number
-    /** Percentage of empty values for personLastName */
-    percentageEmptyPersonLastName?: boolean | number
-    /** Percentage of non-empty values for personLastName */
-    percentageNotEmptyPersonLastName?: boolean | number
     /** Number of unique values for personCity */
     countUniqueValuesPersonCity?: boolean | number
     /** Number of empty values for personCity */
@@ -38543,6 +38519,98 @@ export interface SelfHostingUserConnectionGenqlSelection{
     percentageEmptyCompanyTech?: boolean | number
     /** Percentage of non-empty values for companyTech */
     percentageNotEmptyCompanyTech?: boolean | number
+    /** Number of unique values for id */
+    countUniqueValuesId?: boolean | number
+    /** Number of empty values for id */
+    countEmptyId?: boolean | number
+    /** Number of non-empty values for id */
+    countNotEmptyId?: boolean | number
+    /** Percentage of empty values for id */
+    percentageEmptyId?: boolean | number
+    /** Percentage of non-empty values for id */
+    percentageNotEmptyId?: boolean | number
+    /** Number of unique values for createdAt */
+    countUniqueValuesCreatedAt?: boolean | number
+    /** Number of empty values for createdAt */
+    countEmptyCreatedAt?: boolean | number
+    /** Number of non-empty values for createdAt */
+    countNotEmptyCreatedAt?: boolean | number
+    /** Percentage of empty values for createdAt */
+    percentageEmptyCreatedAt?: boolean | number
+    /** Percentage of non-empty values for createdAt */
+    percentageNotEmptyCreatedAt?: boolean | number
+    /** Earliest date contained in the field createdAt */
+    minCreatedAt?: boolean | number
+    /** Latest date contained in the field createdAt */
+    maxCreatedAt?: boolean | number
+    /** Number of unique values for updatedAt */
+    countUniqueValuesUpdatedAt?: boolean | number
+    /** Number of empty values for updatedAt */
+    countEmptyUpdatedAt?: boolean | number
+    /** Number of non-empty values for updatedAt */
+    countNotEmptyUpdatedAt?: boolean | number
+    /** Percentage of empty values for updatedAt */
+    percentageEmptyUpdatedAt?: boolean | number
+    /** Percentage of non-empty values for updatedAt */
+    percentageNotEmptyUpdatedAt?: boolean | number
+    /** Earliest date contained in the field updatedAt */
+    minUpdatedAt?: boolean | number
+    /** Latest date contained in the field updatedAt */
+    maxUpdatedAt?: boolean | number
+    /** Number of unique values for deletedAt */
+    countUniqueValuesDeletedAt?: boolean | number
+    /** Number of empty values for deletedAt */
+    countEmptyDeletedAt?: boolean | number
+    /** Number of non-empty values for deletedAt */
+    countNotEmptyDeletedAt?: boolean | number
+    /** Percentage of empty values for deletedAt */
+    percentageEmptyDeletedAt?: boolean | number
+    /** Percentage of non-empty values for deletedAt */
+    percentageNotEmptyDeletedAt?: boolean | number
+    /** Earliest date contained in the field deletedAt */
+    minDeletedAt?: boolean | number
+    /** Latest date contained in the field deletedAt */
+    maxDeletedAt?: boolean | number
+    /** Number of unique values for createdBy */
+    countUniqueValuesCreatedBy?: boolean | number
+    /** Number of empty values for createdBy */
+    countEmptyCreatedBy?: boolean | number
+    /** Number of non-empty values for createdBy */
+    countNotEmptyCreatedBy?: boolean | number
+    /** Percentage of empty values for createdBy */
+    percentageEmptyCreatedBy?: boolean | number
+    /** Percentage of non-empty values for createdBy */
+    percentageNotEmptyCreatedBy?: boolean | number
+    /** Number of unique values for updatedBy */
+    countUniqueValuesUpdatedBy?: boolean | number
+    /** Number of empty values for updatedBy */
+    countEmptyUpdatedBy?: boolean | number
+    /** Number of non-empty values for updatedBy */
+    countNotEmptyUpdatedBy?: boolean | number
+    /** Percentage of empty values for updatedBy */
+    percentageEmptyUpdatedBy?: boolean | number
+    /** Percentage of non-empty values for updatedBy */
+    percentageNotEmptyUpdatedBy?: boolean | number
+    /** Number of unique values for position */
+    countUniqueValuesPosition?: boolean | number
+    /** Number of empty values for position */
+    countEmptyPosition?: boolean | number
+    /** Number of non-empty values for position */
+    countNotEmptyPosition?: boolean | number
+    /** Percentage of empty values for position */
+    percentageEmptyPosition?: boolean | number
+    /** Percentage of non-empty values for position */
+    percentageNotEmptyPosition?: boolean | number
+    /** Number of unique values for searchVector */
+    countUniqueValuesSearchVector?: boolean | number
+    /** Number of empty values for searchVector */
+    countEmptySearchVector?: boolean | number
+    /** Number of non-empty values for searchVector */
+    countNotEmptySearchVector?: boolean | number
+    /** Percentage of empty values for searchVector */
+    percentageEmptySearchVector?: boolean | number
+    /** Percentage of non-empty values for searchVector */
+    percentageNotEmptySearchVector?: boolean | number
     edges?: SelfHostingUserEdgeGenqlSelection
     pageInfo?: PageInfoGenqlSelection
     __typename?: boolean | number
@@ -38572,98 +38640,6 @@ export interface SelfHostingUserGroupByConnectionGenqlSelection{
     percentageEmptyEmail?: boolean | number
     /** Percentage of non-empty values for email */
     percentageNotEmptyEmail?: boolean | number
-    /** Number of unique values for id */
-    countUniqueValuesId?: boolean | number
-    /** Number of empty values for id */
-    countEmptyId?: boolean | number
-    /** Number of non-empty values for id */
-    countNotEmptyId?: boolean | number
-    /** Percentage of empty values for id */
-    percentageEmptyId?: boolean | number
-    /** Percentage of non-empty values for id */
-    percentageNotEmptyId?: boolean | number
-    /** Number of unique values for createdAt */
-    countUniqueValuesCreatedAt?: boolean | number
-    /** Number of empty values for createdAt */
-    countEmptyCreatedAt?: boolean | number
-    /** Number of non-empty values for createdAt */
-    countNotEmptyCreatedAt?: boolean | number
-    /** Percentage of empty values for createdAt */
-    percentageEmptyCreatedAt?: boolean | number
-    /** Percentage of non-empty values for createdAt */
-    percentageNotEmptyCreatedAt?: boolean | number
-    /** Earliest date contained in the field createdAt */
-    minCreatedAt?: boolean | number
-    /** Latest date contained in the field createdAt */
-    maxCreatedAt?: boolean | number
-    /** Number of unique values for updatedAt */
-    countUniqueValuesUpdatedAt?: boolean | number
-    /** Number of empty values for updatedAt */
-    countEmptyUpdatedAt?: boolean | number
-    /** Number of non-empty values for updatedAt */
-    countNotEmptyUpdatedAt?: boolean | number
-    /** Percentage of empty values for updatedAt */
-    percentageEmptyUpdatedAt?: boolean | number
-    /** Percentage of non-empty values for updatedAt */
-    percentageNotEmptyUpdatedAt?: boolean | number
-    /** Earliest date contained in the field updatedAt */
-    minUpdatedAt?: boolean | number
-    /** Latest date contained in the field updatedAt */
-    maxUpdatedAt?: boolean | number
-    /** Number of unique values for deletedAt */
-    countUniqueValuesDeletedAt?: boolean | number
-    /** Number of empty values for deletedAt */
-    countEmptyDeletedAt?: boolean | number
-    /** Number of non-empty values for deletedAt */
-    countNotEmptyDeletedAt?: boolean | number
-    /** Percentage of empty values for deletedAt */
-    percentageEmptyDeletedAt?: boolean | number
-    /** Percentage of non-empty values for deletedAt */
-    percentageNotEmptyDeletedAt?: boolean | number
-    /** Earliest date contained in the field deletedAt */
-    minDeletedAt?: boolean | number
-    /** Latest date contained in the field deletedAt */
-    maxDeletedAt?: boolean | number
-    /** Number of unique values for createdBy */
-    countUniqueValuesCreatedBy?: boolean | number
-    /** Number of empty values for createdBy */
-    countEmptyCreatedBy?: boolean | number
-    /** Number of non-empty values for createdBy */
-    countNotEmptyCreatedBy?: boolean | number
-    /** Percentage of empty values for createdBy */
-    percentageEmptyCreatedBy?: boolean | number
-    /** Percentage of non-empty values for createdBy */
-    percentageNotEmptyCreatedBy?: boolean | number
-    /** Number of unique values for updatedBy */
-    countUniqueValuesUpdatedBy?: boolean | number
-    /** Number of empty values for updatedBy */
-    countEmptyUpdatedBy?: boolean | number
-    /** Number of non-empty values for updatedBy */
-    countNotEmptyUpdatedBy?: boolean | number
-    /** Percentage of empty values for updatedBy */
-    percentageEmptyUpdatedBy?: boolean | number
-    /** Percentage of non-empty values for updatedBy */
-    percentageNotEmptyUpdatedBy?: boolean | number
-    /** Number of unique values for position */
-    countUniqueValuesPosition?: boolean | number
-    /** Number of empty values for position */
-    countEmptyPosition?: boolean | number
-    /** Number of non-empty values for position */
-    countNotEmptyPosition?: boolean | number
-    /** Percentage of empty values for position */
-    percentageEmptyPosition?: boolean | number
-    /** Percentage of non-empty values for position */
-    percentageNotEmptyPosition?: boolean | number
-    /** Number of unique values for searchVector */
-    countUniqueValuesSearchVector?: boolean | number
-    /** Number of empty values for searchVector */
-    countEmptySearchVector?: boolean | number
-    /** Number of non-empty values for searchVector */
-    countNotEmptySearchVector?: boolean | number
-    /** Percentage of empty values for searchVector */
-    percentageEmptySearchVector?: boolean | number
-    /** Percentage of non-empty values for searchVector */
-    percentageNotEmptySearchVector?: boolean | number
     /** Number of unique values for domain */
     countUniqueValuesDomain?: boolean | number
     /** Number of empty values for domain */
@@ -38674,6 +38650,46 @@ export interface SelfHostingUserGroupByConnectionGenqlSelection{
     percentageEmptyDomain?: boolean | number
     /** Percentage of non-empty values for domain */
     percentageNotEmptyDomain?: boolean | number
+    /** Number of unique values for userWorkspaceId */
+    countUniqueValuesUserWorkspaceId?: boolean | number
+    /** Number of empty values for userWorkspaceId */
+    countEmptyUserWorkspaceId?: boolean | number
+    /** Number of non-empty values for userWorkspaceId */
+    countNotEmptyUserWorkspaceId?: boolean | number
+    /** Percentage of empty values for userWorkspaceId */
+    percentageEmptyUserWorkspaceId?: boolean | number
+    /** Percentage of non-empty values for userWorkspaceId */
+    percentageNotEmptyUserWorkspaceId?: boolean | number
+    /** Number of unique values for userId */
+    countUniqueValuesUserId?: boolean | number
+    /** Number of empty values for userId */
+    countEmptyUserId?: boolean | number
+    /** Number of non-empty values for userId */
+    countNotEmptyUserId?: boolean | number
+    /** Percentage of empty values for userId */
+    percentageEmptyUserId?: boolean | number
+    /** Percentage of non-empty values for userId */
+    percentageNotEmptyUserId?: boolean | number
+    /** Number of unique values for locale */
+    countUniqueValuesLocale?: boolean | number
+    /** Number of empty values for locale */
+    countEmptyLocale?: boolean | number
+    /** Number of non-empty values for locale */
+    countNotEmptyLocale?: boolean | number
+    /** Percentage of empty values for locale */
+    percentageEmptyLocale?: boolean | number
+    /** Percentage of non-empty values for locale */
+    percentageNotEmptyLocale?: boolean | number
+    /** Number of unique values for serverUrl */
+    countUniqueValuesServerUrl?: boolean | number
+    /** Number of empty values for serverUrl */
+    countEmptyServerUrl?: boolean | number
+    /** Number of non-empty values for serverUrl */
+    countNotEmptyServerUrl?: boolean | number
+    /** Percentage of empty values for serverUrl */
+    percentageEmptyServerUrl?: boolean | number
+    /** Percentage of non-empty values for serverUrl */
+    percentageNotEmptyServerUrl?: boolean | number
     /** Number of unique values for numberOfEmailsWithSameDomain */
     countUniqueValuesNumberOfEmailsWithSameDomain?: boolean | number
     /** Number of empty values for numberOfEmailsWithSameDomain */
@@ -38748,26 +38764,6 @@ export interface SelfHostingUserGroupByConnectionGenqlSelection{
     countTrueIsTwenty?: boolean | number
     /** Count of false values in the field isTwenty */
     countFalseIsTwenty?: boolean | number
-    /** Number of unique values for personFirstName */
-    countUniqueValuesPersonFirstName?: boolean | number
-    /** Number of empty values for personFirstName */
-    countEmptyPersonFirstName?: boolean | number
-    /** Number of non-empty values for personFirstName */
-    countNotEmptyPersonFirstName?: boolean | number
-    /** Percentage of empty values for personFirstName */
-    percentageEmptyPersonFirstName?: boolean | number
-    /** Percentage of non-empty values for personFirstName */
-    percentageNotEmptyPersonFirstName?: boolean | number
-    /** Number of unique values for personLastName */
-    countUniqueValuesPersonLastName?: boolean | number
-    /** Number of empty values for personLastName */
-    countEmptyPersonLastName?: boolean | number
-    /** Number of non-empty values for personLastName */
-    countNotEmptyPersonLastName?: boolean | number
-    /** Percentage of empty values for personLastName */
-    percentageEmptyPersonLastName?: boolean | number
-    /** Percentage of non-empty values for personLastName */
-    percentageNotEmptyPersonLastName?: boolean | number
     /** Number of unique values for personCity */
     countUniqueValuesPersonCity?: boolean | number
     /** Number of empty values for personCity */
@@ -39010,6 +39006,98 @@ export interface SelfHostingUserGroupByConnectionGenqlSelection{
     percentageEmptyCompanyTech?: boolean | number
     /** Percentage of non-empty values for companyTech */
     percentageNotEmptyCompanyTech?: boolean | number
+    /** Number of unique values for id */
+    countUniqueValuesId?: boolean | number
+    /** Number of empty values for id */
+    countEmptyId?: boolean | number
+    /** Number of non-empty values for id */
+    countNotEmptyId?: boolean | number
+    /** Percentage of empty values for id */
+    percentageEmptyId?: boolean | number
+    /** Percentage of non-empty values for id */
+    percentageNotEmptyId?: boolean | number
+    /** Number of unique values for createdAt */
+    countUniqueValuesCreatedAt?: boolean | number
+    /** Number of empty values for createdAt */
+    countEmptyCreatedAt?: boolean | number
+    /** Number of non-empty values for createdAt */
+    countNotEmptyCreatedAt?: boolean | number
+    /** Percentage of empty values for createdAt */
+    percentageEmptyCreatedAt?: boolean | number
+    /** Percentage of non-empty values for createdAt */
+    percentageNotEmptyCreatedAt?: boolean | number
+    /** Earliest date contained in the field createdAt */
+    minCreatedAt?: boolean | number
+    /** Latest date contained in the field createdAt */
+    maxCreatedAt?: boolean | number
+    /** Number of unique values for updatedAt */
+    countUniqueValuesUpdatedAt?: boolean | number
+    /** Number of empty values for updatedAt */
+    countEmptyUpdatedAt?: boolean | number
+    /** Number of non-empty values for updatedAt */
+    countNotEmptyUpdatedAt?: boolean | number
+    /** Percentage of empty values for updatedAt */
+    percentageEmptyUpdatedAt?: boolean | number
+    /** Percentage of non-empty values for updatedAt */
+    percentageNotEmptyUpdatedAt?: boolean | number
+    /** Earliest date contained in the field updatedAt */
+    minUpdatedAt?: boolean | number
+    /** Latest date contained in the field updatedAt */
+    maxUpdatedAt?: boolean | number
+    /** Number of unique values for deletedAt */
+    countUniqueValuesDeletedAt?: boolean | number
+    /** Number of empty values for deletedAt */
+    countEmptyDeletedAt?: boolean | number
+    /** Number of non-empty values for deletedAt */
+    countNotEmptyDeletedAt?: boolean | number
+    /** Percentage of empty values for deletedAt */
+    percentageEmptyDeletedAt?: boolean | number
+    /** Percentage of non-empty values for deletedAt */
+    percentageNotEmptyDeletedAt?: boolean | number
+    /** Earliest date contained in the field deletedAt */
+    minDeletedAt?: boolean | number
+    /** Latest date contained in the field deletedAt */
+    maxDeletedAt?: boolean | number
+    /** Number of unique values for createdBy */
+    countUniqueValuesCreatedBy?: boolean | number
+    /** Number of empty values for createdBy */
+    countEmptyCreatedBy?: boolean | number
+    /** Number of non-empty values for createdBy */
+    countNotEmptyCreatedBy?: boolean | number
+    /** Percentage of empty values for createdBy */
+    percentageEmptyCreatedBy?: boolean | number
+    /** Percentage of non-empty values for createdBy */
+    percentageNotEmptyCreatedBy?: boolean | number
+    /** Number of unique values for updatedBy */
+    countUniqueValuesUpdatedBy?: boolean | number
+    /** Number of empty values for updatedBy */
+    countEmptyUpdatedBy?: boolean | number
+    /** Number of non-empty values for updatedBy */
+    countNotEmptyUpdatedBy?: boolean | number
+    /** Percentage of empty values for updatedBy */
+    percentageEmptyUpdatedBy?: boolean | number
+    /** Percentage of non-empty values for updatedBy */
+    percentageNotEmptyUpdatedBy?: boolean | number
+    /** Number of unique values for position */
+    countUniqueValuesPosition?: boolean | number
+    /** Number of empty values for position */
+    countEmptyPosition?: boolean | number
+    /** Number of non-empty values for position */
+    countNotEmptyPosition?: boolean | number
+    /** Percentage of empty values for position */
+    percentageEmptyPosition?: boolean | number
+    /** Percentage of non-empty values for position */
+    percentageNotEmptyPosition?: boolean | number
+    /** Number of unique values for searchVector */
+    countUniqueValuesSearchVector?: boolean | number
+    /** Number of empty values for searchVector */
+    countEmptySearchVector?: boolean | number
+    /** Number of non-empty values for searchVector */
+    countNotEmptySearchVector?: boolean | number
+    /** Percentage of empty values for searchVector */
+    percentageEmptySearchVector?: boolean | number
+    /** Percentage of non-empty values for searchVector */
+    percentageNotEmptySearchVector?: boolean | number
     edges?: SelfHostingUserEdgeGenqlSelection
     pageInfo?: PageInfoGenqlSelection
     groupByDimensionValues?: boolean | number
@@ -39033,27 +39121,19 @@ id?: (Scalars['ID'] | null)}
 
 export interface SelfHostingUserCreateInput {
 /** Name of the self hosting user */
-name?: (Scalars['String'] | null),
+name?: (FullNameCreateInput | null),
 /** The email of the self hosting user */
 email?: (EmailsCreateInput | null),
-/** Id */
-id?: (Scalars['ID'] | null),
-/** Creation date */
-createdAt?: (Scalars['DateTime'] | null),
-/** Last time the record was changed */
-updatedAt?: (Scalars['DateTime'] | null),
-/** Deletion date */
-deletedAt?: (Scalars['DateTime'] | null),
-/** The creator of the record */
-createdBy?: (ActorCreateInput | null),
-/** The workspace member who last updated the record */
-updatedBy?: (ActorCreateInput | null),
-/** Position */
-position?: (Scalars['Position'] | null),
-/** Search vector */
-searchVector?: (Scalars['TSVector'] | null),
 /** Domain extracted from the email address (e.g. domain.com / https://domain.com/) */
 domain?: (LinksCreateInput | null),
+/** User workspace id of the self hosting user */
+userWorkspaceId?: (Scalars['UUID'] | null),
+/** User id of the self hosting user */
+userId?: (Scalars['UUID'] | null),
+/** Locale of the self hosting user */
+locale?: (Scalars['String'] | null),
+/** Server url of the self hosting user */
+serverUrl?: (Scalars['String'] | null),
 /** Aggregated count of self hosting users sharing the same business domain */
 numberOfEmailsWithSameDomain?: (Scalars['Float'] | null),
 /** Whether the record has been enriched */
@@ -39064,10 +39144,6 @@ triedToBeEnriched?: (Scalars['Boolean'] | null),
 isPersonalEmail?: (Scalars['Boolean'] | null),
 /** Whether the user is from Twenty */
 isTwenty?: (Scalars['Boolean'] | null),
-/** First name of the person */
-personFirstName?: (Scalars['String'] | null),
-/** Last name of the person */
-personLastName?: (Scalars['String'] | null),
 /** City of the person */
 personCity?: (Scalars['String'] | null),
 /** Country of the person */
@@ -39109,13 +39185,7 @@ companyName?: (Scalars['String'] | null),
 /** Tags associated with the company */
 companyTags?: ((Scalars['String'] | null)[] | null),
 /** Technologies used by the company */
-companyTech?: ((Scalars['String'] | null)[] | null)}
-
-export interface SelfHostingUserUpdateInput {
-/** Name of the self hosting user */
-name?: (Scalars['String'] | null),
-/** The email of the self hosting user */
-email?: (EmailsUpdateInput | null),
+companyTech?: ((Scalars['String'] | null)[] | null),
 /** Id */
 id?: (Scalars['ID'] | null),
 /** Creation date */
@@ -39125,15 +39195,29 @@ updatedAt?: (Scalars['DateTime'] | null),
 /** Deletion date */
 deletedAt?: (Scalars['DateTime'] | null),
 /** The creator of the record */
-createdBy?: (ActorUpdateInput | null),
+createdBy?: (ActorCreateInput | null),
 /** The workspace member who last updated the record */
-updatedBy?: (ActorUpdateInput | null),
+updatedBy?: (ActorCreateInput | null),
 /** Position */
 position?: (Scalars['Position'] | null),
 /** Search vector */
-searchVector?: (Scalars['TSVector'] | null),
+searchVector?: (Scalars['TSVector'] | null)}
+
+export interface SelfHostingUserUpdateInput {
+/** Name of the self hosting user */
+name?: (FullNameUpdateInput | null),
+/** The email of the self hosting user */
+email?: (EmailsUpdateInput | null),
 /** Domain extracted from the email address (e.g. domain.com / https://domain.com/) */
 domain?: (LinksUpdateInput | null),
+/** User workspace id of the self hosting user */
+userWorkspaceId?: (Scalars['UUID'] | null),
+/** User id of the self hosting user */
+userId?: (Scalars['UUID'] | null),
+/** Locale of the self hosting user */
+locale?: (Scalars['String'] | null),
+/** Server url of the self hosting user */
+serverUrl?: (Scalars['String'] | null),
 /** Aggregated count of self hosting users sharing the same business domain */
 numberOfEmailsWithSameDomain?: (Scalars['Float'] | null),
 /** Whether the record has been enriched */
@@ -39144,10 +39228,6 @@ triedToBeEnriched?: (Scalars['Boolean'] | null),
 isPersonalEmail?: (Scalars['Boolean'] | null),
 /** Whether the user is from Twenty */
 isTwenty?: (Scalars['Boolean'] | null),
-/** First name of the person */
-personFirstName?: (Scalars['String'] | null),
-/** Last name of the person */
-personLastName?: (Scalars['String'] | null),
 /** City of the person */
 personCity?: (Scalars['String'] | null),
 /** Country of the person */
@@ -39189,15 +39269,9 @@ companyName?: (Scalars['String'] | null),
 /** Tags associated with the company */
 companyTags?: ((Scalars['String'] | null)[] | null),
 /** Technologies used by the company */
-companyTech?: ((Scalars['String'] | null)[] | null)}
-
-export interface SelfHostingUserFilterInput {
-/** Name of the self hosting user */
-name?: (StringFilter | null),
-/** The email of the self hosting user */
-email?: (EmailsFilterInput | null),
+companyTech?: ((Scalars['String'] | null)[] | null),
 /** Id */
-id?: (UUIDFilter | null),
+id?: (Scalars['ID'] | null),
 /** Creation date */
 createdAt?: (Scalars['DateTime'] | null),
 /** Last time the record was changed */
@@ -39205,15 +39279,29 @@ updatedAt?: (Scalars['DateTime'] | null),
 /** Deletion date */
 deletedAt?: (Scalars['DateTime'] | null),
 /** The creator of the record */
-createdBy?: (ActorFilterInput | null),
+createdBy?: (ActorUpdateInput | null),
 /** The workspace member who last updated the record */
-updatedBy?: (ActorFilterInput | null),
+updatedBy?: (ActorUpdateInput | null),
 /** Position */
-position?: (FloatFilter | null),
+position?: (Scalars['Position'] | null),
 /** Search vector */
-searchVector?: (TSVectorFilter | null),
+searchVector?: (Scalars['TSVector'] | null)}
+
+export interface SelfHostingUserFilterInput {
+/** Name of the self hosting user */
+name?: (FullNameFilterInput | null),
+/** The email of the self hosting user */
+email?: (EmailsFilterInput | null),
 /** Domain extracted from the email address (e.g. domain.com / https://domain.com/) */
 domain?: (LinksFilterInput | null),
+/** User workspace id of the self hosting user */
+userWorkspaceId?: (UUIDFilter | null),
+/** User id of the self hosting user */
+userId?: (UUIDFilter | null),
+/** Locale of the self hosting user */
+locale?: (StringFilter | null),
+/** Server url of the self hosting user */
+serverUrl?: (StringFilter | null),
 /** Aggregated count of self hosting users sharing the same business domain */
 numberOfEmailsWithSameDomain?: (FloatFilter | null),
 /** Whether the record has been enriched */
@@ -39224,10 +39312,6 @@ triedToBeEnriched?: (BooleanFilter | null),
 isPersonalEmail?: (BooleanFilter | null),
 /** Whether the user is from Twenty */
 isTwenty?: (BooleanFilter | null),
-/** First name of the person */
-personFirstName?: (StringFilter | null),
-/** Last name of the person */
-personLastName?: (StringFilter | null),
 /** City of the person */
 personCity?: (StringFilter | null),
 /** Country of the person */
@@ -39269,13 +39353,91 @@ companyName?: (StringFilter | null),
 /** Tags associated with the company */
 companyTags?: (ArrayFilter | null),
 /** Technologies used by the company */
-companyTech?: (ArrayFilter | null),and?: ((SelfHostingUserFilterInput | null)[] | null),or?: ((SelfHostingUserFilterInput | null)[] | null),not?: (SelfHostingUserFilterInput | null)}
+companyTech?: (ArrayFilter | null),
+/** Id */
+id?: (UUIDFilter | null),
+/** Creation date */
+createdAt?: (Scalars['DateTime'] | null),
+/** Last time the record was changed */
+updatedAt?: (Scalars['DateTime'] | null),
+/** Deletion date */
+deletedAt?: (Scalars['DateTime'] | null),
+/** The creator of the record */
+createdBy?: (ActorFilterInput | null),
+/** The workspace member who last updated the record */
+updatedBy?: (ActorFilterInput | null),
+/** Position */
+position?: (FloatFilter | null),
+/** Search vector */
+searchVector?: (TSVectorFilter | null),and?: ((SelfHostingUserFilterInput | null)[] | null),or?: ((SelfHostingUserFilterInput | null)[] | null),not?: (SelfHostingUserFilterInput | null)}
 
 export interface SelfHostingUserOrderByInput {
 /** Name of the self hosting user */
-name?: (OrderByDirection | null),
+name?: (FullNameOrderByInput | null),
 /** The email of the self hosting user */
 email?: (EmailsOrderByInput | null),
+/** Domain extracted from the email address (e.g. domain.com / https://domain.com/) */
+domain?: (LinksOrderByInput | null),
+/** User workspace id of the self hosting user */
+userWorkspaceId?: (OrderByDirection | null),
+/** User id of the self hosting user */
+userId?: (OrderByDirection | null),
+/** Locale of the self hosting user */
+locale?: (OrderByDirection | null),
+/** Server url of the self hosting user */
+serverUrl?: (OrderByDirection | null),
+/** Aggregated count of self hosting users sharing the same business domain */
+numberOfEmailsWithSameDomain?: (OrderByDirection | null),
+/** Whether the record has been enriched */
+isEnriched?: (OrderByDirection | null),
+/** Whether an enrichment attempt has been made */
+triedToBeEnriched?: (OrderByDirection | null),
+/** Whether the email is a personal email address */
+isPersonalEmail?: (OrderByDirection | null),
+/** Whether the user is from Twenty */
+isTwenty?: (OrderByDirection | null),
+/** City of the person */
+personCity?: (OrderByDirection | null),
+/** Country of the person */
+personCountry?: (OrderByDirection | null),
+/** Job function of the person */
+personJobFunction?: (OrderByDirection | null),
+/** Job title of the person */
+personJobTitle?: (OrderByDirection | null),
+/** LinkedIn profile of the person */
+personLinkedIn?: (LinksOrderByInput | null),
+/** Seniority level of the person */
+personSeniority?: (OrderByDirection | null),
+/** Alexa rank of the company */
+companyAlexaRank?: (OrderByDirection | null),
+/** Annual revenue of the company */
+companyAnnualRevenue?: (CurrencyOrderByInput | null),
+/** Formatted annual revenue of the company */
+companyAnnualRevenuePrinted?: (OrderByDirection | null),
+/** Description of the company */
+companyDescription?: (OrderByDirection | null),
+/** Number of employees at the company */
+companyEmployees?: (OrderByDirection | null),
+/** Year the company was founded */
+companyFoundedYear?: (OrderByDirection | null),
+/** Latest funding stage of the company */
+companyFundingLatestStage?: (OrderByDirection | null),
+/** Total funding amount of the company */
+companyFundingTotalAmount?: (OrderByDirection | null),
+/** Formatted total funding amount of the company */
+companyFundingTotalAmountPrinted?: (OrderByDirection | null),
+/** Industries the company operates in */
+companyIndustries?: (OrderByDirection | null),
+/** Primary industry of the company */
+companyIndustry?: (OrderByDirection | null),
+/** LinkedIn page of the company */
+companyLinkedIn?: (LinksOrderByInput | null),
+/** Name of the company */
+companyName?: (OrderByDirection | null),
+/** Tags associated with the company */
+companyTags?: (OrderByDirection | null),
+/** Technologies used by the company */
+companyTech?: (OrderByDirection | null),
 /** Id */
 id?: (OrderByDirection | null),
 /** Creation date */
@@ -39291,9 +39453,25 @@ updatedBy?: (ActorOrderByInput | null),
 /** Position */
 position?: (OrderByDirection | null),
 /** Search vector */
-searchVector?: (OrderByDirection | null),
+searchVector?: (OrderByDirection | null)}
+
+export interface SelfHostingUserOrderByWithGroupByInput {
+/** Order by aggregate values */
+aggregate?: (SelfHostingUserOrderByWithGroupByAggregateInput | null),
+/** Name of the self hosting user */
+name?: (FullNameOrderByInput | null),
+/** The email of the self hosting user */
+email?: (EmailsOrderByInput | null),
 /** Domain extracted from the email address (e.g. domain.com / https://domain.com/) */
 domain?: (LinksOrderByInput | null),
+/** User workspace id of the self hosting user */
+userWorkspaceId?: (OrderByDirection | null),
+/** User id of the self hosting user */
+userId?: (OrderByDirection | null),
+/** Locale of the self hosting user */
+locale?: (OrderByDirection | null),
+/** Server url of the self hosting user */
+serverUrl?: (OrderByDirection | null),
 /** Aggregated count of self hosting users sharing the same business domain */
 numberOfEmailsWithSameDomain?: (OrderByDirection | null),
 /** Whether the record has been enriched */
@@ -39304,10 +39482,6 @@ triedToBeEnriched?: (OrderByDirection | null),
 isPersonalEmail?: (OrderByDirection | null),
 /** Whether the user is from Twenty */
 isTwenty?: (OrderByDirection | null),
-/** First name of the person */
-personFirstName?: (OrderByDirection | null),
-/** Last name of the person */
-personLastName?: (OrderByDirection | null),
 /** City of the person */
 personCity?: (OrderByDirection | null),
 /** Country of the person */
@@ -39349,15 +39523,7 @@ companyName?: (OrderByDirection | null),
 /** Tags associated with the company */
 companyTags?: (OrderByDirection | null),
 /** Technologies used by the company */
-companyTech?: (OrderByDirection | null)}
-
-export interface SelfHostingUserOrderByWithGroupByInput {
-/** Order by aggregate values */
-aggregate?: (SelfHostingUserOrderByWithGroupByAggregateInput | null),
-/** Name of the self hosting user */
-name?: (OrderByDirection | null),
-/** The email of the self hosting user */
-email?: (EmailsOrderByInput | null),
+companyTech?: (OrderByDirection | null),
 /** Id */
 id?: (OrderByDirection | null),
 /** Creation date */
@@ -39373,65 +39539,7 @@ updatedBy?: (ActorOrderByInput | null),
 /** Position */
 position?: (OrderByDirection | null),
 /** Search vector */
-searchVector?: (OrderByDirection | null),
-/** Domain extracted from the email address (e.g. domain.com / https://domain.com/) */
-domain?: (LinksOrderByInput | null),
-/** Aggregated count of self hosting users sharing the same business domain */
-numberOfEmailsWithSameDomain?: (OrderByDirection | null),
-/** Whether the record has been enriched */
-isEnriched?: (OrderByDirection | null),
-/** Whether an enrichment attempt has been made */
-triedToBeEnriched?: (OrderByDirection | null),
-/** Whether the email is a personal email address */
-isPersonalEmail?: (OrderByDirection | null),
-/** Whether the user is from Twenty */
-isTwenty?: (OrderByDirection | null),
-/** First name of the person */
-personFirstName?: (OrderByDirection | null),
-/** Last name of the person */
-personLastName?: (OrderByDirection | null),
-/** City of the person */
-personCity?: (OrderByDirection | null),
-/** Country of the person */
-personCountry?: (OrderByDirection | null),
-/** Job function of the person */
-personJobFunction?: (OrderByDirection | null),
-/** Job title of the person */
-personJobTitle?: (OrderByDirection | null),
-/** LinkedIn profile of the person */
-personLinkedIn?: (LinksOrderByInput | null),
-/** Seniority level of the person */
-personSeniority?: (OrderByDirection | null),
-/** Alexa rank of the company */
-companyAlexaRank?: (OrderByDirection | null),
-/** Annual revenue of the company */
-companyAnnualRevenue?: (CurrencyOrderByInput | null),
-/** Formatted annual revenue of the company */
-companyAnnualRevenuePrinted?: (OrderByDirection | null),
-/** Description of the company */
-companyDescription?: (OrderByDirection | null),
-/** Number of employees at the company */
-companyEmployees?: (OrderByDirection | null),
-/** Year the company was founded */
-companyFoundedYear?: (OrderByDirection | null),
-/** Latest funding stage of the company */
-companyFundingLatestStage?: (OrderByDirection | null),
-/** Total funding amount of the company */
-companyFundingTotalAmount?: (OrderByDirection | null),
-/** Formatted total funding amount of the company */
-companyFundingTotalAmountPrinted?: (OrderByDirection | null),
-/** Industries the company operates in */
-companyIndustries?: (OrderByDirection | null),
-/** Primary industry of the company */
-companyIndustry?: (OrderByDirection | null),
-/** LinkedIn page of the company */
-companyLinkedIn?: (LinksOrderByInput | null),
-/** Name of the company */
-companyName?: (OrderByDirection | null),
-/** Tags associated with the company */
-companyTags?: (OrderByDirection | null),
-/** Technologies used by the company */
-companyTech?: (OrderByDirection | null)}
+searchVector?: (OrderByDirection | null)}
 
 
 /** Aggregate-based ordering */
@@ -39458,98 +39566,6 @@ countNotEmptyEmail?: (OrderByDirection | null),
 percentageEmptyEmail?: (OrderByDirection | null),
 /** Percentage of non-empty values for email */
 percentageNotEmptyEmail?: (OrderByDirection | null),
-/** Number of unique values for id */
-countUniqueValuesId?: (OrderByDirection | null),
-/** Number of empty values for id */
-countEmptyId?: (OrderByDirection | null),
-/** Number of non-empty values for id */
-countNotEmptyId?: (OrderByDirection | null),
-/** Percentage of empty values for id */
-percentageEmptyId?: (OrderByDirection | null),
-/** Percentage of non-empty values for id */
-percentageNotEmptyId?: (OrderByDirection | null),
-/** Number of unique values for createdAt */
-countUniqueValuesCreatedAt?: (OrderByDirection | null),
-/** Number of empty values for createdAt */
-countEmptyCreatedAt?: (OrderByDirection | null),
-/** Number of non-empty values for createdAt */
-countNotEmptyCreatedAt?: (OrderByDirection | null),
-/** Percentage of empty values for createdAt */
-percentageEmptyCreatedAt?: (OrderByDirection | null),
-/** Percentage of non-empty values for createdAt */
-percentageNotEmptyCreatedAt?: (OrderByDirection | null),
-/** Earliest date contained in the field createdAt */
-minCreatedAt?: (OrderByDirection | null),
-/** Latest date contained in the field createdAt */
-maxCreatedAt?: (OrderByDirection | null),
-/** Number of unique values for updatedAt */
-countUniqueValuesUpdatedAt?: (OrderByDirection | null),
-/** Number of empty values for updatedAt */
-countEmptyUpdatedAt?: (OrderByDirection | null),
-/** Number of non-empty values for updatedAt */
-countNotEmptyUpdatedAt?: (OrderByDirection | null),
-/** Percentage of empty values for updatedAt */
-percentageEmptyUpdatedAt?: (OrderByDirection | null),
-/** Percentage of non-empty values for updatedAt */
-percentageNotEmptyUpdatedAt?: (OrderByDirection | null),
-/** Earliest date contained in the field updatedAt */
-minUpdatedAt?: (OrderByDirection | null),
-/** Latest date contained in the field updatedAt */
-maxUpdatedAt?: (OrderByDirection | null),
-/** Number of unique values for deletedAt */
-countUniqueValuesDeletedAt?: (OrderByDirection | null),
-/** Number of empty values for deletedAt */
-countEmptyDeletedAt?: (OrderByDirection | null),
-/** Number of non-empty values for deletedAt */
-countNotEmptyDeletedAt?: (OrderByDirection | null),
-/** Percentage of empty values for deletedAt */
-percentageEmptyDeletedAt?: (OrderByDirection | null),
-/** Percentage of non-empty values for deletedAt */
-percentageNotEmptyDeletedAt?: (OrderByDirection | null),
-/** Earliest date contained in the field deletedAt */
-minDeletedAt?: (OrderByDirection | null),
-/** Latest date contained in the field deletedAt */
-maxDeletedAt?: (OrderByDirection | null),
-/** Number of unique values for createdBy */
-countUniqueValuesCreatedBy?: (OrderByDirection | null),
-/** Number of empty values for createdBy */
-countEmptyCreatedBy?: (OrderByDirection | null),
-/** Number of non-empty values for createdBy */
-countNotEmptyCreatedBy?: (OrderByDirection | null),
-/** Percentage of empty values for createdBy */
-percentageEmptyCreatedBy?: (OrderByDirection | null),
-/** Percentage of non-empty values for createdBy */
-percentageNotEmptyCreatedBy?: (OrderByDirection | null),
-/** Number of unique values for updatedBy */
-countUniqueValuesUpdatedBy?: (OrderByDirection | null),
-/** Number of empty values for updatedBy */
-countEmptyUpdatedBy?: (OrderByDirection | null),
-/** Number of non-empty values for updatedBy */
-countNotEmptyUpdatedBy?: (OrderByDirection | null),
-/** Percentage of empty values for updatedBy */
-percentageEmptyUpdatedBy?: (OrderByDirection | null),
-/** Percentage of non-empty values for updatedBy */
-percentageNotEmptyUpdatedBy?: (OrderByDirection | null),
-/** Number of unique values for position */
-countUniqueValuesPosition?: (OrderByDirection | null),
-/** Number of empty values for position */
-countEmptyPosition?: (OrderByDirection | null),
-/** Number of non-empty values for position */
-countNotEmptyPosition?: (OrderByDirection | null),
-/** Percentage of empty values for position */
-percentageEmptyPosition?: (OrderByDirection | null),
-/** Percentage of non-empty values for position */
-percentageNotEmptyPosition?: (OrderByDirection | null),
-/** Number of unique values for searchVector */
-countUniqueValuesSearchVector?: (OrderByDirection | null),
-/** Number of empty values for searchVector */
-countEmptySearchVector?: (OrderByDirection | null),
-/** Number of non-empty values for searchVector */
-countNotEmptySearchVector?: (OrderByDirection | null),
-/** Percentage of empty values for searchVector */
-percentageEmptySearchVector?: (OrderByDirection | null),
-/** Percentage of non-empty values for searchVector */
-percentageNotEmptySearchVector?: (OrderByDirection | null),
 /** Number of unique values for domain */
 countUniqueValuesDomain?: (OrderByDirection | null),
 /** Number of empty values for domain */
@@ -39560,6 +39576,46 @@ countNotEmptyDomain?: (OrderByDirection | null),
 percentageEmptyDomain?: (OrderByDirection | null),
 /** Percentage of non-empty values for domain */
 percentageNotEmptyDomain?: (OrderByDirection | null),
+/** Number of unique values for userWorkspaceId */
+countUniqueValuesUserWorkspaceId?: (OrderByDirection | null),
+/** Number of empty values for userWorkspaceId */
+countEmptyUserWorkspaceId?: (OrderByDirection | null),
+/** Number of non-empty values for userWorkspaceId */
+countNotEmptyUserWorkspaceId?: (OrderByDirection | null),
+/** Percentage of empty values for userWorkspaceId */
+percentageEmptyUserWorkspaceId?: (OrderByDirection | null),
+/** Percentage of non-empty values for userWorkspaceId */
+percentageNotEmptyUserWorkspaceId?: (OrderByDirection | null),
+/** Number of unique values for userId */
+countUniqueValuesUserId?: (OrderByDirection | null),
+/** Number of empty values for userId */
+countEmptyUserId?: (OrderByDirection | null),
+/** Number of non-empty values for userId */
+countNotEmptyUserId?: (OrderByDirection | null),
+/** Percentage of empty values for userId */
+percentageEmptyUserId?: (OrderByDirection | null),
+/** Percentage of non-empty values for userId */
+percentageNotEmptyUserId?: (OrderByDirection | null),
+/** Number of unique values for locale */
+countUniqueValuesLocale?: (OrderByDirection | null),
+/** Number of empty values for locale */
+countEmptyLocale?: (OrderByDirection | null),
+/** Number of non-empty values for locale */
+countNotEmptyLocale?: (OrderByDirection | null),
+/** Percentage of empty values for locale */
+percentageEmptyLocale?: (OrderByDirection | null),
+/** Percentage of non-empty values for locale */
+percentageNotEmptyLocale?: (OrderByDirection | null),
+/** Number of unique values for serverUrl */
+countUniqueValuesServerUrl?: (OrderByDirection | null),
+/** Number of empty values for serverUrl */
+countEmptyServerUrl?: (OrderByDirection | null),
+/** Number of non-empty values for serverUrl */
+countNotEmptyServerUrl?: (OrderByDirection | null),
+/** Percentage of empty values for serverUrl */
+percentageEmptyServerUrl?: (OrderByDirection | null),
+/** Percentage of non-empty values for serverUrl */
+percentageNotEmptyServerUrl?: (OrderByDirection | null),
 /** Number of unique values for numberOfEmailsWithSameDomain */
 countUniqueValuesNumberOfEmailsWithSameDomain?: (OrderByDirection | null),
 /** Number of empty values for numberOfEmailsWithSameDomain */
@@ -39634,26 +39690,6 @@ percentageNotEmptyIsTwenty?: (OrderByDirection | null),
 countTrueIsTwenty?: (OrderByDirection | null),
 /** Count of false values in the field isTwenty */
 countFalseIsTwenty?: (OrderByDirection | null),
-/** Number of unique values for personFirstName */
-countUniqueValuesPersonFirstName?: (OrderByDirection | null),
-/** Number of empty values for personFirstName */
-countEmptyPersonFirstName?: (OrderByDirection | null),
-/** Number of non-empty values for personFirstName */
-countNotEmptyPersonFirstName?: (OrderByDirection | null),
-/** Percentage of empty values for personFirstName */
-percentageEmptyPersonFirstName?: (OrderByDirection | null),
-/** Percentage of non-empty values for personFirstName */
-percentageNotEmptyPersonFirstName?: (OrderByDirection | null),
-/** Number of unique values for personLastName */
-countUniqueValuesPersonLastName?: (OrderByDirection | null),
-/** Number of empty values for personLastName */
-countEmptyPersonLastName?: (OrderByDirection | null),
-/** Number of non-empty values for personLastName */
-countNotEmptyPersonLastName?: (OrderByDirection | null),
-/** Percentage of empty values for personLastName */
-percentageEmptyPersonLastName?: (OrderByDirection | null),
-/** Percentage of non-empty values for personLastName */
-percentageNotEmptyPersonLastName?: (OrderByDirection | null),
 /** Number of unique values for personCity */
 countUniqueValuesPersonCity?: (OrderByDirection | null),
 /** Number of empty values for personCity */
@@ -39895,31 +39931,115 @@ countNotEmptyCompanyTech?: (OrderByDirection | null),
 /** Percentage of empty values for companyTech */
 percentageEmptyCompanyTech?: (OrderByDirection | null),
 /** Percentage of non-empty values for companyTech */
-percentageNotEmptyCompanyTech?: (OrderByDirection | null)}
+percentageNotEmptyCompanyTech?: (OrderByDirection | null),
+/** Number of unique values for id */
+countUniqueValuesId?: (OrderByDirection | null),
+/** Number of empty values for id */
+countEmptyId?: (OrderByDirection | null),
+/** Number of non-empty values for id */
+countNotEmptyId?: (OrderByDirection | null),
+/** Percentage of empty values for id */
+percentageEmptyId?: (OrderByDirection | null),
+/** Percentage of non-empty values for id */
+percentageNotEmptyId?: (OrderByDirection | null),
+/** Number of unique values for createdAt */
+countUniqueValuesCreatedAt?: (OrderByDirection | null),
+/** Number of empty values for createdAt */
+countEmptyCreatedAt?: (OrderByDirection | null),
+/** Number of non-empty values for createdAt */
+countNotEmptyCreatedAt?: (OrderByDirection | null),
+/** Percentage of empty values for createdAt */
+percentageEmptyCreatedAt?: (OrderByDirection | null),
+/** Percentage of non-empty values for createdAt */
+percentageNotEmptyCreatedAt?: (OrderByDirection | null),
+/** Earliest date contained in the field createdAt */
+minCreatedAt?: (OrderByDirection | null),
+/** Latest date contained in the field createdAt */
+maxCreatedAt?: (OrderByDirection | null),
+/** Number of unique values for updatedAt */
+countUniqueValuesUpdatedAt?: (OrderByDirection | null),
+/** Number of empty values for updatedAt */
+countEmptyUpdatedAt?: (OrderByDirection | null),
+/** Number of non-empty values for updatedAt */
+countNotEmptyUpdatedAt?: (OrderByDirection | null),
+/** Percentage of empty values for updatedAt */
+percentageEmptyUpdatedAt?: (OrderByDirection | null),
+/** Percentage of non-empty values for updatedAt */
+percentageNotEmptyUpdatedAt?: (OrderByDirection | null),
+/** Earliest date contained in the field updatedAt */
+minUpdatedAt?: (OrderByDirection | null),
+/** Latest date contained in the field updatedAt */
+maxUpdatedAt?: (OrderByDirection | null),
+/** Number of unique values for deletedAt */
+countUniqueValuesDeletedAt?: (OrderByDirection | null),
+/** Number of empty values for deletedAt */
+countEmptyDeletedAt?: (OrderByDirection | null),
+/** Number of non-empty values for deletedAt */
+countNotEmptyDeletedAt?: (OrderByDirection | null),
+/** Percentage of empty values for deletedAt */
+percentageEmptyDeletedAt?: (OrderByDirection | null),
+/** Percentage of non-empty values for deletedAt */
+percentageNotEmptyDeletedAt?: (OrderByDirection | null),
+/** Earliest date contained in the field deletedAt */
+minDeletedAt?: (OrderByDirection | null),
+/** Latest date contained in the field deletedAt */
+maxDeletedAt?: (OrderByDirection | null),
+/** Number of unique values for createdBy */
+countUniqueValuesCreatedBy?: (OrderByDirection | null),
+/** Number of empty values for createdBy */
+countEmptyCreatedBy?: (OrderByDirection | null),
+/** Number of non-empty values for createdBy */
+countNotEmptyCreatedBy?: (OrderByDirection | null),
+/** Percentage of empty values for createdBy */
+percentageEmptyCreatedBy?: (OrderByDirection | null),
+/** Percentage of non-empty values for createdBy */
+percentageNotEmptyCreatedBy?: (OrderByDirection | null),
+/** Number of unique values for updatedBy */
+countUniqueValuesUpdatedBy?: (OrderByDirection | null),
+/** Number of empty values for updatedBy */
+countEmptyUpdatedBy?: (OrderByDirection | null),
+/** Number of non-empty values for updatedBy */
+countNotEmptyUpdatedBy?: (OrderByDirection | null),
+/** Percentage of empty values for updatedBy */
+percentageEmptyUpdatedBy?: (OrderByDirection | null),
+/** Percentage of non-empty values for updatedBy */
+percentageNotEmptyUpdatedBy?: (OrderByDirection | null),
+/** Number of unique values for position */
+countUniqueValuesPosition?: (OrderByDirection | null),
+/** Number of empty values for position */
+countEmptyPosition?: (OrderByDirection | null),
+/** Number of non-empty values for position */
+countNotEmptyPosition?: (OrderByDirection | null),
+/** Percentage of empty values for position */
+percentageEmptyPosition?: (OrderByDirection | null),
+/** Percentage of non-empty values for position */
+percentageNotEmptyPosition?: (OrderByDirection | null),
+/** Number of unique values for searchVector */
+countUniqueValuesSearchVector?: (OrderByDirection | null),
+/** Number of empty values for searchVector */
+countEmptySearchVector?: (OrderByDirection | null),
+/** Number of non-empty values for searchVector */
+countNotEmptySearchVector?: (OrderByDirection | null),
+/** Percentage of empty values for searchVector */
+percentageEmptySearchVector?: (OrderByDirection | null),
+/** Percentage of non-empty values for searchVector */
+percentageNotEmptySearchVector?: (OrderByDirection | null)}
 
 export interface SelfHostingUserGroupByInput {
 /** Name of the self hosting user */
-name?: (Scalars['Boolean'] | null),
+name?: (FullNameGroupByInput | null),
 /** The email of the self hosting user */
 email?: (EmailsGroupByInput | null),
-/** Id */
-id?: (Scalars['Boolean'] | null),
-/** Creation date */
-createdAt?: (GroupByDateGranularityInput | null),
-/** Last time the record was changed */
-updatedAt?: (GroupByDateGranularityInput | null),
-/** Deletion date */
-deletedAt?: (GroupByDateGranularityInput | null),
-/** The creator of the record */
-createdBy?: (ActorGroupByInput | null),
-/** The workspace member who last updated the record */
-updatedBy?: (ActorGroupByInput | null),
-/** Position */
-position?: (Scalars['Boolean'] | null),
-/** Search vector */
-searchVector?: (Scalars['Boolean'] | null),
 /** Domain extracted from the email address (e.g. domain.com / https://domain.com/) */
 domain?: (LinksGroupByInput | null),
+/** User workspace id of the self hosting user */
+userWorkspaceId?: (Scalars['Boolean'] | null),
+/** User id of the self hosting user */
+userId?: (Scalars['Boolean'] | null),
+/** Locale of the self hosting user */
+locale?: (Scalars['Boolean'] | null),
+/** Server url of the self hosting user */
+serverUrl?: (Scalars['Boolean'] | null),
 /** Aggregated count of self hosting users sharing the same business domain */
 numberOfEmailsWithSameDomain?: (Scalars['Boolean'] | null),
 /** Whether the record has been enriched */
@@ -39930,10 +40050,6 @@ triedToBeEnriched?: (Scalars['Boolean'] | null),
 isPersonalEmail?: (Scalars['Boolean'] | null),
 /** Whether the user is from Twenty */
 isTwenty?: (Scalars['Boolean'] | null),
-/** First name of the person */
-personFirstName?: (Scalars['Boolean'] | null),
-/** Last name of the person */
-personLastName?: (Scalars['Boolean'] | null),
 /** City of the person */
 personCity?: (Scalars['Boolean'] | null),
 /** Country of the person */
@@ -39975,7 +40091,23 @@ companyName?: (Scalars['Boolean'] | null),
 /** Tags associated with the company */
 companyTags?: (Scalars['Boolean'] | null),
 /** Technologies used by the company */
-companyTech?: (Scalars['Boolean'] | null)}
+companyTech?: (Scalars['Boolean'] | null),
+/** Id */
+id?: (Scalars['Boolean'] | null),
+/** Creation date */
+createdAt?: (GroupByDateGranularityInput | null),
+/** Last time the record was changed */
+updatedAt?: (GroupByDateGranularityInput | null),
+/** Deletion date */
+deletedAt?: (GroupByDateGranularityInput | null),
+/** The creator of the record */
+createdBy?: (ActorGroupByInput | null),
+/** The workspace member who last updated the record */
+updatedBy?: (ActorGroupByInput | null),
+/** Position */
+position?: (Scalars['Boolean'] | null),
+/** Search vector */
+searchVector?: (Scalars['Boolean'] | null)}
 
 
     const TimelineCalendarEventParticipant_possibleTypes: string[] = ['TimelineCalendarEventParticipant']

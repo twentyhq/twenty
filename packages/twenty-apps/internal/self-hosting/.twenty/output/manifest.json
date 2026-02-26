@@ -6,7 +6,7 @@
     "defaultRoleUniversalIdentifier": "66972e19-9fdb-4336-87ce-442a17fd179c",
     "yarnLockChecksum": "f66aa34e63e82a31ee0072fffaac635d",
     "packageJsonChecksum": "bf473a5444c8dcb9a2de60adf70a0a99",
-    "apiClientChecksum": "251ea4e066bd44571694ebd57ceac900"
+    "apiClientChecksum": "0ab738171b28a85b31bf36e62cb4a945"
   },
   "objects": [
     {
@@ -17,7 +17,7 @@
       "labelPlural": "Self Hosting Users",
       "fields": [
         {
-          "type": "TEXT",
+          "type": "FULL_NAME",
           "name": "name",
           "label": "Name",
           "description": "Name of the self hosting user",
@@ -36,6 +36,34 @@
           "label": "Domain",
           "description": "Domain extracted from the email address (e.g. domain.com / https://domain.com/)",
           "universalIdentifier": "1dfa7d4e-c8f5-4639-b58e-3392a8789f76"
+        },
+        {
+          "type": "UUID",
+          "name": "userWorkspaceId",
+          "label": "User workspace Id",
+          "description": "User workspace id of the self hosting user",
+          "universalIdentifier": "297a7d6b-e407-4b2d-8c03-8964bc1b7805"
+        },
+        {
+          "type": "UUID",
+          "name": "userId",
+          "label": "User Id",
+          "description": "User id of the self hosting user",
+          "universalIdentifier": "5c7ba3ce-1473-4e3d-8e7c-31816fcb87d8"
+        },
+        {
+          "type": "TEXT",
+          "name": "locale",
+          "label": "Locale",
+          "description": "Locale of the self hosting user",
+          "universalIdentifier": "7b39df37-a22e-4f38-ae77-91cf3ee7c076"
+        },
+        {
+          "type": "TEXT",
+          "name": "serverUrl",
+          "label": "Server url",
+          "description": "Server url of the self hosting user",
+          "universalIdentifier": "f2516b77-2912-4cbb-8838-46ac5a5465d9"
         },
         {
           "type": "NUMBER",
@@ -75,20 +103,6 @@
           "description": "Whether the user is from Twenty",
           "defaultValue": false,
           "universalIdentifier": "b1acef1f-7c10-47a9-899e-aaca45b36e04"
-        },
-        {
-          "type": "TEXT",
-          "name": "personFirstName",
-          "label": "Person First Name",
-          "description": "First name of the person",
-          "universalIdentifier": "d5104f88-a6ff-4559-914b-f127ab0c6477"
-        },
-        {
-          "type": "TEXT",
-          "name": "personLastName",
-          "label": "Person Last Name",
-          "description": "Last name of the person",
-          "universalIdentifier": "f39871d6-295d-48b1-ba44-5799dcc9b710"
         },
         {
           "type": "TEXT",
@@ -515,9 +529,9 @@
         "properties": {}
       },
       "handlerName": "default.config.handler",
-      "sourceHandlerPath": "src/telemetryWebhook.function.ts",
-      "builtHandlerPath": "src/telemetryWebhook.function.mjs",
-      "builtHandlerChecksum": "57a17c862e11da4cb5e2af2b9a80019b"
+      "sourceHandlerPath": "src/logic-functions/telemetryWebhook.function.ts",
+      "builtHandlerPath": "src/logic-functions/telemetryWebhook.function.mjs",
+      "builtHandlerChecksum": "1cdbf5f7ab8761c4ae3b484c61d6ab59"
     }
   ],
   "frontComponents": [],
@@ -525,7 +539,7 @@
   "views": [
     {
       "universalIdentifier": "e903f0ee-52cb-4537-aca8-8940e30b023d",
-      "name": "self-hosting-user-view",
+      "name": "Self hosting users",
       "objectUniversalIdentifier": "06f3fb53-599e-4c6b-9df6-8f731973afd7",
       "icon": "IconList",
       "position": 0,
@@ -534,12 +548,211 @@
           "universalIdentifier": "243a2401-cd13-440c-8dcd-649e26df36bc",
           "fieldMetadataUniversalIdentifier": "682cccbf-9f37-4290-a94c-902c771f61e4",
           "position": 0,
-          "isVisible": true
+          "isVisible": true,
+          "size": 150
         },
         {
           "universalIdentifier": "dfa75ef8-d40d-416f-9f1c-3e86edfa9fce",
           "fieldMetadataUniversalIdentifier": "a4b7892c-431a-4d44-973e-a5481652704f",
-          "position": 0,
+          "position": 1,
+          "isVisible": true,
+          "size": 150
+        },
+        {
+          "universalIdentifier": "15cc9215-eb48-4487-a92e-a25d8e99702f",
+          "fieldMetadataUniversalIdentifier": "1dfa7d4e-c8f5-4639-b58e-3392a8789f76",
+          "position": 2,
+          "isVisible": true,
+          "size": 200
+        },
+        {
+          "universalIdentifier": "dcf88ae8-e71d-452f-b51e-d88cbc6dd273",
+          "fieldMetadataUniversalIdentifier": "297a7d6b-e407-4b2d-8c03-8964bc1b7805",
+          "position": 3,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "aad70516-936b-41d1-b6c6-961a22299761",
+          "fieldMetadataUniversalIdentifier": "5c7ba3ce-1473-4e3d-8e7c-31816fcb87d8",
+          "position": 4,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "8c210eb0-bdda-476e-9f98-42f909872f2a",
+          "fieldMetadataUniversalIdentifier": "7b39df37-a22e-4f38-ae77-91cf3ee7c076",
+          "position": 5,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "367abe85-11c4-440f-80a2-663edd6b4231",
+          "fieldMetadataUniversalIdentifier": "f2516b77-2912-4cbb-8838-46ac5a5465d9",
+          "position": 6,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "924ee786-ab93-44be-9d21-941ff9ffe1ac",
+          "fieldMetadataUniversalIdentifier": "0bf05db0-6771-4400-91ca-1579ec11e76e",
+          "position": 7,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "2feadf3d-e251-4356-add8-7fa70dea5401",
+          "fieldMetadataUniversalIdentifier": "fefe9fd6-23ae-4046-b60b-64d17e9ff7ed",
+          "position": 8,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "de252ae6-c723-4bf7-96cf-d93f5a539f36",
+          "fieldMetadataUniversalIdentifier": "d32c8cc3-8855-453d-bb7d-9c9c0b3f2128",
+          "position": 9,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "b121e8e6-b3eb-4f6c-b67e-c7c6d19e1bc5",
+          "fieldMetadataUniversalIdentifier": "f4568391-9474-4ed8-8cbb-e36d86e0f5f9",
+          "position": 10,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "0ada0bcc-8d6b-4df6-bcc1-78ba14cb04e6",
+          "fieldMetadataUniversalIdentifier": "b1acef1f-7c10-47a9-899e-aaca45b36e04",
+          "position": 11,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "ec7c8d51-ea63-41bd-9eb1-995835b94218",
+          "fieldMetadataUniversalIdentifier": "ca733484-e595-4257-9ca9-9a7802fb8bcb",
+          "position": 12,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "7522dd84-0d23-48e7-85dd-f0a8d9e275f8",
+          "fieldMetadataUniversalIdentifier": "18c06357-1b50-4d5b-82cf-1f71f286fbe4",
+          "position": 13,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "54191cb9-4d5c-466e-affb-d9ba4adeff87",
+          "fieldMetadataUniversalIdentifier": "26e7e2c7-ea83-41e0-8c07-1fc2549a3fb4",
+          "position": 14,
+          "isVisible": true,
+          "size": 200
+        },
+        {
+          "universalIdentifier": "ace75fc7-fb20-4e53-a9a2-6a7529befaf0",
+          "fieldMetadataUniversalIdentifier": "177908e9-1ca6-4762-9518-0df966d3e9fc",
+          "position": 15,
+          "isVisible": true,
+          "size": 180
+        },
+        {
+          "universalIdentifier": "a0b42d61-4553-42eb-aca4-327b9bf9f30e",
+          "fieldMetadataUniversalIdentifier": "3515683f-7f9f-4b6d-9b16-614824d277b7",
+          "position": 16,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "74bc7dd2-fe53-4ff4-8778-2768f3439571",
+          "fieldMetadataUniversalIdentifier": "8b63855a-5915-4d6a-a6ed-ef7d8f8e5dd1",
+          "position": 17,
+          "isVisible": true,
+          "size": 180
+        },
+        {
+          "universalIdentifier": "61b34f41-8d56-472d-ab1e-414703c6ca12",
+          "fieldMetadataUniversalIdentifier": "7c61335b-cd4b-4eae-8b02-0db746913e36",
+          "position": 18,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "5bb7d36b-6a73-4832-b41e-f67130a4708f",
+          "fieldMetadataUniversalIdentifier": "a2367973-aa12-42c2-9577-fe868f61b83b",
+          "position": 19,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "ae6f23ce-006c-41dd-82a1-e9fe7b65bce3",
+          "fieldMetadataUniversalIdentifier": "bc02b6af-8f48-4fde-920d-1fd3e2a8557b",
+          "position": 20,
+          "isVisible": true,
+          "size": 250
+        },
+        {
+          "universalIdentifier": "dd2a4728-a743-43bb-b096-9e7bd5125e56",
+          "fieldMetadataUniversalIdentifier": "a9bb622e-56b6-42ba-8b03-17a47d707409",
+          "position": 21,
+          "isVisible": true,
+          "size": 200
+        },
+        {
+          "universalIdentifier": "ecca02c9-db2e-41e2-b571-b5db75054b56",
+          "fieldMetadataUniversalIdentifier": "8e1dbc58-d444-470f-b8fe-9eed8da4b59e",
+          "position": 22,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "2e76775b-f8b8-4184-8cd3-72d2b93edaa2",
+          "fieldMetadataUniversalIdentifier": "3cf95527-5064-43ab-bf5e-421eb45fac5f",
+          "position": 23,
+          "isVisible": true,
+          "size": 200
+        },
+        {
+          "universalIdentifier": "a7eb002c-6f0c-48ba-a9eb-247c498ad9bd",
+          "fieldMetadataUniversalIdentifier": "a7dcd92a-6811-490b-a8dd-fad1c19091a1",
+          "position": 24,
+          "isVisible": true,
+          "size": 240
+        },
+        {
+          "universalIdentifier": "61be97f6-20da-4b2b-861d-32345e0f9953",
+          "fieldMetadataUniversalIdentifier": "6fca8a11-b49a-4081-a7c9-9646f43ad7aa",
+          "position": 25,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "55720810-3120-4e76-bcf2-2da9517edbbc",
+          "fieldMetadataUniversalIdentifier": "0078f0f0-2262-4c74-aaf8-4061c6c8a1f3",
+          "position": 26,
+          "isVisible": true,
+          "size": 280
+        },
+        {
+          "universalIdentifier": "01e31752-cbc1-499a-8ecf-504dd402d7e2",
+          "fieldMetadataUniversalIdentifier": "6b971b9c-6ef5-4497-989e-f9a7c72720cf",
+          "position": 27,
+          "isVisible": true,
+          "size": 200
+        },
+        {
+          "universalIdentifier": "2e1c8b8b-469b-483e-8348-1fe3d1764e17",
+          "fieldMetadataUniversalIdentifier": "ab84e651-d35b-4e02-8d69-1740af3e22f7",
+          "position": 28,
+          "isVisible": true,
+          "size": 180
+        },
+        {
+          "universalIdentifier": "976cc8ae-6cf8-4c30-8da4-5bf61e799893",
+          "fieldMetadataUniversalIdentifier": "4c44b956-f880-434f-b4cd-854b82076e56",
+          "position": 29,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "5f0776b3-2849-4b9b-82f0-baa38c6d889d",
+          "fieldMetadataUniversalIdentifier": "1a25412b-f9ce-4406-ac53-f20d1ab8c5ea",
+          "position": 30,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "86f0397a-2924-4e5c-a610-3c9ad7bb4923",
+          "fieldMetadataUniversalIdentifier": "ceb64d0b-1203-4c6d-af00-39b668f5f891",
+          "position": 31,
+          "isVisible": true
+        },
+        {
+          "universalIdentifier": "562084f4-1242-4e60-868b-1d9b268a35b0",
+          "fieldMetadataUniversalIdentifier": "11dd57c3-06bb-4722-bb65-96d0a899ca91",
+          "position": 32,
           "isVisible": true
         }
       ]

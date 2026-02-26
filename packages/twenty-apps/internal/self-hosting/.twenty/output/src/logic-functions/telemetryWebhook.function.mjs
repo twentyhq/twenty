@@ -1,7 +1,7 @@
 import { createRequire as __createRequire } from 'module';
 const require = __createRequire(import.meta.url);
 
-// src/telemetryWebhook.function.ts
+// src/logic-functions/telemetryWebhook.function.ts
 import { defineLogicFunction } from "twenty-sdk";
 
 // node_modules/twenty-sdk/generated/core/runtime/error.ts
@@ -45377,37 +45377,25 @@ var types_default = {
     },
     "SelfHostingUser": {
       "name": [
-        1
+        69
       ],
       "email": [
         89
       ],
-      "id": [
-        2
-      ],
-      "createdAt": [
-        7
-      ],
-      "updatedAt": [
-        7
-      ],
-      "deletedAt": [
-        7
-      ],
-      "createdBy": [
-        82
-      ],
-      "updatedBy": [
-        82
-      ],
-      "position": [
-        114
-      ],
-      "searchVector": [
-        115
-      ],
       "domain": [
         52
+      ],
+      "userWorkspaceId": [
+        2
+      ],
+      "userId": [
+        2
+      ],
+      "locale": [
+        1
+      ],
+      "serverUrl": [
+        1
       ],
       "numberOfEmailsWithSameDomain": [
         13
@@ -45423,12 +45411,6 @@ var types_default = {
       ],
       "isTwenty": [
         6
-      ],
-      "personFirstName": [
-        1
-      ],
-      "personLastName": [
-        1
       ],
       "personCity": [
         1
@@ -45492,6 +45474,30 @@ var types_default = {
       ],
       "companyTech": [
         1
+      ],
+      "id": [
+        2
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        82
+      ],
+      "updatedBy": [
+        82
+      ],
+      "position": [
+        114
+      ],
+      "searchVector": [
+        115
       ],
       "timelineActivities": [
         500,
@@ -45677,144 +45683,6 @@ var types_default = {
       "percentageNotEmptyEmail": [
         13
       ],
-      "countUniqueValuesId": [
-        10
-      ],
-      "countEmptyId": [
-        10
-      ],
-      "countNotEmptyId": [
-        10
-      ],
-      "percentageEmptyId": [
-        13
-      ],
-      "percentageNotEmptyId": [
-        13
-      ],
-      "countUniqueValuesCreatedAt": [
-        10
-      ],
-      "countEmptyCreatedAt": [
-        10
-      ],
-      "countNotEmptyCreatedAt": [
-        10
-      ],
-      "percentageEmptyCreatedAt": [
-        13
-      ],
-      "percentageNotEmptyCreatedAt": [
-        13
-      ],
-      "minCreatedAt": [
-        7
-      ],
-      "maxCreatedAt": [
-        7
-      ],
-      "countUniqueValuesUpdatedAt": [
-        10
-      ],
-      "countEmptyUpdatedAt": [
-        10
-      ],
-      "countNotEmptyUpdatedAt": [
-        10
-      ],
-      "percentageEmptyUpdatedAt": [
-        13
-      ],
-      "percentageNotEmptyUpdatedAt": [
-        13
-      ],
-      "minUpdatedAt": [
-        7
-      ],
-      "maxUpdatedAt": [
-        7
-      ],
-      "countUniqueValuesDeletedAt": [
-        10
-      ],
-      "countEmptyDeletedAt": [
-        10
-      ],
-      "countNotEmptyDeletedAt": [
-        10
-      ],
-      "percentageEmptyDeletedAt": [
-        13
-      ],
-      "percentageNotEmptyDeletedAt": [
-        13
-      ],
-      "minDeletedAt": [
-        7
-      ],
-      "maxDeletedAt": [
-        7
-      ],
-      "countUniqueValuesCreatedBy": [
-        10
-      ],
-      "countEmptyCreatedBy": [
-        10
-      ],
-      "countNotEmptyCreatedBy": [
-        10
-      ],
-      "percentageEmptyCreatedBy": [
-        13
-      ],
-      "percentageNotEmptyCreatedBy": [
-        13
-      ],
-      "countUniqueValuesUpdatedBy": [
-        10
-      ],
-      "countEmptyUpdatedBy": [
-        10
-      ],
-      "countNotEmptyUpdatedBy": [
-        10
-      ],
-      "percentageEmptyUpdatedBy": [
-        13
-      ],
-      "percentageNotEmptyUpdatedBy": [
-        13
-      ],
-      "countUniqueValuesPosition": [
-        10
-      ],
-      "countEmptyPosition": [
-        10
-      ],
-      "countNotEmptyPosition": [
-        10
-      ],
-      "percentageEmptyPosition": [
-        13
-      ],
-      "percentageNotEmptyPosition": [
-        13
-      ],
-      "countUniqueValuesSearchVector": [
-        10
-      ],
-      "countEmptySearchVector": [
-        10
-      ],
-      "countNotEmptySearchVector": [
-        10
-      ],
-      "percentageEmptySearchVector": [
-        13
-      ],
-      "percentageNotEmptySearchVector": [
-        13
-      ],
       "countUniqueValuesDomain": [
         10
       ],
@@ -45828,6 +45696,66 @@ var types_default = {
         13
       ],
       "percentageNotEmptyDomain": [
+        13
+      ],
+      "countUniqueValuesUserWorkspaceId": [
+        10
+      ],
+      "countEmptyUserWorkspaceId": [
+        10
+      ],
+      "countNotEmptyUserWorkspaceId": [
+        10
+      ],
+      "percentageEmptyUserWorkspaceId": [
+        13
+      ],
+      "percentageNotEmptyUserWorkspaceId": [
+        13
+      ],
+      "countUniqueValuesUserId": [
+        10
+      ],
+      "countEmptyUserId": [
+        10
+      ],
+      "countNotEmptyUserId": [
+        10
+      ],
+      "percentageEmptyUserId": [
+        13
+      ],
+      "percentageNotEmptyUserId": [
+        13
+      ],
+      "countUniqueValuesLocale": [
+        10
+      ],
+      "countEmptyLocale": [
+        10
+      ],
+      "countNotEmptyLocale": [
+        10
+      ],
+      "percentageEmptyLocale": [
+        13
+      ],
+      "percentageNotEmptyLocale": [
+        13
+      ],
+      "countUniqueValuesServerUrl": [
+        10
+      ],
+      "countEmptyServerUrl": [
+        10
+      ],
+      "countNotEmptyServerUrl": [
+        10
+      ],
+      "percentageEmptyServerUrl": [
+        13
+      ],
+      "percentageNotEmptyServerUrl": [
         13
       ],
       "countUniqueValuesNumberOfEmailsWithSameDomain": [
@@ -45940,36 +45868,6 @@ var types_default = {
       ],
       "countFalseIsTwenty": [
         10
-      ],
-      "countUniqueValuesPersonFirstName": [
-        10
-      ],
-      "countEmptyPersonFirstName": [
-        10
-      ],
-      "countNotEmptyPersonFirstName": [
-        10
-      ],
-      "percentageEmptyPersonFirstName": [
-        13
-      ],
-      "percentageNotEmptyPersonFirstName": [
-        13
-      ],
-      "countUniqueValuesPersonLastName": [
-        10
-      ],
-      "countEmptyPersonLastName": [
-        10
-      ],
-      "countNotEmptyPersonLastName": [
-        10
-      ],
-      "percentageEmptyPersonLastName": [
-        13
-      ],
-      "percentageNotEmptyPersonLastName": [
-        13
       ],
       "countUniqueValuesPersonCity": [
         10
@@ -46332,6 +46230,144 @@ var types_default = {
         13
       ],
       "percentageNotEmptyCompanyTech": [
+        13
+      ],
+      "countUniqueValuesId": [
+        10
+      ],
+      "countEmptyId": [
+        10
+      ],
+      "countNotEmptyId": [
+        10
+      ],
+      "percentageEmptyId": [
+        13
+      ],
+      "percentageNotEmptyId": [
+        13
+      ],
+      "countUniqueValuesCreatedAt": [
+        10
+      ],
+      "countEmptyCreatedAt": [
+        10
+      ],
+      "countNotEmptyCreatedAt": [
+        10
+      ],
+      "percentageEmptyCreatedAt": [
+        13
+      ],
+      "percentageNotEmptyCreatedAt": [
+        13
+      ],
+      "minCreatedAt": [
+        7
+      ],
+      "maxCreatedAt": [
+        7
+      ],
+      "countUniqueValuesUpdatedAt": [
+        10
+      ],
+      "countEmptyUpdatedAt": [
+        10
+      ],
+      "countNotEmptyUpdatedAt": [
+        10
+      ],
+      "percentageEmptyUpdatedAt": [
+        13
+      ],
+      "percentageNotEmptyUpdatedAt": [
+        13
+      ],
+      "minUpdatedAt": [
+        7
+      ],
+      "maxUpdatedAt": [
+        7
+      ],
+      "countUniqueValuesDeletedAt": [
+        10
+      ],
+      "countEmptyDeletedAt": [
+        10
+      ],
+      "countNotEmptyDeletedAt": [
+        10
+      ],
+      "percentageEmptyDeletedAt": [
+        13
+      ],
+      "percentageNotEmptyDeletedAt": [
+        13
+      ],
+      "minDeletedAt": [
+        7
+      ],
+      "maxDeletedAt": [
+        7
+      ],
+      "countUniqueValuesCreatedBy": [
+        10
+      ],
+      "countEmptyCreatedBy": [
+        10
+      ],
+      "countNotEmptyCreatedBy": [
+        10
+      ],
+      "percentageEmptyCreatedBy": [
+        13
+      ],
+      "percentageNotEmptyCreatedBy": [
+        13
+      ],
+      "countUniqueValuesUpdatedBy": [
+        10
+      ],
+      "countEmptyUpdatedBy": [
+        10
+      ],
+      "countNotEmptyUpdatedBy": [
+        10
+      ],
+      "percentageEmptyUpdatedBy": [
+        13
+      ],
+      "percentageNotEmptyUpdatedBy": [
+        13
+      ],
+      "countUniqueValuesPosition": [
+        10
+      ],
+      "countEmptyPosition": [
+        10
+      ],
+      "countNotEmptyPosition": [
+        10
+      ],
+      "percentageEmptyPosition": [
+        13
+      ],
+      "percentageNotEmptyPosition": [
+        13
+      ],
+      "countUniqueValuesSearchVector": [
+        10
+      ],
+      "countEmptySearchVector": [
+        10
+      ],
+      "countNotEmptySearchVector": [
+        10
+      ],
+      "percentageEmptySearchVector": [
+        13
+      ],
+      "percentageNotEmptySearchVector": [
         13
       ],
       "edges": [
@@ -46378,144 +46414,6 @@ var types_default = {
       "percentageNotEmptyEmail": [
         13
       ],
-      "countUniqueValuesId": [
-        10
-      ],
-      "countEmptyId": [
-        10
-      ],
-      "countNotEmptyId": [
-        10
-      ],
-      "percentageEmptyId": [
-        13
-      ],
-      "percentageNotEmptyId": [
-        13
-      ],
-      "countUniqueValuesCreatedAt": [
-        10
-      ],
-      "countEmptyCreatedAt": [
-        10
-      ],
-      "countNotEmptyCreatedAt": [
-        10
-      ],
-      "percentageEmptyCreatedAt": [
-        13
-      ],
-      "percentageNotEmptyCreatedAt": [
-        13
-      ],
-      "minCreatedAt": [
-        7
-      ],
-      "maxCreatedAt": [
-        7
-      ],
-      "countUniqueValuesUpdatedAt": [
-        10
-      ],
-      "countEmptyUpdatedAt": [
-        10
-      ],
-      "countNotEmptyUpdatedAt": [
-        10
-      ],
-      "percentageEmptyUpdatedAt": [
-        13
-      ],
-      "percentageNotEmptyUpdatedAt": [
-        13
-      ],
-      "minUpdatedAt": [
-        7
-      ],
-      "maxUpdatedAt": [
-        7
-      ],
-      "countUniqueValuesDeletedAt": [
-        10
-      ],
-      "countEmptyDeletedAt": [
-        10
-      ],
-      "countNotEmptyDeletedAt": [
-        10
-      ],
-      "percentageEmptyDeletedAt": [
-        13
-      ],
-      "percentageNotEmptyDeletedAt": [
-        13
-      ],
-      "minDeletedAt": [
-        7
-      ],
-      "maxDeletedAt": [
-        7
-      ],
-      "countUniqueValuesCreatedBy": [
-        10
-      ],
-      "countEmptyCreatedBy": [
-        10
-      ],
-      "countNotEmptyCreatedBy": [
-        10
-      ],
-      "percentageEmptyCreatedBy": [
-        13
-      ],
-      "percentageNotEmptyCreatedBy": [
-        13
-      ],
-      "countUniqueValuesUpdatedBy": [
-        10
-      ],
-      "countEmptyUpdatedBy": [
-        10
-      ],
-      "countNotEmptyUpdatedBy": [
-        10
-      ],
-      "percentageEmptyUpdatedBy": [
-        13
-      ],
-      "percentageNotEmptyUpdatedBy": [
-        13
-      ],
-      "countUniqueValuesPosition": [
-        10
-      ],
-      "countEmptyPosition": [
-        10
-      ],
-      "countNotEmptyPosition": [
-        10
-      ],
-      "percentageEmptyPosition": [
-        13
-      ],
-      "percentageNotEmptyPosition": [
-        13
-      ],
-      "countUniqueValuesSearchVector": [
-        10
-      ],
-      "countEmptySearchVector": [
-        10
-      ],
-      "countNotEmptySearchVector": [
-        10
-      ],
-      "percentageEmptySearchVector": [
-        13
-      ],
-      "percentageNotEmptySearchVector": [
-        13
-      ],
       "countUniqueValuesDomain": [
         10
       ],
@@ -46529,6 +46427,66 @@ var types_default = {
         13
       ],
       "percentageNotEmptyDomain": [
+        13
+      ],
+      "countUniqueValuesUserWorkspaceId": [
+        10
+      ],
+      "countEmptyUserWorkspaceId": [
+        10
+      ],
+      "countNotEmptyUserWorkspaceId": [
+        10
+      ],
+      "percentageEmptyUserWorkspaceId": [
+        13
+      ],
+      "percentageNotEmptyUserWorkspaceId": [
+        13
+      ],
+      "countUniqueValuesUserId": [
+        10
+      ],
+      "countEmptyUserId": [
+        10
+      ],
+      "countNotEmptyUserId": [
+        10
+      ],
+      "percentageEmptyUserId": [
+        13
+      ],
+      "percentageNotEmptyUserId": [
+        13
+      ],
+      "countUniqueValuesLocale": [
+        10
+      ],
+      "countEmptyLocale": [
+        10
+      ],
+      "countNotEmptyLocale": [
+        10
+      ],
+      "percentageEmptyLocale": [
+        13
+      ],
+      "percentageNotEmptyLocale": [
+        13
+      ],
+      "countUniqueValuesServerUrl": [
+        10
+      ],
+      "countEmptyServerUrl": [
+        10
+      ],
+      "countNotEmptyServerUrl": [
+        10
+      ],
+      "percentageEmptyServerUrl": [
+        13
+      ],
+      "percentageNotEmptyServerUrl": [
         13
       ],
       "countUniqueValuesNumberOfEmailsWithSameDomain": [
@@ -46641,36 +46599,6 @@ var types_default = {
       ],
       "countFalseIsTwenty": [
         10
-      ],
-      "countUniqueValuesPersonFirstName": [
-        10
-      ],
-      "countEmptyPersonFirstName": [
-        10
-      ],
-      "countNotEmptyPersonFirstName": [
-        10
-      ],
-      "percentageEmptyPersonFirstName": [
-        13
-      ],
-      "percentageNotEmptyPersonFirstName": [
-        13
-      ],
-      "countUniqueValuesPersonLastName": [
-        10
-      ],
-      "countEmptyPersonLastName": [
-        10
-      ],
-      "countNotEmptyPersonLastName": [
-        10
-      ],
-      "percentageEmptyPersonLastName": [
-        13
-      ],
-      "percentageNotEmptyPersonLastName": [
-        13
       ],
       "countUniqueValuesPersonCity": [
         10
@@ -47035,6 +46963,144 @@ var types_default = {
       "percentageNotEmptyCompanyTech": [
         13
       ],
+      "countUniqueValuesId": [
+        10
+      ],
+      "countEmptyId": [
+        10
+      ],
+      "countNotEmptyId": [
+        10
+      ],
+      "percentageEmptyId": [
+        13
+      ],
+      "percentageNotEmptyId": [
+        13
+      ],
+      "countUniqueValuesCreatedAt": [
+        10
+      ],
+      "countEmptyCreatedAt": [
+        10
+      ],
+      "countNotEmptyCreatedAt": [
+        10
+      ],
+      "percentageEmptyCreatedAt": [
+        13
+      ],
+      "percentageNotEmptyCreatedAt": [
+        13
+      ],
+      "minCreatedAt": [
+        7
+      ],
+      "maxCreatedAt": [
+        7
+      ],
+      "countUniqueValuesUpdatedAt": [
+        10
+      ],
+      "countEmptyUpdatedAt": [
+        10
+      ],
+      "countNotEmptyUpdatedAt": [
+        10
+      ],
+      "percentageEmptyUpdatedAt": [
+        13
+      ],
+      "percentageNotEmptyUpdatedAt": [
+        13
+      ],
+      "minUpdatedAt": [
+        7
+      ],
+      "maxUpdatedAt": [
+        7
+      ],
+      "countUniqueValuesDeletedAt": [
+        10
+      ],
+      "countEmptyDeletedAt": [
+        10
+      ],
+      "countNotEmptyDeletedAt": [
+        10
+      ],
+      "percentageEmptyDeletedAt": [
+        13
+      ],
+      "percentageNotEmptyDeletedAt": [
+        13
+      ],
+      "minDeletedAt": [
+        7
+      ],
+      "maxDeletedAt": [
+        7
+      ],
+      "countUniqueValuesCreatedBy": [
+        10
+      ],
+      "countEmptyCreatedBy": [
+        10
+      ],
+      "countNotEmptyCreatedBy": [
+        10
+      ],
+      "percentageEmptyCreatedBy": [
+        13
+      ],
+      "percentageNotEmptyCreatedBy": [
+        13
+      ],
+      "countUniqueValuesUpdatedBy": [
+        10
+      ],
+      "countEmptyUpdatedBy": [
+        10
+      ],
+      "countNotEmptyUpdatedBy": [
+        10
+      ],
+      "percentageEmptyUpdatedBy": [
+        13
+      ],
+      "percentageNotEmptyUpdatedBy": [
+        13
+      ],
+      "countUniqueValuesPosition": [
+        10
+      ],
+      "countEmptyPosition": [
+        10
+      ],
+      "countNotEmptyPosition": [
+        10
+      ],
+      "percentageEmptyPosition": [
+        13
+      ],
+      "percentageNotEmptyPosition": [
+        13
+      ],
+      "countUniqueValuesSearchVector": [
+        10
+      ],
+      "countEmptySearchVector": [
+        10
+      ],
+      "countNotEmptySearchVector": [
+        10
+      ],
+      "percentageEmptySearchVector": [
+        13
+      ],
+      "percentageNotEmptySearchVector": [
+        13
+      ],
       "edges": [
         596
       ],
@@ -47077,37 +47143,25 @@ var types_default = {
     },
     "SelfHostingUserCreateInput": {
       "name": [
-        1
+        70
       ],
       "email": [
         90
       ],
-      "id": [
-        22
-      ],
-      "createdAt": [
-        7
-      ],
-      "updatedAt": [
-        7
-      ],
-      "deletedAt": [
-        7
-      ],
-      "createdBy": [
-        83
-      ],
-      "updatedBy": [
-        83
-      ],
-      "position": [
-        114
-      ],
-      "searchVector": [
-        115
-      ],
       "domain": [
         53
+      ],
+      "userWorkspaceId": [
+        2
+      ],
+      "userId": [
+        2
+      ],
+      "locale": [
+        1
+      ],
+      "serverUrl": [
+        1
       ],
       "numberOfEmailsWithSameDomain": [
         13
@@ -47123,12 +47177,6 @@ var types_default = {
       ],
       "isTwenty": [
         6
-      ],
-      "personFirstName": [
-        1
-      ],
-      "personLastName": [
-        1
       ],
       "personCity": [
         1
@@ -47193,17 +47241,6 @@ var types_default = {
       "companyTech": [
         1
       ],
-      "__typename": [
-        1
-      ]
-    },
-    "SelfHostingUserUpdateInput": {
-      "name": [
-        1
-      ],
-      "email": [
-        91
-      ],
       "id": [
         22
       ],
@@ -47217,10 +47254,10 @@ var types_default = {
         7
       ],
       "createdBy": [
-        84
+        83
       ],
       "updatedBy": [
-        84
+        83
       ],
       "position": [
         114
@@ -47228,8 +47265,31 @@ var types_default = {
       "searchVector": [
         115
       ],
+      "__typename": [
+        1
+      ]
+    },
+    "SelfHostingUserUpdateInput": {
+      "name": [
+        71
+      ],
+      "email": [
+        91
+      ],
       "domain": [
         54
+      ],
+      "userWorkspaceId": [
+        2
+      ],
+      "userId": [
+        2
+      ],
+      "locale": [
+        1
+      ],
+      "serverUrl": [
+        1
       ],
       "numberOfEmailsWithSameDomain": [
         13
@@ -47245,12 +47305,6 @@ var types_default = {
       ],
       "isTwenty": [
         6
-      ],
-      "personFirstName": [
-        1
-      ],
-      "personLastName": [
-        1
       ],
       "personCity": [
         1
@@ -47315,19 +47369,8 @@ var types_default = {
       "companyTech": [
         1
       ],
-      "__typename": [
-        1
-      ]
-    },
-    "SelfHostingUserFilterInput": {
-      "name": [
-        56
-      ],
-      "email": [
-        92
-      ],
       "id": [
-        33
+        22
       ],
       "createdAt": [
         7
@@ -47339,19 +47382,42 @@ var types_default = {
         7
       ],
       "createdBy": [
-        85
+        84
       ],
       "updatedBy": [
-        85
+        84
       ],
       "position": [
-        130
+        114
       ],
       "searchVector": [
-        131
+        115
+      ],
+      "__typename": [
+        1
+      ]
+    },
+    "SelfHostingUserFilterInput": {
+      "name": [
+        72
+      ],
+      "email": [
+        92
       ],
       "domain": [
         55
+      ],
+      "userWorkspaceId": [
+        33
+      ],
+      "userId": [
+        33
+      ],
+      "locale": [
+        56
+      ],
+      "serverUrl": [
+        56
       ],
       "numberOfEmailsWithSameDomain": [
         130
@@ -47367,12 +47433,6 @@ var types_default = {
       ],
       "isTwenty": [
         179
-      ],
-      "personFirstName": [
-        56
-      ],
-      "personLastName": [
-        56
       ],
       "personCity": [
         56
@@ -47437,6 +47497,30 @@ var types_default = {
       "companyTech": [
         242
       ],
+      "id": [
+        33
+      ],
+      "createdAt": [
+        7
+      ],
+      "updatedAt": [
+        7
+      ],
+      "deletedAt": [
+        7
+      ],
+      "createdBy": [
+        85
+      ],
+      "updatedBy": [
+        85
+      ],
+      "position": [
+        130
+      ],
+      "searchVector": [
+        131
+      ],
       "and": [
         604
       ],
@@ -47452,37 +47536,25 @@ var types_default = {
     },
     "SelfHostingUserOrderByInput": {
       "name": [
-        59
+        73
       ],
       "email": [
         93
       ],
-      "id": [
-        59
-      ],
-      "createdAt": [
-        59
-      ],
-      "updatedAt": [
-        59
-      ],
-      "deletedAt": [
-        59
-      ],
-      "createdBy": [
-        87
-      ],
-      "updatedBy": [
-        87
-      ],
-      "position": [
-        59
-      ],
-      "searchVector": [
-        59
-      ],
       "domain": [
         58
+      ],
+      "userWorkspaceId": [
+        59
+      ],
+      "userId": [
+        59
+      ],
+      "locale": [
+        59
+      ],
+      "serverUrl": [
+        59
       ],
       "numberOfEmailsWithSameDomain": [
         59
@@ -47497,12 +47569,6 @@ var types_default = {
         59
       ],
       "isTwenty": [
-        59
-      ],
-      "personFirstName": [
-        59
-      ],
-      "personLastName": [
         59
       ],
       "personCity": [
@@ -47566,6 +47632,30 @@ var types_default = {
         59
       ],
       "companyTech": [
+        59
+      ],
+      "id": [
+        59
+      ],
+      "createdAt": [
+        59
+      ],
+      "updatedAt": [
+        59
+      ],
+      "deletedAt": [
+        59
+      ],
+      "createdBy": [
+        87
+      ],
+      "updatedBy": [
+        87
+      ],
+      "position": [
+        59
+      ],
+      "searchVector": [
         59
       ],
       "__typename": [
@@ -47577,37 +47667,25 @@ var types_default = {
         607
       ],
       "name": [
-        59
+        73
       ],
       "email": [
         93
       ],
-      "id": [
-        59
-      ],
-      "createdAt": [
-        110
-      ],
-      "updatedAt": [
-        110
-      ],
-      "deletedAt": [
-        110
-      ],
-      "createdBy": [
-        87
-      ],
-      "updatedBy": [
-        87
-      ],
-      "position": [
-        59
-      ],
-      "searchVector": [
-        59
-      ],
       "domain": [
         58
+      ],
+      "userWorkspaceId": [
+        59
+      ],
+      "userId": [
+        59
+      ],
+      "locale": [
+        59
+      ],
+      "serverUrl": [
+        59
       ],
       "numberOfEmailsWithSameDomain": [
         59
@@ -47622,12 +47700,6 @@ var types_default = {
         59
       ],
       "isTwenty": [
-        59
-      ],
-      "personFirstName": [
-        59
-      ],
-      "personLastName": [
         59
       ],
       "personCity": [
@@ -47691,6 +47763,30 @@ var types_default = {
         59
       ],
       "companyTech": [
+        59
+      ],
+      "id": [
+        59
+      ],
+      "createdAt": [
+        110
+      ],
+      "updatedAt": [
+        110
+      ],
+      "deletedAt": [
+        110
+      ],
+      "createdBy": [
+        87
+      ],
+      "updatedBy": [
+        87
+      ],
+      "position": [
+        59
+      ],
+      "searchVector": [
         59
       ],
       "__typename": [
@@ -47731,144 +47827,6 @@ var types_default = {
       "percentageNotEmptyEmail": [
         59
       ],
-      "countUniqueValuesId": [
-        59
-      ],
-      "countEmptyId": [
-        59
-      ],
-      "countNotEmptyId": [
-        59
-      ],
-      "percentageEmptyId": [
-        59
-      ],
-      "percentageNotEmptyId": [
-        59
-      ],
-      "countUniqueValuesCreatedAt": [
-        59
-      ],
-      "countEmptyCreatedAt": [
-        59
-      ],
-      "countNotEmptyCreatedAt": [
-        59
-      ],
-      "percentageEmptyCreatedAt": [
-        59
-      ],
-      "percentageNotEmptyCreatedAt": [
-        59
-      ],
-      "minCreatedAt": [
-        59
-      ],
-      "maxCreatedAt": [
-        59
-      ],
-      "countUniqueValuesUpdatedAt": [
-        59
-      ],
-      "countEmptyUpdatedAt": [
-        59
-      ],
-      "countNotEmptyUpdatedAt": [
-        59
-      ],
-      "percentageEmptyUpdatedAt": [
-        59
-      ],
-      "percentageNotEmptyUpdatedAt": [
-        59
-      ],
-      "minUpdatedAt": [
-        59
-      ],
-      "maxUpdatedAt": [
-        59
-      ],
-      "countUniqueValuesDeletedAt": [
-        59
-      ],
-      "countEmptyDeletedAt": [
-        59
-      ],
-      "countNotEmptyDeletedAt": [
-        59
-      ],
-      "percentageEmptyDeletedAt": [
-        59
-      ],
-      "percentageNotEmptyDeletedAt": [
-        59
-      ],
-      "minDeletedAt": [
-        59
-      ],
-      "maxDeletedAt": [
-        59
-      ],
-      "countUniqueValuesCreatedBy": [
-        59
-      ],
-      "countEmptyCreatedBy": [
-        59
-      ],
-      "countNotEmptyCreatedBy": [
-        59
-      ],
-      "percentageEmptyCreatedBy": [
-        59
-      ],
-      "percentageNotEmptyCreatedBy": [
-        59
-      ],
-      "countUniqueValuesUpdatedBy": [
-        59
-      ],
-      "countEmptyUpdatedBy": [
-        59
-      ],
-      "countNotEmptyUpdatedBy": [
-        59
-      ],
-      "percentageEmptyUpdatedBy": [
-        59
-      ],
-      "percentageNotEmptyUpdatedBy": [
-        59
-      ],
-      "countUniqueValuesPosition": [
-        59
-      ],
-      "countEmptyPosition": [
-        59
-      ],
-      "countNotEmptyPosition": [
-        59
-      ],
-      "percentageEmptyPosition": [
-        59
-      ],
-      "percentageNotEmptyPosition": [
-        59
-      ],
-      "countUniqueValuesSearchVector": [
-        59
-      ],
-      "countEmptySearchVector": [
-        59
-      ],
-      "countNotEmptySearchVector": [
-        59
-      ],
-      "percentageEmptySearchVector": [
-        59
-      ],
-      "percentageNotEmptySearchVector": [
-        59
-      ],
       "countUniqueValuesDomain": [
         59
       ],
@@ -47882,6 +47840,66 @@ var types_default = {
         59
       ],
       "percentageNotEmptyDomain": [
+        59
+      ],
+      "countUniqueValuesUserWorkspaceId": [
+        59
+      ],
+      "countEmptyUserWorkspaceId": [
+        59
+      ],
+      "countNotEmptyUserWorkspaceId": [
+        59
+      ],
+      "percentageEmptyUserWorkspaceId": [
+        59
+      ],
+      "percentageNotEmptyUserWorkspaceId": [
+        59
+      ],
+      "countUniqueValuesUserId": [
+        59
+      ],
+      "countEmptyUserId": [
+        59
+      ],
+      "countNotEmptyUserId": [
+        59
+      ],
+      "percentageEmptyUserId": [
+        59
+      ],
+      "percentageNotEmptyUserId": [
+        59
+      ],
+      "countUniqueValuesLocale": [
+        59
+      ],
+      "countEmptyLocale": [
+        59
+      ],
+      "countNotEmptyLocale": [
+        59
+      ],
+      "percentageEmptyLocale": [
+        59
+      ],
+      "percentageNotEmptyLocale": [
+        59
+      ],
+      "countUniqueValuesServerUrl": [
+        59
+      ],
+      "countEmptyServerUrl": [
+        59
+      ],
+      "countNotEmptyServerUrl": [
+        59
+      ],
+      "percentageEmptyServerUrl": [
+        59
+      ],
+      "percentageNotEmptyServerUrl": [
         59
       ],
       "countUniqueValuesNumberOfEmailsWithSameDomain": [
@@ -47993,36 +48011,6 @@ var types_default = {
         59
       ],
       "countFalseIsTwenty": [
-        59
-      ],
-      "countUniqueValuesPersonFirstName": [
-        59
-      ],
-      "countEmptyPersonFirstName": [
-        59
-      ],
-      "countNotEmptyPersonFirstName": [
-        59
-      ],
-      "percentageEmptyPersonFirstName": [
-        59
-      ],
-      "percentageNotEmptyPersonFirstName": [
-        59
-      ],
-      "countUniqueValuesPersonLastName": [
-        59
-      ],
-      "countEmptyPersonLastName": [
-        59
-      ],
-      "countNotEmptyPersonLastName": [
-        59
-      ],
-      "percentageEmptyPersonLastName": [
-        59
-      ],
-      "percentageNotEmptyPersonLastName": [
         59
       ],
       "countUniqueValuesPersonCity": [
@@ -48388,43 +48376,169 @@ var types_default = {
       "percentageNotEmptyCompanyTech": [
         59
       ],
+      "countUniqueValuesId": [
+        59
+      ],
+      "countEmptyId": [
+        59
+      ],
+      "countNotEmptyId": [
+        59
+      ],
+      "percentageEmptyId": [
+        59
+      ],
+      "percentageNotEmptyId": [
+        59
+      ],
+      "countUniqueValuesCreatedAt": [
+        59
+      ],
+      "countEmptyCreatedAt": [
+        59
+      ],
+      "countNotEmptyCreatedAt": [
+        59
+      ],
+      "percentageEmptyCreatedAt": [
+        59
+      ],
+      "percentageNotEmptyCreatedAt": [
+        59
+      ],
+      "minCreatedAt": [
+        59
+      ],
+      "maxCreatedAt": [
+        59
+      ],
+      "countUniqueValuesUpdatedAt": [
+        59
+      ],
+      "countEmptyUpdatedAt": [
+        59
+      ],
+      "countNotEmptyUpdatedAt": [
+        59
+      ],
+      "percentageEmptyUpdatedAt": [
+        59
+      ],
+      "percentageNotEmptyUpdatedAt": [
+        59
+      ],
+      "minUpdatedAt": [
+        59
+      ],
+      "maxUpdatedAt": [
+        59
+      ],
+      "countUniqueValuesDeletedAt": [
+        59
+      ],
+      "countEmptyDeletedAt": [
+        59
+      ],
+      "countNotEmptyDeletedAt": [
+        59
+      ],
+      "percentageEmptyDeletedAt": [
+        59
+      ],
+      "percentageNotEmptyDeletedAt": [
+        59
+      ],
+      "minDeletedAt": [
+        59
+      ],
+      "maxDeletedAt": [
+        59
+      ],
+      "countUniqueValuesCreatedBy": [
+        59
+      ],
+      "countEmptyCreatedBy": [
+        59
+      ],
+      "countNotEmptyCreatedBy": [
+        59
+      ],
+      "percentageEmptyCreatedBy": [
+        59
+      ],
+      "percentageNotEmptyCreatedBy": [
+        59
+      ],
+      "countUniqueValuesUpdatedBy": [
+        59
+      ],
+      "countEmptyUpdatedBy": [
+        59
+      ],
+      "countNotEmptyUpdatedBy": [
+        59
+      ],
+      "percentageEmptyUpdatedBy": [
+        59
+      ],
+      "percentageNotEmptyUpdatedBy": [
+        59
+      ],
+      "countUniqueValuesPosition": [
+        59
+      ],
+      "countEmptyPosition": [
+        59
+      ],
+      "countNotEmptyPosition": [
+        59
+      ],
+      "percentageEmptyPosition": [
+        59
+      ],
+      "percentageNotEmptyPosition": [
+        59
+      ],
+      "countUniqueValuesSearchVector": [
+        59
+      ],
+      "countEmptySearchVector": [
+        59
+      ],
+      "countNotEmptySearchVector": [
+        59
+      ],
+      "percentageEmptySearchVector": [
+        59
+      ],
+      "percentageNotEmptySearchVector": [
+        59
+      ],
       "__typename": [
         1
       ]
     },
     "SelfHostingUserGroupByInput": {
       "name": [
-        6
+        74
       ],
       "email": [
         94
       ],
-      "id": [
-        6
-      ],
-      "createdAt": [
-        109
-      ],
-      "updatedAt": [
-        109
-      ],
-      "deletedAt": [
-        109
-      ],
-      "createdBy": [
-        88
-      ],
-      "updatedBy": [
-        88
-      ],
-      "position": [
-        6
-      ],
-      "searchVector": [
-        6
-      ],
       "domain": [
         60
+      ],
+      "userWorkspaceId": [
+        6
+      ],
+      "userId": [
+        6
+      ],
+      "locale": [
+        6
+      ],
+      "serverUrl": [
+        6
       ],
       "numberOfEmailsWithSameDomain": [
         6
@@ -48439,12 +48553,6 @@ var types_default = {
         6
       ],
       "isTwenty": [
-        6
-      ],
-      "personFirstName": [
-        6
-      ],
-      "personLastName": [
         6
       ],
       "personCity": [
@@ -48508,6 +48616,30 @@ var types_default = {
         6
       ],
       "companyTech": [
+        6
+      ],
+      "id": [
+        6
+      ],
+      "createdAt": [
+        109
+      ],
+      "updatedAt": [
+        109
+      ],
+      "deletedAt": [
+        109
+      ],
+      "createdBy": [
+        88
+      ],
+      "updatedBy": [
+        88
+      ],
+      "position": [
+        6
+      ],
+      "searchVector": [
         6
       ],
       "__typename": [
@@ -58904,22 +59036,30 @@ var defaultOptions2 = {
   }
 };
 
-// src/telemetryWebhook.function.ts
+// src/logic-functions/telemetryWebhook.function.ts
 var main = async (params) => {
   try {
-    const { action, payload } = params.body || {};
+    const {
+      action,
+      workspaceId,
+      userWorkspaceId,
+      userId,
+      userEmail,
+      userFirstName,
+      userLastName,
+      locale,
+      serverUrl
+    } = params.body || {};
     if (action !== "user_signup") {
       return {
         success: true,
         message: `Event type '${action}' ignored`
       };
     }
-    const userEmail = payload?.payload?.events?.[0]?.userEmail || payload?.payload?.events?.[0]?.userId;
     if (!userEmail) {
       return {
-        success: false,
-        message: "No email found in telemetry event",
-        error: "Missing userEmail in payload"
+        success: true,
+        message: "No email found in telemetry event"
       };
     }
     if (userEmail.toLowerCase().includes("example") || userEmail.toLowerCase().includes("test")) {
@@ -58929,27 +59069,62 @@ var main = async (params) => {
       };
     }
     const client = new CoreApiClient();
-    const result = await client.mutation({
+    let existingSelfHostingUserId = void 0;
+    try {
+      const { selfHostingUser: existingSelfHostingUser } = await client.query({
+        selfHostingUser: {
+          __args: {
+            filter: {
+              email: { primaryEmail: { eq: userEmail } }
+            }
+          },
+          id: true
+        }
+      });
+      existingSelfHostingUserId = existingSelfHostingUser?.id;
+    } catch {
+    }
+    if (existingSelfHostingUserId) {
+      await client.mutation({
+        updateSelfHostingUser: {
+          __args: {
+            id: existingSelfHostingUserId,
+            data: {
+              name: { firstName: userFirstName, lastName: userLastName },
+              email: { primaryEmail: userEmail, additionalEmails: null },
+              userWorkspaceId,
+              userId,
+              locale,
+              serverUrl
+            }
+          },
+          id: true
+        }
+      });
+      return {
+        success: true,
+        message: `Self hosting user ${existingSelfHostingUserId} updated`
+      };
+    }
+    const { createSelfHostingUser } = await client.mutation({
       createSelfHostingUser: {
         __args: {
           data: {
-            name: payload?.payload?.events?.[0]?.userFirstName + " " + payload?.payload?.events?.[0]?.userLastName,
-            email: {
-              primaryEmail: userEmail,
-              additionalEmails: null
-            }
-          },
-          upsert: true
+            name: { firstName: userFirstName, lastName: userLastName },
+            email: { primaryEmail: userEmail, additionalEmails: null },
+            workspaceId,
+            userWorkspaceId,
+            userId,
+            locale,
+            serverUrl
+          }
         },
-        id: true,
-        email: {
-          primaryEmail: true
-        }
+        id: true
       }
     });
     return {
       success: true,
-      message: `Self hosting user created/updated: ${result.createSelfHostingUser?.id}`
+      message: `Self hosting user ${createSelfHostingUser?.id} created`
     };
   } catch (error) {
     return {

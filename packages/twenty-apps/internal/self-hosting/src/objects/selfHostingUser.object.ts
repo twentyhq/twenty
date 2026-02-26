@@ -10,7 +10,7 @@ export default defineObject({
   labelPlural: 'Self Hosting Users',
   fields: [
     {
-      type: FieldType.TEXT,
+      type: FieldType.FULL_NAME,
       name: 'name',
       label: 'Name',
       description: 'Name of the self hosting user',
@@ -35,6 +35,42 @@ export default defineObject({
         'Domain extracted from the email address (e.g. domain.com / https://domain.com/)',
       universalIdentifier:
         UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.domain
+          .universalIdentifier,
+    },
+    {
+      type: FieldType.UUID,
+      name: 'userWorkspaceId',
+      label: 'User workspace Id',
+      description: 'User workspace id of the self hosting user',
+      universalIdentifier:
+        UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.userWorkspaceId
+          .universalIdentifier,
+    },
+    {
+      type: FieldType.UUID,
+      name: 'userId',
+      label: 'User Id',
+      description: 'User id of the self hosting user',
+      universalIdentifier:
+        UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.userId
+          .universalIdentifier,
+    },
+    {
+      type: FieldType.TEXT,
+      name: 'locale',
+      label: 'Locale',
+      description: 'Locale of the self hosting user',
+      universalIdentifier:
+        UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.locale
+          .universalIdentifier,
+    },
+    {
+      type: FieldType.TEXT,
+      name: 'serverUrl',
+      label: 'Server url',
+      description: 'Server url of the self hosting user',
+      universalIdentifier:
+        UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.serverUrl
           .universalIdentifier,
     },
     {
@@ -85,24 +121,6 @@ export default defineObject({
       defaultValue: false,
       universalIdentifier:
         UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.isTwenty
-          .universalIdentifier,
-    },
-    {
-      type: FieldType.TEXT,
-      name: 'personFirstName',
-      label: 'Person First Name',
-      description: 'First name of the person',
-      universalIdentifier:
-        UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personFirstName
-          .universalIdentifier,
-    },
-    {
-      type: FieldType.TEXT,
-      name: 'personLastName',
-      label: 'Person Last Name',
-      description: 'Last name of the person',
-      universalIdentifier:
-        UNIVERSAL_IDENTIFIERS.objects.selfHostingUser.fields.personLastName
           .universalIdentifier,
     },
     {

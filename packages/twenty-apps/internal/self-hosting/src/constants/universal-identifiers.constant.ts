@@ -8,6 +8,18 @@ export const UNIVERSAL_IDENTIFIERS = {
         domain: {
           universalIdentifier: '1dfa7d4e-c8f5-4639-b58e-3392a8789f76',
         },
+        userWorkspaceId: {
+          universalIdentifier: '297a7d6b-e407-4b2d-8c03-8964bc1b7805',
+        },
+        userId: {
+          universalIdentifier: '5c7ba3ce-1473-4e3d-8e7c-31816fcb87d8',
+        },
+        locale: {
+          universalIdentifier: '7b39df37-a22e-4f38-ae77-91cf3ee7c076',
+        },
+        serverUrl: {
+          universalIdentifier: 'f2516b77-2912-4cbb-8838-46ac5a5465d9',
+        },
         numberOfEmailsWithSameDomain: {
           universalIdentifier: '0bf05db0-6771-4400-91ca-1579ec11e76e',
         },
@@ -22,12 +34,6 @@ export const UNIVERSAL_IDENTIFIERS = {
         },
         isTwenty: {
           universalIdentifier: 'b1acef1f-7c10-47a9-899e-aaca45b36e04',
-        },
-        personFirstName: {
-          universalIdentifier: 'd5104f88-a6ff-4559-914b-f127ab0c6477',
-        },
-        personLastName: {
-          universalIdentifier: 'f39871d6-295d-48b1-ba44-5799dcc9b710',
         },
         personCity: {
           universalIdentifier: 'ca733484-e595-4257-9ca9-9a7802fb8bcb',
