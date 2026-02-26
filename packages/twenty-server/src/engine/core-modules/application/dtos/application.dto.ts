@@ -74,6 +74,11 @@ export class ApplicationDTO {
   defaultRoleId?: string;
 
   @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  settingsCustomTabFrontComponentId?: string;
+
+  @IsOptional()
   @Field(() => RoleDTO, { nullable: true })
   defaultLogicFunctionRole?: RoleDTO;
 

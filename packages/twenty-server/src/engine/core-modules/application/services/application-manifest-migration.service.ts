@@ -144,10 +144,12 @@ export class ApplicationManifestMigrationService {
       flatRoleMaps: refreshedFlatRoleMaps,
       flatObjectMetadataMaps: refreshedFlatObjectMetadataMaps,
       flatFieldMetadataMaps: refreshedFlatFieldMetadataMaps,
+      flatFrontComponentMaps: refreshedFlatFrontComponentMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatRoleMaps',
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
+      'flatFrontComponentMaps',
     ]);
 
     let defaultRoleId: string | null = null;
@@ -181,9 +183,36 @@ export class ApplicationManifestMigrationService {
       }
     }
 
-    if (isDefined(defaultRoleId)) {
+    let settingsCustomTabFrontComponentId: string | null = null;
+
+    const settingsCustomTabUniversalIdentifier =
+      manifest.application.settingsCustomTabFrontComponentUniversalIdentifier;
+
+    if (isDefined(settingsCustomTabUniversalIdentifier)) {
+      const flatFrontComponent = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: refreshedFlatFrontComponentMaps,
+        universalIdentifier: settingsCustomTabUniversalIdentifier,
+      });
+
+      if (!isDefined(flatFrontComponent)) {
+        throw new ApplicationException(
+          `Failed to resolve front component for settingsCustomTabFrontComponentUniversalIdentifier ${settingsCustomTabUniversalIdentifier}`,
+          ApplicationExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      settingsCustomTabFrontComponentId = flatFrontComponent.id;
+    }
+
+    if (
+      isDefined(defaultRoleId) ||
+      isDefined(settingsCustomTabFrontComponentId)
+    ) {
       await this.applicationService.update(ownerFlatApplication.id, {
-        defaultRoleId,
+        ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
+        ...(isDefined(settingsCustomTabFrontComponentId)
+          ? { settingsCustomTabFrontComponentId }
+          : {}),
       });
     }
   }
