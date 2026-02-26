@@ -98,6 +98,7 @@ export const CommandMenuItemNumberInput = ({
   const handleEscape = () => {
     removeFocusItemFromFocusStackById({ focusId });
     setDraftValue(value);
+    setHasError(false);
     inputRef.current?.blur();
   };
 
