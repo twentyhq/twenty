@@ -169,8 +169,8 @@ const createOrUpdateCloudUser = async ({
   const cloudUser = await client.mutation({
     createCloudUser2: {
       __args: {
-        id: user.userId,
         data: {
+          id: user.userId,
           name: user.fullName,
           email: {
             primaryEmail: user.email,

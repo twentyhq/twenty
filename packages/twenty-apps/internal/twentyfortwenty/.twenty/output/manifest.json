@@ -28,7 +28,7 @@
     },
     "yarnLockChecksum": "31c83d74119b810f2c956d41c2ee3576",
     "packageJsonChecksum": "1807c41d2a51ee36385ece5d35b3ef4f",
-    "apiClientChecksum": "3016815faabfbe0aa66c15e37330545f"
+    "apiClientChecksum": null
   },
   "objects": [
     {
@@ -1592,7 +1592,7 @@
       "handlerName": "default.config.handler",
       "sourceHandlerPath": "src/logic-functions/create-users.ts",
       "builtHandlerPath": "src/logic-functions/create-users.mjs",
-      "builtHandlerChecksum": "fa70115ecfe04b407346a3755c6d3534"
+      "builtHandlerChecksum": "9fdfe58ab36978af5b6d471c61c4146e"
     }
   ],
   "frontComponents": [],
