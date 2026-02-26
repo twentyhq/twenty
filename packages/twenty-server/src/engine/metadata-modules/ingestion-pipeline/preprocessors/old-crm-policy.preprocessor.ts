@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { IngestionPipelineEntity } from 'src/engine/metadata-modules/ingestion-pipeline/entities/ingestion-pipeline.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { lookupCarrierProductCommission } from 'src/modules/policy/utils/lookup-carrier-product-commission.util';
 
 type OldCrmPolicyPayload = Record<string, unknown> & {
   policy_id?: string | number;
@@ -229,6 +230,14 @@ export class OldCrmPolicyPreprocessor {
       ? await this.findOrCreateProduct(payload.product_name, workspaceId)
       : null;
 
+    // Look up LTV from CarrierProduct commission
+    const ltvCommission = await lookupCarrierProductCommission(
+      carrierId,
+      productId,
+      workspaceId,
+      this.globalWorkspaceOrmManager,
+    );
+
     // Map status
     const status = payload.status_name
       ? POLICY_STATUS_NAME_MAP[payload.status_name.toLowerCase()] || null
@@ -283,6 +292,8 @@ export class OldCrmPolicyPreprocessor {
       _carrierId: carrierId,
       _productId: productId,
       _submittedDate: submittedDate,
+      _ltvAmountMicros: ltvCommission?.amountMicros ?? null,
+      _ltvCurrencyCode: ltvCommission?.currencyCode ?? null,
     };
   }
 
