@@ -14,14 +14,18 @@ import {
 import { type ComponentSchema, type PropertySchema } from './schemas';
 import { schemaTypeToConstructor } from './utils';
 
-const schemaTypeToTs = (type: PropertySchema['type']): string => type;
+const formatEventSignature = (event: string): string =>
+  `${event}(event: RemoteEvent<SerializedEventData>): void`;
+
+const formatEventsTypeBlock = (events: readonly string[]): string =>
+  `{ ${events.map(formatEventSignature).join('; ')} }`;
 
 const generatePropertyEntries = (
   properties: Record<string, PropertySchema>,
 ): string[] =>
   Object.entries(properties).map(([name, schema]) => {
     const optional = schema.optional ? '?' : '';
-    return `'${name}'${optional}: ${schemaTypeToTs(schema.type)}`;
+    return `'${name}'${optional}: ${schema.type}`;
   });
 
 const writePropertyEntries = (
@@ -38,15 +42,12 @@ const writePropertyEntries = (
 const getSpecificProperties = (
   component: ComponentSchema,
   commonPropertyNames: Set<string>,
-): Record<string, PropertySchema> => {
-  const specific: Record<string, PropertySchema> = {};
-  for (const [name, schema] of Object.entries(component.properties)) {
-    if (!commonPropertyNames.has(name)) {
-      specific[name] = schema;
-    }
-  }
-  return specific;
-};
+): Record<string, PropertySchema> =>
+  Object.fromEntries(
+    Object.entries(component.properties).filter(
+      ([name]) => !commonPropertyNames.has(name),
+    ),
+  );
 
 const generateCommonPropertiesType = (
   sourceFile: SourceFile,
@@ -81,9 +82,7 @@ const generateCommonEventsType = (
     type: (writer) => {
       writer.block(() => {
         for (const event of events) {
-          writer.writeLine(
-            `${event}(event: RemoteEvent<SerializedEventData>): void;`,
-          );
+          writer.writeLine(`${formatEventSignature(event)};`);
         }
       });
     },
@@ -120,11 +119,7 @@ const generateCommonPropertiesConfig = (
         name: TYPE_NAMES.COMMON_PROPERTIES_CONFIG,
         initializer: (writer) => {
           writer.block(() => {
-            for (const [name, schema] of Object.entries(commonProperties)) {
-              writer.writeLine(
-                `'${name}': { type: ${schemaTypeToConstructor(schema.type)} },`,
-              );
-            }
+            writePropertyEntries(writer, commonProperties);
           });
         },
       },
@@ -139,37 +134,147 @@ const generateElementPropertyType = (
 ): void => {
   const hasSpecificProps = Object.keys(specificProperties).length > 0;
 
-  if (hasSpecificProps) {
-    const entries = generatePropertyEntries(specificProperties);
-    sourceFile.addTypeAlias({
-      isExported: true,
-      name: `${component.name}Properties`,
-      type: (writer) => {
-        if (isDefined(component.htmlTag)) {
-          writer.write(`${TYPE_NAMES.COMMON_PROPERTIES} & `);
-        }
-        writer.block(() => {
-          for (const entry of entries) {
-            writer.writeLine(`${entry};`);
-          }
-        });
-      },
-    });
+  if (!hasSpecificProps) {
+    return;
   }
+
+  const entries = generatePropertyEntries(specificProperties);
+  sourceFile.addTypeAlias({
+    isExported: true,
+    name: `${component.name}Properties`,
+    type: (writer) => {
+      if (isDefined(component.htmlTag)) {
+        writer.write(`${TYPE_NAMES.COMMON_PROPERTIES} & `);
+      }
+      writer.block(() => {
+        for (const entry of entries) {
+          writer.writeLine(`${entry};`);
+        }
+      });
+    },
+  });
+};
+
+type ElementEventAnalysis = {
+  specificEvents: string[];
+  shouldApplySharedEventsOnly: boolean;
+  hasExtraEvents: boolean;
+};
+
+const analyzeElementEvents = (
+  component: ComponentSchema,
+  commonEventNames: Set<string>,
+  isHtml: boolean,
+): ElementEventAnalysis => {
+  const specificEvents = component.events.filter(
+    (event) => !commonEventNames.has(event),
+  );
+  const hasExtraEvents = specificEvents.length > 0;
+  const shouldApplySharedEventsOnly =
+    !hasExtraEvents && commonEventNames.size > 0 && isHtml;
+
+  return { specificEvents, hasExtraEvents, shouldApplySharedEventsOnly };
+};
+
+const computeEventsType = (
+  component: ComponentSchema,
+  eventAnalysis: ElementEventAnalysis,
+): string => {
+  if (component.events.length === 0) {
+    return TYPE_NAMES.EMPTY_RECORD;
+  }
+
+  if (eventAnalysis.shouldApplySharedEventsOnly) {
+    return TYPE_NAMES.COMMON_EVENTS;
+  }
+
+  if (eventAnalysis.hasExtraEvents) {
+    return `${TYPE_NAMES.COMMON_EVENTS} & ${formatEventsTypeBlock(eventAnalysis.specificEvents)}`;
+  }
+
+  return formatEventsTypeBlock(component.events);
+};
+
+const writeEventsConfig = (
+  writer: CodeBlockWriter,
+  component: ComponentSchema,
+  eventAnalysis: ElementEventAnalysis,
+): void => {
+  if (eventAnalysis.shouldApplySharedEventsOnly) {
+    writer.write(`events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}],`);
+    writer.newLine();
+
+    return;
+  }
+
+  if (eventAnalysis.hasExtraEvents) {
+    const extraEntries = eventAnalysis.specificEvents
+      .map((event) => `'${event}'`)
+      .join(', ');
+
+    writer.write(
+      `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}, ${extraEntries}],`,
+    );
+    writer.newLine();
+
+    return;
+  }
+
+  const entries = component.events.map((event) => `'${event}'`).join(', ');
+  writer.write(`events: [${entries}],`);
+  writer.newLine();
+};
+
+const writePropertiesConfig = (
+  writer: CodeBlockWriter,
+  specificProperties: Record<string, PropertySchema>,
+  hasSpecificProps: boolean,
+  isHtml: boolean,
+  useSharedPropertiesConfig: boolean,
+): void => {
+  if (hasSpecificProps && isHtml) {
+    writer.write('properties: ');
+    writer.block(() => {
+      writer.writeLine(`...${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`);
+      writePropertyEntries(writer, specificProperties);
+    });
+    writer.write(',');
+    writer.newLine();
+
+    return;
+  }
+
+  if (useSharedPropertiesConfig && isHtml) {
+    writer.write(`properties: ${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`);
+    writer.newLine();
+
+    return;
+  }
+
+  writer.write('properties: ');
+  writer.block(() => {
+    writePropertyEntries(writer, specificProperties);
+  });
+  writer.write(',');
+  writer.newLine();
 };
 
 const generateElementDefinition = (
   sourceFile: SourceFile,
   component: ComponentSchema,
   specificProperties: Record<string, PropertySchema>,
-  useSharedEvents: boolean,
+  commonEventNames: Set<string>,
   useSharedPropertiesConfig: boolean,
 ): void => {
   const isHtml = isDefined(component.htmlTag);
-  const useShared = useSharedEvents && isHtml;
   const hasEvents = component.events.length > 0;
   const hasSpecificProps = Object.keys(specificProperties).length > 0;
   const hasProps = Object.keys(component.properties).length > 0;
+  const eventAnalysis = analyzeElementEvents(
+    component,
+    commonEventNames,
+    isHtml,
+  );
 
   const propsType = hasSpecificProps
     ? `${component.name}Properties`
@@ -177,11 +282,7 @@ const generateElementDefinition = (
       ? TYPE_NAMES.COMMON_PROPERTIES
       : TYPE_NAMES.EMPTY_RECORD;
 
-  const eventsType = hasEvents
-    ? useShared
-      ? TYPE_NAMES.COMMON_EVENTS
-      : `{ ${component.events.map((event) => `${event}(event: RemoteEvent<SerializedEventData>): void`).join('; ')} }`
-    : TYPE_NAMES.EMPTY_RECORD;
+  const eventsType = computeEventsType(component, eventAnalysis);
 
   sourceFile.addVariableStatement({
     isExported: true,
@@ -210,37 +311,16 @@ const generateElementDefinition = (
           writer.write('(');
           writer.block(() => {
             if (hasProps) {
-              if (hasSpecificProps && isHtml) {
-                writer.write('properties: ');
-                writer.block(() => {
-                  writer.writeLine(
-                    `...${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`,
-                  );
-                  writePropertyEntries(writer, specificProperties);
-                });
-                writer.write(',');
-                writer.newLine();
-              } else if (useSharedPropertiesConfig && isHtml) {
-                writer.write(
-                  `properties: ${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`,
-                );
-                writer.newLine();
-              } else {
-                writer.write('properties: ');
-                writer.block(() => {
-                  writePropertyEntries(writer, specificProperties);
-                });
-                writer.write(',');
-                writer.newLine();
-              }
+              writePropertiesConfig(
+                writer,
+                specificProperties,
+                hasSpecificProps,
+                isHtml,
+                useSharedPropertiesConfig,
+              );
             }
             if (hasEvents) {
-              writer.write(
-                useShared
-                  ? `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}],`
-                  : `events: [${component.events.map((event) => `'${event}'`).join(', ')}],`,
-              );
-              writer.newLine();
+              writeEventsConfig(writer, component, eventAnalysis);
             }
           });
           writer.write(')');
@@ -304,7 +384,7 @@ export const generateRemoteElements = (
     overwrite: true,
   });
 
-  const useSharedEvents = commonEvents.length > 0;
+  const commonEventNames = new Set(commonEvents);
   const useSharedPropertiesConfig = Object.keys(commonProperties).length > 0;
 
   sourceFile.addImportDeclaration({
@@ -327,7 +407,7 @@ export const generateRemoteElements = (
 
   generateCommonPropertiesType(sourceFile, commonProperties);
 
-  if (useSharedEvents) {
+  if (commonEventNames.size > 0) {
     generateCommonEventsType(sourceFile, commonEvents);
   }
 
@@ -345,7 +425,7 @@ export const generateRemoteElements = (
       sourceFile,
       component,
       specificProperties,
-      useSharedEvents,
+      commonEventNames,
       useSharedPropertiesConfig,
     );
   }

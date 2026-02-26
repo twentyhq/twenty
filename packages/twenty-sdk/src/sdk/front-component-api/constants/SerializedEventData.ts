@@ -23,4 +23,11 @@ export type SerializedEventData = {
   deltaY?: number;
   deltaZ?: number;
   deltaMode?: number;
+  currentTime?: number;
+  duration?: number;
+  paused?: boolean;
+  ended?: boolean;
+  volume?: number;
+  muted?: boolean;
+  playbackRate?: number;
 };
