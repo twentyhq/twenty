@@ -11,11 +11,18 @@ import { defineLogicFunction } from 'twenty-sdk';
 import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
 import { z } from 'zod';
 
+interface LocalTranscriptEntry {
+  text: string;
+  speaker: string;
+  timestamp: string;
+}
+
 interface EndRecordingBody {
   callRecordingId: string;
   audioUrl: string;
   transcriptUrl?: string;
   participants?: Participant[];
+  localTranscript?: LocalTranscriptEntry[];
 }
 
 type UploadedFileRef = { fileId: string; label: string };
@@ -52,6 +59,13 @@ const transcriptToMarkdown = (
     })
     .join('\n\n');
 
+const localTranscriptToMarkdown = (
+  entries: LocalTranscriptEntry[],
+): string =>
+  entries
+    .map((entry) => `**${entry.speaker}:** ${entry.text}`)
+    .join('\n\n');
+
 const downloadFile = async (
   url: string,
 ): Promise<{ buffer: Buffer; contentType: string; fileName: string }> => {
@@ -78,6 +92,7 @@ const downloadFile = async (
 const processTranscript = async (
   metadataClient: InstanceType<typeof MetadataApiClient>,
   transcriptUrl: string | undefined,
+  localTranscript?: LocalTranscriptEntry[],
 ): Promise<
   | {
       transcriptFile?: UploadedFileRef[];
@@ -86,6 +101,14 @@ const processTranscript = async (
   | undefined
 > => {
   if (!transcriptUrl) {
+    if (localTranscript?.length) {
+      const markdown = localTranscriptToMarkdown(localTranscript);
+
+      return {
+        transcript: { blocknote: null, markdown },
+      };
+    }
+
     return undefined;
   }
 
@@ -98,9 +121,13 @@ const processTranscript = async (
     TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
   );
 
-  const rawJson = JSON.parse(buffer.toString('utf-8'));
-  const entries = transcriptSchema.parse(rawJson);
-  const markdown = transcriptToMarkdown(entries);
+  // Prefer the local transcript (with correct speaker names from active speaker tracking)
+  // over the Recall transcript (which attributes all speech to the host)
+  const markdown = localTranscript?.length
+    ? localTranscriptToMarkdown(localTranscript)
+    : transcriptToMarkdown(transcriptSchema.parse(
+        JSON.parse(buffer.toString('utf-8')),
+      ));
 
   return {
     transcriptFile: [{ fileId: uploadedTranscript.id, label: fileName }],
@@ -153,6 +180,7 @@ const handler = async (event: any) => {
   const transcriptData = await processTranscript(
     metadataClient,
     body.transcriptUrl,
+    body.localTranscript,
   );
 
   const callName = body.participants?.length
