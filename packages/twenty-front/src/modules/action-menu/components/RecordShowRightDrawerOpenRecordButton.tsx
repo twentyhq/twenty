@@ -102,7 +102,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
       store.set(parentViewState, undefined);
     }
 
-    store.set(commandMenuNavigationStackState, []);
+    store.set(commandMenuNavigationStackState.atom, []);
 
     navigate(AppPath.RecordShowPage, {
       objectNameSingular,
