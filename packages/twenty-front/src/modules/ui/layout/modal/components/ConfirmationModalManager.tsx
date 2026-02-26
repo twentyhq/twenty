@@ -1,5 +1,4 @@
 import { useAtomValue } from 'jotai';
-import { useCallback } from 'react';
 
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { CONFIRMATION_MODAL_MANAGER_ID } from '@/ui/layout/modal/hooks/useConfirmationModalManager';
@@ -16,9 +15,17 @@ export const ConfirmationModalManager = () => {
   const isOpen = useAtomValue(isModalOpenedAtom);
   const setConfig = useSetAtomState(confirmationModalManagerState);
 
-  const handleClose = useCallback(() => {
+  const handleConfirmClick = async () => {
+    try {
+      await config?.onConfirmClick();
+    } finally {
+      setConfig(null);
+    }
+  };
+
+  const handleClose = () => {
     setConfig(null);
-  }, [setConfig]);
+  };
 
   if (!config || !isOpen) {
     return null;
@@ -29,7 +36,7 @@ export const ConfirmationModalManager = () => {
       modalId={CONFIRMATION_MODAL_MANAGER_ID}
       title={config.title}
       subtitle={config.subtitle}
-      onConfirmClick={config.onConfirmClick}
+      onConfirmClick={handleConfirmClick}
       onClose={handleClose}
       confirmButtonText={config.confirmButtonText}
       confirmButtonAccent={config.confirmButtonAccent}
