@@ -7,6 +7,7 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -14,6 +15,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { AppRegistrationEntity } from 'src/engine/core-modules/app-registration/app-registration.entity';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -90,6 +92,16 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
 
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
+
+  @Column({ nullable: true, type: 'uuid' })
+  appRegistrationId: string | null;
+
+  @ManyToOne(() => AppRegistrationEntity, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'appRegistrationId' })
+  appRegistration: Relation<AppRegistrationEntity> | null;
 
   @OneToMany(() => AgentEntity, (agent) => agent.application, {
     onDelete: 'CASCADE',

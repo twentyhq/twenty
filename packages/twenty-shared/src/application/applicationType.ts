@@ -1,16 +1,6 @@
 import { type ApplicationVariables } from './applicationVariablesType';
+import { type ServerVariables } from './serverVariablesType';
 import { type SyncableEntityOptions } from './syncableEntityOptionsType';
-
-export type ApplicationMarketplaceData = {
-  author?: string;
-  category?: string;
-  logo?: string;
-  screenshots?: string[];
-  aboutDescription?: string;
-  providers?: string[];
-  websiteUrl?: string;
-  termsUrl?: string;
-};
 
 export type ApplicationManifest = SyncableEntityOptions & {
   defaultRoleUniversalIdentifier: string;
@@ -19,7 +9,15 @@ export type ApplicationManifest = SyncableEntityOptions & {
   description: string;
   icon?: string;
   applicationVariables?: ApplicationVariables;
-  marketplaceData?: ApplicationMarketplaceData;
+  serverVariables?: ServerVariables;
+  author?: string;
+  logoUrl?: string;
+  category?: string;
+  screenshots?: string[];
+  aboutDescription?: string;
+  providers?: string[];
+  websiteUrl?: string;
+  termsUrl?: string;
   packageJsonChecksum: string | null;
   yarnLockChecksum: string | null;
   apiClientChecksum: string | null;
