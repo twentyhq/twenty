@@ -20,26 +20,27 @@ import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
   const handleChange = (text) => {
-    console.log("输入已更改：", text);
+    console.log("Input changed:", text);
   };
 
   const handleKeyDown = (event) => {
-    console.log("按下的键：", event.key);
+    console.log("Key pressed:", event.key);
   };
 
   return (
-      <TextInput
-        className
-        label="用户名"
-        onChange={handleChange}
-        fullWidth={false}
-        disableHotkeys={false}
-        error="用户名无效"
-        onKeyDown={handleKeyDown}
-        RightIcon={null}
-      />
+    <TextInput
+      className
+      label="Username"
+      onChange={handleChange}
+      fullWidth={false}
+      disableHotkeys={false}
+      error="Invalid username"
+      onKeyDown={handleKeyDown}
+      RightIcon={null}
+    />
   );
 };
+
 ```
 
 
@@ -81,15 +82,15 @@ import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
 export const MyComponent = () => {
   return (
-      <AutosizeTextInput
-        onValidate={() => console.log("onValidate 函数已触发")}
-        minRows={1}
-        placeholder="写一条评论"
-        onFocus={() => console.log("onFocus 函数已触发")}
-        variant="icon"
-        buttonTitle
-        value="任务： "
-      />
+    <AutosizeTextInput
+      onValidate={() => console.log("onValidate function fired")}
+      minRows={1}
+      placeholder="Write a comment"
+      onFocus={() => console.log("onFocus function fired")}
+      variant="icon"
+      buttonTitle
+      value="Task: "
+    />
   );
 };
 ```

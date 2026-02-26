@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-Внутренне текущая выбранная область хранится в состоянии Jotai, которое используется по всему приложению:
+Internally, the currently selected scope is stored in a Jotai atom that is shared across the application :
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-Но это состояние Jotai никогда не следует обрабатывать вручную! Мы увидим, как использовать это в следующем разделе.
+But this atom should never be handled manually ! Мы увидим, как использовать это в следующем разделе.
 
 ## Как это работает внутренне?
 
 Мы сделали тонкую обертку поверх [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro), которая делает его более производительным и избегает ненужных повторных рендеров.
 
-Мы также создаем состояние Jotai, чтобы управлять состоянием горячей клавиши и сделать его доступным везде в приложении.
+We also create a Jotai atom to handle the hotkey scope state and make it available everywhere in the application.

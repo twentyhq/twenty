@@ -20,27 +20,27 @@ import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
   const handleChange = (text) => {
-    console.log("Girdi değişti:", text);
+    console.log("Input changed:", text);
   };
 
   const handleKeyDown = (event) => {
-    console.log("Basılan tuş:", event.key);
+    console.log("Key pressed:", event.key);
   };
 
   return (
-      <TextInput
-        className
-        label="Kullanıcı adı"
-        onChange={handleChange}
-        fullWidth={false}
-        disableHotkeys={false}
-        error="Geçersiz kullanıcı adı"
-        onKeyDown={handleKeyDown}
-        RightIcon={null}
-      />
+    <TextInput
+      className
+      label="Username"
+      onChange={handleChange}
+      fullWidth={false}
+      disableHotkeys={false}
+      error="Invalid username"
+      onKeyDown={handleKeyDown}
+      RightIcon={null}
+    />
   );
 };
-},{
+
 ```
 
 
@@ -82,15 +82,15 @@ import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
 export const MyComponent = () => {
   return (
-      <AutosizeTextInput
-        onValidate={() => console.log("onValidate fonksiyonu tetiklendi")}
-        minRows={1}
-        placeholder="Bir yorum yazın"
-        onFocus={() => console.log("onFocus fonksiyonu tetiklendi")}
-        variant="icon"
-        buttonTitle
-        value="Görev: "
-      />
+    <AutosizeTextInput
+      onValidate={() => console.log("onValidate function fired")}
+      minRows={1}
+      placeholder="Write a comment"
+      onFocus={() => console.log("onFocus function fired")}
+      variant="icon"
+      buttonTitle
+      value="Task: "
+    />
   );
 };
 ```

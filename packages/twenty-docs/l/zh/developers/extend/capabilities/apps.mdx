@@ -52,22 +52,25 @@ npx create-twenty-app@latest my-app --interactive
 从这里您可以：
 
 ```bash filename="Terminal"
-# 向你的应用添加一个新实体（引导式）
+# Add a new entity to your application (guided)
 yarn twenty entity:add
 
-# 监听你的应用函数日志
+# Watch your application's function logs
 yarn twenty function:logs
 
-# 按名称执行一个函数
-yarn twenty function:execute -n my-function -p '{\"name\": \"test\"}'
+# Execute a function by name
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# 执行安装后函数
+# Execute the pre-install function
+yarn twenty function:execute --preInstall
+
+# Execute the post-install function
 yarn twenty function:execute --postInstall
 
-# 从当前工作区卸载该应用
+# Uninstall the application from the current workspace
 yarn twenty app:uninstall
 
-# 显示命令帮助
+# Display commands' help
 yarn twenty help
 ```
 
@@ -80,7 +83,7 @@ yarn twenty help
 * 将一个最小的基础应用复制到 `my-twenty-app/` 中
 * 添加本地 `twenty-sdk` 依赖和 Yarn 4 配置
 * 创建与 `twenty` CLI 关联的配置文件和脚本
-* Generates core files (application config, default function role, post-install function) plus example files based on the scaffolding mode
+* Generates core files (application config, default function role, pre-install and post-install functions) plus example files based on the scaffolding mode
 
 A freshly scaffolded app with the default `--exhaustive` mode looks like this:
 
@@ -107,6 +110,7 @@ my-twenty-app/
   │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
   │   ├── hello-world.ts                # Example logic function
+  │   ├── pre-install.ts                # Pre-install logic function
   │   └── post-install.ts               # Post-install logic function
   ├── front-components/
   │   └── hello-world.tsx               # Example front component
@@ -118,7 +122,7 @@ my-twenty-app/
       └── example-skill.ts                # Example AI agent skill definition
 ```
 
-With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
+With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`). With `--interactive`, you choose which example files to include.
 
 总体来说：
 
@@ -135,16 +139,18 @@ With `--minimal`, only the core files are created (`application-config.ts`, `rol
 
 该 SDK 通过在你的 TypeScript 文件中解析 **`export default define<Entity>({...})`** 调用来检测实体。 每种实体类型都有一个从 `twenty-sdk` 导出的对应辅助函数：
 
-| 辅助函数                         | 实体类型                             |
-| ---------------------------- | -------------------------------- |
-| `defineObject()`             | 自定义对象定义                          |
-| `defineLogicFunction()`      | 逻辑函数定义                           |
-| `defineFrontComponent()`     | 前端组件定义                           |
-| `defineRole()`               | 角色定义                             |
-| `defineField()`              | 现有对象的字段扩展                        |
-| `defineView()`               | Saved view definitions           |
-| `defineNavigationMenuItem()` | Navigation menu item definitions |
-| `defineSkill()`              | AI agent skill definitions       |
+| 辅助函数                               | 实体类型                                                  |
+| ---------------------------------- | ----------------------------------------------------- |
+| `defineObject()`                   | 自定义对象定义                                               |
+| `defineLogicFunction()`            | 逻辑函数定义                                                |
+| `definePreInstallLogicFunction()`  | Pre-install logic function (runs before installation) |
+| `definePostInstallLogicFunction()` | Post-install logic function (runs after installation) |
+| `defineFrontComponent()`           | 前端组件定义                                                |
+| `defineRole()`                     | 角色定义                                                  |
+| `defineField()`                    | 现有对象的字段扩展                                             |
+| `defineView()`                     | Saved view definitions                                |
+| `defineNavigationMenuItem()`       | Navigation menu item definitions                      |
+| `defineSkill()`                    | AI agent skill definitions                            |
 
 <Note>
 **文件命名是灵活的。** 实体检测基于 AST — SDK 会扫描你的源文件以查找 `export default define<Entity>({...})` 模式。 你可以按照自己的喜好组织文件和文件夹。 按实体类型分组（例如 `logic-functions/`、`roles/`）只是代码组织的一种约定，并非必需。
@@ -165,7 +171,7 @@ export default defineObject({
 
 后续命令将添加更多文件和文件夹：
 
-* `yarn twenty app:dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
+* `yarn twenty app:dev` 会在 `node_modules/twenty-sdk/generated` 中自动生成两个类型化 API 客户端：`CoreApiClient`（通过 `/graphql` 获取工作区数据）和 `MetadataApiClient`（通过 `/metadata` 处理工作区配置和文件上传）。
 * `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## 身份验证
@@ -209,17 +215,19 @@ twenty-sdk 提供你在应用中使用的类型化构件和辅助函数。 以�
 
 该 SDK 提供辅助函数用于定义你的应用实体。 如 [实体检测](#entity-detection) 中所述，你必须使用 `export default define<Entity>({...})` 才能让你的实体被检测到：
 
-| 函数                           | 目的                              |
-| ---------------------------- | ------------------------------- |
-| `defineApplication()`        | 配置应用元数据（必需，每个应用一个）              |
-| `defineObject()`             | 定义带字段的自定义对象                     |
-| `defineLogicFunction()`      | 定义带处理程序的逻辑函数                    |
-| `defineFrontComponent()`     | 为自定义 UI 定义前端组件                  |
-| `defineRole()`               | 配置角色权限和对象访问                     |
-| `defineField()`              | 为现有对象扩展额外字段                     |
-| `defineView()`               | Define saved views for objects  |
-| `defineNavigationMenuItem()` | Define sidebar navigation links |
-| `defineSkill()`              | Define AI agent skills          |
+| 函数                                 | 目的                                                 |
+| ---------------------------------- | -------------------------------------------------- |
+| `defineApplication()`              | 配置应用元数据（必需，每个应用一个）                                 |
+| `defineObject()`                   | 定义带字段的自定义对象                                        |
+| `defineLogicFunction()`            | 定义带处理程序的逻辑函数                                       |
+| `definePreInstallLogicFunction()`  | Define a pre-install logic function (one per app)  |
+| `definePostInstallLogicFunction()` | Define a post-install logic function (one per app) |
+| `defineFrontComponent()`           | 为自定义 UI 定义前端组件                                     |
+| `defineRole()`                     | 配置角色权限和对象访问                                        |
+| `defineField()`                    | 为现有对象扩展额外字段                                        |
+| `defineView()`                     | Define saved views for objects                     |
+| `defineNavigationMenuItem()`       | Define sidebar navigation links                    |
+| `defineSkill()`                    | Define AI agent skills                             |
 
 这些函数会在构建时校验你的配置，并提供 IDE 自动补全和类型安全。
 
@@ -319,6 +327,7 @@ export default defineObject({
 * **应用的身份**：标识符、显示名称和描述。
 * **函数如何运行**：它们用于权限的角色。
 * **（可选）变量**：以环境变量形式提供给函数的键值对。
+* **(Optional) pre-install function**: a logic function that runs before the app is installed.
 * **（可选）安装后函数**：在应用安装后运行的逻辑函数。
 
 使用 `defineApplication()` 定义你的应用配置：
@@ -327,7 +336,6 @@ export default defineObject({
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -343,7 +351,6 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -352,7 +359,7 @@ export default defineApplication({
 * `universalIdentifier` 字段是你拥有的确定性 ID；生成一次并在多次同步中保持稳定。
 * `applicationVariables` 会变成函数可用的环境变量（例如，`DEFAULT_RECIPIENT_NAME` 可作为 `process.env.DEFAULT_RECIPIENT_NAME` 使用）。
 * `defaultRoleUniversalIdentifier` 必须与角色文件一致（见下文）。
-* `postInstallLogicFunctionUniversalIdentifier`（可选）指向一个在应用安装后自动运行的逻辑函数。 参见 [安装后函数](#post-install-functions)。
+* Pre-install and post-install functions are automatically detected during the manifest build. See [Pre-install functions](#pre-install-functions) and [Post-install functions](#post-install-functions).
 
 #### 角色和权限
 
@@ -491,6 +498,44 @@ export default defineLogicFunction({
 * `triggers` 数组是可选的。 没有触发器的函数可作为实用函数，被其他函数调用。
 * 你可以在单个函数中混用多种触发器类型。
 
+### Pre-install functions
+
+A pre-install function is a logic function that runs automatically before your app is installed on a workspace. This is useful for validation tasks, prerequisite checks, or preparing workspace state before the main installation proceeds.
+
+When you scaffold a new app with `create-twenty-app`, a pre-install function is generated for you at `src/logic-functions/pre-install.ts`:
+
+```typescript
+// src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+You can also manually execute the pre-install function at any time using the CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --preInstall
+```
+
+关键点：
+
+* Pre-install functions use `definePreInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
+* Only one pre-install function is allowed per application. The manifest build will error if more than one is detected.
+* The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
+* The default timeout is set to 300 seconds (5 minutes) to allow for longer preparation tasks.
+* Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `function:execute --preInstall`.
+
 ### 安装后函数
 
 安装后函数是在你的应用安装到工作区后自动运行的逻辑函数。 这对于一次性设置任务很有用，例如填充默认数据、创建初始记录或配置工作区设置。
@@ -499,31 +544,18 @@ export default defineLogicFunction({
 
 ```typescript
 // src/logic-functions/post-install.ts
-import { defineLogicFunction } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
 
-export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
-
-const handler = async (): Promise<void> => {
-  console.log('Post install logic function executed successfully!');
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
-export default defineLogicFunction({
-  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+export default definePostInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
   handler,
-});
-```
-
-通过在 `application-config.ts` 中引用其通用标识符，可将该函数接入你的应用：
-
-```typescript
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
-
-export default defineApplication({
-  // ...
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -535,8 +567,10 @@ yarn twenty function:execute --postInstall
 
 关键点：
 
-* Post-install functions are standard logic functions — they use `defineLogicFunction()` like any other function.
-* The `postInstallLogicFunctionUniversalIdentifier` field in `defineApplication()` is optional. If omitted, no function runs after installation.
+* Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
+* Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
+* The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
 * The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
 * Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `function:execute --postInstall`.
 
@@ -734,7 +768,7 @@ export default defineFrontComponent({
 你可以通过两种方式创建新的前端组件：
 
 * **脚手架生成**：运行 `yarn twenty entity:add` 并选择添加新前端组件的选项。
-* **Manual**: Create a new `.tsx` file and use `defineFrontComponent()`, following the same pattern.
+* **手动**：创建一个新的 `.tsx` 文件，并使用 `defineFrontComponent()`，遵循相同的模式。
 
 ### 技能
 
@@ -771,12 +805,12 @@ You can create new skills in two ways:
 * **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
 * **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
 
-### Generated typed clients
+### 生成的类型化客户端
 
-Two typed clients are auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/generated` based on your workspace schema:
+两个类型化客户端由 `yarn twenty app:dev` 自动生成（基于你的工作区架构），并存放在 `node_modules/twenty-sdk/generated`：
 
-* **`CoreApiClient`** — queries the `/graphql` endpoint for workspace data
-* **`MetadataApiClient`** — queries the `/metadata` endpoint for workspace configuration and file uploads
+* **`CoreApiClient`** — 查询 `/graphql` 端点以获取工作区数据
+* **`MetadataApiClient`** — 查询 `/metadata` 端点以获取工作区配置并处理文件上传
 
 ```typescript
 import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
@@ -788,7 +822,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Both clients are re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
+每当你的对象或字段发生变化时，`yarn twenty app:dev` 都会自动重新生成这两个客户端。
 
 #### 逻辑函数中的运行时凭据
 
@@ -805,7 +839,7 @@ Both clients are re-generated automatically by `yarn twenty app:dev` whenever yo
 
 #### 上传文件
 
-The generated `MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. 由于标准 GraphQL 客户端不原生支持多部分文件上传，该客户端提供了一个专用方法，在底层实现了 [GraphQL 多部分请求规范](https://github.com/jaydenseric/graphql-multipart-request-spec)。
+生成的 `MetadataApiClient` 包含一个 `uploadFile` 方法，用于将文件附加到你的工作区对象的文件类型字段。 由于标准 GraphQL 客户端不原生支持多部分文件上传，该客户端提供了一个专用方法，在底层实现了 [GraphQL 多部分请求规范](https://github.com/jaydenseric/graphql-multipart-request-spec)。
 
 ```typescript
 import { MetadataApiClient } from 'twenty-sdk/generated';
@@ -846,7 +880,7 @@ uploadFile(
 
 关键点：
 
-* The `uploadFile` method is available on `MetadataApiClient` because the upload mutation is resolved by the `/metadata` endpoint.
+* `uploadFile` 方法可在 `MetadataApiClient` 上使用，因为上传 mutation 由 `/metadata` 端点解析。
 * 它使用该字段的 `universalIdentifier`（而不是其工作区特定的 ID），因此你的上传代码可以在安装了你的应用的任何工作区中使用——这与应用在其他地方引用字段的方式保持一致。
 * 返回的 `url` 是一个签名 URL，你可以用它来访问已上传的文件。
 
