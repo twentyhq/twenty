@@ -33,11 +33,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "name": true,
   },
   "targetEmploymentHistoryId": true,
-  "targetMedicine": {
-    "id": true,
-    "name": true,
-  },
-  "targetMedicineId": true,
   "targetOpportunity": {
     "id": true,
     "name": true,
@@ -58,11 +53,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   },
   "targetPetCareAgreementId": true,
   "targetPetId": true,
-  "targetPostcard": {
-    "id": true,
-    "name": true,
-  },
-  "targetPostcardId": true,
   "targetRocket": {
     "id": true,
     "name": true,
@@ -73,11 +63,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "name": true,
   },
   "targetSurveyResultId": true,
-  "targetToto": {
-    "id": true,
-    "name": true,
-  },
-  "targetTotoId": true,
   "updatedAt": true,
   "updatedBy": true,
 }
@@ -101,11 +86,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "name": true,
   },
   "targetEmploymentHistoryId": true,
-  "targetMedicine": {
-    "id": true,
-    "name": true,
-  },
-  "targetMedicineId": true,
   "targetOpportunity": {
     "id": true,
     "name": true,
@@ -126,11 +106,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   },
   "targetPetCareAgreementId": true,
   "targetPetId": true,
-  "targetPostcard": {
-    "id": true,
-    "name": true,
-  },
-  "targetPostcardId": true,
   "targetRocket": {
     "id": true,
     "name": true,
@@ -141,11 +116,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "name": true,
   },
   "targetSurveyResultId": true,
-  "targetToto": {
-    "id": true,
-    "name": true,
-  },
-  "targetTotoId": true,
   "updatedAt": true,
   "updatedBy": true,
 }
@@ -179,11 +149,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "name": true,
   },
   "targetEmploymentHistoryId": true,
-  "targetMedicine": {
-    "id": true,
-    "name": true,
-  },
-  "targetMedicineId": true,
   "targetOpportunity": {
     "id": true,
     "name": true,
@@ -204,11 +169,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   },
   "targetPetCareAgreementId": true,
   "targetPetId": true,
-  "targetPostcard": {
-    "id": true,
-    "name": true,
-  },
-  "targetPostcardId": true,
   "targetRocket": {
     "id": true,
     "name": true,
@@ -219,11 +179,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "name": true,
   },
   "targetSurveyResultId": true,
-  "targetToto": {
-    "id": true,
-    "name": true,
-  },
-  "targetTotoId": true,
   "task": {
     "id": true,
     "title": true,
@@ -252,11 +207,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "name": true,
   },
   "targetEmploymentHistoryId": true,
-  "targetMedicine": {
-    "id": true,
-    "name": true,
-  },
-  "targetMedicineId": true,
   "targetOpportunity": {
     "id": true,
     "name": true,
@@ -277,11 +227,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   },
   "targetPetCareAgreementId": true,
   "targetPetId": true,
-  "targetPostcard": {
-    "id": true,
-    "name": true,
-  },
-  "targetPostcardId": true,
   "targetRocket": {
     "id": true,
     "name": true,
@@ -292,11 +237,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "name": true,
   },
   "targetSurveyResultId": true,
-  "targetToto": {
-    "id": true,
-    "name": true,
-  },
-  "targetTotoId": true,
   "updatedAt": true,
   "updatedBy": true,
 }
