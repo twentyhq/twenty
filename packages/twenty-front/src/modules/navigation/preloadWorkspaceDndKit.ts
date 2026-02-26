@@ -1,7 +1,9 @@
 let preloadScheduled = false;
 
 export const preloadWorkspaceDndKit = (): void => {
-  if (preloadScheduled) return;
+  if (preloadScheduled) {
+    return;
+  }
   preloadScheduled = true;
 
   const preload = () => {
