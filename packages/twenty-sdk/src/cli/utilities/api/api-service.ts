@@ -1,13 +1,13 @@
+import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import chalk from 'chalk';
 import * as fs from 'fs';
-import { createClient } from 'graphql-sse';
 import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql';
+import { createClient } from 'graphql-sse';
 import * as path from 'path';
 import { type Manifest } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
-import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { pascalCase } from 'twenty-shared/utils';
 
 export class ApiService {
@@ -305,7 +305,8 @@ export class ApiService {
 
       return {
         success: true,
-        data: response.data.data.findApplicationRegistrationByUniversalIdentifier,
+        data: response.data.data
+          .findApplicationRegistrationByUniversalIdentifier,
       };
     } catch (error) {
       return {

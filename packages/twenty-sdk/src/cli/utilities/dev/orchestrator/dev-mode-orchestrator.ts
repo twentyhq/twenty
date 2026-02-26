@@ -227,7 +227,8 @@ export class DevModeOrchestrator {
 
     const resolveResult = await this.resolveApplicationStep.execute({
       manifest,
-      applicationRegistrationId: registerResult.applicationRegistrationId ?? undefined,
+      applicationRegistrationId:
+        registerResult.applicationRegistrationId ?? undefined,
     });
 
     if (!resolveResult.applicationId) {

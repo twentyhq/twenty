@@ -19,13 +19,11 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 
 @Entity({ name: 'applicationRegistrationVariable', schema: 'core' })
 @ObjectType('ApplicationRegistrationVariable')
-@Unique(
-  'IDX_APPLICATION_REGISTRATION_VARIABLE_KEY_APPLICATION_REGISTRATION_ID_UNIQUE',
-  ['key', 'applicationRegistrationId'],
-)
-@Index('IDX_APPLICATION_REGISTRATION_VARIABLE_APPLICATION_REGISTRATION_ID', [
+@Unique('IDX_APP_REG_VAR_KEY_APP_REGISTRATION_ID_UNIQUE', [
+  'key',
   'applicationRegistrationId',
 ])
+@Index('IDX_APP_REG_VAR_APP_REGISTRATION_ID', ['applicationRegistrationId'])
 export class ApplicationRegistrationVariableEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
