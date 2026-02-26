@@ -10,6 +10,7 @@ type CallRecording = {
   endedAt: string | null;
   recordingFile: Array<{ fileId: string; label: string; url: string | null; extension: string | null }>;
   transcriptFile: Array<{ fileId: string; label: string; url: string | null; extension: string | null }>;
+  transcript: { markdown: string | null } | null;
   summary: { markdown: string | null } | null;
 };
 
@@ -59,6 +60,9 @@ export const useCallRecording = () => {
               url: true,
               extension: true,
             },
+            transcript: {
+              markdown: true,
+            },
             summary: {
               markdown: true,
             },
@@ -82,6 +86,9 @@ export const useCallRecording = () => {
             url: file.url ?? null,
             extension: file.extension ?? null,
           })) ?? [],
+          transcript: callRecording?.transcript
+            ? { markdown: callRecording.transcript.markdown ?? null }
+            : null,
           summary: callRecording?.summary
             ? { markdown: callRecording.summary.markdown ?? null }
             : null,

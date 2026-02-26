@@ -1562,10 +1562,9 @@ async function processTranscriptData(evt) {
       return;
     }
 
-    // Extract the transcript data
     const words = evt.data.data.words || [];
     if (words.length === 0) {
-      return; // No words to process
+      return;
     }
 
     // The SDK's transcript.data always attributes speech to the host on Google Meet.
@@ -1573,33 +1572,31 @@ async function processTranscriptData(evt) {
     const speaker = currentActiveSpeaker || evt.data.data.participant?.name || "Unknown Speaker";
     console.log(`[speaker-debug] Using active speaker: ${speaker} (currentActiveSpeaker=${currentActiveSpeaker}, transcript.participant=${evt.data.data.participant?.name})`);
 
-    // Combine all words into a single text
     const text = words.map(word => word.text).join(" ");
-
     console.log(`Transcript from ${speaker}: "${text}"`);
 
-    // Use the file operation manager to safely update the meetings data
     await fileOperationManager.scheduleOperation(async (meetingsData) => {
-      // Find the meeting note with this ID
       const noteIndex = meetingsData.pastMeetings.findIndex(meeting => meeting.id === noteId);
       if (noteIndex === -1) {
         console.log(`No meeting note found with ID: ${noteId}`);
-        return null; // Return null to indicate no changes needed
+        return null;
       }
 
-      // Add the transcript data
       const meeting = meetingsData.pastMeetings[noteIndex];
 
-      // Initialize transcript array if it doesn't exist
       if (!meeting.transcript) {
         meeting.transcript = [];
       }
 
-      // Add the new transcript entry
+      // Store in the same format as the AssemblyAI transcript file so the
+      // backend can upload it directly with correct speakers + timestamps
       meeting.transcript.push({
-        text,
-        speaker,
-        timestamp: new Date().toISOString()
+        participant: { name: speaker },
+        words: words.map(word => ({
+          text: word.text,
+          start_timestamp: word.start_timestamp || undefined,
+          end_timestamp: word.end_timestamp || undefined,
+        })),
       });
 
       console.log(`Added transcript data for meeting: ${noteId}`);

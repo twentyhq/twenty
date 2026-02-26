@@ -19,7 +19,9 @@ export type TranscriptEntry = {
   words: TranscriptWord[];
 };
 
-export const useTranscript = (transcriptFileUrl: string | null | undefined) => {
+export const useTranscript = (
+  transcriptFileUrl: string | null | undefined,
+) => {
   const [entries, setEntries] = useState<TranscriptEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);

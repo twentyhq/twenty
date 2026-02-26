@@ -747,19 +747,23 @@ function updateDebugTranscript(transcript) {
   const transcriptDiv = document.createElement('div');
   transcriptDiv.className = 'transcript-entries';
 
-  // Add each transcript entry
   transcript.forEach((entry, index) => {
     const entryDiv = document.createElement('div');
     entryDiv.className = 'transcript-entry';
 
-    // Format timestamp
-    const timestamp = new Date(entry.timestamp);
-    const formattedTime = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const speaker = entry.participant?.name || entry.speaker || 'Unknown';
+    const text = entry.words
+      ? entry.words.map(word => word.text).join(' ')
+      : entry.text || '';
+    const firstWord = entry.words?.[0];
+    const absTimestamp = firstWord?.start_timestamp?.absolute;
+    const formattedTime = absTimestamp
+      ? new Date(absTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      : '';
 
-    // Create HTML for this entry
     entryDiv.innerHTML = `
-      <div class="transcript-speaker">${entry.speaker || 'Unknown'}</div>
-      <div class="transcript-text">${entry.text}</div>
+      <div class="transcript-speaker">${speaker}</div>
+      <div class="transcript-text">${text}</div>
       <div class="transcript-timestamp">${formattedTime}</div>
     `;
 
@@ -1418,28 +1422,27 @@ document.addEventListener('DOMContentLoaded', async () => {
       loadMeetingsDataFromFile().then(() => {
         const meeting = [...upcomingMeetings, ...pastMeetings].find(m => m.id === meetingId);
         if (meeting && meeting.transcript && meeting.transcript.length > 0) {
-          // Log the latest transcript entry
           const latestEntry = meeting.transcript[meeting.transcript.length - 1];
-          console.log(`Latest transcript: ${latestEntry.speaker}: "${latestEntry.text}"`);
+          const latestSpeaker = latestEntry.participant?.name || latestEntry.speaker || 'Unknown';
+          const latestText = latestEntry.words
+            ? latestEntry.words.map(word => word.text).join(' ')
+            : latestEntry.text || '';
+          console.log(`Latest transcript: ${latestSpeaker}: "${latestText}"`);
 
-          // Update the transcript area in the debug panel
           updateDebugTranscript(meeting.transcript);
 
-          // Show notification about new transcript if debug panel is closed
           const debugPanel = document.getElementById('debugPanel');
           if (debugPanel && debugPanel.classList.contains('hidden')) {
             const debugPanelToggle = document.getElementById('debugPanelToggle');
             if (debugPanelToggle) {
-              // Add pulse effect to show there's new content
               debugPanelToggle.classList.add('has-new-content');
 
-              // Create a mini notification if we're recording
               if (window.isRecording) {
                 const miniNotification = document.createElement('div');
                 miniNotification.className = 'debug-notification transcript-notification';
                 miniNotification.innerHTML = `
-                  <span class="debug-notification-speaker">${latestEntry.speaker || 'Unknown'}</span>:
-                  <span class="debug-notification-text">${latestEntry.text.slice(0, 40)}${latestEntry.text.length > 40 ? '...' : ''}</span>
+                  <span class="debug-notification-speaker">${latestSpeaker}</span>:
+                  <span class="debug-notification-text">${latestText.slice(0, 40)}${latestText.length > 40 ? '...' : ''}</span>
                 `;
 
                 // Add to document

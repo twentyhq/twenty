@@ -11,10 +11,15 @@ import { defineLogicFunction } from 'twenty-sdk';
 import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
 import { z } from 'zod';
 
-interface LocalTranscriptEntry {
+interface LocalTranscriptWord {
   text: string;
-  speaker: string;
-  timestamp: string;
+  start_timestamp?: { relative: number; absolute: string };
+  end_timestamp?: { relative: number; absolute: string };
+}
+
+interface LocalTranscriptEntry {
+  participant: { name: string };
+  words: LocalTranscriptWord[];
 }
 
 interface EndRecordingBody {
@@ -63,7 +68,12 @@ const localTranscriptToMarkdown = (
   entries: LocalTranscriptEntry[],
 ): string =>
   entries
-    .map((entry) => `**${entry.speaker}:** ${entry.text}`)
+    .map((entry) => {
+      const speaker = entry.participant?.name ?? 'Unknown';
+      const text = entry.words.map((word) => word.text).join(' ');
+
+      return `**${speaker}:** ${text}`;
+    })
     .join('\n\n');
 
 const downloadFile = async (
@@ -100,38 +110,54 @@ const processTranscript = async (
     }
   | undefined
 > => {
+  // The local transcript already has correct speakers (from isActiveSpeaker
+  // tracking) and word-level timestamps (from the SDK events). Use it
+  // directly instead of the Recall file which misattributes speakers.
+  if (localTranscript?.length) {
+    const transcriptBuffer = Buffer.from(
+      JSON.stringify(localTranscript),
+      'utf-8',
+    );
+
+    const uploadedTranscript = await metadataClient.uploadFile(
+      transcriptBuffer,
+      'transcript.json',
+      'application/json',
+      TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+    );
+
+    return {
+      transcriptFile: [
+        { fileId: uploadedTranscript.id, label: 'transcript.json' },
+      ],
+      transcript: {
+        blocknote: null,
+        markdown: localTranscriptToMarkdown(localTranscript),
+      },
+    };
+  }
+
+  // Fallback: use the Recall-provided transcript file when no local data
   if (!transcriptUrl) {
-    if (localTranscript?.length) {
-      const markdown = localTranscriptToMarkdown(localTranscript);
-
-      return {
-        transcript: { blocknote: null, markdown },
-      };
-    }
-
     return undefined;
   }
 
-  const { buffer, contentType, fileName } = await downloadFile(transcriptUrl);
+  const { buffer, fileName } = await downloadFile(transcriptUrl);
 
   const uploadedTranscript = await metadataClient.uploadFile(
     buffer,
     fileName,
-    contentType,
+    'application/json',
     TRANSCRIPT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
   );
 
-  // Prefer the local transcript (with correct speaker names from active speaker tracking)
-  // over the Recall transcript (which attributes all speech to the host)
-  const markdown = localTranscript?.length
-    ? localTranscriptToMarkdown(localTranscript)
-    : transcriptToMarkdown(transcriptSchema.parse(
-        JSON.parse(buffer.toString('utf-8')),
-      ));
+  const parsedEntries = transcriptSchema.parse(
+    JSON.parse(buffer.toString('utf-8')),
+  );
 
   return {
     transcriptFile: [{ fileId: uploadedTranscript.id, label: fileName }],
-    transcript: { blocknote: null, markdown },
+    transcript: { blocknote: null, markdown: transcriptToMarkdown(parsedEntries) },
   };
 };
 
