@@ -220,14 +220,16 @@ export const graphqlMocks = {
       });
     }),
     graphql.query('Search', () => {
-      const companySearchEdges = companiesMock
-        .slice(0, 3)
-        .map((company: Record<string, unknown>, index: number) => ({
+      const personSearchEdges = peopleMock
+        .slice(0, 2)
+        .map((person: Record<string, unknown>, index: number) => ({
           node: {
             __typename: 'SearchRecordDTO',
-            recordId: company.id,
-            objectNameSingular: 'company',
-            label: company.name,
+            recordId: person.id,
+            objectNameSingular: 'person',
+            objectLabelSingular: 'Person',
+            label:
+              `${(person.name as Record<string, string>)?.firstName ?? ''} ${(person.name as Record<string, string>)?.lastName ?? ''}`.trim(),
             imageUrl: '',
             tsRankCD: 0.2,
             tsRank: 0.12158542,
@@ -235,15 +237,31 @@ export const graphqlMocks = {
           cursor: `cursor-${index + 1}`,
         }));
 
+      const companySearchEdges = companiesMock
+        .slice(0, 2)
+        .map((company: Record<string, unknown>, index: number) => ({
+          node: {
+            __typename: 'SearchRecordDTO',
+            recordId: company.id,
+            objectNameSingular: 'company',
+            objectLabelSingular: 'Company',
+            label: company.name,
+            imageUrl: '',
+            tsRankCD: 0.2,
+            tsRank: 0.12158542,
+          },
+          cursor: `cursor-${personSearchEdges.length + index + 1}`,
+        }));
+
+      const allEdges = [...personSearchEdges, ...companySearchEdges];
+
       return HttpResponse.json({
         data: {
           search: {
-            edges: companySearchEdges,
+            edges: allEdges,
             pageInfo: {
               hasNextPage: true,
-              endCursor:
-                companySearchEdges[companySearchEdges.length - 1]?.cursor ??
-                null,
+              endCursor: allEdges[allEdges.length - 1]?.cursor ?? null,
             },
           },
         },
