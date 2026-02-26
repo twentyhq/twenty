@@ -10,50 +10,58 @@ image: /images/user-guide/create-workspace/workspace-cover.png
 تستخدم عندما يمكن للمستخدمين اختيار خيار واحد فقط من سلسلة من الخيارات.
 
 <Tabs>
-  <Tab title="استخدام">
-    ```jsx
-    import { Radio } from "twenty-ui/display";
+<Tab title="استخدام">
 
-    export const MyComponent = () => {
+```jsx
+import { Radio } from "twenty-ui/display";
 
-      const handleRadioChange = (event) => {
-        console.log("Radio button changed:", event.target.checked);
-      };
+export const MyComponent = () => {
 
-      const handleCheckedChange = (checked) => {
-        console.log("Checked state changed:", checked);
-      };
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
 
 
-      return (
-        <Radio
-          checked={true}
-          value="Option 1"
-          onChange={handleRadioChange}
-          onCheckedChange={handleCheckedChange}
-          size="large"
-          disabled={false}
-          labelPosition="right"
-        />
-      );
-    };
-    },{
-    ```
-  </Tab>
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
+},{
+```
 
-  <Tab title="المحددات">
-    | المحددات                 | النوع             | الوصف                                                              |
-    | ------------------------ | ----------------- | ------------------------------------------------------------------ |
-    | النمط                    | خصائص `React.CSS` | أنماط إضافية مضمنة للمكون                                          |
-    | اسم الفئة                | نص                | فئة CSS اختيارية لتصميم إضافي                                      |
-    | مختار                    | قيمة منطقية       | يشير إلى ما إذا كان زر الراديو محددًا                              |
-    | القيمة                   | نص                | التسمية أو النص المرتبط بزر الراديو                                |
-    | عند التغيير              | دالة              | الدالة التي تُستدعى عند تغيير زر الاختيار المحدد.                  |
-    | عند تغيير الحالة المحددة | دالة              | الدالة التي تُستدعى عند تغيير حالة `checked` لزر الاختيار.         |
-    | الحجم                    | نص                | حجم زر الراديو. تشمل الخيارات: `large` و `small`                   |
-    | معطل                     | قيمة منطقية       | إذا كانت `true`، فسيكون زر الاختيار معطلاً وغير قابل للنقر         |
-    | موضع التسمية             | نص                | موضع نص التسمية بالنسبة لزر الراديو. يوجد خياران: `left` و `right` |
-  </Tab>
+
+</Tab>
+<Tab title="المحددات">
+
+
+| المحددات                 | النوع             | الوصف                                                              |
+| ------------------------ | ----------------- | ------------------------------------------------------------------ |
+| النمط                    | خصائص `React.CSS` | أنماط إضافية مضمنة للمكون                                          |
+| اسم الفئة                | نص                | فئة CSS اختيارية لتصميم إضافي                                      |
+| مختار                    | قيمة منطقية       | يشير إلى ما إذا كان زر الراديو محددًا                              |
+| القيمة                   | نص                | التسمية أو النص المرتبط بزر الراديو                                |
+| عند التغيير              | دالة              | الدالة التي تُستدعى عند تغيير زر الاختيار المحدد.                  |
+| عند تغيير الحالة المحددة | دالة              | الدالة التي تُستدعى عند تغيير حالة `checked` لزر الاختيار.         |
+| الحجم                    | نص                | حجم زر الراديو. تشمل الخيارات: `large` و `small`                   |
+| معطل                     | قيمة منطقية       | إذا كانت `true`، فسيكون زر الاختيار معطلاً وغير قابل للنقر         |
+| موضع التسمية             | نص                | موضع نص التسمية بالنسبة لزر الراديو. يوجد خياران: `left` و `right` |
+
+
+
+
+</Tab>
 </Tabs>
 
 ## مجموعة الراديو
@@ -61,37 +69,45 @@ image: /images/user-guide/create-workspace/workspace-cover.png
 يجمع أزرار الراديو ذات الصلة معًا.
 
 <Tabs>
-  <Tab title="استخدام">
-    ```jsx
-    import React, { useState } from "react";
-    import { Radio, RadioGroup } from "twenty-ui/display";
+<Tab title="استخدام">
 
-    export const MyComponent = () => {
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
 
-      const [selectedValue, setSelectedValue] = useState("Option 1");
+export const MyComponent = () => {
 
-      const handleChange = (event) => {
-        setSelectedValue(event.target.value);
-      };
-      
-      return (
-        <RadioGroup value={selectedValue} onChange={handleChange}>
-          <Radio value="Option 1" />
-          <Radio value="Option 2" />
-          <Radio value="Option 3" />
-        </RadioGroup>
-      );
-    };
+  const [selectedValue, setSelectedValue] = useState("Option 1");
 
-    ```
-  </Tab>
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
 
-  <Tab title="الخصائص">
-    | الخصائص       | النوع             | الوصف                                                                 |
-    | ------------- | ----------------- | --------------------------------------------------------------------- |
-    | القيمة        | string            | قيمة زر الراديو المحدد حاليًا                                         |
-    | عند التغيير   | دالة              | دالة الاستدعاء التي يتم تشغيلها عند تغيير زر الاختيار.                |
-    | onValueChange | دالة              | دالة الاستدعاء التي يتم تشغيلها عند تغيير القيمة المحددة في المجموعة. |
-    | الأبناء       | `React.ReactNode` | يتيح لك تمرير مكوّنات React (مثل Radio) كعناصر فرعية إلى Radio Group  |
-  </Tab>
+```
+
+</Tab>
+<Tab title="الخصائص">
+
+
+| الخصائص       | النوع             | الوصف                                                                 |
+| ------------- | ----------------- | --------------------------------------------------------------------- |
+| القيمة        | string            | قيمة زر الراديو المحدد حاليًا                                         |
+| عند التغيير   | دالة              | دالة الاستدعاء التي يتم تشغيلها عند تغيير زر الاختيار.                |
+| onValueChange | دالة              | دالة الاستدعاء التي يتم تشغيلها عند تغيير القيمة المحددة في المجموعة. |
+| الأبناء       | `React.ReactNode` | يتيح لك تمرير مكوّنات React (مثل Radio) كعناصر فرعية إلى Radio Group  |
+
+
+
+
+</Tab>
+
 </Tabs>

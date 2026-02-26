@@ -7,7 +7,7 @@ import {
 import { type FrontComponentExecutionContext } from '../types/FrontComponentExecutionContext';
 
 export const useFrontComponentExecutionContext = <T>(
-  selector: (context: FrontComponentExecutionContext | undefined) => T,
+  selector: (context: FrontComponentExecutionContext) => T,
 ): T => {
   const [currentSelectedValue, setCurrentSelectedValue] = useState(() =>
     selector(getFrontComponentExecutionContext()),

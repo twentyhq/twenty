@@ -7,11 +7,10 @@ import { t } from '@lingui/core/macro';
 
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
-import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
+import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   H2Title,
@@ -61,7 +60,7 @@ export const SettingsRolesList = () => {
   const [showAgentRoles, setShowAgentRoles] = useState(false);
   const [showApiKeyRoles, setShowApiKeyRoles] = useState(false);
 
-  const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
+  const settingsAllRoles = useSettingsAllRoles();
 
   const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) =>
     sortByAscString(a.label, b.label),

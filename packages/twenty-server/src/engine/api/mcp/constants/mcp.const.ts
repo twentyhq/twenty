@@ -1,10 +1,10 @@
 export const MCP_SERVER_METADATA = {
   metadata: {
-    info: 'Objects structure your business entities in Twenty. **Standard Objects** (e.g. People, Companies, Opportunities) are built‑in, pre‑configured data models. **Custom Objects** let you define entities specific to your needs (like Rockets, Properties, etc.). **Fields** work like spreadsheet columns and can be standard or custom. Always use the `fields` and `objects` parameters to select only the data you need—this **strongly reduces response size and token usage**, improving performance.',
+    info: 'Twenty CRM MCP Server. Follow this workflow: (1) get_tool_catalog to discover tools, (2) learn_tools to get input schemas, (3) execute_tool to run them. Never guess tool names — always start with get_tool_catalog. Use load_skills for guidance on complex tasks like workflow or dashboard building.',
   },
   protocolVersion: '2024-11-05',
   serverInfo: {
     name: 'Twenty MCP Server',
-    version: '0.0.1',
+    version: '0.1.0',
   },
 };

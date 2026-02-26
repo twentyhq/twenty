@@ -1,8 +1,8 @@
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const singleRecordPickerShouldShowInitialLoadingComponentState =
-  createComponentState<boolean>({
+  createAtomComponentState<boolean>({
     key: 'singleRecordPickerShouldShowInitialLoadingComponentState',
     defaultValue: false,
     componentInstanceContext: SingleRecordPickerComponentInstanceContext,

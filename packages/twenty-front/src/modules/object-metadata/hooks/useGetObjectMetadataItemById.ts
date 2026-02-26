@@ -1,10 +1,9 @@
-import { useRecoilValue } from 'recoil';
-
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const useGetObjectMetadataItemById = () => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const getObjectMetadataItemById = (objectId: string) => {
     const objectMetadataItem = objectMetadataItems.find(

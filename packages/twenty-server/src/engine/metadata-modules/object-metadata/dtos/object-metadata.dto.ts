@@ -32,6 +32,9 @@ export class ObjectMetadataDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 
+  @IDField(() => UUIDScalarType)
+  universalIdentifier: string;
+
   @Field()
   nameSingular: string;
 

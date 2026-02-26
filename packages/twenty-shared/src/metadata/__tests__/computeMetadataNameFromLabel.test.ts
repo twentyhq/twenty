@@ -1,9 +1,15 @@
-import { computeMetadataNameFromLabel } from '@/metadata/compute-metadata-name-from-label.util';
+import { computeMetadataNameFromLabel } from '@/metadata/utils/compute-metadata-name-from-label.util';
 
 describe('computeMetadataNameFromLabel', () => {
   it('should convert a label to camelCase', () => {
     expect(computeMetadataNameFromLabel({ label: 'My Custom Field' })).toBe(
       'myCustomField',
+    );
+  });
+
+  it('should convert a label to camelCase', () => {
+    expect(computeMetadataNameFromLabel({ label: 'My CreatedAt Field' })).toBe(
+      'myCreatedatField',
     );
   });
 

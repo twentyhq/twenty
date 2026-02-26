@@ -3,11 +3,11 @@ import {
   BillingPlanKey,
 } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 export const useCurrentBillingFlags = () => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   assertIsDefinedOrThrow(currentWorkspace);
 

@@ -1,41 +1,29 @@
-import { selectorFamily } from 'recoil';
-
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { createAtomWritableFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomWritableFamilySelector';
 
-export const coreViewsByObjectMetadataIdFamilySelector = selectorFamily<
-  CoreViewWithRelations[],
-  string
->({
-  key: 'coreViewsByObjectMetadataIdFamilySelector',
-  get:
-    (objectMetadataId: string) =>
-    ({ get }) => {
-      const coreViews = get(coreViewsState);
-
-      return coreViews.filter(
-        (view) => view.objectMetadataId === objectMetadataId,
-      );
-    },
-  set:
-    (objectMetadataId: string) =>
-    ({ get, set }, newViewsForObject) => {
-      const currentCoreViews = get(coreViewsState);
-
-      const viewsFromOtherObjects = currentCoreViews.filter(
-        (view) => view.objectMetadataId !== objectMetadataId,
-      );
-
-      let updatedViewsForObject: CoreViewWithRelations[];
-
-      if (Array.isArray(newViewsForObject)) {
-        updatedViewsForObject = newViewsForObject;
-      } else {
-        updatedViewsForObject = [];
-      }
-
-      const newCoreViews = [...viewsFromOtherObjects, ...updatedViewsForObject];
-
-      set(coreViewsState, newCoreViews);
-    },
-});
+export const coreViewsByObjectMetadataIdFamilySelector =
+  createAtomWritableFamilySelector<CoreViewWithRelations[], string>({
+    key: 'coreViewsByObjectMetadataIdFamilySelector',
+    get:
+      (objectMetadataId) =>
+      ({ get }) => {
+        const coreViews = get(coreViewsState);
+        return coreViews.filter(
+          (view) => view.objectMetadataId === objectMetadataId,
+        );
+      },
+    set:
+      (objectMetadataId) =>
+      ({ get, set }, newViewsForObject) => {
+        const currentCoreViews = get(coreViewsState);
+        const viewsFromOtherObjects = currentCoreViews.filter(
+          (view) => view.objectMetadataId !== objectMetadataId,
+        );
+        const newCoreViews = [
+          ...viewsFromOtherObjects,
+          ...(Array.isArray(newViewsForObject) ? newViewsForObject : []),
+        ];
+        set(coreViewsState, newCoreViews);
+      },
+  });

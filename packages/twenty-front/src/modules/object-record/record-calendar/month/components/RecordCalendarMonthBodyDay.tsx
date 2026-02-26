@@ -2,8 +2,8 @@ import { RecordCalendarCardDraggableContainer } from '@/object-record/record-cal
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { calendarDayRecordIdsComponentFamilySelector } from '@/object-record/record-calendar/states/selectors/calendarDayRecordsComponentFamilySelector';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
@@ -108,13 +108,13 @@ export const RecordCalendarMonthBodyDay = ({
 }: RecordCalendarMonthBodyDayProps) => {
   const { userTimezone } = useUserTimezone();
 
-  const recordCalendarSelectedDate = useRecoilComponentValue(
+  const recordCalendarSelectedDate = useAtomComponentStateValue(
     recordCalendarSelectedDateComponentState,
   );
 
   const dayKey = day.toString();
 
-  const recordIds = useRecoilComponentFamilyValue(
+  const recordIds = useAtomComponentFamilySelectorValue(
     calendarDayRecordIdsComponentFamilySelector,
     {
       day: day,

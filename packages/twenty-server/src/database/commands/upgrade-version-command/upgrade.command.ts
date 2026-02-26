@@ -17,10 +17,10 @@ import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationComma
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
 import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
 import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
-import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-workflow-code-steps.command';
 import { BackfillFileSizeAndMimeTypeCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-file-size-and-mime-type.command';
 import { BackfillMessageChannelThrottleRetryAfterCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-message-channel-throttle-retry-after.command';
 import { BackfillStandardViewsAndFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-backfill-standard-views-and-field-metadata.command';
+import { DeleteOrphanFavoritesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-delete-orphan-favorites.command';
 import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-activity-rich-text-attachment-file-ids.command';
 import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-favorites-to-navigation-menu-items.command';
@@ -29,7 +29,9 @@ import { MigrateWorkflowSendEmailAttachmentsCommand } from 'src/database/command
 import { MigrateWorkspacePicturesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workspace-pictures.command';
 import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-missing-system-fields-to-standard-objects.command';
 import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
+import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-page-layouts.command';
 import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
+import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -57,10 +59,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly migrateTaskTargetToMorphRelationsCommand: MigrateTaskTargetToMorphRelationsCommand,
     protected readonly identifyWebhookMetadataCommand: IdentifyWebhookMetadataCommand,
     protected readonly makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-    protected readonly migrateWorkflowCodeStepsCommand: MigrateWorkflowCodeStepsCommand,
     protected readonly fixMorphRelationFieldNamesCommand: FixMorphRelationFieldNamesCommand,
 
     // 1.18 Commands
+    protected readonly deleteOrphanFavoritesCommand: DeleteOrphanFavoritesCommand,
     protected readonly migrateFavoritesToNavigationMenuItemsCommand: MigrateFavoritesToNavigationMenuItemsCommand,
     protected readonly migratePersonAvatarFilesCommand: MigratePersonAvatarFilesCommand,
     protected readonly backfillFileSizeAndMimeTypeCommand: BackfillFileSizeAndMimeTypeCommand,
@@ -75,6 +77,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillSystemFieldsIsSystemCommand: BackfillSystemFieldsIsSystemCommand,
     protected readonly addMissingSystemFieldsToStandardObjectsCommand: AddMissingSystemFieldsToStandardObjectsCommand,
     protected readonly backfillMessageChannelMessageAssociationMessageFolderCommand: BackfillMessageChannelMessageAssociationMessageFolderCommand,
+    protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
+    protected readonly fixRoleAndAgentUniversalIdentifiersCommand: FixInvalidStandardUniversalIdentifiersCommand,
   ) {
     super(
       workspaceRepository,
@@ -94,12 +98,12 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this
         .makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this.deleteFileRecordsAndUpdateTableCommand,
-      this.migrateWorkflowCodeStepsCommand,
       this.backfillApplicationPackageFilesCommand,
       this.fixMorphRelationFieldNamesCommand,
     ];
 
     const commands_1180: VersionCommands = [
+      this.deleteOrphanFavoritesCommand,
       this.migrateFavoritesToNavigationMenuItemsCommand,
       this.migratePersonAvatarFilesCommand,
       this.migrateAttachmentFilesCommand,
@@ -115,6 +119,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillSystemFieldsIsSystemCommand,
       this.addMissingSystemFieldsToStandardObjectsCommand,
       this.backfillMessageChannelMessageAssociationMessageFolderCommand,
+      this.backfillPageLayoutsCommand,
+      this.fixRoleAndAgentUniversalIdentifiersCommand,
     ];
 
     this.allCommands = {

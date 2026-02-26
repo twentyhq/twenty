@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 
@@ -13,6 +13,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -92,17 +93,17 @@ export const EventRow = ({
   event,
   mainObjectMetadataItem,
 }: EventRowProps) => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const allowRequestsToTwentyIcons = useRecoilValue(
+  const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
   );
 
-  const { localeCatalog } = useRecoilValue(dateLocaleState);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const { recordId } = useContext(TimelineActivityContext);
 
-  const recordFromStore = useRecoilValue(recordStoreFamilyState(recordId));
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
     event.createdAt,
@@ -116,7 +117,7 @@ export const EventRow = ({
     return null;
   }
 
-  if (isUndefinedOrNull(recordFromStore)) {
+  if (isUndefinedOrNull(recordStore)) {
     return null;
   }
   if (isUndefinedOrNull(mainObjectMetadataItem)) {
@@ -125,7 +126,7 @@ export const EventRow = ({
 
   const labelIdentifier = getObjectRecordIdentifier({
     objectMetadataItem: mainObjectMetadataItem,
-    record: recordFromStore,
+    record: recordStore,
     allowRequestsToTwentyIcons,
   });
 

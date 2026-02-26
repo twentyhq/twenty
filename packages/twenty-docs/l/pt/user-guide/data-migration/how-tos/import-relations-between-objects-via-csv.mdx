@@ -51,9 +51,9 @@ O pai (lado "um") deve existir no Twenty antes de poder referenciá-lo.
 4. **Tarefas/Notas** (ligar a qualquer um dos anteriores)
 
 <Warning>
-  **Se o registo pai não existir, a importação falhará.**
+**Se o registo pai não existir, a importação falhará.**
 
-  Verifique sempre que as Empresas são importadas antes de importar Pessoas com referências a empresas.
+Verifique sempre que as Empresas são importadas antes de importar Pessoas com referências a empresas.
 </Warning>
 
 ## Passo 3: Anote o identificador único do pai
@@ -117,9 +117,9 @@ A coluna `companyDomain` faz referência ao domínio da Empresa.
 | ID            | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **O formato do domínio é importante!**
+**O formato do domínio é importante!**
 
-  Use `https://domain.com` (não apenas `domain.com`). Isto corresponde à forma como a Twenty armazena domínios de Empresas e evita erros de correspondência.
+Use `https://domain.com` (não apenas `domain.com`). Isto corresponde à forma como a Twenty armazena domínios de Empresas e evita erros de correspondência.
 </Warning>
 
 ### Regras Importantes
@@ -178,7 +178,6 @@ Review proposal,jane@yourcompany.com
 <AccordionGroup>
   <Accordion title="E se o meu registo pai não tiver um domínio ou email?">
     Tem duas opções:
-
     1. Use o `id` da Twenty (exporte os registos pai para obter os respetivos IDs)
     2. Crie um campo único personalizado no seu modelo de dados para armazenar um ID externo do seu sistema anterior
   </Accordion>
@@ -197,7 +196,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="O que acontece se um registo pai não existir?">
     A importação mostrará um erro para essa linha. Você pode:
-
     * Importe primeiro o registo pai e depois volte a importar
     * Corrija o valor de referência
     * Remova a linha da importação
@@ -205,7 +203,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="Porque é que a minha relação não está a ligar corretamente?">
     Causas comuns:
-
     * Formato incorreto (use `https://domain.com` para domínios)
     * Incompatibilidade de maiúsculas/minúsculas (verifique a grafia exata)
     * O pai não existe (importe primeiro os pais)
@@ -214,9 +211,9 @@ Review proposal,jane@yourcompany.com
 </AccordionGroup>
 
 <Warning>
-  **Lembre-se: registos eliminados logicamente contam para a unicidade.**
+**Lembre-se: registos eliminados logicamente contam para a unicidade.**
 
-  Se estiver a receber erros de "not found", mas o registo parece existir, verifique Menu de Comandos → Ver registos eliminados. O pai pode ter sido eliminado logicamente.
+Se estiver a receber erros de "not found", mas o registo parece existir, verifique Menu de Comandos → Ver registos eliminados. O pai pode ter sido eliminado logicamente.
 </Warning>
 
 ## Resolução de Problemas

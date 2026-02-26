@@ -1,7 +1,7 @@
 import { type ViewType } from '@/views/types/ViewType';
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const recordIndexViewTypeState = createState<ViewType | undefined>({
+export const recordIndexViewTypeState = createAtomState<ViewType | undefined>({
   key: 'recordIndexViewTypeState',
   defaultValue: undefined,
 });

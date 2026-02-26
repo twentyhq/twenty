@@ -1,16 +1,17 @@
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useIsCurrentObjectCustom = () => {
   const { targetRecordIdentifier } = useLayoutRenderingContext();
 
-  const objectMetadataItem = useRecoilValue(
-    objectMetadataItemFamilySelector({
+  const objectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    {
       objectName: targetRecordIdentifier?.targetObjectNameSingular ?? '',
       objectNameType: 'singular',
-    }),
+    },
   );
 
   if (!isDefined(targetRecordIdentifier)) {

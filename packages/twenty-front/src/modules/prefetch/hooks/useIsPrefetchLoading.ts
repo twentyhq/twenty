@@ -1,23 +1,23 @@
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { useRecoilValue } from 'recoil';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 export const useIsPrefetchLoading = () => {
   const isWorkspaceActive = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.ACTIVE,
   );
-  const isFavoriteFoldersPrefetched = useRecoilValue(
-    prefetchIsLoadedFamilyState(PrefetchKey.AllFavoritesFolders),
+  const prefetchIsLoaded = useAtomFamilyStateValue(
+    prefetchIsLoadedFamilyState,
+    PrefetchKey.AllFavoritesFolders,
   );
 
-  const areFavoritesPrefetched = useRecoilValue(
-    prefetchIsLoadedFamilyState(PrefetchKey.AllFavorites),
+  // eslint-disable-next-line twenty/matching-state-variable
+  const prefetchIsLoadedFavorites = useAtomFamilyStateValue(
+    prefetchIsLoadedFamilyState,
+    PrefetchKey.AllFavorites,
   );
 
-  return (
-    isWorkspaceActive &&
-    (!areFavoritesPrefetched || !isFavoriteFoldersPrefetched)
-  );
+  return isWorkspaceActive && (!prefetchIsLoadedFavorites || !prefetchIsLoaded);
 };

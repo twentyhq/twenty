@@ -3,10 +3,10 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { type InformationBannerKeys } from '@/information-banner/types/InformationBannerKeys';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useAccountToReconnect = (key: InformationBannerKeys) => {
-  const currentUser = useRecoilValue(currentUserState);
+  const currentUser = useAtomStateValue(currentUserState);
 
   const userVars = currentUser?.userVars;
 

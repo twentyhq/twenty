@@ -306,6 +306,11 @@ msgstr ""
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
 msgstr ""
 
+#. js-lingui-id: fTSz8d
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
+msgid "{numberOfSelectedItems} workspace members"
+msgstr ""
+
 #. js-lingui-id: 7kYa/u
 #: src/modules/object-record/record-show/hooks/useRecordShowPagePagination.ts
 msgid "{objectLabelPlural} ({totalCount})"
@@ -324,6 +329,16 @@ msgstr ""
 #. js-lingui-id: HpUf/k
 #: src/modules/object-record/record-merge/components/MergeSettingsTab.tsx
 msgid "{positionLabel} record holds priority"
+msgstr ""
+
+#. js-lingui-id: YG/wl5
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "{providerLabel} — API key not configured"
+msgstr ""
+
+#. js-lingui-id: s80lrU
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "{providerLabel} — Deprecated"
 msgstr ""
 
 #. js-lingui-id: Sxx5Hr
@@ -765,6 +780,11 @@ msgstr ""
 msgid "Add a {objectLabelSingular}"
 msgstr ""
 
+#. js-lingui-id: 7W8nJr
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
+msgid "Add a Group"
+msgstr ""
+
 #. js-lingui-id: CZDwqQ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
@@ -779,11 +799,6 @@ msgstr ""
 #. js-lingui-id: nGv1DN
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemRecordSubView.tsx
 msgid "Add a record"
-msgstr ""
-
-#. js-lingui-id: r8W+9y
-#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationSectionEditor.tsx
-msgid "Add a Section"
 msgstr ""
 
 #. js-lingui-id: eMc2xs
@@ -1112,6 +1127,11 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
+#. js-lingui-id: K2OX5h
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Admin Model Controls"
+msgstr ""
+
 #. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
@@ -1138,11 +1158,6 @@ msgstr ""
 #. js-lingui-id: tMFFwF
 #: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
 msgid "Advanced filter"
-msgstr ""
-
-#. js-lingui-id: luNzWN
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Advanced model for complex planning"
 msgstr ""
 
 #. js-lingui-id: miuPUc
@@ -1247,6 +1262,7 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "AI"
 msgstr ""
@@ -1256,11 +1272,6 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "AI Model"
-msgstr ""
-
-#. js-lingui-id: tGx4Zn
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "AI Models"
 msgstr ""
 
 #. js-lingui-id: Sfwld8
@@ -1344,6 +1355,11 @@ msgstr ""
 #. js-lingui-id: ypSiuQ
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "All Metadata"
+msgstr ""
+
+#. js-lingui-id: AJgjR+
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "All Models"
 msgstr ""
 
 #. js-lingui-id: aFE/OW
@@ -1507,6 +1523,9 @@ msgstr ""
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFilterAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
+#: src/modules/views/hooks/internal/usePerformViewFieldGroupAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewFieldAPIPersist.ts
@@ -1601,6 +1620,11 @@ msgstr ""
 #. js-lingui-id: r+NRG6
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "API Key copied to clipboard"
+msgstr ""
+
+#. js-lingui-id: jjaYji
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "API key not configured"
 msgstr ""
 
 #. js-lingui-id: Widx6n
@@ -2058,6 +2082,16 @@ msgstr ""
 msgid "Automatically create People records when receiving or sending emails"
 msgstr ""
 
+#. js-lingui-id: erwsgX
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Automatically enable new models"
+msgstr ""
+
+#. js-lingui-id: fx8TeY
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Automatically mark new models as available"
+msgstr ""
+
 #. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Availability"
@@ -2065,6 +2099,7 @@ msgstr ""
 
 #. js-lingui-id: csDS2L
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Available"
 msgstr ""
@@ -2860,10 +2895,14 @@ msgstr ""
 msgid "Conditions"
 msgstr ""
 
+#. js-lingui-id: 14PdY0
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+msgid "Config"
+msgstr ""
+
 #. js-lingui-id: Vj43Y/
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Config Variables"
 msgstr ""
 
@@ -2876,11 +2915,6 @@ msgstr ""
 #. js-lingui-id: iAL9tI
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Configure"
-msgstr ""
-
-#. js-lingui-id: 9px+al
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Configure AI models for routing and planning"
 msgstr ""
 
 #. js-lingui-id: +zUMwJ
@@ -2906,6 +2940,11 @@ msgstr ""
 #. js-lingui-id: ahqAfe
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Configure date, time, number, timezone, and calendar start day"
+msgstr ""
+
+#. js-lingui-id: +SQwHr
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Configure default AI models and availability"
 msgstr ""
 
 #. js-lingui-id: utsXG8
@@ -3236,11 +3275,6 @@ msgstr ""
 #. js-lingui-id: u9zl2y
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Core Objects"
-msgstr ""
-
-#. js-lingui-id: cfa2VJ
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
-msgid "Core Schema"
 msgstr ""
 
 #. js-lingui-id: I99Miw
@@ -4259,6 +4293,16 @@ msgstr ""
 #. js-lingui-id: wIAG+H
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "Deleting this method will remove it permanently from your account."
+msgstr ""
+
+#. js-lingui-id: Ssdrw4
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Deprecated"
+msgstr ""
+
+#. js-lingui-id: 8OJZ/p
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Deprecated models"
 msgstr ""
 
 #. js-lingui-id: O3LJh6
@@ -5804,14 +5848,35 @@ msgstr ""
 msgid "Failed to save workspace instructions"
 msgstr ""
 
-#. js-lingui-id: YMSYb+
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Failed to update fast model"
+#. js-lingui-id: YzURPo
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Failed to update auto-enable setting"
 msgstr ""
 
 #. js-lingui-id: P1NmNz
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Failed to update feature flag. {errorMessage}"
+msgstr ""
+
+#. js-lingui-id: 1R13Ov
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Failed to update model"
+msgstr ""
+
+#. js-lingui-id: W7Ff/4
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Failed to update model availability"
+msgstr ""
+
+#. js-lingui-id: LgZlJ7
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Failed to update model availability settings"
+msgstr ""
+
+#. js-lingui-id: rCUG3c
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Failed to update model selection mode"
 msgstr ""
 
 #. js-lingui-id: HnBqPY
@@ -5827,11 +5892,6 @@ msgstr ""
 #. js-lingui-id: QGaQRo
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Failed to update role"
-msgstr ""
-
-#. js-lingui-id: h/0aT5
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Failed to update smart model"
 msgstr ""
 
 #. js-lingui-id: Dzh4a2
@@ -5882,13 +5942,8 @@ msgid "False"
 msgstr ""
 
 #. js-lingui-id: XVIZ7v
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 msgid "Fast Model"
-msgstr ""
-
-#. js-lingui-id: UJHTjm
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Fast model updated successfully"
 msgstr ""
 
 #. js-lingui-id: X9kySA
@@ -6049,6 +6104,7 @@ msgstr ""
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/components/ChartFiltersSettings.tsx
@@ -6278,7 +6334,9 @@ msgstr ""
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
-#: src/modules/page-layout/hooks/useTemporaryFieldsConfiguration.ts
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetEditorGroupsData.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
 msgstr ""
@@ -6520,11 +6578,15 @@ msgstr ""
 msgid "Heading 3"
 msgstr ""
 
+#. js-lingui-id: UPqS9C
+#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+msgid "Health"
+msgstr ""
+
 #. js-lingui-id: I1IOmb
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Health Status"
 msgstr ""
 
@@ -7000,11 +7062,6 @@ msgstr ""
 #. js-lingui-id: RGm66q
 #: src/utils/title-utils.ts
 msgid "Integrations - Settings"
-msgstr ""
-
-#. js-lingui-id: ntgzzG
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
-msgid "Interact with your workspace data"
 msgstr ""
 
 #. js-lingui-id: jyjroS
@@ -8120,11 +8177,6 @@ msgstr ""
 msgid "Metadata file generation failed"
 msgstr ""
 
-#. js-lingui-id: 0BF9eC
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
-msgid "Metadata Schema"
-msgstr ""
-
 #. js-lingui-id: onCJJ6
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Metered tier switching has been cancelled."
@@ -8183,6 +8235,17 @@ msgstr ""
 msgid "Mission accomplished!"
 msgstr ""
 
+#. js-lingui-id: //nm2/
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Models"
+msgstr ""
+
+#. js-lingui-id: oHM560
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Models available in the chat model picker"
+msgstr ""
+
 #. js-lingui-id: hty0d5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Monday"
@@ -8228,6 +8291,7 @@ msgid "months"
 msgstr ""
 
 #. js-lingui-id: 2FYpfJ
+#: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
 msgid "More"
 msgstr ""
@@ -8515,6 +8579,11 @@ msgstr ""
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
 #: src/modules/command-menu/components/CommandMenuFolderInfo.tsx
 msgid "New folder"
+msgstr ""
+
+#. js-lingui-id: 93KA8w
+#: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
+msgid "New Group"
 msgstr ""
 
 #. js-lingui-id: o8MyXb
@@ -8925,7 +8994,6 @@ msgstr ""
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
 msgstr ""
 
@@ -9563,7 +9631,7 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/page-layout/hooks/useTemporaryFieldsConfiguration.ts
+#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
 msgid "Other"
 msgstr ""
@@ -10251,11 +10319,6 @@ msgstr ""
 msgid "Queue: {queueName}"
 msgstr ""
 
-#. js-lingui-id: GaAG2G
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Quick model for routing decisions"
-msgstr ""
-
 #. js-lingui-id: opSifa
 #: src/modules/ai/utils/getToolDisplayMessage.ts
 msgid "Ran {formattedName}"
@@ -10732,6 +10795,11 @@ msgstr ""
 msgid "Restore Records"
 msgstr ""
 
+#. js-lingui-id: hO3AfV
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Restrict available models to a curated list"
+msgstr ""
+
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Result"
@@ -11011,6 +11079,12 @@ msgstr ""
 #. js-lingui-id: ITQFzL
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditFolderPickerSubView.tsx
 msgid "Search a folder..."
+msgstr ""
+
+#. js-lingui-id: 8J0e5B
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Search a model..."
 msgstr ""
 
 #. js-lingui-id: WXvlVa
@@ -11566,6 +11640,11 @@ msgstr ""
 msgid "Serbian (Cyrillic)"
 msgstr ""
 
+#. js-lingui-id: 8ZSrlB
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Server-wide AI model availability settings"
+msgstr ""
+
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Service Provider Details"
@@ -11648,7 +11727,6 @@ msgstr ""
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -11867,13 +11945,8 @@ msgid "Small section heading"
 msgstr ""
 
 #. js-lingui-id: 5J8ZFl
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 msgid "Smart Model"
-msgstr ""
-
-#. js-lingui-id: qgvZ/2
-#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
-msgid "Smart model updated successfully"
 msgstr ""
 
 #. js-lingui-id: w+rJId
@@ -12954,6 +13027,11 @@ msgstr ""
 msgid "Toggle all settings permissions"
 msgstr ""
 
+#. js-lingui-id: 93pMSK
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Toggle model availability across all workspaces"
+msgstr ""
+
 #. js-lingui-id: WOr+hW
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "tokens"
@@ -13249,6 +13327,11 @@ msgstr ""
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
+msgstr ""
+
+#. js-lingui-id: EbnX+O
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Unconfigured models"
 msgstr ""
 
 #. js-lingui-id: EUHN7i
@@ -13561,9 +13644,24 @@ msgstr ""
 msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
 msgstr ""
 
+#. js-lingui-id: hCZsJ0
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Use best models only"
+msgstr ""
+
 #. js-lingui-id: c6uZUV
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
+msgstr ""
+
+#. js-lingui-id: 664z2C
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Used for chats, agents, and complex reasoning"
+msgstr ""
+
+#. js-lingui-id: C41qgx
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Used for lightweight tasks like title generation"
 msgstr ""
 
 #. js-lingui-id: AQVj2A
@@ -14072,6 +14170,16 @@ msgstr ""
 msgid "When enabled, AI agents and workflow automations can discover and call this function"
 msgstr ""
 
+#. js-lingui-id: i2V4DO
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "When enabled, new AI models will be available to users by default"
+msgstr ""
+
+#. js-lingui-id: 01e9rV
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "When enabled, newly added models are available to all workspaces by default"
+msgstr ""
+
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "When the API key will expire."
@@ -14245,9 +14353,9 @@ msgstr ""
 msgid "Workspaces"
 msgstr ""
 
-#. js-lingui-id: F7iCiM
+#. js-lingui-id: QPsQMb
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
-msgid "Would you like to remove {recordGroupSort} group sorting?"
+msgid "Would you like to remove {recordIndexRecordGroupSort} group sorting?"
 msgstr ""
 
 #. js-lingui-id: 5iSD9O

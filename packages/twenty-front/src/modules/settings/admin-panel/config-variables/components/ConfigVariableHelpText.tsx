@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   ConfigSource,
   type ConfigVariable,
@@ -24,7 +24,7 @@ export const ConfigVariableHelpText = ({
   variable,
   hasValueChanged,
 }: ConfigVariableHelpTextProps) => {
-  const isConfigVariablesInDbEnabled = useRecoilValue(
+  const isConfigVariablesInDbEnabled = useAtomStateValue(
     isConfigVariablesInDbEnabledState,
   );
   const { t } = useLingui();

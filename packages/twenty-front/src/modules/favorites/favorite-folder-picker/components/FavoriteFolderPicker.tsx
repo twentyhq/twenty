@@ -4,16 +4,15 @@ import { FavoriteFolderPickerSearchInput } from '@/favorites/favorite-folder-pic
 import { useFavoriteFolderPicker } from '@/favorites/favorite-folder-picker/hooks/useFavoriteFolderPicker';
 import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder-picker/states/context/FavoriteFolderPickerInstanceContext';
 import { favoriteFolderSearchFilterComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFoldersSearchFilterComponentState';
-import { isFavoriteFolderCreatingStateV2 } from '@/favorites/states/isFavoriteFolderCreatingStateV2';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { Key } from 'ts-key-enum';
 
 type FavoriteFolderPickerProps = {
@@ -31,8 +30,9 @@ export const FavoriteFolderPicker = ({
   objectNameSingular,
   dropdownId,
 }: FavoriteFolderPickerProps) => {
-  const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
-    useRecoilStateV2(isFavoriteFolderCreatingStateV2);
+  const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] = useAtomState(
+    isFavoriteFolderCreatingState,
+  );
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     FavoriteFolderPickerInstanceContext,
@@ -43,19 +43,19 @@ export const FavoriteFolderPicker = ({
     objectNameSingular,
   });
 
-  const [favoriteFoldersSearchFilter] = useRecoilComponentState(
+  const [favoriteFolderSearchFilter] = useAtomComponentState(
     favoriteFolderSearchFilterComponentState,
   );
 
   const filteredFolders = favoriteFolders.filter((folder) =>
     folder.name
       .toLowerCase()
-      .includes(favoriteFoldersSearchFilter.toLowerCase()),
+      .includes(favoriteFolderSearchFilter.toLowerCase()),
   );
 
   const showNoFolderOption =
-    !favoriteFoldersSearchFilter ||
-    'no folder'.includes(favoriteFoldersSearchFilter.toLowerCase());
+    !favoriteFolderSearchFilter ||
+    'no folder'.includes(favoriteFolderSearchFilter.toLowerCase());
 
   useHotkeysOnFocusedElement({
     keys: [Key.Escape],

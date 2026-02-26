@@ -230,7 +230,7 @@ export class ToolExecutorService {
       );
     }
 
-    // The tool's execute expects (args, ToolCallOptions). Pass args with
+    // The tool's execute expects (args, ToolExecutionOptions). Pass args with
     // a dummy loadingMessage since the tool's internal strip is harmless.
     return tool.execute(
       { loadingMessage: '', ...args },

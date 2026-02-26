@@ -10,29 +10,38 @@ image: /images/user-guide/table-views/table.png
 Componente per categorizzare o etichettare visivamente i contenuti.
 
 <Tabs>
-  <Tab title="Utilizzo">
-    ```jsx
-    import { Tag } from "@/ui/display/tag/components/Tag";
 
-    export const MyComponent = () => {
-      return (
-        <Tag
-          className
-          color="red"
-          text="Urgente"
-          onClick={() => console.log("click")}
-        />
-      );
-    };
-    ```
-  </Tab>
+<Tab title="Utilizzo">
 
-  <Tab title="Props">
-    | Props      | Tipo     | Descrizione                                                                                                                                 |
-    | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-    | nomeClasse | string   | Nome opzionale per stile aggiuntivo                                                                                                         |
-    | colore     | stringa  | Colore dell'etichetta. Le opzioni includono: `verde`, `turchese`, `cielo`, `blu`, `viola`, `rosa`, `rosso`, `arancione`, `giallo`, `grigio` |
-    | testo      | stringa  | Il contenuto dell'etichetta                                                                                                                 |
-    | onClick    | funzione | Funzione opzionale chiamata quando un utente clicca sull'etichetta                                                                          |
-  </Tab>
+```jsx
+import { Tag } from "@/ui/display/tag/components/Tag";
+
+export const MyComponent = () => {
+  return (
+    <Tag
+      className
+      color="red"
+      text="Urgente"
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+
+| Props      | Tipo     | Descrizione                                                                                                                                 |
+| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| nomeClasse | string   | Nome opzionale per stile aggiuntivo                                                                                                         |
+| colore     | stringa  | Colore dell'etichetta. Le opzioni includono: `verde`, `turchese`, `cielo`, `blu`, `viola`, `rosa`, `rosso`, `arancione`, `giallo`, `grigio` |
+| testo      | stringa  | Il contenuto dell'etichetta                                                                                                                 |
+| onClick    | funzione | Funzione opzionale chiamata quando un utente clicca sull'etichetta                                                                          |
+
+
+
+</Tab>
+
 </Tabs>

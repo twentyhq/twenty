@@ -4,9 +4,9 @@ import { act } from 'react';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { useOpenCalendarEventInCommandMenu } from '@/command-menu/hooks/useOpenCalendarEventInCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconCalendarEvent } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -46,7 +46,7 @@ const renderHooks = () => {
       const { openCalendarEventInCommandMenu } =
         useOpenCalendarEventInCommandMenu();
 
-      const viewableRecordId = useRecoilComponentValue(
+      const viewableRecordId = useAtomComponentStateValue(
         viewableRecordIdComponentState,
         'mocked-uuid',
       );

@@ -1,6 +1,6 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const recordIndexCalendarFieldMetadataIdState = createState<
+export const recordIndexCalendarFieldMetadataIdState = createAtomState<
   string | null
 >({
   key: 'recordIndexCalendarFieldMetadataIdState',

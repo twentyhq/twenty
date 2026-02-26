@@ -10,8 +10,8 @@ import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { type Decorator } from '@storybook/react-vite';
-import { useEffect, useState } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
+import { useCallback, useEffect, useState } from 'react';
 import {
   getWorkflowMock,
   getWorkflowNodeIdMock,
@@ -26,56 +26,59 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
   const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
   const [ready, setReady] = useState(false);
 
-  const handleMount = useRecoilCallback(
-    ({ set }) =>
-      async () => {
-        await loadMockedObjectMetadataItems();
+  const store = useStore();
 
-        set(
-          workflowVisualizerWorkflowIdComponentState.atomFamily({
-            instanceId: workflowVisualizerComponentInstanceId,
-          }),
-          getWorkflowMock().id,
-        );
-        set(
-          workflowVisualizerWorkflowVersionIdComponentState.atomFamily({
-            instanceId: workflowVisualizerComponentInstanceId,
-          }),
-          workflowVersion.id,
-        );
-        set(
-          workflowVisualizerWorkflowRunIdComponentState.atomFamily({
-            instanceId: workflowVisualizerComponentInstanceId,
-          }),
-          '123',
-        );
-        set(
-          workflowSelectedNodeComponentState.atomFamily({
-            instanceId: workflowVisualizerComponentInstanceId,
-          }),
-          getWorkflowNodeIdMock(),
-        );
-        set(
-          flowComponentState.atomFamily({
-            instanceId: workflowVisualizerComponentInstanceId,
-          }),
-          {
-            workflowVersionId: workflowVersion.id,
-            trigger: workflowVersion.trigger,
-            steps: workflowVersion.steps,
-          },
-        );
-        set(
-          commandMenuWorkflowIdComponentState.atomFamily({
-            instanceId: workflowVisualizerComponentInstanceId,
-          }),
-          getWorkflowMock().id,
-        );
-        populateStepsOutputSchema(workflowVersion);
-        setReady(true);
+  const handleMount = useCallback(async () => {
+    await loadMockedObjectMetadataItems();
+
+    store.set(
+      workflowVisualizerWorkflowIdComponentState.atomFamily({
+        instanceId: workflowVisualizerComponentInstanceId,
+      }),
+      getWorkflowMock().id,
+    );
+    store.set(
+      workflowVisualizerWorkflowVersionIdComponentState.atomFamily({
+        instanceId: workflowVisualizerComponentInstanceId,
+      }),
+      workflowVersion.id,
+    );
+    store.set(
+      workflowVisualizerWorkflowRunIdComponentState.atomFamily({
+        instanceId: workflowVisualizerComponentInstanceId,
+      }),
+      '123',
+    );
+    store.set(
+      workflowSelectedNodeComponentState.atomFamily({
+        instanceId: workflowVisualizerComponentInstanceId,
+      }),
+      getWorkflowNodeIdMock(),
+    );
+    store.set(
+      flowComponentState.atomFamily({
+        instanceId: workflowVisualizerComponentInstanceId,
+      }),
+      {
+        workflowVersionId: workflowVersion.id,
+        trigger: workflowVersion.trigger,
+        steps: workflowVersion.steps,
       },
-    [loadMockedObjectMetadataItems, populateStepsOutputSchema, workflowVersion],
-  );
+    );
+    store.set(
+      commandMenuWorkflowIdComponentState.atomFamily({
+        instanceId: workflowVisualizerComponentInstanceId,
+      }),
+      getWorkflowMock().id,
+    );
+    populateStepsOutputSchema(workflowVersion);
+    setReady(true);
+  }, [
+    loadMockedObjectMetadataItems,
+    populateStepsOutputSchema,
+    workflowVersion,
+    store,
+  ]);
 
   useEffect(() => {
     handleMount();

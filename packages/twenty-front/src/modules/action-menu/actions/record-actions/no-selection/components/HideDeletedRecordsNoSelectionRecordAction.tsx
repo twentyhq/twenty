@@ -6,23 +6,23 @@ import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRe
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const HideDeletedRecordsNoSelectionRecordAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const currentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
-  if (!currentViewId) {
+  if (!contextStoreCurrentViewId) {
     throw new Error('Current view ID is not defined');
   }
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem.namePlural,
-    currentViewId,
+    contextStoreCurrentViewId,
   );
 
   const { toggleSoftDeleteFilterState } = useHandleToggleTrashColumnFilter({
@@ -32,7 +32,7 @@ export const HideDeletedRecordsNoSelectionRecordAction = () => {
 
   const { isRecordFilterAboutSoftDelete } = useCheckIsSoftDeleteFilter();
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
     recordIndexId,
   );

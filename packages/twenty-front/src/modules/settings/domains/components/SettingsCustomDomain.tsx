@@ -4,7 +4,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { useRecoilValue } from 'recoil';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
 import { Button, ButtonGroup } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -37,13 +37,13 @@ const StyledRecordsWrapper = styled.div`
 `;
 
 export const SettingsCustomDomain = () => {
-  const { customDomainRecords, isLoading } = useRecoilValue(
+  const { customDomainRecords, isLoading } = useAtomStateValue(
     customDomainRecordsState,
   );
 
   const { checkCustomDomainRecords } = useCheckCustomDomainValidRecords();
 
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { t } = useLingui();
 

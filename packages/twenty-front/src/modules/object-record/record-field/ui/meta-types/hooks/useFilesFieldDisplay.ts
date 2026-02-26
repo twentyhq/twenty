@@ -4,7 +4,7 @@ import {
   type FieldFilesMetadata,
   type FieldFilesValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useRecordFieldValueV2 } from '@/object-record/record-store/hooks/useRecordFieldValueV2';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 
 import { useContext } from 'react';
 
@@ -14,7 +14,7 @@ export const useFilesFieldDisplay = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const fieldValue = useRecordFieldValueV2<FieldFilesValue[] | undefined>(
+  const fieldValue = useRecordFieldValue<FieldFilesValue[] | undefined>(
     recordId,
     fieldName,
     fieldDefinition,

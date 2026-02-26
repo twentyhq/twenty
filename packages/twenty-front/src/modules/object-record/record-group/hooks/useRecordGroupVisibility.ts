@@ -1,51 +1,48 @@
+import { useStore } from 'jotai';
+
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { recordGroupDefinitionToViewGroup } from '@/views/utils/recordGroupDefinitionToViewGroup';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 
 export const useRecordGroupVisibility = () => {
-  const recordIndexShouldHideEmptyRecordGroupsCallbackState =
-    useRecoilComponentCallbackState(
+  const store = useStore();
+
+  const recordIndexShouldHideEmptyRecordGroups =
+    useAtomComponentStateCallbackState(
       recordIndexShouldHideEmptyRecordGroupsComponentState,
     );
 
   const { saveViewGroup } = useSaveCurrentViewGroups();
   const { updateCurrentView } = useUpdateCurrentView();
 
-  const handleVisibilityChange = useRecoilCallback(
-    ({ set }) =>
-      async (updatedRecordGroup: RecordGroupDefinition) => {
-        set(
-          recordGroupDefinitionFamilyState(updatedRecordGroup.id),
-          updatedRecordGroup,
-        );
+  const handleVisibilityChange = useCallback(
+    async (updatedRecordGroup: RecordGroupDefinition) => {
+      store.set(
+        recordGroupDefinitionFamilyState.atomFamily(updatedRecordGroup.id),
+        updatedRecordGroup,
+      );
 
-        saveViewGroup(recordGroupDefinitionToViewGroup(updatedRecordGroup));
-      },
-    [saveViewGroup],
+      saveViewGroup(recordGroupDefinitionToViewGroup(updatedRecordGroup));
+    },
+    [saveViewGroup, store],
   );
 
-  const handleHideEmptyRecordGroupChange = useRecoilCallback(
-    ({ set, snapshot }) =>
-      async () => {
-        const currentHideState = snapshot
-          .getLoadable(recordIndexShouldHideEmptyRecordGroupsCallbackState)
-          .getValue();
+  const handleHideEmptyRecordGroupChange = useCallback(async () => {
+    const currentHideState = store.get(recordIndexShouldHideEmptyRecordGroups);
 
-        const newHideState = !currentHideState;
+    const newHideState = !currentHideState;
 
-        set(recordIndexShouldHideEmptyRecordGroupsCallbackState, newHideState);
+    store.set(recordIndexShouldHideEmptyRecordGroups, newHideState);
 
-        await updateCurrentView({
-          shouldHideEmptyGroups: newHideState,
-        });
-      },
-    [recordIndexShouldHideEmptyRecordGroupsCallbackState, updateCurrentView],
-  );
+    await updateCurrentView({
+      shouldHideEmptyGroups: newHideState,
+    });
+  }, [store, recordIndexShouldHideEmptyRecordGroups, updateCurrentView]);
 
   return {
     handleVisibilityChange,

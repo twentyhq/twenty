@@ -1,6 +1,6 @@
 import { RecordTableRowDiv } from '@/object-record/record-table/record-table-row/components/RecordTableRowDiv';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isActive } from '@tiptap/core';
 import { forwardRef, type ReactNode } from 'react';
 
@@ -33,7 +33,7 @@ export const RecordTableFirstRowOfGroup = forwardRef<
     },
     ref,
   ) => {
-    const isScrolledVertically = useRecoilComponentValue(
+    const isRecordTableScrolledVertically = useAtomComponentStateValue(
       isRecordTableScrolledVerticallyComponentState,
     );
 
@@ -48,7 +48,7 @@ export const RecordTableFirstRowOfGroup = forwardRef<
         data-next-row-active-or-focused={isNextRowActiveOrFocused}
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
-        isScrolledVertically={isScrolledVertically}
+        isScrolledVertically={isRecordTableScrolledVertically}
         isFirstRowOfGroup={true}
       >
         {children}

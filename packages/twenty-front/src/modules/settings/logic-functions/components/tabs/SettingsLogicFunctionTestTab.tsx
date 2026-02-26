@@ -1,11 +1,9 @@
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
-import {
-  type LogicFunctionTestData,
-  logicFunctionTestDataFamilyState,
-} from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
 import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -33,10 +31,14 @@ export const SettingsLogicFunctionTestTab = ({
   isTesting?: boolean;
 }) => {
   const { t } = useLingui();
-  const [logicFunctionTestData, setLogicFunctionTestData] =
-    useRecoilState<LogicFunctionTestData>(
-      logicFunctionTestDataFamilyState(logicFunctionId),
-    );
+  const logicFunctionTestData = useAtomFamilyStateValue(
+    logicFunctionTestDataFamilyState,
+    logicFunctionId,
+  );
+  const setLogicFunctionTestData = useSetAtomFamilyState(
+    logicFunctionTestDataFamilyState,
+    logicFunctionId,
+  );
 
   const onChange = (newInput: string) => {
     setLogicFunctionTestData((prev) => ({

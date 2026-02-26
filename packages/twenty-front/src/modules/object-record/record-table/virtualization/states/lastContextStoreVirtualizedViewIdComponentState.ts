@@ -1,8 +1,8 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const lastContextStoreVirtualizedViewIdComponentState =
-  createComponentState<string | null>({
+  createAtomComponentState<string | null>({
     key: 'lastContextStoreVirtualizedViewIdComponentState',
     componentInstanceContext: ContextStoreComponentInstanceContext,
     defaultValue: null,

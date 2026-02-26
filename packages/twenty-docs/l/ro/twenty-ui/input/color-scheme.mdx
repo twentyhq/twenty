@@ -12,28 +12,36 @@ image: /images/user-guide/fields/field.png
 Reprezintă scheme de culori diferite și este special adaptat pentru teme deschise și întunecate.
 
 <Tabs>
-  <Tab title="Utilizare">
-    ```jsx
-    import { ColorSchemeCard } from "twenty-ui/display";
+<Tab title="Utilizare">
 
-    export const MyComponent = () => {
-      return (
-          <ColorSchemeCard
-          variant="Dark"
-          selected={true}
-          />
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
 
-  <Tab title="Proprietăți">
-    | Proprietăți              | Tip                                     | Descriere                                                                        | Implicit |
-    | ------------------------ | --------------------------------------- | -------------------------------------------------------------------------------- | -------- |
-    | variantă                 | șir                                     | Varianta schemei de culori. Opțiuni includ `Întunecată`, `Deschisă`, și `Sistem` | luminos  |
-    | selectat                 | boolean                                 | Dacă este `true`, afișează o bifă pentru a indica schema culorilor selectată     |          |
-    | proprietăți suplimentare | `React.ComponentPropsWithoutRef<'div'>` | Proprietăți standard pentru elementul HTML `div`                                 |          |
-  </Tab>
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Proprietăți">
+
+
+| Proprietăți              | Tip                                     | Descriere                                                                        | Implicit |
+| ------------------------ | --------------------------------------- | -------------------------------------------------------------------------------- | -------- |
+| variantă                 | șir                                     | Varianta schemei de culori. Opțiuni includ `Întunecată`, `Deschisă`, și `Sistem` | luminos  |
+| selectat                 | boolean                                 | Dacă este `true`, afișează o bifă pentru a indica schema culorilor selectată     |          |
+| proprietăți suplimentare | `React.ComponentPropsWithoutRef<'div'>` | Proprietăți standard pentru elementul HTML `div`                                 |          |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Selector de scheme de culori
@@ -41,23 +49,31 @@ Reprezintă scheme de culori diferite și este special adaptat pentru teme desch
 Permite utilizatorilor să aleagă între diferite scheme de culori.
 
 <Tabs>
-  <Tab title="Utilizare">
-    ```jsx
-    import { ColorSchemePicker } from "twenty-ui/display";
+<Tab title="Utilizare">
 
-    export const MyComponent = () => {
-      return <ColorSchemePicker
-      value="Dark"
-      onChange
-      />;
-    };
-    ```
-  </Tab>
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
 
-  <Tab title="Proprietăți">
-    | Proprietăți | Tip                | Descriere                                                                                           |
-    | ----------- | ------------------ | --------------------------------------------------------------------------------------------------- |
-    | valoare     | `Schema culorilor` | Schema de culori curentă selectată                                                                  |
-    | onChange    | funcție            | Funcția de callback pe care doriți să o declanșați când un utilizator selectează o schemă de culori |
-  </Tab>
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="Proprietăți">
+
+
+| Proprietăți | Tip                | Descriere                                                                                           |
+| ----------- | ------------------ | --------------------------------------------------------------------------------------------------- |
+| valoare     | `Schema culorilor` | Schema de culori curentă selectată                                                                  |
+| onChange    | funcție            | Funcția de callback pe care doriți să o declanșați când un utilizator selectează o schemă de culori |
+
+
+
+</Tab>
+
 </Tabs>

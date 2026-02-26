@@ -1,5 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 import { FIELD_NOT_OVERWRITTEN_AT_DRAFT } from '@/object-record/constants/FieldsNotOverwrittenAtDraft';
 import { recordFieldInputDraftValueComponentState } from '@/object-record/record-field/ui/states/recordFieldInputDraftValueComponentState';
@@ -10,53 +11,52 @@ import { computeDraftValueFromString } from '@/object-record/record-field/ui/uti
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 export const useInitDraftValue = <FieldValue>() => {
-  return useRecoilCallback(
-    ({ set, snapshot }) =>
-      ({
-        value,
-        recordId,
-        fieldDefinition,
-        fieldComponentInstanceId,
-      }: {
-        value?: string;
-        recordId: string;
-        fieldDefinition: FieldDefinition<FieldMetadata>;
-        fieldComponentInstanceId: string;
-      }) => {
-        const recordFieldValue = snapshot
-          .getLoadable(
-            recordStoreFamilySelector<FieldValue>({
-              recordId,
-              fieldName: fieldDefinition.metadata.fieldName,
-            }),
-          )
-          .getValue();
+  const store = useStore();
 
-        if (
-          isUndefined(value) ||
-          FIELD_NOT_OVERWRITTEN_AT_DRAFT.includes(fieldDefinition.type)
-        ) {
-          set(
-            recordFieldInputDraftValueComponentState.atomFamily({
-              instanceId: fieldComponentInstanceId,
-            }),
-            computeDraftValueFromFieldValue<FieldValue>({
-              fieldValue: recordFieldValue,
-              fieldDefinition,
-            }),
-          );
-        } else {
-          set(
-            recordFieldInputDraftValueComponentState.atomFamily({
-              instanceId: fieldComponentInstanceId,
-            }),
-            computeDraftValueFromString<FieldValue>({
-              value,
-              fieldDefinition,
-            }),
-          );
-        }
-      },
-    [],
+  return useCallback(
+    ({
+      value,
+      recordId,
+      fieldDefinition,
+      fieldComponentInstanceId,
+    }: {
+      value?: string;
+      recordId: string;
+      fieldDefinition: FieldDefinition<FieldMetadata>;
+      fieldComponentInstanceId: string;
+    }) => {
+      const recordFieldValue = store.get(
+        recordStoreFamilySelector.selectorFamily({
+          recordId,
+          fieldName: fieldDefinition.metadata.fieldName,
+        }),
+      ) as FieldValue;
+
+      const draftValue = recordFieldInputDraftValueComponentState.atomFamily({
+        instanceId: fieldComponentInstanceId,
+      });
+
+      if (
+        isUndefined(value) ||
+        FIELD_NOT_OVERWRITTEN_AT_DRAFT.includes(fieldDefinition.type)
+      ) {
+        store.set(
+          draftValue,
+          computeDraftValueFromFieldValue<FieldValue>({
+            fieldValue: recordFieldValue,
+            fieldDefinition,
+          }),
+        );
+      } else {
+        store.set(
+          draftValue,
+          computeDraftValueFromString<FieldValue>({
+            value,
+            fieldDefinition,
+          }),
+        );
+      }
+    },
+    [store],
   );
 };

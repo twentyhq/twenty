@@ -1,15 +1,15 @@
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useCreateNavigationMenuItemMutation } from '~/generated-metadata/graphql';
 
 import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const useCreateNavigationMenuItem = () => {
   const { navigationMenuItems, currentWorkspaceMemberId } =
     usePrefetchedNavigationMenuItemsData();
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const [createNavigationMenuItemMutation] =
     useCreateNavigationMenuItemMutation({

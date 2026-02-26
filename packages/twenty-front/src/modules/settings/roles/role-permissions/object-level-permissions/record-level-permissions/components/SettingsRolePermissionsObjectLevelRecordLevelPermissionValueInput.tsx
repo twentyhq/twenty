@@ -25,7 +25,7 @@ import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { createRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledContainer = styled.div`
   align-items: stretch;
@@ -102,7 +102,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
 
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
-    const currentRecordFilters = useRecoilComponentValue(
+    const currentRecordFilters = useAtomComponentStateValue(
       currentRecordFiltersComponentState,
     );
 

@@ -15,9 +15,9 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useRecoilValue } from 'recoil';
 
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import {
@@ -356,7 +356,7 @@ export const DatePicker = ({
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const handleClear = () => {
     closeDropdowns();
     onClear?.();

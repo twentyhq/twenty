@@ -8,9 +8,9 @@ import {
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useSetRecoilState } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -27,10 +27,10 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     objectMetadataItem,
   });
   const navigate = useNavigateSettings();
-  const setUpdatedObjectNamePlural = useSetRecoilState(
+  const setUpdatedObjectNamePlural = useSetAtomState(
     updatedObjectNamePluralState,
   );
-  const setNavigationMemorizedUrl = useSetRecoilState(
+  const setNavigationMemorizedUrl = useSetAtomState(
     navigationMemorizedUrlState,
   );
 

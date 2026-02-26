@@ -1,8 +1,8 @@
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const isObjectFilterDropdownUnfoldedComponentState =
-  createComponentState<boolean>({
+  createAtomComponentState<boolean>({
     key: 'isObjectFilterDropdownUnfoldedComponentState',
     defaultValue: false,
     componentInstanceContext: ObjectFilterDropdownComponentInstanceContext,

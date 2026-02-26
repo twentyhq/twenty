@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Note with loadRelations="activity" 1`] = `
 {
@@ -12,13 +12,8 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
 
 exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Note with loadRelations="both" 1`] = `
 {
-  "company": {
-    "domainName": true,
-    "id": true,
-    "name": true,
-  },
-  "companyId": true,
   "createdAt": true,
+  "createdBy": true,
   "deletedAt": true,
   "id": true,
   "note": {
@@ -26,54 +21,103 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
     "title": true,
   },
   "noteId": true,
-  "opportunity": {
+  "position": true,
+  "searchVector": true,
+  "targetCompany": {
     "id": true,
     "name": true,
   },
-  "opportunityId": true,
-  "person": {
-    "avatarUrl": true,
+  "targetCompanyId": true,
+  "targetEmploymentHistory": {
     "id": true,
     "name": true,
   },
-  "personId": true,
-  "pet": {
+  "targetEmploymentHistoryId": true,
+  "targetOpportunity": {
     "id": true,
     "name": true,
   },
-  "petId": true,
-  "rocket": {
+  "targetOpportunityId": true,
+  "targetPerson": {
     "id": true,
     "name": true,
   },
-  "rocketId": true,
-  "surveyResult": {
+  "targetPersonId": true,
+  "targetPet": {
     "id": true,
     "name": true,
   },
-  "surveyResultId": true,
+  "targetPetCareAgreement": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreementId": true,
+  "targetPetId": true,
+  "targetRocket": {
+    "id": true,
+    "name": true,
+  },
+  "targetRocketId": true,
+  "targetSurveyResult": {
+    "id": true,
+    "name": true,
+  },
+  "targetSurveyResultId": true,
   "updatedAt": true,
+  "updatedBy": true,
 }
 `;
 
 exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Note with loadRelations="relations" 1`] = `
 {
-  "company": true,
-  "companyId": true,
   "createdAt": true,
+  "createdBy": true,
   "deletedAt": true,
   "id": true,
-  "opportunity": true,
-  "opportunityId": true,
-  "person": true,
-  "personId": true,
-  "pet": true,
-  "petId": true,
-  "rocket": true,
-  "rocketId": true,
-  "surveyResult": true,
-  "surveyResultId": true,
+  "position": true,
+  "searchVector": true,
+  "targetCompany": {
+    "id": true,
+    "name": true,
+  },
+  "targetCompanyId": true,
+  "targetEmploymentHistory": {
+    "id": true,
+    "name": true,
+  },
+  "targetEmploymentHistoryId": true,
+  "targetOpportunity": {
+    "id": true,
+    "name": true,
+  },
+  "targetOpportunityId": true,
+  "targetPerson": {
+    "id": true,
+    "name": true,
+  },
+  "targetPersonId": true,
+  "targetPet": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreement": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreementId": true,
+  "targetPetId": true,
+  "targetRocket": {
+    "id": true,
+    "name": true,
+  },
+  "targetRocketId": true,
+  "targetSurveyResult": {
+    "id": true,
+    "name": true,
+  },
+  "targetSurveyResultId": true,
   "updatedAt": true,
+  "updatedBy": true,
 }
 `;
 
@@ -89,67 +133,111 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
 
 exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Task with loadRelations="both" 1`] = `
 {
-  "company": {
-    "domainName": true,
-    "id": true,
-    "name": true,
-  },
-  "companyId": true,
   "createdAt": true,
+  "createdBy": true,
   "deletedAt": true,
   "id": true,
-  "opportunity": {
+  "position": true,
+  "searchVector": true,
+  "targetCompany": {
     "id": true,
     "name": true,
   },
-  "opportunityId": true,
-  "person": {
-    "avatarUrl": true,
+  "targetCompanyId": true,
+  "targetEmploymentHistory": {
     "id": true,
     "name": true,
   },
-  "personId": true,
-  "pet": {
+  "targetEmploymentHistoryId": true,
+  "targetOpportunity": {
     "id": true,
     "name": true,
   },
-  "petId": true,
-  "rocket": {
+  "targetOpportunityId": true,
+  "targetPerson": {
     "id": true,
     "name": true,
   },
-  "rocketId": true,
-  "surveyResult": {
+  "targetPersonId": true,
+  "targetPet": {
     "id": true,
     "name": true,
   },
-  "surveyResultId": true,
+  "targetPetCareAgreement": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreementId": true,
+  "targetPetId": true,
+  "targetRocket": {
+    "id": true,
+    "name": true,
+  },
+  "targetRocketId": true,
+  "targetSurveyResult": {
+    "id": true,
+    "name": true,
+  },
+  "targetSurveyResultId": true,
   "task": {
     "id": true,
     "title": true,
   },
   "taskId": true,
   "updatedAt": true,
+  "updatedBy": true,
 }
 `;
 
 exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Task with loadRelations="relations" 1`] = `
 {
-  "company": true,
-  "companyId": true,
   "createdAt": true,
+  "createdBy": true,
   "deletedAt": true,
   "id": true,
-  "opportunity": true,
-  "opportunityId": true,
-  "person": true,
-  "personId": true,
-  "pet": true,
-  "petId": true,
-  "rocket": true,
-  "rocketId": true,
-  "surveyResult": true,
-  "surveyResultId": true,
+  "position": true,
+  "searchVector": true,
+  "targetCompany": {
+    "id": true,
+    "name": true,
+  },
+  "targetCompanyId": true,
+  "targetEmploymentHistory": {
+    "id": true,
+    "name": true,
+  },
+  "targetEmploymentHistoryId": true,
+  "targetOpportunity": {
+    "id": true,
+    "name": true,
+  },
+  "targetOpportunityId": true,
+  "targetPerson": {
+    "id": true,
+    "name": true,
+  },
+  "targetPersonId": true,
+  "targetPet": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreement": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreementId": true,
+  "targetPetId": true,
+  "targetRocket": {
+    "id": true,
+    "name": true,
+  },
+  "targetRocketId": true,
+  "targetSurveyResult": {
+    "id": true,
+    "name": true,
+  },
+  "targetSurveyResultId": true,
   "updatedAt": true,
+  "updatedBy": true,
 }
 `;

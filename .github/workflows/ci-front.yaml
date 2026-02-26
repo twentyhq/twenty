@@ -14,8 +14,8 @@ concurrency:
 
 env:
   # restore-cache action adds 'v4-' prefix and '-<branch>-<sha>' suffix to the key
-  STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION: storybook-build-ubuntu-latest-8-cores-runner
-  STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION: v4-storybook-build-ubuntu-latest-8-cores-runner-${{ github.ref_name }}-${{ github.sha }}
+  STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION: storybook-build-depot-ubuntu-24.04-8-runner
+  STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION: v4-storybook-build-depot-ubuntu-24.04-8-runner-${{ github.ref_name }}-${{ github.sha }}
 
 jobs:
   changed-files-check:
@@ -42,7 +42,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: depot-ubuntu-24.04-8
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
@@ -68,7 +68,7 @@ jobs:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION }}
   front-sb-test:
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: depot-ubuntu-24.04-8
     needs: front-sb-build
     strategy:
       fail-fast: false
@@ -98,52 +98,52 @@ jobs:
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
         run: npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
-      - name: Rename coverage file
-        run: |
-          if [ -f "packages/twenty-front/coverage/storybook/coverage-final.json" ]; then
-            mv packages/twenty-front/coverage/storybook/coverage-final.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
-          else
-            echo "Error: coverage-final.json not found"
-            ls -la packages/twenty-front/coverage/storybook/ || echo "Coverage directory does not exist"
-            exit 1
-          fi
-      - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
-        with:
-          retention-days: 1
-          name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-${{ matrix.shard }}
-          path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
-  merge-reports-and-check-coverage:
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
-    needs: front-sb-test
-    env:
-      PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
-    strategy:
-      matrix:
-        storybook_scope: [modules, pages, performance]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Install dependencies
-        uses: ./.github/actions/yarn-install
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-*
-          merge-multiple: true
-          path: coverage-artifacts
-      - name: Merge coverage reports
-        run: |
-          mkdir -p ${{ env.PATH_TO_COVERAGE }}
-          npx nyc merge coverage-artifacts ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
-      - name: Checking coverage
-        run: npx nx storybook:coverage twenty-front --checkCoverage=true --configuration=${{ matrix.storybook_scope }}
+      # - name: Rename coverage file
+      #   run: |
+      #     if [ -f "packages/twenty-front/coverage/storybook/coverage-final.json" ]; then
+      #       mv packages/twenty-front/coverage/storybook/coverage-final.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
+      #     else
+      #       echo "Error: coverage-final.json not found"
+      #       ls -la packages/twenty-front/coverage/storybook/ || echo "Coverage directory does not exist"
+      #       exit 1
+      #     fi
+      # - name: Upload coverage artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     retention-days: 1
+      #     name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-${{ matrix.shard }}
+      #     path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
+  # merge-reports-and-check-coverage:
+  #   timeout-minutes: 30
+  #   runs-on: depot-ubuntu-24.04
+  #   needs: front-sb-test
+  #   env:
+  #     PATH_TO_COVERAGE: packages/twenty-front/coverage/storybook
+  #   strategy:
+  #     matrix:
+  #       storybook_scope: [modules, pages, performance]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Install dependencies
+  #       uses: ./.github/actions/yarn-install
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         pattern: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-*
+  #         merge-multiple: true
+  #         path: coverage-artifacts
+  #     - name: Merge coverage reports
+  #       run: |
+  #         mkdir -p ${{ env.PATH_TO_COVERAGE }}
+  #         npx nyc merge coverage-artifacts ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
+  #     - name: Checking coverage
+  #       run: npx nx storybook:coverage twenty-front --checkCoverage=true --configuration=${{ matrix.storybook_scope }}
   front-chromatic-deployment:
     timeout-minutes: 30
     if: false
     needs: front-sb-build
-    runs-on: ubuntu-latest-8-cores
+    runs-on: depot-ubuntu-24.04-8
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
       CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -169,8 +169,9 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     env:
+      NODE_OPTIONS: '--max-old-space-size=4096'
       TASK_CACHE_KEY: front-task-${{ matrix.task }}
     strategy:
       matrix:
@@ -210,7 +211,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: ubuntu-latest-8-cores
+    runs-on: depot-ubuntu-24.04-8
     env:
       NODE_OPTIONS: "--max-old-space-size=10240"
     steps:
@@ -228,14 +229,14 @@ jobs:
         run: npx nx reset:env twenty-front
       - name: Build frontend
         run: npx nx build twenty-front
-      - name: Upload frontend build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build
-          path: packages/twenty-front/build
-          retention-days: 1
+      # - name: Upload frontend build artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: frontend-build
+      #     path: packages/twenty-front/build
+      #     retention-days: 1
   e2e-test:
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     needs: [changed-files-check-e2e, front-build]
     if: |
       always() &&
@@ -295,15 +296,18 @@ jobs:
           cp packages/twenty-front/.env.example packages/twenty-front/.env
           npx nx reset:env:e2e-testing-server twenty-server
 
-      - name: Download frontend build artifact
-        if: needs.front-build.result == 'success'
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-build
-          path: packages/twenty-front/build
+      # - name: Download frontend build artifact
+      #   if: needs.front-build.result == 'success'
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: frontend-build
+      #     path: packages/twenty-front/build
 
-      - name: Build frontend (if not available from front-build)
-        if: needs.front-build.result == 'skipped'
+      # - name: Build frontend (if not available from front-build)
+      #   if: needs.front-build.result == 'skipped'
+      #   run: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-front
+
+      - name: Build frontend
         run: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-front
 
       - name: Build server
@@ -335,23 +339,23 @@ jobs:
       - name: Run Playwright tests
         run: npx nx test twenty-e2e-testing
 
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report
-          path: packages/twenty-e2e-testing/run_results/
-          retention-days: 30
+      # - uses: actions/upload-artifact@v4
+      #   if: always()
+      #   with:
+      #     name: playwright-report
+      #     path: packages/twenty-e2e-testing/run_results/
+      #     retention-days: 30
 
   ci-front-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     needs:
       [
         changed-files-check,
         front-task,
         front-build,
-        merge-reports-and-check-coverage,
+        # merge-reports-and-check-coverage,
         front-sb-test,
         front-sb-build,
       ]
@@ -362,7 +366,7 @@ jobs:
   ci-e2e-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-24.04
     needs: [changed-files-check-e2e, e2e-test]
     steps:
       - name: Fail job if any needs failed

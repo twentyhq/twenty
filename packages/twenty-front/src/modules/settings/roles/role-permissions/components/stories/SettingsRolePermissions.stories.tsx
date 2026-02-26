@@ -1,7 +1,7 @@
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { getRolesMock } from '~/testing/mock-data/roles';
@@ -9,14 +9,15 @@ import { getRolesMock } from '~/testing/mock-data/roles';
 const SettingsRolePermissionsWrapper = (
   args: React.ComponentProps<typeof SettingsRolePermissions>,
 ) => {
-  const setDraftRole = useSetRecoilState(
-    settingsDraftRoleFamilyState(args.roleId),
+  const setSettingsDraftRole = useSetAtomFamilyState(
+    settingsDraftRoleFamilyState,
+    args.roleId,
   );
 
   const role = getRolesMock().find((role) => role.id === args.roleId);
 
   if (isDefined(role)) {
-    setDraftRole(role);
+    setSettingsDraftRole(role);
   }
 
   return (

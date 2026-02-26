@@ -54,7 +54,7 @@ export const main = async () => {
 ```
 
 <Tip>
-  通过 `updated_at >= last X minutes` 进行筛选，仅检索最近更改的记录。 这样可以保持同步的高效性。
+通过 `updated_at >= last X minutes` 进行筛选，仅检索最近更改的记录。 这样可以保持同步的高效性。
 </Tip>
 
 ## 步骤 3：格式化数据（可选）
@@ -163,7 +163,7 @@ export const main = async (params: { deals: any }) => {
 | **Price** | `{{iterator.item.price}}` |
 
 <Tip>
-  使用 **Upsert**（更新或创建），而不是为“创建”和“更新”分别构建分支。 这样构建更快，也更易于调试。
+使用 **Upsert**（更新或创建），而不是为“创建”和“更新”分别构建分支。 这样构建更快，也更易于调试。
 </Tip>
 
 ## 示例用例

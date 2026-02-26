@@ -12,9 +12,9 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import { useRecoilValue } from 'recoil';
 import { HorizontalSeparator } from 'twenty-ui/display';
 import { ClickToActionLink } from 'twenty-ui/navigation';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -23,8 +23,8 @@ const StyledContentContainer = styled.div`
 `;
 
 export const SignInUpWorkspaceScopeForm = () => {
-  const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
-  const workspaceAuthBypassProviders = useRecoilValue(
+  const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
+  const workspaceAuthBypassProviders = useAtomStateValue(
     workspaceAuthBypassProvidersState,
   );
   const { shouldOfferBypass, shouldUseBypass } = useWorkspaceBypass();

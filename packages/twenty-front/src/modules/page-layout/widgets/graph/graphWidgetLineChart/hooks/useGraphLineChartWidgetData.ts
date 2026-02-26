@@ -65,7 +65,8 @@ export const useGraphLineChartWidgetData = ({
     : new Map();
 
   const secondaryAxisField = objectMetadataItem?.fields?.find(
-    (field) => field.id === configuration.secondaryAxisGroupByFieldMetadataId,
+    (field: { id: string }) =>
+      field.id === configuration.secondaryAxisGroupByFieldMetadataId,
   );
 
   const selectFieldOptions =

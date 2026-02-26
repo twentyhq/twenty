@@ -1,4 +1,4 @@
-import { addCustomSuffixIfIsReserved } from '@/metadata/add-custom-suffix-if-reserved.util';
+import { addCustomSuffixIfIsReserved } from '@/metadata/utils/add-custom-suffix-if-reserved.util';
 
 describe('addCustomSuffixIfIsReserved', () => {
   it('should add Custom suffix for reserved name "event"', () => {

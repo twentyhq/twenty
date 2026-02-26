@@ -1,6 +1,5 @@
-import { useRecoilState } from 'recoil';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
@@ -12,7 +11,7 @@ import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 export const ToggleImpersonate = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
 

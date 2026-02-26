@@ -20,8 +20,8 @@ import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID } from '@/page-layout/constants
 import { recordPageLayoutFromIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutFromIdFamilySelector';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useQuery } from '@apollo/client';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 const getDefaultLayoutById = (layoutId: string): PageLayout => {
@@ -64,8 +64,9 @@ export const useBasePageLayout = (
 ): PageLayout | undefined => {
   const isDefaultLayout = isDefaultLayoutId(pageLayoutId);
 
-  const cachedRecordPageLayout = useRecoilValue(
-    recordPageLayoutFromIdFamilySelector({ pageLayoutId }),
+  const cachedRecordPageLayout = useAtomFamilySelectorValue(
+    recordPageLayoutFromIdFamilySelector,
+    { pageLayoutId },
   );
 
   const shouldSkipQuery = isDefaultLayout || isDefined(cachedRecordPageLayout);
