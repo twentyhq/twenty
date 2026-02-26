@@ -4,6 +4,7 @@ import { type ToolSet } from 'ai';
 import { AggregateOperations } from 'twenty-shared/types';
 import { z } from 'zod';
 
+import { getIsFlatFieldAJunctionRelationField } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-junction-relation-field';
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
@@ -97,6 +98,76 @@ export class ViewFieldToolsFactory {
     private readonly viewFieldService: ViewFieldService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
+
+  /**
+   * Hides all system and junction relation fields for a given view by setting isVisible=false.
+   * Returns the updated view fields.
+   */
+  async hideAllSystemAndJunctionFields(workspaceId: string, viewId: string) {
+    // Get all view fields for the view
+    const viewFields = await this.viewFieldService.findByViewId(
+      workspaceId,
+      viewId,
+    );
+
+    // Get field metadata for all fields in the workspace
+    const { flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
+        },
+      );
+
+    // Find view fields that are system or junction relation fields
+    const toHide = viewFields.filter((vf) => {
+      const universalIdentifier =
+        flatFieldMetadataMaps.universalIdentifierById[vf.fieldMetadataId];
+      const meta = universalIdentifier
+        ? flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier]
+        : undefined;
+
+      if (!meta) {
+        return false;
+      }
+
+      return (
+        meta.isSystem ||
+        getIsFlatFieldAJunctionRelationField({ flatField: meta })
+      );
+    });
+
+    // Prepare update payloads
+    const updates = toHide.map((vf) => ({
+      id: vf.id,
+      isVisible: false,
+    }));
+
+    // Update all relevant view fields
+    const results = await Promise.all(
+      updates.map(async (update) => {
+        const updated = await this.viewFieldService.updateOne({
+          updateViewFieldInput: {
+            id: update.id,
+            update: { isVisible: false },
+          },
+          workspaceId,
+        });
+
+        return {
+          id: updated.id,
+          fieldMetadataId: updated.fieldMetadataId,
+          viewId: updated.viewId,
+          isVisible: updated.isVisible,
+          size: updated.size,
+          position: updated.position,
+          aggregateOperation: updated.aggregateOperation,
+        };
+      }),
+    );
+
+    return results;
+  }
 
   private async resolveFieldName(
     workspaceId: string,
@@ -368,6 +439,29 @@ export class ViewFieldToolsFactory {
             }
             throw error;
           }
+        },
+      },
+
+      hide_system_and_junction_fields: {
+        description:
+          'Hide all system and junction relation fields in a view by setting isVisible=false for those fields. Use get_views to find the viewId.',
+        inputSchema: z.object({
+          viewId: z
+            .string()
+            .uuid()
+            .describe(
+              'The ID of the view whose system and junction relation fields should be hidden.',
+            ),
+        }),
+        execute: async (parameters: { viewId: string }) => {
+          const result = await this.hideAllSystemAndJunctionFields(
+            workspaceId,
+            parameters.viewId,
+          );
+
+          return {
+            success: Array.isArray(result) ? result.length > 0 : false,
+          };
         },
       },
     };
