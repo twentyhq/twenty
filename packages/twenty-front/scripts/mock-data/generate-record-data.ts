@@ -54,10 +54,7 @@ const buildFieldSelection = (field: MetadataField): string | null => {
   return field.name;
 };
 
-const buildFindManyQuery = (
-  object: MetadataObject,
-  limit: number,
-): string => {
+const buildFindManyQuery = (object: MetadataObject, limit: number): string => {
   const selections = object.fieldsList
     .map(buildFieldSelection)
     .filter(Boolean)
