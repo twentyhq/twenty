@@ -204,17 +204,11 @@ export class ApplicationManifestMigrationService {
       settingsCustomTabFrontComponentId = flatFrontComponent.id;
     }
 
-    if (
-      isDefined(defaultRoleId) ||
-      isDefined(settingsCustomTabFrontComponentId)
-    ) {
-      await this.applicationService.update(ownerFlatApplication.id, {
-        ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
-        ...(isDefined(settingsCustomTabFrontComponentId)
-          ? { settingsCustomTabFrontComponentId }
-          : {}),
-      });
-    }
+    await this.applicationService.update(ownerFlatApplication.id, {
+      workspaceId,
+      settingsCustomTabFrontComponentId,
+      ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
+    });
   }
 
   private async syncApplicationRolePermissions({
