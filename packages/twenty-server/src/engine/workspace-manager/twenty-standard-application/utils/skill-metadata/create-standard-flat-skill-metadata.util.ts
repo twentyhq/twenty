@@ -138,6 +138,61 @@ Prioritize data integrity and provide clear feedback on operations performed.`,
       },
     }),
 
+  'workspace-demo-seeding': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
+    createStandardSkillFlatMetadata({
+      ...args,
+      context: {
+        skillName: 'workspace-demo-seeding',
+        name: 'workspace-demo-seeding',
+        label: 'Workspace Demo Seeding',
+        description:
+          'Seeding demo metadata and data for workspace setup and testing purposes',
+        icon: 'IconDatabase',
+        content: `# Workspace Demo Seeding Skill
+You will create a demo workspace that fits a particular type of company given by the user.
+
+Do not ask the user for more information, just be creative with the objects and fields, but stay professional and coherent.
+
+Create relations fields between objects, for example a car repair shop workspace would have objects for cars, employees, repairs, customers, and the relevant relations between them.
+
+For the fields you will create, make sure to create a good variety of field types to showcase the different capabilities of the platform, for example:
+- Create SELECT and SELECT_MULTIPLE field types for building demo board index views and table with groups views
+- Create DATE_TIME fields to be able to create calendar views
+- Create CURRENCY and NUMERIC fields for graphs
+
+Then add mock data for all created objects, between 20 and 50, with a coherent combination of values.
+
+Here are the steps for you to work properly :
+- Creating an object
+- Navigating to its default view
+- Hide all the junction relation fields from the default view, at once
+- Creating the relevant field metadata items :
+  - Create all field metadata items at once
+  - Change all view fields visibility to visible at once
+  - Change the position to after the label identifier, at a relevant position semanticaly for each view fields, at once
+- Then create mock records for this object
+- Then proceed to the next object and repeat this
+
+After you're finished with this part, let's proceed to the dashboard creation. We will create a dashboard with 4 graphs.
+- Navigate to the dashboard list default view
+- Create a new dashboard
+- Navigate to the dashboard page
+- Create 4 graphs :
+  - For each graph, find a relevant amount for y axis, a relevant date or select field for x axis, and if necessary a relevant group by stack
+  - Change the name of each graph so it is relevant
+  - Turn on the labels on the graphs
+
+Create multiple views, and navigate and wait for each one, they should be creative and relevant to this workspace :
+- Board view
+- Calendar view
+- Table with groups
+
+After everything is done, make a tour to the user, by waiting between each step so the user can see what have been made, explain what you've done and how to use it, and then ask the user if they want to modify or add something to this demo workspace, and if they do, help them with that.
+`,
+        isCustom: false,
+      },
+    }),
+
   'dashboard-building': (args: Omit<CreateStandardSkillArgs, 'context'>) =>
     createStandardSkillFlatMetadata({
       ...args,
