@@ -1,0 +1,162 @@
+{
+  "application": {
+    "universalIdentifier": "ac1d2ed1-8835-4bd4-9043-28b46fdda465",
+    "displayName": "Apollo enrichment",
+    "description": "Data enrichment with Apollo to keep your data accurate",
+    "defaultRoleUniversalIdentifier": "b8faae3f-e174-43fa-ab94-715712ae26cb",
+    "applicationVariables": {
+      "APOLLO_CLIENT_ID": {
+        "universalIdentifier": "5852219e-7757-463e-9e7c-80980203794c",
+        "isSecret": true,
+        "value": "",
+        "description": "Apollo Client ID"
+      },
+      "APOLLO_CLIENT_SECRET": {
+        "universalIdentifier": "a032349d-9458-4381-8505-82547276434a",
+        "isSecret": true,
+        "value": "",
+        "description": "Apollo Client Secret"
+      },
+      "APOLLO_OAUTH_URL": {
+        "universalIdentifier": "1d42411c-5809-4093-873a-8121b1302475",
+        "isSecret": false,
+        "value": "",
+        "description": "Apollo OAuth URL"
+      },
+      "APOLLO_REDIRECT_URI": {
+        "universalIdentifier": "c8d9e0f1-2a3b-4c5d-6e7f-8a9b0c1d2e3f",
+        "isSecret": false,
+        "value": "",
+        "description": "Apollo OAuth redirect URI"
+      },
+      "APOLLO_REGISTERED_URL": {
+        "universalIdentifier": "672a6fce-5565-43bc-9a3b-7f2c33620770",
+        "isSecret": false,
+        "value": "",
+        "description": "Apollo registered URL"
+      }
+    },
+    "yarnLockChecksum": "0d2353a6658e57eb832d0f924f07b2ff",
+    "packageJsonChecksum": "e5b55760981dea090642b5dffb00904f",
+    "apiClientChecksum": "87772bb0b06ba8792f14151a068940da",
+    "preInstallLogicFunctionUniversalIdentifier": "af7cd86e-149e-466a-8d60-312b6e46d604",
+    "postInstallLogicFunctionUniversalIdentifier": "08292efc-d7ba-4ec3-ab95-e7c33bd3a3bc"
+  },
+  "objects": [],
+  "fields": [],
+  "roles": [
+    {
+      "universalIdentifier": "b8faae3f-e174-43fa-ab94-715712ae26cb",
+      "label": "Apollo enrich default function role",
+      "description": "Apollo enrich default function role",
+      "canReadAllObjectRecords": true,
+      "canUpdateAllObjectRecords": true,
+      "canSoftDeleteAllObjectRecords": true,
+      "canDestroyAllObjectRecords": false
+    }
+  ],
+  "skills": [],
+  "logicFunctions": [
+    {
+      "universalIdentifier": "7ccc63a7-ece1-44c0-adbe-805a1baea03a",
+      "name": "get-authentication-token-pairs",
+      "description": "Returns the Apollo authentication token pairs",
+      "timeoutSeconds": 10,
+      "httpRouteTriggerSettings": {
+        "path": "/oauth/token-pairs",
+        "httpMethod": "GET",
+        "isAuthRequired": false
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/get-authentication-token-pairs.ts",
+      "builtHandlerPath": "src/logic-functions/get-authentication-token-pairs.mjs",
+      "builtHandlerChecksum": "ba8cd2ded79a72b96755f689c1b9c4d6"
+    },
+    {
+      "universalIdentifier": "b7c3e8f1-9d4a-4e2b-8f6c-1a5d3e7b9c2f",
+      "name": "get-oauth-application-variables",
+      "description": "Returns the Apollo OAuth authorization URL",
+      "timeoutSeconds": 10,
+      "httpRouteTriggerSettings": {
+        "path": "/oauth/application-variables",
+        "httpMethod": "GET",
+        "isAuthRequired": false
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/get-oauth-application-variables.ts",
+      "builtHandlerPath": "src/logic-functions/get-oauth-application-variables.mjs",
+      "builtHandlerChecksum": "b427f301286c97fd42b88af739515aba"
+    },
+    {
+      "universalIdentifier": "4d74950a-d9c1-4c66-a799-89c1aea4e6b0",
+      "name": "get-verify-page",
+      "description": "Returns the Apollo OAuth verify page",
+      "timeoutSeconds": 10,
+      "httpRouteTriggerSettings": {
+        "path": "/oauth/verify",
+        "httpMethod": "GET",
+        "isAuthRequired": false
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/get-verify-page.ts",
+      "builtHandlerPath": "src/logic-functions/get-verify-page.mjs",
+      "builtHandlerChecksum": "ed60dee42b098ff23964249d9338233a"
+    },
+    {
+      "universalIdentifier": "08292efc-d7ba-4ec3-ab95-e7c33bd3a3bc",
+      "name": "post-install",
+      "description": "Runs after installation to set up the application.",
+      "timeoutSeconds": 300,
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/post-install.ts",
+      "builtHandlerPath": "src/logic-functions/post-install.mjs",
+      "builtHandlerChecksum": "0810f342d1e55c8513115077d6be11f6"
+    },
+    {
+      "universalIdentifier": "af7cd86e-149e-466a-8d60-312b6e46d604",
+      "name": "pre-install",
+      "description": "Runs before installation to prepare the application.",
+      "timeoutSeconds": 300,
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/pre-install.ts",
+      "builtHandlerPath": "src/logic-functions/pre-install.mjs",
+      "builtHandlerChecksum": "ba594cfa38b7d955ed3768894e800ff0"
+    }
+  ],
+  "frontComponents": [
+    {
+      "universalIdentifier": "50d59f7c-eada-4731-aacd-8e45371e1040",
+      "name": "apollo-oauth-cta",
+      "description": "CTA button to connect to Apollo Enrichment via OAuth",
+      "componentName": "ApolloOAuthCta",
+      "sourceComponentPath": "src/front-components/apollo-oauth-cta.tsx",
+      "builtComponentPath": "src/front-components/apollo-oauth-cta.mjs",
+      "builtComponentChecksum": "92c08f88ad8ae00ae6fc52cf17e9d197",
+      "isHeadless": false
+    }
+  ],
+  "publicAssets": [],
+  "views": [],
+  "navigationMenuItems": [],
+  "pageLayouts": []
+}
