@@ -140,6 +140,8 @@ export const FormDateTimeFieldInput = ({
   const handlePickerEnter = () => {};
 
   const handlePickerEscape = () => {
+    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
+    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
     setDraftValue({
       type: 'static',
       value: draftValue.value,
