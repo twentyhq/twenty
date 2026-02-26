@@ -120,14 +120,6 @@ export class ApplicationSyncService {
       },
     );
 
-    const updateData: Partial<ApplicationEntity> = {
-      name,
-      description: manifest.application.description,
-      version: packageJson.version,
-      packageJsonChecksum: manifest.application.packageJsonChecksum,
-      yarnLockChecksum: manifest.application.yarnLockChecksum,
-    };
-
     let applicationRegistrationId = application.applicationRegistrationId;
 
     const applicationRegistrationMetadata = {
@@ -162,8 +154,6 @@ export class ApplicationSyncService {
           `Created app registration for ${name} (${manifest.application.universalIdentifier})`,
         );
       }
-
-      updateData.applicationRegistrationId = applicationRegistrationId;
     }
 
     await this.applicationRegistrationService.update({
@@ -178,7 +168,14 @@ export class ApplicationSyncService {
       );
     }
 
-    return await this.applicationService.update(application.id, updateData);
+    return await this.applicationService.update(application.id, {
+      name,
+      description: manifest.application.description,
+      version: packageJson.version,
+      packageJsonChecksum: manifest.application.packageJsonChecksum,
+      yarnLockChecksum: manifest.application.yarnLockChecksum,
+      applicationRegistrationId,
+    });
   }
 
   public async uninstallApplication({

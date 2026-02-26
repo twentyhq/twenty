@@ -17,7 +17,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 
 const OAUTH_ACCESS_TOKEN_EXPIRES_IN = 1800;
 
-type OAuthTokenResponse = {
+export type OAuthTokenResponse = {
   access_token: string;
   token_type: string;
   expires_in: number;
@@ -25,7 +25,7 @@ type OAuthTokenResponse = {
   scope?: string;
 };
 
-type OAuthErrorResponse = {
+export type OAuthErrorResponse = {
   error: string;
   error_description: string;
 };
