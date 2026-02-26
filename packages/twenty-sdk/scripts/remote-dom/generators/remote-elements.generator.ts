@@ -163,7 +163,7 @@ const generateElementDefinition = (
   component: ComponentSchema,
   specificProperties: Record<string, PropertySchema>,
   commonEventNames: Set<string>,
-  shouldUseSharedPropertiesConfig: boolean,
+  shouldUseCommonHtmlPropertiesConfig: boolean,
 ): void => {
   const isHtml = isDefined(component.htmlTag);
   const hasCommonHtmlEvents = commonEventNames.size > 0 && isHtml;
@@ -231,7 +231,7 @@ const generateElementDefinition = (
                 });
                 writer.write(',');
                 writer.newLine();
-              } else if (shouldUseSharedPropertiesConfig && isHtml) {
+              } else if (shouldUseCommonHtmlPropertiesConfig && isHtml) {
                 writer.write(
                   `properties: ${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`,
                 );
@@ -322,7 +322,7 @@ export const generateRemoteElements = (
   });
 
   const commonEventNames = new Set(commonEvents);
-  const shouldUseSharedPropertiesConfig =
+  const shouldUseCommonHtmlPropertiesConfig =
     Object.keys(commonProperties).length > 0;
 
   sourceFile.addImportDeclaration({
@@ -349,7 +349,7 @@ export const generateRemoteElements = (
     generateCommonEventsType(sourceFile, commonEvents);
   }
 
-  if (shouldUseSharedPropertiesConfig) {
+  if (shouldUseCommonHtmlPropertiesConfig) {
     generateCommonPropertiesConfig(sourceFile, commonProperties);
   }
 
@@ -364,7 +364,7 @@ export const generateRemoteElements = (
       component,
       specificProperties,
       commonEventNames,
-      shouldUseSharedPropertiesConfig,
+      shouldUseCommonHtmlPropertiesConfig,
     );
   }
 
