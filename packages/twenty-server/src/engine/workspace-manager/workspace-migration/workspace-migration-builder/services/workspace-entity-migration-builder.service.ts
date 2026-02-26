@@ -338,7 +338,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
   }: UniversalFlatEntityValidationArgs<T>): FlatEntityValidationError[] {
     if (
       !uuidValidate(universalIdentifier) ||
-      uuidVersion(universalIdentifier) !== 4
+      uuidVersion(universalIdentifier) < 4
     ) {
       return [
         {
