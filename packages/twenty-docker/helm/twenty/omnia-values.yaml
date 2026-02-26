@@ -32,6 +32,9 @@ server:
       nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
       nginx.ingress.kubernetes.io/proxy-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-next-upstream: "error timeout http_502 http_503 http_504"
+      nginx.ingress.kubernetes.io/proxy-next-upstream-tries: "3"
+      nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: "10"
       nginx.ingress.kubernetes.io/configuration-snippet: |
         if ($request_uri ~* \.(?:js|css|woff2?|svg|png|jpg|jpeg|gif|ico)$) {
           add_header Cache-Control "public, max-age=31536000, immutable" always;

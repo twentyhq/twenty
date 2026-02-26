@@ -15,8 +15,6 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
 import { buildCompositeValueFromSubField } from '@/object-record/record-table/utils/buildValueFromFilter';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { isUndefined } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -37,8 +35,6 @@ export const useBuildRecordInputFromRLSPredicates = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const permissionFlagMap = usePermissionFlagMap();
-  const isAdmin = permissionFlagMap[PermissionFlagType.LAYOUTS];
 
   const { record: currentWorkspaceMemberRecord } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -148,15 +144,10 @@ export const useBuildRecordInputFromRLSPredicates = ({
         return intermediateRecordId;
       }
 
-      // Admins may not have an intermediate record (e.g., no Agent profile).
-      // Skip gracefully — they can set the field manually.
-      if (isAdmin) {
-        return undefined;
-      }
-
-      throw new Error(
-        `Workspace member field metadata item not found for id: ${workspaceMemberFieldMetadataId}`,
-      );
+      // Field metadata not found — may be stale RLS predicate referencing
+      // a removed field. Skip gracefully; the server-side hook will set
+      // the correct value with bypassed permissions.
+      return undefined;
     }
 
     let workspaceMemberFieldValue =

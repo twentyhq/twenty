@@ -1,0 +1,119 @@
+{{- if .Values.server.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "twenty.fullname" . }}-migration-{{ .Release.Revision }}
+  namespace: {{ include "twenty.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "twenty.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: migration
+  annotations:
+    helm.sh/hook: pre-upgrade
+    helm.sh/hook-weight: "0"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "twenty.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: migration
+    spec:
+      {{- with .Values.server.nodeSelector | default .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.server.tolerations | default .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+{{- toYaml .Values.securityContext | nindent 8 }}
+      restartPolicy: Never
+      initContainers:
+        - name: wait-for-db
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h {{ if .Values.db.enabled }}{{ include "twenty.fullname" . }}-db{{ else }}{{ .Values.db.external.host }}{{ end }} \
+                               -p {{ if .Values.db.enabled }}5432{{ else }}{{ .Values.db.external.port | default 5432 }}{{ end }} \
+                               -U postgres; do
+                echo "Waiting for database socket..."
+                sleep 2
+              done
+              echo "Database socket is ready!"
+        {{- if .Values.db.enabled }}
+        - name: ensure-database-exists
+          image: postgres:16-alpine
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-superuser
+                  key: password
+            - name: APP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-url
+                  key: appPassword
+          command:
+            - sh
+            - -c
+            - |
+              DBNAME={{ .Values.db.internal.database | default "twenty" }}
+              APP_USER={{ .Values.db.internal.appUser | default "twenty_app_user" }}
+              DB_HOST={{ include "twenty.fullname" . }}-db
+              export PGPASSWORD
+              export APP_PASSWORD
+              echo "Creating database ${DBNAME} if it doesn't exist..."
+              psql -h ${DB_HOST} -p 5432 -U postgres -d postgres -Atc "SELECT 1 FROM pg_database WHERE datname = '${DBNAME}'" | grep -q 1 || \
+              psql -h ${DB_HOST} -p 5432 -U postgres -d postgres -c "CREATE DATABASE ${DBNAME};"
+              echo "Database ${DBNAME} is ready."
+        {{- end }}
+      containers:
+        - name: run-migrations
+          {{- $img := include "twenty.server.image" . }}
+          image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
+          imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
+          command:
+            - sh
+            - -c
+            - >-
+              npx -y typeorm migration:run -d dist/database/typeorm/core/core.datasource
+          env:
+            {{- if .Values.db.enabled }}
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.fullname" . }}-db-superuser
+                  key: password
+            - name: PG_DATABASE_URL
+              value: "postgres://postgres:$(PGPASSWORD)@{{ include "twenty.fullname" . }}-db.{{ include "twenty.namespace" . }}.svc.cluster.local/{{ .Values.db.internal.database | default "twenty" }}"
+            {{- else if eq (include "twenty.db.useExternalSecret" .) "true" }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.dbPassword.secretName" . }}
+                  key: {{ include "twenty.dbPassword.secretKey" . }}
+            - name: PG_DATABASE_URL
+              value: {{ include "twenty.dbUrl.template" . | quote }}
+            {{- else }}
+            - name: PG_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.dbUrl.secretName" . }}
+                  key: url
+            {{- end }}
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+{{- end }}

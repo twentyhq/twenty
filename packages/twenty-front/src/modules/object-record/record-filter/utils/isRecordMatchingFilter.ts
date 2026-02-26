@@ -285,12 +285,12 @@ export const isRecordMatchingFilter = ({
           (fullNameFilter.firstName === undefined ||
             isMatchingStringFilter({
               stringFilter: fullNameFilter.firstName,
-              value: record[filterKey].firstName,
+              value: record[filterKey]?.firstName,
             })) &&
           (fullNameFilter.lastName === undefined ||
             isMatchingStringFilter({
               stringFilter: fullNameFilter.lastName,
-              value: record[filterKey].lastName,
+              value: record[filterKey]?.lastName,
             }))
         );
       }
@@ -314,7 +314,7 @@ export const isRecordMatchingFilter = ({
 
           return isMatchingStringFilter({
             stringFilter: value,
-            value: record[filterKey][key],
+            value: record[filterKey]?.[key],
           });
         });
       }
@@ -331,7 +331,7 @@ export const isRecordMatchingFilter = ({
 
           return isMatchingStringFilter({
             stringFilter: value,
-            value: record[filterKey][key],
+            value: record[filterKey]?.[key],
           });
         });
       }
@@ -374,7 +374,7 @@ export const isRecordMatchingFilter = ({
           actorFilter.name === undefined ||
           isMatchingStringFilter({
             stringFilter: actorFilter.name,
-            value: record[filterKey].name,
+            value: record[filterKey]?.name,
           })
         );
       }
@@ -387,7 +387,7 @@ export const isRecordMatchingFilter = ({
 
         return isMatchingStringFilter({
           stringFilter: emailsFilter.primaryEmail,
-          value: record[filterKey].primaryEmail,
+          value: record[filterKey]?.primaryEmail,
         });
       }
       case FieldMetadataType.PHONES: {
@@ -403,7 +403,7 @@ export const isRecordMatchingFilter = ({
 
           return isMatchingStringFilter({
             stringFilter: value,
-            value: record[filterKey][key],
+            value: record[filterKey]?.[key],
           });
         });
       }
