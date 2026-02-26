@@ -191,9 +191,8 @@ export class MarketplaceService {
     const packageJson = JSON.parse(packageJsonContent) as PackageJson;
 
     const { application } = manifest;
-    const marketplaceData = application.marketplaceData;
 
-    if (!marketplaceData?.author || !marketplaceData?.category) {
+    if (!application.author || !application.category) {
       return null;
     }
 
@@ -258,14 +257,14 @@ export class MarketplaceService {
       description: application.description ?? '',
       icon: application.icon ?? 'IconApps',
       version: packageJson.version ?? '0.1.0',
-      author: marketplaceData.author,
-      category: marketplaceData.category,
-      logo: this.resolveAssetUrl(appPath, marketplaceData.logo),
-      screenshots: this.resolveAssetUrls(appPath, marketplaceData.screenshots),
-      aboutDescription: marketplaceData.aboutDescription ?? '',
-      providers: marketplaceData.providers ?? [],
-      websiteUrl: marketplaceData.websiteUrl,
-      termsUrl: marketplaceData.termsUrl,
+      author: application.author,
+      category: application.category,
+      logo: this.resolveAssetUrl(appPath, application.logoUrl),
+      screenshots: this.resolveAssetUrls(appPath, application.screenshots),
+      aboutDescription: application.aboutDescription ?? '',
+      providers: application.providers ?? [],
+      websiteUrl: application.websiteUrl,
+      termsUrl: application.termsUrl,
       objects,
       fields,
       logicFunctions,

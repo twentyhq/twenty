@@ -5,6 +5,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 
+import { AppRegistrationService } from 'src/engine/core-modules/app-registration/app-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -38,6 +39,7 @@ export class ApplicationSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
+    private readonly appRegistrationService: AppRegistrationService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -118,14 +120,65 @@ export class ApplicationSyncService {
       },
     );
 
-    return await this.applicationService.update(application.id, {
+    const updateData: Partial<ApplicationEntity> = {
       name,
       description: manifest.application.description,
       version: packageJson.version,
       packageJsonChecksum: manifest.application.packageJsonChecksum,
       yarnLockChecksum: manifest.application.yarnLockChecksum,
-      //availablePackages: manifest.application.availablePackages, // TODO: compute available package in dev-mode-orchestrator
+    };
+
+    let appRegistrationId = application.appRegistrationId;
+
+    const appRegistrationMetadata = {
+      name,
+      description: manifest.application.description,
+      logoUrl: manifest.application.logoUrl,
+      author: manifest.application.author,
+      websiteUrl: manifest.application.websiteUrl,
+      termsUrl: manifest.application.termsUrl,
+    };
+
+    if (!appRegistrationId) {
+      const existingRegistration =
+        await this.appRegistrationService.findOneByUniversalIdentifier(
+          manifest.application.universalIdentifier,
+        );
+
+      if (existingRegistration) {
+        appRegistrationId = existingRegistration.id;
+      } else {
+        const { appRegistration: newRegistration } =
+          await this.appRegistrationService.create(
+            {
+              ...appRegistrationMetadata,
+              universalIdentifier: manifest.application.universalIdentifier,
+            },
+            null,
+          );
+
+        appRegistrationId = newRegistration.id;
+        this.logger.log(
+          `Created app registration for ${name} (${manifest.application.universalIdentifier})`,
+        );
+      }
+
+      updateData.appRegistrationId = appRegistrationId;
+    }
+
+    await this.appRegistrationService.update({
+      id: appRegistrationId,
+      ...appRegistrationMetadata,
     });
+
+    if (manifest.application.serverVariables) {
+      await this.appRegistrationService.syncVariableSchemas(
+        appRegistrationId,
+        manifest.application.serverVariables,
+      );
+    }
+
+    return await this.applicationService.update(application.id, updateData);
   }
 
   public async uninstallApplication({

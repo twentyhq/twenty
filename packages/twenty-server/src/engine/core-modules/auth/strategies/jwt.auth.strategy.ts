@@ -359,12 +359,33 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    // TODO: Token carries userId/userWorkspaceId but they are unused.
-    // Compute the intersection of user and application permissions instead.
-    return {
-      application,
-      workspace,
-    };
+    const context: AuthContext = { application, workspace };
+
+    // When the token carries user context (e.g. OAuth authorization code flow),
+    // populate user fields so downstream resolvers can identify the acting user.
+    if (payload.userId) {
+      const user = await this.userRepository.findOne({
+        where: { id: payload.userId },
+      });
+
+      if (isDefined(user)) {
+        context.user = user;
+      }
+    }
+
+    if (payload.userWorkspaceId) {
+      const userWorkspace = await this.userWorkspaceRepository.findOne({
+        where: { id: payload.userWorkspaceId },
+        relations: ['user', 'workspace'],
+      });
+
+      if (isDefined(userWorkspace)) {
+        context.userWorkspace = userWorkspace;
+        context.userWorkspaceId = userWorkspace.id;
+      }
+    }
+
+    return context;
   }
 
   private isLegacyApiKeyPayload(

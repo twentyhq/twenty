@@ -13,8 +13,9 @@ import { AppPath } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
+
+import { AppRegistrationService } from 'src/engine/core-modules/app-registration/app-registration.service';
 import {
   AppTokenEntity,
   AppTokenType,
@@ -94,6 +95,7 @@ export class AuthService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly i18nService: I18nService,
     private readonly auditService: AuditService,
+    private readonly appRegistrationService: AppRegistrationService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
@@ -495,40 +497,28 @@ export class AuthService {
     user: UserEntity,
     workspace: WorkspaceEntity,
   ): Promise<AuthorizeAppOutput> {
-    // TODO: replace with db call to - third party app table
-    const apps = [
-      {
-        id: 'chrome',
-        name: 'Chrome Extension',
-        redirectUrl:
-          this.twentyConfigService.get('NODE_ENV') ===
-          NodeEnvironment.DEVELOPMENT
-            ? authorizeAppInput.redirectUrl
-            : `https://${this.twentyConfigService.get(
-                'CHROME_EXTENSION_ID',
-              )}.chromiumapp.org/`,
-      },
-    ];
-
     const { clientId, codeChallenge } = authorizeAppInput;
 
-    const client = apps.find((app) => app.id === clientId);
+    const appRegistration =
+      await this.appRegistrationService.findOneByClientId(clientId);
 
-    if (!client) {
+    if (!appRegistration) {
       throw new AuthException(
         `Client not found for '${clientId}'`,
         AuthExceptionCode.CLIENT_NOT_FOUND,
       );
     }
 
-    if (!client.redirectUrl || !authorizeAppInput.redirectUrl) {
+    if (!authorizeAppInput.redirectUrl) {
       throw new AuthException(
-        `redirectUrl not found for '${clientId}'`,
+        `redirectUrl not provided for '${clientId}'`,
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
-    if (client.redirectUrl !== authorizeAppInput.redirectUrl) {
+    if (
+      !appRegistration.redirectUris.includes(authorizeAppInput.redirectUrl)
+    ) {
       throw new AuthException(
         `redirectUrl mismatch for '${clientId}'`,
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -570,9 +560,7 @@ export class AuthService {
       await this.appTokenRepository.save(token);
     }
 
-    const redirectUrl = `${
-      client.redirectUrl ? client.redirectUrl : authorizeAppInput.redirectUrl
-    }?authorizationCode=${authorizationCode}`;
+    const redirectUrl = `${authorizeAppInput.redirectUrl}?authorizationCode=${authorizationCode}`;
 
     return { redirectUrl };
   }
