@@ -139,7 +139,7 @@ export const WorkflowEditActionCode = ({
 
   const [functionInput, setFunctionInput] =
     useState<LogicFunctionInputFormData>(
-      action.settings.input.logicFunctionInput,
+      action.settings.input.logicFunctionInput ?? {},
     );
 
   const handleUpdateFunctionInputSchema = useDebouncedCallback(
