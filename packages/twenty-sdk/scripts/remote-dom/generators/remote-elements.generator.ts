@@ -163,14 +163,14 @@ const generateElementDefinition = (
   component: ComponentSchema,
   specificProperties: Record<string, PropertySchema>,
   commonEventNames: Set<string>,
-  hasSharedPropertiesConfig: boolean,
+  shouldUseSharedPropertiesConfig: boolean,
 ): void => {
   const isHtml = isDefined(component.htmlTag);
-  const hasSharedEvents = commonEventNames.size > 0 && isHtml;
+  const hasCommonHtmlEvents = commonEventNames.size > 0 && isHtml;
   const customEvents = component.events.filter(
-    (event) => !hasSharedEvents || !commonEventNames.has(event),
+    (event) => !hasCommonHtmlEvents || !commonEventNames.has(event),
   );
-  const hasEvents = hasSharedEvents || customEvents.length > 0;
+  const hasEvents = hasCommonHtmlEvents || customEvents.length > 0;
   const hasSpecificProps = Object.keys(specificProperties).length > 0;
   const hasProps = Object.keys(component.properties).length > 0;
 
@@ -186,9 +186,9 @@ const generateElementDefinition = (
 
   let eventsType: string = TYPE_NAMES.EMPTY_RECORD;
 
-  if (hasSharedEvents && customEvents.length > 0) {
+  if (hasCommonHtmlEvents && customEvents.length > 0) {
     eventsType = `${TYPE_NAMES.COMMON_EVENTS} & { ${customEventsInline} }`;
-  } else if (hasSharedEvents) {
+  } else if (hasCommonHtmlEvents) {
     eventsType = TYPE_NAMES.COMMON_EVENTS;
   } else if (customEvents.length > 0) {
     eventsType = `{ ${customEventsInline} }`;
@@ -231,7 +231,7 @@ const generateElementDefinition = (
                 });
                 writer.write(',');
                 writer.newLine();
-              } else if (hasSharedPropertiesConfig && isHtml) {
+              } else if (shouldUseSharedPropertiesConfig && isHtml) {
                 writer.write(
                   `properties: ${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`,
                 );
@@ -251,9 +251,9 @@ const generateElementDefinition = (
                 .join(', ');
 
               writer.write(
-                hasSharedEvents && customEvents.length > 0
+                hasCommonHtmlEvents && customEvents.length > 0
                   ? `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}, ${formattedCustomEvents}],`
-                  : hasSharedEvents
+                  : hasCommonHtmlEvents
                     ? `events: [...${TYPE_NAMES.COMMON_EVENTS_ARRAY}],`
                     : `events: [${formattedCustomEvents}],`,
               );
@@ -322,7 +322,8 @@ export const generateRemoteElements = (
   });
 
   const commonEventNames = new Set(commonEvents);
-  const hasSharedPropertiesConfig = Object.keys(commonProperties).length > 0;
+  const shouldUseSharedPropertiesConfig =
+    Object.keys(commonProperties).length > 0;
 
   sourceFile.addImportDeclaration({
     moduleSpecifier: '@remote-dom/core/elements',
@@ -348,7 +349,7 @@ export const generateRemoteElements = (
     generateCommonEventsType(sourceFile, commonEvents);
   }
 
-  if (hasSharedPropertiesConfig) {
+  if (shouldUseSharedPropertiesConfig) {
     generateCommonPropertiesConfig(sourceFile, commonProperties);
   }
 
@@ -363,7 +364,7 @@ export const generateRemoteElements = (
       component,
       specificProperties,
       commonEventNames,
-      hasSharedPropertiesConfig,
+      shouldUseSharedPropertiesConfig,
     );
   }
 
