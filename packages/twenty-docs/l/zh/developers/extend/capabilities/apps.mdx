@@ -734,7 +734,7 @@ export default defineFrontComponent({
 你可以通过两种方式创建新的前端组件：
 
 * **脚手架生成**：运行 `yarn twenty entity:add` 并选择添加新前端组件的选项。
-* **Manual**: Create a new `.tsx` file and use `defineFrontComponent()`, following the same pattern.
+* **手动**：创建一个新的 `.tsx` 文件，并使用 `defineFrontComponent()`，遵循相同的模式。
 
 ### 技能
 
@@ -776,7 +776,7 @@ You can create new skills in two ways:
 两个类型化客户端由 `yarn twenty app:dev` 自动生成（基于你的工作区架构），并存放在 `node_modules/twenty-sdk/generated`：
 
 * **`CoreApiClient`** — 查询 `/graphql` 端点以获取工作区数据
-* **`MetadataApiClient`** — queries the `/metadata` endpoint for workspace configuration and file uploads
+* **`MetadataApiClient`** — 查询 `/metadata` 端点以获取工作区配置并处理文件上传
 
 ```typescript
 import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
@@ -788,7 +788,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Both clients are re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
+每当你的对象或字段发生变化时，`yarn twenty app:dev` 都会自动重新生成这两个客户端。
 
 #### 逻辑函数中的运行时凭据
 
@@ -805,7 +805,7 @@ Both clients are re-generated automatically by `yarn twenty app:dev` whenever yo
 
 #### 上传文件
 
-The generated `MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. 由于标准 GraphQL 客户端不原生支持多部分文件上传，该客户端提供了一个专用方法，在底层实现了 [GraphQL 多部分请求规范](https://github.com/jaydenseric/graphql-multipart-request-spec)。
+生成的 `MetadataApiClient` 包含一个 `uploadFile` 方法，用于将文件附加到你的工作区对象的文件类型字段。 由于标准 GraphQL 客户端不原生支持多部分文件上传，该客户端提供了一个专用方法，在底层实现了 [GraphQL 多部分请求规范](https://github.com/jaydenseric/graphql-multipart-request-spec)。
 
 ```typescript
 import { MetadataApiClient } from 'twenty-sdk/generated';
@@ -846,7 +846,7 @@ uploadFile(
 
 关键点：
 
-* The `uploadFile` method is available on `MetadataApiClient` because the upload mutation is resolved by the `/metadata` endpoint.
+* `uploadFile` 方法可在 `MetadataApiClient` 上使用，因为上传 mutation 由 `/metadata` 端点解析。
 * 它使用该字段的 `universalIdentifier`（而不是其工作区特定的 ID），因此你的上传代码可以在安装了你的应用的任何工作区中使用——这与应用在其他地方引用字段的方式保持一致。
 * 返回的 `url` 是一个签名 URL，你可以用它来访问已上传的文件。
 

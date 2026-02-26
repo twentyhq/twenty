@@ -734,7 +734,7 @@ export default defineFrontComponent({
 Вы можете создать новые фронт-компоненты двумя способами:
 
 * **Сгенерировано**: Запустите `yarn twenty entity:add` и выберите опцию добавления нового фронтенд-компонента.
-* **Manual**: Create a new `.tsx` file and use `defineFrontComponent()`, following the same pattern.
+* **Вручную**: Создайте новый файл `.tsx` и используйте `defineFrontComponent()`, следуя тому же шаблону.
 
 ### Навыки
 
@@ -776,7 +776,7 @@ export default defineSkill({
 Два типизированных клиента автоматически генерируются с помощью `yarn twenty app:dev` и сохраняются в `node_modules/twenty-sdk/generated` на основе схемы вашего рабочего пространства:
 
 * **`CoreApiClient`** — выполняет запросы к конечной точке `/graphql` для получения данных рабочего пространства
-* **`MetadataApiClient`** — queries the `/metadata` endpoint for workspace configuration and file uploads
+* **`MetadataApiClient`** — выполняет запросы к эндпоинту `/metadata` для получения конфигурации рабочего пространства и загрузки файлов.
 
 ```typescript
 import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
@@ -788,7 +788,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Both clients are re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
+Оба клиента автоматически перегенерируются с помощью `yarn twenty app:dev` при изменении ваших объектов или полей.
 
 #### Учётные данные времени выполнения в логических функциях
 
@@ -805,7 +805,7 @@ Both clients are re-generated automatically by `yarn twenty app:dev` whenever yo
 
 #### Загрузка файлов
 
-The generated `MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. Поскольку стандартные клиенты GraphQL изначально не поддерживают многочастовую загрузку файлов, клиент предоставляет специальный метод, который под капотом реализует [спецификацию многочастных запросов GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+Сгенерированный `MetadataApiClient` включает метод `uploadFile` для прикрепления файлов к полям типа «файл» в объектах вашего рабочего пространства. Поскольку стандартные клиенты GraphQL изначально не поддерживают многочастовую загрузку файлов, клиент предоставляет специальный метод, который под капотом реализует [спецификацию многочастных запросов GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 ```typescript
 import { MetadataApiClient } from 'twenty-sdk/generated';
@@ -846,7 +846,7 @@ uploadFile(
 
 Основные моменты:
 
-* The `uploadFile` method is available on `MetadataApiClient` because the upload mutation is resolved by the `/metadata` endpoint.
+* Метод `uploadFile` доступен в `MetadataApiClient`, потому что мутация загрузки обрабатывается эндпоинтом `/metadata`.
 * Он использует `universalIdentifier` поля (а не его идентификатор, специфичный для рабочего пространства), поэтому ваш код загрузки будет работать в любом рабочем пространстве, где установлено ваше приложение — в соответствии с тем, как приложения ссылаются на поля повсюду.
 * Возвращаемый `url` — это подписанный URL, который можно использовать для доступа к загруженному файлу.
 

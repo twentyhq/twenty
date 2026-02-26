@@ -723,6 +723,7 @@ export default defineFrontComponent({
   description: 'A custom widget component',
   component: MyWidget,
 });
+
 ```
 
 Pontos-chave:
@@ -734,7 +735,7 @@ Pontos-chave:
 Você pode criar novos componentes de front-end de duas formas:
 
 * **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar um novo componente de front-end.
-* **Manual**: Create a new `.tsx` file and use `defineFrontComponent()`, following the same pattern.
+* **Manual**: Crie um novo ficheiro `.tsx` e use `defineFrontComponent()`, seguindo o mesmo padrão.
 
 ### Habilidades
 
@@ -776,7 +777,7 @@ Você pode criar novas habilidades de duas formas:
 Dois clientes tipados são gerados automaticamente pelo `yarn twenty app:dev` e armazenados em `node_modules/twenty-sdk/generated` com base no esquema do seu espaço de trabalho:
 
 * **`CoreApiClient`** — consulta o endpoint `/graphql` para dados do espaço de trabalho
-* **`MetadataApiClient`** — queries the `/metadata` endpoint for workspace configuration and file uploads
+* **`MetadataApiClient`** — consulta o endpoint `/metadata` para obter a configuração do espaço de trabalho e o carregamento de ficheiros
 
 ```typescript
 import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
@@ -786,9 +787,10 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 
 const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
+
 ```
 
-Both clients are re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
+Ambos os clientes são regenerados automaticamente pelo `yarn twenty app:dev` sempre que seus objetos ou campos forem alterados.
 
 #### Credenciais em tempo de execução em funções de lógica
 
@@ -805,7 +807,7 @@ Notas:
 
 #### Carregamento de ficheiros
 
-The generated `MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. Como os clientes GraphQL padrão não suportam nativamente o carregamento de ficheiros multipart, o cliente fornece este método dedicado que implementa, nos bastidores, a [especificação de pedidos multipart do GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+O `MetadataApiClient` gerado inclui um método `uploadFile` para anexar ficheiros a campos do tipo ficheiro nos objetos do seu espaço de trabalho. Como os clientes GraphQL padrão não suportam nativamente o carregamento de ficheiros multipart, o cliente fornece este método dedicado que implementa, nos bastidores, a [especificação de pedidos multipart do GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 ```typescript
 import { MetadataApiClient } from 'twenty-sdk/generated';
@@ -824,6 +826,7 @@ const uploadedFile = await metadataClient.uploadFile(
 
 console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+
 ```
 
 A assinatura do método:
@@ -846,7 +849,7 @@ uploadFile(
 
 Pontos-chave:
 
-* The `uploadFile` method is available on `MetadataApiClient` because the upload mutation is resolved by the `/metadata` endpoint.
+* O método `uploadFile` está disponível no `MetadataApiClient` porque a mutação de upload é resolvida pelo endpoint `/metadata`.
 * Ele usa o `universalIdentifier` do campo (não o ID específico do espaço de trabalho), de modo que seu código de upload funcione em qualquer espaço de trabalho onde seu app esteja instalado — consistente com a forma como os apps referenciam campos em qualquer outro lugar.
 * A `url` retornada é um URL assinado que você pode usar para acessar o arquivo enviado.
 

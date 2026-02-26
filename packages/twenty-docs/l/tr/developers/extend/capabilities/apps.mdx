@@ -734,7 +734,7 @@ export default defineFrontComponent({
 Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
 
 * **Şablondan**: `yarn twenty entity:add` çalıştırın ve yeni bir ön uç bileşeni ekleme seçeneğini seçin.
-* **Manual**: Create a new `.tsx` file and use `defineFrontComponent()`, following the same pattern.
+* **Manuel**: Aynı deseni izleyerek yeni bir `.tsx` dosyası oluşturun ve `defineFrontComponent()` kullanın.
 
 ### Beceriler
 
@@ -776,7 +776,7 @@ Yeni yetenekleri iki şekilde oluşturabilirsiniz:
 Çalışma alanı şemanıza göre `yarn twenty app:dev` tarafından iki tiplendirilmiş istemci otomatik olarak oluşturulur ve `node_modules/twenty-sdk/generated` içine kaydedilir:
 
 * **`CoreApiClient`** — çalışma alanı verileri için `/graphql` uç noktasını sorgular
-* **`MetadataApiClient`** — queries the `/metadata` endpoint for workspace configuration and file uploads
+* **`MetadataApiClient`** — çalışma alanı yapılandırması ve dosya yüklemeleri için `/metadata` uç noktasını sorgular.
 
 ```typescript
 import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
@@ -788,7 +788,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Both clients are re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
+Her iki istemci de, nesneleriniz veya alanlarınız değiştiğinde, `yarn twenty app:dev` tarafından otomatik olarak yeniden oluşturulur.
 
 #### Mantık fonksiyonlarında çalışma zamanı kimlik bilgileri
 
@@ -805,7 +805,7 @@ Notlar:
 
 #### Dosya yükleme
 
-The generated `MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. Standart GraphQL istemcileri çok parçalı dosya yüklemelerini yerel olarak desteklemediğinden, istemci arka planda [GraphQL çok parçalı istek belirtimi](https://github.com/jaydenseric/graphql-multipart-request-spec) uygulayan bu özel yöntemi sağlar.
+Oluşturulan `MetadataApiClient`, çalışma alanı nesnelerinizdeki dosya türündeki alanlara dosya eklemek için bir `uploadFile` yöntemi içerir. Standart GraphQL istemcileri çok parçalı dosya yüklemelerini yerel olarak desteklemediğinden, istemci arka planda [GraphQL çok parçalı istek belirtimi](https://github.com/jaydenseric/graphql-multipart-request-spec) uygulayan bu özel yöntemi sağlar.
 
 ```typescript
 import { MetadataApiClient } from 'twenty-sdk/generated';
@@ -846,7 +846,7 @@ uploadFile(
 
 Önemli noktalar:
 
-* The `uploadFile` method is available on `MetadataApiClient` because the upload mutation is resolved by the `/metadata` endpoint.
+* `uploadFile` yöntemi, yükleme mutasyonu `/metadata` uç noktası tarafından çözümlendiği için `MetadataApiClient` üzerinde mevcuttur.
 * Alan için `universalIdentifier` kullanılır (çalışma alanına özgü kimliği değil), böylece yükleme kodunuz uygulamanızın yüklü olduğu herhangi bir çalışma alanında çalışır — uygulamaların başka her yerde alanlara nasıl atıfta bulunduğuyla tutarlıdır.
 * Döndürülen `url`, yüklenen dosyaya erişmek için kullanabileceğiniz imzalı bir URL'dir.
 
