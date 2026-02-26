@@ -1,29 +1,10 @@
 import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 
-export const getWorkflowMock = () => {
-  return workflowQueryResult.workflows.edges[0].node;
-};
-
-export const getWorkflowVersionsMock = () => {
-  return {
-    ...getWorkflowMock().versions,
-    __typename: 'WorkflowVersionConnection',
-    totalCount: 1,
-    pageInfo: {
-      __typename: 'PageInfo',
-      hasNextPage: false,
-      hasPreviousPage: false,
-      startCursor:
-        'eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTE5VDEwOjEwOjA0LjcyNVoiLCJpZCI6ImY2MTg4NDNhLTI2YmUtNGE1NC1hNjBmLWY0Y2U4OGE1OTRmMCJ9',
-      endCursor:
-        'eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTE5VDEwOjEwOjA0LjcyNVoiLCJpZCI6ImY2MTg4NDNhLTI2YmUtNGE1NC1hNjBmLWY0Y2U4OGE1OTRmMCJ9',
-    },
-  };
-};
-
-export const getWorkflowNodeIdMock = () => {
-  return getWorkflowMock().versions.edges[0].node.steps[0].id;
-};
+// Keep function wrappers as aliases for backward compatibility — they just
+// return the pre-computed constants so callers can be migrated gradually.
+export const getWorkflowMock = () => mockedWorkflow;
+export const getWorkflowVersionsMock = () => mockedWorkflowVersions;
+export const getWorkflowNodeIdMock = () => mockedWorkflowNodeId;
 
 export const MOCKED_STEP_ID = '04d5f3bf-9714-400d-ba27-644006a5fb1b';
 
@@ -1552,3 +1533,24 @@ export const workflowQueryResult = {
     ],
   },
 } satisfies { workflows: RecordGqlConnection };
+
+export const mockedWorkflow = workflowQueryResult.workflows.edges[0].node;
+
+export const mockedWorkflowVersion = mockedWorkflow.versions.edges[0].node;
+
+export const mockedWorkflowVersions = {
+  ...mockedWorkflow.versions,
+  __typename: 'WorkflowVersionConnection' as const,
+  totalCount: 1,
+  pageInfo: {
+    __typename: 'PageInfo' as const,
+    hasNextPage: false,
+    hasPreviousPage: false,
+    startCursor:
+      'eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTE5VDEwOjEwOjA0LjcyNVoiLCJpZCI6ImY2MTg4NDNhLTI2YmUtNGE1NC1hNjBmLWY0Y2U4OGE1OTRmMCJ9',
+    endCursor:
+      'eyJjcmVhdGVkQXQiOiIyMDI0LTA5LTE5VDEwOjEwOjA0LjcyNVoiLCJpZCI6ImY2MTg4NDNhLTI2YmUtNGE1NC1hNjBmLWY0Y2U4OGE1OTRmMCJ9',
+  },
+};
+
+export const mockedWorkflowNodeId = mockedWorkflowVersion.steps[0].id;
