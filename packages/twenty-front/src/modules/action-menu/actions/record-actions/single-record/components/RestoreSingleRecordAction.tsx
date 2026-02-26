@@ -1,3 +1,4 @@
+import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
@@ -5,7 +6,6 @@ import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecor
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { useConfirmationModalManager } from '@/ui/layout/modal/hooks/useConfirmationModalManager';
 import { t } from '@lingui/core/macro';
 
 export const RestoreSingleRecordAction = () => {
@@ -22,7 +22,7 @@ export const RestoreSingleRecordAction = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const { openConfirmationModal } = useConfirmationModalManager();
+  const { openConfirmationModal } = useActionMenuConfirmationModal();
   const { closeActionMenu } = useCloseActionMenu();
 
   const handleRestoreClick = async () => {

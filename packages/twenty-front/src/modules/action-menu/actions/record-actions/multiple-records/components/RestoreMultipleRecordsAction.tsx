@@ -1,3 +1,4 @@
+import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
@@ -13,7 +14,6 @@ import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { useConfirmationModalManager } from '@/ui/layout/modal/hooks/useConfirmationModalManager';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
@@ -79,7 +79,7 @@ export const RestoreMultipleRecordsAction = () => {
     recordGqlFields: { id: true },
   });
 
-  const { openConfirmationModal } = useConfirmationModalManager();
+  const { openConfirmationModal } = useActionMenuConfirmationModal();
   const { closeActionMenu } = useCloseActionMenu();
 
   const handleRestoreClick = async () => {
