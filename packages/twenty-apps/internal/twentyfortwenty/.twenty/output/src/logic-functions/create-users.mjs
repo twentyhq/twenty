@@ -68311,16 +68311,16 @@ var fetchUsersFromClickHouse = async () => {
     clickHouseUsername,
     clickHousePassword
   } = getApplicationConfig();
-  const startDate = "'2026-02-04 14:28:52.000'";
+  const nowDate = "'2026-02-04 14:28:52.000'";
   const findUsersWithRecentActivity = `
     SELECT
       *
     FROM
       ${clickHouseDatabase}.user
     WHERE
-      lastActivityDate >= ${startDate} - INTERVAL 500 MINUTE
+      lastActivityDate >= ${nowDate} - INTERVAL 500 MINUTE
         AND
-      lastActivityDate <= ${startDate}
+      lastActivityDate <= ${nowDate}
     FORMAT
       JSONEachRow;
   `;
@@ -68370,46 +68370,35 @@ var fetchAllPeopleFromTwentyByEmail = async (emails) => {
   });
   return allPeople.people?.edges.map((edge) => edge.node) ?? [];
 };
-var createOrUpdateCloudUser = async ({
+var buildCloudUserInput = ({
   user,
   personId
-}) => {
-  const cloudUser = await client.mutation({
-    createCloudUser2: {
-      __args: {
-        data: {
-          id: user.userId,
-          name: user.fullName,
-          email: {
-            primaryEmail: user.email
-          },
-          personId,
-          fullName: {
-            lastName: user.lastName,
-            firstName: user.firstName
-          },
-          isTwenty: user.isTwenty,
-          userTenure: user.userAgeDays,
-          isActiveL7d: user.isActiveLast7d,
-          isActiveL24h: user.isActiveLast24h,
-          isActiveL30d: user.isActiveLast30d,
-          pageViewsL7d: user.pageviewsLast7d,
-          pageViewsL24h: user.pageviewsLast24h,
-          pageViewsL30d: user.pageviewsLast30d,
-          activityStatus: user.activityStatus,
-          workspaceCount: user.workspaceCount,
-          lastActivityDate: user.lastActivityDate,
-          dataLastUpdatedAt: (/* @__PURE__ */ new Date()).toISOString(),
-          avgDailyPageviewsLast30d: user.avgDailyPageviewsLast30d,
-          daysSinceLastActivity: user.daysSinceLastActivity
-        },
-        upsert: true
-      },
-      __scalar: true
-    }
-  });
-  return cloudUser;
-};
+}) => ({
+  id: user.userId,
+  name: user.fullName,
+  email: {
+    primaryEmail: user.email
+  },
+  personId,
+  fullName: {
+    lastName: user.lastName,
+    firstName: user.firstName
+  },
+  isTwenty: user.isTwenty,
+  userTenure: user.userAgeDays,
+  isActiveL7d: user.isActiveLast7d,
+  isActiveL24h: user.isActiveLast24h,
+  isActiveL30d: user.isActiveLast30d,
+  pageViewsL7d: user.pageviewsLast7d,
+  pageViewsL24h: user.pageviewsLast24h,
+  pageViewsL30d: user.pageviewsLast30d,
+  activityStatus: user.activityStatus,
+  workspaceCount: user.workspaceCount,
+  lastActivityDate: user.lastActivityDate,
+  dataLastUpdatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+  avgDailyPageviewsLast30d: user.avgDailyPageviewsLast30d,
+  daysSinceLastActivity: user.daysSinceLastActivity
+});
 var handler = async () => {
   try {
     const { users } = await fetchUsersFromClickHouse();
@@ -68418,41 +68407,105 @@ var handler = async () => {
     console.log("fetch people from twenty with emails", emails);
     const people = await fetchAllPeopleFromTwentyByEmail(emails);
     console.log("fetched people from twenty", people);
-    for (const user of users) {
-      const matchingPerson = people.find(
-        (person) => person.emails?.primaryEmail !== void 0 && person.emails.primaryEmail.toLowerCase() === user.email.toLowerCase()
-      );
-      if (matchingPerson !== void 0) {
-        await createOrUpdateCloudUser({
-          user,
-          personId: matchingPerson.id
-        });
-      } else {
-        const newPerson = await client.mutation({
-          createPerson: {
-            __args: {
-              data: {
-                name: {
-                  firstName: user.firstName,
-                  lastName: user.lastName
-                },
-                emails: {
-                  primaryEmail: user.email
-                }
-              }
-            },
-            id: true
-          }
-        });
-        const personId = newPerson.createPerson?.id;
-        if (personId === void 0) {
-          throw new Error(`Failed to create person for user ${user.email}`);
-        }
-        await createOrUpdateCloudUser({ user, personId });
+    const emailToPersonId = /* @__PURE__ */ new Map();
+    for (const person of people) {
+      if (person.emails?.primaryEmail !== void 0) {
+        emailToPersonId.set(
+          person.emails.primaryEmail.toLowerCase(),
+          person.id
+        );
       }
     }
+    const usersWithoutPerson = users.filter(
+      (user) => !emailToPersonId.has(user.email.toLowerCase())
+    );
+    const newlyCreatedPersonIds = [];
+    if (usersWithoutPerson.length > 0) {
+      console.log(`Batch-creating ${usersWithoutPerson.length} people records`);
+      const createPeopleResult = await client.mutation({
+        createPeople: {
+          __args: {
+            data: usersWithoutPerson.map((user) => ({
+              name: {
+                firstName: user.firstName,
+                lastName: user.lastName
+              },
+              emails: {
+                primaryEmail: user.email
+              }
+            }))
+          },
+          id: true,
+          emails: {
+            primaryEmail: true
+          }
+        }
+      });
+      const createdPeople = createPeopleResult.createPeople ?? [];
+      for (const person of createdPeople) {
+        if (person.emails?.primaryEmail === void 0 || person.id === void 0) {
+          continue;
+        }
+        newlyCreatedPersonIds.push(person.id);
+        emailToPersonId.set(
+          person.emails.primaryEmail.toLowerCase(),
+          person.id
+        );
+      }
+    }
+    const cloudUserInputs = users.map((user) => {
+      const personId = emailToPersonId.get(user.email.toLowerCase());
+      if (personId === void 0) {
+        throw new Error(
+          `No personId found for user ${user.email} \u2014 this should not happen`
+        );
+      }
+      return buildCloudUserInput({ user, personId });
+    });
+    try {
+      console.log(`Batch-upserting ${cloudUserInputs.length} cloud users`);
+      await client.mutation({
+        createCloudUsers2: {
+          __args: {
+            data: cloudUserInputs,
+            upsert: true
+          },
+          __scalar: true
+        }
+      });
+    } catch (cloudUserError) {
+      console.log(
+        "Cloud user upsert failed, rolling back newly created people",
+        cloudUserError
+      );
+      if (newlyCreatedPersonIds.length > 0) {
+        try {
+          await client.mutation({
+            destroyPeople: {
+              __args: {
+                filter: {
+                  id: {
+                    in: newlyCreatedPersonIds
+                  }
+                }
+              },
+              id: true
+            }
+          });
+          console.log(
+            `Rolled back ${newlyCreatedPersonIds.length} newly created people`
+          );
+        } catch (rollbackError) {
+          console.log(
+            "Rollback of newly created people also failed",
+            rollbackError
+          );
+        }
+      }
+      throw cloudUserError;
+    }
     return {
-      message: `Successfully fetched ${users.length} users from ClickHouse`
+      message: `Successfully processed ${users.length} users from ClickHouse`
     };
   } catch (err) {
     console.log(err);
