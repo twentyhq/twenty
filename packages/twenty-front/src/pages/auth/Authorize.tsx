@@ -1,4 +1,4 @@
-import { FIND_APP_REGISTRATION_BY_CLIENT_ID } from '@/settings/app-registrations/graphql/findAppRegistrationByClientId';
+import { FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID } from '@/settings/application-registrations/graphql/findApplicationRegistrationByClientId';
 import styled from '@emotion/styled';
 import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
@@ -89,15 +89,18 @@ export const Authorize = () => {
   const codeChallenge = searchParam.get('codeChallenge');
   const redirectUrl = searchParam.get('redirectUrl');
 
-  const { data, loading } = useQuery(FIND_APP_REGISTRATION_BY_CLIENT_ID, {
-    variables: { clientId: clientId ?? '' },
-    skip: !isDefined(clientId),
-  });
+  const { data, loading } = useQuery(
+    FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID,
+    {
+      variables: { clientId: clientId ?? '' },
+      skip: !isDefined(clientId),
+    },
+  );
 
-  const appRegistration = data?.findAppRegistrationByClientId;
+  const applicationRegistration = data?.findApplicationRegistrationByClientId;
   const [authorizeApp] = useAuthorizeAppMutation();
 
-  if (!loading && !isDefined(appRegistration) && isDefined(clientId)) {
+  if (!loading && !isDefined(applicationRegistration) && isDefined(clientId)) {
     navigate(AppPath.NotFound);
 
     return null;
@@ -122,12 +125,12 @@ export const Authorize = () => {
     }
   };
 
-  if (loading || !appRegistration) {
+  if (loading || !applicationRegistration) {
     return null;
   }
 
-  const appName = appRegistration.name;
-  const requestedScopes: string[] = appRegistration.scopes ?? [];
+  const appName = applicationRegistration.name;
+  const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
 
   return (
     <StyledContainer>

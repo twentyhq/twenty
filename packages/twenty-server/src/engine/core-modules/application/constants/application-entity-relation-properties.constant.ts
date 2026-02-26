@@ -8,5 +8,5 @@ export const APPLICATION_ENTITY_RELATION_PROPERTIES = [
   'applicationVariables',
   'packageJsonFile',
   'yarnLockFile',
-  'appRegistration',
+  'applicationRegistration',
 ] as const satisfies (keyof ApplicationEntity)[];

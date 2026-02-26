@@ -13,9 +13,7 @@ import { AppPath } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-
-
-import { AppRegistrationService } from 'src/engine/core-modules/app-registration/app-registration.service';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
 import {
   AppTokenEntity,
   AppTokenType,
@@ -95,7 +93,7 @@ export class AuthService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly i18nService: I18nService,
     private readonly auditService: AuditService,
-    private readonly appRegistrationService: AppRegistrationService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
@@ -499,10 +497,10 @@ export class AuthService {
   ): Promise<AuthorizeAppOutput> {
     const { clientId, codeChallenge } = authorizeAppInput;
 
-    const appRegistration =
-      await this.appRegistrationService.findOneByClientId(clientId);
+    const applicationRegistration =
+      await this.applicationRegistrationService.findOneByClientId(clientId);
 
-    if (!appRegistration) {
+    if (!applicationRegistration) {
       throw new AuthException(
         `Client not found for '${clientId}'`,
         AuthExceptionCode.CLIENT_NOT_FOUND,
@@ -517,7 +515,9 @@ export class AuthService {
     }
 
     if (
-      !appRegistration.redirectUris.includes(authorizeAppInput.redirectUrl)
+      !applicationRegistration.oAuthRedirectUris.includes(
+        authorizeAppInput.redirectUrl,
+      )
     ) {
       throw new AuthException(
         `redirectUrl mismatch for '${clientId}'`,

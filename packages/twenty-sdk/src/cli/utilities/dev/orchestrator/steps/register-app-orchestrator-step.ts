@@ -4,7 +4,7 @@ import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mod
 import { type Manifest } from 'twenty-shared/application';
 
 export type RegisterAppOrchestratorStepOutput = {
-  appRegistrationId: string | null;
+  applicationRegistrationId: string | null;
   clientId: string | null;
 };
 
@@ -37,7 +37,7 @@ export class RegisterAppOrchestratorStep {
     const universalIdentifier = input.manifest.application.universalIdentifier;
 
     const findResult =
-      await this.apiService.findAppRegistrationByUniversalIdentifier(
+      await this.apiService.findApplicationRegistrationByUniversalIdentifier(
         universalIdentifier,
       );
 
@@ -50,7 +50,7 @@ export class RegisterAppOrchestratorStep {
       ]);
       this.notify();
 
-      return { appRegistrationId: null, clientId: null };
+      return { applicationRegistrationId: null, clientId: null };
     }
 
     if (findResult.data) {
@@ -63,12 +63,12 @@ export class RegisterAppOrchestratorStep {
       this.notify();
 
       return {
-        appRegistrationId: findResult.data.id,
-        clientId: findResult.data.clientId,
+        applicationRegistrationId: findResult.data.id,
+        clientId: findResult.data.oAuthClientId,
       };
     }
 
-    const createResult = await this.apiService.createAppRegistration({
+    const createResult = await this.apiService.createApplicationRegistration({
       name: input.manifest.application.displayName,
       description: input.manifest.application.description,
       universalIdentifier,
@@ -83,11 +83,11 @@ export class RegisterAppOrchestratorStep {
       ]);
       this.notify();
 
-      return { appRegistrationId: null, clientId: null };
+      return { applicationRegistrationId: null, clientId: null };
     }
 
     await this.configService.setConfig({
-      oauthClientId: createResult.data.appRegistration.clientId,
+      oauthClientId: createResult.data.applicationRegistration.oAuthClientId,
       oauthClientSecret: createResult.data.clientSecret,
     });
 
@@ -97,7 +97,7 @@ export class RegisterAppOrchestratorStep {
         status: 'success',
       },
       {
-        message: `Client ID: ${createResult.data.appRegistration.clientId}`,
+        message: `Client ID: ${createResult.data.applicationRegistration.oAuthClientId}`,
         status: 'info',
       },
       {
@@ -113,8 +113,8 @@ export class RegisterAppOrchestratorStep {
     this.notify();
 
     return {
-      appRegistrationId: createResult.data.appRegistration.id,
-      clientId: createResult.data.appRegistration.clientId,
+      applicationRegistrationId: createResult.data.applicationRegistration.id,
+      clientId: createResult.data.applicationRegistration.oAuthClientId,
     };
   }
 }

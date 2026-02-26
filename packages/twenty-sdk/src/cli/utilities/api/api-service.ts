@@ -260,24 +260,24 @@ export class ApiService {
     }
   }
 
-  async findAppRegistrationByUniversalIdentifier(
+  async findApplicationRegistrationByUniversalIdentifier(
     universalIdentifier: string,
   ): Promise<
     ApiResponse<{
       id: string;
       universalIdentifier: string;
       name: string;
-      clientId: string;
+      oAuthClientId: string;
     } | null>
   > {
     try {
       const query = `
-        query FindAppRegistrationByUniversalIdentifier($universalIdentifier: String!) {
-          findAppRegistrationByUniversalIdentifier(universalIdentifier: $universalIdentifier) {
+        query FindApplicationRegistrationByUniversalIdentifier($universalIdentifier: String!) {
+          findApplicationRegistrationByUniversalIdentifier(universalIdentifier: $universalIdentifier) {
             id
             universalIdentifier
             name
-            clientId
+            oAuthClientId
           }
         }
       `;
@@ -305,7 +305,7 @@ export class ApiService {
 
       return {
         success: true,
-        data: response.data.data.findAppRegistrationByUniversalIdentifier,
+        data: response.data.data.findApplicationRegistrationByUniversalIdentifier,
       };
     } catch (error) {
       return {
@@ -315,28 +315,28 @@ export class ApiService {
     }
   }
 
-  async createAppRegistration(input: {
+  async createApplicationRegistration(input: {
     name: string;
     description?: string;
     universalIdentifier: string;
   }): Promise<
     ApiResponse<{
-      appRegistration: {
+      applicationRegistration: {
         id: string;
         universalIdentifier: string;
-        clientId: string;
+        oAuthClientId: string;
       };
       clientSecret: string;
     }>
   > {
     try {
       const mutation = `
-        mutation CreateAppRegistration($input: CreateAppRegistrationInput!) {
-          createAppRegistration(input: $input) {
-            appRegistration {
+        mutation CreateApplicationRegistration($input: CreateApplicationRegistrationInput!) {
+          createApplicationRegistration(input: $input) {
+            applicationRegistration {
               id
               universalIdentifier
-              clientId
+              oAuthClientId
             }
             clientSecret
           }
@@ -366,7 +366,7 @@ export class ApiService {
 
       return {
         success: true,
-        data: response.data.data.createAppRegistration,
+        data: response.data.data.createApplicationRegistration,
       };
     } catch (error) {
       return {
@@ -378,7 +378,7 @@ export class ApiService {
 
   async createApplication(
     manifest: Manifest,
-    options?: { appRegistrationId?: string },
+    options?: { applicationRegistrationId?: string },
   ): Promise<ApiResponse<{ id: string; universalIdentifier: string }>> {
     try {
       const mutation = `
@@ -397,8 +397,8 @@ export class ApiService {
         sourcePath: 'cli-sync',
       };
 
-      if (options?.appRegistrationId) {
-        input.appRegistrationId = options.appRegistrationId;
+      if (options?.applicationRegistrationId) {
+        input.applicationRegistrationId = options.applicationRegistrationId;
       }
 
       const variables = {

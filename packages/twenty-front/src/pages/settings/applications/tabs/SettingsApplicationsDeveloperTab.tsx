@@ -1,5 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { FIND_MANY_APP_REGISTRATIONS } from '@/settings/app-registrations/graphql/queries';
+import { FIND_MANY_APPLICATION_REGISTRATIONS } from '@/settings/application-registrations/graphql/queries/findManyApplicationRegistrations';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -26,7 +26,7 @@ const StyledButtonContainer = styled.div`
   margin: ${({ theme }) => theme.spacing(2)} 0;
 `;
 
-type AppRegistration = {
+type ApplicationRegistration = {
   id: string;
   name: string;
   description: string | null;
@@ -40,10 +40,10 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   const { copyToClipboard } = useCopyToClipboard();
 
-  const { data, loading } = useQuery(FIND_MANY_APP_REGISTRATIONS);
+  const { data, loading } = useQuery(FIND_MANY_APPLICATION_REGISTRATIONS);
 
-  const registrations: AppRegistration[] =
-    data?.findManyAppRegistrations ?? [];
+  const registrations: ApplicationRegistration[] =
+    data?.findManyApplicationRegistrations ?? [];
 
   const commands = [
     // eslint-disable-next-line lingui/no-unlocalized-strings
@@ -99,8 +99,8 @@ export const SettingsApplicationsDeveloperTab = () => {
             RowIcon={IconApps}
             onRowClick={(registration) => {
               navigate(
-                getSettingsPath(SettingsPath.AppRegistrationDetail, {
-                  appRegistrationId: registration.id,
+                getSettingsPath(SettingsPath.ApplicationRegistrationDetail, {
+                  applicationRegistrationId: registration.id,
                 }),
               );
             }}

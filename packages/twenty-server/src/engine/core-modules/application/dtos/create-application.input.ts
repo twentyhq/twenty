@@ -32,5 +32,5 @@ export class CreateApplicationInput {
   @IsUUID()
   @IsOptional()
   @Field({ nullable: true })
-  appRegistrationId?: string;
+  applicationRegistrationId?: string;
 }

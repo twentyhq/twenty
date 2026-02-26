@@ -5,7 +5,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 
-import { AppRegistrationService } from 'src/engine/core-modules/app-registration/app-registration.service';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -39,7 +39,7 @@ export class ApplicationSyncService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
-    private readonly appRegistrationService: AppRegistrationService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -128,9 +128,9 @@ export class ApplicationSyncService {
       yarnLockChecksum: manifest.application.yarnLockChecksum,
     };
 
-    let appRegistrationId = application.appRegistrationId;
+    let applicationRegistrationId = application.applicationRegistrationId;
 
-    const appRegistrationMetadata = {
+    const applicationRegistrationMetadata = {
       name,
       description: manifest.application.description,
       logoUrl: manifest.application.logoUrl,
@@ -139,41 +139,41 @@ export class ApplicationSyncService {
       termsUrl: manifest.application.termsUrl,
     };
 
-    if (!appRegistrationId) {
+    if (!applicationRegistrationId) {
       const existingRegistration =
-        await this.appRegistrationService.findOneByUniversalIdentifier(
+        await this.applicationRegistrationService.findOneByUniversalIdentifier(
           manifest.application.universalIdentifier,
         );
 
       if (existingRegistration) {
-        appRegistrationId = existingRegistration.id;
+        applicationRegistrationId = existingRegistration.id;
       } else {
-        const { appRegistration: newRegistration } =
-          await this.appRegistrationService.create(
+        const { applicationRegistration: newRegistration } =
+          await this.applicationRegistrationService.create(
             {
-              ...appRegistrationMetadata,
+              ...applicationRegistrationMetadata,
               universalIdentifier: manifest.application.universalIdentifier,
             },
             null,
           );
 
-        appRegistrationId = newRegistration.id;
+        applicationRegistrationId = newRegistration.id;
         this.logger.log(
           `Created app registration for ${name} (${manifest.application.universalIdentifier})`,
         );
       }
 
-      updateData.appRegistrationId = appRegistrationId;
+      updateData.applicationRegistrationId = applicationRegistrationId;
     }
 
-    await this.appRegistrationService.update({
-      id: appRegistrationId,
-      ...appRegistrationMetadata,
+    await this.applicationRegistrationService.update({
+      id: applicationRegistrationId,
+      ...applicationRegistrationMetadata,
     });
 
     if (manifest.application.serverVariables) {
-      await this.appRegistrationService.syncVariableSchemas(
-        appRegistrationId,
+      await this.applicationRegistrationService.syncVariableSchemas(
+        applicationRegistrationId,
         manifest.application.serverVariables,
       );
     }

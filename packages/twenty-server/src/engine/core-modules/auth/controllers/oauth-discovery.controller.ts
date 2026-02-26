@@ -1,17 +1,16 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 
-import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/app-registration/constants/oauth-scopes';
+import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application-registration/constants/oauth-scopes';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('.well-known')
 export class OAuthDiscoveryController {
-  constructor(
-    private readonly twentyConfigService: TwentyConfigService,
-  ) {}
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   @Get('oauth-authorization-server')
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   getAuthorizationServerMetadata() {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
@@ -27,10 +26,7 @@ export class OAuthDiscoveryController {
         'refresh_token',
       ],
       code_challenge_methods_supported: ['S256'],
-      token_endpoint_auth_methods_supported: [
-        'client_secret_post',
-        'none',
-      ],
+      token_endpoint_auth_methods_supported: ['client_secret_post', 'none'],
     };
   }
 }

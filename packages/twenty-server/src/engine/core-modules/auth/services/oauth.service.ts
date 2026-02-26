@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
 import { Repository } from 'typeorm';
 
-import { AppRegistrationEntity } from 'src/engine/core-modules/app-registration/app-registration.entity';
-import { AppRegistrationService } from 'src/engine/core-modules/app-registration/app-registration.service';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
 import {
   AppTokenEntity,
   AppTokenType,
@@ -32,6 +32,8 @@ type OAuthErrorResponse = {
 
 @Injectable()
 export class OAuthService {
+  private readonly logger = new Logger(OAuthService.name);
+
   constructor(
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
@@ -40,7 +42,7 @@ export class OAuthService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly applicationTokenService: ApplicationTokenService,
-    private readonly appRegistrationService: AppRegistrationService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
   ) {}
 
   async exchangeAuthorizationCode(params: {
@@ -71,22 +73,23 @@ export class OAuthService {
       return clientValidation;
     }
 
-    const appRegistration = clientValidation;
+    const applicationRegistration = clientValidation;
 
-    if (
-      redirectUri &&
-      appRegistration.redirectUris.length > 0 &&
-      !appRegistration.redirectUris.includes(redirectUri)
-    ) {
-      return this.errorResponse(
-        'invalid_grant',
-        'Redirect URI does not match any registered redirect URI',
-      );
+    if (redirectUri) {
+      if (
+        applicationRegistration.oAuthRedirectUris.length === 0 ||
+        !applicationRegistration.oAuthRedirectUris.includes(redirectUri)
+      ) {
+        return this.errorResponse(
+          'invalid_grant',
+          'Redirect URI does not match any registered redirect URI',
+        );
+      }
     }
 
     if (clientSecret) {
       const secretError = await this.validateClientSecret(
-        appRegistration,
+        applicationRegistration,
         clientSecret,
       );
 
@@ -110,10 +113,7 @@ export class OAuthService {
     }
 
     if (authCodeToken.expiresAt.getTime() < Date.now()) {
-      return this.errorResponse(
-        'invalid_grant',
-        'Authorization code expired',
-      );
+      return this.errorResponse('invalid_grant', 'Authorization code expired');
     }
 
     if (codeVerifier) {
@@ -143,7 +143,7 @@ export class OAuthService {
     }
 
     const application = await this.findApplicationByRegistrationAndWorkspace(
-      appRegistration.id,
+      applicationRegistration.id,
       authCodeToken.workspaceId,
     );
 
@@ -174,7 +174,7 @@ export class OAuthService {
       token_type: 'Bearer',
       expires_in: OAUTH_ACCESS_TOKEN_EXPIRES_IN,
       refresh_token: applicationRefreshToken.token,
-      scope: appRegistration.scopes.join(' '),
+      scope: applicationRegistration.oAuthScopes.join(' '),
     };
   }
 
@@ -190,10 +190,10 @@ export class OAuthService {
       return clientValidation;
     }
 
-    const appRegistration = clientValidation;
+    const applicationRegistration = clientValidation;
 
     const secretError = await this.validateClientSecret(
-      appRegistration,
+      applicationRegistration,
       clientSecret,
     );
 
@@ -201,16 +201,25 @@ export class OAuthService {
       return secretError;
     }
 
-    const application = await this.applicationRepository.findOne({
-      where: { appRegistrationId: appRegistration.id },
+    const applications = await this.applicationRepository.find({
+      where: { applicationRegistrationId: applicationRegistration.id },
     });
 
-    if (!application) {
+    if (applications.length === 0) {
       return this.errorResponse(
         'server_error',
         'No workspace installation found for this client. Install the app in a workspace first.',
       );
     }
+
+    if (applications.length > 1) {
+      return this.errorResponse(
+        'invalid_request',
+        'Multiple workspace installations found. Client credentials grant requires exactly one installation.',
+      );
+    }
+
+    const application = applications[0];
 
     const applicationAccessToken =
       await this.applicationTokenService.generateApplicationAccessToken({
@@ -222,7 +231,7 @@ export class OAuthService {
       access_token: applicationAccessToken.token,
       token_type: 'Bearer',
       expires_in: OAUTH_ACCESS_TOKEN_EXPIRES_IN,
-      scope: appRegistration.scopes.join(' '),
+      scope: applicationRegistration.oAuthScopes.join(' '),
     };
   }
 
@@ -239,11 +248,11 @@ export class OAuthService {
       return clientValidation;
     }
 
-    const appRegistration = clientValidation;
+    const applicationRegistration = clientValidation;
 
     if (clientSecret) {
       const secretError = await this.validateClientSecret(
-        appRegistration,
+        applicationRegistration,
         clientSecret,
       );
 
@@ -266,9 +275,11 @@ export class OAuthService {
         token_type: 'Bearer',
         expires_in: OAUTH_ACCESS_TOKEN_EXPIRES_IN,
         refresh_token: applicationRefreshToken.token,
-        scope: appRegistration.scopes.join(' '),
+        scope: applicationRegistration.oAuthScopes.join(' '),
       };
-    } catch {
+    } catch (error) {
+      this.logger.error('Refresh token grant failed', error);
+
       return this.errorResponse(
         'invalid_grant',
         'Invalid or expired refresh token',
@@ -278,25 +289,26 @@ export class OAuthService {
 
   private async validateClient(
     clientId: string,
-  ): Promise<AppRegistrationEntity | OAuthErrorResponse> {
-    const appRegistration =
-      await this.appRegistrationService.findOneByClientId(clientId);
+  ): Promise<ApplicationRegistrationEntity | OAuthErrorResponse> {
+    const applicationRegistration =
+      await this.applicationRegistrationService.findOneByClientId(clientId);
 
-    if (!appRegistration) {
+    if (!applicationRegistration) {
       return this.errorResponse('invalid_client', 'Client not found');
     }
 
-    return appRegistration;
+    return applicationRegistration;
   }
 
   private async validateClientSecret(
-    appRegistration: AppRegistrationEntity,
+    applicationRegistration: ApplicationRegistrationEntity,
     clientSecret: string,
   ): Promise<OAuthErrorResponse | null> {
-    const isValid = await this.appRegistrationService.verifyClientSecret(
-      appRegistration,
-      clientSecret,
-    );
+    const isValid =
+      await this.applicationRegistrationService.verifyClientSecret(
+        applicationRegistration,
+        clientSecret,
+      );
 
     if (!isValid) {
       return this.errorResponse('invalid_client', 'Invalid client secret');
@@ -345,11 +357,11 @@ export class OAuthService {
   }
 
   private async findApplicationByRegistrationAndWorkspace(
-    appRegistrationId: string,
+    applicationRegistrationId: string,
     workspaceId: string,
   ): Promise<ApplicationEntity | null> {
     return this.applicationRepository.findOne({
-      where: { appRegistrationId, workspaceId },
+      where: { applicationRegistrationId, workspaceId },
     });
   }
 
