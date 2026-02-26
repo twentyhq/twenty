@@ -9,11 +9,12 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { AgentProfileResolverService } from 'src/modules/agent-profile/services/agent-profile-resolver.service';
 import { buildPolicyDisplayName } from 'src/modules/policy/utils/build-policy-display-name.util';
 
-// Only derives name from carrier + product. All other auto-set fields
-// (submittedDate, agentId, LTV) are handled in post-query hooks with
-// bypassed permissions to avoid field-level permission failures.
+// Sets agentId and name before insert. agentId must be set here (not
+// post-query) because RLS predicates validate the record before insert
+// and may require agentId to match the current user's agent profile.
 @Injectable()
 @WorkspaceQueryHook(`policy.createMany`)
 export class PolicyCreateManyPreQueryHook
@@ -21,6 +22,7 @@ export class PolicyCreateManyPreQueryHook
 {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly agentProfileResolverService: AgentProfileResolverService,
   ) {}
 
   async execute(
@@ -32,6 +34,24 @@ export class PolicyCreateManyPreQueryHook
 
     if (!isDefined(workspace)) {
       return payload;
+    }
+
+    // Auto-assign agentId so RLS predicates pass on insert
+    if (isDefined(authContext.workspaceMemberId)) {
+      const agentProfileId =
+        await this.agentProfileResolverService.resolveAgentProfileId(
+          workspace.id,
+          authContext.workspaceMemberId,
+          authContext,
+        );
+
+      if (agentProfileId) {
+        for (const record of payload.data) {
+          if (!isDefined(record.agentId)) {
+            record.agentId = agentProfileId;
+          }
+        }
+      }
     }
 
     // Auto-derive name from carrier + product
