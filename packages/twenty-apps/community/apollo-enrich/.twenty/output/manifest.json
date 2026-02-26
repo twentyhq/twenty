@@ -9,19 +9,19 @@
       "APOLLO_CLIENT_ID": {
         "universalIdentifier": "5852219e-7757-463e-9e7c-80980203794c",
         "isSecret": true,
-        "value": "",
+        "value": "svSdsc2ke_N_3UhVAXjM4ayZrHZItEGHHUZpJzzDPvY",
         "description": "Apollo Client ID"
       },
       "APOLLO_CLIENT_SECRET": {
         "universalIdentifier": "a032349d-9458-4381-8505-82547276434a",
         "isSecret": true,
-        "value": "",
+        "value": "TM26HxjXh9LwmsYqBoDqjjGN1HB8GsGQAA__gEX6EH8",
         "description": "Apollo Client Secret"
       },
       "APOLLO_OAUTH_URL": {
         "universalIdentifier": "1d42411c-5809-4093-873a-8121b1302475",
         "isSecret": false,
-        "value": "",
+        "value": "https://app.apollo.io/#/oauth/authorize",
         "description": "Apollo OAuth URL"
       },
       "APOLLO_REDIRECT_URI": {
@@ -33,7 +33,7 @@
       "APOLLO_REGISTERED_URL": {
         "universalIdentifier": "672a6fce-5565-43bc-9a3b-7f2c33620770",
         "isSecret": false,
-        "value": "",
+        "value": "https://hjsm0q38-3000.uks1.devtunnels.ms/",
         "description": "Apollo registered URL"
       },
       "APOLLO_ACCESS_TOKEN": {
@@ -51,7 +51,7 @@
     },
     "yarnLockChecksum": "0d2353a6658e57eb832d0f924f07b2ff",
     "packageJsonChecksum": "e5b55760981dea090642b5dffb00904f",
-    "apiClientChecksum": null,
+    "apiClientChecksum": "b832f647d2362b76aa1198ed588a3c8a",
     "preInstallLogicFunctionUniversalIdentifier": "af7cd86e-149e-466a-8d60-312b6e46d604",
     "postInstallLogicFunctionUniversalIdentifier": "08292efc-d7ba-4ec3-ab95-e7c33bd3a3bc"
   },
@@ -107,7 +107,7 @@
       "handlerName": "default.config.handler",
       "sourceHandlerPath": "src/logic-functions/get-oauth-application-variables.ts",
       "builtHandlerPath": "src/logic-functions/get-oauth-application-variables.mjs",
-      "builtHandlerChecksum": "b427f301286c97fd42b88af739515aba"
+      "builtHandlerChecksum": "1e8149528787499e02915e88a149aeca"
     },
     {
       "universalIdentifier": "4d74950a-d9c1-4c66-a799-89c1aea4e6b0",
@@ -165,7 +165,7 @@
       "componentName": "ApolloOAuthCta",
       "sourceComponentPath": "src/front-components/apollo-oauth-cta.tsx",
       "builtComponentPath": "src/front-components/apollo-oauth-cta.mjs",
-      "builtComponentChecksum": "9b81d28047401ff1665e11664810e2ee",
+      "builtComponentChecksum": "b3979eb10d1d0650b5b98d9d593f0834",
       "isHeadless": false
     }
   ],

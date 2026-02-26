@@ -51628,6 +51628,64 @@ var get_verify_page_default = de({
   }
 });
 
+var StyledContainer = newStyled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+`;
+var StyledSectionTitle = newStyled.h3`
+  color: #333;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+`;
+var StyledSectionSubtitle = newStyled.p`
+  color: #818181;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  margin: 0 0 12px 0;
+`;
+var StyledCard = newStyled.div`
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+`;
+var StyledIconContainer = newStyled.div`
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 8px;
+  color: #666;
+  display: flex;
+  flex-shrink: 0;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+`;
+var StyledTextContainer = newStyled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+`;
+var StyledTitle = newStyled.span`
+  color: #333;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+`;
+var StyledDescription = newStyled.span`
+  color: #818181;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+`;
 var StyledLink = newStyled.a`
   align-items: center;
   background: #5e5adb;
@@ -51637,13 +51695,14 @@ var StyledLink = newStyled.a`
   color: #fafafa;
   cursor: pointer;
   display: inline-flex;
+  flex-shrink: 0;
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 500;
   gap: 4px;
   height: 32px;
   justify-content: center;
-  padding: 0 8px;
+  padding: 0 12px;
   text-decoration: none;
   transition: background 0.1s ease;
   white-space: nowrap;
@@ -51660,6 +51719,26 @@ var StyledLink = newStyled.a`
     outline: none;
   }
 `;
+var StyledConnectedStatus = newStyled.span`
+  align-items: center;
+  background: #10b981;
+  border-radius: 4px;
+  color: #fff;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  white-space: nowrap;
+`;
+var StyledIcon = newStyled.img`
+  height: 24px;
+  width: 24px;
+`;
+var APOLLO_ICON_URL = "https://twenty-icons.com/apollo.io";
 var fetchOAuthApplicationVariables = async () => {
   const backEndUrl = `${process.env.TWENTY_API_URL}/s/oauth/application-variables`;
   const response = await fetch(backEndUrl, {
@@ -51669,7 +51748,7 @@ var fetchOAuthApplicationVariables = async () => {
   return data;
 };
 var buildOAuthUrl = (oauthApplicationVariables) => {
-  const { apolloOAuthUrl, apolloClientId, apolloRegisteredUrl } = oauthApplicationVariables;
+  const { apolloOAuthUrl, apolloClientId, apolloRegisteredUrl, apolloAccessToken, apolloRefreshToken } = oauthApplicationVariables;
   const redirectUri = `${apolloRegisteredUrl}auth/oauth-propagator/callback`;
   const state = encodeURIComponent(`${process.env.TWENTY_API_URL}/s${VERIFY_PAGE_PATH}`);
   return `${apolloOAuthUrl}?client_id=${apolloClientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code`;
@@ -51682,21 +51761,35 @@ var ApolloOAuthCta = () => {
     fetchOAuthApplicationVariables().then(setOAuthApplicationVariables).catch(setError).finally(() => setIsLoading(false));
   }, []);
   if (isLoading) {
-    return /* @__PURE__ */ jsx(StyledLink, { as: "span", children: "Loading..." });
+    return /* @__PURE__ */ jsxs(StyledContainer, { children: [
+      /* @__PURE__ */ jsx(StyledSectionTitle, { children: "Connect to Apollo" }),
+      /* @__PURE__ */ jsx(StyledSectionSubtitle, { children: "Enrich your contacts with Apollo data" }),
+      /* @__PURE__ */ jsxs(StyledCard, { children: [
+        /* @__PURE__ */ jsx(StyledIconContainer, { children: /* @__PURE__ */ jsx(StyledIcon, { src: APOLLO_ICON_URL, alt: "Apollo" }) }),
+        /* @__PURE__ */ jsxs(StyledTextContainer, { children: [
+          /* @__PURE__ */ jsx(StyledTitle, { children: "Apollo OAuth" }),
+          /* @__PURE__ */ jsx(StyledDescription, { children: "Loading..." })
+        ] })
+      ] })
+    ] });
   }
   if (error48 || !oauthApplicationVariables) {
     return null;
   }
+  const isConnected = Boolean(oauthApplicationVariables.apolloAccessToken);
   const oauthUrl = buildOAuthUrl(oauthApplicationVariables);
-  return /* @__PURE__ */ jsx(
-    StyledLink,
-    {
-      href: oauthUrl,
-      target: "_blank",
-      rel: "noopener noreferrer",
-      children: "Connect to Apollo"
-    }
-  );
+  return /* @__PURE__ */ jsxs(StyledContainer, { children: [
+    /* @__PURE__ */ jsx(StyledSectionTitle, { children: "Connect to Apollo" }),
+    /* @__PURE__ */ jsx(StyledSectionSubtitle, { children: "Enrich your contacts with Apollo data" }),
+    /* @__PURE__ */ jsxs(StyledCard, { children: [
+      /* @__PURE__ */ jsx(StyledIconContainer, { children: /* @__PURE__ */ jsx(StyledIcon, { src: APOLLO_ICON_URL, alt: "Apollo" }) }),
+      /* @__PURE__ */ jsxs(StyledTextContainer, { children: [
+        /* @__PURE__ */ jsx(StyledTitle, { children: "Apollo OAuth" }),
+        /* @__PURE__ */ jsx(StyledDescription, { children: isConnected ? "Your Apollo account is connected" : "Connect your Apollo account to enrich contacts" })
+      ] }),
+      isConnected ? /* @__PURE__ */ jsx(StyledConnectedStatus, { children: "\u2713 Connected" }) : /* @__PURE__ */ jsx(StyledLink, { href: oauthUrl, rel: "noopener noreferrer", children: "Connect" })
+    ] })
+  ] });
 };
 function __renderFrontComponent(__container) {
   (0, import_client.createRoot)(__container).render(jsx(ApolloOAuthCta, {}));

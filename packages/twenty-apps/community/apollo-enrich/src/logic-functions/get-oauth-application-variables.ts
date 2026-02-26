@@ -6,6 +6,8 @@ export type OAuthApplicationVariables = {
   apolloClientId: string;
   apolloRegisteredUrl: string;
   apolloOAuthUrl: string;
+  apolloAccessToken: string;
+  apolloRefreshToken: string;
 };
 
 
@@ -14,8 +16,10 @@ const handler = async (): Promise<OAuthApplicationVariables> => {
   const apolloClientId = process.env.APOLLO_CLIENT_ID ?? '';
   const apolloRegisteredUrl = process.env.APOLLO_REGISTERED_URL ?? '';
   const apolloOAuthUrl = process.env.APOLLO_OAUTH_URL ?? '';
+  const apolloAccessToken = process.env.APOLLO_ACCESS_TOKEN ?? '';
+  const apolloRefreshToken = process.env.APOLLO_REFRESH_TOKEN ?? '';
 
-  return { apolloClientId, apolloRegisteredUrl, apolloOAuthUrl };
+  return { apolloClientId, apolloRegisteredUrl, apolloOAuthUrl, apolloAccessToken, apolloRefreshToken };
 };
 
 export default defineLogicFunction({
