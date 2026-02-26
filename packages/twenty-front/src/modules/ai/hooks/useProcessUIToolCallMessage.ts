@@ -41,15 +41,17 @@ export const useProcessUIToolCallMessage = () => {
   const processUIToolCallMessage = async (
     uiToolCallMessage: ExtendedUIMessage,
   ) => {
-    const toolCallMessageParts = uiToolCallMessage.parts.filter(
-      (part) => part.type === 'tool-execute_tool',
+    const uiToolCallMessageParts = uiToolCallMessage.parts.filter(
+      (part) =>
+        part.type === 'tool-execute_tool' &&
+        (part.input as any)?.toolName === 'navigate_app',
     ) as unknown as AgentChatMessageUIToolCallPart[];
 
     const alreadyProcessedToolExecutionPartIds = store.get(
       processedToolExecutionPartIdsCallbackState,
     );
 
-    const toolCallMessagePartsToProcess = toolCallMessageParts.filter(
+    const toolCallMessagePartsToProcess = uiToolCallMessageParts.filter(
       (part) => !alreadyProcessedToolExecutionPartIds.includes(part.toolCallId),
     );
 

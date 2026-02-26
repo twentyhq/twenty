@@ -6,7 +6,9 @@ import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 
+import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
@@ -167,7 +169,11 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     },
   });
 
+  const setAgentChatIsStreaming = useSetAtomState(agentChatIsStreamingState);
+
   const isStreaming = status === 'streaming';
+
+  setAgentChatIsStreaming(isStreaming);
 
   const isLoading = isStreaming || agentChatSelectedFiles.length > 0;
 
@@ -216,6 +222,18 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
       window.removeEventListener(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME, handler);
     };
   }, [handleSendMessage]);
+
+  useEffect(() => {
+    const handler = () => {
+      stop();
+    };
+
+    window.addEventListener(AGENT_CHAT_STOP_EVENT_NAME, handler);
+
+    return () => {
+      window.removeEventListener(AGENT_CHAT_STOP_EVENT_NAME, handler);
+    };
+  }, [stop]);
 
   return {
     messages,

@@ -10,7 +10,12 @@ import { ViewFieldService } from 'src/engine/metadata-modules/view-field/service
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const GetViewFieldsInputSchema = z.object({
-  viewId: z.string().uuid().describe('The ID of the view to list fields for.'),
+  viewId: z
+    .string()
+    .uuid()
+    .describe(
+      'The ID of the view to list fields for. Obtain this from get_views.',
+    ),
 });
 
 const CreateViewFieldInputSchema = z.object({
@@ -46,7 +51,12 @@ const CreateViewFieldInputSchema = z.object({
 });
 
 const UpdateViewFieldInputSchema = z.object({
-  id: z.string().uuid().describe('The ID of the view field to update.'),
+  id: z
+    .string()
+    .uuid()
+    .describe(
+      'The ID of the view field to update. Obtain this from get_view_fields.',
+    ),
   isVisible: z.boolean().optional().describe('Whether the field is visible.'),
   size: z.number().int().optional().describe('Column width in pixels.'),
   position: z.number().optional().describe('Position of the field.'),
@@ -57,7 +67,12 @@ const UpdateViewFieldInputSchema = z.object({
 });
 
 const DeleteViewFieldInputSchema = z.object({
-  id: z.string().uuid().describe('The ID of the view field to delete.'),
+  id: z
+    .string()
+    .uuid()
+    .describe(
+      'The ID of the view field to delete. Obtain this from get_view_fields.',
+    ),
 });
 
 @Injectable()
@@ -94,7 +109,8 @@ export class ViewFieldToolsFactory {
     return {
       get_view_fields: {
         description:
-          'List fields configured for a specific view. Returns field visibility, size, position, and aggregate settings.',
+          'List the columns (fields) displayed in a specific view. A view field controls which columns appear in a table or kanban view, their visibility, width, position, and aggregate operation. Use get_views first to find the view ID, then call this to inspect its column configuration.',
+
         inputSchema: GetViewFieldsInputSchema,
         execute: async (parameters: { viewId: string }) => {
           const viewFields = await this.viewFieldService.findByViewId(
@@ -132,7 +148,8 @@ export class ViewFieldToolsFactory {
     return {
       create_view_field: {
         description:
-          'Add a field to a view. Use get_field_metadata to find available field metadata IDs.',
+          'Add a new column to a view. View fields define which columns are shown in table or kanban views. First call get_field_metadata to find the fieldMetadataId of the column to add, and get_views to find the target viewId.',
+
         inputSchema: CreateViewFieldInputSchema,
         execute: async (parameters: {
           viewId: string;
@@ -175,7 +192,8 @@ export class ViewFieldToolsFactory {
       },
       update_view_field: {
         description:
-          'Update a view field. You can change visibility, size, position, and aggregate operation. Be careful to not change the position to -1, never do that, and not before the position of the label identifier or to an existing position of another field.',
+          "Update properties of a column in a view. You can change its visibility, width (size in pixels), display position, or aggregate operation. Use get_view_fields to find the view field ID. Constraints: position must not be -1, must not precede the label identifier field, and must not conflict with another field's position.",
+
         inputSchema: UpdateViewFieldInputSchema,
         execute: async (parameters: {
           id: string;
@@ -217,7 +235,9 @@ export class ViewFieldToolsFactory {
         },
       },
       delete_view_field: {
-        description: 'Remove a field from a view by its view field ID.',
+        description:
+          "Remove a column from a view. This removes the field from the view's displayed columns. Use get_view_fields to find the view field ID to delete.",
+
         inputSchema: DeleteViewFieldInputSchema,
         execute: async (parameters: { id: string }) => {
           try {

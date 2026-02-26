@@ -10,7 +10,7 @@ export const getToolCatalogInputSchema = z.object({
     .array(z.string())
     .optional()
     .describe(
-      'Filter by category (e.g. DATABASE_CRUD, METADATA, VIEW, WORKFLOW, DASHBOARD, LOGIC_FUNCTION, ACTION). Omit to get all.',
+      'Filter by category. Available categories: DATABASE_CRUD, METADATA, VIEW, VIEW_FIELD, WORKFLOW, DASHBOARD, LOGIC_FUNCTION, ACTION. VIEW manages views (lists, kanban boards), VIEW_FIELD manages columns within views. Omit to get all.',
     ),
 });
 
@@ -32,7 +32,7 @@ export const createGetToolCatalogTool = (
   },
 ) => ({
   description:
-    'STEP 1: Start here. Browse available tools by category. Returns tool names and descriptions. You MUST call this before using learn_tools or execute_tool — do not guess tool names.',
+    'STEP 1: Start here. Browse available tools by category. Returns tool names and descriptions. You MUST call this before using learn_tools or execute_tool, be very careful to look for related tools, for example field can be view, view field, or field metadata tools, DO NOT OVERLOOK THIS OR YOU WONT FIND SOME TOOLS.',
   inputSchema: getToolCatalogInputSchema,
   execute: async (
     parameters: GetToolCatalogInput,
@@ -77,6 +77,8 @@ export const createGetToolCatalogTool = (
       (sum, tools) => sum + tools.length,
       0,
     );
+
+    console.log(catalog);
 
     return {
       catalog,

@@ -1,3 +1,4 @@
+import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { agentChatInputIsEmptySelector } from '@/ai/states/agentChatInputIsEmptySelector';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
@@ -18,12 +19,17 @@ export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
 
   const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
 
+  const dispatchStopEvent = () => {
+    const stopEvent = new CustomEvent(AGENT_CHAT_STOP_EVENT_NAME);
+    window.dispatchEvent(stopEvent);
+  };
+
   if (agentChatIsStreaming) {
     return (
       <RoundedIconButton
         Icon={IconPlayerStop}
         size="medium"
-        onClick={() => {}}
+        onClick={dispatchStopEvent}
       />
     );
   }
