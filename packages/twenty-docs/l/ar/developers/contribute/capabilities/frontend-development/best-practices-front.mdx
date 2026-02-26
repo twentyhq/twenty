@@ -6,9 +6,9 @@ title: أفضل الممارسات
 
 ## إدارة الحالة
 
-React and Jotai handle state management in the codebase.
+تقوم React و Jotai بإدارة الحالة في قاعدة الشيفرة.
 
-### Use Jotai atoms to store state
+### استخدم ذرات Jotai لتخزين الحالة
 
 من الجيد إنشاء أكبر عدد ممكن من الذرات لتخزين الحالة الخاصة بك.
 
@@ -45,7 +45,7 @@ export const MyComponent = () => {
 
 تجنب استخدام `useRef` لتخزين الحالة.
 
-If you want to store state, you should use `useState` or Jotai atoms with `useAtomState`.
+إذا كنت ترغب في تخزين الحالة، يجب أن تستخدم `useState` أو ذرات Jotai مع `useAtomState`.
 
 انظر [كيفية إدارة إعادة العرض](#managing-re-renders) إذا شعرت أنك بحاجة إلى `useRef` لمنع بعض إعادة العرض من الحدوث.
 
@@ -82,8 +82,8 @@ If you feel like you need to add a `useEffect` in your root component, you shoul
 يمكنك تطبيق نفس الشيء على منطق جلب البيانات، مع الخُطافات Apollo.
 
 ```tsx
-// ❌ Bad, will cause re-renders even if data is not changing,
-//    because useEffect needs to be re-evaluated
+// ❌ سيئ، سيتسبب في إعادة التصيير حتى إذا لم تتغير البيانات،
+//    لأن useEffect يحتاج إلى إعادة التقييم
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -103,8 +103,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Good, will not cause re-renders if data is not changing,
-//   because useEffect is re-evaluated in another sibling component
+// ✅ جيّد، لن يتسبب في إعادة التصيير إذا لم تتغير البيانات،
+//   لأن useEffect يُعاد تقييمه في مكوّن شقيق آخر
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 
@@ -132,9 +132,9 @@ export const App = () => (
 );
 ```
 
-### Use atom family states and selectors
+### استخدم حالات عائلة الذرات والمحددات
 
-Atom family states and selectors are a great way to avoid re-renders.
+تُعد حالات عائلة الذرات والمحددات طريقة رائعة لتجنّب عمليات إعادة التصيير.
 
 إنها مفيدة عندما تحتاج إلى تخزين قائمة من العناصر.
 
