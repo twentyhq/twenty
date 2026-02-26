@@ -9,8 +9,6 @@ type SummaryViewerProps = {
 const StyledSummaryCard = styled.div`
   background: #ffffff;
   border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   overflow: hidden;
 `;
 
@@ -49,6 +47,10 @@ const StyledSummaryContent = styled.div`
     margin-bottom: 0.5em;
     color: #1a1a1a;
     font-weight: 600;
+
+    &:first-child {
+      margin-top: 0;
+    }
   }
 
   p {
