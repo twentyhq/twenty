@@ -1,5 +1,5 @@
 import { type ApplicationVariables } from './applicationVariablesType';
-import { type ServerVariables } from './serverVariablesType';
+import { type ServerVariables } from './server-variables.type';
 import { type SyncableEntityOptions } from './syncableEntityOptionsType';
 
 export type ApplicationManifest = SyncableEntityOptions & {

@@ -49,7 +49,7 @@ export type {
   FieldPermissionManifest,
   RoleManifest,
 } from './roleManifestType';
-export type { ServerVariables } from './serverVariablesType';
+export type { ServerVariables } from './server-variables.type';
 export type { SkillManifest } from './skillManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type {
