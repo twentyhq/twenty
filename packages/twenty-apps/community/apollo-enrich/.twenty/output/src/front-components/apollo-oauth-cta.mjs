@@ -51544,92 +51544,76 @@ var de = (e) => {
 h.DAY, h.WEEK, h.MONTH, h.QUARTER, h.YEAR;
 
 var VERIFY_PAGE_PATH = "/oauth/verify";
-var renderSuccessPage = (tokens) => {
-  return `<!DOCTYPE html>
+var buildVerifyPageHtml = (applicationId) => `<!DOCTYPE html>
 <html>
 <head>
-  <title>Apollo OAuth - Success</title>
+  <title>Apollo OAuth - Verifying...</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; text-align: center; }
+    .loading { color: #6b7280; }
     .success { color: #10b981; }
-    .token-box { background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 10px 0; word-break: break-all; }
-    .label { font-weight: 600; color: #374151; }
-    h1 { color: #111827; }
-  </style>
-</head>
-<body>
-  <h1 class="success">\u2713 Apollo Connected Successfully</h1>
-  <p>Your Apollo account has been connected. You can close this window.</p>
-
-  <div class="token-box">
-    <p class="label">Access Token:</p>
-    <code>${tokens.access_token}</code>
-  </div>
-
-  <div class="token-box">
-    <p class="label">Refresh Token:</p>
-    <code>${tokens.refresh_token}</code>
-  </div>
-
-  <div class="token-box">
-    <p class="label">Expires In:</p>
-    <code>${tokens.expires_in} seconds (${Math.round(tokens.expires_in / 86400)} days)</code>
-  </div>
-
-  <div class="token-box">
-    <p class="label">Scopes:</p>
-    <code>${tokens.scope}</code>
-  </div>
-</body>
-</html>`;
-};
-var renderErrorPage = (error48) => {
-  return `<!DOCTYPE html>
-<html>
-<head>
-  <title>Apollo OAuth - Error</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
     .error { color: #ef4444; }
-    .error-box { background: #fef2f2; padding: 15px; border-radius: 8px; border: 1px solid #fecaca; }
-    h1 { color: #111827; }
+    .spinner { border: 3px solid #f3f4f6; border-top: 3px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
-</head>
-<body>
-  <h1 class="error">\u2717 Connection Failed</h1>
-  <div class="error-box">
-    <p>${error48}</p>
-    <p>${process.env.TWENTY_API_URL}</p>
-  </div>
-</body>
-</html>`;
-};
-var handler = async (event) => {
-  const code = event.queryStringParameters?.code;
-  if (!code) {
-    return renderErrorPage("Authorization code is missing. Please try connecting again.");
-  }
-  const baseUrl = "http://apple.localhost:3000";
-  try {
-    const response = await fetch(
-      `${baseUrl}/s/oauth/token-pairs?code=${encodeURIComponent(code)}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
+  <script>
+    (async function() {
+      const applicationId = ${JSON.stringify(applicationId)};
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      const baseUrl = window.location.origin;
+
+      function showError(message) {
+        document.addEventListener('DOMContentLoaded', function() {
+          document.getElementById('spinner').style.display = 'none';
+          document.getElementById('title').textContent = '\u2717 Connection Failed';
+          document.getElementById('title').className = 'error';
+          document.getElementById('status').textContent = message;
+        });
+
+        if (window.opener) {
+          window.opener.postMessage({ type: 'APOLLO_OAUTH_ERROR', error: message }, '*');
         }
       }
-    );
-    if (!response.ok) {
-      const errorText = await response.text();
-      return renderErrorPage(`Failed to get tokens: ${response.status} - ${errorText}`);
-    }
-    const tokens = await response.json();
-    return renderSuccessPage(tokens);
-  } catch (error48) {
-    const errorMessage = error48 instanceof Error ? error48.message : "Unknown error occurred";
-    return renderErrorPage(errorMessage);
-  }
+
+      if (!code) {
+        showError('Authorization code is missing. Please try connecting again.');
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          baseUrl + '/s/oauth/token-pairs?code=' + encodeURIComponent(code),
+          {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error('Failed to get tokens: ' + response.status + ' - ' + errorText);
+        }
+
+        const tokens = await response.json();
+
+        window.location.href = 'http://apple.localhost:3001/settings/applications/' + applicationId + '#custom';
+
+      } catch (error) {
+        showError(error.message);
+      }
+    })();
+  <\/script>
+</head>
+<body>
+  <div class="spinner" id="spinner"></div>
+  <h1 class="loading" id="title">Connecting to Apollo...</h1>
+  <p id="status">Please wait while we complete the connection.</p>
+</body>
+</html>`;
+var handler = async () => {
+  const applicationId = process.env.APPLICATION_ID ?? "";
+  return buildVerifyPageHtml(applicationId);
 };
 var get_verify_page_default = de({
   universalIdentifier: "4d74950a-d9c1-4c66-a799-89c1aea4e6b0",

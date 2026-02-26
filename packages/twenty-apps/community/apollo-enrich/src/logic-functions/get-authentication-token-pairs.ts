@@ -1,4 +1,6 @@
 import { defineLogicFunction, RoutePayload } from "twenty-sdk";
+import { MetadataApiClient } from 'twenty-sdk/generated';
+
 
 export const OAUTH_TOKEN_PAIRS_PATH = '/oauth/token-pairs';
 
@@ -40,7 +42,7 @@ const getAuthenticationTokenPairs = async (
   return response.json();
 };
 
-const handler = async (event: RoutePayload): Promise<ApolloTokenResponse> => {
+const handler = async (event: RoutePayload): Promise<any> => {
   const { queryStringParameters: { code } } = event;
 
   if (!code) {
@@ -49,6 +51,17 @@ const handler = async (event: RoutePayload): Promise<ApolloTokenResponse> => {
 
   const apolloClientId = process.env.APOLLO_CLIENT_ID ?? '';
   const apolloClientSecret = process.env.APOLLO_CLIENT_SECRET ?? '';
+  const applicationId = process.env.APPLICATION_ID ?? '';
+
+
+  const metadataClient = new MetadataApiClient({});
+
+
+
+
+
+
+
 
   const tokenPairs = await getAuthenticationTokenPairs(
     code,
@@ -56,7 +69,26 @@ const handler = async (event: RoutePayload): Promise<ApolloTokenResponse> => {
     apolloClientSecret,
   );
 
-  return tokenPairs;
+  await metadataClient.mutation({
+    updateOneApplicationVariable: {
+      __args: {
+          key: 'APOLLO_ACCESS_TOKEN',
+          value: tokenPairs.access_token,
+          applicationId,
+        },
+    },
+  });
+
+   await metadataClient.mutation({
+    updateOneApplicationVariable: {
+      __args: {
+          key: 'APOLLO_REFRESH_TOKEN',
+          value: tokenPairs.refresh_token,
+          applicationId,
+        },
+    },
+  });
+  return {tokenPairs};
 };
 
 export default defineLogicFunction({

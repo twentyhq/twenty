@@ -1097,6 +1097,9 @@ export default {
             "defaultRoleId": [
                 1
             ],
+            "settingsCustomTabFrontComponentId": [
+                3
+            ],
             "defaultLogicFunctionRole": [
                 26
             ],

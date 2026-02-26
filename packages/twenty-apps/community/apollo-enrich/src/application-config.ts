@@ -6,6 +6,7 @@ export default defineApplication({
   displayName: 'Apollo enrichment',
   description: 'Data enrichment with Apollo to keep your data accurate',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  settingsCustomTabFrontComponentUniversalIdentifier: '50d59f7c-eada-4731-aacd-8e45371e1040',
   applicationVariables: {
     APOLLO_CLIENT_ID: {
       universalIdentifier: '5852219e-7757-463e-9e7c-80980203794c',
@@ -37,5 +38,17 @@ export default defineApplication({
       value:'',
       description: 'Apollo registered URL',
     },
+      APOLLO_ACCESS_TOKEN: {
+        universalIdentifier: '672a6fce-5565-43bc-9a3b-7f2c33620771',
+        isSecret: true,
+        value: '',
+        description: 'Apollo access token',
+      },
+      APOLLO_REFRESH_TOKEN: {
+        universalIdentifier: '672a6fce-5565-43bc-9a3b-7f2c33620772',
+        isSecret: true,
+        value: '',
+        description: 'Apollo refresh token',
+      },
   },
 });
