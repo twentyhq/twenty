@@ -43,11 +43,10 @@ const loadObjectMetadataItems = (): ObjectMetadataItem[] => {
 
   return metadata.objects.edges.map(
     (edge: { node: Record<string, unknown> }) => {
-      const {
-        fieldsList,
-        indexMetadataList,
-        ...rest
-      } = edge.node as Record<string, unknown>;
+      const { fieldsList, indexMetadataList, ...rest } = edge.node as Record<
+        string,
+        unknown
+      >;
 
       const fields = fieldsList as unknown[];
 
@@ -125,9 +124,7 @@ export const generateRecordData = async (token: string) => {
     { edges: { node: Record<string, unknown> }[] }
   >;
 
-  const records = data[companyObject.namePlural].edges.map(
-    (edge) => edge.node,
-  );
+  const records = data[companyObject.namePlural].edges.map((edge) => edge.node);
 
   console.log(`  Got ${records.length} ${companyObject.namePlural}.`);
 
