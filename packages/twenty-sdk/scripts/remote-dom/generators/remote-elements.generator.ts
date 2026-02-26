@@ -230,7 +230,7 @@ const writePropertiesConfig = (
   specificProperties: Record<string, PropertySchema>,
   hasSpecificProps: boolean,
   isHtml: boolean,
-  useSharedPropertiesConfig: boolean,
+  hasSharedPropertiesConfig: boolean,
 ): void => {
   if (hasSpecificProps && isHtml) {
     writer.write('properties: ');
@@ -244,7 +244,7 @@ const writePropertiesConfig = (
     return;
   }
 
-  if (useSharedPropertiesConfig && isHtml) {
+  if (hasSharedPropertiesConfig && isHtml) {
     writer.write(`properties: ${TYPE_NAMES.COMMON_PROPERTIES_CONFIG},`);
     writer.newLine();
 
@@ -264,7 +264,7 @@ const generateElementDefinition = (
   component: ComponentSchema,
   specificProperties: Record<string, PropertySchema>,
   commonEventNames: Set<string>,
-  useSharedPropertiesConfig: boolean,
+  hasSharedPropertiesConfig: boolean,
 ): void => {
   const isHtml = isDefined(component.htmlTag);
   const hasEvents = component.events.length > 0;
@@ -316,7 +316,7 @@ const generateElementDefinition = (
                 specificProperties,
                 hasSpecificProps,
                 isHtml,
-                useSharedPropertiesConfig,
+                hasSharedPropertiesConfig,
               );
             }
             if (hasEvents) {
@@ -385,7 +385,7 @@ export const generateRemoteElements = (
   });
 
   const commonEventNames = new Set(commonEvents);
-  const useSharedPropertiesConfig = Object.keys(commonProperties).length > 0;
+  const hasSharedPropertiesConfig = Object.keys(commonProperties).length > 0;
 
   sourceFile.addImportDeclaration({
     moduleSpecifier: '@remote-dom/core/elements',
@@ -411,7 +411,7 @@ export const generateRemoteElements = (
     generateCommonEventsType(sourceFile, commonEvents);
   }
 
-  if (useSharedPropertiesConfig) {
+  if (hasSharedPropertiesConfig) {
     generateCommonPropertiesConfig(sourceFile, commonProperties);
   }
 
@@ -426,7 +426,7 @@ export const generateRemoteElements = (
       component,
       specificProperties,
       commonEventNames,
-      useSharedPropertiesConfig,
+      hasSharedPropertiesConfig,
     );
   }
 
