@@ -5,8 +5,12 @@ import { tmpdir } from 'os';
 import { basename, join } from 'path';
 
 import { extract, type ReadEntry } from 'tar';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type LogicFunctionManifest,
+  type Manifest,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
@@ -16,14 +20,22 @@ import {
 import { ApplicationSyncService } from 'src/engine/core-modules/application/services/application-sync.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const MAX_EXTRACTED_SIZE_BYTES = 500 * 1024 * 1024;
 
 type FileFolderMapping = {
   fileFolder: FileFolder;
   resourcePath: string;
+};
+
+type InstallHookIdentifiers = {
+  preInstallLogicFunctionUniversalIdentifier: string | undefined;
+  postInstallLogicFunctionUniversalIdentifier: string | undefined;
 };
 
 @Injectable()
@@ -35,6 +47,8 @@ export class ApplicationInstallService {
     private readonly fileStorageService: FileStorageService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async installApplication({
@@ -46,10 +60,7 @@ export class ApplicationInstallService {
     version: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const temporaryDir = join(
-      tmpdir(),
-      `application-install-${v4()}`,
-    );
+    const temporaryDir = join(tmpdir(), `application-install-${v4()}`);
 
     try {
       await fs.mkdir(temporaryDir, { recursive: true });
@@ -71,9 +82,46 @@ export class ApplicationInstallService {
         workspaceId,
       });
 
+      const hookIdentifiers = this.resolveInstallHookIdentifiers(manifest);
+
+      const hookLogicFunctions = this.extractHookLogicFunctions({
+        manifest,
+        hookIdentifiers,
+      });
+
+      if (hookLogicFunctions.length > 0) {
+        const hooksOnlyManifest = this.buildHooksOnlyManifest({
+          manifest,
+          hookLogicFunctions,
+        });
+
+        await this.applicationSyncService.synchronizeFromManifest({
+          workspaceId,
+          manifest: hooksOnlyManifest,
+        });
+      }
+
+      await this.executeInstallHook({
+        hookUniversalIdentifier:
+          hookIdentifiers.preInstallLogicFunctionUniversalIdentifier,
+        hookName: 'preInstall',
+        workspaceId,
+        applicationUniversalIdentifier,
+        version,
+      });
+
       await this.applicationSyncService.synchronizeFromManifest({
         workspaceId,
         manifest,
+      });
+
+      await this.executeInstallHook({
+        hookUniversalIdentifier:
+          hookIdentifiers.postInstallLogicFunctionUniversalIdentifier,
+        hookName: 'postInstall',
+        workspaceId,
+        applicationUniversalIdentifier,
+        version,
       });
 
       this.logger.log(
@@ -164,9 +212,7 @@ export class ApplicationInstallService {
         cwd: temporaryDir,
         filter: (path, entry) => {
           if (path.includes('..')) {
-            this.logger.warn(
-              `Skipping path traversal entry: ${path}`,
-            );
+            this.logger.warn(`Skipping path traversal entry: ${path}`);
 
             return false;
           }
@@ -359,5 +405,118 @@ export class ApplicationInstallService {
     }
 
     return filePaths;
+  }
+
+  private resolveInstallHookIdentifiers(
+    manifest: Manifest,
+  ): InstallHookIdentifiers {
+    return {
+      preInstallLogicFunctionUniversalIdentifier:
+        manifest.application.preInstallLogicFunctionUniversalIdentifier,
+      postInstallLogicFunctionUniversalIdentifier:
+        manifest.application.postInstallLogicFunctionUniversalIdentifier,
+    };
+  }
+
+  private extractHookLogicFunctions({
+    manifest,
+    hookIdentifiers,
+  }: {
+    manifest: Manifest;
+    hookIdentifiers: InstallHookIdentifiers;
+  }): LogicFunctionManifest[] {
+    const hookUniversalIdentifiers = [
+      hookIdentifiers.preInstallLogicFunctionUniversalIdentifier,
+      hookIdentifiers.postInstallLogicFunctionUniversalIdentifier,
+    ].filter(isDefined);
+
+    if (hookUniversalIdentifiers.length === 0) {
+      return [];
+    }
+
+    const hookUniversalIdentifierSet = new Set(hookUniversalIdentifiers);
+
+    return manifest.logicFunctions.filter((logicFunction) =>
+      hookUniversalIdentifierSet.has(logicFunction.universalIdentifier),
+    );
+  }
+
+  private buildHooksOnlyManifest({
+    manifest,
+    hookLogicFunctions,
+  }: {
+    manifest: Manifest;
+    hookLogicFunctions: LogicFunctionManifest[];
+  }): Manifest {
+    return {
+      application: manifest.application,
+      logicFunctions: hookLogicFunctions,
+      objects: [],
+      fields: [],
+      frontComponents: [],
+      roles: [],
+      skills: [],
+      publicAssets: [],
+      views: [],
+      navigationMenuItems: [],
+      pageLayouts: [],
+    };
+  }
+
+  private async executeInstallHook({
+    hookUniversalIdentifier,
+    hookName,
+    workspaceId,
+    applicationUniversalIdentifier,
+    version,
+  }: {
+    hookUniversalIdentifier: string | undefined;
+    hookName: 'preInstall' | 'postInstall';
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    version: string;
+  }): Promise<void> {
+    if (!isDefined(hookUniversalIdentifier)) {
+      return;
+    }
+
+    const { flatLogicFunctionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatLogicFunctionMaps',
+      ]);
+
+    const flatLogicFunction =
+      flatLogicFunctionMaps.byUniversalIdentifier[hookUniversalIdentifier];
+
+    if (!isDefined(flatLogicFunction)) {
+      throw new ApplicationException(
+        `${hookName} logic function with universalIdentifier ${hookUniversalIdentifier} not found after manifest sync`,
+        ApplicationExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    this.logger.log(
+      `Executing ${hookName} hook (${hookUniversalIdentifier}) for ${applicationUniversalIdentifier}@${version}`,
+    );
+
+    const result = await this.logicFunctionExecutorService.execute({
+      logicFunctionId: flatLogicFunction.id,
+      workspaceId,
+      payload: {
+        applicationUniversalIdentifier,
+        version,
+      },
+    });
+
+    if (result.status === LogicFunctionExecutionStatus.ERROR) {
+      throw new ApplicationException(
+        `${hookName} hook failed for ${applicationUniversalIdentifier}@${version}: ${result.error?.errorMessage ?? 'Unknown error'}`,
+        ApplicationExceptionCode.INSTALL_HOOK_EXECUTION_FAILED,
+      );
+    }
+
+    this.logger.log(
+      `${hookName} hook completed successfully for ${applicationUniversalIdentifier}@${version}`,
+    );
   }
 }

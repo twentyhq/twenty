@@ -13,6 +13,7 @@ export enum ApplicationExceptionCode {
   APPLICATION_NOT_FOUND = 'APPLICATION_NOT_FOUND',
   FORBIDDEN = 'FORBIDDEN',
   INVALID_INPUT = 'INVALID_INPUT',
+  INSTALL_HOOK_EXECUTION_FAILED = 'INSTALL_HOOK_EXECUTION_FAILED',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -35,6 +36,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`You do not have permission to perform this action.`;
     case ApplicationExceptionCode.INVALID_INPUT:
       return msg`Invalid input provided.`;
+    case ApplicationExceptionCode.INSTALL_HOOK_EXECUTION_FAILED:
+      return msg`Install hook execution failed.`;
     default:
       assertUnreachable(code);
   }

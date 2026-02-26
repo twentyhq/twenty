@@ -24,6 +24,7 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
         throw new NotFoundError(exception);
       case ApplicationExceptionCode.FORBIDDEN:
       case ApplicationExceptionCode.INVALID_INPUT:
+      case ApplicationExceptionCode.INSTALL_HOOK_EXECUTION_FAILED:
         throw new UserInputError(exception);
       default: {
         assertUnreachable(exception.code);

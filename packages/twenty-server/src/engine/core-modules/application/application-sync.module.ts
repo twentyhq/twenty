@@ -12,6 +12,7 @@ import { ApplicationVariableEntityModule } from 'src/engine/core-modules/applica
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
 import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
@@ -39,6 +40,7 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
     WorkspaceCacheModule,
     WorkspaceMigrationRunnerModule,
     SecureHttpClientModule,
+    LogicFunctionExecutorModule,
   ],
   providers: [
     ApplicationResolver,

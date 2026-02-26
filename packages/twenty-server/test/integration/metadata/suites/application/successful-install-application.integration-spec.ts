@@ -2,13 +2,12 @@ import http from 'http';
 
 import { type Manifest } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-
 import { buildTestTarball } from 'test/integration/metadata/suites/application/utils/build-test-tarball.util';
 import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -51,12 +50,9 @@ const packageJson = {
   version: TEST_VERSION,
 };
 
-const startTarballServer = (
-  tarballBuffer: Buffer,
-): Promise<http.Server> => {
+const startTarballServer = (tarballBuffer: Buffer): Promise<http.Server> => {
   return new Promise((resolve) => {
-    const expectedPath =
-      `/${TEST_APP_ID}@${TEST_VERSION}/app.tar.gz`;
+    const expectedPath = `/${TEST_APP_ID}@${TEST_VERSION}/app.tar.gz`;
 
     const server = http.createServer((req, res) => {
       if (req.url === expectedPath) {

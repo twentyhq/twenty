@@ -22,8 +22,9 @@ export const buildTestTarball = async ({
 
     const fileNames: string[] = [];
 
-    const manifestContent = rawManifestContent
-      ?? (manifest ? JSON.stringify(manifest, null, 2) : undefined);
+    const manifestContent =
+      rawManifestContent ??
+      (manifest ? JSON.stringify(manifest, null, 2) : undefined);
 
     if (manifestContent) {
       await fs.writeFile(join(tempDir, 'manifest.json'), manifestContent);

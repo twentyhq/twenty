@@ -1,9 +1,6 @@
 import http from 'http';
 
 import { v4 as uuidv4 } from 'uuid';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildTestTarball } from 'test/integration/metadata/suites/application/utils/build-test-tarball.util';
@@ -13,13 +10,14 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+
 const INVALID_UUID_APP_ID = uuidv4();
 const INVALID_UUID_ROLE_ID = uuidv4();
 
 const TARBALL_SERVER_PORT = 4444;
 
-const buildTarballServerUrl = (path: string) =>
-  `/${path}/app.tar.gz`;
+const buildTarballServerUrl = (path: string) => `/${path}/app.tar.gz`;
 
 const startTarballServer = (
   routes: Record<string, Buffer>,
@@ -75,9 +73,8 @@ describe('Install application should fail', () => {
     });
 
     const routes: Record<string, Buffer> = {
-      [buildTarballServerUrl(
-        `${NO_MANIFEST_APP_ID}@${NO_MANIFEST_VERSION}`,
-      )]: tarballWithoutManifest,
+      [buildTarballServerUrl(`${NO_MANIFEST_APP_ID}@${NO_MANIFEST_VERSION}`)]:
+        tarballWithoutManifest,
       [buildTarballServerUrl(
         `${INVALID_MANIFEST_APP_ID}@${INVALID_MANIFEST_VERSION}`,
       )]: tarballWithInvalidManifest,
