@@ -8,6 +8,7 @@ import { FileIcon } from '@/file/components/FileIcon';
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
 import { useLingui } from '@lingui/react/macro';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const StyledContainer = styled.div`
@@ -96,7 +97,7 @@ export const EmailMessageAttachments = ({
           const fileCategory = getFileCategoryFromExtension(
             extension.replace('.', ''),
           );
-          const downloadUrl = `${window.location.origin}/api/message-attachments/${attachment.id}/download`;
+          const downloadUrl = `${REACT_APP_SERVER_BASE_URL}/api/message-attachments/${attachment.id}/download`;
 
           return (
             <ActivityRow
