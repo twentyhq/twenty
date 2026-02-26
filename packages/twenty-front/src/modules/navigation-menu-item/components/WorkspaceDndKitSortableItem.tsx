@@ -6,19 +6,6 @@ import { SortableDropTargetRefContext } from '@/navigation-menu-item/contexts/So
 
 const SORTABLE_COLLISION_PRIORITY = 3;
 
-const StyledDropIndicator = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: ${({ theme }) => theme.color.blue};
-  border-radius: ${({ theme }) => theme.border.radius.sm}
-    ${({ theme }) => theme.border.radius.sm} 0 0;
-  pointer-events: none;
-  z-index: 1;
-`;
-
 const StyledSortableRoot = styled.div`
   min-height: 0;
   position: relative;
@@ -39,7 +26,7 @@ export const WorkspaceDndKitSortableItem = ({
   disabled = false,
   children,
 }: WorkspaceDndKitSortableItemProps) => {
-  const { handleRef, isDropTarget, ref, targetRef } = useSortable({
+  const { handleRef, ref, targetRef } = useSortable({
     id,
     index,
     group,
@@ -59,7 +46,6 @@ export const WorkspaceDndKitSortableItem = ({
           handleRef?.(el);
         }}
       >
-        {isDropTarget && <StyledDropIndicator />}
         {children}
       </StyledSortableRoot>
     </SortableDropTargetRefContext.Provider>
