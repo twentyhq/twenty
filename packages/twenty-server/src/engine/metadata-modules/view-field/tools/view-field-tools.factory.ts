@@ -75,6 +75,22 @@ const DeleteViewFieldInputSchema = z.object({
     ),
 });
 
+const CreateManyViewFieldsInputSchema = z.object({
+  viewFields: z
+    .array(CreateViewFieldInputSchema)
+    .min(1)
+    .max(50)
+    .describe('Array of view fields to create (1-50 items).'),
+});
+
+const UpdateManyViewFieldsInputSchema = z.object({
+  viewFields: z
+    .array(UpdateViewFieldInputSchema)
+    .min(1)
+    .max(50)
+    .describe('Array of view field updates to apply (1-50 items).'),
+});
+
 @Injectable()
 export class ViewFieldToolsFactory {
   constructor(
@@ -250,6 +266,102 @@ export class ViewFieldToolsFactory {
               id: viewField.id,
               deleted: true,
             };
+          } catch (error) {
+            if (error instanceof WorkspaceMigrationBuilderException) {
+              throw new Error(formatValidationErrors(error));
+            }
+            throw error;
+          }
+        },
+      },
+      create_many_view_fields: {
+        description:
+          'Add multiple columns to a view at once. More efficient than calling create_view_field multiple times. Each item follows the same schema as create_view_field. All view fields can target the same or different views.',
+        inputSchema: CreateManyViewFieldsInputSchema,
+        execute: async (parameters: {
+          viewFields: Array<{
+            viewId: string;
+            fieldMetadataId: string;
+            isVisible?: boolean;
+            size?: number;
+            position?: number;
+            aggregateOperation?: string;
+          }>;
+        }) => {
+          try {
+            const viewFields = await this.viewFieldService.createMany({
+              createViewFieldInputs: parameters.viewFields.map((vf) => ({
+                viewId: vf.viewId,
+                fieldMetadataId: vf.fieldMetadataId,
+                isVisible: vf.isVisible ?? true,
+                size: vf.size ?? 150,
+                position: vf.position ?? 0,
+                aggregateOperation:
+                  vf.aggregateOperation as AggregateOperations,
+              })),
+              workspaceId,
+            });
+
+            return viewFields.map((viewField) => ({
+              id: viewField.id,
+              fieldMetadataId: viewField.fieldMetadataId,
+              viewId: viewField.viewId,
+              isVisible: viewField.isVisible,
+              size: viewField.size,
+              position: viewField.position,
+              aggregateOperation: viewField.aggregateOperation,
+            }));
+          } catch (error) {
+            if (error instanceof WorkspaceMigrationBuilderException) {
+              throw new Error(formatValidationErrors(error));
+            }
+            throw error;
+          }
+        },
+      },
+      update_many_view_fields: {
+        description:
+          'Update multiple columns in a view at once. More efficient than calling update_view_field multiple times. Each item must include the view field ID and properties to update. Same constraints as update_view_field apply to each item.',
+        inputSchema: UpdateManyViewFieldsInputSchema,
+        execute: async (parameters: {
+          viewFields: Array<{
+            id: string;
+            isVisible?: boolean;
+            size?: number;
+            position?: number;
+            aggregateOperation?: string;
+          }>;
+        }) => {
+          try {
+            const results = await Promise.all(
+              parameters.viewFields.map(async (vf) => {
+                const viewField = await this.viewFieldService.updateOne({
+                  updateViewFieldInput: {
+                    id: vf.id,
+                    update: {
+                      isVisible: vf.isVisible,
+                      size: vf.size,
+                      position: vf.position,
+                      aggregateOperation:
+                        vf.aggregateOperation as AggregateOperations,
+                    },
+                  },
+                  workspaceId,
+                });
+
+                return {
+                  id: viewField.id,
+                  fieldMetadataId: viewField.fieldMetadataId,
+                  viewId: viewField.viewId,
+                  isVisible: viewField.isVisible,
+                  size: viewField.size,
+                  position: viewField.position,
+                  aggregateOperation: viewField.aggregateOperation,
+                };
+              }),
+            );
+
+            return results;
           } catch (error) {
             if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));
