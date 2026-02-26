@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
+import { saveAs } from 'file-saver';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { type EmailThreadMessageAttachment } from '@/activities/emails/types/EmailThreadMessage';
-import { downloadFile } from '@/activities/files/utils/downloadFile';
+import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { FileIcon } from '@/file/components/FileIcon';
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
 import { useLingui } from '@lingui/react/macro';
@@ -84,6 +85,19 @@ export const EmailMessageAttachments = ({
     return null;
   }
 
+  const downloadAttachment = (attachmentId: string, fileName: string) => {
+    const url = `${REACT_APP_SERVER_BASE_URL}/message-attachments/${attachmentId}/download`;
+    const token = getTokenPair()?.accessOrWorkspaceAgnosticToken?.token ?? '';
+
+    fetch(url, {
+      headers: { authorization: `Bearer ${token}` },
+    })
+      .then((resp) => (resp.ok ? resp.blob() : Promise.reject(resp.statusText)))
+      .then((blob) => {
+        saveAs(blob, fileName);
+      });
+  };
+
   return (
     <StyledContainer>
       <StyledTitleBar>
@@ -97,21 +111,20 @@ export const EmailMessageAttachments = ({
           const fileCategory = getFileCategoryFromExtension(
             extension.replace('.', ''),
           );
-          const downloadUrl = `${REACT_APP_SERVER_BASE_URL}/api/message-attachments/${attachment.id}/download`;
 
           return (
             <ActivityRow
               key={attachment.id}
-              onClick={() => downloadFile(downloadUrl, attachment.name)}
+              onClick={() => downloadAttachment(attachment.id, attachment.name)}
             >
               <StyledLeftContent>
                 <FileIcon fileCategory={fileCategory} />
                 <StyledLinkContainer>
                   <StyledLink
-                    href={downloadUrl}
+                    href="#"
                     onClick={(e) => {
                       e.preventDefault();
-                      downloadFile(downloadUrl, attachment.name);
+                      downloadAttachment(attachment.id, attachment.name);
                     }}
                   >
                     <OverflowingTextWithTooltip text={attachment.name} />

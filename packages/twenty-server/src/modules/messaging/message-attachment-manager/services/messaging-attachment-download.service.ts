@@ -4,6 +4,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type MessageAttachmentWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-attachment.workspace-entity';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -31,76 +32,83 @@ export class MessagingAttachmentDownloadService {
     messageAttachmentId: string,
     workspaceId: string,
   ): Promise<DownloadResult> {
-    const messageAttachmentRepository =
-      await this.globalWorkspaceOrmManager.getRepository<MessageAttachmentWorkspaceEntity>(
-        workspaceId,
-        'messageAttachment',
-      );
+    const authContext = buildSystemAuthContext(workspaceId);
 
-    const messageAttachment = await messageAttachmentRepository.findOne({
-      where: { id: messageAttachmentId },
-    });
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageAttachmentRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageAttachmentWorkspaceEntity>(
+            workspaceId,
+            'messageAttachment',
+          );
 
-    if (!isDefined(messageAttachment)) {
-      throw new NotFoundException('Message attachment not found');
-    }
+        const messageAttachment = await messageAttachmentRepository.findOne({
+          where: { id: messageAttachmentId },
+        });
 
-    const messageChannelMessageAssociationRepository =
-      await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-        workspaceId,
-        'messageChannelMessageAssociation',
-      );
+        if (!isDefined(messageAttachment)) {
+          throw new NotFoundException('Message attachment not found');
+        }
 
-    const association =
-      await messageChannelMessageAssociationRepository.findOne({
-        where: { messageId: messageAttachment.messageId },
-      });
+        const messageChannelMessageAssociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            workspaceId,
+            'messageChannelMessageAssociation',
+          );
 
-    if (!isDefined(association)) {
-      throw new NotFoundException(
-        'Message channel message association not found',
-      );
-    }
+        const association =
+          await messageChannelMessageAssociationRepository.findOne({
+            where: { messageId: messageAttachment.messageId },
+          });
 
-    const messageChannelRepository =
-      await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-        workspaceId,
-        'messageChannel',
-      );
+        if (!isDefined(association)) {
+          throw new NotFoundException(
+            'Message channel message association not found',
+          );
+        }
 
-    const messageChannel = await messageChannelRepository.findOne({
-      where: { id: association.messageChannelId },
-    });
+        const messageChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+            workspaceId,
+            'messageChannel',
+          );
 
-    if (!isDefined(messageChannel)) {
-      throw new NotFoundException('Message channel not found');
-    }
+        const messageChannel = await messageChannelRepository.findOne({
+          where: { id: association.messageChannelId },
+        });
 
-    const connectedAccountRepository =
-      await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-        workspaceId,
-        'connectedAccount',
-      );
+        if (!isDefined(messageChannel)) {
+          throw new NotFoundException('Message channel not found');
+        }
 
-    const connectedAccount = await connectedAccountRepository.findOne({
-      where: { id: messageChannel.connectedAccountId },
-    });
+        const connectedAccountRepository =
+          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+            workspaceId,
+            'connectedAccount',
+          );
 
-    if (!isDefined(connectedAccount)) {
-      throw new NotFoundException('Connected account not found');
-    }
+        const connectedAccount = await connectedAccountRepository.findOne({
+          where: { id: messageChannel.connectedAccountId },
+        });
 
-    const content = await this.downloadFromProvider(
-      connectedAccount,
-      association.messageExternalId ?? '',
-      messageAttachment.externalIdentifier ?? '',
+        if (!isDefined(connectedAccount)) {
+          throw new NotFoundException('Connected account not found');
+        }
+
+        const content = await this.downloadFromProvider(
+          connectedAccount,
+          association.messageExternalId ?? '',
+          messageAttachment.externalIdentifier ?? '',
+        );
+
+        return {
+          content,
+          filename: messageAttachment.name,
+          mimeType: messageAttachment.mimeType || 'application/octet-stream',
+        };
+      },
+      authContext,
     );
-
-    return {
-      content,
-      filename: messageAttachment.name,
-      mimeType: messageAttachment.mimeType || 'application/octet-stream',
-    };
   }
 
   private async downloadFromProvider(
