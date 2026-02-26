@@ -30,7 +30,7 @@ export const STANDARD_SKILL = {
     universalIdentifier: '20202020-13b5-4e60-9359-b8519ef1c07d',
   },
   'workspace-demo-seeding': {
-    universalIdentifier: '20202020-c81b-baf8-5255-4c34bd0eac9c',
+    universalIdentifier: '20202020-c81b-4af8-9255-4c34bd0eac9c',
   },
 } as const satisfies Record<
   string,

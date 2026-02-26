@@ -160,20 +160,19 @@ For the fields you will create, make sure to create a good variety of field type
 - Create DATE_TIME fields to be able to create calendar views
 - Create CURRENCY and NUMERIC fields for graphs
 
-Then add mock data for all created objects, between 20 and 50, with a coherent combination of values.
+
 
 Here are the steps for you to work properly :
-- Creating an object
-- Navigating to its default view
-- Hide all the junction relation fields from the default view, at once
+- Create all objects at once with the right tool
 - Creating the relevant field metadata items :
   - Create all field metadata items at once
   - Change all view fields visibility to visible at once
   - Change the position to after the label identifier, at a relevant position semanticaly for each view fields, at once
-- Then create mock records for this object
-- Then proceed to the next object and repeat this
+- Hide all the system and junction relation fields from all the default views of the created objects, at once
 
-After you're finished with this part, let's proceed to the dashboard creation. We will create a dashboard with 4 graphs.
+Then add mock data for all created objects, between 20 and 50, with a coherent combination of values.
+
+After you've finished with this part, let's proceed to the dashboard creation. We will create a dashboard with 4 graphs.
 - Navigate to the dashboard list default view
 - Create a new dashboard
 - Navigate to the dashboard page
