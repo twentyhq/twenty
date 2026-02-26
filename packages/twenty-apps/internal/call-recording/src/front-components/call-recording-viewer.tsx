@@ -45,21 +45,18 @@ export const CallRecordingViewer = () => {
   const recordingFileUrl = recordingFile?.url;
   const recordingFileExtension = recordingFile?.extension;
 
-  if (!isDefined(recordingFileUrl)) {
-    return;
-  }
-
-  if (!isDefined(recordingFileExtension)) {
-    return;
-  }
+  const hasRecording =
+    isDefined(recordingFileUrl) && isDefined(recordingFileExtension);
 
   return (
     <StyledContainer>
-      <MediaPlayer
-        url={recordingFileUrl}
-        extension={recordingFileExtension}
-        onTimeUpdate={setCurrentTimeSeconds}
-      />
+      {hasRecording && (
+        <MediaPlayer
+          url={recordingFileUrl}
+          extension={recordingFileExtension}
+          onTimeUpdate={setCurrentTimeSeconds}
+        />
+      )}
       {transcriptLoading ? (
         <SummaryViewerSkeleton />
       ) : (
