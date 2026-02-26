@@ -1,21 +1,22 @@
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-
-type PageLayoutWidgetCommonPropertiesInput = Pick<
-  FlatPageLayoutWidget,
-  'pageLayoutTabId' | 'title' | 'type' | 'gridPosition'
-> & {
-  objectMetadataId?: string | null;
-  position?: FlatPageLayoutWidget['position'];
-};
+import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 
 export const buildFlatPageLayoutWidgetCommonProperties = ({
   widgetInput,
   flatPageLayoutTabMaps,
   flatObjectMetadataMaps,
 }: {
-  widgetInput: PageLayoutWidgetCommonPropertiesInput;
+  widgetInput: Pick<
+    CreatePageLayoutWidgetInput,
+    | 'pageLayoutTabId'
+    | 'title'
+    | 'type'
+    | 'objectMetadataId'
+    | 'gridPosition'
+    | 'position'
+  >;
 } & Pick<
   AllFlatEntityMaps,
   'flatPageLayoutTabMaps' | 'flatObjectMetadataMaps'
@@ -30,15 +31,17 @@ export const buildFlatPageLayoutWidgetCommonProperties = ({
   | 'gridPosition'
   | 'position'
 > => {
-  const { pageLayoutTabUniversalIdentifier, objectMetadataUniversalIdentifier } =
-    resolveEntityRelationUniversalIdentifiers({
-      metadataName: 'pageLayoutWidget',
-      foreignKeyValues: {
-        pageLayoutTabId: widgetInput.pageLayoutTabId,
-        objectMetadataId: widgetInput.objectMetadataId,
-      },
-      flatEntityMaps: { flatPageLayoutTabMaps, flatObjectMetadataMaps },
-    });
+  const {
+    pageLayoutTabUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+  } = resolveEntityRelationUniversalIdentifiers({
+    metadataName: 'pageLayoutWidget',
+    foreignKeyValues: {
+      pageLayoutTabId: widgetInput.pageLayoutTabId,
+      objectMetadataId: widgetInput.objectMetadataId,
+    },
+    flatEntityMaps: { flatPageLayoutTabMaps, flatObjectMetadataMaps },
+  });
 
   return {
     pageLayoutTabId: widgetInput.pageLayoutTabId,

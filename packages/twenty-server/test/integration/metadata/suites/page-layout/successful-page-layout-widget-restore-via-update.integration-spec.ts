@@ -173,9 +173,11 @@ describe('Page layout widget restore via bulk update should succeed', () => {
     const restoredTab = restoreData.updatePageLayoutWithTabsAndWidgets.tabs![0];
 
     expect(restoredTab.widgets).toHaveLength(1);
-    expect(restoredTab.widgets![0].id).toBe(widgetId);
-    expect(restoredTab.widgets![0].title).toBe('Restored Graph Widget');
-    expect(restoredTab.widgets![0].deletedAt).toBeNull();
+    expect(restoredTab.widgets![0]).toMatchObject({
+      id: widgetId,
+      title: 'Restored Graph Widget',
+      deletedAt: null,
+    });
 
     expect(restoreData.updatePageLayoutWithTabsAndWidgets).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny({
@@ -369,17 +371,20 @@ describe('Page layout widget restore via bulk update should succeed', () => {
       (w: { id: string }) => w.id === newWidgetId,
     );
 
-    expect(updatedWidget).toBeDefined();
-    expect(updatedWidget!.title).toBe('Updated Widget Title');
-    expect(updatedWidget!.deletedAt).toBeNull();
+    expect(updatedWidget).toMatchObject({
+      title: 'Updated Widget Title',
+      deletedAt: null,
+    });
 
-    expect(restoredWidget).toBeDefined();
-    expect(restoredWidget!.title).toBe('Restored Widget');
-    expect(restoredWidget!.deletedAt).toBeNull();
+    expect(restoredWidget).toMatchObject({
+      title: 'Restored Widget',
+      deletedAt: null,
+    });
 
-    expect(newWidget).toBeDefined();
-    expect(newWidget!.title).toBe('Brand New Widget');
-    expect(newWidget!.deletedAt).toBeNull();
+    expect(newWidget).toMatchObject({
+      title: 'Brand New Widget',
+      deletedAt: null,
+    });
 
     expect(mixedData.updatePageLayoutWithTabsAndWidgets).toMatchSnapshot(
       extractRecordIdsAndDatesAsExpectAny({
