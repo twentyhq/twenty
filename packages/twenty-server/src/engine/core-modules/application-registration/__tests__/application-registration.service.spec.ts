@@ -133,7 +133,7 @@ describe('ApplicationRegistrationService', () => {
         service.create(
           {
             name: 'Bad Scopes App',
-            scopes: ['api', 'invalid:scope'],
+            oAuthScopes: ['api', 'invalid:scope'],
           },
           mockUserId,
         ),

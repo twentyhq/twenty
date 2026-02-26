@@ -1,4 +1,4 @@
-import { FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID } from '@/settings/application-registrations/graphql/findApplicationRegistrationByClientId';
+import { FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationByClientId';
 import styled from '@emotion/styled';
 import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
