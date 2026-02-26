@@ -9,7 +9,7 @@ import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScro
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
@@ -22,8 +22,6 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
     lastShowPageRecordIdState,
   );
 
-  const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
-
   const { scrollTableToPosition } = useScrollTableToPosition();
 
   const { triggerInitialRecordTableDataLoad } =
@@ -33,19 +31,49 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
 
   const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
 
+  const allRecordIdsRef = useRef(allRecordIds);
+  allRecordIdsRef.current = allRecordIds;
+
+  const scrollTableToPositionRef = useRef(scrollTableToPosition);
+  scrollTableToPositionRef.current = scrollTableToPosition;
+
+  const triggerInitialRecordTableDataLoadRef = useRef(
+    triggerInitialRecordTableDataLoad,
+  );
+  triggerInitialRecordTableDataLoadRef.current =
+    triggerInitialRecordTableDataLoad;
+
+  const processTreadmillScrollTopRef = useRef(processTreadmillScrollTop);
+  processTreadmillScrollTopRef.current = processTreadmillScrollTop;
+
+  const getScrollWrapperElementRef = useRef(getScrollWrapperElement);
+  getScrollWrapperElementRef.current = getScrollWrapperElement;
+
+  const triggerFetchPagesWithoutDebounceRef = useRef(
+    triggerFetchPagesWithoutDebounce,
+  );
+  triggerFetchPagesWithoutDebounceRef.current =
+    triggerFetchPagesWithoutDebounce;
+
   useEffect(() => {
+    if (!isNonEmptyString(lastShowPageRecordId)) {
+      return;
+    }
+
     const run = async () => {
       setLastShowPageRecordId(null);
 
-      const recordPosition = allRecordIds.findIndex(
+      const recordPosition = allRecordIdsRef.current.findIndex(
         (recordId) => recordId === lastShowPageRecordId,
       );
 
-      await triggerInitialRecordTableDataLoad();
+      await triggerInitialRecordTableDataLoadRef.current();
 
-      const { scrollWrapperElement } = getScrollWrapperElement();
+      const { scrollWrapperElement } =
+        getScrollWrapperElementRef.current();
 
-      const tableScrollWrapperHeight = scrollWrapperElement?.clientHeight ?? 0;
+      const tableScrollWrapperHeight =
+        scrollWrapperElement?.clientHeight ?? 0;
 
       const numberOfRowsDisplayedInTable = Math.min(
         Math.floor(tableScrollWrapperHeight / (RECORD_TABLE_ROW_HEIGHT + 1)),
@@ -56,7 +84,8 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
         numberOfRowsDisplayedInTable / 2,
       );
 
-      const recordPositionInPx = recordPosition * (RECORD_TABLE_ROW_HEIGHT + 1);
+      const recordPositionInPx =
+        recordPosition * (RECORD_TABLE_ROW_HEIGHT + 1);
 
       const targetScrollPositionInPx = Math.max(
         0,
@@ -64,32 +93,18 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
           halfNumberOfRowsVisible * (RECORD_TABLE_ROW_HEIGHT + 1),
       );
 
-      scrollTableToPosition({
+      scrollTableToPositionRef.current({
         horizontalScrollInPx: 0,
         verticalScrollInPx: targetScrollPositionInPx,
       });
 
-      processTreadmillScrollTop(targetScrollPositionInPx);
+      processTreadmillScrollTopRef.current(targetScrollPositionInPx);
 
-      setHasInitializedScroll(true);
-
-      await triggerFetchPagesWithoutDebounce();
+      await triggerFetchPagesWithoutDebounceRef.current();
     };
 
-    if (isNonEmptyString(lastShowPageRecordId)) {
-      run();
-    }
-  }, [
-    hasInitializedScroll,
-    lastShowPageRecordId,
-    scrollTableToPosition,
-    allRecordIds,
-    setLastShowPageRecordId,
-    triggerInitialRecordTableDataLoad,
-    processTreadmillScrollTop,
-    getScrollWrapperElement,
-    triggerFetchPagesWithoutDebounce,
-  ]);
+    run();
+  }, [lastShowPageRecordId, setLastShowPageRecordId]);
 
   return <></>;
 };

@@ -13,9 +13,8 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import isEmpty from 'lodash.isempty';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
-// TODO: see if we can merge the initial and load more processes, to have only one load at scroll index effect
 export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
 
@@ -53,45 +52,81 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
+  const currentViewId = currentView?.id ?? null;
+
+  const triggerInitialRecordTableDataLoadRef = useRef(
+    triggerInitialRecordTableDataLoad,
+  );
+  triggerInitialRecordTableDataLoadRef.current =
+    triggerInitialRecordTableDataLoad;
+
+  const setLastRecordTableQueryIdentifierRef = useRef(
+    setLastRecordTableQueryIdentifier,
+  );
+  setLastRecordTableQueryIdentifierRef.current =
+    setLastRecordTableQueryIdentifier;
+
+  const setLastContextStoreVirtualizedViewIdRef = useRef(
+    setLastContextStoreVirtualizedViewId,
+  );
+  setLastContextStoreVirtualizedViewIdRef.current =
+    setLastContextStoreVirtualizedViewId;
+
+  const setLastContextStoreVirtualizedVisibleRecordFieldsRef = useRef(
+    setLastContextStoreVirtualizedVisibleRecordFields,
+  );
+  setLastContextStoreVirtualizedVisibleRecordFieldsRef.current =
+    setLastContextStoreVirtualizedVisibleRecordFields;
+
+  const visibleRecordFieldsRef = useRef(visibleRecordFields);
+  visibleRecordFieldsRef.current = visibleRecordFields;
+
+  const queryIdentifierRef = useRef(queryIdentifier);
+  queryIdentifierRef.current = queryIdentifier;
+
   useEffect(() => {
     if (isInitializingVirtualTableDataLoading) {
       return;
     }
 
     (async () => {
-      if ((currentView?.id ?? null) !== lastContextStoreVirtualizedViewId) {
-        // Wait for the atomic batch from loadRecordIndexStates to populate
-        // visibleRecordFields before triggering a fetch. On the next render
-        // after the batch, fields will be populated and we'll proceed.
-        if (isEmpty(visibleRecordFields)) {
+      if (currentViewId !== lastContextStoreVirtualizedViewId) {
+        if (isEmpty(visibleRecordFieldsRef.current)) {
           return;
         }
 
-        setLastContextStoreVirtualizedViewId(currentView?.id ?? null);
-        setLastRecordTableQueryIdentifier(queryIdentifier);
-        setLastContextStoreVirtualizedVisibleRecordFields(visibleRecordFields);
+        setLastContextStoreVirtualizedViewIdRef.current(currentViewId);
+        setLastRecordTableQueryIdentifierRef.current(
+          queryIdentifierRef.current,
+        );
+        setLastContextStoreVirtualizedVisibleRecordFieldsRef.current(
+          visibleRecordFieldsRef.current,
+        );
 
-        await triggerInitialRecordTableDataLoad();
+        await triggerInitialRecordTableDataLoadRef.current();
       } else if (
         queryIdentifier !== lastRecordTableQueryIdentifier &&
         !isFetchingMoreRecords
       ) {
-        setLastRecordTableQueryIdentifier(queryIdentifier);
+        setLastRecordTableQueryIdentifierRef.current(queryIdentifier);
 
-        await triggerInitialRecordTableDataLoad();
+        await triggerInitialRecordTableDataLoadRef.current();
       } else if (
         JSON.stringify(lastContextStoreVirtualizedVisibleRecordFields) !==
         JSON.stringify(visibleRecordFields)
       ) {
-        const lastFields = lastContextStoreVirtualizedVisibleRecordFields || [];
+        const lastFields =
+          lastContextStoreVirtualizedVisibleRecordFields || [];
         const currentFields = visibleRecordFields || [];
 
-        setLastContextStoreVirtualizedVisibleRecordFields(visibleRecordFields);
+        setLastContextStoreVirtualizedVisibleRecordFieldsRef.current(
+          visibleRecordFields,
+        );
 
         const shouldRefetchData = currentFields.length > lastFields.length;
 
         if (shouldRefetchData) {
-          await triggerInitialRecordTableDataLoad({
+          await triggerInitialRecordTableDataLoadRef.current({
             shouldScrollToStart: isEmpty(lastFields),
           });
         }
@@ -100,15 +135,11 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   }, [
     queryIdentifier,
     lastRecordTableQueryIdentifier,
-    triggerInitialRecordTableDataLoad,
-    setLastRecordTableQueryIdentifier,
     isFetchingMoreRecords,
     isInitializingVirtualTableDataLoading,
-    currentView,
+    currentViewId,
     lastContextStoreVirtualizedViewId,
-    setLastContextStoreVirtualizedViewId,
     lastContextStoreVirtualizedVisibleRecordFields,
-    setLastContextStoreVirtualizedVisibleRecordFields,
     visibleRecordFields,
   ]);
 
