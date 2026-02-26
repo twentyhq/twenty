@@ -51,6 +51,20 @@ body {
   align-items: center;
 }
 
+.header-left {
+  margin-left: 60px;
+  gap: 8px;
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
 .header-center {
   flex-grow: 1;
   max-width: 400px;

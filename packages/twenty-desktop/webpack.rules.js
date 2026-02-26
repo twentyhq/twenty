@@ -6,20 +6,12 @@ module.exports = [
     test: /native_modules[/\\].+\.node$/,
     use: 'node-loader',
   },
-  // Put your webpack loader rules in this array.  This is where you would put
-  // your ts-loader configuration for instance:
-  /**
-   * Typescript Example:
-   *
-   * {
-   *   test: /\.tsx?$/,
-   *   exclude: /(node_modules|.webpack)/,
-   *   loaders: [{
-   *     loader: 'ts-loader',
-   *     options: {
-   *       transpileOnly: true
-   *     }
-   *   }]
-   * }
-   */
+  {
+    test: /\.(png|jpe?g|gif)$/i,
+    type: 'asset/inline',
+  },
+  {
+    test: /\.svg$/i,
+    type: 'asset/resource',
+  },
 ];

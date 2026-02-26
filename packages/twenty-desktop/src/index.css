@@ -62,7 +62,17 @@ body {
 }
 
 .header-left {
-  margin-left: 60px; /* Add space to avoid overlapping with macOS window controls */
+  margin-left: 60px;
+  gap: 8px;
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .header-center {

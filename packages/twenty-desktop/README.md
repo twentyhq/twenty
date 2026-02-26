@@ -1,4 +1,4 @@
-# Muesli
+# Twenty Desktop
 
 This is a demo application that shows off what you can build with the [Recall.ai Desktop Recording SDK.](https://www.recall.ai/product/desktop-recording-sdk)
 
@@ -36,7 +36,7 @@ TWENTY_API_KEY=<your key>
 
 The `call-recording` Twenty app must be installed in your workspace first (`packages/twenty-apps/internal/call-recording`). Generate an API key at `<your-twenty-instance>/settings/api-webhooks`.
 
-To launch the Muesli application, start the server first, then the app:
+To launch the Twenty Desktop application, start the server first, then the app:
 
 ```sh
 npm ci

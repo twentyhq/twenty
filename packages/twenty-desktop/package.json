@@ -1,8 +1,8 @@
 {
-  "name": "muesli",
-  "productName": "Muesli",
+  "name": "twenty-desktop",
+  "productName": "Twenty",
   "version": "1.0.0",
-  "description": "Muesli meeting recorder",
+  "description": "Twenty meeting recorder",
   "main": ".webpack/main",
   "scripts": {
     "start": "concurrently \"npm run start:server\" \"npm run start:electron\"",

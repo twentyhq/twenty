@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, protocol, Notification, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, protocol, Notification, shell, nativeImage } = require('electron');
 const path = require('node:path');
 const url = require('url');
 const fs = require('fs');
@@ -9,11 +9,22 @@ const sdkLogger = require('./sdk-logger');
 const twentyClient = require('./twenty-client');
 require('dotenv').config();
 
+const twentyIconDataUrl = require('./assets/twenty-logo-256.png');
+
+function getAppIcon() {
+  try {
+    return nativeImage.createFromDataURL(twentyIconDataUrl);
+  } catch (error) {
+    console.error('Failed to load app icon:', error);
+    return undefined;
+  }
+}
+
 // Function to get the OpenRouter headers
 function getHeaderLines() {
   return [
     "HTTP-Referer: https://recall.ai", // Replace with your actual app's URL
-    "X-Title: Muesli AI Notetaker"
+    "X-Title: Twenty AI Notetaker"
   ];
 }
 
@@ -23,7 +34,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENROUTER_KEY,
   defaultHeaders: {
     "HTTP-Referer": "https://recall.ai",
-    "X-Title": "Muesli AI Notetaker"
+    "X-Title": "Twenty AI Notetaker"
   }
 });
 
@@ -52,6 +63,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 768,
+    icon: getAppIcon(),
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       contextIsolation: true,
@@ -96,6 +108,16 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  if (process.platform === 'darwin' && app.dock) {
+    const dockIcon = getAppIcon();
+    if (dockIcon && !dockIcon.isEmpty()) {
+      app.dock.setIcon(dockIcon);
+      console.log('Twenty dock icon set successfully');
+    } else {
+      console.error('Failed to set dock icon: image is empty or undefined');
+    }
+  }
+
   console.log("Registering IPC handlers...");
   // Log all registered IPC handlers
   console.log("IPC handlers:", Object.keys(ipcMain._invokeHandlers));
@@ -457,7 +479,7 @@ function initSDK() {
     // Send a notification
     let notification = new Notification({
       title: `${platformName} Meeting Detected`,
-      body: platformName
+      body: platformName,
     });
 
     // Handle notification click
@@ -741,7 +763,7 @@ function initSDK() {
     // Show notification for errors
     let notification = new Notification({
       title: 'Recording Error',
-      body: `Error: ${type} - ${message}`
+      body: `Error: ${type} - ${message}`,
     });
     notification.show();
   });

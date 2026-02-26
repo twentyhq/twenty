@@ -17,7 +17,7 @@ module.exports = {
         };
       }
     },
-    icon: './muesli',
+    icon: './twenty',
     extendInfo: {
       NSUserNotificationAlertStyle: "alert",
     }
