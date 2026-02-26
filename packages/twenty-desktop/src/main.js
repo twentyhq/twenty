@@ -407,6 +407,7 @@ async function endCallRecordingWithRetry(windowId, maxAttempts = 10, delayMs = 5
             audioUrl,
             transcriptUrl,
             participants: meeting.participants,
+            localTranscript: meeting.transcript || [],
           });
           return;
         }
@@ -457,6 +458,18 @@ function initSDK() {
       console.warn(prefix, evt.message);
     } else {
       console.log(prefix, evt.message);
+    }
+
+    // Track active speaker from LibbotMeetingRecorder participant updates
+    if (evt.message && evt.message.includes('isActiveSpeaker: true')) {
+      const nameMatch = evt.message.match(/name:\s*([^,]+),/);
+      if (nameMatch) {
+        const speakerName = nameMatch[1].trim();
+        if (speakerName !== currentActiveSpeaker) {
+          currentActiveSpeaker = speakerName;
+          console.log(`[speaker-debug] Active speaker changed to: ${currentActiveSpeaker}`);
+        }
+      }
     }
   });
 
@@ -1520,17 +1533,12 @@ async function processParticipantJoin(evt) {
   }
 }
 
-let currentUnknownSpeaker = -1;
+// Tracks the currently active speaker as detected by the SDK's participant updates
+let currentActiveSpeaker = null;
 
 async function processTranscriptProviderData(evt) {
-  // let speakerId = evt.data.data.payload.
-  try {
-    if (evt.data.data.data.payload.channel.alternatives[0].words[0].speaker !== undefined) {
-      currentUnknownSpeaker = evt.data.data.data.payload.channel.alternatives[0].words[0].speaker;
-    }
-  } catch (error) {
-    // console.error("Error processing provider data:", error);
-  }
+  // provider_data from AssemblyAI streaming only contains WebSocket handshake
+  // messages, not actual transcript data with speaker IDs — intentionally ignored
 }
 
 // Function to process transcript data and store it with the meeting note
@@ -1560,15 +1568,10 @@ async function processTranscriptData(evt) {
       return; // No words to process
     }
 
-    // Get speaker information
-    let speaker;
-    if (evt.data.data.participant?.name && evt.data.data.participant?.name !== "Host" && evt.data.data.participant?.name !== "Guest") {
-      speaker = evt.data.data.participant?.name;
-    } else if (currentUnknownSpeaker !== -1) {
-      speaker = `Speaker ${currentUnknownSpeaker}`;
-    } else {
-      speaker = "Unknown Speaker";
-    }
+    // The SDK's transcript.data always attributes speech to the host on Google Meet.
+    // Use the active speaker tracked from SDK's internal participant updates instead.
+    const speaker = currentActiveSpeaker || evt.data.data.participant?.name || "Unknown Speaker";
+    console.log(`[speaker-debug] Using active speaker: ${speaker} (currentActiveSpeaker=${currentActiveSpeaker}, transcript.participant=${evt.data.data.participant?.name})`);
 
     // Combine all words into a single text
     const text = words.map(word => word.text).join(" ");
