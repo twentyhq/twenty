@@ -19,11 +19,13 @@ export const CommandMenuLinkInfo = () => {
   const theme = useTheme();
   const { t } = useLingui();
   const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
-  const [shouldFocusTitleInput, setShouldFocusTitleInput] =
-    useAtomComponentState(
-      commandMenuShouldFocusTitleInputComponentState,
-      commandMenuPageInfo.instanceId,
-    );
+  const [
+    commandMenuShouldFocusTitleInput,
+    setCommandMenuShouldFocusTitleInput,
+  ] = useAtomComponentState(
+    commandMenuShouldFocusTitleInputComponentState,
+    commandMenuPageInfo.instanceId,
+  );
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeState,
   );
@@ -84,8 +86,8 @@ export const CommandMenuLinkInfo = () => {
           onClickOutside={handleSave}
           onTab={handleSave}
           onShiftTab={handleSave}
-          shouldFocus={shouldFocusTitleInput}
-          onFocus={() => setShouldFocusTitleInput(false)}
+          shouldFocus={commandMenuShouldFocusTitleInput}
+          onFocus={() => setCommandMenuShouldFocusTitleInput(false)}
         />
       }
       label={t`link`}

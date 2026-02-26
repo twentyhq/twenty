@@ -23,21 +23,21 @@ export const WidgetSettingsFooter = ({
   const { closeDropdown } = useCloseDropdown();
   const { duplicateWidget } = useDuplicatePageLayoutWidget(pageLayoutId);
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget(pageLayoutId);
-  const editingWidgetId = useAtomComponentStateValue(
+  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );
 
   const handleDuplicateWidget = () => {
-    if (isDefined(editingWidgetId)) {
-      duplicateWidget(editingWidgetId);
+    if (isDefined(pageLayoutEditingWidgetId)) {
+      duplicateWidget(pageLayoutEditingWidgetId);
     }
     closeDropdown(dropdownId);
   };
 
   const handleDeleteWidget = () => {
-    if (isDefined(editingWidgetId)) {
-      deletePageLayoutWidget(editingWidgetId);
+    if (isDefined(pageLayoutEditingWidgetId)) {
+      deletePageLayoutWidget(pageLayoutEditingWidgetId);
     }
     closeDropdown(dropdownId);
   };

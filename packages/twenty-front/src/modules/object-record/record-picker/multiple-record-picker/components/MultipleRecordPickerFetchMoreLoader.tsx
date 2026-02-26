@@ -49,12 +49,12 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     componentInstanceId,
   );
 
-  const isLoading = useAtomComponentStateValue(
+  const multipleRecordPickerIsLoading = useAtomComponentStateValue(
     multipleRecordPickerIsLoadingComponentState,
     componentInstanceId,
   );
 
-  const searchFilter = useAtomComponentStateValue(
+  const multipleRecordPickerSearchFilter = useAtomComponentStateValue(
     multipleRecordPickerSearchFilterComponentState,
     componentInstanceId,
   );
@@ -77,16 +77,22 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
       }),
     );
 
-    if (isLoading || !currentPaginationState.hasNextPage) {
+    if (multipleRecordPickerIsLoading || !currentPaginationState.hasNextPage) {
       return;
     }
 
     await performSearch({
       multipleRecordPickerInstanceId: componentInstanceId,
-      forceSearchFilter: searchFilter,
+      forceSearchFilter: multipleRecordPickerSearchFilter,
       loadMore: true,
     });
-  }, [componentInstanceId, performSearch, searchFilter, isLoading, store]);
+  }, [
+    componentInstanceId,
+    performSearch,
+    multipleRecordPickerSearchFilter,
+    multipleRecordPickerIsLoading,
+    store,
+  ]);
 
   const { ref } = useInView({
     onChange: useCallback(
@@ -107,7 +113,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     !paginationState.hasNextPage ||
     multipleRecordPickerShouldShowInitialLoading ||
     multipleRecordPickerShouldShowSkeleton ||
-    (isLoading && !multipleRecordPickerIsFetchingMore)
+    (multipleRecordPickerIsLoading && !multipleRecordPickerIsFetchingMore)
   ) {
     return null;
   }

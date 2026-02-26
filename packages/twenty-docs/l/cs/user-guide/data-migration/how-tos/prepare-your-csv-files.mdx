@@ -210,15 +210,14 @@ Jane,Doe,jane@widgets.co,https://widgets.co
 * U členů pracovního prostoru použijte jejich **e-mail** (ne jméno)
 
 <Warning>
-  **Pořadí importu je důležité!**
+**Pořadí importu je důležité!**
 
-  Importujte stranu "one" před stranou "many":
+Importujte stranu "one" před stranou "many":
+1. **Společnosti** jako první
+2. **Lidé** jako druzí (s odkazem na společnost)
+3. **Příležitosti** jako třetí
 
-  1. **Společnosti** jako první
-  2. **Lidé** jako druzí (s odkazem na společnost)
-  3. **Příležitosti** jako třetí
-
-  Nadřazený záznam musí existovat dříve, než na něj můžete odkazovat.
+Nadřazený záznam musí existovat dříve, než na něj můžete odkazovat.
 </Warning>
 
 Podrobné pokyny najdete v [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv).

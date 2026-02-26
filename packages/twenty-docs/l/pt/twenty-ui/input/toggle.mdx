@@ -8,29 +8,35 @@ image: /images/user-guide/table-views/table.png
 </Frame>
 
 <Tabs>
-  <Tab title="Uso">
-    ```jsx
-    import { Toggle } from "twenty-ui/input";
+<Tab title="Uso">
 
-    export const MyComponent = () => {
-      return (
-        <Toggle
-        value = {true}
-        onChange = {()=>console.log('On Change event')}
-        color="green"
-        toggleSize = "medium"
-        />
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { Toggle } from "twenty-ui/input";
 
-  <Tab title="Propriedades">
-    | Propriedades    | Tipo     | Descrição                                                                                     | Padrão   |
-    | --------------- | -------- | --------------------------------------------------------------------------------------------- | -------- |
-    | valor           | booleano | O estado atual da alternância                                                                 | `falso`  |
-    | onChange        | função   | Função de retorno de chamada acionada quando o estado da alternância muda                     |          |
-    | cor             | string   | Color of the toggle when it\                                                                  | cor azul |
-    | tamanhoAlternar | string   | Size of the toggle, affecting both height and weight. Possui duas opções: `pequeno` e `médio` | médio    |
-  </Tab>
+export const MyComponent = () => {
+  return (
+    <Toggle
+    value = {true}
+    onChange = {()=>console.log('On Change event')}
+    color="green"
+    toggleSize = "medium"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Propriedades">
+
+
+| Propriedades    | Tipo     | Descrição                                                                                     | Padrão   |
+| --------------- | -------- | --------------------------------------------------------------------------------------------- | -------- |
+| valor           | booleano | O estado atual da alternância                                                                 | `falso`  |
+| onChange        | função   | Função de retorno de chamada acionada quando o estado da alternância muda                     |          |
+| cor             | string   | Color of the toggle when it\                                                                  | cor azul |
+| tamanhoAlternar | string   | Size of the toggle, affecting both height and weight. Possui duas opções: `pequeno` e `médio` | médio    |
+
+
+
+</Tab>
 </Tabs>

@@ -30,12 +30,12 @@ describe('useIsFieldEmpty', () => {
   it('should work as expected', () => {
     const { result } = renderHook(
       () => {
-        const setFieldState = useSetAtomFamilyState(
+        const setRecordStore = useSetAtomFamilyState(
           recordStoreFamilyState,
           recordId,
         );
         return {
-          setFieldState,
+          setRecordStore,
           isFieldEditModeValueEmpty: useIsFieldEmpty(),
         };
       },
@@ -47,7 +47,7 @@ describe('useIsFieldEmpty', () => {
     expect(result.current.isFieldEditModeValueEmpty).toBe(true);
 
     act(() => {
-      result.current.setFieldState({
+      result.current.setRecordStore({
         id: 'id',
         phone: '+1 233223',
         __typename: 'Person',

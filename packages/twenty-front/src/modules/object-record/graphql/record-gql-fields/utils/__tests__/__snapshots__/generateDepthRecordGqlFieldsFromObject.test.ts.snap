@@ -1,9 +1,8 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record gql fields from object 1`] = `
 {
   "accountOwner": {
-    "avatarUrl": true,
     "id": true,
     "name": true,
   },
@@ -13,6 +12,13 @@ exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record
   "attachments": {
     "id": true,
     "name": true,
+  },
+  "caredForPets": {
+    "id": true,
+    "pet": {
+      "id": true,
+      "name": true,
+    },
   },
   "createdAt": true,
   "createdBy": true,
@@ -44,6 +50,14 @@ exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record
     "name": true,
   },
   "position": true,
+  "previousEmployees": {
+    "id": true,
+    "person": {
+      "avatarUrl": true,
+      "id": true,
+      "name": true,
+    },
+  },
   "searchVector": true,
   "tagline": true,
   "taskTargets": {
@@ -55,8 +69,10 @@ exports[`generateDepthRecordGqlFieldsFromObject should generate depth one record
   },
   "timelineActivities": {
     "id": true,
+    "name": true,
   },
   "updatedAt": true,
+  "updatedBy": true,
   "visaSponsorship": true,
   "workPolicy": true,
   "xLink": true,
@@ -82,6 +98,7 @@ exports[`generateDepthRecordGqlFieldsFromObject should generate depth zero recor
   "searchVector": true,
   "tagline": true,
   "updatedAt": true,
+  "updatedBy": true,
   "visaSponsorship": true,
   "workPolicy": true,
   "xLink": true,

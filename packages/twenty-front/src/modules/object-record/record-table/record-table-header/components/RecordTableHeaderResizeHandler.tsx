@@ -53,17 +53,17 @@ export const RecordTableHeaderResizeHandler = ({
 
   const columnResizeDisabled = isMobile;
 
-  const [resizedFieldMetadataItemId, setResizedFieldMetadataItemId] =
+  const [resizedFieldMetadataId, setResizedFieldMetadataId] =
     useAtomComponentState(resizedFieldMetadataIdComponentState);
 
   const isResizing =
-    recordField?.fieldMetadataItemId === resizedFieldMetadataItemId;
+    recordField?.fieldMetadataItemId === resizedFieldMetadataId;
 
   const { setDragSelectionStartEnabled } = useDragSelect();
 
   const handlePointerDown = () => {
     setDragSelectionStartEnabled(false);
-    setResizedFieldMetadataItemId(recordField?.fieldMetadataItemId);
+    setResizedFieldMetadataId(recordField?.fieldMetadataItemId);
   };
 
   return (

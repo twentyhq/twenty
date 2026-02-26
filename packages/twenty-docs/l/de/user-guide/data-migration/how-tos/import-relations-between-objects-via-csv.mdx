@@ -51,9 +51,9 @@ Das übergeordnete Objekt ("Eins"-Seite) muss in Twenty existieren, bevor Sie da
 4. **Aufgaben/Notizen** (mit einem der oben genannten verknüpfen)
 
 <Warning>
-  **Wenn der übergeordnete Datensatz nicht existiert, schlägt der Import fehl.**
+**Wenn der übergeordnete Datensatz nicht existiert, schlägt der Import fehl.**
 
-  Stellen Sie stets sicher, dass Unternehmen importiert sind, bevor Sie Personen mit Unternehmensreferenzen importieren.
+Stellen Sie stets sicher, dass Unternehmen importiert sind, bevor Sie Personen mit Unternehmensreferenzen importieren.
 </Warning>
 
 ## Schritt 3: Notieren Sie den eindeutigen Bezeichner des übergeordneten Objekts
@@ -117,9 +117,9 @@ Die Spalte `companyDomain` verweist auf die Domain des Unternehmens.
 | ID      | UUID            | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **Das Domain-Format ist wichtig!**
+**Das Domain-Format ist wichtig!**
 
-  Verwenden Sie `https://domain.com` (nicht nur `domain.com`). Dies entspricht der Art, wie Twenty Unternehmensdomains speichert, und verhindert Zuordnungsfehler.
+Verwenden Sie `https://domain.com` (nicht nur `domain.com`). Dies entspricht der Art, wie Twenty Unternehmensdomains speichert, und verhindert Zuordnungsfehler.
 </Warning>
 
 ### Wichtige Regeln
@@ -178,7 +178,6 @@ Review proposal,jane@yourcompany.com
 <AccordionGroup>
   <Accordion title="Was ist, wenn mein übergeordneter Datensatz keine Domain oder E-Mail hat?">
     Sie haben zwei Optionen:
-
     1. Verwenden Sie die Twenty-`id` (exportieren Sie übergeordnete Datensätze, um ihre IDs zu erhalten)
     2. Erstellen Sie ein benutzerdefiniertes eindeutiges Feld in Ihrem Datenmodell, um eine externe ID aus Ihrem vorherigen System zu speichern
   </Accordion>
@@ -197,7 +196,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="Was passiert, wenn ein übergeordneter Datensatz nicht existiert?">
     Der Import zeigt für diese Zeile einen Fehler an. Sie können entweder:
-
     * Importieren Sie zuerst den übergeordneten Datensatz und importieren Sie dann erneut
     * Korrigieren Sie den Referenzwert
     * Entfernen Sie die Zeile aus dem Import
@@ -205,7 +203,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="Warum wird meine Beziehung nicht korrekt verknüpft?">
     Häufige Ursachen:
-
     * Falsches Format (verwenden Sie für Domains `https://domain.com`)
     * Abweichende Groß-/Kleinschreibung (prüfen Sie die exakte Schreibweise)
     * Übergeordneter Datensatz existiert nicht (zuerst übergeordnete Datensätze importieren)
@@ -214,9 +211,9 @@ Review proposal,jane@yourcompany.com
 </AccordionGroup>
 
 <Warning>
-  **Denken Sie daran: soft gelöschte Datensätze zählen für die Eindeutigkeit.**
+**Denken Sie daran: soft gelöschte Datensätze zählen für die Eindeutigkeit.**
 
-  Wenn Sie "not found"-Fehler erhalten, der Datensatz aber zu existieren scheint, prüfen Sie im Befehlsmenü → Gelöschte Datensätze anzeigen. Der übergeordnete Datensatz wurde möglicherweise soft gelöscht.
+Wenn Sie "not found"-Fehler erhalten, der Datensatz aber zu existieren scheint, prüfen Sie im Befehlsmenü → Gelöschte Datensätze anzeigen. Der übergeordnete Datensatz wurde möglicherweise soft gelöscht.
 </Warning>
 
 ## Fehlerbehebung

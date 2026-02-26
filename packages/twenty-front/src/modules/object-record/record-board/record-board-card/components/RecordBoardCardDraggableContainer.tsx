@@ -36,7 +36,7 @@ export const RecordBoardCardDraggableContainer = ({
 
   const { columnIndex } = useContext(RecordBoardColumnContext);
 
-  const isRecordBoardCardFocusActive = useAtomComponentFamilyStateValue(
+  const isRecordBoardCardFocused = useAtomComponentFamilyStateValue(
     isRecordBoardCardFocusedComponentFamilyState,
     {
       rowIndex,
@@ -61,7 +61,7 @@ export const RecordBoardCardDraggableContainer = ({
             data-select-disable
           >
             <DragAndDropLibraryLegacyReRenderBreaker memoizationId={recordId}>
-              {isRecordBoardCardFocusActive && <RecordBoardCardHotkeysEffect />}
+              {isRecordBoardCardFocused && <RecordBoardCardHotkeysEffect />}
               <RecordBoardCard />
               <RecordBoardCardMultiDragPreview />
             </DragAndDropLibraryLegacyReRenderBreaker>

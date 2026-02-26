@@ -64,12 +64,12 @@ export const JestContextStoreSetter = ({
     instanceId,
   );
 
-  const setContextStoreFiltersComponentState = useSetAtomComponentState(
+  const setContextStoreFilters = useSetAtomComponentState(
     contextStoreFiltersComponentState,
     instanceId,
   );
 
-  const setContextStoreFilterGroupsComponentState = useSetAtomComponentState(
+  const setContextStoreFilterGroups = useSetAtomComponentState(
     contextStoreFilterGroupsComponentState,
     instanceId,
   );
@@ -96,8 +96,8 @@ export const JestContextStoreSetter = ({
     setContextStoreTargetedRecordsRule(contextStoreTargetedRecordsRule);
     setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     setContextStoreNumberOfSelectedRecords(contextStoreNumberOfSelectedRecords);
-    setContextStoreFiltersComponentState(contextStoreFilters);
-    setContextStoreFilterGroupsComponentState(contextStoreFilterGroups);
+    setContextStoreFilters(contextStoreFilters);
+    setContextStoreFilterGroups(contextStoreFilterGroups);
     setContextStoreCurrentViewType(contextStoreCurrentViewType ?? null);
     setIsLoaded(true);
   }, [
@@ -107,14 +107,14 @@ export const JestContextStoreSetter = ({
     contextStoreCurrentObjectMetadataId,
     setContextStoreNumberOfSelectedRecords,
     contextStoreNumberOfSelectedRecords,
-    setContextStoreFiltersComponentState,
+    setContextStoreFilters,
     contextStoreFilters,
     objectMetadataItem,
     setContextStoreCurrentViewId,
     contextStoreCurrentViewId,
     setContextStoreCurrentViewType,
     contextStoreCurrentViewType,
-    setContextStoreFilterGroupsComponentState,
+    setContextStoreFilterGroups,
     contextStoreFilterGroups,
   ]);
 

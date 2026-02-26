@@ -45,7 +45,7 @@ export const UpdateViewButtonGroup = () => {
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -58,14 +58,14 @@ export const UpdateViewButtonGroup = () => {
   );
 
   const openViewPickerInCreateMode = () => {
-    if (!currentViewId) {
+    if (!contextStoreCurrentViewId) {
       return;
     }
 
     openViewPickerDropdown({
       dropdownComponentInstanceIdFromProps: VIEW_PICKER_DROPDOWN_ID,
     });
-    setViewPickerReferenceViewId(currentViewId);
+    setViewPickerReferenceViewId(contextStoreCurrentViewId);
     setViewPickerMode('create-from-current');
 
     closeUpdateViewButtonDropdown(UPDATE_VIEW_BUTTON_DROPDOWN_ID);

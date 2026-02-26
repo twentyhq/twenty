@@ -77,7 +77,7 @@ export const BarChart = ({
   hasNoData = false,
 }: BarChartProps) => {
   const theme = useTheme();
-  const highlightedLegendId = useAtomComponentStateValue(
+  const graphWidgetHighlightedLegendId = useAtomComponentStateValue(
     graphWidgetHighlightedLegendIdComponentState,
   );
 
@@ -225,7 +225,7 @@ export const BarChart = ({
         groupMode={groupMode}
         hasNegativeValues={hasNegativeValues}
         hasNoData={hasNoData}
-        highlightedLegendId={highlightedLegendId}
+        highlightedLegendId={graphWidgetHighlightedLegendId}
         hoveredSlice={hoveredSlice}
         innerHeight={innerHeight}
         innerWidth={innerWidth}

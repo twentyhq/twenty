@@ -6,7 +6,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 export const useContextStoreObjectMetadataItem = (
   contextStoreInstanceId?: string,
 ) => {
-  const objectMetadataItemId = useAtomComponentStateValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     contextStoreInstanceId,
   );
@@ -15,7 +15,7 @@ export const useContextStoreObjectMetadataItem = (
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItemToFind) =>
-      objectMetadataItemToFind.id === objectMetadataItemId,
+      objectMetadataItemToFind.id === contextStoreCurrentObjectMetadataItemId,
   );
 
   return { objectMetadataItem };

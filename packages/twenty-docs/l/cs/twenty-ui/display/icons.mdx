@@ -14,35 +14,44 @@ Seznam ikon používaných po celé naší aplikaci.
 V celé aplikaci používáme ikony Tabler pro React.
 
 <Tabs>
-  <Tab title="Instalace">
-    <br />
 
-    ```
-    yarn add @tabler/icons-react
-    ```
-  </Tab>
+<Tab title="Instalace">
+<br />
 
-  <Tab title="Vlastnosti">
-    Každou ikonu můžete importovat jako komponentu. Zde je příklad:
+```
+yarn add @tabler/icons-react
+```
 
-    <br />
+</Tab>
 
-    ```jsx
-    import { IconArrowLeft } from "@tabler/icons-react";
+<Tab title="Vlastnosti">
 
-    export const MyComponent = () => {
-      return <IconArrowLeft color="red" size={48} />;
-    };
-    ```
-  </Tab>
+Každou ikonu můžete importovat jako komponentu. Zde je příklad:
+<br />
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti | Typ     | Popis                          | Výchozí       |
-    | ---------- | ------- | ------------------------------ | ------------- |
-    | velikost   | číslo   | Výška a šířka ikony v pixelech | 24            |
-    | barva      | řetězec | Barva ikon                     | současnáBarva |
-    | stroke     | číslo   | Šířka tahu ikony v pixelech    | 2             |
-  </Tab>
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti | Typ     | Popis                          | Výchozí       |
+| ---------- | ------- | ------------------------------ | ------------- |
+| velikost   | číslo   | Výška a šířka ikony v pixelech | 24            |
+| barva      | řetězec | Barva ikon                     | současnáBarva |
+| stroke     | číslo   | Šířka tahu ikony v pixelech    | 2             |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Vlastní ikony
@@ -54,20 +63,29 @@ Kromě ikon Tabler aplikace používá také některé vlastní ikony.
 Zobrazí ikonu adresáře.
 
 <Tabs>
-  <Tab title="Použití">
-    ```jsx
-    import { IconAddressBook } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
-      return <IconAddressBook size={24} stroke={2} />;
-    };
-    ```
-  </Tab>
+<Tab title="Použití">
 
-  <Tab title="Vlastnosti">
-    | Vlastnosti | Typ   | Popis                          | Výchozí |
-    | ---------- | ----- | ------------------------------ | ------- |
-    | velikost   | číslo | Výška a šířka ikony v pixelech | 24      |
-    | stroke     | číslo | Šířka tahu ikony v pixelech    | 2       |
-  </Tab>
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Vlastnosti">
+
+
+| Vlastnosti | Typ   | Popis                          | Výchozí |
+| ---------- | ----- | ------------------------------ | ------- |
+| velikost   | číslo | Výška a šířka ikony v pixelech | 24      |
+| stroke     | číslo | Šířka tahu ikony v pixelech    | 2       |
+
+
+
+</Tab>
+
 </Tabs>

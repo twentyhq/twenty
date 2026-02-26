@@ -9,7 +9,7 @@ import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jota
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 export const useMoveHoverToCurrentCell = (recordTableId: string) => {
-  const setHoverPosition = useSetAtomComponentState(
+  const setRecordTableHoverPosition = useSetAtomComponentState(
     recordTableHoverPositionComponentState,
     recordTableId,
   );
@@ -26,10 +26,10 @@ export const useMoveHoverToCurrentCell = (recordTableId: string) => {
       const cellInEditMode = store.get(isSomeCellInEditMode);
 
       if (!cellInEditMode) {
-        setHoverPosition(cellPosition);
+        setRecordTableHoverPosition(cellPosition);
       }
     },
-    [store, isSomeCellInEditMode, setHoverPosition],
+    [store, isSomeCellInEditMode, setRecordTableHoverPosition],
   );
 
   return { moveHoverToCurrentCell };

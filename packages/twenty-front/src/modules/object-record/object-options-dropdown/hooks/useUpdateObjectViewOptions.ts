@@ -16,11 +16,11 @@ export const useUpdateObjectViewOptions = () => {
     recordIndexOpenRecordInState,
   );
 
-  const setRecordIndexViewName = useSetAtomComponentState(
+  const setViewPickerInputName = useSetAtomComponentState(
     viewPickerInputNameComponentState,
   );
 
-  const setRecordIndexViewIcon = useSetAtomComponentState(
+  const setViewPickerSelectedIcon = useSetAtomComponentState(
     viewPickerSelectedIconComponentState,
   );
 
@@ -41,23 +41,23 @@ export const useUpdateObjectViewOptions = () => {
   const setAndPersistViewName = useCallback(
     (viewName: string, view: GraphQLView | undefined) => {
       if (!view) return;
-      setRecordIndexViewName(viewName);
+      setViewPickerInputName(viewName);
       updateCurrentView({
         name: viewName,
       });
     },
-    [setRecordIndexViewName, updateCurrentView],
+    [setViewPickerInputName, updateCurrentView],
   );
 
   const setAndPersistViewIcon = useCallback(
     (viewIcon: string, view: GraphQLView | undefined) => {
       if (!view) return;
-      setRecordIndexViewIcon(viewIcon);
+      setViewPickerSelectedIcon(viewIcon);
       updateCurrentView({
         icon: viewIcon,
       });
     },
-    [setRecordIndexViewIcon, updateCurrentView],
+    [setViewPickerSelectedIcon, updateCurrentView],
   );
 
   return {

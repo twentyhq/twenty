@@ -13,7 +13,7 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellFocusedPortal = () => {
-  const focusPosition = useAtomComponentStateValue(
+  const recordTableFocusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
   );
 
@@ -29,22 +29,22 @@ export const RecordTableCellFocusedPortal = () => {
     hasRecordGroupsComponentSelector,
   );
 
-  const hoverPosition = useAtomComponentStateValue(
+  const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 
   const isUnderHoveredPortal =
-    isDefined(hoverPosition) &&
-    isDefined(focusPosition) &&
-    hoverPosition.column === focusPosition.column &&
-    hoverPosition.row === focusPosition.row;
+    isDefined(recordTableHoverPosition) &&
+    isDefined(recordTableFocusPosition) &&
+    recordTableHoverPosition.column === recordTableFocusPosition.column &&
+    recordTableHoverPosition.row === recordTableFocusPosition.row;
 
-  if (!isDefined(focusPosition) || isUnderHoveredPortal) {
+  if (!isDefined(recordTableFocusPosition) || isUnderHoveredPortal) {
     return null;
   }
 
-  const isOnFirstScrollableColumn = focusPosition.column === 1;
-  const isOnLabelIdentifierStickyColumn = focusPosition.column === 0;
+  const isOnFirstScrollableColumn = recordTableFocusPosition.column === 1;
+  const isOnLabelIdentifierStickyColumn = recordTableFocusPosition.column === 0;
 
   const zIndexForHoveredPortalOnFirstScrollableColumnWithoutGroups =
     isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
@@ -141,7 +141,7 @@ export const RecordTableCellFocusedPortal = () => {
     : zIndexForHoveredPortalWithoutGroups;
 
   return (
-    <RecordTableCellPortalWrapper position={focusPosition}>
+    <RecordTableCellPortalWrapper position={recordTableFocusPosition}>
       <RecordTableCellPortalRootContainer zIndex={zIndex}>
         <RecordTableCellFocusedPortalContent />
       </RecordTableCellPortalRootContainer>

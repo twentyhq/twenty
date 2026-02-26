@@ -35,26 +35,26 @@ export const ScrollWrapper = ({
   defaultEnableXScroll = true,
   defaultEnableYScroll = true,
 }: ScrollWrapperProps) => {
-  const setScrollTop = useSetAtomComponentState(
+  const setScrollWrapperScrollTop = useSetAtomComponentState(
     scrollWrapperScrollTopComponentState,
     componentInstanceId,
   );
 
-  const setScrollLeft = useSetAtomComponentState(
+  const setScrollWrapperScrollLeft = useSetAtomComponentState(
     scrollWrapperScrollLeftComponentState,
     componentInstanceId,
   );
 
-  const setScrollBottom = useSetAtomComponentState(
+  const setScrollWrapperScrollBottom = useSetAtomComponentState(
     scrollWrapperScrollBottomComponentState,
     componentInstanceId,
   );
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     const target = event.currentTarget;
-    setScrollTop(target.scrollTop);
-    setScrollLeft(target.scrollLeft);
-    setScrollBottom(
+    setScrollWrapperScrollTop(target.scrollTop);
+    setScrollWrapperScrollLeft(target.scrollLeft);
+    setScrollWrapperScrollBottom(
       target.scrollHeight - target.clientHeight - target.scrollTop,
     );
   };

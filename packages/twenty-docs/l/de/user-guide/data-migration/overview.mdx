@@ -44,16 +44,15 @@ Sie können Beziehungen zwischen Objekte n mithilfe der CSV-Importfunktion impor
 <Note>**Gelöschte Datensätze zählen zur Eindeutigkeit.** Softgelöschte Datensätze (sichtbar unter Befehlsmenü → Gelöschte Datensätze anzeigen) werden in die Eindeutigkeitsprüfungen einbezogen. Wenn Sie einen Datensatz mit demselben eindeutigen Wert wie ein gelöschter Datensatz importieren, wird der gelöschte Datensatz wiederhergestellt.</Note>
 
 <Warning>
-  **Die Importreihenfolge ist wichtig!**
+**Die Importreihenfolge ist wichtig!**
 
-  Beim Import verknüpfter Objekte laden Sie die Dateien in dieser Reihenfolge hoch:
+Beim Import verknüpfter Objekte laden Sie die Dateien in dieser Reihenfolge hoch:
+1. **Unternehmen** zuerst (die „one“-Seite der Beziehungen)
+2. **Personen** an zweiter Stelle (über companyId mit Unternehmen verknüpft)
+3. **Verkaufschancen** an dritter Stelle (mit Unternehmen/Personen verknüpft)
+4. **Benutzerdefinierte Objekte** mit Beziehungen zuletzt
 
-  1. **Unternehmen** zuerst (die „one“-Seite der Beziehungen)
-  2. **Personen** an zweiter Stelle (über companyId mit Unternehmen verknüpft)
-  3. **Verkaufschancen** an dritter Stelle (mit Unternehmen/Personen verknüpft)
-  4. **Benutzerdefinierte Objekte** mit Beziehungen zuletzt
-
-  Warum? Die „one“-Seite einer Eins-zu-viele-Beziehung muss existieren, bevor Sie darauf verweisen können. Beispielsweise muss der Unternehmensdatensatz existieren, bevor Sie eine Person mit der ID dieses Unternehmens importieren.
+Warum? Die „one“-Seite einer Eins-zu-viele-Beziehung muss existieren, bevor Sie darauf verweisen können. Beispielsweise muss der Unternehmensdatensatz existieren, bevor Sie eine Person mit der ID dieses Unternehmens importieren.
 </Warning>
 
 Weitere Informationen finden Sie in [diesem Artikel](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) mit einer Schritt-für-Schritt-Anleitung zum Vorgehen.

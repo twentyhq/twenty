@@ -11,11 +11,11 @@ import { isDefined } from 'twenty-shared/utils';
 export const useRecordBoardCardMetadataFromPosition = () => {
   const { objectMetadataItem } = useContext(RecordBoardContext);
 
-  const hoverPosition = useAtomComponentStateValue(
+  const recordBoardCardHoverPosition = useAtomComponentStateValue(
     recordBoardCardHoverPositionComponentState,
   );
 
-  const editModePosition = useAtomComponentStateValue(
+  const recordBoardCardEditModePosition = useAtomComponentStateValue(
     recordBoardCardEditModePositionComponentState,
   );
 
@@ -30,12 +30,12 @@ export const useRecordBoardCardMetadataFromPosition = () => {
       labelIdentifierFieldMetadataItem?.id !== recordField.fieldMetadataItemId,
   );
 
-  const hoveredRecordField = isDefined(hoverPosition)
-    ? visibleRecordFieldsFiltered.at(hoverPosition)
+  const hoveredRecordField = isDefined(recordBoardCardHoverPosition)
+    ? visibleRecordFieldsFiltered.at(recordBoardCardHoverPosition)
     : undefined;
 
-  const editedRecordField = isDefined(editModePosition)
-    ? visibleRecordFieldsFiltered.at(editModePosition)
+  const editedRecordField = isDefined(recordBoardCardEditModePosition)
+    ? visibleRecordFieldsFiltered.at(recordBoardCardEditModePosition)
     : undefined;
 
   const hoveredFieldMetadataItem = isDefined(hoveredRecordField)

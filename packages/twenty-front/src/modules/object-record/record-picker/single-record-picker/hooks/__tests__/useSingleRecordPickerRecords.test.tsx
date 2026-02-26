@@ -18,11 +18,11 @@ describe('useSingleRecordPickerRecords', () => {
     const { result } = renderHook(
       () => {
         const recordSelectSearchHook = useSingleRecordPickerSearch(instanceId);
-        const internallyStoredFilter = useAtomComponentStateValue(
+        const singleRecordPickerSearchFilter = useAtomComponentStateValue(
           singleRecordPickerSearchFilterComponentState,
           instanceId,
         );
-        return { recordSelectSearchHook, internallyStoredFilter };
+        return { recordSelectSearchHook, singleRecordPickerSearchFilter };
       },
       {
         wrapper: Wrapper,
@@ -37,6 +37,6 @@ describe('useSingleRecordPickerRecords', () => {
       } as ChangeEvent<HTMLInputElement>);
     });
 
-    expect(result.current.internallyStoredFilter).toBe(filter);
+    expect(result.current.singleRecordPickerSearchFilter).toBe(filter);
   });
 });

@@ -59,17 +59,17 @@ Před importem dat připravte svůj pracovní prostor Twenty:
 4. Nastavte vlastnosti polí (jedinečné, povinné, možnosti výběru apod.)
 
 <Warning>
-  **Všechna pole musí existovat před importem.**
+**Všechna pole musí existovat před importem.**
 
-  Import CSV vytváří záznamy, nikoli pole. Vytvořte všechna vlastní pole v Nastavení → Datový model před importem.
+Import CSV vytváří záznamy, nikoli pole. Vytvořte všechna vlastní pole v Nastavení → Datový model před importem.
 </Warning>
 
 ### Pozvěte svůj tým
 
 <Warning>
-  **Pozvěte uživatele PŘED importem dat.**
+**Pozvěte uživatele PŘED importem dat.**
 
-  Pokud vaše data obsahují odkazy na uživatele (vlastník účtu, přiřazený uživatel apod.), tito uživatelé musí v Twenty existovat před importem. Jinak tyto relace nelze namapovat.
+Pokud vaše data obsahují odkazy na uživatele (vlastník účtu, přiřazený uživatel apod.), tito uživatelé musí v Twenty existovat před importem. Jinak tyto relace nelze namapovat.
 </Warning>
 
 1. Přejděte na **Nastavení → Členové**
@@ -116,9 +116,9 @@ Otevřete každý exportovaný soubor CSV v tabulkovém editoru a připravte jej
 | **Výběrová pole**      | Používejte názvy API, nikoli zobrazované štítky   |
 
 <Warning>
-  **Formát domény je zásadní.**
+**Formát domény je zásadní.**
 
-  Použijte `https://domain.com` (ne `domain.com` ani `www.domain.com`). To odpovídá formátu Twenty a předchází duplicitám, když připojíte synchronizaci e-mailu/kalendáře.
+Použijte `https://domain.com` (ne `domain.com` ani `www.domain.com`). To odpovídá formátu Twenty a předchází duplicitám, když připojíte synchronizaci e-mailu/kalendáře.
 </Warning>
 
 Úplné požadavky na formátování pro všechny typy polí viz [Jak připravit soubory CSV](/l/cs/user-guide/data-migration/how-tos/prepare-your-csv-files).
@@ -149,17 +149,16 @@ Kompletní průvodce formátováním viz [Jak připravit soubory CSV](/l/cs/user
 ## Krok 6: Import do Twenty
 
 <Warning>
-  **Na pořadí importu záleží!**
+**Na pořadí importu záleží!**
 
-  Vždy importujte v tomto pořadí:
+Vždy importujte v tomto pořadí:
+1. **Společnosti** jako první (bez závislostí)
+2. **Lidé** jako druzí (propojení se společnostmi)
+3. **Příležitosti** jako třetí (propojení se společnostmi/lidmi)
+4. **Poznámky a úkoly** (propojení na záznamy)
+5. **Vlastní objekty** podle jejich závislostí
 
-  1. **Společnosti** jako první (bez závislostí)
-  2. **Lidé** jako druzí (propojení se společnostmi)
-  3. **Příležitosti** jako třetí (propojení se společnostmi/lidmi)
-  4. **Poznámky a úkoly** (propojení na záznamy)
-  5. **Vlastní objekty** podle jejich závislostí
-
-  Nadřazený záznam musí existovat dříve, než na něj můžete odkazovat.
+Nadřazený záznam musí existovat dříve, než na něj můžete odkazovat.
 </Warning>
 
 ### Importujte každý objekt

@@ -81,17 +81,17 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   const shouldShowEditButton =
     isPageLayoutInEditMode && shouldEnableTabEditingFeatures(pageLayoutType);
 
-  const isTabDragging = useAtomComponentStateValue(
+  const isPageLayoutTabDragging = useAtomComponentStateValue(
     isPageLayoutTabDraggingComponentState,
     instanceId,
   );
 
-  const setIsTabDragging = useSetAtomComponentState(
+  const setIsPageLayoutTabDragging = useSetAtomComponentState(
     isPageLayoutTabDraggingComponentState,
     instanceId,
   );
 
-  const setTabSettingsOpenTabId = useSetAtomComponentState(
+  const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
@@ -99,19 +99,19 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const handleClose = () => {
-    if (!isTabDragging) {
+    if (!isPageLayoutTabDragging) {
       onClose();
     }
   };
 
   const handleTabSelect = (tabId: string) => {
-    setIsTabDragging(false);
+    setIsPageLayoutTabDragging(false);
     onSelect(tabId);
     handleClose();
   };
 
   const handleEditClick = (tabId: string) => {
-    setTabSettingsOpenTabId(tabId);
+    setPageLayoutTabSettingsOpenTabId(tabId);
     navigatePageLayoutCommandMenu({
       commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
     });

@@ -34,7 +34,7 @@ export const useDuplicatePageLayoutWidget = (
     pageLayoutId,
   );
 
-  const setEditingWidgetId = useSetAtomComponentState(
+  const setPageLayoutEditingWidgetId = useSetAtomComponentState(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );
@@ -115,7 +115,7 @@ export const useDuplicatePageLayoutWidget = (
         tabs: addWidgetToTab(prev.tabs, sourceTab.id, clonedWidget),
       }));
 
-      setEditingWidgetId(newWidgetId);
+      setPageLayoutEditingWidgetId(newWidgetId);
 
       const { scrollWrapperElement } = getScrollWrapperElement();
 
@@ -139,7 +139,7 @@ export const useDuplicatePageLayoutWidget = (
     [
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
-      setEditingWidgetId,
+      setPageLayoutEditingWidgetId,
       getScrollWrapperElement,
       store,
     ],

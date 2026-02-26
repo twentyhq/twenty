@@ -53,7 +53,7 @@ export const SingleRecordPickerMenuItems = ({
     selectableListComponentInstanceId,
   );
 
-  const isSelectedSelectNoneButton = useAtomComponentFamilyStateValue(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     selectableListComponentInstanceId,
     'select-none',
@@ -72,9 +72,8 @@ export const SingleRecordPickerMenuItems = ({
   const selectableItemIds = pickableMorphItems.map(
     (morphItem) => morphItem.recordId,
   );
-  const [selectedRecordId, setSelectedRecordId] = useAtomComponentState(
-    singleRecordPickerSelectedIdComponentState,
-  );
+  const [singleRecordPickerSelectedId, setSingleRecordPickerSelectedId] =
+    useAtomComponentState(singleRecordPickerSelectedIdComponentState);
 
   const singleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
     singleRecordPickerShouldShowSkeletonComponentState,
@@ -101,19 +100,19 @@ export const SingleRecordPickerMenuItems = ({
           key="select-none"
           itemId="select-none"
           onEnter={() => {
-            setSelectedRecordId(undefined);
+            setSingleRecordPickerSelectedId(undefined);
             onMorphItemSelected();
           }}
         >
           <MenuItemSelect
             onClick={() => {
-              setSelectedRecordId(undefined);
+              setSingleRecordPickerSelectedId(undefined);
               onMorphItemSelected();
             }}
             LeftIcon={EmptyIcon}
             text={emptyLabel}
-            selected={isUndefined(selectedRecordId)}
-            focused={isSelectedSelectNoneButton}
+            selected={isUndefined(singleRecordPickerSelectedId)}
+            focused={isSelectedItemId}
           />
         </SelectableListItem>
       )}
@@ -127,7 +126,9 @@ export const SingleRecordPickerMenuItems = ({
             key={morphItem.recordId}
             morphItem={morphItem}
             onMorphItemSelected={onMorphItemSelected}
-            isRecordSelected={selectedRecordId === morphItem.recordId}
+            isRecordSelected={
+              singleRecordPickerSelectedId === morphItem.recordId
+            }
           />
         ))
       )}

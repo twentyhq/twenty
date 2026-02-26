@@ -1,5 +1,5 @@
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -49,7 +49,7 @@ export const MainContextStoreProvider = () => {
   const viewIdQueryParam = searchParams.get('viewId');
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-  const viewsEntry = useAtomFamilyStateValue(metadataStoreState, 'views');
+  const metadataStore = useAtomFamilyStateValue(metadataStoreState, 'views');
   const coreViews = useAtomStateValue(coreViewsState);
 
   const objectMetadataItem = objectMetadataItems.find(
@@ -76,7 +76,7 @@ export const MainContextStoreProvider = () => {
   const shouldComputeContextStore =
     (isRecordIndexPage || isRecordShowPage || isSettingsPage) &&
     !showAuthModal &&
-    viewsEntry.status === 'loaded';
+    metadataStore.status === 'up-to-date';
 
   if (!shouldComputeContextStore) {
     return null;

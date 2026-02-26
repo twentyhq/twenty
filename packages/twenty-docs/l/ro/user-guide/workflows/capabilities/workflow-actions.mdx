@@ -10,9 +10,9 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 Acțiunile definesc ce se întâmplă după declanșarea unui trigger. Puteți înlănțui mai multe acțiuni pentru a construi automatizări complexe.
 
 <Tip>
-  * Folosiți selectorul de variabile (faceți clic pe pictograma `(x+)`) pentru a răsfoi datele disponibile din pașii anteriori
-  * Plasați cursorul peste orice câmp de intrare pentru a vedea din care pas provine o variabilă — util atunci când același câmp (de ex., ID) există în mai mulți pași anteriori
-  * Dați fiecărei acțiuni un nume descriptiv pentru o mentenanță mai ușoară
+* Folosiți selectorul de variabile (faceți clic pe pictograma `(x+)`) pentru a răsfoi datele disponibile din pașii anteriori
+* Plasați cursorul peste orice câmp de intrare pentru a vedea din care pas provine o variabilă — util atunci când același câmp (de ex., ID) există în mai mulți pași anteriori
+* Dați fiecărei acțiuni un nume descriptiv pentru o mentenanță mai ușoară
 </Tip>
 
 ## Acțiuni asupra înregistrărilor
@@ -71,7 +71,7 @@ Găsește înregistrări într-un obiect selectat folosind condițiile de filtra
 **Output**: Returnează înregistrările care se potrivesc care pot fi utilizate în pașii următori.
 
 <Note>
-  **Limită**: Search Records returnează maximum **200 de înregistrări**. Dacă aveți nevoie să procesați mai multe, adăugați filtre specifice pentru a reduce rezultatele sau folosiți fluxuri de lucru programate pentru a procesa în loturi.
+**Limită**: Search Records returnează maximum **200 de înregistrări**. Dacă aveți nevoie să procesați mai multe, adăugați filtre specifice pentru a reduce rezultatele sau folosiți fluxuri de lucru programate pentru a procesa în loturi.
 </Note>
 
 **Cea mai bună practică**: Utilizați [ramuri](/l/ro/user-guide/workflows/capabilities/workflow-branches) după Search Records pentru a gestiona scenariile "găsit" vs "ne-găsit".
@@ -89,7 +89,7 @@ Creează o înregistrare nouă sau actualizează una existentă pe baza criterii
 * Completați valorile câmpurilor. Nu uitați să completați cel puțin unul dintre identificatorii unici.
 
 <Note>
-  **Potrivirea funcționează de obicei și mai bine când adăugați un singur identificator unic.** De exemplu, captura de ecran de mai jos va potrivi companiile pe baza domeniului lor. ID-ul nu este neapărat necesar.
+**Potrivirea funcționează de obicei și mai bine când adăugați un singur identificator unic.** De exemplu, captura de ecran de mai jos va potrivi companiile pe baza domeniului lor. ID-ul nu este neapărat necesar.
 </Note>
 
 <img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
@@ -116,8 +116,8 @@ Creează o înregistrare nouă sau actualizează una existentă pe baza criterii
 * Definiți acțiunile de efectuat pe fiecare înregistrare în buclă.
 
 <Note>
-  - Puteți adăuga mai multe acțiuni în cadrul unui iterator.
-  - Când folosiți ramuri în interiorul unui iterator, asigurați-vă că ultimul pas al fiecărei ramuri se conectează înapoi la iterator pentru a închide bucla.
+- Puteți adăuga mai multe acțiuni în cadrul unui iterator.
+- Când folosiți ramuri în interiorul unui iterator, asigurați-vă că ultimul pas al fiecărei ramuri se conectează înapoi la iterator pentru a închide bucla.
 </Note>
 
 * Accesați câmpurile `Current Item`: pentru a utiliza câmpuri din înregistrarea procesată în prezent, faceți clic pe pasul **Iterator**, apoi selectați **Current item**. Lista câmpurilor disponibile din acea înregistrare va fi afișată și poate fi selectată pentru utilizare în acțiunile ulterioare.
@@ -135,8 +135,8 @@ Filtrează înregistrările pe baza condițiilor specificate, permițând trecer
 * Configurați care înregistrări ar trebui să treacă la pașii următori
 
 <Note>
-  1. **Output**: Nodurile Filter nu returnează date — acționează ca porți. Dacă condițiile sunt îndeplinite, fluxul de lucru continuă. Dacă nu, fluxul de lucru se oprește pe acea ramură.
-  2. Operatorul `IS` poate fi utilizat cu câmpuri numerice. Se comportă ca un `EQUAL`.
+1. **Output**: Nodurile Filter nu returnează date — acționează ca porți. Dacă condițiile sunt îndeplinite, fluxul de lucru continuă. Dacă nu, fluxul de lucru se oprește pe acea ramură.
+2. Operatorul `IS` poate fi utilizat cu câmpuri numerice. Se comportă ca un `EQUAL`.
 </Note>
 
 ### Întârziere
@@ -167,7 +167,7 @@ Pauzează execuția fluxului de lucru pentru o durată specificată sau până l
 * Programează acțiuni pentru programul de lucru
 
 <Note>
-  Data programată nu poate fi în trecut. Dacă este utilizat un câmp de tip dată dintr-un pas anterior și data a trecut deja, fluxul de lucru va eșua.
+Data programată nu poate fi în trecut. Dacă este utilizat un câmp de tip dată dintr-un pas anterior și data a trecut deja, fluxul de lucru va eșua.
 </Note>
 
 **Limitări și credite**:
@@ -190,7 +190,7 @@ Nu este potrivit pentru newslettere (care necesită o formatare mai bogată) sau
 * Selectați contul de email expeditor
 
 <Note>
-  Puteți trimite emailuri doar din căsuțele poștale sincronizate cu propriul dvs. cont Twenty. Trimiterea din căsuțele poștale ale altor membri ai echipei (de ex., emailul proprietarului contului) este pe roadmap.
+Puteți trimite emailuri doar din căsuțele poștale sincronizate cu propriul dvs. cont Twenty. Trimiterea din căsuțele poștale ale altor membri ai echipei (de ex., emailul proprietarului contului) este pe roadmap.
 </Note>
 
 Pentru toți pașii următori, puteți face referire la variabile din pașii anteriori pentru personalizare.
@@ -198,14 +198,14 @@ Pentru toți pașii următori, puteți face referire la variabile din pașii ant
 * Introduceți adresa de email a destinatarului.
 
 <Note>
-  În acest moment este posibil un singur destinatar.
+În acest moment este posibil un singur destinatar.
 </Note>
 
 * Setați linia de subiect.
 * Compuneți corpul mesajului. Puteți formata linkuri, crea liste numerotate, liste cu puncte, adăuga atașamente.
 
 <Note>
-  Adăugarea semnăturilor HTML nu este posibilă în acest moment.
+Adăugarea semnăturilor HTML nu este posibilă în acest moment.
 </Note>
 
 ### Formular
@@ -213,7 +213,7 @@ Pentru toți pașii următori, puteți face referire la variabile din pașii ant
 Solicită un formular în timpul execuției fluxului de lucru pentru a colecta intrarea utilizatorului. Răspunsurile pot fi apoi folosite în pașii următori pentru a crea înregistrări, a trimite emailuri sau a executa orice altă acțiune pe baza datelor introduse.
 
 <Warning>
-  **Formularele sunt concepute doar pentru declanșatoare manuale**. Pentru fluxurile de lucru cu alte declanșatoare (Înregistrare creată, actualizată, etc.), formularele sunt accesibile doar prin interfața de execuție a fluxului de lucru, ceea ce nu este experiența de utilizator așteptată. Un centru de notificări va fi lansat în 2026 pentru a sprijini corespunzător formularele în fluxurile de lucru automatizate.
+**Formularele sunt concepute doar pentru declanșatoare manuale**. Pentru fluxurile de lucru cu alte declanșatoare (Înregistrare creată, actualizată, etc.), formularele sunt accesibile doar prin interfața de execuție a fluxului de lucru, ceea ce nu este experiența de utilizator așteptată. Un centru de notificări va fi lansat în 2026 pentru a sprijini corespunzător formularele în fluxurile de lucru automatizate.
 </Warning>
 
 **Configurare**:
@@ -234,7 +234,7 @@ Solicită un formular în timpul execuției fluxului de lucru pentru a colecta i
 * Completați formularul afișat în panoul lateral și faceți clic pe `Submit`.
 
 <Note>
-  Câmpurile nu pot fi făcute obligatorii.
+Câmpurile nu pot fi făcute obligatorii.
 </Note>
 
 <VimeoEmbed videoId="1147277989" title="Demonstrație video" />
@@ -256,15 +256,15 @@ Rulați JavaScript personalizat în cadrul fluxului dumneavoastră de lucru.
 * Testați codul direct în pas
 
 <Note>
-  Dacă trebuie să utilizați chei API externe în codul dvs., trebuie să le introduceți direct în corpul funcției. Nu puteți configura cheile API în altă parte și să faceți referire la ele în funcția logică.
+Dacă trebuie să utilizați chei API externe în codul dvs., trebuie să le introduceți direct în corpul funcției. Nu puteți configura cheile API în altă parte și să faceți referire la ele în funcția logică.
 </Note>
 
 <Tip>
-  **Lucrați cu array-uri?** Array-urile din sisteme externe sau din pași anteriori pot veni ca stringuri. Consultați [Cum să gestionați array-urile în acțiunile Code](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) pentru soluție.
+**Lucrați cu array-uri?** Array-urile din sisteme externe sau din pași anteriori pot veni ca stringuri. Consultați [Cum să gestionați array-urile în acțiunile Code](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) pentru soluție.
 </Tip>
 
 <Tip>
-  Faceți clic pe pictograma pătrată din dreapta sus a editorului de cod pentru a-l afișa pe tot ecranul — util, deoarece lățimea implicită a editorului este limitată.
+Faceți clic pe pictograma pătrată din dreapta sus a editorului de cod pentru a-l afișa pe tot ecranul — util, deoarece lățimea implicită a editorului este limitată.
 </Tip>
 
 ### Solicitare HTTP
@@ -303,9 +303,9 @@ Rulează un agent AI în cadrul fluxului dvs. de lucru pentru a efectua sarcini 
 **Output**: Răspunsul agentului AI este disponibil pentru utilizare în pașii următori. Dacă agentul are o schemă de ieșire structurată, răspunsul va urma acel format.
 
 <Note>
-  Acțiunile agentului AI consumă credite ale fluxului de lucru în funcție de modelul AI utilizat. Consultați [Credite pentru fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/workflow-credits) pentru detalii.
+Acțiunile agentului AI consumă credite ale fluxului de lucru în funcție de modelul AI utilizat. Consultați [Credite pentru fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/workflow-credits) pentru detalii.
 </Note>
 
 <Note>
-  Agenții AI respectă permisiunile bazate pe roluri. Puteți atribui roluri specifice agenților în **Settings → Roles** pentru a controla la ce date pot avea acces. Consultați [Permisiuni](/l/ro/user-guide/permissions-access/capabilities/permissions) pentru detalii.
+Agenții AI respectă permisiunile bazate pe roluri. Puteți atribui roluri specifice agenților în **Settings → Roles** pentru a controla la ce date pot avea acces. Consultați [Permisiuni](/l/ro/user-guide/permissions-access/capabilities/permissions) pentru detalii.
 </Note>

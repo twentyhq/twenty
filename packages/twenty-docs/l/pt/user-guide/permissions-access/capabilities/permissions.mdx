@@ -30,7 +30,7 @@ Para excluir uma função:
 4. Clique em **Confirmar** no modal
 
 <Note>
-  Se uma função for excluída, qualquer membro do espaço de trabalho atribuído a ela será automaticamente reatribuído à função padrão. Todas, exceto a função **Admin**, podem ser excluídas. Deve sempre haver pelo menos um membro atribuído à função **Admin**.
+Se uma função for excluída, qualquer membro do espaço de trabalho atribuído a ela será automaticamente reatribuído à função padrão. Todas, exceto a função **Admin**, podem ser excluídas. Deve sempre haver pelo menos um membro atribuído à função **Admin**.
 </Note>
 
 ## Atribuir Funções a Membros
@@ -58,7 +58,7 @@ Para excluir uma função:
 4. Novos membros do espaço de trabalho serão atribuídos a essa função ao ingressar
 
 <Note>
-  Você só pode atribuir funções a membros existentes do espaço de trabalho. Para convidar novos membros, use [Gestão de Membros](/l/pt/user-guide/settings/capabilities/member-management).
+Você só pode atribuir funções a membros existentes do espaço de trabalho. Para convidar novos membros, use [Gestão de Membros](/l/pt/user-guide/settings/capabilities/member-management).
 </Note>
 
 ## Personalizar Permissões
@@ -83,7 +83,7 @@ Primeiro, configure as permissões básicas que se aplicam a **todos os objetos*
 Selecione ou desmarque com base no que deve ser o comportamento padrão desta função.
 
 <Note>
-  **Exemplo — função de Estagiário**: Um estagiário deve poder ver todos os objetos, mas não editá-los por padrão. Ative "Ver registros em todos os objetos", mas deixe "Editar registros em todos os objetos" desmarcado.
+**Exemplo — função de Estagiário**: Um estagiário deve poder ver todos os objetos, mas não editá-los por padrão. Ative "Ver registros em todos os objetos", mas deixe "Editar registros em todos os objetos" desmarcado.
 </Note>
 
 #### Adicionar exceções em nível de objeto
@@ -146,7 +146,7 @@ Controle o acesso às configurações do espaço de trabalho de duas maneiras:
 * Ou ative permissões específicas (por exemplo, geração de chave API, preferências do espaço de trabalho, atribuição de funções, configuração do modelo de dados, configurações de segurança e gestão de fluxos de trabalho)
 
 <Note>
-  **Limitação atual**: O acesso ao gerenciamento de fluxos de trabalho é atualmente necessário para acionar fluxos de trabalho manualmente. Esse comportamento pode mudar em versões futuras.
+**Limitação atual**: O acesso ao gerenciamento de fluxos de trabalho é atualmente necessário para acionar fluxos de trabalho manualmente. Esse comportamento pode mudar em versões futuras.
 </Note>
 
 ### Permissões de Ação do Espaço de Trabalho
@@ -179,7 +179,7 @@ Além dos membros do espaço de trabalho, funções também podem ser atribuída
 A chave de API agora herdará todas as permissões definidas por essa função. Qualquer chamada de API feita com essa chave será restringida de acordo.
 
 <Note>
-  Chaves de API sem uma função atribuída usam permissões padrão. Para maior segurança, sempre atribua uma função específica às chaves de API de produção.
+Chaves de API sem uma função atribuída usam permissões padrão. Para maior segurança, sempre atribua uma função específica às chaves de API de produção.
 </Note>
 
 ### Atribuir uma função a um agente de IA
@@ -194,5 +194,5 @@ A chave de API agora herdará todas as permissões definidas por essa função. 
 O agente de IA só poderá acessar dados e executar ações permitidas pela função que lhe foi atribuída.
 
 <Note>
-  Para agentes de IA executados em fluxos de trabalho, isso garante que o agente não possa acessar ou modificar dados fora do seu escopo pretendido — mesmo que o fluxo de trabalho tenha permissões mais amplas.
+Para agentes de IA executados em fluxos de trabalho, isso garante que o agente não possa acessar ou modificar dados fora do seu escopo pretendido — mesmo que o fluxo de trabalho tenha permissões mais amplas.
 </Note>

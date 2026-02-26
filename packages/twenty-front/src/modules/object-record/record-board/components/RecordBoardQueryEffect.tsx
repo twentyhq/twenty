@@ -51,7 +51,7 @@ export const RecordBoardQueryEffect = () => {
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const [shouldFetchMore] = useAtomComponentState(
+  const [recordBoardShouldFetchMore] = useAtomComponentState(
     recordBoardShouldFetchMoreComponentState,
   );
 
@@ -64,11 +64,11 @@ export const RecordBoardQueryEffect = () => {
   const { triggerRecordBoardInitialQuery } =
     useTriggerRecordBoardInitialQuery();
 
-  const recordGroupdIds = useAtomComponentStateValue(
+  const recordGroupIds = useAtomComponentStateValue(
     recordGroupIdsComponentState,
   );
   const recordGroupIdsHaveChanged = !isDeeplyEqual(
-    [...recordGroupdIds].sort(),
+    [...recordGroupIds].sort(),
     [...lastRecordGroupIds].sort(),
   );
 
@@ -78,10 +78,10 @@ export const RecordBoardQueryEffect = () => {
       (queryIdentifierHasChanged || recordGroupIdsHaveChanged)
     ) {
       triggerRecordBoardInitialQuery();
-      setLastRecordGroupIds(recordGroupdIds);
+      setLastRecordGroupIds(recordGroupIds);
     } else if (
       !recordIndexRecordGroupsAreInInitialLoading &&
-      shouldFetchMore &&
+      recordBoardShouldFetchMore &&
       !queryIdentifierHasChanged &&
       !recordBoardIsFetchingMore
     ) {
@@ -95,11 +95,11 @@ export const RecordBoardQueryEffect = () => {
     setRecordBoardCurrentGroupByQueryOffset,
     scrollWrapperHTMLElement,
     recordIndexRecordGroupsAreInInitialLoading,
-    shouldFetchMore,
+    recordBoardShouldFetchMore,
     recordBoardIsFetchingMore,
     triggerRecordBoardFetchMore,
     setLastRecordGroupIds,
-    recordGroupdIds,
+    recordGroupIds,
     recordGroupIdsHaveChanged,
   ]);
 

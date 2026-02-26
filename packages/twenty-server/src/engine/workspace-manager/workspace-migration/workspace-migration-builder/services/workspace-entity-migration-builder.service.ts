@@ -3,6 +3,7 @@ import { Inject } from '@nestjs/common';
 import { AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import {
@@ -26,6 +27,7 @@ import { resetUniversalFlatEntityForeignKeyAggregators } from 'src/engine/worksp
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/universal-flat-entity-deleted-created-updated-matrix-dispatcher.util';
 import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration/utils/get-metadata-empty-workspace-migration-action-record.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
+import { FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { FailedFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/failed-flat-entity-validate-and-build.type';
 import { SuccessfulFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/successful-flat-entity-validate-and-build.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -132,7 +134,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         },
       );
 
-      const validationResult = await this.validateFlatEntityCreation({
+      const validationResult = await this.innerValidateFlatEntityCreation({
         additionalCacheDataMaps,
         flatEntityToValidate: universalFlatEntityToCreate,
         workspaceId,
@@ -329,6 +331,53 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       status: 'success',
       actions: actionsResult,
     };
+  }
+
+  private validateUniversalIdentifier({
+    flatEntityToValidate: { universalIdentifier },
+  }: UniversalFlatEntityValidationArgs<T>): FlatEntityValidationError[] {
+    if (
+      !uuidValidate(universalIdentifier) ||
+      uuidVersion(universalIdentifier) !== 4
+    ) {
+      return [
+        {
+          code: FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
+          message: `Invalid universalIdentifier: "${universalIdentifier}" is not a valid UUID v4`,
+          value: universalIdentifier,
+        },
+      ];
+    }
+
+    return [];
+  }
+
+  private async innerValidateFlatEntityCreation(
+    args: UniversalFlatEntityValidationArgs<T>,
+  ): Promise<UniversalFlatEntityValidationReturnType<T, 'create'>> {
+    const uuidValidationResult = this.validateUniversalIdentifier(args);
+    const result = await this.validateFlatEntityCreation(args);
+
+    if (result.status === 'fail') {
+      return {
+        ...result,
+        errors: [...result.errors, ...uuidValidationResult],
+      };
+    }
+
+    if (result.status === 'success' && uuidValidationResult.length > 0) {
+      return {
+        status: 'fail',
+        flatEntityMinimalInformation: {
+          universalIdentifier: args.flatEntityToValidate.universalIdentifier,
+        } as Partial<MetadataFlatEntity<T>>,
+        errors: uuidValidationResult,
+        metadataName: this.metadataName,
+        type: 'create',
+      };
+    }
+
+    return result;
   }
 
   protected abstract validateFlatEntityCreation(

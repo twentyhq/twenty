@@ -21,7 +21,7 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableColumnWidthEffect = () => {
-  const [resizedFieldMetadataItemId] = useAtomComponentState(
+  const [resizedFieldMetadataId] = useAtomComponentState(
     resizedFieldMetadataIdComponentState,
   );
 
@@ -36,7 +36,7 @@ export const RecordTableColumnWidthEffect = () => {
   );
 
   useEffect(() => {
-    if (isDefined(resizedFieldMetadataItemId)) {
+    if (isDefined(resizedFieldMetadataId)) {
       return;
     }
 
@@ -98,7 +98,7 @@ export const RecordTableColumnWidthEffect = () => {
       );
     }
   }, [
-    resizedFieldMetadataItemId,
+    resizedFieldMetadataId,
     visibleRecordFields,
     recordTableWidth,
     shouldCompactRecordTableFirstColumn,

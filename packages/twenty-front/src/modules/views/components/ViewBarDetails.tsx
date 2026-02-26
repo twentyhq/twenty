@@ -189,7 +189,7 @@ export const ViewBarDetails = ({
   const shouldShowAdvancedFilterDropdownButton =
     currentRecordFilterGroups.length > 0;
 
-  const isAnyFieldSearchDropdownOpen = useAtomComponentStateValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     ANY_FIELD_SEARCH_DROPDOWN_ID,
   );
@@ -202,7 +202,7 @@ export const ViewBarDetails = ({
     !hasFiltersQueryParams;
 
   const shouldShowAnyFieldSearchChip =
-    isNonEmptyString(anyFieldFilterValue) || isAnyFieldSearchDropdownOpen;
+    isNonEmptyString(anyFieldFilterValue) || isDropdownOpen;
 
   const shouldExpandViewBar =
     shouldShowAnyFieldSearchChip ||

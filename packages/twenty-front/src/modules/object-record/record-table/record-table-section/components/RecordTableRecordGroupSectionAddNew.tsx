@@ -15,12 +15,12 @@ export const RecordTableRecordGroupSectionAddNew = () => {
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
-  const recordGroup = useAtomFamilyStateValue(
+  const recordGroupDefinition = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
     currentRecordGroupId,
   );
 
-  const mainGroupByFieldMetadata = useAtomComponentStateValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -29,7 +29,7 @@ export const RecordTableRecordGroupSectionAddNew = () => {
   });
 
   const fieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === mainGroupByFieldMetadata?.id,
+    (field) => field.id === recordIndexGroupFieldMetadataItem?.id,
   );
 
   const objectPermissions = useObjectPermissionsForObject(
@@ -53,7 +53,7 @@ export const RecordTableRecordGroupSectionAddNew = () => {
 
         createNewIndexRecord({
           position: 'last',
-          [fieldMetadataItem.name]: recordGroup?.value,
+          [fieldMetadataItem.name]: recordGroupDefinition?.value,
         });
       }}
     />

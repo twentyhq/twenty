@@ -13,17 +13,17 @@ export const CreateNewViewNoSelectionRecord = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
   const { openDropdown } = useOpenDropdown();
 
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
-  if (!currentViewId) {
+  if (!contextStoreCurrentViewId) {
     throw new Error('Current view ID is not defined');
   }
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem.namePlural,
-    currentViewId,
+    contextStoreCurrentViewId,
   );
 
   const setViewPickerReferenceViewId = useSetAtomComponentState(
@@ -34,7 +34,7 @@ export const CreateNewViewNoSelectionRecord = () => {
   const { setViewPickerMode } = useViewPickerMode(recordIndexId);
 
   const handleAddViewButtonClick = () => {
-    setViewPickerReferenceViewId(currentViewId);
+    setViewPickerReferenceViewId(contextStoreCurrentViewId);
     setViewPickerMode('create-empty');
     openDropdown({
       dropdownComponentInstanceIdFromProps: VIEW_PICKER_DROPDOWN_ID,

@@ -41,7 +41,9 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
   dragIndex,
 }: CommandMenuItemWithAddToNavigationDragProps) => {
   const { t } = useLingui();
-  const setRegistry = useSetAtomState(addToNavPayloadRegistryState);
+  const setAddToNavPayloadRegistry = useSetAtomState(
+    addToNavPayloadRegistryState,
+  );
   const [isHovered, setIsHovered] = useState(false);
 
   const contextualDescription = isHovered
@@ -59,7 +61,7 @@ export const CommandMenuItemWithAddToNavigationDrag = ({
 
   const registerPayload = () => {
     if (dragIndex !== undefined) {
-      setRegistry((prev) => new Map(prev).set(id, payload));
+      setAddToNavPayloadRegistry((prev) => new Map(prev).set(id, payload));
     }
   };
 
