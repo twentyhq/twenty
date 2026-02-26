@@ -1,12 +1,15 @@
 import { FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationByClientId';
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useQuery } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useAuthorizeAppMutation } from '~/generated-metadata/graphql';
@@ -103,6 +106,7 @@ export const Authorize = () => {
 
   const applicationRegistration = data?.findApplicationRegistrationByClientId;
   const [authorizeApp] = useAuthorizeAppMutation();
+  const [hasLogoError, setHasLogoError] = useState(false);
 
   if (!isDefined(clientId)) {
     navigate(AppPath.NotFound);
@@ -136,7 +140,10 @@ export const Authorize = () => {
   }
 
   const appName = applicationRegistration.name;
+  const appLogoUrl = applicationRegistration.logoUrl;
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
+
+  const showLogoImage = isNonEmptyString(appLogoUrl) && !hasLogoError;
 
   return (
     <StyledContainer>
@@ -154,6 +161,23 @@ export const Authorize = () => {
             height={60}
             width={60}
           />
+          {showLogoImage ? (
+            <img
+              src={appLogoUrl}
+              alt={appName}
+              height={40}
+              width={40}
+              style={{ borderRadius: '2px' }}
+              onError={() => setHasLogoError(true)}
+            />
+          ) : (
+            <Avatar
+              size="xl"
+              placeholder={appName}
+              placeholderColorSeed={appName}
+              type="squared"
+            />
+          )}
         </StyledAppsContainer>
         <StyledText>
           <Trans>{appName} wants to access your account</Trans>

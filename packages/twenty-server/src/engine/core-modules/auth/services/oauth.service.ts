@@ -5,13 +5,14 @@ import crypto from 'crypto';
 
 import { IsNull, Repository } from 'typeorm';
 
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
 import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { OAuthErrorResponse } from 'src/engine/core-modules/auth/types/oauth-error-response.type';
 import { OAuthTokenResponse } from 'src/engine/core-modules/auth/types/oauth-token-response.type';
@@ -32,6 +33,7 @@ export class OAuthService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async exchangeAuthorizationCode(params: {
@@ -136,17 +138,10 @@ export class OAuthService {
       );
     }
 
-    const application = await this.findApplicationByRegistrationAndWorkspace(
-      applicationRegistration.id,
+    const application = await this.findOrInstallApplication(
+      applicationRegistration,
       authCodeToken.workspaceId,
     );
-
-    if (!application) {
-      return this.errorResponse(
-        'server_error',
-        'No workspace installation found for this client',
-      );
-    }
 
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
@@ -351,12 +346,34 @@ export class OAuthService {
     return null;
   }
 
-  private async findApplicationByRegistrationAndWorkspace(
-    applicationRegistrationId: string,
+  private async findOrInstallApplication(
+    applicationRegistration: ApplicationRegistrationEntity,
     workspaceId: string,
-  ): Promise<ApplicationEntity | null> {
-    return this.applicationRepository.findOne({
-      where: { applicationRegistrationId, workspaceId },
+  ): Promise<ApplicationEntity> {
+    const existingApplication = await this.applicationRepository.findOne({
+      where: {
+        applicationRegistrationId: applicationRegistration.id,
+        workspaceId,
+      },
+    });
+
+    if (existingApplication) {
+      return existingApplication;
+    }
+
+    this.logger.log(
+      `Auto-installing application "${applicationRegistration.name}" in workspace ${workspaceId}`,
+    );
+
+    // TODO: defaulting to version 0.0.0, build better system
+    return this.applicationService.create({
+      universalIdentifier: applicationRegistration.universalIdentifier,
+      name: applicationRegistration.name,
+      description: applicationRegistration.description,
+      version: '0.0.0',
+      sourcePath: 'oauth-install',
+      applicationRegistrationId: applicationRegistration.id,
+      workspaceId,
     });
   }
 

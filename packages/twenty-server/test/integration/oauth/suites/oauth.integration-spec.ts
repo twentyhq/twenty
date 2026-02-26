@@ -25,10 +25,14 @@ describe('OAuth (integration)', () => {
   let testClientSecret: string;
   let testApplication: ApplicationEntity;
 
+  let autoInstallRegistration: ApplicationRegistrationEntity;
+  let autoInstallClientSecret: string;
+
   const createdEntityIds: {
     registrations: string[];
     tokens: string[];
-  } = { registrations: [], tokens: [] };
+    applications: string[];
+  } = { registrations: [], tokens: [], applications: [] };
 
   beforeAll(async () => {
     appRegistrationRepository = global.testDataSource.getRepository(
@@ -64,11 +68,34 @@ describe('OAuth (integration)', () => {
         canBeUninstalled: true,
       }),
     );
+
+    autoInstallClientSecret = crypto.randomBytes(32).toString('hex');
+    const autoInstallSecretHash = await bcrypt.hash(
+      autoInstallClientSecret,
+      10,
+    );
+
+    autoInstallRegistration = await appRegistrationRepository.save(
+      appRegistrationRepository.create({
+        universalIdentifier: crypto.randomUUID(),
+        name: 'OAuth Auto-Install Test App',
+        description: 'App for testing OAuth auto-install',
+        oAuthClientId: crypto.randomUUID(),
+        oAuthClientSecretHash: autoInstallSecretHash,
+        oAuthRedirectUris: ['https://example.com/callback'],
+        oAuthScopes: ['api'],
+      }),
+    );
+    createdEntityIds.registrations.push(autoInstallRegistration.id);
   });
 
   afterAll(async () => {
     if (createdEntityIds.tokens.length > 0) {
       await appTokenRepository.delete(createdEntityIds.tokens);
+    }
+
+    if (createdEntityIds.applications.length > 0) {
+      await applicationRepository.delete(createdEntityIds.applications);
     }
 
     if (testApplication) {
@@ -337,6 +364,114 @@ describe('OAuth (integration)', () => {
       }).expect(400);
 
       expect(res.body.error).toBe('invalid_grant');
+    });
+  });
+
+  describe('OAuth auto-install', () => {
+    const createAutoInstallAuthCode = async (): Promise<string> => {
+      const code = crypto.randomBytes(42).toString('hex');
+
+      const token = appTokenRepository.create({
+        value: code,
+        type: AppTokenType.AuthorizationCode,
+        userId: TEST_USER_ID,
+        workspaceId: TEST_WORKSPACE_ID,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      });
+
+      const saved = await appTokenRepository.save(token);
+
+      createdEntityIds.tokens.push(saved.id);
+
+      return code;
+    };
+
+    it('should auto-install application during authorization code exchange', async () => {
+      const code = await createAutoInstallAuthCode();
+
+      const res = await postToken({
+        grant_type: 'authorization_code',
+        code,
+        client_id: autoInstallRegistration.oAuthClientId,
+        client_secret: autoInstallClientSecret,
+        redirect_uri: 'https://example.com/callback',
+      }).expect(200);
+
+      expect(res.body.access_token).toBeDefined();
+      expect(res.body.refresh_token).toBeDefined();
+      expect(res.body.token_type).toBe('Bearer');
+      expect(res.body.scope).toBe('api');
+
+      const autoCreatedApp = await applicationRepository.findOne({
+        where: {
+          applicationRegistrationId: autoInstallRegistration.id,
+          workspaceId: TEST_WORKSPACE_ID,
+        },
+      });
+
+      expect(autoCreatedApp).toBeDefined();
+      expect(autoCreatedApp!.name).toBe('OAuth Auto-Install Test App');
+      expect(autoCreatedApp!.description).toBe(
+        'App for testing OAuth auto-install',
+      );
+      expect(autoCreatedApp!.sourcePath).toBe('oauth-install');
+      expect(autoCreatedApp!.universalIdentifier).toBe(
+        autoInstallRegistration.universalIdentifier,
+      );
+
+      createdEntityIds.applications.push(autoCreatedApp!.id);
+    });
+
+    it('should reuse existing application on subsequent authorization code exchanges', async () => {
+      const code = await createAutoInstallAuthCode();
+
+      const res = await postToken({
+        grant_type: 'authorization_code',
+        code,
+        client_id: autoInstallRegistration.oAuthClientId,
+        client_secret: autoInstallClientSecret,
+        redirect_uri: 'https://example.com/callback',
+      }).expect(200);
+
+      expect(res.body.access_token).toBeDefined();
+
+      const apps = await applicationRepository.find({
+        where: {
+          applicationRegistrationId: autoInstallRegistration.id,
+          workspaceId: TEST_WORKSPACE_ID,
+        },
+      });
+
+      expect(apps).toHaveLength(1);
+    });
+
+    it('should fail client credentials when app is not installed in any workspace', async () => {
+      const noInstallSecret = crypto.randomBytes(32).toString('hex');
+      const noInstallHash = await bcrypt.hash(noInstallSecret, 10);
+
+      const noInstallRegistration = await appRegistrationRepository.save(
+        appRegistrationRepository.create({
+          universalIdentifier: crypto.randomUUID(),
+          name: 'No Install Test App',
+          oAuthClientId: crypto.randomUUID(),
+          oAuthClientSecretHash: noInstallHash,
+          oAuthRedirectUris: [],
+          oAuthScopes: ['api'],
+        }),
+      );
+
+      createdEntityIds.registrations.push(noInstallRegistration.id);
+
+      const res = await postToken({
+        grant_type: 'client_credentials',
+        client_id: noInstallRegistration.oAuthClientId,
+        client_secret: noInstallSecret,
+      }).expect(400);
+
+      expect(res.body.error).toBe('server_error');
+      expect(res.body.error_description).toContain(
+        'No workspace installation found',
+      );
     });
   });
 
