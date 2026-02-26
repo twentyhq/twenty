@@ -1,17 +1,16 @@
+import { FIND_APP_REGISTRATION_BY_CLIENT_ID } from '@/settings/app-registrations/graphql/findAppRegistrationByClientId';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useQuery } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useAuthorizeAppMutation } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-
-type App = { id: string; name: string; logo: string };
 
 const StyledContainer = styled.div`
   display: flex;
@@ -56,32 +55,54 @@ const StyledButtonContainer = styled.div`
   gap: 10px;
   width: 100%;
 `;
+
+const StyledScopeList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0 0 ${({ theme }) => theme.spacing(4)} 0;
+  width: 100%;
+`;
+
+const StyledScopeItem = styled.li`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  padding: ${({ theme }) => theme.spacing(1)} 0;
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
 export const Authorize = () => {
   const { t } = useLingui();
   const navigate = useNavigateApp();
   const [searchParam] = useSearchParams();
   const { redirect } = useRedirect();
-  //TODO: Replace with db call for registered third party apps
-  const [apps] = useState<App[]>([
-    {
-      id: 'chrome',
-      name: 'Chrome Extension',
-      logo: 'images/integrations/chrome-icon.svg',
-    },
-  ]);
-  const [app, setApp] = useState<App>();
+
+  const oauthScopeLabels: Record<string, string> = {
+    api: t`Access workspace data`,
+    profile: t`Read your profile`,
+  };
+
   const clientId = searchParam.get('clientId');
   const codeChallenge = searchParam.get('codeChallenge');
   const redirectUrl = searchParam.get('redirectUrl');
 
-  useEffect(() => {
-    const app = apps.find((app) => app.id === clientId);
-    if (!isDefined(app)) navigate(AppPath.NotFound);
-    else setApp(app);
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { data, loading } = useQuery(FIND_APP_REGISTRATION_BY_CLIENT_ID, {
+    variables: { clientId: clientId ?? '' },
+    skip: !isDefined(clientId),
+  });
 
+  const appRegistration = data?.findAppRegistrationByClientId;
   const [authorizeApp] = useAuthorizeAppMutation();
+
+  if (!loading && !isDefined(appRegistration) && isDefined(clientId)) {
+    navigate(AppPath.NotFound);
+
+    return null;
+  }
+
   const handleAuthorize = async () => {
     if (
       isDefined(clientId) &&
@@ -94,14 +115,19 @@ export const Authorize = () => {
           codeChallenge,
           redirectUrl,
         },
-        onCompleted: (data) => {
-          redirect(data.authorizeApp.redirectUrl);
+        onCompleted: (responseData) => {
+          redirect(responseData.authorizeApp.redirectUrl);
         },
       });
     }
   };
 
-  const appName = app?.name;
+  if (loading || !appRegistration) {
+    return null;
+  }
+
+  const appName = appRegistration.name;
+  const requestedScopes: string[] = appRegistration.scopes ?? [];
 
   return (
     <StyledContainer>
@@ -119,11 +145,19 @@ export const Authorize = () => {
             height={60}
             width={60}
           />
-          <img src={app?.logo} alt="app-icon" height={40} width={40} />
         </StyledAppsContainer>
         <StyledText>
           <Trans>{appName} wants to access your account</Trans>
         </StyledText>
+        {requestedScopes.length > 0 && (
+          <StyledScopeList>
+            {requestedScopes.map((scope) => (
+              <StyledScopeItem key={scope}>
+                {oauthScopeLabels[scope] ?? scope}
+              </StyledScopeItem>
+            ))}
+          </StyledScopeList>
+        )}
         <StyledButtonContainer>
           <UndecoratedLink to={AppPath.Index}>
             <MainButton title={t`Cancel`} variant="secondary" fullWidth />

@@ -48,6 +48,7 @@ type TableItem = {
   Icon?: IconComponent;
   label: string;
   value: string | number | React.ReactNode;
+  onClick?: () => void;
 };
 
 type SettingsAdminTableCardProps = {
@@ -82,7 +83,11 @@ export const SettingsAdminTableCard = ({
                 {item.Icon && <item.Icon size={theme.icon.size.md} />}
                 <span>{item.label}</span>
               </StyledTableCellLabel>
-              <StyledTableCellValue align={valueAlign}>
+              <StyledTableCellValue
+                align={valueAlign}
+                onClick={item.onClick}
+                style={item.onClick ? { cursor: 'pointer' } : undefined}
+              >
                 {item.value}
               </StyledTableCellValue>
             </StyledTableRow>

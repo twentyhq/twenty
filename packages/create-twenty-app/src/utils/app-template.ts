@@ -485,6 +485,13 @@ export default defineApplication({
   description: '${description ?? ''}',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+  serverVariables: {
+    EXAMPLE_API_KEY: {
+      description: 'An example API key for a third-party service',
+      isSecret: true,
+      isRequired: false,
+    },
+  },
 });
 `;
 

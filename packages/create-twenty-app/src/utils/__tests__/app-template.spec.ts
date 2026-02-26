@@ -167,6 +167,10 @@ describe('copyBaseApplicationProject', () => {
     expect(appConfigContent).toContain(
       'defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER',
     );
+
+    // Verify it includes serverVariables example
+    expect(appConfigContent).toContain('serverVariables:');
+    expect(appConfigContent).toContain('EXAMPLE_API_KEY');
   });
 
   it('should create default-role.ts with defineRole and correct values', async () => {

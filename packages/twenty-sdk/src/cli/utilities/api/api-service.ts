@@ -260,8 +260,125 @@ export class ApiService {
     }
   }
 
+  async findAppRegistrationByUniversalIdentifier(
+    universalIdentifier: string,
+  ): Promise<
+    ApiResponse<{
+      id: string;
+      universalIdentifier: string;
+      name: string;
+      clientId: string;
+    } | null>
+  > {
+    try {
+      const query = `
+        query FindAppRegistrationByUniversalIdentifier($universalIdentifier: String!) {
+          findAppRegistrationByUniversalIdentifier(universalIdentifier: $universalIdentifier) {
+            id
+            universalIdentifier
+            name
+            clientId
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query,
+          variables: { universalIdentifier },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.findAppRegistrationByUniversalIdentifier,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async createAppRegistration(input: {
+    name: string;
+    description?: string;
+    universalIdentifier: string;
+  }): Promise<
+    ApiResponse<{
+      appRegistration: {
+        id: string;
+        universalIdentifier: string;
+        clientId: string;
+      };
+      clientSecret: string;
+    }>
+  > {
+    try {
+      const mutation = `
+        mutation CreateAppRegistration($input: CreateAppRegistrationInput!) {
+          createAppRegistration(input: $input) {
+            appRegistration {
+              id
+              universalIdentifier
+              clientId
+            }
+            clientSecret
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { input },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.createAppRegistration,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
   async createApplication(
     manifest: Manifest,
+    options?: { appRegistrationId?: string },
   ): Promise<ApiResponse<{ id: string; universalIdentifier: string }>> {
     try {
       const mutation = `
@@ -273,13 +390,19 @@ export class ApiService {
         }
       `;
 
+      const input: Record<string, string> = {
+        universalIdentifier: manifest.application.universalIdentifier,
+        name: manifest.application.displayName,
+        version: '0.0.1',
+        sourcePath: 'cli-sync',
+      };
+
+      if (options?.appRegistrationId) {
+        input.appRegistrationId = options.appRegistrationId;
+      }
+
       const variables = {
-        input: {
-          universalIdentifier: manifest.application.universalIdentifier,
-          name: manifest.application.displayName,
-          version: '0.0.1',
-          sourcePath: 'cli-sync',
-        },
+        input,
       };
 
       const response: AxiosResponse = await this.client.post(
