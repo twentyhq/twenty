@@ -6,10 +6,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
-import {
-  jotaiStore,
-  resetJotaiStore,
-} from '@/ui/utilities/state/jotai/jotaiStore';
+import { resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -36,10 +33,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
       'Missing mock object metadata item with name singular "company"',
     );
   }
-
-  afterEach(() => {
-    resetJotaiStore();
-  });
 
   const mockFieldMetadataItem = mockObjectMetadataItem.fields.find(
     (field) => field.name === 'name',
@@ -77,8 +70,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
   } satisfies CoreViewWithRelations;
 
   it('should apply sorts from current view', () => {
-    jotaiStore.set(coreViewsState.atom, [mockCoreView]);
-
     const { result } = renderHook(
       () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
@@ -101,6 +92,9 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           contextStoreCurrentViewId: mockView.id,
+          onInitializeJotaiStore: (store) => {
+            store.set(coreViewsState.atom, [mockCoreView]);
+          },
         }),
       },
     );
@@ -119,8 +113,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
   });
 
   it('should not apply sorts when current view is not found', () => {
-    jotaiStore.set(coreViewsState.atom, []);
-
     const { result } = renderHook(
       () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
@@ -167,8 +159,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
       viewSorts: [],
     };
 
-    jotaiStore.set(coreViewsState.atom, [viewWithNoSorts]);
-
     const { result } = renderHook(
       () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
@@ -191,6 +181,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           onInitializeJotaiStore: (store) => {
+            store.set(coreViewsState.atom, [viewWithNoSorts]);
             store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
