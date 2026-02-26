@@ -8,9 +8,11 @@ import { type Manifest } from 'twenty-shared/application';
 
 export const buildTestTarball = async ({
   manifest,
+  rawManifestContent,
   packageJson,
 }: {
-  manifest: Manifest;
+  manifest?: Manifest;
+  rawManifestContent?: string;
   packageJson: Record<string, unknown>;
 }): Promise<Buffer> => {
   const tempDir = join(tmpdir(), `test-tarball-${v4()}`);
@@ -18,15 +20,21 @@ export const buildTestTarball = async ({
   try {
     await fs.mkdir(tempDir, { recursive: true });
 
-    await fs.writeFile(
-      join(tempDir, 'manifest.json'),
-      JSON.stringify(manifest, null, 2),
-    );
+    const fileNames: string[] = [];
+
+    const manifestContent = rawManifestContent
+      ?? (manifest ? JSON.stringify(manifest, null, 2) : undefined);
+
+    if (manifestContent) {
+      await fs.writeFile(join(tempDir, 'manifest.json'), manifestContent);
+      fileNames.push('manifest.json');
+    }
 
     await fs.writeFile(
       join(tempDir, 'package.json'),
       JSON.stringify(packageJson, null, 2),
     );
+    fileNames.push('package.json');
 
     const tarballPath = join(tempDir, 'app.tar.gz');
 
@@ -36,7 +44,7 @@ export const buildTestTarball = async ({
         file: tarballPath,
         cwd: tempDir,
       },
-      ['manifest.json', 'package.json'],
+      fileNames,
     );
 
     return await fs.readFile(tarballPath);
