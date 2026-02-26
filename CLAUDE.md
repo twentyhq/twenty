@@ -201,3 +201,70 @@ When running in CI, the dev environment is **not** pre-configured. Dependencies 
 - `tsconfig.base.json` - Base TypeScript configuration
 - `package.json` - Root package with workspace definitions
 - `.cursor/rules/` - Detailed development guidelines and best practices
+
+---
+
+## Sales-Masters Deployment
+
+This section documents the self-hosted deployment of Twenty CRM at Sales-Masters.
+
+### Project Context
+- Self-hosted Twenty CRM running via Docker Compose
+- DEV environment: https://toniedevcrm.salesmasters.pl (Hetzner VPS CX22)
+- Production: separate dedicated Hetzner servers — **DO NOT TOUCH!**
+
+### Owner Profile
+- Business owner, NOT a developer
+- Needs clear explanations of what we're doing and why
+- Uses Claude Code and Codex (OpenAI) for coding tasks
+- Language: Polish (commands and code can be in English)
+
+### Critical Rules
+- NEVER commit `.env` files with secrets
+- Always work on `feature/*` or `develop` branch — NEVER directly on `main`
+- Every change needs a description of what and why
+- After significant changes — update `docs/CHANGELOG.md`
+- Before push, verify no secrets leaked: `git diff --cached --name-only | grep -E '\.env$'`
+
+### Deployment Stack
+- Twenty CRM (self-hosted via Docker Compose)
+- PostgreSQL 16 (database)
+- Redis (cache)
+- Nginx (reverse proxy + SSL)
+- Node.js 22 LTS + Yarn
+- Ubuntu 24.04 LTS
+
+### Infrastructure
+- **DEV**: Hetzner VPS CX22 (2 vCPU, 4GB RAM) — all-in-one
+- **PROD**: Server 1 = app, Server 2 = database, Backup = Hetzner Storage Box
+
+### Branching Strategy
+- `main` — stable (production)
+- `develop` — current development
+- `feature/*` — new features
+- `hotfix/*` — urgent fixes
+
+### Docker Commands
+```bash
+docker compose up -d          # Start
+docker compose down            # Stop
+docker compose ps              # Status
+docker compose logs -f         # Live logs
+docker compose restart server  # Restart single container
+```
+
+### Key Deployment Files
+- `docker-compose.yml` — container configuration
+- `.env` — environment variables (DO NOT COMMIT!)
+- `.env.example` — variable template (commit this one)
+- `docs/SPEC.md` — business spec (lead statuses, deduplication)
+- `docs/CHANGELOG.md` — change log
+- `docs/SETUP.md` — step-by-step environment setup
+- `docs/WORKFLOW.md` — day-to-day development workflow
+- `docs/ARCHITECTURE.md` — infrastructure diagram
+
+### Planned Customizations
+- Row-level permissions (each user sees only their own records)
+- Search for unassigned records by phone number
+- Custom People module view
+- Approach: feature flag → PostgreSQL RLS → fork (in that order)
