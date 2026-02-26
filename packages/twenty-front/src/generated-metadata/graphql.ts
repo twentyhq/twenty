@@ -304,7 +304,7 @@ export type Application = {
   objects: Array<Object>;
   packageJsonChecksum?: Maybe<Scalars['String']>;
   packageJsonFileId?: Maybe<Scalars['UUID']>;
-  settingsCustomTabFrontComponentId?: Maybe<Scalars['String']>;
+  settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']>;
   universalIdentifier: Scalars['String'];
   version: Scalars['String'];
   yarnLockChecksum?: Maybe<Scalars['String']>;
