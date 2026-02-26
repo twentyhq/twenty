@@ -52,7 +52,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const recordGroupFieldMetadata = useAtomComponentStateValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -109,7 +109,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         StartComponent={
           <DropdownMenuHeaderLeftComponent
             onClick={() =>
-              isDefined(recordGroupFieldMetadata)
+              isDefined(recordIndexGroupFieldMetadataItem)
                 ? onContentChange('recordGroups')
                 : resetContent()
             }
@@ -130,14 +130,16 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         {viewType === ViewType.Table && (
           <MenuItemSelect
             text={t`None`}
-            selected={!isDefined(recordGroupFieldMetadata)}
+            selected={!isDefined(recordIndexGroupFieldMetadataItem)}
             onClick={handleResetRecordGroupField}
           />
         )}
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
           <MenuItemSelect
             key={fieldMetadataItem.id}
-            selected={fieldMetadataItem.id === recordGroupFieldMetadata?.id}
+            selected={
+              fieldMetadataItem.id === recordIndexGroupFieldMetadataItem?.id
+            }
             onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
             LeftIcon={getIcon(fieldMetadataItem.icon)}
             text={fieldMetadataItem.label}

@@ -33,13 +33,13 @@ export const SingleRecordPicker = ({
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const setRecordPickerSearchFilter = useSetAtomComponentState(
+  const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
     componentInstanceId,
   );
 
   const handleCancel = () => {
-    setRecordPickerSearchFilter('');
+    setSingleRecordPickerSearchFilter('');
 
     onCancel?.();
   };
@@ -47,7 +47,7 @@ export const SingleRecordPicker = ({
   const handleMorphItemSelected = (
     selectedMorphItem?: RecordPickerPickableMorphItem | undefined,
   ) => {
-    setRecordPickerSearchFilter('');
+    setSingleRecordPickerSearchFilter('');
 
     onMorphItemSelected?.(selectedMorphItem);
   };

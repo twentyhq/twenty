@@ -28,7 +28,7 @@ export const FavoriteFolderPickerList = ({
   toggleFolderSelection,
 }: FavoriteFolderPickerListProps) => {
   const { t } = useLingui();
-  const [favoriteFoldersSearchFilter] = useAtomComponentState(
+  const [favoriteFolderSearchFilter] = useAtomComponentState(
     favoriteFolderSearchFilterComponentState,
   );
 
@@ -39,12 +39,12 @@ export const FavoriteFolderPickerList = ({
   const filteredFolders = folders.filter((folder) =>
     folder.name
       .toLowerCase()
-      .includes(favoriteFoldersSearchFilter.toLowerCase()),
+      .includes(favoriteFolderSearchFilter.toLowerCase()),
   );
 
   const showNoFolderOption =
-    !favoriteFoldersSearchFilter ||
-    'no folder'.includes(favoriteFoldersSearchFilter.toLowerCase());
+    !favoriteFolderSearchFilter ||
+    'no folder'.includes(favoriteFolderSearchFilter.toLowerCase());
 
   return (
     <StyledItemsContainer>

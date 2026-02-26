@@ -3,13 +3,13 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useEffect } from 'react';
 
 export const RecordBoardStickyHeaderEffect = () => {
-  const scrollTop = useAtomComponentStateValue(
+  const scrollWrapperScrollTop = useAtomComponentStateValue(
     scrollWrapperScrollTopComponentState,
   );
 
   // TODO: move this outside because it might cause way too many re-renders for other hooks
   useEffect(() => {
-    if (scrollTop > 0) {
+    if (scrollWrapperScrollTop > 0) {
       document
         .getElementById('record-board-header')
         ?.classList.add('header-sticky');
@@ -18,7 +18,7 @@ export const RecordBoardStickyHeaderEffect = () => {
         .getElementById('record-board-header')
         ?.classList.remove('header-sticky');
     }
-  }, [scrollTop]);
+  }, [scrollWrapperScrollTop]);
 
   return <></>;
 };

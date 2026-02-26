@@ -1,4 +1,4 @@
-import { companiesQueryResult } from '~/testing/mock-data/companies';
+import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
 
@@ -18,8 +18,8 @@ export const mockedFavoritesData = [
     workflowVersion: null,
     forWorkspaceMemberId: mockedWorkspaceMemberData.id,
     forWorkspaceMember: mockedWorkspaceMemberData,
-    companyId: companiesQueryResult.companies.edges[0].node.id,
-    company: companiesQueryResult.companies.edges[0].node,
+    companyId: getCompaniesMock()[0].id,
+    company: getCompaniesMock()[0],
     viewId: null,
     view: null,
     taskId: null,

@@ -26,7 +26,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     objectNameSingular,
   });
 
-  const setCreatedRecordsProgress = useSetAtomState(
+  const setSpreadsheetImportCreatedRecordsProgress = useSetAtomState(
     spreadsheetImportCreatedRecordsProgressState,
   );
 
@@ -41,7 +41,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     objectNameSingular,
     recordGqlFields,
     mutationBatchSize: SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE,
-    setBatchedRecordsCount: setCreatedRecordsProgress,
+    setBatchedRecordsCount: setSpreadsheetImportCreatedRecordsProgress,
     abortController,
   });
 

@@ -29,7 +29,7 @@ export const ViewBarFilterDropdownAnyFieldSearchButtonMenuItem = ({
     objectFilterDropdownSearchInputComponentState,
   );
 
-  const isSelected = useAtomComponentFamilyStateValue(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH,
   );
@@ -40,7 +40,7 @@ export const ViewBarFilterDropdownAnyFieldSearchButtonMenuItem = ({
       onEnter={onClick}
     >
       <MenuItem
-        focused={isSelected}
+        focused={isSelectedItemId}
         onClick={onClick}
         LeftIcon={IconSearch}
         text={

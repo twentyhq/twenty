@@ -9,12 +9,9 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 export const CancelDashboardSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
-  const selectedRecord = useAtomFamilyStateValue(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const pageLayoutId = selectedRecord?.pageLayoutId;
+  const pageLayoutId = recordStore?.pageLayoutId;
 
   const { closeCommandMenu } = useCommandMenu();
 

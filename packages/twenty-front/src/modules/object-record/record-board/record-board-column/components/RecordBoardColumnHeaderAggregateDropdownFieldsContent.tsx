@@ -39,7 +39,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
     aggregateOperationComponentState,
   );
 
-  const availableFieldsIdsForAggregateOperation = useAtomComponentStateValue(
+  const availableFieldIdsForAggregateOperation = useAtomComponentStateValue(
     availableFieldIdsForAggregateOperationComponentState,
   );
 
@@ -72,7 +72,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
         {getAggregateOperationLabel(aggregateOperation)}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
-        {availableFieldsIdsForAggregateOperation.map((fieldId) => {
+        {availableFieldIdsForAggregateOperation.map((fieldId) => {
           const fieldMetadata = objectMetadataItem.fields.find(
             (field) => field.id === fieldId,
           );

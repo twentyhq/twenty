@@ -1,104 +1,122 @@
-import { type MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
+import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import gql from 'graphql-tag';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { mockedTasks } from '~/testing/mock-data/tasks';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-const mockedDate = '2024-03-15T12:00:00.000Z';
-const toISOStringMock = jest.fn(() => mockedDate);
-global.Date.prototype.toISOString = toISOStringMock;
+const mockCreateOneNote = jest.fn();
+const mockCreateOneNoteTarget = jest.fn();
 
-const { id, title, bodyV2, status, dueAt } = mockedTasks[0];
-const mockedActivity = {
-  id,
-  title,
-  bodyV2,
-  status,
-  dueAt,
-  updatedAt: mockedDate,
-};
+jest.mock('@/object-record/hooks/useCreateOneRecord', () => ({
+  useCreateOneRecord: ({
+    objectNameSingular,
+  }: {
+    objectNameSingular: string;
+  }) =>
+    objectNameSingular === CoreObjectNameSingular.NoteTarget
+      ? { createOneRecord: mockCreateOneNoteTarget }
+      : { createOneRecord: mockCreateOneNote },
+}));
 
-const mocks: MockedResponse[] = [
-  {
-    request: {
-      query: gql`
-        mutation CreateOneActivity($input: ActivityCreateInput!) {
-          createActivity(data: $input) {
-            __typename
-            createdAt
-            reminderAt
-            authorId
-            title
-            status
-            updatedAt
-            body
-            dueAt
-            type
-            id
-            assigneeId
-          }
-        }
-      `,
-      variables: {
-        input: mockedActivity,
-      },
-    },
-    result: jest.fn(() => ({
-      data: {
-        createActivity: {
-          ...mockedActivity,
-          __typename: 'Activity',
-          assigneeId: '',
-          authorId: '1',
-          reminderAt: null,
-          createdAt: mockedDate,
-        },
-      },
-    })),
-  },
-];
+const mockOpenRecordInCommandMenu = jest.fn();
+
+jest.mock('@/command-menu/hooks/useOpenRecordInCommandMenu', () => ({
+  useOpenRecordInCommandMenu: () => ({
+    openRecordInCommandMenu: mockOpenRecordInCommandMenu,
+  }),
+}));
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: mocks,
+  apolloMocks: [],
 });
 
-const mockObjectMetadataItems = generatedMockObjectMetadataItems;
+const fakeNoteId = 'fake-note-id';
 
 describe('useOpenCreateActivityDrawer', () => {
   beforeEach(() => {
-    jotaiStore.set(objectMetadataItemsState.atom, mockObjectMetadataItems);
+    jest.clearAllMocks();
+    mockCreateOneNote.mockResolvedValue({ id: fakeNoteId });
+    mockCreateOneNoteTarget.mockResolvedValue({
+      id: 'fake-note-target-id',
+    });
   });
 
-  it('works as expected', async () => {
+  it('should create a note and note target then open the record in the command menu', async () => {
     const { result } = renderHook(
-      () => {
-        const openActivityRightDrawer = useOpenCreateActivityDrawer({
+      () =>
+        useOpenCreateActivityDrawer({
           activityObjectNameSingular: CoreObjectNameSingular.Note,
-        });
-        const viewableRecordId = useAtomStateValue(viewableRecordIdState);
-        return {
-          openActivityRightDrawer,
-          viewableRecordId,
-        };
-      },
-      {
-        wrapper: Wrapper,
-      },
+        }),
+      { wrapper: Wrapper },
     );
 
-    expect(result.current.viewableRecordId).toBeNull();
     await act(async () => {
-      result.current.openActivityRightDrawer({
+      await result.current({
         targetableObjects: [],
       });
     });
+
+    expect(mockCreateOneNote).toHaveBeenCalledWith({
+      position: 'last',
+    });
+
+    expect(mockCreateOneNoteTarget).toHaveBeenCalledWith({
+      noteId: fakeNoteId,
+    });
+
+    expect(mockOpenRecordInCommandMenu).toHaveBeenCalledWith({
+      recordId: fakeNoteId,
+      objectNameSingular: CoreObjectNameSingular.Note,
+      isNewRecord: true,
+    });
+
+    expect(jotaiStore.get(viewableRecordIdState.atom)).toBe(fakeNoteId);
+    expect(jotaiStore.get(viewableRecordNameSingularState.atom)).toBe(
+      CoreObjectNameSingular.Note,
+    );
+    expect(jotaiStore.get(activityTargetableEntityArrayState.atom)).toEqual([]);
+    expect(jotaiStore.get(isUpsertingActivityInDBState.atom)).toBe(false);
+  });
+
+  it('should create a note target with the targetable object relation when targets are provided', async () => {
+    const targetableObjects = [
+      {
+        id: 'company-id',
+        targetObjectNameSingular: CoreObjectNameSingular.Company,
+      },
+    ];
+
+    const { result } = renderHook(
+      () =>
+        useOpenCreateActivityDrawer({
+          activityObjectNameSingular: CoreObjectNameSingular.Note,
+        }),
+      { wrapper: Wrapper },
+    );
+
+    await act(async () => {
+      await result.current({
+        targetableObjects,
+      });
+    });
+
+    expect(mockCreateOneNote).toHaveBeenCalledWith({
+      position: 'last',
+    });
+
+    expect(mockCreateOneNoteTarget).toHaveBeenCalledWith(
+      expect.objectContaining({
+        noteId: fakeNoteId,
+      }),
+    );
+
+    expect(jotaiStore.get(activityTargetableEntityArrayState.atom)).toEqual(
+      targetableObjects,
+    );
   });
 });

@@ -84,13 +84,13 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
       pageLayoutId,
     );
 
-  const draftPageLayout = useAtomComponentStateValue(
+  const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
   const existingWidget = isDefined(pageLayoutEditingWidgetId)
-    ? draftPageLayout.tabs
+    ? pageLayoutDraft.tabs
         .flatMap((tab) => tab.widgets)
         .find((widget) => widget.id === pageLayoutEditingWidgetId)
     : undefined;

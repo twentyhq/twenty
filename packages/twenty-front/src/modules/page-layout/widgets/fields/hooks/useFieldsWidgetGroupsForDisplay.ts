@@ -22,7 +22,7 @@ export const useFieldsWidgetGroupsForDisplay = ({
     isPageLayoutInEditModeComponentState,
   );
 
-  const allDraftGroups = useAtomComponentStateValue(
+  const fieldsWidgetGroupsDraft = useAtomComponentStateValue(
     fieldsWidgetGroupsDraftComponentState,
   );
 
@@ -31,7 +31,7 @@ export const useFieldsWidgetGroupsForDisplay = ({
     objectNameSingular,
   });
 
-  const draftGroupsForWidget = allDraftGroups[widgetId];
+  const draftGroupsForWidget = fieldsWidgetGroupsDraft[widgetId];
   const hasDraftGroups =
     isDefined(draftGroupsForWidget) && draftGroupsForWidget.length > 0;
 

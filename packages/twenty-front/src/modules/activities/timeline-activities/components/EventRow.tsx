@@ -103,10 +103,7 @@ export const EventRow = ({
 
   const { recordId } = useContext(TimelineActivityContext);
 
-  const recordFromStore = useAtomFamilyStateValue(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
     event.createdAt,
@@ -120,7 +117,7 @@ export const EventRow = ({
     return null;
   }
 
-  if (isUndefinedOrNull(recordFromStore)) {
+  if (isUndefinedOrNull(recordStore)) {
     return null;
   }
   if (isUndefinedOrNull(mainObjectMetadataItem)) {
@@ -129,7 +126,7 @@ export const EventRow = ({
 
   const labelIdentifier = getObjectRecordIdentifier({
     objectMetadataItem: mainObjectMetadataItem,
-    record: recordFromStore,
+    record: recordStore,
     allowRequestsToTwentyIcons,
   });
 

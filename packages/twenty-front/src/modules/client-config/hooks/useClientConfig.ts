@@ -75,19 +75,19 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setLabPublicFeatureFlags = useSetAtomState(labPublicFeatureFlagsState);
 
-  const setMicrosoftMessagingEnabled = useSetAtomState(
+  const setIsMicrosoftMessagingEnabled = useSetAtomState(
     isMicrosoftMessagingEnabledState,
   );
 
-  const setMicrosoftCalendarEnabled = useSetAtomState(
+  const setIsMicrosoftCalendarEnabled = useSetAtomState(
     isMicrosoftCalendarEnabledState,
   );
 
-  const setGoogleMessagingEnabled = useSetAtomState(
+  const setIsGoogleMessagingEnabled = useSetAtomState(
     isGoogleMessagingEnabledState,
   );
 
-  const setGoogleCalendarEnabled = useSetAtomState(
+  const setIsGoogleCalendarEnabled = useSetAtomState(
     isGoogleCalendarEnabledState,
   );
 
@@ -178,10 +178,10 @@ export const useClientConfig = (): UseClientConfigResult => {
       });
       setCanManageFeatureFlags(clientConfig?.canManageFeatureFlags);
       setLabPublicFeatureFlags(clientConfig?.publicFeatureFlags);
-      setMicrosoftMessagingEnabled(clientConfig?.isMicrosoftMessagingEnabled);
-      setMicrosoftCalendarEnabled(clientConfig?.isMicrosoftCalendarEnabled);
-      setGoogleMessagingEnabled(clientConfig?.isGoogleMessagingEnabled);
-      setGoogleCalendarEnabled(clientConfig?.isGoogleCalendarEnabled);
+      setIsMicrosoftMessagingEnabled(clientConfig?.isMicrosoftMessagingEnabled);
+      setIsMicrosoftCalendarEnabled(clientConfig?.isMicrosoftCalendarEnabled);
+      setIsGoogleMessagingEnabled(clientConfig?.isGoogleMessagingEnabled);
+      setIsGoogleCalendarEnabled(clientConfig?.isGoogleCalendarEnabled);
       setIsAttachmentPreviewEnabled(clientConfig?.isAttachmentPreviewEnabled);
       setIsConfigVariablesInDbEnabled(
         clientConfig?.isConfigVariablesInDbEnabled,
@@ -222,8 +222,8 @@ export const useClientConfig = (): UseClientConfigResult => {
     setChromeExtensionId,
     setClientConfigApiStatus,
     setDomainConfiguration,
-    setGoogleCalendarEnabled,
-    setGoogleMessagingEnabled,
+    setIsGoogleCalendarEnabled,
+    setIsGoogleMessagingEnabled,
     setIsAnalyticsEnabled,
     setIsAttachmentPreviewEnabled,
     setIsConfigVariablesInDbEnabled,
@@ -235,8 +235,8 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsClickHouseConfigured,
     setIsCloudflareIntegrationEnabled,
     setLabPublicFeatureFlags,
-    setMicrosoftCalendarEnabled,
-    setMicrosoftMessagingEnabled,
+    setIsMicrosoftCalendarEnabled,
+    setIsMicrosoftMessagingEnabled,
     setSentryConfig,
     setSupportChat,
     setAllowRequestsToTwentyIcons,

@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const RecordTableCellPortals = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isRecordTableFocusActive = useAtomComponentStateValue(
+  const isRecordTableCellFocusActive = useAtomComponentStateValue(
     isRecordTableCellFocusActiveComponentState,
     recordTableId,
   );
@@ -22,7 +22,7 @@ export const RecordTableCellPortals = () => {
     <>
       <RecordTableCellHoveredPortal />
       <RecordTableCellFocusedPortal />
-      {isRecordTableFocusActive && (
+      {isRecordTableCellFocusActive && (
         <>
           <RecordTableCellEditModePortal />
           {isDefined(recordTableCellFocusId) && (

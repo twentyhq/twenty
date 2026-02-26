@@ -10,23 +10,23 @@ export const RecordBoardSelectRecordsEffect = () => {
     recordBoardSelectedRecordIdsComponentSelector,
   );
 
-  const setContextStoreTargetedRecords = useSetAtomComponentState(
+  const setContextStoreTargetedRecordsRule = useSetAtomComponentState(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
   useEffect(() => {
-    setContextStoreTargetedRecords({
+    setContextStoreTargetedRecordsRule({
       mode: 'selection',
       selectedRecordIds: selectedRecordIds,
     });
 
     return () => {
-      setContextStoreTargetedRecords({
+      setContextStoreTargetedRecordsRule({
         mode: 'selection',
         selectedRecordIds: [],
       });
     };
-  }, [selectedRecordIds, setContextStoreTargetedRecords]);
+  }, [selectedRecordIds, setContextStoreTargetedRecordsRule]);
 
   return <></>;
 };

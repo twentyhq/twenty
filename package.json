@@ -48,7 +48,7 @@
     "react-responsive": "^9.0.2",
     "react-router-dom": "^6.4.4",
     "react-tooltip": "^5.13.1",
-    "remark-gfm": "^3.0.1",
+    "remark-gfm": "^4.0.1",
     "rxjs": "^7.2.0",
     "semver": "^7.5.4",
     "slash": "^5.1.0",

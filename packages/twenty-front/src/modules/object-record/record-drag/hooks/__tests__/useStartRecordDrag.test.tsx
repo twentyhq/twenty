@@ -35,7 +35,7 @@ describe('useStartRecordDrag', () => {
         const primaryDraggedRecordId = useAtomComponentStateValue(
           primaryDraggedRecordIdComponentState,
         );
-        const originalSelection = useAtomComponentStateValue(
+        const originalDragSelection = useAtomComponentStateValue(
           originalDragSelectionComponentState,
         );
 
@@ -46,7 +46,7 @@ describe('useStartRecordDrag', () => {
           isMultiDragActive,
           draggedRecordIds,
           primaryDraggedRecordId,
-          originalSelection,
+          originalDragSelection,
         };
       },
       { wrapper: Wrapper },
@@ -62,7 +62,7 @@ describe('useStartRecordDrag', () => {
     expect(result.current.isMultiDragActive).toBe(true);
     expect(result.current.draggedRecordIds).toEqual(['record-1']);
     expect(result.current.primaryDraggedRecordId).toBe('record-1');
-    expect(result.current.originalSelection).toEqual(['record-1']);
+    expect(result.current.originalDragSelection).toEqual(['record-1']);
   });
 
   it('should set single drag state when only one record is selected', () => {
@@ -77,7 +77,7 @@ describe('useStartRecordDrag', () => {
         const primaryDraggedRecordId = useAtomComponentStateValue(
           primaryDraggedRecordIdComponentState,
         );
-        const originalSelection = useAtomComponentStateValue(
+        const originalDragSelection = useAtomComponentStateValue(
           originalDragSelectionComponentState,
         );
 
@@ -88,7 +88,7 @@ describe('useStartRecordDrag', () => {
           isMultiDragActive,
           draggedRecordIds,
           primaryDraggedRecordId,
-          originalSelection,
+          originalDragSelection,
         };
       },
       { wrapper: Wrapper },
@@ -104,7 +104,7 @@ describe('useStartRecordDrag', () => {
     expect(result.current.isMultiDragActive).toBe(true);
     expect(result.current.draggedRecordIds).toEqual(['record-1']);
     expect(result.current.primaryDraggedRecordId).toBe('record-1');
-    expect(result.current.originalSelection).toEqual(['record-1']);
+    expect(result.current.originalDragSelection).toEqual(['record-1']);
   });
 
   it('should set multi drag state when multiple records are selected', () => {
@@ -119,7 +119,7 @@ describe('useStartRecordDrag', () => {
         const primaryDraggedRecordId = useAtomComponentStateValue(
           primaryDraggedRecordIdComponentState,
         );
-        const originalSelection = useAtomComponentStateValue(
+        const originalDragSelection = useAtomComponentStateValue(
           originalDragSelectionComponentState,
         );
 
@@ -130,7 +130,7 @@ describe('useStartRecordDrag', () => {
           isMultiDragActive,
           draggedRecordIds,
           primaryDraggedRecordId,
-          originalSelection,
+          originalDragSelection,
         };
       },
       { wrapper: Wrapper },
@@ -150,7 +150,7 @@ describe('useStartRecordDrag', () => {
       'record-3',
     ]);
     expect(result.current.primaryDraggedRecordId).toBe('record-2');
-    expect(result.current.originalSelection).toEqual([
+    expect(result.current.originalDragSelection).toEqual([
       'record-1',
       'record-2',
       'record-3',
@@ -169,7 +169,7 @@ describe('useStartRecordDrag', () => {
         const primaryDraggedRecordId = useAtomComponentStateValue(
           primaryDraggedRecordIdComponentState,
         );
-        const originalSelection = useAtomComponentStateValue(
+        const originalDragSelection = useAtomComponentStateValue(
           originalDragSelectionComponentState,
         );
 
@@ -180,7 +180,7 @@ describe('useStartRecordDrag', () => {
           isMultiDragActive,
           draggedRecordIds,
           primaryDraggedRecordId,
-          originalSelection,
+          originalDragSelection,
         };
       },
       { wrapper: Wrapper },
@@ -196,7 +196,7 @@ describe('useStartRecordDrag', () => {
     expect(result.current.isMultiDragActive).toBe(true);
     expect(result.current.draggedRecordIds).toEqual(['record-1']);
     expect(result.current.primaryDraggedRecordId).toBe('record-1');
-    expect(result.current.originalSelection).toEqual(['record-1']);
+    expect(result.current.originalDragSelection).toEqual(['record-1']);
   });
 
   it('should set single drag state when dragged record is not in selection', () => {
@@ -211,7 +211,7 @@ describe('useStartRecordDrag', () => {
         const primaryDraggedRecordId = useAtomComponentStateValue(
           primaryDraggedRecordIdComponentState,
         );
-        const originalSelection = useAtomComponentStateValue(
+        const originalDragSelection = useAtomComponentStateValue(
           originalDragSelectionComponentState,
         );
 
@@ -222,7 +222,7 @@ describe('useStartRecordDrag', () => {
           isMultiDragActive,
           draggedRecordIds,
           primaryDraggedRecordId,
-          originalSelection,
+          originalDragSelection,
         };
       },
       { wrapper: Wrapper },
@@ -238,7 +238,7 @@ describe('useStartRecordDrag', () => {
     expect(result.current.isMultiDragActive).toBe(true);
     expect(result.current.draggedRecordIds).toEqual(['record-1']);
     expect(result.current.primaryDraggedRecordId).toBe('record-1');
-    expect(result.current.originalSelection).toEqual(['record-1']);
+    expect(result.current.originalDragSelection).toEqual(['record-1']);
   });
 
   it('should set multi drag state when multiple records are selected', () => {
@@ -253,7 +253,7 @@ describe('useStartRecordDrag', () => {
         const primaryDraggedRecordId = useAtomComponentStateValue(
           primaryDraggedRecordIdComponentState,
         );
-        const originalSelection = useAtomComponentStateValue(
+        const originalDragSelection = useAtomComponentStateValue(
           originalDragSelectionComponentState,
         );
 
@@ -264,7 +264,7 @@ describe('useStartRecordDrag', () => {
           isMultiDragActive,
           draggedRecordIds,
           primaryDraggedRecordId,
-          originalSelection,
+          originalDragSelection,
         };
       },
       { wrapper: Wrapper },
@@ -284,7 +284,7 @@ describe('useStartRecordDrag', () => {
       'record-3',
     ]);
     expect(result.current.primaryDraggedRecordId).toBe('record-2');
-    expect(result.current.originalSelection).toEqual([
+    expect(result.current.originalDragSelection).toEqual([
       'record-1',
       'record-2',
       'record-3',

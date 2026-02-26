@@ -99,7 +99,7 @@ export const FieldWidgetRelationEditAction = ({
       instanceId: scopeInstanceId,
     });
 
-  const isRelationSelectionDropdownOpen = useAtomComponentStateValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     relationSelectionDropdownId,
   );
@@ -108,7 +108,7 @@ export const FieldWidgetRelationEditAction = ({
 
   const dropdownTriggerClickableComponent = (
     <StyledEditButton
-      isDropdownOpen={isRelationSelectionDropdownOpen}
+      isDropdownOpen={isDropdownOpen}
       isMobile={isMobile}
       Icon={IconPencil}
       accent="secondary"

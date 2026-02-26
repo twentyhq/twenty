@@ -13,6 +13,7 @@ import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/S
 import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 
 type WorkflowAiAgentPromptTabProps = {
+  prompt: string;
   readonly: boolean;
   aiModelOptions: SelectOption[];
   onPromptChange: (value: string) => void;
@@ -25,6 +26,7 @@ type WorkflowAiAgentPromptTabProps = {
 };
 
 export const WorkflowAiAgentPromptTab = ({
+  prompt,
   readonly,
   aiModelOptions,
   onPromptChange,
@@ -42,7 +44,7 @@ export const WorkflowAiAgentPromptTab = ({
         VariablePicker={WorkflowVariablePicker}
         label={t`Instructions for AI`}
         placeholder={t`Describe what you want the AI to do...`}
-        defaultValue={workflowAiAgentActionAgent?.prompt || ''}
+        defaultValue={prompt}
         onChange={onPromptChange}
         readonly={readonly}
       />

@@ -54,23 +54,23 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     isPageLayoutInEditModeComponentState,
   );
 
-  const draggingWidgetId = useAtomComponentStateValue(
+  const pageLayoutDraggingWidgetId = useAtomComponentStateValue(
     pageLayoutDraggingWidgetIdComponentState,
   );
 
-  const resizingWidgetId = useAtomComponentStateValue(
+  const pageLayoutResizingWidgetId = useAtomComponentStateValue(
     pageLayoutResizingWidgetIdComponentState,
   );
 
-  const currentlyEditingWidgetId = useAtomComponentStateValue(
+  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
   );
 
-  const isEditing = currentlyEditingWidgetId === widget.id;
+  const isEditing = pageLayoutEditingWidgetId === widget.id;
 
-  const isDragging = draggingWidgetId === widget.id;
+  const isDragging = pageLayoutDraggingWidgetId === widget.id;
 
-  const isResizing = resizingWidgetId === widget.id;
+  const isResizing = pageLayoutResizingWidgetId === widget.id;
 
   const { hasAccess, restriction } = useWidgetPermissions(widget);
 
@@ -109,17 +109,17 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     deletePageLayoutWidget(widget.id);
   };
 
-  const setIsHovered = useSetAtomComponentFamilyState(
+  const setWidgetCardHovered = useSetAtomComponentFamilyState(
     widgetCardHoveredComponentFamilyState,
     widget.id,
   );
 
   const handleMouseEnter = () => {
-    setIsHovered(true);
+    setWidgetCardHovered(true);
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
+    setWidgetCardHovered(false);
   };
 
   const variant = getWidgetCardVariant({

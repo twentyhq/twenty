@@ -66,7 +66,7 @@ export const useUpdateActivityTargetFromCell = ({
       : isNoteTargetMigrated;
 
   const store = useStore();
-  const setActivityFromStore = useSetAtomFamilyState(
+  const setRecordStore = useSetAtomFamilyState(
     recordStoreFamilyState,
     activityId,
   );
@@ -194,7 +194,7 @@ export const useUpdateActivityTargetFromCell = ({
         await createOneActivityTarget(activityTargetInput);
       }
 
-      setActivityFromStore((currentActivity) => {
+      setRecordStore((currentActivity) => {
         if (!isDefined(currentActivity)) {
           return null;
         }
@@ -212,7 +212,7 @@ export const useUpdateActivityTargetFromCell = ({
       createOneActivityTarget,
       deleteOneActivityTarget,
       isMorphRelation,
-      setActivityFromStore,
+      setRecordStore,
     ],
   );
 

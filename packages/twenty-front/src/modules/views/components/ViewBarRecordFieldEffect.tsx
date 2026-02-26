@@ -12,7 +12,7 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordFieldEffect = () => {
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -21,7 +21,7 @@ export const ViewBarRecordFieldEffect = () => {
   const currentView = useAtomFamilySelectorValue(
     coreViewFromViewIdFamilySelector,
     {
-      viewId: currentViewId ?? '',
+      viewId: contextStoreCurrentViewId ?? '',
     },
   );
 
@@ -31,7 +31,7 @@ export const ViewBarRecordFieldEffect = () => {
   ] = useAtomComponentFamilyState(
     hasInitializedCurrentRecordFieldsComponentFamilyState,
     {
-      viewId: currentViewId ?? undefined,
+      viewId: contextStoreCurrentViewId ?? undefined,
     },
   );
 
@@ -54,7 +54,7 @@ export const ViewBarRecordFieldEffect = () => {
       setHasInitializedCurrentRecordFields(true);
     }
   }, [
-    currentViewId,
+    contextStoreCurrentViewId,
     setCurrentRecordFields,
     hasInitializedCurrentRecordFields,
     setHasInitializedCurrentRecordFields,

@@ -10,9 +10,12 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { sleep } from '~/utils/sleep';
+
+const companiesMock = getCompaniesMock();
 
 const meta: Meta = {
   title: 'Modules/ObjectRecord/RecordTable/RecordTable',
@@ -70,7 +73,7 @@ export const ScrolledLeft: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findAllByText('Linkedin', {}, { timeout: 3000 });
+    await canvas.findAllByText(companiesMock[0].name, {}, { timeout: 3000 });
 
     const scrollWrapper = canvasElement.ownerDocument.body.querySelector(
       '.scroll-wrapper-x-enabled',
@@ -88,7 +91,7 @@ export const ScrolledLeft: Story = {
       },
     });
 
-    await canvas.findByText('Facebook');
+    await canvas.findByText(companiesMock[1].name);
   },
 };
 
@@ -100,7 +103,7 @@ export const ScrolledBottom: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findAllByText('Linkedin', {}, { timeout: 3000 });
+    await canvas.findAllByText(companiesMock[0].name, {}, { timeout: 3000 });
 
     const scrollWrapper = canvasElement.ownerDocument.body.querySelector(
       '.scroll-wrapper-y-enabled',
@@ -118,6 +121,6 @@ export const ScrolledBottom: Story = {
       },
     });
 
-    await canvas.findByText('Facebook');
+    await canvas.findByText(companiesMock[1].name);
   },
 };

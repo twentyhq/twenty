@@ -28,7 +28,7 @@ export const useRegisteredActions = (
     contextStoreCurrentViewTypeComponentState,
   );
 
-  const isFullTabWidgetInEditMode = useAtomComponentStateValue(
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
 
@@ -58,7 +58,7 @@ export const useRegisteredActions = (
   const permissionMap = usePermissionFlagMap();
 
   const actionsToRegister = Object.values(actionsConfig).filter((action) => {
-    if (isFullTabWidgetInEditMode) {
+    if (contextStoreIsPageInEditMode) {
       return (
         isDefined(action.availableOn) &&
         action.availableOn.includes(ActionViewType.PAGE_EDIT_MODE)

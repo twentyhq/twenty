@@ -26,7 +26,7 @@ type RecordTableRowVirtualizedContainerProps = {
 export const RecordTableRowVirtualizedContainer = ({
   virtualIndex,
 }: RecordTableRowVirtualizedContainerProps) => {
-  const realIndex = useAtomComponentFamilyStateValue(
+  const realIndexByVirtualIndex = useAtomComponentFamilyStateValue(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
   );
@@ -36,12 +36,16 @@ export const RecordTableRowVirtualizedContainer = ({
       totalNumberOfRecordsToVirtualizeComponentState,
     ) ?? 0;
 
-  if (!isDefined(realIndex) || realIndex >= totalNumberOfRecordsToVirtualize) {
+  if (
+    !isDefined(realIndexByVirtualIndex) ||
+    realIndexByVirtualIndex >= totalNumberOfRecordsToVirtualize
+  ) {
     return null;
   }
 
   const pixelsFromTop =
-    realIndex * (RECORD_TABLE_ROW_HEIGHT + 1) + (RECORD_TABLE_ROW_HEIGHT + 1);
+    realIndexByVirtualIndex * (RECORD_TABLE_ROW_HEIGHT + 1) +
+    (RECORD_TABLE_ROW_HEIGHT + 1);
 
   return (
     <StyledVirtualizedRowContainer
@@ -51,7 +55,9 @@ export const RecordTableRowVirtualizedContainer = ({
       {TABLE_VIRTUALIZATION_DEBUG_ACTIVATED && (
         <RecordTableRowVirtualizedDebugRowHelper virtualIndex={virtualIndex} />
       )}
-      <RecordTableRowVirtualizedRouterLevel1 realIndex={realIndex} />
+      <RecordTableRowVirtualizedRouterLevel1
+        realIndex={realIndexByVirtualIndex}
+      />
     </StyledVirtualizedRowContainer>
   );
 };

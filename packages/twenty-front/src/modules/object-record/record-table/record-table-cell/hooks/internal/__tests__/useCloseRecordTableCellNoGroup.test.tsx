@@ -74,7 +74,7 @@ describe('useCloseRecordTableCellNoGroup', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
-        const currentTableCellInEditModePosition = useAtomComponentStateValue(
+        const recordTableCellEditModePosition = useAtomComponentStateValue(
           recordTableCellEditModePositionComponentState,
           recordTableId,
         );
@@ -82,7 +82,7 @@ describe('useCloseRecordTableCellNoGroup', () => {
         return {
           ...useCloseRecordTableCellNoGroup(),
           ...useDragSelect(),
-          currentTableCellInEditModePosition,
+          recordTableCellEditModePosition,
         };
       },
       {
@@ -95,6 +95,6 @@ describe('useCloseRecordTableCellNoGroup', () => {
     });
 
     expect(result.current.isDragSelectionStartEnabled()).toBe(true);
-    expect(result.current.currentTableCellInEditModePosition).toBe(null);
+    expect(result.current.recordTableCellEditModePosition).toBe(null);
   });
 });

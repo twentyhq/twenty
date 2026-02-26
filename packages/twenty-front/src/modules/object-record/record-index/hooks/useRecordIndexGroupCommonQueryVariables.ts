@@ -59,13 +59,13 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     objectMetadataItems,
   );
 
-  const recordGroupFieldMetadata = useAtomComponentStateValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
   const recordGqlFields = useRecordsFieldVisibleGqlFields({
     objectMetadataItem,
-    additionalFieldMetadataId: recordGroupFieldMetadata?.id,
+    additionalFieldMetadataId: recordIndexGroupFieldMetadataItem?.id,
   });
 
   const recordGroupDefinitions = useAtomComponentSelectorValue(
@@ -81,7 +81,7 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
   );
 
   const recordGroupOptionsFilter = computeRecordGroupOptionsFilter({
-    recordGroupFieldMetadata,
+    recordGroupFieldMetadata: recordIndexGroupFieldMetadataItem,
     recordGroupValues,
   });
 

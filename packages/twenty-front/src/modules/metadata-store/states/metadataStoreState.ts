@@ -14,6 +14,7 @@ export const ALL_METADATA_ENTITY_KEYS = [
   'viewSorts',
   'pageLayouts',
   'logicFunctions',
+  'navigationMenuItems',
 ] as const;
 
 export type MetadataEntityKey = (typeof ALL_METADATA_ENTITY_KEYS)[number];
