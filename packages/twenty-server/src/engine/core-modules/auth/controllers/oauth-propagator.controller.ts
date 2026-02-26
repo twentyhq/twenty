@@ -16,7 +16,6 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
-import { extractBaseDomain } from 'src/engine/core-modules/domain/utils/extract-base-domain.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -71,17 +70,8 @@ export class OAuthPropagatorController {
   }
 
   private async isValidDomain(url: URL): Promise<boolean> {
-    const frontHostname = this.domainServerConfigService.getFrontUrl().hostname;
-    const isDevMode =
-      this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT;
-
-    const twentyBaseDomain = extractBaseDomain(frontHostname, isDevMode);
-    const redirectBaseDomain = extractBaseDomain(url.hostname, isDevMode);
-
     if (
-      isDefined(twentyBaseDomain) &&
-      isDefined(redirectBaseDomain) &&
-      twentyBaseDomain === redirectBaseDomain
+      this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT
     ) {
       return true;
     }
