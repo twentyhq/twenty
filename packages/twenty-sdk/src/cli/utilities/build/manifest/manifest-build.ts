@@ -73,6 +73,7 @@ export const buildManifest = async (
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
+  const preInstallLogicFunctionUniversalIdentifiers: string[] = [];
   const postInstallLogicFunctionUniversalIdentifiers: string[] = [];
 
   const applicationFilePaths: string[] = [];
@@ -211,6 +212,14 @@ export const buildManifest = async (
         logicFunctionsFilePaths.push(relativePath);
 
         if (
+          targetFunctionName === TargetFunction.DefinePreInstallLogicFunction
+        ) {
+          preInstallLogicFunctionUniversalIdentifiers.push(
+            extract.config.universalIdentifier,
+          );
+        }
+
+        if (
           targetFunctionName === TargetFunction.DefinePostInstallLogicFunction
         ) {
           postInstallLogicFunctionUniversalIdentifiers.push(
@@ -315,10 +324,24 @@ export const buildManifest = async (
     );
   }
 
+  if (preInstallLogicFunctionUniversalIdentifiers.length > 1) {
+    errors.push(
+      'Only one pre install logic function is allowed per application',
+    );
+  }
+
   if (postInstallLogicFunctionUniversalIdentifiers.length > 1) {
     errors.push(
       'Only one post install logic function is allowed per application',
     );
+  }
+
+  if (application && preInstallLogicFunctionUniversalIdentifiers.length >= 1) {
+    application = {
+      ...application,
+      preInstallLogicFunctionUniversalIdentifier:
+        preInstallLogicFunctionUniversalIdentifiers[0],
+    };
   }
 
   if (application && postInstallLogicFunctionUniversalIdentifiers.length >= 1) {

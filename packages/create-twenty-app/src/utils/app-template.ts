@@ -97,6 +97,12 @@ export const copyBaseApplicationProject = async ({
     });
   }
 
+  await createDefaultPreInstallFunction({
+    appDirectory: sourceFolderPath,
+    fileFolder: 'logic-functions',
+    fileName: 'pre-install.ts',
+  });
+
   await createDefaultPostInstallFunction({
     appDirectory: sourceFolderPath,
     fileFolder: 'logic-functions',
@@ -261,6 +267,36 @@ export default defineLogicFunction({
     httpMethod: 'GET',
     isAuthRequired: false,
   },
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
+const createDefaultPreInstallFunction = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { definePreInstallLogicFunction } from 'twenty-sdk';
+
+const handler = async (): Promise<void> => {
+  console.log('Pre install logic function executed successfully!');
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: '${universalIdentifier}',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
 });
 `;
 

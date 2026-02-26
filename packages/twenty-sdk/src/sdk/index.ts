@@ -29,6 +29,7 @@ export type {
   FrontComponentType,
 } from './front-component-config';
 export { defineLogicFunction } from './logic-functions/define-logic-function';
+export { definePreInstallLogicFunction } from './logic-functions/define-pre-install-logic-function';
 export { definePostInstallLogicFunction } from './logic-functions/define-post-install-logic-function';
 export type {
   LogicFunctionConfig,
