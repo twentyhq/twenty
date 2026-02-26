@@ -7,15 +7,15 @@ import { isDefined } from 'twenty-shared/utils';
 export const useCurrentlyFocusedRecordTableCellFocusId = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const focusPosition = useAtomComponentStateValue(
+  const recordTableFocusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
     recordTableId,
   );
 
-  return isDefined(focusPosition)
+  return isDefined(recordTableFocusPosition)
     ? getRecordTableCellFocusId({
         recordTableId,
-        cellPosition: focusPosition,
+        cellPosition: recordTableFocusPosition,
       })
     : null;
 };

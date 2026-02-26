@@ -44,12 +44,12 @@ Aqui, o Projeto está do lado "um". Vários registos de diferentes objetos podem
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Limitação de Importação/Exportação**: Relações que apontam para vários tipos de objeto (como Notas → Pessoas/Empresas/Oportunidades) **ainda não são suportadas** na importação ou exportação por CSV.
+**Limitação de Importação/Exportação**: Relações que apontam para vários tipos de objeto (como Notas → Pessoas/Empresas/Oportunidades) **ainda não são suportadas** na importação ou exportação por CSV.
 
-  * **Importação**: Apenas podem ser importadas relações um-para-muitos que apontem para um único tipo de objeto de cada lado
-  * **Exportação**: As colunas para relações que apontam para vários tipos de objeto são, atualmente, deixadas em branco
+* **Importação**: Apenas podem ser importadas relações um-para-muitos que apontem para um único tipo de objeto de cada lado
+* **Exportação**: As colunas para relações que apontam para vários tipos de objeto são, atualmente, deixadas em branco
 
-  Isto está no nosso roadmap.
+Isto está no nosso roadmap.
 </Warning>
 
 ### O que não é suportado hoje
@@ -137,12 +137,12 @@ Se não existir:
 ## Regra da Ordem de Importação
 
 <Warning>
-  **Importe sempre primeiro o lado "um"!**
+**Importe sempre primeiro o lado "um"!**
 
-  1. **Empresas** primeiro (sem dependências)
-  2. **Pessoas** em segundo (ligadas a Empresas)
-  3. **Oportunidades** em terceiro (ligadas a Empresas/Pessoas)
-  4. **Objetos personalizados** seguindo as suas dependências
+1. **Empresas** primeiro (sem dependências)
+2. **Pessoas** em segundo (ligadas a Empresas)
+3. **Oportunidades** em terceiro (ligadas a Empresas/Pessoas)
+4. **Objetos personalizados** seguindo as suas dependências
 
-  O registo pai deve existir antes de o poder referenciar.
+O registo pai deve existir antes de o poder referenciar.
 </Warning>

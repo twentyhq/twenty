@@ -7,9 +7,10 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type InMemoryCache } from '@apollo/client';
+import type { Store } from 'jotai/vanilla/store';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
@@ -23,13 +24,15 @@ export const getJestMetadataAndApolloMocksWrapper = ({
   apolloMocks?:
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
-  onInitializeJotaiStore?: (store: typeof jotaiStore) => void;
+  onInitializeJotaiStore?: (store: Store) => void;
   objectMetadataItems?: ObjectMetadataItem[];
 }) => {
-  onInitializeJotaiStore?.(jotaiStore);
+  const store = resetJotaiStore();
+
+  onInitializeJotaiStore?.(store);
 
   return ({ children }: { children: ReactNode }) => (
-    <JotaiProvider store={jotaiStore}>
+    <JotaiProvider store={store}>
       <SnackBarComponentInstanceContext.Provider
         value={{ instanceId: 'snack-bar-manager' }}
       >

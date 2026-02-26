@@ -39,17 +39,18 @@ export const CommandMenu = () => {
     commandMenuSearch,
   });
 
+  // eslint-disable-next-line twenty/matching-state-variable
   const previousContextStoreCurrentObjectMetadataItemId =
     useAtomComponentStateValue(
       contextStoreCurrentObjectMetadataItemIdComponentState,
       'command-menu-previous',
     );
 
-  const objectMetadataItemId = useAtomComponentStateValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
   const currentObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === objectMetadataItemId,
+    (item) => item.id === contextStoreCurrentObjectMetadataItemId,
   );
 
   const commandGroups: ActionGroupConfig[] = [

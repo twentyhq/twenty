@@ -39,10 +39,10 @@ export const RecordTitleCellSingleTextDisplayMode = ({
 }) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const recordValue = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const isEmpty =
-    recordValue?.[fieldDefinition.metadata.fieldName]?.trim() === '';
+    recordStore?.[fieldDefinition.metadata.fieldName]?.trim() === '';
 
   const { openRecordTitleCell } = useRecordTitleCell();
 
@@ -65,7 +65,7 @@ export const RecordTitleCellSingleTextDisplayMode = ({
       ) : (
         <OverflowingTextWithTooltip
           text={
-            recordValue?.[fieldDefinition.metadata.fieldName] ||
+            recordStore?.[fieldDefinition.metadata.fieldName] ||
             fieldDefinition.label
           }
         />

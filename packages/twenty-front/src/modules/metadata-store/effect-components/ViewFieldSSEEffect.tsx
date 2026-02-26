@@ -9,7 +9,7 @@ import {
   type CoreViewField,
 } from '~/generated-metadata/graphql';
 
-export const ViewFieldMetadataSSEEffect = () => {
+export const ViewFieldSSEEffect = () => {
   const store = useStore();
 
   const queryId = 'view-field-metadata-sse-effect';

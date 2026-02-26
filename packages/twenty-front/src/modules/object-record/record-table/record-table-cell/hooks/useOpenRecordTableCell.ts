@@ -42,7 +42,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const store = useStore();
 
-  const setCurrentTableCellInEditModePosition = useSetAtomComponentState(
+  const setRecordTableCellEditModePosition = useSetAtomComponentState(
     recordTableCellEditModePositionComponentState,
     recordTableId,
   );
@@ -66,7 +66,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
 
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
-  const setIsRowFocusActive = useSetAtomComponentState(
+  const setIsRecordTableRowFocusActive = useSetAtomComponentState(
     isRecordTableRowFocusActiveComponentState,
     recordTableId,
   );
@@ -129,7 +129,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
 
       focusRecordTableCell(cellPosition);
 
-      setIsRowFocusActive(false);
+      setIsRecordTableRowFocusActive(false);
 
       setDragSelectionStartEnabled(false);
 
@@ -139,7 +139,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
         prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
       });
 
-      setCurrentTableCellInEditModePosition(cellPosition);
+      setRecordTableCellEditModePosition(cellPosition);
 
       initDraftValue({
         value: initialValue,
@@ -166,10 +166,10 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
     [
       deactivateRecordTableRow,
       focusRecordTableCell,
-      setIsRowFocusActive,
+      setIsRecordTableRowFocusActive,
       setDragSelectionStartEnabled,
       openFieldInput,
-      setCurrentTableCellInEditModePosition,
+      setRecordTableCellEditModePosition,
       initDraftValue,
       toggleClickOutside,
       setActiveDropdownFocusIdAndMemorizePrevious,

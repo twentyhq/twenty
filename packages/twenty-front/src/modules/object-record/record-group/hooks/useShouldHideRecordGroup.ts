@@ -4,14 +4,14 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useShouldHideRecordGroup = (recordGroupId: string): boolean => {
-  const shouldHideEmptyRecordGroups = useAtomComponentStateValue(
+  const recordIndexShouldHideEmptyRecordGroups = useAtomComponentStateValue(
     recordIndexShouldHideEmptyRecordGroupsComponentState,
   );
 
-  const isRecordGroupEmpty = useAtomComponentFamilyStateValue(
+  const emptyRecordGroupById = useAtomComponentFamilyStateValue(
     emptyRecordGroupByIdComponentFamilyState,
     recordGroupId,
   );
 
-  return shouldHideEmptyRecordGroups && isRecordGroupEmpty;
+  return recordIndexShouldHideEmptyRecordGroups && emptyRecordGroupById;
 };

@@ -19,7 +19,7 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
 
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
 
-  const setMultiWorkspaceDropdownState = useSetAtomState(
+  const setMultiWorkspaceDropdown = useSetAtomState(
     multiWorkspaceDropdownState,
   );
   const [searchValue, setSearchValue] = useState('');
@@ -29,7 +29,7 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
-            onClick={() => setMultiWorkspaceDropdownState('default')}
+            onClick={() => setMultiWorkspaceDropdown('default')}
             Icon={IconChevronLeft}
           />
         }

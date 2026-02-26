@@ -25,7 +25,7 @@ export const GraphPieChartTooltip = ({
   displayType,
   onSliceClick,
 }: GraphPieChartTooltipProps) => {
-  const tooltipState = useAtomComponentStateValue(
+  const graphWidgetPieTooltip = useAtomComponentStateValue(
     graphWidgetPieTooltipComponentState,
   );
 
@@ -34,10 +34,10 @@ export const GraphPieChartTooltip = ({
     return null;
   }
 
-  const tooltipData = !isDefined(tooltipState)
+  const tooltipData = !isDefined(graphWidgetPieTooltip)
     ? null
     : getPieChartTooltipData({
-        datum: tooltipState.datum,
+        datum: graphWidgetPieTooltip.datum,
         enrichedData,
         formatOptions,
         displayType,
@@ -45,18 +45,18 @@ export const GraphPieChartTooltip = ({
 
   const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
     ? () => {
-        if (isDefined(tooltipState)) {
-          onSliceClick(tooltipState.datum.data);
+        if (isDefined(graphWidgetPieTooltip)) {
+          onSliceClick(graphWidgetPieTooltip.datum.data);
         }
       }
     : undefined;
 
-  const reference = !isDefined(tooltipState)
+  const reference = !isDefined(graphWidgetPieTooltip)
     ? null
     : createVirtualElementFromContainerOffset(
         containerElement,
-        tooltipState.offsetLeft,
-        tooltipState.offsetTop,
+        graphWidgetPieTooltip.offsetLeft,
+        graphWidgetPieTooltip.offsetTop,
       );
 
   return (

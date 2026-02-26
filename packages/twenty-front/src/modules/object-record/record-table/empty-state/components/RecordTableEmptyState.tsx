@@ -18,7 +18,7 @@ export const RecordTableEmptyState = () => {
 
   const isRemote = objectMetadataItem.isRemote;
 
-  const isSoftDeleteActive = useAtomComponentStateValue(
+  const isSoftDeleteFilterActive = useAtomComponentStateValue(
     isSoftDeleteFilterActiveComponentState,
     recordTableId,
   );
@@ -35,7 +35,7 @@ export const RecordTableEmptyState = () => {
 
   if (isRemote) {
     return <RecordTableEmptyStateRemote />;
-  } else if (isSoftDeleteActive === true) {
+  } else if (isSoftDeleteFilterActive === true) {
     return <RecordTableEmptyStateSoftDelete />;
   } else if (noRecordAtAll) {
     return <RecordTableEmptyStateNoGroupNoRecordAtAll />;

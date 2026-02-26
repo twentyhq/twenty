@@ -27,9 +27,9 @@ export const RecordTitleCellUuidFieldDisplay = ({
 }) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const recordValue = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const uuidValue = recordValue?.[fieldDefinition.metadata.fieldName] ?? '';
+  const uuidValue = recordStore?.[fieldDefinition.metadata.fieldName] ?? '';
 
   return (
     <StyledDiv>

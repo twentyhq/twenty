@@ -7,19 +7,20 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
   const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
-  const groupFieldMetadata = useAtomComponentStateValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
   const recordGroupFilter = useMemo(() => {
     if (isDefined(currentRecordGroupDefinition)) {
       const fieldMetadataItem = fields.find(
-        (fieldMetadataItem) => fieldMetadataItem.id === groupFieldMetadata?.id,
+        (fieldMetadataItem) =>
+          fieldMetadataItem.id === recordIndexGroupFieldMetadataItem?.id,
       );
 
       if (!fieldMetadataItem) {
         throw new Error(
-          `Field metadata item with id ${groupFieldMetadata?.id} not found`,
+          `Field metadata item with id ${recordIndexGroupFieldMetadataItem?.id} not found`,
         );
       }
 
@@ -35,7 +36,11 @@ export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
     }
 
     return {};
-  }, [currentRecordGroupDefinition, fields, groupFieldMetadata?.id]);
+  }, [
+    currentRecordGroupDefinition,
+    fields,
+    recordIndexGroupFieldMetadataItem?.id,
+  ]);
 
   return { recordGroupFilter };
 };

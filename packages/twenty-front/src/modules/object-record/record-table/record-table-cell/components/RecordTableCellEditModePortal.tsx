@@ -14,11 +14,11 @@ import { recordTableFocusPositionComponentState } from '@/object-record/record-t
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellEditModePortal = () => {
-  const focusedCellPosition = useAtomComponentStateValue(
+  const recordTableFocusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
   );
 
-  const currentTableCellInEditModePosition = useAtomComponentStateValue(
+  const recordTableCellEditModePosition = useAtomComponentStateValue(
     recordTableCellEditModePositionComponentState,
   );
 
@@ -28,13 +28,13 @@ export const RecordTableCellEditModePortal = () => {
 
   const cellFocusId = useCurrentlyFocusedRecordTableCellFocusId();
 
-  if (!isDefined(focusedCellPosition) || !isDefined(cellFocusId)) {
+  if (!isDefined(recordTableFocusPosition) || !isDefined(cellFocusId)) {
     return null;
   }
 
   return (
-    <RecordTableCellPortalWrapper position={focusedCellPosition}>
-      {currentTableCellInEditModePosition && (
+    <RecordTableCellPortalWrapper position={recordTableFocusPosition}>
+      {recordTableCellEditModePosition && (
         <RecordTableCellPortalRootContainer
           zIndex={
             hasRecordGroups

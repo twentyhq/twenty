@@ -57,7 +57,7 @@ exports[`CommandMenuItem creation should fail when creating with empty workflowV
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID: 'not-a-valid-uuid'",
+  "message": "Invalid UUID: ''",
   "name": "ValidationError",
 }
 `;

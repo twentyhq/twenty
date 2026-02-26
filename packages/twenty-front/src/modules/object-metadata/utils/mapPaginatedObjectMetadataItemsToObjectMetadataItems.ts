@@ -26,7 +26,9 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
 
       return {
         ...objectWithoutFieldsList,
-        fields: fieldsList,
+        fields: fieldsList.map((field) => ({
+          ...field,
+        })),
         labelIdentifierFieldMetadataId,
         indexMetadatas: indexMetadataList.map(
           (index) =>

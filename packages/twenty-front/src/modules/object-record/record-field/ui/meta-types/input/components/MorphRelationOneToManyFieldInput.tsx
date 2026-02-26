@@ -23,7 +23,7 @@ export const MorphRelationOneToManyFieldInput = () => {
     onSubmit?.({ skipPersist: true });
   };
 
-  const layoutDirection = useAtomComponentStateValue(
+  const recordFieldInputLayoutDirection = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 
@@ -37,7 +37,7 @@ export const MorphRelationOneToManyFieldInput = () => {
       }}
       onClickOutside={handleSubmit}
       layoutDirection={
-        layoutDirection === 'downward'
+        recordFieldInputLayoutDirection === 'downward'
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'
       }

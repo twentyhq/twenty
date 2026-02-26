@@ -39,7 +39,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
     aggregateOperationComponentState,
   );
 
-  const setAvailableFieldsForAggregateOperation = useSetAtomComponentState(
+  const setAvailableFieldIdsForAggregateOperation = useSetAtomComponentState(
     availableFieldIdsForAggregateOperationComponentState,
   );
 
@@ -79,7 +79,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                       availableAggregationOperation as ExtendedAggregateOperations,
                     );
 
-                    setAvailableFieldsForAggregateOperation(
+                    setAvailableFieldIdsForAggregateOperation(
                       availableAggregationFieldsIdsForOperation,
                     );
                     onContentChange('aggregateFields');

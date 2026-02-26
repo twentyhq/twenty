@@ -7,17 +7,14 @@ import { AppPath } from 'twenty-shared/types';
 
 export const SeeWorkflowWorkflowVersionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
-  const workflowVersion = useAtomFamilyStateValue(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   return (
     <ActionLink
       to={AppPath.RecordShowPage}
       params={{
         objectNameSingular: CoreObjectNameSingular.Workflow,
-        objectRecordId: workflowVersion?.workflow?.id,
+        objectRecordId: recordStore?.workflow?.id,
       }}
     />
   );

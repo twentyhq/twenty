@@ -24,7 +24,7 @@ export const RecordFieldListCellEditModePortal = ({
     RecordFieldListComponentInstanceContext,
   );
 
-  const editModePosition = useAtomComponentStateValue(
+  const recordFieldListCellEditModePosition = useAtomComponentStateValue(
     recordFieldListCellEditModePositionComponentState,
   );
 
@@ -32,7 +32,10 @@ export const RecordFieldListCellEditModePortal = ({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  if (!isDefined(editModePosition) || !isDefined(editedFieldMetadataItem)) {
+  if (
+    !isDefined(recordFieldListCellEditModePosition) ||
+    !isDefined(editedFieldMetadataItem)
+  ) {
     return null;
   }
 

@@ -38,7 +38,7 @@ export const RecordBoardColumn = ({
     recordGroupDefinitionFamilyState,
     recordBoardColumnId,
   );
-  const recordIdsByGroup = useAtomComponentFamilyStateValue(
+  const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
   );
@@ -58,7 +58,7 @@ export const RecordBoardColumn = ({
       value={{
         columnDefinition: recordGroupDefinition,
         columnId: recordBoardColumnId,
-        recordIds: recordIdsByGroup,
+        recordIds: recordIndexRecordIdsByGroup,
         columnIndex: recordBoardColumnIndex,
       }}
     >

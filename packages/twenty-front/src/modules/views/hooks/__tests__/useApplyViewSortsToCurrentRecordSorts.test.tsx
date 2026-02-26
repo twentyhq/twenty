@@ -45,11 +45,11 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
         const { applyViewSortsToCurrentRecordSorts } =
           useApplyViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useAtomComponentStateValue(
+        const currentRecordSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
         );
 
-        return { applyViewSortsToCurrentRecordSorts, currentSorts };
+        return { applyViewSortsToCurrentRecordSorts, currentRecordSorts };
       },
       {
         wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
@@ -65,7 +65,7 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
       result.current.applyViewSortsToCurrentRecordSorts([mockViewSort]);
     });
 
-    expect(result.current.currentSorts).toEqual([
+    expect(result.current.currentRecordSorts).toEqual([
       {
         id: mockViewSort.id,
         fieldMetadataId: mockViewSort.fieldMetadataId,
@@ -80,11 +80,11 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
         const { applyViewSortsToCurrentRecordSorts } =
           useApplyViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useAtomComponentStateValue(
+        const currentRecordSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
         );
 
-        return { applyViewSortsToCurrentRecordSorts, currentSorts };
+        return { applyViewSortsToCurrentRecordSorts, currentRecordSorts };
       },
       {
         wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
@@ -100,6 +100,6 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
       result.current.applyViewSortsToCurrentRecordSorts([]);
     });
 
-    expect(result.current.currentSorts).toEqual([]);
+    expect(result.current.currentRecordSorts).toEqual([]);
   });
 });

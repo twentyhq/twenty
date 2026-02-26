@@ -5,7 +5,7 @@ import { type CoreViewWithoutRelations } from '@/views/types/CoreViewWithoutRela
 import { useStore } from 'jotai';
 import { AllMetadataName } from '~/generated-metadata/graphql';
 
-export const ViewMetadataSSEEffect = () => {
+export const ViewSSEEffect = () => {
   const queryId = 'view-metadata-sse-effect';
 
   const store = useStore();

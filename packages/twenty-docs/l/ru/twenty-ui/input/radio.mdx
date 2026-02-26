@@ -10,50 +10,58 @@ image: /images/user-guide/create-workspace/workspace-cover.png
 Используется, когда пользователи могут выбрать только один вариант из серии вариантов.
 
 <Tabs>
-  <Tab title="Использование">
-    ```jsx
-    import { Radio } from "twenty-ui/display";
+<Tab title="Использование">
 
-    export const MyComponent = () => {
+```jsx
+import { Radio } from "twenty-ui/display";
 
-      const handleRadioChange = (event) => {
-        console.log("Radio button changed:", event.target.checked);
-      };
+export const MyComponent = () => {
 
-      const handleCheckedChange = (checked) => {
-        console.log("Checked state changed:", checked);
-      };
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
 
 
-      return (
-        <Radio
-          checked={true}
-          value="Option 1"
-          onChange={handleRadioChange}
-          onCheckedChange={handleCheckedChange}
-          size="large"
-          disabled={false}
-          labelPosition="right"
-        />
-      );
-    };
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
 
-    ```
-  </Tab>
+```
 
-  <Tab title="Свойства">
-    | Свойства        | Тип                  | Описание                                                                                |
-    | --------------- | -------------------- | --------------------------------------------------------------------------------------- |
-    | стиль           | Свойства `React.CSS` | Дополнительные встроенные стили для компонента.                                         |
-    | className       | строка               | Необязательный CSS-класс для дополнительного стилирования                               |
-    | отмечено        | boolean              | Указывает, отмечена ли радиокнопка                                                      |
-    | значение        | строка               | Метка или текст, связанные с радио-кнопкой.                                             |
-    | onChange        | функция              | Функция вызывается при изменении выбранной радио-кнопки.                                |
-    | onCheckedChange | функция              | Функция, вызываемая при изменении состояния `checked` радиокнопки                       |
-    | размер          | строка               | Размер радио-кнопки. Доступные варианты: `large` и `small`                              |
-    | отключено       | boolean              | Если `true`, радиокнопка отключена и недоступна для нажатия                             |
-    | позицияМетки    | строка               | Положение текста метки относительно радио-кнопки. Имеет два варианта: `left` и `right`. |
-  </Tab>
+
+</Tab>
+<Tab title="Свойства">
+
+
+| Свойства        | Тип                  | Описание                                                                                |
+| --------------- | -------------------- | --------------------------------------------------------------------------------------- |
+| стиль           | Свойства `React.CSS` | Дополнительные встроенные стили для компонента.                                         |
+| className       | строка               | Необязательный CSS-класс для дополнительного стилирования                               |
+| отмечено        | boolean              | Указывает, отмечена ли радиокнопка                                                      |
+| значение        | строка               | Метка или текст, связанные с радио-кнопкой.                                             |
+| onChange        | функция              | Функция вызывается при изменении выбранной радио-кнопки.                                |
+| onCheckedChange | функция              | Функция, вызываемая при изменении состояния `checked` радиокнопки                       |
+| размер          | строка               | Размер радио-кнопки. Доступные варианты: `large` и `small`                              |
+| отключено       | boolean              | Если `true`, радиокнопка отключена и недоступна для нажатия                             |
+| позицияМетки    | строка               | Положение текста метки относительно радио-кнопки. Имеет два варианта: `left` и `right`. |
+
+
+
+
+</Tab>
 </Tabs>
 
 ## Группа Радио
@@ -61,37 +69,45 @@ image: /images/user-guide/create-workspace/workspace-cover.png
 Объединяет связанные радио-кнопки.
 
 <Tabs>
-  <Tab title="Использование">
-    ```jsx
-    import React, { useState } from "react";
-    import { Radio, RadioGroup } from "twenty-ui/display";
+<Tab title="Использование">
 
-    export const MyComponent = () => {
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
 
-      const [selectedValue, setSelectedValue] = useState("Option 1");
+export const MyComponent = () => {
 
-      const handleChange = (event) => {
-        setSelectedValue(event.target.value);
-      };
-      
-      return (
-        <RadioGroup value={selectedValue} onChange={handleChange}>
-          <Radio value="Option 1" />
-          <Radio value="Option 2" />
-          <Radio value="Option 3" />
-        </RadioGroup>
-      );
-    };
+  const [selectedValue, setSelectedValue] = useState("Option 1");
 
-    ```
-  </Tab>
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
 
-  <Tab title="Свойства">
-    | Свойства      | Тип               | Описание                                                                                              |
-    | ------------- | ----------------- | ----------------------------------------------------------------------------------------------------- |
-    | значение      | строка            | Значение в настоящее время выбранной радио-кнопки.                                                    |
-    | onChange      | функция           | Функция обратного вызова, вызываемая при изменении радио-кнопки.                                      |
-    | onValueChange | функция           | Функция обратного вызова, вызываемая при изменении выбранного значения в группе.                      |
-    | children      | `React.ReactNode` | Позволяет передавать компоненты React (например, Radio) в качестве дочерних элементов для Radio Group |
-  </Tab>
+```
+
+</Tab>
+<Tab title="Свойства">
+
+
+| Свойства      | Тип               | Описание                                                                                              |
+| ------------- | ----------------- | ----------------------------------------------------------------------------------------------------- |
+| значение      | строка            | Значение в настоящее время выбранной радио-кнопки.                                                    |
+| onChange      | функция           | Функция обратного вызова, вызываемая при изменении радио-кнопки.                                      |
+| onValueChange | функция           | Функция обратного вызова, вызываемая при изменении выбранного значения в группе.                      |
+| children      | `React.ReactNode` | Позволяет передавать компоненты React (например, Radio) в качестве дочерних элементов для Radio Group |
+
+
+
+
+</Tab>
+
 </Tabs>

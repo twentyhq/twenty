@@ -7,6 +7,7 @@ export type AllowedHtmlElement = {
   tag: string;
   name: string;
   properties: Record<string, PropertySchema>;
+  events?: string[];
 };
 
 export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
@@ -150,12 +151,15 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     name: 'HtmlIframe',
     properties: {
       src: { type: 'string', optional: true },
-      title: { type: 'string', optional: true },
+      name: { type: 'string', optional: true },
       width: { type: 'string', optional: true },
       height: { type: 'string', optional: true },
       allow: { type: 'string', optional: true },
       sandbox: { type: 'string', optional: true },
       allowFullScreen: { type: 'boolean', optional: true },
+      loading: { type: 'string', optional: true },
+      referrerPolicy: { type: 'string', optional: true },
+      srcDoc: { type: 'string', optional: true },
     },
   },
   {
@@ -173,7 +177,30 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
       height: { type: 'string', optional: true },
       crossOrigin: { type: 'string', optional: true },
       playsInline: { type: 'boolean', optional: true },
+      disablePictureInPicture: { type: 'boolean', optional: true },
+      disableRemotePlayback: { type: 'boolean', optional: true },
     },
+    events: [
+      'timeupdate',
+      'play',
+      'pause',
+      'ended',
+      'loadedmetadata',
+      'loadeddata',
+      'volumechange',
+      'seeking',
+      'seeked',
+      'error',
+      'canplay',
+      'canplaythrough',
+      'waiting',
+      'progress',
+      'durationchange',
+      'ratechange',
+      'stalled',
+      'suspend',
+      'emptied',
+    ],
   },
   {
     tag: 'html-audio',
@@ -187,6 +214,27 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
       preload: { type: 'string', optional: true },
       crossOrigin: { type: 'string', optional: true },
     },
+    events: [
+      'timeupdate',
+      'play',
+      'pause',
+      'ended',
+      'loadedmetadata',
+      'loadeddata',
+      'volumechange',
+      'seeking',
+      'seeked',
+      'error',
+      'canplay',
+      'canplaythrough',
+      'waiting',
+      'progress',
+      'durationchange',
+      'ratechange',
+      'stalled',
+      'suspend',
+      'emptied',
+    ],
   },
   {
     tag: 'html-source',
@@ -195,6 +243,10 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
       src: { type: 'string', optional: true },
       type: { type: 'string', optional: true },
       media: { type: 'string', optional: true },
+      srcSet: { type: 'string', optional: true },
+      sizes: { type: 'string', optional: true },
+      width: { type: 'number', optional: true },
+      height: { type: 'number', optional: true },
     },
   },
 ];

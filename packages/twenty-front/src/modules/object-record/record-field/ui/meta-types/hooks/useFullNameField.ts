@@ -29,7 +29,7 @@ export const useFullNameField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldFullNameValue>();
 
-  const draftValue = useAtomComponentStateValue(
+  const recordFieldInputDraftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
@@ -37,7 +37,7 @@ export const useFullNameField = () => {
     fieldDefinition,
     fieldValue,
     setFieldValue,
-    draftValue,
+    draftValue: recordFieldInputDraftValue,
     setDraftValue,
   };
 };

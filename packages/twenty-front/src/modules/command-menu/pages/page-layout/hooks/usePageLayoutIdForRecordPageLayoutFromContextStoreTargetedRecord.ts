@@ -7,26 +7,26 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord =
   () => {
-    const targetedRecordsRule = useAtomComponentStateValue(
+    const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
       contextStoreTargetedRecordsRuleComponentState,
     );
 
-    const objectMetadataId = useAtomComponentStateValue(
+    const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
       contextStoreCurrentObjectMetadataItemIdComponentState,
     );
 
-    if (!isDefined(objectMetadataId)) {
+    if (!isDefined(contextStoreCurrentObjectMetadataItemId)) {
       throw new Error('Object metadata ID is not defined');
     }
 
     const { objectMetadataItem } = useObjectMetadataItemById({
-      objectId: objectMetadataId ?? undefined,
+      objectId: contextStoreCurrentObjectMetadataItemId ?? undefined,
     });
 
     if (
       !(
-        targetedRecordsRule.mode === 'selection' &&
-        targetedRecordsRule.selectedRecordIds.length === 1
+        contextStoreTargetedRecordsRule.mode === 'selection' &&
+        contextStoreTargetedRecordsRule.selectedRecordIds.length === 1
       )
     ) {
       throw new Error('Only one record should be selected');

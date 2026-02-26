@@ -20,7 +20,7 @@ export const usePieChartData = ({
   colorRegistry,
   colorMode,
 }: UsePieChartDataProps) => {
-  const hiddenLegendIds = useAtomComponentStateValue(
+  const graphWidgetHiddenLegendIds = useAtomComponentStateValue(
     graphWidgetHiddenLegendIdsComponentState,
   );
 
@@ -54,7 +54,7 @@ export const usePieChartData = ({
   }));
 
   const enrichedData = allEnrichedData.filter(
-    (item) => !hiddenLegendIds.includes(item.id),
+    (item) => !graphWidgetHiddenLegendIds.includes(item.id),
   );
 
   const enrichedDataMap = useMemo(

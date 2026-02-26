@@ -2,11 +2,12 @@ import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useObjectFilterDropdownFilterValue = () => {
-  const currentRecordFilter = useAtomComponentStateValue(
+  const objectFilterDropdownCurrentRecordFilter = useAtomComponentStateValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 
-  const objectFilterDropdownFilterValue = currentRecordFilter?.value;
+  const objectFilterDropdownFilterValue =
+    objectFilterDropdownCurrentRecordFilter?.value;
 
   return { objectFilterDropdownFilterValue };
 };

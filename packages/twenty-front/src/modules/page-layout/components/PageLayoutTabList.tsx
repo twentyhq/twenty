@@ -143,7 +143,7 @@ export const PageLayoutTabList = ({
   const { openDropdown } = useOpenDropdown();
   const { toggleClickOutside } = useClickOutsideListener(dropdownId);
 
-  const setIsTabDragging = useSetAtomComponentState(
+  const setIsPageLayoutTabDragging = useSetAtomComponentState(
     isPageLayoutTabDraggingComponentState,
     componentInstanceId,
   );
@@ -188,9 +188,9 @@ export const PageLayoutTabList = ({
   };
 
   const handleDragStart = useCallback<OnDragStartResponder>(() => {
-    setIsTabDragging(true);
+    setIsPageLayoutTabDragging(true);
     toggleClickOutside(false);
-  }, [setIsTabDragging, toggleClickOutside]);
+  }, [setIsPageLayoutTabDragging, toggleClickOutside]);
 
   const handleDragEnd = useCallback<OnDragEndResponder>(
     (result, provided) => {
@@ -199,7 +199,7 @@ export const PageLayoutTabList = ({
         PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS;
 
       if (!droppedInOverflow) {
-        setIsTabDragging(false);
+        setIsPageLayoutTabDragging(false);
       }
 
       toggleClickOutside(true);
@@ -216,18 +216,24 @@ export const PageLayoutTabList = ({
         });
       }
     },
-    [onReorder, setIsTabDragging, toggleClickOutside, openDropdown, dropdownId],
+    [
+      onReorder,
+      setIsPageLayoutTabDragging,
+      toggleClickOutside,
+      openDropdown,
+      dropdownId,
+    ],
   );
 
   const isPageLayoutInEditMode = useAtomComponentStateValue(
     isPageLayoutInEditModeComponentState,
     pageLayoutId,
   );
-  const tabSettingsOpenTabId = useAtomComponentStateValue(
+  const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
-  const setTabSettingsOpenTabId = useSetAtomComponentState(
+  const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
@@ -235,16 +241,16 @@ export const PageLayoutTabList = ({
 
   const openTabSettings = useCallback(
     (tabId: string) => {
-      setTabSettingsOpenTabId(tabId);
+      setPageLayoutTabSettingsOpenTabId(tabId);
       navigatePageLayoutCommandMenu({
         commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
         resetNavigationStack: true,
       });
     },
-    [setTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
+    [setPageLayoutTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
   );
 
-  const isTabSettingsOpen = isDefined(tabSettingsOpenTabId);
+  const isTabSettingsOpen = isDefined(pageLayoutTabSettingsOpenTabId);
 
   const handleSelectTab = useCallback(
     (tabId: string) => {

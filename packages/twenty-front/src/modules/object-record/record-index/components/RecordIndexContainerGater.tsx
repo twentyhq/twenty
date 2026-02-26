@@ -40,7 +40,6 @@ export const RecordIndexContainerGater = () => {
 
   const { indexIdentifierUrl } = useHandleIndexIdentifierClick({
     objectMetadataItem,
-    recordIndexId,
   });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();

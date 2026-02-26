@@ -14,14 +14,14 @@ export const useFieldsWidgetGroupsDraft = ({
 }: UseFieldsWidgetGroupsDraftParams): {
   draftGroups: FieldsWidgetGroup[];
 } => {
-  const allDraftGroups = useAtomComponentStateValue(
+  const fieldsWidgetGroupsDraft = useAtomComponentStateValue(
     fieldsWidgetGroupsDraftComponentState,
     pageLayoutId,
   );
 
   const draftGroups = useMemo(
-    () => allDraftGroups[widgetId] ?? [],
-    [allDraftGroups, widgetId],
+    () => fieldsWidgetGroupsDraft[widgetId] ?? [],
+    [fieldsWidgetGroupsDraft, widgetId],
   );
 
   return { draftGroups };

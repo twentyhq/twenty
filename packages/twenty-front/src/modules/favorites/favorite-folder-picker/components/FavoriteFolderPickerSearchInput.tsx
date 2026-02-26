@@ -5,11 +5,11 @@ import { useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const FavoriteFolderPickerSearchInput = () => {
-  const [favoriteFoldersSearchFilter, setFavoriteFoldersSearchFilter] =
+  const [favoriteFolderSearchFilter, setFavoriteFolderSearchFilter] =
     useAtomComponentState(favoriteFolderSearchFilterComponentState);
 
   const debouncedSetSearchFilter = useDebouncedCallback(
-    setFavoriteFoldersSearchFilter,
+    setFavoriteFolderSearchFilter,
     100,
     { leading: true },
   );
@@ -23,7 +23,7 @@ export const FavoriteFolderPickerSearchInput = () => {
 
   return (
     <DropdownMenuSearchInput
-      value={favoriteFoldersSearchFilter}
+      value={favoriteFolderSearchFilter}
       onChange={handleFilterChange}
       autoFocus
     />

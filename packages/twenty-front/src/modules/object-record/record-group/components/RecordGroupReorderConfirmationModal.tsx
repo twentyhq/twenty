@@ -13,7 +13,7 @@ type RecordGroupReorderConfirmationModalProps = {
 export const RecordGroupReorderConfirmationModal = ({
   onConfirmClick,
 }: RecordGroupReorderConfirmationModalProps): ReactNode => {
-  const recordGroupSort = useAtomComponentStateValue(
+  const recordIndexRecordGroupSort = useAtomComponentStateValue(
     recordIndexRecordGroupSortComponentState,
   );
 
@@ -23,7 +23,7 @@ export const RecordGroupReorderConfirmationModal = ({
         <ConfirmationModal
           modalId={RECORD_GROUP_REORDER_CONFIRMATION_MODAL_ID}
           title={t`Group sorting`}
-          subtitle={t`Would you like to remove ${recordGroupSort} group sorting?`}
+          subtitle={t`Would you like to remove ${recordIndexRecordGroupSort} group sorting?`}
           onConfirmClick={onConfirmClick}
           confirmButtonText={t`Remove`}
         />,

@@ -54,7 +54,7 @@ export const main = async () => {
 ```
 
 <Tip>
-  Filtrováním podle `updated_at >= last X minutes` získáte pouze nedávno změněné záznamy. Díky tomu zůstane synchronizace efektivní.
+Filtrováním podle `updated_at >= last X minutes` získáte pouze nedávno změněné záznamy. Díky tomu zůstane synchronizace efektivní.
 </Tip>
 
 ## Krok 3: Formátování dat (volitelné)
@@ -163,7 +163,7 @@ Uvnitř iterátoru přidejte akci **Upsert Record**:
 | **Cena**        | `{{iterator.item.price}}`                     |
 
 <Tip>
-  Použijte **Upsert** (aktualizace nebo vytvoření) místo vytváření samostatných větví pro vytvoření vs. aktualizaci. Je to rychlejší na vytvoření a snazší na ladění.
+Použijte **Upsert** (aktualizace nebo vytvoření) místo vytváření samostatných větví pro vytvoření vs. aktualizaci. Je to rychlejší na vytvoření a snazší na ladění.
 </Tip>
 
 ## Příklady použití

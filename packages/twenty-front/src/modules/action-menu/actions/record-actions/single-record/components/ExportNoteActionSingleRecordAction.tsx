@@ -7,19 +7,16 @@ import { isDefined } from 'twenty-shared/utils';
 export const ExportNoteActionSingleRecordAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
-  const selectedRecord = useAtomFamilyStateValue(
-    recordStoreFamilyState,
-    recordId,
-  );
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const filename = `${(selectedRecord?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
+  const filename = `${(recordStore?.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
 
   const handleClick = async () => {
-    if (!isDefined(selectedRecord)) {
+    if (!isDefined(recordStore)) {
       return;
     }
 
-    const initialBody = selectedRecord.bodyV2?.blocknote;
+    const initialBody = recordStore.bodyV2?.blocknote;
 
     let parsedBody = [];
 

@@ -33,7 +33,7 @@ export const RecordBoardColumnCardsContainer = ({
 }: RecordBoardColumnCardsContainerProps) => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const recordIds = useAtomComponentFamilyStateValue(
+  const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
     recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
   );
@@ -49,7 +49,7 @@ export const RecordBoardColumnCardsContainer = ({
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
-      {recordIds.map((recordId, index) => (
+      {recordIndexRecordIdsByGroup.map((recordId, index) => (
         <RecordBoardCardDraggableContainer
           key={recordId}
           recordId={recordId}
@@ -61,7 +61,7 @@ export const RecordBoardColumnCardsContainer = ({
       ) : null}
       <Draggable
         draggableId={`new-${columnDefinition.id}-bottom`}
-        index={recordIds.length}
+        index={recordIndexRecordIdsByGroup.length}
         isDragDisabled={true}
       >
         {(draggableProvided) => (

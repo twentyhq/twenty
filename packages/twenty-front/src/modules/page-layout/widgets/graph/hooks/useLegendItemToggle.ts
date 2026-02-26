@@ -11,7 +11,7 @@ export const useLegendItemToggle = ({
   itemIds,
   isInteractive,
 }: UseLegendItemToggleProps) => {
-  const setHiddenLegendIds = useSetAtomComponentState(
+  const setGraphWidgetHiddenLegendIds = useSetAtomComponentState(
     graphWidgetHiddenLegendIdsComponentState,
   );
 
@@ -19,7 +19,7 @@ export const useLegendItemToggle = ({
     (itemId: string) => {
       if (!isInteractive) return;
 
-      setHiddenLegendIds((previousHiddenIds) => {
+      setGraphWidgetHiddenLegendIds((previousHiddenIds) => {
         const hasStaleIds = previousHiddenIds.some(
           (id) => !itemIds.includes(id),
         );
@@ -40,7 +40,7 @@ export const useLegendItemToggle = ({
         return [...validHiddenIds, itemId];
       });
     },
-    [isInteractive, itemIds, setHiddenLegendIds],
+    [isInteractive, itemIds, setGraphWidgetHiddenLegendIds],
   );
 
   return { toggleLegendItem };

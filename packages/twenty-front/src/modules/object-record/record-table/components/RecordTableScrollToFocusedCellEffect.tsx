@@ -14,7 +14,7 @@ export const RecordTableScrollToFocusedCellEffect = () => {
     recordTableId,
   );
 
-  const focusPosition = useAtomComponentStateValue(
+  const recordTableFocusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
     recordTableId,
   );
@@ -25,19 +25,19 @@ export const RecordTableScrollToFocusedCellEffect = () => {
       return;
     }
 
-    if (!focusPosition) {
+    if (!recordTableFocusPosition) {
       return;
     }
 
     const focusElement = document.getElementById(
-      `record-table-cell-${focusPosition.column}-${focusPosition.row}`,
+      `record-table-cell-${recordTableFocusPosition.column}-${recordTableFocusPosition.row}`,
     );
 
     if (!focusElement) {
       return;
     }
 
-    const isSecondColumn = focusPosition.column === 1;
+    const isSecondColumn = recordTableFocusPosition.column === 1;
 
     if (isSecondColumn) {
       const checkBoxColumnCell = document.getElementById(
@@ -63,7 +63,7 @@ export const RecordTableScrollToFocusedCellEffect = () => {
         focusElement.style.scrollMarginBottom = '';
       }
     };
-  }, [focusPosition, isRecordTableCellFocusActive]);
+  }, [recordTableFocusPosition, isRecordTableCellFocusActive]);
 
   return null;
 };

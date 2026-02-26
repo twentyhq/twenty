@@ -1,4 +1,5 @@
-import { type ToolCallOptions, type ToolSet } from 'ai';
+import { jsonSchema, type ToolExecutionOptions, type ToolSet } from 'ai';
+import { type JSONSchema7 } from 'json-schema';
 import { z } from 'zod';
 
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -6,7 +7,7 @@ import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/to
 
 export const EXECUTE_TOOL_TOOL_NAME = 'execute_tool';
 
-export const executeToolInputSchema = z.object({
+const executeToolInputZodSchema = z.object({
   toolName: z
     .string()
     .describe('Exact tool name from get_tool_catalog. Do not guess.'),
@@ -15,7 +16,29 @@ export const executeToolInputSchema = z.object({
     .describe('Arguments matching the schema returned by learn_tools.'),
 });
 
-export type ExecuteToolInput = z.infer<typeof executeToolInputSchema>;
+export type ExecuteToolInput = z.infer<typeof executeToolInputZodSchema>;
+
+export const executeToolInputSchema = jsonSchema<ExecuteToolInput>(
+  () => {
+    const schema = z.toJSONSchema(executeToolInputZodSchema, {
+      target: 'draft-7',
+      io: 'input',
+    }) as JSONSchema7;
+
+    schema.additionalProperties = false;
+
+    return schema;
+  },
+  {
+    validate: async (value) => {
+      const result = await z.safeParseAsync(executeToolInputZodSchema, value);
+
+      return result.success
+        ? { success: true, value: result.data }
+        : { success: false, error: result.error };
+    },
+  },
+);
 
 export type ExecuteToolResult = {
   toolName: string;
@@ -37,7 +60,7 @@ export const createExecuteToolTool = (
   inputSchema: executeToolInputSchema,
   execute: async (
     parameters: ExecuteToolInput,
-    options: ToolCallOptions,
+    options: ToolExecutionOptions,
   ): Promise<ExecuteToolResult> => {
     const { toolName, arguments: args } = parameters;
 

@@ -31,16 +31,16 @@ export const useJsonField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldJsonValue>();
 
-  const draftValue = useAtomComponentStateValue(
+  const recordFieldInputDraftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
   const precomputedDraftValue = usePrecomputedJsonDraftValue({
-    draftValue,
+    draftValue: recordFieldInputDraftValue,
   });
 
   return {
-    draftValue,
+    draftValue: recordFieldInputDraftValue,
     precomputedDraftValue,
     setDraftValue,
     maxWidth,

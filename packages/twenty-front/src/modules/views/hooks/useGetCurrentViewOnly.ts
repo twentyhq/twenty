@@ -4,14 +4,14 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 
 export const useGetCurrentViewOnly = () => {
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
   const currentView = useAtomFamilySelectorValue(
     coreViewFromViewIdFamilySelector,
     {
-      viewId: currentViewId ?? '',
+      viewId: contextStoreCurrentViewId ?? '',
     },
   );
 

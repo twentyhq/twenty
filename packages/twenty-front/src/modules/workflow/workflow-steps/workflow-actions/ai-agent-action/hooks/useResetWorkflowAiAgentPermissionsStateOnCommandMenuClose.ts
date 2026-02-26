@@ -5,18 +5,20 @@ import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/wo
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
 
 export const useResetWorkflowAiAgentPermissionsStateOnCommandMenuClose = () => {
-  const setSelectedObjectId = useSetAtomState(
+  const setWorkflowAiAgentPermissionsSelectedObjectId = useSetAtomState(
     workflowAiAgentPermissionsSelectedObjectIdState,
   );
-  const setIsAddingPermission = useSetAtomState(
+  const setWorkflowAiAgentPermissionsIsAddingPermission = useSetAtomState(
     workflowAiAgentPermissionsIsAddingPermissionState,
   );
-  const setAgentState = useSetAtomState(workflowAiAgentActionAgentState);
+  const setWorkflowAiAgentActionAgent = useSetAtomState(
+    workflowAiAgentActionAgentState,
+  );
 
   const resetPermissionState = () => {
-    setSelectedObjectId(undefined);
-    setIsAddingPermission(false);
-    setAgentState(undefined);
+    setWorkflowAiAgentPermissionsSelectedObjectId(undefined);
+    setWorkflowAiAgentPermissionsIsAddingPermission(false);
+    setWorkflowAiAgentActionAgent(undefined);
   };
 
   useListenToSidePanelClosing(resetPermissionState);

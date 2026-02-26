@@ -23,7 +23,7 @@ export const FrontComponentRenderer = ({
   const theme = useTheme();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const setApplicationTokenPair = useSetAtomComponentState(
+  const setFrontComponentApplicationTokenPair = useSetAtomComponentState(
     frontComponentApplicationTokenPairComponentState,
     frontComponentId,
   );
@@ -53,7 +53,7 @@ export const FrontComponentRenderer = ({
       const tokenPair = completedData.frontComponent?.applicationTokenPair;
 
       if (isDefined(tokenPair)) {
-        setApplicationTokenPair(tokenPair);
+        setFrontComponentApplicationTokenPair(tokenPair);
       }
     },
   });
