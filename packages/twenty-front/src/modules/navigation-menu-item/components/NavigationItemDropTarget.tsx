@@ -55,6 +55,7 @@ type NavigationItemDropTargetProps = {
   sectionId: NavigationSections;
   children?: ReactNode;
   compact?: boolean;
+  dropTargetIdOverride?: string;
 };
 
 export const NavigationItemDropTarget = ({
@@ -63,11 +64,13 @@ export const NavigationItemDropTarget = ({
   sectionId,
   children,
   compact = false,
+  dropTargetIdOverride,
 }: NavigationItemDropTargetProps) => {
   const { activeDropTargetId, forbiddenDropTargetId } = useContext(
     NavigationDropTargetContext,
   );
-  const dropTargetId = `${sectionId}-${folderId ?? 'orphan'}-${index}`;
+  const dropTargetId =
+    dropTargetIdOverride ?? `${sectionId}-${folderId ?? 'orphan'}-${index}`;
   const isDragOver = activeDropTargetId === dropTargetId;
   const isDropForbidden = forbiddenDropTargetId === dropTargetId;
 
