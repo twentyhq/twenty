@@ -14,6 +14,9 @@ Apps let you build and manage Twenty customizations **as code**. Instead of conf
 **What you can do today:**
 - Define custom objects and fields as code (managed data model)
 - Build logic functions with custom triggers
+- Build front components with custom UI, actions, and command menu items
+- Define views, navigation menu items, and page layouts
+- Define roles with granular permissions
 - Define skills for AI agents
 - Deploy the same app across multiple workspaces
 
@@ -150,6 +153,7 @@ The SDK detects entities by parsing your TypeScript files for **`export default 
 | `defineView()` | Saved view definitions |
 | `defineNavigationMenuItem()` | Navigation menu item definitions |
 | `defineSkill()` | AI agent skill definitions |
+| `definePageLayout()` | Page layout definitions |
 
 <Note>
 **File naming is flexible.** Entity detection is AST-based — the SDK scans your source files for the `export default define<Entity>({...})` pattern. You can organize your files and folders however you like. Grouping by entity type (e.g., `logic-functions/`, `roles/`) is just a convention for code organization, not a requirement.
@@ -226,6 +230,7 @@ The SDK provides helper functions for defining your app entities. As described i
 | `defineView()` | Define saved views for objects |
 | `defineNavigationMenuItem()` | Define sidebar navigation links |
 | `defineSkill()` | Define AI agent skills |
+| `definePageLayout()` | Define page layouts with tabs and widgets |
 
 These functions validate your configuration at build time and provide IDE autocompletion and type safety.
 
@@ -792,6 +797,249 @@ You can create new skills in two ways:
 
 - **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new skill.
 - **Manual**: Create a new file and use `defineSkill()`, following the same pattern.
+
+### Views
+
+Views define saved, reusable ways to display records from a specific object. Use `defineView()` to define views with built-in validation:
+
+```typescript
+// src/views/all-post-cards.view.ts
+import { defineView } from 'twenty-sdk';
+import { POST_CARD_UNIVERSAL_IDENTIFIER, CONTENT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/post-card.object';
+
+export default defineView({
+  universalIdentifier: 'b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+  name: 'All Post Cards',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: 'table',
+  icon: 'IconMail',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'bf1a2b3c-0001-4a7b-8c9d-0e1f2a3b4c5d',
+      fieldMetadataUniversalIdentifier: CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+  filters: [],
+  groups: [],
+});
+```
+
+Key points:
+- `objectUniversalIdentifier` links the view to the object it displays.
+- `fields` controls which columns are visible and their order.
+- `filters`, `filterGroups`, `groups`, and `fieldGroups` are optional for advanced filtering and grouping.
+- Views are typically paired with a navigation menu item so they appear in the sidebar.
+
+### Standalone fields
+
+Standalone fields let you extend an existing object (custom or standard) with additional fields, without modifying the object's definition file. Use `defineField()` to define standalone fields:
+
+```typescript
+// src/fields/postCardNumber.field.ts
+import { defineField, FieldType } from 'twenty-sdk';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from 'src/objects/post-card.object';
+
+export default defineField({
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
+  type: FieldType.NUMBER,
+  name: 'priority',
+  label: 'Priority',
+  description: 'Priority level for the post card (1-10)',
+});
+```
+
+You can also define relation fields to link objects together:
+
+```typescript
+// src/fields/recipient-relation.field.ts
+import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk';
+
+export default defineField({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '<source-object-uuid>',
+  type: FieldType.RELATION,
+  name: 'recipient',
+  label: 'Recipient',
+  relationTargetObjectMetadataUniversalIdentifier: '<target-object-uuid>',
+  relationTargetFieldMetadataUniversalIdentifier: '<inverse-field-uuid>',
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.CASCADE,
+    joinColumnName: 'recipientId',
+  },
+});
+```
+
+Key points:
+- `objectUniversalIdentifier` specifies which object this field extends.
+- Standalone fields are useful for extending standard objects or keeping field definitions separate from the object file.
+- The SDK exports `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` (aliased as `STANDARD_OBJECT`) with universal identifiers for all built-in objects and their fields, so you can reference them when extending standard objects.
+
+### Navigation menu items
+
+Navigation menu items add entries to the workspace sidebar. Use `defineNavigationMenuItem()` to define sidebar links:
+
+```typescript
+// src/navigation-menu-items/post-cards.navigation-menu-item.ts
+import { defineNavigationMenuItem } from 'twenty-sdk';
+import { ALL_POST_CARDS_VIEW_ID } from 'src/views/all-post-cards.view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: 'c1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+  position: 0,
+  viewUniversalIdentifier: ALL_POST_CARDS_VIEW_ID,
+});
+```
+
+Key points:
+- `viewUniversalIdentifier` links the menu item to a specific view.
+- `position` controls the ordering in the sidebar.
+- Optional properties: `name`, `icon`, `link` (for external URLs), `targetObjectUniversalIdentifier`.
+- Without a navigation menu item, your views won't appear in the sidebar — users will have no way to navigate to them.
+
+### Page layouts
+
+Page layouts define the layout structure for record detail pages. Use `definePageLayout()` to define layouts with tabs and widgets:
+
+```typescript
+// src/page-layouts/post-card-detail.page-layout.ts
+import { definePageLayout } from 'twenty-sdk';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from 'src/objects/post-card.object';
+
+export default definePageLayout({
+  universalIdentifier: 'd1e2f3a4-b5c6-7d8e-9f0a-1b2c3d4e5f6a',
+  name: 'Post Card Detail',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: 'e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b',
+      title: 'Overview',
+      position: 0,
+      icon: 'IconList',
+      widgets: [],
+    },
+  ],
+});
+```
+
+Key points:
+- `objectUniversalIdentifier` links the layout to a specific object type.
+- `tabs` define the tab structure; each tab can contain `widgets`.
+- Each widget requires a `universalIdentifier`, `title`, `type`, and `configuration`.
+- `defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier` optionally sets which tab is shown first on mobile and in the side panel.
+
+### Front component API
+
+The SDK provides hooks and utility functions for front components to interact with Twenty's UI. These are available inside components defined with `defineFrontComponent()`.
+
+#### Hooks
+
+| Hook | Return type | Description |
+|------|-------------|-------------|
+| `useFrontComponentExecutionContext(selector)` | `T` | Subscribe to the front component's execution context with a selector function. The context contains `frontComponentId` and `userId`. |
+| `useFrontComponentId()` | `string` | Get the current front component instance ID. |
+| `useUserId()` | `string \| null` | Get the current user's ID. |
+
+```typescript
+import { defineFrontComponent, useFrontComponentExecutionContext, useUserId } from 'twenty-sdk';
+
+const MyComponent = () => {
+  const userId = useUserId();
+  const fullContext = useFrontComponentExecutionContext((context) => context);
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <pre>{JSON.stringify(fullContext, null, 2)}</pre>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'my-component',
+  component: MyComponent,
+});
+```
+
+#### Utility functions
+
+| Function | Description |
+|----------|-------------|
+| `navigate(to, params?, queryParams?, options?)` | Navigate to a Twenty app path. |
+| `openSidePanelPage({ page, pageTitle, pageIcon, shouldResetSearchState? })` | Open a page in the side panel. |
+| `closeSidePanel()` | Close the side panel. |
+| `enqueueSnackbar({ message, detailedMessage?, variant, dedupeKey? })` | Show a notification toast. |
+| `unmountFrontComponent()` | Unmount the current front component. |
+
+### Action components
+
+Action components are headless components that execute a single action and then unmount themselves. They handle error reporting via snackbar notifications automatically.
+
+| Component | Props | Description |
+|-----------|-------|-------------|
+| `Action` | `execute: () => void \| Promise<void>` | Runs a custom function, then unmounts. |
+| `ActionLink` | `to`, `params?`, `queryParams?`, `options?` | Navigates to a Twenty app path, then unmounts. |
+| `ActionOpenSidePanelPage` | `page`, `pageTitle`, `pageIcon`, `onClick?`, `shouldResetSearchState?` | Opens a side panel page, then unmounts. |
+
+```typescript
+import { defineFrontComponent, Action } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/generated';
+
+const CreateTask = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+    await client.mutation({
+      createTask: { __args: { data: { title: 'New task' } }, id: true },
+    });
+  };
+
+  return <Action execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'create-task-action',
+  description: 'Creates a new task',
+  component: CreateTask,
+});
+```
+
+### Front component commands
+
+Front components can be registered as command menu items, making them accessible from Twenty's command palette. Add a `command` property to your `defineFrontComponent()` call:
+
+```typescript
+import { defineFrontComponent } from 'twenty-sdk';
+
+const QuickSearch = () => {
+  return <div>Quick search UI...</div>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'quick-search',
+  description: 'A quick search component',
+  component: QuickSearch,
+  command: {
+    universalIdentifier: '...',
+    label: 'Quick Search',
+    icon: 'IconSearch',
+    isPinned: true,
+  },
+});
+```
+
+Key points:
+- `label` is displayed in the command menu.
+- `isPinned` keeps the command visible at the top of the command palette.
+- `availabilityType` can be `'GLOBAL'`, `'SINGLE_RECORD'`, or `'BULK_RECORDS'` to control when the command is available.
+- `availabilityObjectUniversalIdentifier` restricts the command to a specific object type when using record-level availability.
 
 ### Generated typed clients
 
