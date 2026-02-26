@@ -26,13 +26,24 @@ export class AgentProfileResolverService {
     workspaceId: string,
     workspaceMemberId: string,
   ): Promise<string | null> {
-    const agentObjectMetadata = await this.objectMetadataRepository.findOne({
+    // Try both 'agentProfile' (production) and 'agent' (future migration)
+    let agentObjectMetadata = await this.objectMetadataRepository.findOne({
       where: {
-        nameSingular: 'agent',
+        nameSingular: 'agentProfile',
         workspaceId,
         isActive: true,
       },
     });
+
+    if (!isDefined(agentObjectMetadata)) {
+      agentObjectMetadata = await this.objectMetadataRepository.findOne({
+        where: {
+          nameSingular: 'agent',
+          workspaceId,
+          isActive: true,
+        },
+      });
+    }
 
     if (!isDefined(agentObjectMetadata)) {
       this.logger.warn(
