@@ -27,7 +27,22 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput';
+import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
+
+const personMetadata = getMockObjectMetadataItemOrThrow('person');
+const companyMetadata = getMockObjectMetadataItemOrThrow('company');
+const companyFieldOnPerson = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: personMetadata,
+  fieldName: 'company',
+});
+const peopleFieldOnCompany = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyMetadata,
+  fieldName: 'people',
+});
+const companiesMock = getCompaniesMock();
 
 const RelationWorkspaceSetterEffect = () => {
   const setRecordFieldInputLayoutDirectionLoading = useSetAtomComponentState(
@@ -75,7 +90,7 @@ const RelationManyToOneFieldInputWithContext = ({
       <FieldContext.Provider
         value={{
           fieldDefinition: {
-            fieldMetadataId: 'f6be42ac-ccb8-4df0-8c22-a9627d655c76',
+            fieldMetadataId: companyFieldOnPerson.id,
             label: 'Company',
             type: FieldMetadataType.RELATION,
             iconName: 'IconLink',
@@ -84,9 +99,9 @@ const RelationManyToOneFieldInputWithContext = ({
               relationObjectMetadataNamePlural: 'companies',
               relationObjectMetadataNameSingular:
                 CoreObjectNameSingular.Company,
-              relationObjectMetadataId: '69e0aa5d-a9c5-486b-a99d-fe191195a19d',
+              relationObjectMetadataId: companyMetadata.id,
               objectMetadataNameSingular: 'person',
-              relationFieldMetadataId: '94902a74-b8ca-4a56-8573-7469f0b664f6',
+              relationFieldMetadataId: peopleFieldOnCompany.id,
             },
           },
           recordId: recordId,
@@ -154,7 +169,7 @@ export const Submit: Story = {
 
     expect(handleSubmitMocked).toHaveBeenCalledTimes(0);
 
-    const item = await canvas.findByText('Linkedin', undefined, {
+    const item = await canvas.findByText(companiesMock[0].name, undefined, {
       timeout: 3000,
     });
 
@@ -171,7 +186,9 @@ export const Cancel: Story = {
     const canvas = within(canvasElement);
 
     expect(handleCancelMocked).toHaveBeenCalledTimes(0);
-    await canvas.findByText('Linkedin', undefined, { timeout: 3000 });
+    await canvas.findByText(companiesMock[0].name, undefined, {
+      timeout: 3000,
+    });
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
 
