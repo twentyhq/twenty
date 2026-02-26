@@ -60,7 +60,6 @@ const getPrivateKey = (): string => {
   return key.replace(/\\n/g, '\n');
 };
 
-// Base64url encode
 const base64UrlEncode = (data: string): string => {
   return Buffer.from(data)
     .toString('base64')
@@ -69,7 +68,6 @@ const base64UrlEncode = (data: string): string => {
     .replace(/=+$/, '');
 };
 
-// Base64url decode
 const base64UrlDecode = (data: string): string => {
   const padded = data + '='.repeat((4 - (data.length % 4)) % 4);
   const base64 = padded.replace(/-/g, '+').replace(/_/g, '/');
