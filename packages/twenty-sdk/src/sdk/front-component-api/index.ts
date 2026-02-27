@@ -18,4 +18,3 @@ export { EVENT_TO_REACT } from './constants/EventToReact';
 export { HTML_COMMON_PROPERTIES } from './constants/HtmlCommonProperties';
 export { HTML_TAG_TO_REMOTE_COMPONENT } from './constants/HtmlTagToRemoteComponent';
 export type { SerializedEventData } from './constants/SerializedEventData';
-

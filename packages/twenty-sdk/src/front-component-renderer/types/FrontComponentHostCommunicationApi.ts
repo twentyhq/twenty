@@ -4,7 +4,7 @@ import {
   type NavigateFunction,
   type OpenSidePanelPageFunction,
   type RequestAccessTokenRefreshFunction,
-  type UnmountFrontComponentFunction
+  type UnmountFrontComponentFunction,
 } from '../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 
 export type FrontComponentHostCommunicationApi = {

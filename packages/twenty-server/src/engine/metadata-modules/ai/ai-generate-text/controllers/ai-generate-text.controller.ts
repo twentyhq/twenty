@@ -1,10 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, UseFilters, UseGuards } from '@nestjs/common';
 
 import { generateText } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
