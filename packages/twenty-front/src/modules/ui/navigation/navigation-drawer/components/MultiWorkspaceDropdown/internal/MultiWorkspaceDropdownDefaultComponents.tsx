@@ -18,7 +18,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
-import { multiWorkspaceDropdownStateV2 } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownStateV2';
+import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type ApolloError } from '@apollo/client';
@@ -75,8 +75,8 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
 
   const [signUpInNewWorkspaceMutation] = useSignUpInNewWorkspaceMutation();
 
-  const setMultiWorkspaceDropdownState = useSetAtomState(
-    multiWorkspaceDropdownStateV2,
+  const setMultiWorkspaceDropdown = useSetAtomState(
+    multiWorkspaceDropdownState,
   );
 
   const handleSupport = () => {
@@ -195,9 +195,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
               <MenuItem
                 LeftIcon={IconSwitchHorizontal}
                 text={t`Other workspaces`}
-                onClick={() =>
-                  setMultiWorkspaceDropdownState('workspaces-list')
-                }
+                onClick={() => setMultiWorkspaceDropdown('workspaces-list')}
                 hasSubMenu={true}
               />
             )}
@@ -215,7 +213,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             </>
           }
           hasSubMenu={true}
-          onClick={() => setMultiWorkspaceDropdownState('themes')}
+          onClick={() => setMultiWorkspaceDropdown('themes')}
         />
         <UndecoratedLink
           to={getSettingsPath(SettingsPath.WorkspaceMembersPage)}

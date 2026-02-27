@@ -8,7 +8,7 @@ import { INFORMATION_BANNER_HEIGHT } from '@/information-banner/constants/Inform
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import styled from '@emotion/styled';
@@ -48,7 +48,7 @@ export const CommandMenuRecordPage = () => {
   );
 
   const recordDeletedAt = useAtomFamilySelectorValue(
-    recordStoreFamilySelectorV2,
+    recordStoreFamilySelector,
     {
       recordId: objectRecordId,
       fieldName: 'deletedAt',

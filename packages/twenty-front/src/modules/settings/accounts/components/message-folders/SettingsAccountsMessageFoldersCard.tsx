@@ -9,7 +9,7 @@ import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/m
 import { computeFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/computeFolderIdsForSyncToggle';
 import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
 import { useUpdateMessageFoldersSyncStatus } from '@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus';
-import { settingsAccountsSelectedMessageChannelStateV2 } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelStateV2';
+import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -73,7 +73,7 @@ export const SettingsAccountsMessageFoldersCard = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const settingsAccountsSelectedMessageChannel = useAtomStateValue(
-    settingsAccountsSelectedMessageChannelStateV2,
+    settingsAccountsSelectedMessageChannelState,
   );
 
   const { updateMessageFoldersSyncStatus } =

@@ -21,7 +21,7 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
     recordBoardIndexId,
   );
 
-  const groupByFieldMetadataItem = useAtomComponentStateValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
     recordBoardIndexId,
   );
@@ -46,7 +46,7 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
     ) as string[];
 
     if (
-      !isDefined(groupByFieldMetadataItem) ||
+      !isDefined(recordIndexGroupFieldMetadataItem) ||
       !isNonEmptyArray(recordGroupDefinitions) ||
       !isNonEmptyArray(deletedRecordIds)
     ) {
@@ -86,7 +86,7 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
     resetRecordBoardSelection();
   }, [
     store,
-    groupByFieldMetadataItem,
+    recordIndexGroupFieldMetadataItem,
     recordIndexRecordIdsByGroupCallbackState,
     recordGroupDefinitions,
     recordBoardSelectedRecordIds,

@@ -31,12 +31,11 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const [recordGroupSort, setRecordGroupSort] = useAtomComponentState(
-    recordIndexRecordGroupSortComponentState,
-  );
+  const [recordIndexRecordGroupSort, setRecordIndexRecordGroupSort] =
+    useAtomComponentState(recordIndexRecordGroupSortComponentState);
 
   const handleRecordGroupSortChange = (sort: RecordGroupSort) => {
-    setRecordGroupSort(sort);
+    setRecordIndexRecordGroupSort(sort);
   };
 
   const selectedItemId = useAtomComponentStateValue(
@@ -87,7 +86,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               }
               LeftIcon={IconHandMove}
               text={RecordGroupSort.Manual}
-              selected={recordGroupSort === RecordGroupSort.Manual}
+              selected={recordIndexRecordGroupSort === RecordGroupSort.Manual}
               focused={selectedItemId === RecordGroupSort.Manual}
             />
           </SelectableListItem>
@@ -103,7 +102,9 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               }
               LeftIcon={IconSortAZ}
               text={RecordGroupSort.Alphabetical}
-              selected={recordGroupSort === RecordGroupSort.Alphabetical}
+              selected={
+                recordIndexRecordGroupSort === RecordGroupSort.Alphabetical
+              }
               focused={selectedItemId === RecordGroupSort.Alphabetical}
             />
           </SelectableListItem>
@@ -119,7 +120,10 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
               }
               LeftIcon={IconSortZA}
               text={RecordGroupSort.ReverseAlphabetical}
-              selected={recordGroupSort === RecordGroupSort.ReverseAlphabetical}
+              selected={
+                recordIndexRecordGroupSort ===
+                RecordGroupSort.ReverseAlphabetical
+              }
               focused={selectedItemId === RecordGroupSort.ReverseAlphabetical}
             />
           </SelectableListItem>

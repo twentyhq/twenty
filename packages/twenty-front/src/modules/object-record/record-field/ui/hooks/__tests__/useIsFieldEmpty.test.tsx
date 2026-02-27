@@ -1,7 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { phonesFieldDefinition } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -22,7 +21,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
         isRecordFieldReadOnly: false,
       }}
     >
-      <RecoilRoot>{children}</RecoilRoot>
+      {children}
     </FieldContext.Provider>
   </JotaiProvider>
 );
@@ -31,12 +30,12 @@ describe('useIsFieldEmpty', () => {
   it('should work as expected', () => {
     const { result } = renderHook(
       () => {
-        const setFieldState = useSetAtomFamilyState(
+        const setRecordStore = useSetAtomFamilyState(
           recordStoreFamilyState,
           recordId,
         );
         return {
-          setFieldState,
+          setRecordStore,
           isFieldEditModeValueEmpty: useIsFieldEmpty(),
         };
       },
@@ -48,7 +47,7 @@ describe('useIsFieldEmpty', () => {
     expect(result.current.isFieldEditModeValueEmpty).toBe(true);
 
     act(() => {
-      result.current.setFieldState({
+      result.current.setRecordStore({
         id: 'id',
         phone: '+1 233223',
         __typename: 'Person',

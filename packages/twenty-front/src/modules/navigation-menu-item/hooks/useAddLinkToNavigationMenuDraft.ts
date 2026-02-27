@@ -2,14 +2,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/utils/computeInsertIndexAndPosition';
 import { normalizeUrl } from '@/navigation-menu-item/utils/normalizeUrl';
 
 export const useAddLinkToNavigationMenuDraft = () => {
   const setNavigationMenuItemsDraft = useSetAtomState(
-    navigationMenuItemsDraftStateV2,
+    navigationMenuItemsDraftState,
   );
 
   const addLinkToDraft = (

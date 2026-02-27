@@ -36,7 +36,7 @@ import { type View } from '@/views/types/View';
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedViewFieldsData } from '~/testing/mock-data/view-fields';
 import { mockedViewsData } from '~/testing/mock-data/views';
 
@@ -74,7 +74,7 @@ const InternalTableStateLoaderEffect = ({
   useEffect(() => {
     loadRecordIndexStates(view, objectMetadataItem);
     setRecordTableData({
-      records: getCompaniesMock(),
+      records: [...mockedCompanyRecords],
     });
     const recordFields = view.viewFields
       .map(mapViewFieldToRecordField)

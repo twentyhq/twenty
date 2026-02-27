@@ -14,7 +14,7 @@ import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/Obj
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
-import { addMenuItemInsertionContextStateV2 } from '@/navigation-menu-item/states/addMenuItemInsertionContextStateV2';
+import { addMenuItemInsertionContextState } from '@/navigation-menu-item/states/addMenuItemInsertionContextState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -38,10 +38,10 @@ export const CommandMenuNewSidebarItemViewPickerSubView = ({
   const { addViewToDraft } = useAddViewToNavigationMenuDraft();
   const { currentDraft } = useDraftNavigationMenuItems();
   const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextStateV2,
+    addMenuItemInsertionContextState,
   );
   const setAddMenuItemInsertionContext = useSetAtomState(
-    addMenuItemInsertionContextStateV2,
+    addMenuItemInsertionContextState,
   );
   const { objectMetadataItems } = useObjectMetadataItems();
   const { views } = useNavigationMenuObjectMetadataFromDraft(currentDraft);

@@ -37,18 +37,21 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const setIsPrefetchFavoritesLoaded = useSetAtomFamilyState(
+  const setPrefetchIsLoaded = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavorites,
   );
 
-  const setIsPrefetchFavoritesFoldersLoaded = useSetAtomFamilyState(
+  // eslint-disable-next-line twenty/matching-state-variable
+  const setPrefetchIsLoadedFolders = useSetAtomFamilyState(
     prefetchIsLoadedFamilyState,
     PrefetchKey.AllFavoritesFolders,
   );
 
-  const setFavoritesState = useSetAtomState(prefetchFavoritesState);
-  const setFavoriteFoldersState = useSetAtomState(prefetchFavoriteFoldersState);
+  const setPrefetchFavorites = useSetAtomState(prefetchFavoritesState);
+  const setPrefetchFavoriteFolders = useSetAtomState(
+    prefetchFavoriteFoldersState,
+  );
 
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({
@@ -90,10 +93,10 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
     (newFavorites: Favorite[]) => {
       const existingFavorites = store.get(prefetchFavoritesState.atom);
       if (!isDeeplyEqual(existingFavorites, newFavorites)) {
-        setFavoritesState(newFavorites);
+        setPrefetchFavorites(newFavorites);
       }
     },
-    [setFavoritesState, store],
+    [setPrefetchFavorites, store],
   );
 
   const setPrefetchFavoriteFoldersStateIfChanged = useCallback(
@@ -102,34 +105,30 @@ export const PrefetchRunFavoriteQueriesEffect = () => {
         prefetchFavoriteFoldersState.atom,
       );
       if (!isDeeplyEqual(existingFavoriteFolders, newFavoriteFolders)) {
-        setFavoriteFoldersState(newFavoriteFolders);
+        setPrefetchFavoriteFolders(newFavoriteFolders);
       }
     },
-    [setFavoriteFoldersState, store],
+    [setPrefetchFavoriteFolders, store],
   );
 
   useEffect(() => {
     if (isDefined(favorites)) {
       setPrefetchFavoritesStateIfChanged(favorites as Favorite[]);
-      setIsPrefetchFavoritesLoaded(true);
+      setPrefetchIsLoaded(true);
     }
-  }, [
-    favorites,
-    setPrefetchFavoritesStateIfChanged,
-    setIsPrefetchFavoritesLoaded,
-  ]);
+  }, [favorites, setPrefetchFavoritesStateIfChanged, setPrefetchIsLoaded]);
 
   useEffect(() => {
     if (isDefined(favoriteFolders)) {
       setPrefetchFavoriteFoldersStateIfChanged(
         favoriteFolders as FavoriteFolder[],
       );
-      setIsPrefetchFavoritesFoldersLoaded(true);
+      setPrefetchIsLoadedFolders(true);
     }
   }, [
     favoriteFolders,
     setPrefetchFavoriteFoldersStateIfChanged,
-    setIsPrefetchFavoritesFoldersLoaded,
+    setPrefetchIsLoadedFolders,
   ]);
 
   return <></>;

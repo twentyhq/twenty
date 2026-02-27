@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
-import { type FamilyStateV2 } from '@/ui/utilities/state/jotai/types/FamilyStateV2';
+import { type FamilyState } from '@/ui/utilities/state/jotai/types/FamilyState';
 
 export const createAtomFamilyState = <ValueType, FamilyKey>({
   key,
@@ -11,15 +11,15 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
   key: string;
   defaultValue: ValueType;
   useLocalStorage?: boolean;
-}): FamilyStateV2<ValueType, FamilyKey> => {
+}): FamilyState<ValueType, FamilyKey> => {
   const atomCache = new Map<
     string,
-    ReturnType<FamilyStateV2<ValueType, FamilyKey>['atomFamily']>
+    ReturnType<FamilyState<ValueType, FamilyKey>['atomFamily']>
   >();
 
   const familyFunction = (
     familyKey: FamilyKey,
-  ): ReturnType<FamilyStateV2<ValueType, FamilyKey>['atomFamily']> => {
+  ): ReturnType<FamilyState<ValueType, FamilyKey>['atomFamily']> => {
     const cacheKey =
       typeof familyKey === 'string' ? familyKey : JSON.stringify(familyKey);
 
@@ -40,7 +40,7 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
   };
 
   return Object.assign(familyFunction, {
-    type: 'FamilyStateV2' as const,
+    type: 'FamilyState' as const,
     key,
     atomFamily: familyFunction,
   });

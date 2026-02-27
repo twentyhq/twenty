@@ -25,7 +25,7 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
 }: PageLayoutRelationWidgetsSyncEffectProps) => {
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
-  const isInitialized = useAtomComponentStateValue(
+  const pageLayoutIsInitialized = useAtomComponentStateValue(
     pageLayoutIsInitializedComponentState,
   );
 
@@ -75,7 +75,7 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
   );
 
   useEffect(() => {
-    if (!isInitialized) {
+    if (!pageLayoutIsInitialized) {
       return;
     }
 
@@ -97,7 +97,7 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
   }, [
     basePageLayout,
     boxedRelationFieldMetadataItems,
-    isInitialized,
+    pageLayoutIsInitialized,
     layoutType,
     syncPageLayoutWithRelationWidgets,
   ]);

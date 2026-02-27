@@ -1,6 +1,6 @@
 import { CommandMenuOpenContainer } from '@/command-menu/components/CommandMenuOpenContainer';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import styled from '@emotion/styled';
 
@@ -13,7 +13,7 @@ const StyledCommandMenuMobileFullScreenContainer = styled.div`
 `;
 
 export const CommandMenuForMobile = () => {
-  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedStateV2);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
 
   return (
     <AnimatePresence>

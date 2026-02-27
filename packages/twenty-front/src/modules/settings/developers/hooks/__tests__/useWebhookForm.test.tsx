@@ -2,7 +2,6 @@ import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
 
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { CREATE_WEBHOOK } from '@/settings/developers/graphql/mutations/createWebhook';
@@ -125,9 +124,7 @@ const Wrapper = ({
   mocks?: any[];
 }) => (
   <MockedProvider mocks={mocks} addTypename={false}>
-    <RecoilRoot>
-      <MemoryRouter>{children}</MemoryRouter>
-    </RecoilRoot>
+    <MemoryRouter>{children}</MemoryRouter>
   </MockedProvider>
 );
 

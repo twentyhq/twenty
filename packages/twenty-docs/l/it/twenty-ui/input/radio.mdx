@@ -10,50 +10,58 @@ image: /images/user-guide/create-workspace/workspace-cover.png
 Utilizzato quando gli utenti possono scegliere solo un'opzione da una serie di opzioni.
 
 <Tabs>
-  <Tab title="Utilizzo">
-    ```jsx
-    import { Radio } from "twenty-ui/display";
+<Tab title="Utilizzo">
 
-    export const MyComponent = () => {
+```jsx
+import { Radio } from "twenty-ui/display";
 
-      const handleRadioChange = (event) => {
-        console.log("Radio button changed:", event.target.checked);
-      };
+export const MyComponent = () => {
 
-      const handleCheckedChange = (checked) => {
-        console.log("Checked state changed:", checked);
-      };
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
 
 
-      return (
-        <Radio
-          checked={true}
-          value="Option 1"
-          onChange={handleRadioChange}
-          onCheckedChange={handleCheckedChange}
-          size="large"
-          disabled={false}
-          labelPosition="right"
-        />
-      );
-    };
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
 
-    ```
-  </Tab>
+```
 
-  <Tab title="Props">
-    | Props              | Tipo                  | Descrizione                                                                                                  |
-    | ------------------ | --------------------- | ------------------------------------------------------------------------------------------------------------ |
-    | stile              | proprietà `React.CSS` | Stili inline aggiuntivi per il componente                                                                    |
-    | nomeClasse         | stringa               | Classe CSS opzionale per uno stile aggiuntivo                                                                |
-    | selezionato        | booleano              | Indica se il pulsante di opzione è selezionato                                                               |
-    | valore             | stringa               | L'etichetta o il testo associato al pulsante di opzione                                                      |
-    | onChange           | funzione              | La funzione chiamata quando il pulsante di opzione selezionato cambia                                        |
-    | onCheckedChange    | funzione              | La funzione chiamata quando cambia lo stato `selezionato` del pulsante di opzione                            |
-    | dimensione         | stringa               | La dimensione del pulsante di opzione. Le opzioni includono: `grande` e `piccolo`                            |
-    | disabilitato       | booleano              | Se `true`, il pulsante di opzione è disabilitato e non cliccabile                                            |
-    | posizioneEtichetta | stringa               | La posizione del testo dell'etichetta rispetto al pulsante di opzione. Ha due opzioni: `sinistra` e `destra` |
-  </Tab>
+
+</Tab>
+<Tab title="Props">
+
+
+| Props              | Tipo                  | Descrizione                                                                                                  |
+| ------------------ | --------------------- | ------------------------------------------------------------------------------------------------------------ |
+| stile              | proprietà `React.CSS` | Stili inline aggiuntivi per il componente                                                                    |
+| nomeClasse         | stringa               | Classe CSS opzionale per uno stile aggiuntivo                                                                |
+| selezionato        | booleano              | Indica se il pulsante di opzione è selezionato                                                               |
+| valore             | stringa               | L'etichetta o il testo associato al pulsante di opzione                                                      |
+| onChange           | funzione              | La funzione chiamata quando il pulsante di opzione selezionato cambia                                        |
+| onCheckedChange    | funzione              | La funzione chiamata quando cambia lo stato `selezionato` del pulsante di opzione                            |
+| dimensione         | stringa               | La dimensione del pulsante di opzione. Le opzioni includono: `grande` e `piccolo`                            |
+| disabilitato       | booleano              | Se `true`, il pulsante di opzione è disabilitato e non cliccabile                                            |
+| posizioneEtichetta | stringa               | La posizione del testo dell'etichetta rispetto al pulsante di opzione. Ha due opzioni: `sinistra` e `destra` |
+
+
+
+
+</Tab>
 </Tabs>
 
 ## Gruppo di Radio
@@ -61,37 +69,45 @@ Utilizzato quando gli utenti possono scegliere solo un'opzione da una serie di o
 Raggruppa insieme pulsanti di opzione correlati.
 
 <Tabs>
-  <Tab title="Utilizzo">
-    ```jsx
-    import React, { useState } from "react";
-    import { Radio, RadioGroup } from "twenty-ui/display";
+<Tab title="Utilizzo">
 
-    export const MyComponent = () => {
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
 
-      const [selectedValue, setSelectedValue] = useState("Option 1");
+export const MyComponent = () => {
 
-      const handleChange = (event) => {
-        setSelectedValue(event.target.value);
-      };
-      
-      return (
-        <RadioGroup value={selectedValue} onChange={handleChange}>
-          <Radio value="Option 1" />
-          <Radio value="Option 2" />
-          <Radio value="Option 3" />
-        </RadioGroup>
-      );
-    };
+  const [selectedValue, setSelectedValue] = useState("Option 1");
 
-    ```
-  </Tab>
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
 
-  <Tab title="Proprietà">
-    | Proprietà     | Tipo              | Descrizione                                                                      |
-    | ------------- | ----------------- | -------------------------------------------------------------------------------- |
-    | valore        | stringa           | Il valore del pulsante di opzione attualmente selezionato                        |
-    | onChange      | funzione          | La funzione di callback attivata quando il pulsante di opzione cambia            |
-    | onValueChange | funzione          | La funzione di callback attivata quando cambia il valore selezionato nel gruppo. |
-    | figli         | `React.ReactNode` | Consente di passare componenti React (come Radio) come figli al Gruppo di Radio  |
-  </Tab>
+```
+
+</Tab>
+<Tab title="Proprietà">
+
+
+| Proprietà     | Tipo              | Descrizione                                                                      |
+| ------------- | ----------------- | -------------------------------------------------------------------------------- |
+| valore        | stringa           | Il valore del pulsante di opzione attualmente selezionato                        |
+| onChange      | funzione          | La funzione di callback attivata quando il pulsante di opzione cambia            |
+| onValueChange | funzione          | La funzione di callback attivata quando cambia il valore selezionato nel gruppo. |
+| figli         | `React.ReactNode` | Consente di passare componenti React (come Radio) come figli al Gruppo di Radio  |
+
+
+
+
+</Tab>
+
 </Tabs>

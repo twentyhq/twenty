@@ -90,7 +90,7 @@ npx nx run twenty-front:graphql:generate --configuration=metadata
 ## Architecture Overview
 
 ### Tech Stack
-- **Frontend**: React 18, TypeScript, Recoil (state management), Emotion (styling), Vite
+- **Frontend**: React 18, TypeScript, Jotai (state management), Emotion (styling), Vite
 - **Backend**: NestJS, TypeORM, PostgreSQL, Redis, GraphQL (with GraphQL Yoga)
 - **Monorepo**: Nx workspace managed with Yarn 4
 
@@ -138,7 +138,7 @@ packages/
 - Multi-line comments use multiple `//` lines, not `/** */`
 
 ### State Management
-- **Recoil** for global state: atoms for primitive state, selectors for derived state, atom families for dynamic collections
+- **Jotai** for global state: atoms for primitive state, selectors for derived state, atom families for dynamic collections
 - Component-specific state with React hooks (`useState`, `useReducer` for complex logic)
 - GraphQL cache managed by Apollo Client
 - Use functional state updates: `setState(prev => prev + 1)`

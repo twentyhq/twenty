@@ -5,9 +5,9 @@ import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permi
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { workflowAiAgentActionAgentStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentStateV2';
-import { workflowAiAgentPermissionsIsAddingPermissionStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionStateV2';
-import { workflowAiAgentPermissionsSelectedObjectIdStateV2 } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdStateV2';
+import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
+import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
+import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -37,7 +37,7 @@ export const useWorkflowAiAgentPermissionActions = ({
 }: UseWorkflowAiAgentPermissionActionsParams) => {
   const { enqueueSuccessSnackBar } = useSnackBar();
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
-    useAtomState(workflowAiAgentActionAgentStateV2);
+    useAtomState(workflowAiAgentActionAgentState);
   const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
   const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig({
@@ -48,10 +48,10 @@ export const useWorkflowAiAgentPermissionActions = ({
   });
 
   const [, setWorkflowAiAgentPermissionsSelectedObjectId] = useAtomState(
-    workflowAiAgentPermissionsSelectedObjectIdStateV2,
+    workflowAiAgentPermissionsSelectedObjectIdState,
   );
   const [, setWorkflowAiAgentPermissionsIsAddingPermission] = useAtomState(
-    workflowAiAgentPermissionsIsAddingPermissionStateV2,
+    workflowAiAgentPermissionsIsAddingPermissionState,
   );
 
   const [createRole] = useCreateOneRoleMutation();
@@ -118,7 +118,7 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     const { refetchedAgent } = await refetchAgentAndRoles();
 
-    // Update Recoil state with the refetched agent to ensure roleId is available
+    // Update state with the refetched agent to ensure roleId is available
     // Apollo's onCompleted is not called on refetch, so we need to update manually
     if (isDefined(refetchedAgent)) {
       setWorkflowAiAgentActionAgent(refetchedAgent);

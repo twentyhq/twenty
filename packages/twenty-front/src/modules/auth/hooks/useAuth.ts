@@ -1,6 +1,5 @@
 import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
-import { snapshot_UNSTABLE, useGotoRecoilSnapshot } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -113,8 +112,6 @@ export const useAuth = () => {
 
   const client = useApolloClient();
 
-  const goToRecoilSnapshot = useGotoRecoilSnapshot();
-
   const [, setSearchParams] = useSearchParams();
 
   const navigate = useNavigate();
@@ -123,8 +120,6 @@ export const useAuth = () => {
     const sseClient = store.get(sseClientState.atom);
 
     sseClient?.dispose();
-
-    const emptySnapshot = snapshot_UNSTABLE();
 
     const authProvidersValue = store.get(workspaceAuthProvidersState.atom);
     const domainConfigurationValue = store.get(domainConfigurationState.atom);
@@ -136,14 +131,8 @@ export const useAuth = () => {
       isCaptchaScriptLoadedState.atom,
     );
 
-    const initialSnapshot = emptySnapshot.map(() => {
-      return undefined;
-    });
-
     sessionStorage.clear();
     localStorage.clear();
-
-    goToRecoilSnapshot(initialSnapshot);
 
     store.set(workspaceAuthProvidersState.atom, authProvidersValue);
     store.set(workspacePublicDataState.atom, workspacePublicDataValue);
@@ -151,8 +140,6 @@ export const useAuth = () => {
     store.set(isCaptchaScriptLoadedState.atom, isCaptchaScriptLoadedValue);
     store.set(lastAuthenticatedMethodState.atom, lastAuthenticatedMethod);
 
-    // Reset user-data Jotai states that were migrated from Recoil
-    // (Recoil snapshot reset no longer handles these since they are Jotai V2)
     store.set(tokenPairState.atom, null);
     store.set(currentUserState.atom, null);
     store.set(currentWorkspaceState.atom, null);
@@ -172,7 +159,6 @@ export const useAuth = () => {
     await resetToMockedMetadata();
     navigate(AppPath.SignInUp);
   }, [
-    goToRecoilSnapshot,
     client,
     setLastAuthenticateWorkspaceDomain,
     resetToMockedMetadata,

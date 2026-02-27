@@ -16,25 +16,24 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
-
-const mockCopyContextStoreStates = jest.fn();
-jest.mock(
-  '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates',
-  () => ({
-    useCopyContextStoreStates: () => ({
-      copyContextStoreStates: mockCopyContextStoreStates,
-    }),
-  }),
-);
 
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
 )!;
 
-const peopleMock = getPeopleRecordConnectionMock();
+const peopleMock = [...mockedPersonRecords];
+
+jotaiStore.set(
+  recordStoreFamilyState.atomFamily(peopleMock[0].id),
+  peopleMock[0],
+);
+jotaiStore.set(
+  recordStoreFamilyState.atomFamily(peopleMock[1].id),
+  peopleMock[1],
+);
 
 const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   apolloMocks: [],
@@ -48,16 +47,6 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   },
   contextStoreNumberOfSelectedRecords: 2,
   contextStoreCurrentViewType: ContextStoreViewType.Table,
-  onInitializeRecoilSnapshot: (_snapshot) => {
-    jotaiStore.set(
-      recordStoreFamilyState.atomFamily(peopleMock[0].id),
-      peopleMock[0],
-    );
-    jotaiStore.set(
-      recordStoreFamilyState.atomFamily(peopleMock[1].id),
-      peopleMock[1],
-    );
-  },
 });
 
 describe('useSetGlobalCommandMenuContext', () => {
@@ -71,44 +60,44 @@ describe('useSetGlobalCommandMenuContext', () => {
         const { setGlobalCommandMenuContext } =
           useSetGlobalCommandMenuContext();
 
-        const targetedRecordsRule = useAtomComponentStateValue(
+        const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
           contextStoreTargetedRecordsRuleComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const numberOfSelectedRecords = useAtomComponentStateValue(
+        const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
           contextStoreNumberOfSelectedRecordsComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const filters = useAtomComponentStateValue(
+        const contextStoreFilters = useAtomComponentStateValue(
           contextStoreFiltersComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const filterGroups = useAtomComponentStateValue(
+        const contextStoreFilterGroups = useAtomComponentStateValue(
           contextStoreFilterGroupsComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const anyFieldFilterValue = useAtomComponentStateValue(
+        const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
           contextStoreAnyFieldFilterValueComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
-        const currentViewType = useAtomComponentStateValue(
+        const contextStoreCurrentViewType = useAtomComponentStateValue(
           contextStoreCurrentViewTypeComponentState,
           COMMAND_MENU_COMPONENT_INSTANCE_ID,
         );
 
         return {
           setGlobalCommandMenuContext,
-          targetedRecordsRule,
-          numberOfSelectedRecords,
-          filters,
-          filterGroups,
-          currentViewType,
-          anyFieldFilterValue,
+          contextStoreTargetedRecordsRule,
+          contextStoreNumberOfSelectedRecords,
+          contextStoreFilters,
+          contextStoreFilterGroups,
+          contextStoreCurrentViewType,
+          contextStoreAnyFieldFilterValue,
         };
       },
       {
@@ -116,14 +105,16 @@ describe('useSetGlobalCommandMenuContext', () => {
       },
     );
 
-    expect(result.current.targetedRecordsRule).toEqual({
+    expect(result.current.contextStoreTargetedRecordsRule).toEqual({
       mode: 'selection',
       selectedRecordIds: [peopleMock[0].id, peopleMock[1].id],
     });
-    expect(result.current.numberOfSelectedRecords).toBe(2);
-    expect(result.current.filters).toEqual([]);
-    expect(result.current.anyFieldFilterValue).toEqual('');
-    expect(result.current.currentViewType).toBe(ContextStoreViewType.Table);
+    expect(result.current.contextStoreNumberOfSelectedRecords).toBe(2);
+    expect(result.current.contextStoreFilters).toEqual([]);
+    expect(result.current.contextStoreAnyFieldFilterValue).toEqual('');
+    expect(result.current.contextStoreCurrentViewType).toBe(
+      ContextStoreViewType.Table,
+    );
     const commandMenuPageInfo = jotaiStore.get(commandMenuPageInfoState.atom);
     expect(commandMenuPageInfo).toEqual({
       title: undefined,
@@ -139,14 +130,16 @@ describe('useSetGlobalCommandMenuContext', () => {
       result.current.setGlobalCommandMenuContext();
     });
 
-    expect(result.current.targetedRecordsRule).toEqual({
+    expect(result.current.contextStoreTargetedRecordsRule).toEqual({
       mode: 'selection',
       selectedRecordIds: [],
     });
-    expect(result.current.numberOfSelectedRecords).toBe(0);
-    expect(result.current.filters).toEqual([]);
-    expect(result.current.anyFieldFilterValue).toEqual('');
-    expect(result.current.currentViewType).toBe(ContextStoreViewType.Table);
+    expect(result.current.contextStoreNumberOfSelectedRecords).toBe(0);
+    expect(result.current.contextStoreFilters).toEqual([]);
+    expect(result.current.contextStoreAnyFieldFilterValue).toEqual('');
+    expect(result.current.contextStoreCurrentViewType).toBe(
+      ContextStoreViewType.Table,
+    );
     const commandMenuPageInfoAfter = jotaiStore.get(
       commandMenuPageInfoState.atom,
     );
@@ -161,18 +154,43 @@ describe('useSetGlobalCommandMenuContext', () => {
     expect(hasUserSelectedCommandAfter).toBe(false);
   });
 
-  it('should call copyContextStoreStates with correct parameters', () => {
-    const { result } = renderHook(() => useSetGlobalCommandMenuContext(), {
-      wrapper,
-    });
+  it('should copy context store states to previous instance before resetting', () => {
+    const { result } = renderHook(
+      () => {
+        const { setGlobalCommandMenuContext } =
+          useSetGlobalCommandMenuContext();
+
+        // eslint-disable-next-line twenty/matching-state-variable
+        const previousTargetedRecordsRule = useAtomComponentStateValue(
+          contextStoreTargetedRecordsRuleComponentState,
+          COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID,
+        );
+
+        // eslint-disable-next-line twenty/matching-state-variable
+        const previousNumberOfSelectedRecords = useAtomComponentStateValue(
+          contextStoreNumberOfSelectedRecordsComponentState,
+          COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID,
+        );
+
+        return {
+          setGlobalCommandMenuContext,
+          previousTargetedRecordsRule,
+          previousNumberOfSelectedRecords,
+        };
+      },
+      {
+        wrapper,
+      },
+    );
 
     act(() => {
       result.current.setGlobalCommandMenuContext();
     });
 
-    expect(mockCopyContextStoreStates).toHaveBeenCalledWith({
-      instanceIdToCopyFrom: COMMAND_MENU_COMPONENT_INSTANCE_ID,
-      instanceIdToCopyTo: COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID,
+    expect(result.current.previousTargetedRecordsRule).toEqual({
+      mode: 'selection',
+      selectedRecordIds: [peopleMock[0].id, peopleMock[1].id],
     });
+    expect(result.current.previousNumberOfSelectedRecords).toBe(2);
   });
 });

@@ -14,7 +14,7 @@ export const useOpenAnyFieldSearchFilterFromViewBar = () => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const setObjectFilterDropdownAnyFieldSearchIsSelectedComponentState =
+  const setObjectFilterDropdownAnyFieldSearchIsSelected =
     useSetAtomComponentState(
       objectFilterDropdownAnyFieldSearchIsSelectedComponentState,
     );
@@ -48,7 +48,7 @@ export const useOpenAnyFieldSearchFilterFromViewBar = () => {
       setAnyFieldFilterValue(filterValue);
     }
 
-    setObjectFilterDropdownAnyFieldSearchIsSelectedComponentState(true);
+    setObjectFilterDropdownAnyFieldSearchIsSelected(true);
   };
 
   return {

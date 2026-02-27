@@ -10,40 +10,48 @@ image: /images/user-guide/github/github-header.png
 Un element vizual pe care îl puteți folosi ca un container clicabil sau non-clicabil, cu o etichetă, componente opționale la stânga și dreapta și diverse opțiuni de stil pentru a afișa etichete și tag-uri.
 
 <Tabs>
-  <Tab title="Utilizare">
-    ```jsx
-    import { Chip } from 'twenty-ui/components';
 
-    export const MyComponent = () => {
-      return (
-        <Chip
-          size="large"
-          label="Clickable Chip"
-          clickable={true}
-          variant="highlighted"
-          accent="text-primary"
-          leftComponent
-          rightComponent
-          maxWidth="200px"
-          className
-        />
-      );
-    };
+<Tab title="Utilizare">
 
-    ```
-  </Tab>
+```jsx
+import { Chip } from 'twenty-ui/components';
 
-  <Tab title="Proprietăți">
-    | Proprietăți  | Tip                        | Descriere                                                                                               |
-    | ------------ | -------------------------- | ------------------------------------------------------------------------------------------------------- |
-    | linkToEntity | șir                        | Legătura către entitate                                                                                 |
-    | entitateId   | șir                        | Identificatorul unic pentru entitate                                                                    |
-    | nume         | șir                        | Numele entității                                                                                        |
-    | pictureUrl   | șir                        | imagine a lui s                                                                                         |
-    | tipAvatar    | Tip Avatar                 | Tipul de avatar pe care doriți să îl afișați. Are două opțiuni: `rounded` și `squared`                  |
-    | variant      | `Enumul EntityChipVariant` | Varianta chip-ului entității pe care dorești să o afișezi. Are două opțiuni: `regulat` și `transparent` |
-    | IconaStânga  | ComponentaIcoana           | O componentă React care reprezintă o icona. Afișată pe partea stângă a fișei                            |
-  </Tab>
+export const MyComponent = () => {
+  return (
+    <Chip
+      size="large"
+      label="Clickable Chip"
+      clickable={true}
+      variant="highlighted"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Proprietăți">
+
+
+| Proprietăți  | Tip                        | Descriere                                                                                               |
+| ------------ | -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| linkToEntity | șir                        | Legătura către entitate                                                                                 |
+| entitateId   | șir                        | Identificatorul unic pentru entitate                                                                    |
+| nume         | șir                        | Numele entității                                                                                        |
+| pictureUrl   | șir                        | imagine a lui s                                                                                         |
+| tipAvatar    | Tip Avatar                 | Tipul de avatar pe care doriți să îl afișați. Are două opțiuni: `rounded` și `squared`                  |
+| variant      | `Enumul EntityChipVariant` | Varianta chip-ului entității pe care dorești să o afișezi. Are două opțiuni: `regulat` și `transparent` |
+| IconaStânga  | ComponentaIcoana           | O componentă React care reprezintă o icona. Afișată pe partea stângă a fișei                            |
+
+
+
+</Tab>
 </Tabs>
 
 ## Exemple
@@ -100,39 +108,47 @@ export const MyComponent = () => {
 Un element de tip Chip pentru a afișa informații despre o entitate.
 
 <Tabs>
-  <Tab title="Utilizare">
-    ```jsx
-    import { BrowserRouter as Router } from 'react-router-dom';
-    import { IconTwentyStar } from 'twenty-ui/display';
-    import { Chip } from 'twenty-ui/components';
 
-    export const MyComponent = () => {
-      return (
-        <Router>
-          <Chip
-            linkToEntity="/entity-link"
-            entityId="entityTest"
-            name="Entity name"
-            pictureUrl=""
-            avatarType="rounded"
-            variant="regular"
-            LeftIcon={IconTwentyStar}
-          />
-        </Router>
-      );
-    };
-    ```
-  </Tab>
+<Tab title="Utilizare">
 
-  <Tab title="Proprietăți">
-    | Proprietăți  | Tip                        | Descriere                                                                                               |
-    | ------------ | -------------------------- | ------------------------------------------------------------------------------------------------------- |
-    | linkToEntity | șir                        | Legătura către entitate                                                                                 |
-    | entitateId   | șir                        | Identificatorul unic pentru entitate                                                                    |
-    | nume         | șir                        | Numele entității                                                                                        |
-    | pictureUrl   | șir                        | imagine a lui s                                                                                         |
-    | tipAvatar    | Tip Avatar                 | Tipul de avatar pe care doriți să îl afișați. Are două opțiuni: `rounded` și `squared`                  |
-    | variant      | `Enumul EntityChipVariant` | Varianta chip-ului entității pe care dorești să o afișezi. Are două opțiuni: `regulat` și `transparent` |
-    | IconaStânga  | ComponentaIcoana           | O componentă React care reprezintă o icona. Afișată pe partea stângă a fișei                            |
-  </Tab>
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+import { IconTwentyStar } from 'twenty-ui/display';
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <Chip
+        linkToEntity="/entity-link"
+        entityId="entityTest"
+        name="Entity name"
+        pictureUrl=""
+        avatarType="rounded"
+        variant="regular"
+        LeftIcon={IconTwentyStar}
+      />
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Proprietăți">
+
+
+| Proprietăți  | Tip                        | Descriere                                                                                               |
+| ------------ | -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| linkToEntity | șir                        | Legătura către entitate                                                                                 |
+| entitateId   | șir                        | Identificatorul unic pentru entitate                                                                    |
+| nume         | șir                        | Numele entității                                                                                        |
+| pictureUrl   | șir                        | imagine a lui s                                                                                         |
+| tipAvatar    | Tip Avatar                 | Tipul de avatar pe care doriți să îl afișați. Are două opțiuni: `rounded` și `squared`                  |
+| variant      | `Enumul EntityChipVariant` | Varianta chip-ului entității pe care dorești să o afișezi. Are două opțiuni: `regulat` și `transparent` |
+| IconaStânga  | ComponentaIcoana           | O componentă React care reprezintă o icona. Afișată pe partea stângă a fișei                            |
+
+
+
+</Tab>
 </Tabs>

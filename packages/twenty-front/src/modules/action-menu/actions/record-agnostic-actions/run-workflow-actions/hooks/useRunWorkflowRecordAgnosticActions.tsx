@@ -2,7 +2,6 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
@@ -15,9 +14,8 @@ import { useIcons } from 'twenty-ui/display';
 export const useRunWorkflowRecordAgnosticActions = () => {
   const { getIcon } = useIcons();
 
-  const isPageInEditMode = useAtomComponentStateValue(
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const { actionMenuType } = useContext(ActionMenuContext);
@@ -52,7 +50,7 @@ export const useRunWorkflowRecordAgnosticActions = () => {
         shortLabel: name,
         position: index,
         isPinned:
-          !isPageInEditMode &&
+          !contextStoreIsPageInEditMode &&
           activeWorkflowVersion.trigger?.settings?.isPinned,
         Icon,
         shouldBeRegistered: () => true,

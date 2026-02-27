@@ -13,11 +13,11 @@ import { useAddRecordToNavigationMenuDraft } from '@/navigation-menu-item/hooks/
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
 import { useOpenNavigationMenuItemInCommandMenu } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInCommandMenu';
-import { addToNavPayloadRegistryStateV2 } from '@/navigation-menu-item/states/addToNavPayloadRegistryStateV2';
-import { isNavigationMenuInEditModeStateV2 } from '@/navigation-menu-item/states/isNavigationMenuInEditModeStateV2';
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
-import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
@@ -36,7 +36,7 @@ export const useHandleAddToNavigationDrop = () => {
   const { addLinkToDraft } = useAddLinkToNavigationMenuDraft();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
   const navigationMenuItemsDraft = useAtomStateValue(
-    navigationMenuItemsDraftStateV2,
+    navigationMenuItemsDraftState,
   );
   const { openNavigationMenuItemInCommandMenu } =
     useOpenNavigationMenuItemInCommandMenu();
@@ -44,13 +44,13 @@ export const useHandleAddToNavigationDrop = () => {
   const coreViews = useAtomStateValue(coreViewsState);
   const { getIcon } = useIcons();
   const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
-    selectedNavigationMenuItemInEditModeStateV2,
+    selectedNavigationMenuItemInEditModeState,
   );
   const setIsNavigationMenuInEditMode = useSetAtomState(
-    isNavigationMenuInEditModeStateV2,
+    isNavigationMenuInEditModeState,
   );
   const setOpenNavigationMenuItemFolderIds = useSetAtomState(
-    openNavigationMenuItemFolderIdsStateV2,
+    openNavigationMenuItemFolderIdsState,
   );
 
   const handleAddToNavigationDrop = useCallback(
@@ -65,7 +65,7 @@ export const useHandleAddToNavigationDrop = () => {
       }
 
       const payload =
-        store.get(addToNavPayloadRegistryStateV2.atom).get(draggableId) ?? null;
+        store.get(addToNavPayloadRegistryState.atom).get(draggableId) ?? null;
       if (!payload) {
         return;
       }

@@ -20,10 +20,23 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { RelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationOneToManyFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+const personMetadata = getMockObjectMetadataItemOrThrow('person');
+const companyMetadata = getMockObjectMetadataItemOrThrow('company');
+const companyFieldOnPerson = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: personMetadata,
+  fieldName: 'company',
+});
+const peopleFieldOnCompany = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyMetadata,
+  fieldName: 'people',
+});
 
 const RelationWorkspaceSetterEffect = () => {
   useEffect(() => {
@@ -39,24 +52,24 @@ const RelationOneToManyFieldInputWithContext = () => {
 
   const fieldDefinition = useMemo(
     () => ({
-      fieldMetadataId: 'e82262eb-7f58-4167-a23c-fc51ec584d1b',
+      fieldMetadataId: peopleFieldOnCompany.id,
       label: 'People',
       type: FieldMetadataType.RELATION,
       iconName: 'IconLink',
       metadata: {
         fieldName: 'people',
         relationType: RelationType.ONE_TO_MANY,
-        relationObjectMetadataNamePlural: 'companies',
-        relationObjectMetadataNameSingular: CoreObjectNameSingular.Company,
-        objectMetadataNameSingular: 'person',
-        relationFieldMetadataId: '3c211c59-02a1-4904-ad0f-5bb30b736461',
+        relationObjectMetadataNamePlural: 'people',
+        relationObjectMetadataNameSingular: CoreObjectNameSingular.Person,
+        objectMetadataNameSingular: 'company',
+        relationFieldMetadataId: companyFieldOnPerson.id,
       },
     }),
     [],
   );
 
   const setRecordStoreFieldValue = useSetAtom(
-    recordStoreFamilySelectorV2.selectorFamily({
+    recordStoreFamilySelector.selectorFamily({
       fieldName: 'people',
       recordId: 'recordId',
     }),

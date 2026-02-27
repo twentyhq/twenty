@@ -108,6 +108,27 @@ const serializeEvent = (event: unknown): SerializedEventData => {
     if ('scrollLeft' in target && typeof target.scrollLeft === 'number') {
       serialized.scrollLeft = target.scrollLeft;
     }
+    if ('currentTime' in target && typeof target.currentTime === 'number') {
+      serialized.currentTime = target.currentTime;
+    }
+    if ('duration' in target && typeof target.duration === 'number') {
+      serialized.duration = target.duration;
+    }
+    if ('paused' in target && typeof target.paused === 'boolean') {
+      serialized.paused = target.paused;
+    }
+    if ('ended' in target && typeof target.ended === 'boolean') {
+      serialized.ended = target.ended;
+    }
+    if ('volume' in target && typeof target.volume === 'number') {
+      serialized.volume = target.volume;
+    }
+    if ('muted' in target && typeof target.muted === 'boolean') {
+      serialized.muted = target.muted;
+    }
+    if ('playbackRate' in target && typeof target.playbackRate === 'number') {
+      serialized.playbackRate = target.playbackRate;
+    }
   }
 
   return serialized;

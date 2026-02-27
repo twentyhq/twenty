@@ -31,7 +31,7 @@ export const ActionDropdownItem = ({
     SelectableListComponentInstanceContext,
   );
 
-  const isSelected = useAtomComponentFamilyStateValue(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     action.key,
     selectableListInstanceId,
@@ -40,7 +40,7 @@ export const ActionDropdownItem = ({
   return (
     <SelectableListItem itemId={action.key} onEnter={handleClick}>
       <MenuItem
-        focused={isSelected}
+        focused={isSelectedItemId}
         key={action.key}
         LeftIcon={action.Icon}
         onClick={handleClick}

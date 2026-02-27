@@ -43,7 +43,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     tabListInstanceId,
   );
 
-  const setTabSettingsOpenTabId = useSetAtomComponentState(
+  const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
@@ -128,7 +128,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
       setActiveTabId(newTabId);
 
-      setTabSettingsOpenTabId(newTabId);
+      setPageLayoutTabSettingsOpenTabId(newTabId);
 
       navigatePageLayoutCommandMenu({
         commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
@@ -144,7 +144,7 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
       pageLayoutCurrentLayouts,
       pageLayoutDraft,
       setActiveTabId,
-      setTabSettingsOpenTabId,
+      setPageLayoutTabSettingsOpenTabId,
       store,
     ],
   );

@@ -29,7 +29,7 @@ export const GraphLineChartTooltip = ({
   onMouseEnter,
   onMouseLeave,
 }: GraphLineChartTooltipProps) => {
-  const tooltipState = useAtomComponentStateValue(
+  const graphWidgetLineTooltip = useAtomComponentStateValue(
     graphWidgetLineTooltipComponentState,
   );
 
@@ -40,11 +40,12 @@ export const GraphLineChartTooltip = ({
 
   const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
     ? () => {
-        if (!isDefined(tooltipState)) return;
+        if (!isDefined(graphWidgetLineTooltip)) return;
 
-        const highlightedPoint = tooltipState.slice.points.find(
+        const highlightedPoint = graphWidgetLineTooltip.slice.points.find(
           (point) =>
-            String(point.seriesId) === tooltipState.highlightedSeriesId,
+            String(point.seriesId) ===
+            graphWidgetLineTooltip.highlightedSeriesId,
         );
 
         if (!isDefined(highlightedPoint)) return;
@@ -53,21 +54,21 @@ export const GraphLineChartTooltip = ({
       }
     : undefined;
 
-  const tooltipData = !isDefined(tooltipState)
+  const tooltipData = !isDefined(graphWidgetLineTooltip)
     ? null
     : getLineChartTooltipData({
-        slice: tooltipState.slice,
+        slice: graphWidgetLineTooltip.slice,
         enrichedSeries,
         formatOptions,
         isStacked,
       });
 
-  const reference = !isDefined(tooltipState)
+  const reference = !isDefined(graphWidgetLineTooltip)
     ? null
     : createVirtualElementFromContainerOffset(
         containerElement,
-        tooltipState.offsetLeft,
-        tooltipState.offsetTop,
+        graphWidgetLineTooltip.offsetLeft,
+        graphWidgetLineTooltip.offsetTop,
       );
 
   return (
@@ -77,7 +78,7 @@ export const GraphLineChartTooltip = ({
       tooltipOffsetFromAnchorInPx={LINE_CHART_CONSTANTS.TOOLTIP_OFFSET_PX}
       items={tooltipData?.items ?? []}
       indexLabel={tooltipData?.indexLabel}
-      highlightedKey={tooltipState?.highlightedSeriesId}
+      highlightedKey={graphWidgetLineTooltip?.highlightedSeriesId}
       onGraphWidgetTooltipClick={handleTooltipClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}

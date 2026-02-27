@@ -51,9 +51,9 @@ Ana ("bir" taraf) kaydı, ona referans verebilmeden önce Twenty'de mevcut olmal
 4. **Görevler/Notlar** (yukarıdakilerin herhangi birine bağlanır)
 
 <Warning>
-  **Ana kayıt mevcut değilse içe aktarma başarısız olur.**
+**Ana kayıt mevcut değilse içe aktarma başarısız olur.**
 
-  Şirket referansları olan Kişileri içe aktarmadan önce, Şirketlerin içe aktarılmış olduğunu her zaman doğrulayın.
+Şirket referansları olan Kişileri içe aktarmadan önce, Şirketlerin içe aktarılmış olduğunu her zaman doğrulayın.
 </Warning>
 
 ## Adım 3: Ana kaydın benzersiz tanımlayıcısını not edin
@@ -117,9 +117,9 @@ Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
 | Kimlik      | UUID             | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **Alan adı biçimi önemlidir!**
+**Alan adı biçimi önemlidir!**
 
-  `https://domain.com` kullanın (yalnızca `domain.com` değil). Bu, Twenty'nin Şirket alan adlarını saklama biçimiyle eşleşir ve eşleştirme hatalarını önler.
+`https://domain.com` kullanın (yalnızca `domain.com` değil). Bu, Twenty'nin Şirket alan adlarını saklama biçimiyle eşleşir ve eşleştirme hatalarını önler.
 </Warning>
 
 ### Önemli Kurallar
@@ -178,7 +178,6 @@ Review proposal,jane@yourcompany.com
 <AccordionGroup>
   <Accordion title="Ana kaydımın alan adı veya e-postası yoksa ne olur?">
     İki seçeneğiniz var:
-
     1. Twenty `id` değerini kullanın (kimlikleri almak için ana kayıtları dışa aktarın)
     2. Önceki sisteminizden gelen harici bir kimliği saklamak için veri modelinizde özel bir benzersiz alan oluşturun
   </Accordion>
@@ -197,7 +196,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="Ana kayıt mevcut değilse ne olur?">
     İçe aktarma, o satır için bir hata gösterir. Aşağıdakileri yapabilirsiniz:
-
     * Önce ana kaydı içe aktarın, ardından yeniden içe aktarın
     * Referans değerini düzeltin
     * Satırı içe aktarmadan çıkarın
@@ -205,7 +203,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="İlişkim neden doğru şekilde bağlanmıyor?">
     Yaygın nedenler:
-
     * Yanlış biçim (alan adları için `https://domain.com` kullanın)
     * Büyük/küçük harf uyumsuzluğu (yazımı tam olarak kontrol edin)
     * Ana kayıt mevcut değil (önce ana kayıtları içe aktarın)
@@ -214,9 +211,9 @@ Review proposal,jane@yourcompany.com
 </AccordionGroup>
 
 <Warning>
-  **Unutmayın: Yumuşak silinmiş kayıtlar benzersizliğe dahildir.**
+**Unutmayın: Yumuşak silinmiş kayıtlar benzersizliğe dahildir.**
 
-  "bulunamadı" hataları alıyorsanız ancak kayıt var gibi görünüyorsa, Komut Menüsü → Silinen kayıtları göster'i kontrol edin. Ana kayıt yumuşak silinmiş olabilir.
+"bulunamadı" hataları alıyorsanız ancak kayıt var gibi görünüyorsa, Komut Menüsü → Silinen kayıtları göster'i kontrol edin. Ana kayıt yumuşak silinmiş olabilir.
 </Warning>
 
 ## Sorun Giderme

@@ -1,8 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { createElement, act } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
-
 import {
   type CurrentUser,
   currentUserState,
@@ -26,11 +24,7 @@ const currentUser = {
 } as CurrentUser;
 
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
-  createElement(
-    JotaiProvider,
-    { store: jotaiStore },
-    createElement(RecoilRoot, null, children),
-  );
+  createElement(JotaiProvider, { store: jotaiStore }, children);
 
 const renderHooks = () => {
   const { result } = renderHook(

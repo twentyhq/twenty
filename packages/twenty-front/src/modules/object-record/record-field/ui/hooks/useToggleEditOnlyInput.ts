@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
 import { useStore } from 'jotai';
 
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
 
@@ -21,11 +21,11 @@ export const useToggleEditOnlyInput = () => {
     if (fieldIsBoolean) {
       const fieldName = fieldDefinition.metadata.fieldName;
       const oldValue = store.get(
-        recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
+        recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
       ) as boolean;
       const valueToPersist = !oldValue;
       store.set(
-        recordStoreFamilySelectorV2.selectorFamily({ recordId, fieldName }),
+        recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
         valueToPersist,
       );
 

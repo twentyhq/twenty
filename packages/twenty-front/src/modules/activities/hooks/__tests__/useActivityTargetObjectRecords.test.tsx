@@ -3,7 +3,6 @@ import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
-import { RecoilRoot } from 'recoil';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -22,10 +21,10 @@ const taskTarget = {
   id: '89bb825c-171e-4bcc-9cf7-43448d6fb300',
   createdAt: '2023-04-26T10:12:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
-  companyId: null,
-  company: null,
-  personId: '89bb825c-171e-4bcc-9cf7-43448d6fb280',
-  person: {
+  targetCompanyId: null,
+  targetCompany: null,
+  targetPersonId: '89bb825c-171e-4bcc-9cf7-43448d6fb280',
+  targetPerson: {
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb280',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
@@ -59,21 +58,24 @@ cache.writeFragment({
       __typename
       updatedAt
       createdAt
-      personId
+      targetPersonId
       taskId
-      companyId
+      targetCompanyId
       id
       task {
         __typename
         createdAt
         title
         updatedAt
-        body
+        bodyV2 {
+          blocknote
+          markdown
+        }
         dueAt
         id
         assigneeId
       }
-      person {
+      targetPerson {
         __typename
         id
         createdAt
@@ -84,7 +86,7 @@ cache.writeFragment({
           lastName
         }
       }
-      company {
+      targetCompany {
         __typename
         id
         createdAt
@@ -115,17 +117,15 @@ const task = {
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <RecoilRoot>
-      <MockedProvider cache={cache}>
-        <JestObjectMetadataItemSetter>
-          <SnackBarComponentInstanceContext.Provider
-            value={{ instanceId: 'snack-bar-manager' }}
-          >
-            {children}
-          </SnackBarComponentInstanceContext.Provider>
-        </JestObjectMetadataItemSetter>
-      </MockedProvider>
-    </RecoilRoot>
+    <MockedProvider cache={cache}>
+      <JestObjectMetadataItemSetter>
+        <SnackBarComponentInstanceContext.Provider
+          value={{ instanceId: 'snack-bar-manager' }}
+        >
+          {children}
+        </SnackBarComponentInstanceContext.Provider>
+      </JestObjectMetadataItemSetter>
+    </MockedProvider>
   </JotaiProvider>
 );
 
@@ -140,7 +140,7 @@ describe('useActivityTargetObjectRecords', () => {
 
     const { result } = renderHook(
       () => {
-        const setRecordFromStore = useSetAtomFamilyState(
+        const setRecordStore = useSetAtomFamilyState(
           recordStoreFamilyState,
           task.id,
         );
@@ -151,14 +151,14 @@ describe('useActivityTargetObjectRecords', () => {
 
         return {
           activityTargetObjectRecords,
-          setRecordFromStore,
+          setRecordStore,
         };
       },
       { wrapper: Wrapper },
     );
 
     act(() => {
-      result.current.setRecordFromStore(task);
+      result.current.setRecordStore(task);
     });
 
     const activityTargetObjectRecords =
@@ -167,7 +167,7 @@ describe('useActivityTargetObjectRecords', () => {
     expect(activityTargetObjectRecords).toHaveLength(1);
     expect(activityTargetObjectRecords[0].activityTarget).toEqual(taskTarget);
     expect(activityTargetObjectRecords[0].targetObject).toEqual(
-      taskTarget.person,
+      taskTarget.targetPerson,
     );
     expect(
       activityTargetObjectRecords[0].targetObjectMetadataItem.nameSingular,

@@ -1,7 +1,7 @@
 import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
 import { useCreateFavoriteFolder } from '@/favorites/hooks/useCreateFavoriteFolder';
 import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
-import { isFavoriteFolderCreatingStateV2 } from '@/favorites/states/isFavoriteFolderCreatingStateV2';
+import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
@@ -21,7 +21,7 @@ export const FavoriteFolders = ({
   const { createNewFavoriteFolder } = useCreateFavoriteFolder();
 
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] = useAtomState(
-    isFavoriteFolderCreatingStateV2,
+    isFavoriteFolderCreatingState,
   );
 
   const handleFavoriteFolderNameChange = (value: string) => {

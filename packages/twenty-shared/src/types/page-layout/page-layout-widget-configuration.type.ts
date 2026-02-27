@@ -125,7 +125,7 @@ export type IframeConfiguration = {
 
 export type FrontComponentConfiguration = {
   configurationType: 'FRONT_COMPONENT';
-  frontComponentId: string;
+  frontComponentId: SerializedRelation;
 };
 
 export type TimelineConfiguration = {

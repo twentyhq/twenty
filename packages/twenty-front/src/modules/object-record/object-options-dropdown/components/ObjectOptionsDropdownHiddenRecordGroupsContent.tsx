@@ -36,7 +36,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
     viewType,
   } = useObjectOptionsDropdown();
 
-  const recordGroupFieldMetadata = useAtomComponentStateValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -61,7 +61,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
 
   const viewGroupSettingsUrl = getSettingsPath(SettingsPath.ObjectFieldEdit, {
     objectNamePlural,
-    fieldName: recordGroupFieldMetadata?.name ?? '',
+    fieldName: recordIndexGroupFieldMetadataItem?.name ?? '',
   });
 
   const location = useLocation();
@@ -88,10 +88,10 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
           />
         }
       >
-        {t`Hidden`} {recordGroupFieldMetadata?.label}
+        {t`Hidden`} {recordIndexGroupFieldMetadataItem?.label}
       </DropdownMenuHeader>
       <RecordGroupsVisibilityDropdownSection
-        title={`${t`Hidden`} ${recordGroupFieldMetadata?.label}`}
+        title={`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label}`}
         recordGroupIds={hiddenRecordGroupIds}
         onVisibilityChange={handleRecordGroupVisibilityChange}
         isDraggable={false}

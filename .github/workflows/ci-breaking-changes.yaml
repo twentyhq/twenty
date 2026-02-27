@@ -771,16 +771,16 @@ jobs:
             kill $(cat /tmp/main-server.pid) || true
           fi
 
-      - name: Upload API specifications and diffs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-specifications-and-diffs
-          path: |
-            /tmp/main-server.log
-            /tmp/current-server.log
-            *-api.json
-            *-schema-introspection.json
-            *-diff.md
-            *-diff.json
+      # - name: Upload API specifications and diffs
+      #   if: always()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: api-specifications-and-diffs
+      #     path: |
+      #       /tmp/main-server.log
+      #       /tmp/current-server.log
+      #       *-api.json
+      #       *-schema-introspection.json
+      #       *-diff.md
+      #       *-diff.json
 

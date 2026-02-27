@@ -94,17 +94,17 @@ export const useCommandMenuItemFrontComponentActions = () => {
     useOpenFrontComponentInCommandMenu();
   const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
 
-  const isPageInEditMode = useAtomComponentStateValue(
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
 
   const { actionMenuType } = useContext(ActionMenuContext);
 
-  const currentObjectMetadataItemId = useAtomComponentStateValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const targetedRecordsRule = useAtomComponentStateValue(
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
@@ -126,13 +126,14 @@ export const useCommandMenuItemFrontComponentActions = () => {
     ) ?? [];
 
   const selectedRecordCount =
-    targetedRecordsRule.mode === 'selection'
-      ? targetedRecordsRule.selectedRecordIds.length
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds.length
       : 0;
 
   const objectMatches = (item: CommandMenuItemWithFrontComponent) =>
     !isDefined(item.availabilityObjectMetadataId) ||
-    item.availabilityObjectMetadataId === currentObjectMetadataItemId;
+    item.availabilityObjectMetadataId ===
+      contextStoreCurrentObjectMetadataItemId;
 
   const globalItems = frontComponentItems.filter(
     (item) => item.availabilityType === CommandMenuItemAvailabilityType.GLOBAL,
@@ -152,7 +153,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
       item,
       scope: ActionScope.Global,
       index,
-      isPinned: !isPageInEditMode && item.isPinned,
+      isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
       openFrontComponentInCommandMenu,
       mountHeadlessFrontComponent,
@@ -164,7 +165,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
       item,
       scope: ActionScope.RecordSelection,
       index,
-      isPinned: !isPageInEditMode && item.isPinned,
+      isPinned: !contextStoreIsPageInEditMode && item.isPinned,
       getIcon,
       openFrontComponentInCommandMenu,
       mountHeadlessFrontComponent,

@@ -2,7 +2,7 @@ import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { navigationMenuItemsDraftStateV2 } from '@/navigation-menu-item/states/navigationMenuItemsDraftStateV2';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -21,7 +21,7 @@ type SearchRecordWithOptionalMetadataId = SearchRecord & {
 
 export const useAddRecordToNavigationMenuDraft = () => {
   const setNavigationMenuItemsDraft = useSetAtomState(
-    navigationMenuItemsDraftStateV2,
+    navigationMenuItemsDraftState,
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 

@@ -1,10 +1,10 @@
 import { atom, type WritableAtom } from 'jotai';
 
 import {
-  type SelectorGetterV2,
-  type SelectorSetterV2,
-} from '@/ui/utilities/state/jotai/types/SelectorCallbacksV2';
-import { type WritableFamilySelectorV2 } from '@/ui/utilities/state/jotai/types/WritableFamilySelectorV2';
+  type SelectorGetter,
+  type SelectorSetter,
+} from '@/ui/utilities/state/jotai/types/SelectorCallbacks';
+import { type WritableFamilySelector } from '@/ui/utilities/state/jotai/types/WritableFamilySelector';
 import { buildGetHelper } from '@/ui/utilities/state/jotai/utils/buildGetHelper';
 import { buildSetHelper } from '@/ui/utilities/state/jotai/utils/buildSetHelper';
 
@@ -14,11 +14,11 @@ export const createAtomWritableFamilySelector = <ValueType, FamilyKey>({
   set,
 }: {
   key: string;
-  get: (familyKey: FamilyKey) => (callbacks: SelectorGetterV2) => ValueType;
+  get: (familyKey: FamilyKey) => (callbacks: SelectorGetter) => ValueType;
   set: (
     familyKey: FamilyKey,
-  ) => (callbacks: SelectorSetterV2, newValue: ValueType) => void;
-}): WritableFamilySelectorV2<ValueType, FamilyKey> => {
+  ) => (callbacks: SelectorSetter, newValue: ValueType) => void;
+}): WritableFamilySelector<ValueType, FamilyKey> => {
   const atomCache = new Map<
     string,
     WritableAtom<
@@ -79,7 +79,7 @@ export const createAtomWritableFamilySelector = <ValueType, FamilyKey>({
   };
 
   return {
-    type: 'WritableFamilySelectorV2',
+    type: 'WritableFamilySelector',
     key,
     selectorFamily,
   };

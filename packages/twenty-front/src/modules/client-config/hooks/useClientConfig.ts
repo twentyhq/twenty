@@ -21,19 +21,17 @@ import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpC
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { labPublicFeatureFlagsStateV2 } from '@/client-config/states/labPublicFeatureFlagsStateV2';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useCallback } from 'react';
-import { isAttachmentPreviewEnabledStateV2 } from '@/client-config/states/isAttachmentPreviewEnabledStateV2';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { getClientConfig } from '@/client-config/utils/getClientConfig';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useStore } from 'jotai';
 
 type UseClientConfigResult = {
   data: { clientConfig: ClientConfig } | undefined;
@@ -44,7 +42,6 @@ type UseClientConfigResult = {
 };
 
 export const useClientConfig = (): UseClientConfigResult => {
-  const store = useStore();
   const setIsAnalyticsEnabled = useSetAtomState(isAnalyticsEnabledState);
   const setDomainConfiguration = useSetAtomState(domainConfigurationState);
   const setAuthProviders = useSetAtomState(authProvidersState);
@@ -76,23 +73,21 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setCanManageFeatureFlags = useSetAtomState(canManageFeatureFlagsState);
 
-  const setLabPublicFeatureFlags = useSetAtomState(
-    labPublicFeatureFlagsStateV2,
-  );
+  const setLabPublicFeatureFlags = useSetAtomState(labPublicFeatureFlagsState);
 
-  const setMicrosoftMessagingEnabled = useSetAtomState(
+  const setIsMicrosoftMessagingEnabled = useSetAtomState(
     isMicrosoftMessagingEnabledState,
   );
 
-  const setMicrosoftCalendarEnabled = useSetAtomState(
+  const setIsMicrosoftCalendarEnabled = useSetAtomState(
     isMicrosoftCalendarEnabledState,
   );
 
-  const setGoogleMessagingEnabled = useSetAtomState(
+  const setIsGoogleMessagingEnabled = useSetAtomState(
     isGoogleMessagingEnabledState,
   );
 
-  const setGoogleCalendarEnabled = useSetAtomState(
+  const setIsGoogleCalendarEnabled = useSetAtomState(
     isGoogleCalendarEnabledState,
   );
 
@@ -183,15 +178,11 @@ export const useClientConfig = (): UseClientConfigResult => {
       });
       setCanManageFeatureFlags(clientConfig?.canManageFeatureFlags);
       setLabPublicFeatureFlags(clientConfig?.publicFeatureFlags);
-      setMicrosoftMessagingEnabled(clientConfig?.isMicrosoftMessagingEnabled);
-      setMicrosoftCalendarEnabled(clientConfig?.isMicrosoftCalendarEnabled);
-      setGoogleMessagingEnabled(clientConfig?.isGoogleMessagingEnabled);
-      setGoogleCalendarEnabled(clientConfig?.isGoogleCalendarEnabled);
+      setIsMicrosoftMessagingEnabled(clientConfig?.isMicrosoftMessagingEnabled);
+      setIsMicrosoftCalendarEnabled(clientConfig?.isMicrosoftCalendarEnabled);
+      setIsGoogleMessagingEnabled(clientConfig?.isGoogleMessagingEnabled);
+      setIsGoogleCalendarEnabled(clientConfig?.isGoogleCalendarEnabled);
       setIsAttachmentPreviewEnabled(clientConfig?.isAttachmentPreviewEnabled);
-      store.set(
-        isAttachmentPreviewEnabledStateV2.atom,
-        clientConfig?.isAttachmentPreviewEnabled,
-      );
       setIsConfigVariablesInDbEnabled(
         clientConfig?.isConfigVariablesInDbEnabled,
       );
@@ -231,8 +222,8 @@ export const useClientConfig = (): UseClientConfigResult => {
     setChromeExtensionId,
     setClientConfigApiStatus,
     setDomainConfiguration,
-    setGoogleCalendarEnabled,
-    setGoogleMessagingEnabled,
+    setIsGoogleCalendarEnabled,
+    setIsGoogleMessagingEnabled,
     setIsAnalyticsEnabled,
     setIsAttachmentPreviewEnabled,
     setIsConfigVariablesInDbEnabled,
@@ -244,12 +235,11 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsClickHouseConfigured,
     setIsCloudflareIntegrationEnabled,
     setLabPublicFeatureFlags,
-    setMicrosoftCalendarEnabled,
-    setMicrosoftMessagingEnabled,
+    setIsMicrosoftCalendarEnabled,
+    setIsMicrosoftMessagingEnabled,
     setSentryConfig,
     setSupportChat,
     setAllowRequestsToTwentyIcons,
-    store,
   ]);
 
   return {

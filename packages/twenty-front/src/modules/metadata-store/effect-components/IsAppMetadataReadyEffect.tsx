@@ -14,15 +14,22 @@ export const IsAppMetadataReadyEffect = () => {
   const isLoggedIn = useIsLogged();
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const objectsEntry = useAtomFamilyStateValue(metadataStoreState, 'objects');
-  const viewsEntry = useAtomFamilyStateValue(metadataStoreState, 'views');
+  const metadataStore = useAtomFamilyStateValue(
+    metadataStoreState,
+    'objectMetadataItems',
+  );
+  // eslint-disable-next-line twenty/matching-state-variable
+  const metadataStoreViews = useAtomFamilyStateValue(
+    metadataStoreState,
+    'views',
+  );
   const setIsAppMetadataReady = useSetAtomState(isAppMetadataReadyState);
 
   useEffect(() => {
     const hasActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
 
-    const areObjectsLoaded = objectsEntry.status === 'loaded';
-    const areViewsLoaded = viewsEntry.status === 'loaded';
+    const areObjectsLoaded = metadataStore.status === 'up-to-date';
+    const areViewsLoaded = metadataStoreViews.status === 'up-to-date';
 
     if (!areObjectsLoaded) {
       setIsAppMetadataReady(false);
@@ -38,8 +45,8 @@ export const IsAppMetadataReadyEffect = () => {
     isLoggedIn,
     currentUser,
     currentWorkspace,
-    objectsEntry.status,
-    viewsEntry.status,
+    metadataStore.status,
+    metadataStoreViews.status,
     setIsAppMetadataReady,
   ]);
 

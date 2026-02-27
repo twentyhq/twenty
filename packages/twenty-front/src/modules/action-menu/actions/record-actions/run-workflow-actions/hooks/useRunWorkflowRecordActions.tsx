@@ -7,7 +7,6 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
@@ -31,16 +30,13 @@ export const useRunWorkflowRecordActions = ({
   const store = useStore();
   const { getIcon } = useIcons();
   const { enqueueWarningSnackBar } = useSnackBar();
-  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
-    recordIndexId,
   );
 
-  const isPageInEditMode = useAtomComponentStateValue(
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
-    recordIndexId,
   );
 
   const selectedRecordIds =
@@ -142,7 +138,7 @@ export const useRunWorkflowRecordActions = ({
         position: index,
         Icon,
         isPinned:
-          !isPageInEditMode &&
+          !contextStoreIsPageInEditMode &&
           activeWorkflowVersion.trigger?.settings?.isPinned,
         shouldBeRegistered: () => true,
         component: (

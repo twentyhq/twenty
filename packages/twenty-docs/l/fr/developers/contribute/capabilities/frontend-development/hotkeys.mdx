@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-En interne, le périmètre sélectionné est stocké dans un état Recoil qui est partagé dans toute l'application :
+En interne, le périmètre sélectionné est stocké dans un état Jotai qui est partagé dans toute l'application :
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-Mais cet état Recoil ne doit jamais être manipulé manuellement ! Nous verrons comment l'utiliser dans la prochaine section.
+Mais cet état Jotai ne doit jamais être manipulé manuellement ! Nous verrons comment l'utiliser dans la prochaine section.
 
 ## Comment cela fonctionne-t-il en interne ?
 
 Nous avons créé un léger emballage au-dessus de [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) qui le rend plus performant et évite les rendus inutiles.
 
-Nous créons également un état Recoil pour gérer l'état du périmètre des raccourcis et le rendre disponible partout dans l'application.
+Nous créons également un état Jotai pour gérer l'état du périmètre des raccourcis et le rendre disponible partout dans l'application.

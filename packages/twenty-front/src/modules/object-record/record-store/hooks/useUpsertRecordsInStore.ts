@@ -1,7 +1,6 @@
 import { filterRecordOnGqlFields } from '@/object-record/cache/utils/filterRecordOnGqlFields';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
@@ -40,10 +39,6 @@ export const useUpsertRecordsInStore = () => {
             recordStoreFamilyState.atomFamily(partialRecord.id),
             newRecord,
           );
-          store.set(
-            recordStoreFamilyStateV2.atomFamily(partialRecord.id),
-            newRecord,
-          );
           continue;
         }
 
@@ -61,10 +56,6 @@ export const useUpsertRecordsInStore = () => {
           };
           store.set(
             recordStoreFamilyState.atomFamily(partialRecord.id),
-            updatedRecord,
-          );
-          store.set(
-            recordStoreFamilyStateV2.atomFamily(partialRecord.id),
             updatedRecord,
           );
         }

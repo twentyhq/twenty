@@ -11,12 +11,12 @@ export const useAgentChatScrollToBottom = () => {
     AI_CHAT_SCROLL_WRAPPER_ID,
   );
 
-  const scrollBottom = useAtomComponentStateValue(
+  const scrollWrapperScrollBottom = useAtomComponentStateValue(
     scrollWrapperScrollBottomComponentState,
     AI_CHAT_SCROLL_WRAPPER_ID,
   );
 
-  const isNearBottom = scrollBottom <= SCROLL_BOTTOM_THRESHOLD_PX;
+  const isNearBottom = scrollWrapperScrollBottom <= SCROLL_BOTTOM_THRESHOLD_PX;
 
   const scrollToBottom = () => {
     const { scrollWrapperElement } = getScrollWrapperElement();

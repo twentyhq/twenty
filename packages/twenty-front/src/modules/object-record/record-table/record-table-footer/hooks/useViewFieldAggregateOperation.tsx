@@ -52,13 +52,13 @@ export const useViewFieldAggregateOperation = () => {
     refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
   };
 
-  const currentViewFieldAggregateOperation = useAtomFamilyStateValue(
+  const viewFieldAggregateOperation = useAtomFamilyStateValue(
     viewFieldAggregateOperationState,
     { viewFieldId: currentViewField?.id ?? '' },
   );
 
   return {
     updateViewFieldAggregateOperation,
-    currentViewFieldAggregateOperation,
+    currentViewFieldAggregateOperation: viewFieldAggregateOperation,
   };
 };

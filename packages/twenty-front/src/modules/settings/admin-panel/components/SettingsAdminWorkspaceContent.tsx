@@ -5,7 +5,7 @@ import { SettingsAdminTableCard } from '@/settings/admin-panel/components/Settin
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
-import { userLookupResultStateV2 } from '@/settings/admin-panel/states/userLookupResultStateV2';
+import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/get-workspace-schema-name.util';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -70,7 +70,7 @@ export const SettingsAdminWorkspaceContent = ({
   const [impersonate] = useImpersonateMutation();
 
   const { updateFeatureFlagState } = useFeatureFlagState();
-  const userLookupResult = useAtomStateValue(userLookupResultStateV2);
+  const userLookupResult = useAtomStateValue(userLookupResultState);
 
   const { t } = useLingui();
 

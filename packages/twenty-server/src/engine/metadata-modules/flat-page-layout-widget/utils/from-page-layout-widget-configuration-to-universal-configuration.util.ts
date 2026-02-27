@@ -73,12 +73,14 @@ const convertChartFilterToUniversalFilter = ({
 export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
   configuration,
   fieldMetadataUniversalIdentifierById,
+  frontComponentUniversalIdentifierById = {},
   viewFieldGroupUniversalIdentifierById = {},
   viewUniversalIdentifierById = {},
   shouldThrowOnMissingIdentifier = false,
 }: {
   configuration: PageLayoutWidgetConfiguration;
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  frontComponentUniversalIdentifierById?: Partial<Record<string, string>>;
   viewFieldGroupUniversalIdentifierById?: Partial<Record<string, string>>;
   viewUniversalIdentifierById?: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
@@ -326,6 +328,28 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       };
     }
 
+    case WidgetConfigurationType.FRONT_COMPONENT: {
+      const { frontComponentId, ...rest } = configuration;
+
+      const frontComponentUniversalIdentifier: string | null =
+        frontComponentUniversalIdentifierById[frontComponentId] ?? null;
+
+      if (
+        !isDefined(frontComponentUniversalIdentifier) &&
+        shouldThrowOnMissingIdentifier
+      ) {
+        throw new FlatEntityMapsException(
+          `Front component universal identifier not found for id: ${frontComponentId}`,
+          FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+        );
+      }
+
+      return {
+        ...rest,
+        frontComponentUniversalIdentifier,
+      };
+    }
+
     case WidgetConfigurationType.VIEW:
     case WidgetConfigurationType.FIELD:
     case WidgetConfigurationType.TIMELINE:
@@ -338,7 +362,6 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     case WidgetConfigurationType.WORKFLOW:
     case WidgetConfigurationType.WORKFLOW_VERSION:
     case WidgetConfigurationType.WORKFLOW_RUN:
-    case WidgetConfigurationType.FRONT_COMPONENT:
     case WidgetConfigurationType.IFRAME:
     case WidgetConfigurationType.STANDALONE_RICH_TEXT:
       return configuration;

@@ -8,7 +8,6 @@ import {
 } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { recordStoreFamilyStateV2 } from '@/object-record/record-store/states/recordStoreFamilyStateV2';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
@@ -91,7 +90,6 @@ export const useSetRecordTableData = ({
           } as T;
 
           store.set(recordStoreFamilyState.atomFamily(record.id), newRecord);
-          store.set(recordStoreFamilyStateV2.atomFamily(record.id), newRecord);
         }
       }
 

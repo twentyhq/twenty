@@ -1,9 +1,9 @@
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { useUploadFilesFieldFile } from '@/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile';
 import { uploadMultipleFiles } from '@/object-record/record-field/ui/meta-types/utils/uploadMultipleFiles';
-import { filesFieldUploadStateV2 } from '@/object-record/record-field/ui/states/filesFieldUploadStateV2';
+import { filesFieldUploadState } from '@/object-record/record-field/ui/states/filesFieldUploadState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { recordStoreFamilySelectorV2 } from '@/object-record/record-store/states/selectors/recordStoreFamilySelectorV2';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
@@ -60,7 +60,7 @@ export const useOpenFilesFieldInput = () => {
       };
     }) => {
       const fieldValue = store.get(
-        recordStoreFamilySelectorV2.selectorFamily({
+        recordStoreFamilySelector.selectorFamily({
           recordId,
           fieldName,
         }),
@@ -95,7 +95,7 @@ export const useOpenFilesFieldInput = () => {
       const currentFileCount = isDefined(fieldValue) ? fieldValue.length : 0;
 
       store.set(
-        filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
+        filesFieldUploadState.atomFamily({ recordId, fieldName }),
         'UPLOAD_WINDOW_OPEN',
       );
 
@@ -108,7 +108,7 @@ export const useOpenFilesFieldInput = () => {
             });
 
             store.set(
-              filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
+              filesFieldUploadState.atomFamily({ recordId, fieldName }),
               null,
             );
 
@@ -130,7 +130,7 @@ export const useOpenFilesFieldInput = () => {
           }
 
           store.set(
-            filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
+            filesFieldUploadState.atomFamily({ recordId, fieldName }),
             'UPLOADING_FILE',
           );
 
@@ -148,7 +148,7 @@ export const useOpenFilesFieldInput = () => {
             }
           } finally {
             store.set(
-              filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
+              filesFieldUploadState.atomFamily({ recordId, fieldName }),
               null,
             );
 
@@ -170,7 +170,7 @@ export const useOpenFilesFieldInput = () => {
         },
         onCancel: () => {
           store.set(
-            filesFieldUploadStateV2.atomFamily({ recordId, fieldName }),
+            filesFieldUploadState.atomFamily({ recordId, fieldName }),
             null,
           );
 

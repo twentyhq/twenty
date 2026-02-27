@@ -10,7 +10,7 @@ import { MentionInlineContent } from '@/blocknote-editor/blocks/MentionInlineCon
 export const BLOCK_SCHEMA = BlockNoteSchema.create({
   blockSpecs: {
     ...defaultBlockSpecs,
-    file: FileBlock,
+    file: FileBlock(),
   },
   inlineContentSpecs: {
     ...defaultInlineContentSpecs,

@@ -12,28 +12,36 @@ image: /images/user-guide/fields/field.png
 Farklı renk şemalarını temsil eder ve açık ve koyu temalar için özel olarak tasarlanmıştır.
 
 <Tabs>
-  <Tab title="Kullanım">
-    ```jsx
-    import { ColorSchemeCard } from "twenty-ui/display";
+<Tab title="Kullanım">
 
-    export const MyComponent = () => {
-      return (
-          <ColorSchemeCard
-          variant="Dark"
-          selected={true}
-          />
-      );
-    };
-    ```
-  </Tab>
+```jsx
+import { ColorSchemeCard } from "twenty-ui/display";
 
-  <Tab title="Özellikler">
-    | Özellikler    | Tür                                     | Açıklama                                                                            | Varsayılan |
-    | ------------- | --------------------------------------- | ----------------------------------------------------------------------------------- | ---------- |
-    | variant       | string                                  | Renk şeması varyantı. Seçenekler arasında `Koyu`, `Açık` ve `Sistem` bulunmaktadır. | aydınlık   |
-    | seçili        | boolean                                 | Eğer `true` ise, seçilen renk şemasını belirtmek için bir onay işareti görüntüler.  |            |
-    | ek özellikler | `React.ComponentPropsWithoutRef<'div'>` | Standart HTML `div` öğe özellikleri                                                 |            |
-  </Tab>
+export const MyComponent = () => {
+  return (
+      <ColorSchemeCard
+      variant="Dark"
+      selected={true}
+      />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Özellikler">
+
+
+| Özellikler    | Tür                                     | Açıklama                                                                            | Varsayılan |
+| ------------- | --------------------------------------- | ----------------------------------------------------------------------------------- | ---------- |
+| variant       | string                                  | Renk şeması varyantı. Seçenekler arasında `Koyu`, `Açık` ve `Sistem` bulunmaktadır. | aydınlık   |
+| seçili        | boolean                                 | Eğer `true` ise, seçilen renk şemasını belirtmek için bir onay işareti görüntüler.  |            |
+| ek özellikler | `React.ComponentPropsWithoutRef<'div'>` | Standart HTML `div` öğe özellikleri                                                 |            |
+
+
+
+</Tab>
+
 </Tabs>
 
 ## Renk Şeması Seçici
@@ -41,23 +49,31 @@ Farklı renk şemalarını temsil eder ve açık ve koyu temalar için özel ola
 Kullanıcıların farklı renk şemaları arasında seçim yapmasına olanak tanır.
 
 <Tabs>
-  <Tab title="Kullanım">
-    ```jsx
-    import { ColorSchemePicker } from "twenty-ui/display";
+<Tab title="Kullanım">
 
-    export const MyComponent = () => {
-      return <ColorSchemePicker
-      value="Dark"
-      onChange
-      />;
-    };
-    ```
-  </Tab>
+```jsx
+import { ColorSchemePicker } from "twenty-ui/display";
 
-  <Tab title="Özellikler">
-    | Özellikler | Tür           | Açıklama                                                                            |
-    | ---------- | ------------- | ----------------------------------------------------------------------------------- |
-    | değer      | `Renk Şeması` | Şu anda seçili olan renk şeması                                                     |
-    | onChange   | fonksiyon     | Bir kullanıcı bir renk şeması seçtiğinde tetiklemek istediğiniz geri çağırma işlevi |
-  </Tab>
+export const MyComponent = () => {
+  return <ColorSchemePicker
+  value="Dark"
+  onChange
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="Özellikler">
+
+
+| Özellikler | Tür           | Açıklama                                                                            |
+| ---------- | ------------- | ----------------------------------------------------------------------------------- |
+| değer      | `Renk Şeması` | Şu anda seçili olan renk şeması                                                     |
+| onChange   | fonksiyon     | Bir kullanıcı bir renk şeması seçtiğinde tetiklemek istediğiniz geri çağırma işlevi |
+
+
+
+</Tab>
+
 </Tabs>

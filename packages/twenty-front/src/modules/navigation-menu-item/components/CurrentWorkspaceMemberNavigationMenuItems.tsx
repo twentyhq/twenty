@@ -24,7 +24,7 @@ import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/N
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useDeleteNavigationMenuItemFolder } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItemFolder';
 import { useRenameNavigationMenuItemFolder } from '@/navigation-menu-item/hooks/useRenameNavigationMenuItemFolder';
-import { openNavigationMenuItemFolderIdsStateV2 } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsStateV2';
+import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
@@ -41,7 +41,7 @@ import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/compone
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { currentNavigationMenuItemFolderIdStateV2 } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdStateV2';
+import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -83,17 +83,19 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
   const isMobile = useIsMobile();
 
   const [openNavigationMenuItemFolderIds, setOpenNavigationMenuItemFolderIds] =
-    useAtomState(openNavigationMenuItemFolderIdsStateV2);
+    useAtomState(openNavigationMenuItemFolderIdsState);
 
-  const setCurrentFolderId = useSetAtomState(
-    currentNavigationMenuItemFolderIdStateV2,
+  const setCurrentNavigationMenuItemFolderId = useSetAtomState(
+    currentNavigationMenuItemFolderIdState,
   );
 
   const isOpen = openNavigationMenuItemFolderIds.includes(folder.id);
 
   const handleToggle = () => {
     if (isMobile) {
-      setCurrentFolderId((prev) => (prev === folder.id ? null : folder.id));
+      setCurrentNavigationMenuItemFolderId((prev) =>
+        prev === folder.id ? null : folder.id,
+      );
     } else {
       setOpenNavigationMenuItemFolderIds((currentOpenFolders) => {
         if (isOpen) {
@@ -123,7 +125,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
 
   const dropdownId = `navigation-menu-item-folder-edit-${folder.id}`;
 
-  const isDropdownOpenComponent = useAtomComponentStateValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
@@ -237,7 +239,7 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
                 onClick={handleToggle}
                 rightOptions={rightOptions}
                 className="navigation-drawer-item"
-                isRightOptionsDropdownOpen={isDropdownOpenComponent}
+                isRightOptionsDropdownOpen={isDropdownOpen}
                 triggerEvent="CLICK"
                 preventCollapseOnMobile={isMobile}
               />

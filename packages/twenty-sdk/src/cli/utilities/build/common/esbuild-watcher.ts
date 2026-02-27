@@ -210,8 +210,12 @@ const createSdkGeneratedResolverPlugin = (appPath: string): esbuild.Plugin => ({
   },
 });
 
+export type EsbuildWatcherFactoryOptions = RestartableWatcherOptions & {
+  shouldSkipTypecheck: () => boolean;
+};
+
 export const createLogicFunctionsWatcher = (
-  options: RestartableWatcherOptions,
+  options: EsbuildWatcherFactoryOptions,
 ): EsbuildWatcher =>
   new EsbuildWatcher({
     ...options,
@@ -220,7 +224,7 @@ export const createLogicFunctionsWatcher = (
       fileFolder: FileFolder.BuiltLogicFunction,
       platform: 'node',
       extraPlugins: [
-        createTypecheckPlugin(options.appPath),
+        createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
         createSdkGeneratedResolverPlugin(options.appPath),
       ],
       banner: NODE_ESM_CJS_BANNER,
@@ -228,7 +232,7 @@ export const createLogicFunctionsWatcher = (
   });
 
 export const createFrontComponentsWatcher = (
-  options: RestartableWatcherOptions,
+  options: EsbuildWatcherFactoryOptions,
 ): EsbuildWatcher =>
   new EsbuildWatcher({
     ...options,
@@ -237,7 +241,7 @@ export const createFrontComponentsWatcher = (
       fileFolder: FileFolder.BuiltFrontComponent,
       jsx: 'automatic',
       extraPlugins: [
-        createTypecheckPlugin(options.appPath),
+        createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
         createSdkGeneratedResolverPlugin(options.appPath),
         ...getFrontComponentBuildPlugins(),
       ],

@@ -11,7 +11,7 @@ import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIcon
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useUpdateFolderInDraft } from '@/navigation-menu-item/hooks/useUpdateFolderInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeStateV2 } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeStateV2';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -27,13 +27,15 @@ export const CommandMenuFolderInfo = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const commandMenuPageInfo = useAtomStateValue(commandMenuPageInfoState);
-  const [shouldFocusTitleInput, setShouldFocusTitleInput] =
-    useAtomComponentState(
-      commandMenuShouldFocusTitleInputComponentState,
-      commandMenuPageInfo.instanceId,
-    );
+  const [
+    commandMenuShouldFocusTitleInput,
+    setCommandMenuShouldFocusTitleInput,
+  ] = useAtomComponentState(
+    commandMenuShouldFocusTitleInputComponentState,
+    commandMenuPageInfo.instanceId,
+  );
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
-    selectedNavigationMenuItemInEditModeStateV2,
+    selectedNavigationMenuItemInEditModeState,
   );
   const items = useWorkspaceSectionItems();
   const { updateFolderInDraft } = useUpdateFolderInDraft();
@@ -106,8 +108,8 @@ export const CommandMenuFolderInfo = () => {
           onClickOutside={handleSave}
           onTab={handleSave}
           onShiftTab={handleSave}
-          shouldFocus={shouldFocusTitleInput}
-          onFocus={() => setShouldFocusTitleInput(false)}
+          shouldFocus={commandMenuShouldFocusTitleInput}
+          onFocus={() => setCommandMenuShouldFocusTitleInput(false)}
         />
       }
     />
