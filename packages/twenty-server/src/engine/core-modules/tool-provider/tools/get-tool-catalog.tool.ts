@@ -78,8 +78,6 @@ export const createGetToolCatalogTool = (
       0,
     );
 
-    console.log(catalog);
-
     return {
       catalog,
       message: `Found ${totalTools} tool(s) across ${Object.keys(catalog).length} category(ies).`,

@@ -268,14 +268,14 @@ export class FieldMetadataToolsFactory {
           }>;
         }) => {
           try {
-            const results = await this.fieldMetadataService.createManyFields({
+            await this.fieldMetadataService.createManyFields({
               createFieldInputs: parameters.fields as Parameters<
                 typeof this.fieldMetadataService.createManyFields
               >[0]['createFieldInputs'],
               workspaceId,
             });
 
-            return results.map(fromFlatFieldMetadataToFieldMetadataDto);
+            return true;
           } catch (error) {
             if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));
@@ -305,23 +305,18 @@ export class FieldMetadataToolsFactory {
           }>;
         }) => {
           try {
-            const results = await Promise.all(
+            await Promise.all(
               parameters.fields.map(async ({ id, ...update }) => {
-                const flatFieldMetadata =
-                  await this.fieldMetadataService.updateOneField({
-                    updateFieldInput: { id, ...update } as Parameters<
-                      typeof this.fieldMetadataService.updateOneField
-                    >[0]['updateFieldInput'],
-                    workspaceId,
-                  });
-
-                return fromFlatFieldMetadataToFieldMetadataDto(
-                  flatFieldMetadata,
-                );
+                await this.fieldMetadataService.updateOneField({
+                  updateFieldInput: { id, ...update } as Parameters<
+                    typeof this.fieldMetadataService.updateOneField
+                  >[0]['updateFieldInput'],
+                  workspaceId,
+                });
               }),
             );
 
-            return results;
+            return true;
           } catch (error) {
             if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));

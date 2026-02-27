@@ -2,14 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 import { AggregateOperations } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { getIsFlatFieldAJunctionRelationField } from 'src/engine/api/common/common-select-fields/utils/get-is-flat-field-a-junction-relation-field';
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const GetViewFieldsInputSchema = z.object({
@@ -98,213 +95,8 @@ const UpdateManyViewFieldsInputSchema = z.object({
 export class ViewFieldToolsFactory {
   constructor(
     private readonly viewFieldService: ViewFieldService,
-    private readonly viewService: ViewService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
-
-  /**
-   * Hides all system and junction relation fields for a given view by setting isVisible=false.
-   * Returns the updated view fields.
-   */
-  async hideAllSystemAndJunctionFields(workspaceId: string, viewId: string) {
-    // Get all view fields for the view
-    const viewFields = await this.viewFieldService.findByViewId(
-      workspaceId,
-      viewId,
-    );
-
-    // Get field metadata for all fields in the workspace
-    const { flatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
-        },
-      );
-
-    // Find view fields that are system or junction relation fields
-    const toHide = viewFields.filter((vf) => {
-      const universalIdentifier =
-        flatFieldMetadataMaps.universalIdentifierById[vf.fieldMetadataId];
-      const meta = universalIdentifier
-        ? flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier]
-        : undefined;
-
-      if (!meta) {
-        return false;
-      }
-
-      return (
-        meta.isSystem ||
-        getIsFlatFieldAJunctionRelationField({ flatField: meta })
-      );
-    });
-
-    // Prepare update payloads
-    const updates = toHide.map((vf) => ({
-      id: vf.id,
-      isVisible: false,
-    }));
-
-    // Update all relevant view fields
-    const results = await Promise.all(
-      updates.map(async (update) => {
-        const updated = await this.viewFieldService.updateOne({
-          updateViewFieldInput: {
-            id: update.id,
-            update: { isVisible: false },
-          },
-          workspaceId,
-        });
-
-        return {
-          id: updated.id,
-          fieldMetadataId: updated.fieldMetadataId,
-          viewId: updated.viewId,
-          isVisible: updated.isVisible,
-          size: updated.size,
-          position: updated.position,
-          aggregateOperation: updated.aggregateOperation,
-        };
-      }),
-    );
-
-    return results;
-  }
-
-  async hideAllFieldsExceptLabelIdentifier(
-    workspaceId: string,
-    viewId: string,
-  ) {
-    const view = await this.viewService.findById(viewId, workspaceId);
-
-    if (!isDefined(view)) {
-      throw new Error(
-        `View with ID ${viewId} not found in workspace ${workspaceId}`,
-      );
-    }
-
-    const { flatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
-
-    const universalIdentifier =
-      flatObjectMetadataMaps.universalIdentifierById[view.objectMetadataId];
-    const objectMetadata = universalIdentifier
-      ? flatObjectMetadataMaps.byUniversalIdentifier[universalIdentifier]
-      : undefined;
-
-    const labelIdentifierFieldMetadataId =
-      objectMetadata?.labelIdentifierFieldMetadataId;
-
-    const viewFields = await this.viewFieldService.findByViewId(
-      workspaceId,
-      viewId,
-    );
-
-    const toHide = viewFields.filter(
-      (vf) =>
-        vf.isVisible && vf.fieldMetadataId !== labelIdentifierFieldMetadataId,
-    );
-
-    if (toHide.length === 0) {
-      return { success: true };
-    }
-
-    await Promise.all(
-      toHide.map((vf) =>
-        this.viewFieldService.updateOne({
-          updateViewFieldInput: {
-            id: vf.id,
-            update: { isVisible: false },
-          },
-          workspaceId,
-        }),
-      ),
-    );
-
-    return { success: true };
-  }
-
-  async ensureNonSystemViewFields(workspaceId: string, viewId: string) {
-    const { flatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
-        },
-      );
-
-    const allFieldMetas = Object.values(
-      flatFieldMetadataMaps.byUniversalIdentifier,
-    ).filter((meta) => meta !== undefined);
-
-    const view = await this.viewService.findById(viewId, workspaceId);
-
-    if (!isDefined(view)) {
-      throw new Error(
-        `View with ID ${viewId} not found in workspace ${workspaceId}`,
-      );
-    }
-
-    const nonSystemFields = allFieldMetas.filter(
-      (fieldMetadata) =>
-        fieldMetadata.objectMetadataId === view.objectMetadataId &&
-        !fieldMetadata.isSystem &&
-        !getIsFlatFieldAJunctionRelationField({ flatField: fieldMetadata }),
-    );
-
-    const viewFields = await this.viewFieldService.findByViewId(
-      workspaceId,
-      viewId,
-    );
-
-    const existingFieldIds = new Set(
-      viewFields.map((vf) => vf.fieldMetadataId),
-    );
-
-    const toCreate = nonSystemFields.filter(
-      (meta) => !existingFieldIds.has(meta.id),
-    );
-
-    if (toCreate.length > 0) {
-      await this.viewFieldService.createMany({
-        createViewFieldInputs: toCreate.map((meta, idx) => ({
-          viewId,
-          fieldMetadataId: meta.id,
-          isVisible: true,
-          size: 150,
-          position: viewFields.length + idx,
-        })),
-        workspaceId,
-      });
-    }
-
-    const nonSystemFieldIds = new Set(nonSystemFields.map((meta) => meta.id));
-
-    const fieldsToUpdateToShow = viewFields.filter(
-      (vf) =>
-        nonSystemFieldIds.has(vf.fieldMetadataId) && vf.isVisible === false,
-    );
-
-    await Promise.all(
-      fieldsToUpdateToShow.map((vf) =>
-        this.viewFieldService.updateOne({
-          updateViewFieldInput: {
-            id: vf.id,
-            update: { isVisible: true, position: vf.position },
-          },
-          workspaceId,
-        }),
-      ),
-    );
-
-    return true;
-  }
 
   private async resolveFieldName(
     workspaceId: string,
@@ -497,28 +289,20 @@ export class ViewFieldToolsFactory {
           }>;
         }) => {
           try {
-            const viewFields = await this.viewFieldService.createMany({
-              createViewFieldInputs: parameters.viewFields.map((vf) => ({
-                viewId: vf.viewId,
-                fieldMetadataId: vf.fieldMetadataId,
-                isVisible: vf.isVisible ?? true,
-                size: vf.size ?? 150,
-                position: vf.position ?? 0,
+            await this.viewFieldService.createMany({
+              createViewFieldInputs: parameters.viewFields.map((viewField) => ({
+                viewId: viewField.viewId,
+                fieldMetadataId: viewField.fieldMetadataId,
+                isVisible: viewField.isVisible ?? true,
+                size: viewField.size ?? 150,
+                position: viewField.position ?? 0,
                 aggregateOperation:
-                  vf.aggregateOperation as AggregateOperations,
+                  viewField.aggregateOperation as AggregateOperations,
               })),
               workspaceId,
             });
 
-            return viewFields.map((viewField) => ({
-              id: viewField.id,
-              fieldMetadataId: viewField.fieldMetadataId,
-              viewId: viewField.viewId,
-              isVisible: viewField.isVisible,
-              size: viewField.size,
-              position: viewField.position,
-              aggregateOperation: viewField.aggregateOperation,
-            }));
+            return true;
           } catch (error) {
             if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));
@@ -541,35 +325,25 @@ export class ViewFieldToolsFactory {
           }>;
         }) => {
           try {
-            const results = await Promise.all(
-              parameters.viewFields.map(async (vf) => {
-                const viewField = await this.viewFieldService.updateOne({
+            await Promise.all(
+              parameters.viewFields.map(async (viewField) => {
+                await this.viewFieldService.updateOne({
                   updateViewFieldInput: {
-                    id: vf.id,
+                    id: viewField.id,
                     update: {
-                      isVisible: vf.isVisible,
-                      size: vf.size,
-                      position: vf.position,
+                      isVisible: viewField.isVisible,
+                      size: viewField.size,
+                      position: viewField.position,
                       aggregateOperation:
-                        vf.aggregateOperation as AggregateOperations,
+                        viewField.aggregateOperation as AggregateOperations,
                     },
                   },
                   workspaceId,
                 });
-
-                return {
-                  id: viewField.id,
-                  fieldMetadataId: viewField.fieldMetadataId,
-                  viewId: viewField.viewId,
-                  isVisible: viewField.isVisible,
-                  size: viewField.size,
-                  position: viewField.position,
-                  aggregateOperation: viewField.aggregateOperation,
-                };
               }),
             );
 
-            return results;
+            return true;
           } catch (error) {
             if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));
@@ -578,64 +352,6 @@ export class ViewFieldToolsFactory {
           }
         },
       },
-      ensure_non_system_view_fields: {
-        description:
-          'Create (if not already present) and return view fields for all non-system, non-junction-relation fields in a view. Use get_views to find the viewId.',
-        inputSchema: z.object({
-          viewId: z
-            .string()
-            .uuid()
-            .describe(
-              'The ID of the view to ensure non-system view fields for.',
-            ),
-        }),
-        execute: async (parameters: { viewId: string }) => {
-          return await this.ensureNonSystemViewFields(
-            workspaceId,
-            parameters.viewId,
-          );
-        },
-      },
-      hide_all_fields_except_label_identifier: {
-        description:
-          'Hide all view fields except the label identifier field. This keeps only the primary label column visible. Use get_views to find the viewId.',
-        inputSchema: z.object({
-          viewId: z
-            .string()
-            .uuid()
-            .describe(
-              'The ID of the view to hide all fields except the label identifier.',
-            ),
-        }),
-        execute: async (parameters: { viewId: string }) => {
-          return this.hideAllFieldsExceptLabelIdentifier(
-            workspaceId,
-            parameters.viewId,
-          );
-        },
-      },
-      // hide_system_and_junction_fields: {
-      //   description:
-      //     'Hide all system and junction relation fields in a view by setting isVisible=false for those fields. Use get_views to find the viewId.',
-      //   inputSchema: z.object({
-      //     viewId: z
-      //       .string()
-      //       .uuid()
-      //       .describe(
-      //         'The ID of the view whose system and junction relation fields should be hidden.',
-      //       ),
-      //   }),
-      //   execute: async (parameters: { viewId: string }) => {
-      //     const result = await this.hideAllSystemAndJunctionFields(
-      //       workspaceId,
-      //       parameters.viewId,
-      //     );
-
-      //     return {
-      //       success: Array.isArray(result) ? result.length > 0 : false,
-      //     };
-      //   },
-      // },
     };
   }
 }

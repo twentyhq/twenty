@@ -236,23 +236,18 @@ export class ObjectMetadataToolsFactory {
           }>;
         }) => {
           try {
-            const results = await Promise.all(
+            await Promise.all(
               parameters.objects.map(async (createObjectInput) => {
-                const flatObjectMetadata =
-                  await this.objectMetadataService.createOneObject({
-                    createObjectInput: createObjectInput as Parameters<
-                      typeof this.objectMetadataService.createOneObject
-                    >[0]['createObjectInput'],
-                    workspaceId,
-                  });
-
-                return fromFlatObjectMetadataToObjectMetadataDto(
-                  flatObjectMetadata,
-                );
+                await this.objectMetadataService.createOneObject({
+                  createObjectInput: createObjectInput as Parameters<
+                    typeof this.objectMetadataService.createOneObject
+                  >[0]['createObjectInput'],
+                  workspaceId,
+                });
               }),
             );
 
-            return results;
+            return true;
           } catch (error) {
             if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));
@@ -282,21 +277,16 @@ export class ObjectMetadataToolsFactory {
           }>;
         }) => {
           try {
-            const results = await Promise.all(
+            await Promise.all(
               parameters.objects.map(async ({ id, ...update }) => {
-                const flatObjectMetadata =
-                  await this.objectMetadataService.updateOneObject({
-                    updateObjectInput: { id, update },
-                    workspaceId,
-                  });
-
-                return fromFlatObjectMetadataToObjectMetadataDto(
-                  flatObjectMetadata,
-                );
+                await this.objectMetadataService.updateOneObject({
+                  updateObjectInput: { id, update },
+                  workspaceId,
+                });
               }),
             );
 
-            return results;
+            return true;
           } catch (error) {
             if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));
