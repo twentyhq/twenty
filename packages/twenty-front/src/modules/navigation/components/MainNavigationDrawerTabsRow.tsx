@@ -121,9 +121,8 @@ export const MainNavigationDrawerTabsRow = () => {
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
-  const [activeTab, setActiveTab] = useAtomState(
-    navigationDrawerActiveTabState,
-  );
+  const [navigationDrawerActiveTab, setNavigationDrawerActiveTab] =
+    useAtomState(navigationDrawerActiveTabState);
   const { createChatThread } = useCreateNewAIChatThread();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const setIsNavigationDrawerExpanded = useSetAtomState(
@@ -137,14 +136,14 @@ export const MainNavigationDrawerTabsRow = () => {
   const isExpanded = isNavigationDrawerExpanded || isMobile;
 
   const handleTabClick = (tab: NavigationDrawerActiveTab) => () => {
-    setActiveTab(tab);
+    setNavigationDrawerActiveTab(tab);
   };
 
   const handleTabKeyDown =
     (tab: NavigationDrawerActiveTab) => (event: React.KeyboardEvent) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        setActiveTab(tab);
+        setNavigationDrawerActiveTab(tab);
       }
     };
 
@@ -170,12 +169,21 @@ export const MainNavigationDrawerTabsRow = () => {
       <NavigationDrawerAnimatedCollapseWrapper>
         <StyledTabsPill role="tablist" aria-label={t`Navigation tabs`}>
           <StyledTabWrapper
-            isActive={activeTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU}
+            isActive={
+              navigationDrawerActiveTab ===
+              NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
+            }
             role="tab"
-            aria-selected={activeTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU}
+            aria-selected={
+              navigationDrawerActiveTab ===
+              NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
+            }
             aria-label={t`Home`}
             tabIndex={
-              activeTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU ? 0 : -1
+              navigationDrawerActiveTab ===
+              NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
+                ? 0
+                : -1
             }
             onClick={handleTabClick(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU)}
             onKeyDown={handleTabKeyDown(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU)}
@@ -184,18 +192,28 @@ export const MainNavigationDrawerTabsRow = () => {
               <IconHome
                 size={theme.icon.size.sm}
                 color={getTabIconColor(
-                  activeTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+                  navigationDrawerActiveTab ===
+                    NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
                 )}
               />
             </StyledTabIcon>
           </StyledTabWrapper>
           <StyledTabWrapper
-            isActive={activeTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY}
+            isActive={
+              navigationDrawerActiveTab ===
+              NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
+            }
             role="tab"
-            aria-selected={activeTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY}
+            aria-selected={
+              navigationDrawerActiveTab ===
+              NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
+            }
             aria-label={t`Chat`}
             tabIndex={
-              activeTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY ? 0 : -1
+              navigationDrawerActiveTab ===
+              NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
+                ? 0
+                : -1
             }
             onClick={handleTabClick(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY)}
             onKeyDown={handleTabKeyDown(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY)}
@@ -204,7 +222,8 @@ export const MainNavigationDrawerTabsRow = () => {
               <IconComment
                 size={theme.icon.size.sm}
                 color={getTabIconColor(
-                  activeTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+                  navigationDrawerActiveTab ===
+                    NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
                 )}
               />
             </StyledTabIcon>

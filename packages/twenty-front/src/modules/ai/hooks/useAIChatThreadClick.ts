@@ -1,5 +1,5 @@
-import { agentChatUsageStateV2 } from '@/ai/states/agentChatUsageStateV2';
-import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
+import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -15,11 +15,11 @@ export const useAIChatThreadClick = (
   options: UseAIChatThreadClickOptions = {},
 ) => {
   const { resetNavigationStack = false } = options;
-  const [, setCurrentAIChatThread] = useAtomState(currentAIChatThreadStateV2);
+  const [, setCurrentAIChatThread] = useAtomState(currentAIChatThreadState);
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
   );
-  const setAgentChatUsage = useSetAtomState(agentChatUsageStateV2);
+  const setAgentChatUsage = useSetAtomState(agentChatUsageState);
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
 
   const handleThreadClick = (thread: AgentChatThread) => {

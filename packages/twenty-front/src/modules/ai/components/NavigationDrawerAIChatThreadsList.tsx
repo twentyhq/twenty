@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { NavigationDrawerAIChatThreadDateSection } from '@/ai/components/NavigationDrawerAIChatThreadDateSection';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { useAIChatThreadClick } from '@/ai/hooks/useAIChatThreadClick';
-import { currentAIChatThreadStateV2 } from '@/ai/states/currentAIChatThreadStateV2';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { type DateGroupKey } from '@/ai/utils/dateGroupKey';
 import { DATE_GROUP_KEYS } from '@/ai/utils/dateGroupKeys';
@@ -22,7 +22,7 @@ const StyledScrollableList = styled.div`
 `;
 
 export const NavigationDrawerAIChatThreadsList = () => {
-  const currentThreadId = useAtomStateValue(currentAIChatThreadStateV2);
+  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
   const { handleThreadClick } = useAIChatThreadClick({
     resetNavigationStack: true,
   });
@@ -45,7 +45,7 @@ export const NavigationDrawerAIChatThreadsList = () => {
             key={key}
             title={getDateGroupTitle(key)}
             threads={threads}
-            currentThreadId={currentThreadId}
+            currentThreadId={currentAIChatThread}
             onThreadClick={handleThreadClick}
           />
         );

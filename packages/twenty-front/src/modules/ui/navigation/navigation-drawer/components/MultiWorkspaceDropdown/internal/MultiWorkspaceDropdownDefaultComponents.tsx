@@ -18,7 +18,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationDrawerExpandedMemorizedStateV2 } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedStateV2';
+import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -85,7 +85,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useAtomState(isNavigationDrawerExpandedState);
   const setNavigationDrawerExpandedMemorized = useSetAtomState(
-    navigationDrawerExpandedMemorizedStateV2,
+    navigationDrawerExpandedMemorizedState,
   );
   const setNavigationMemorizedUrl = useSetAtomState(
     navigationMemorizedUrlState,

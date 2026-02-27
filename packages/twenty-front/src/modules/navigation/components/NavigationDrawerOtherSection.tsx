@@ -7,7 +7,7 @@ import { IconHelpCircle, IconSettings } from 'twenty-ui/display';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationDrawerExpandedMemorizedStateV2 } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedStateV2';
+import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -29,7 +29,7 @@ export const NavigationDrawerOtherSection = () => {
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useAtomState(isNavigationDrawerExpandedState);
   const setNavigationDrawerExpandedMemorized = useSetAtomState(
-    navigationDrawerExpandedMemorizedStateV2,
+    navigationDrawerExpandedMemorizedState,
   );
   const setNavigationMemorizedUrl = useSetAtomState(
     navigationMemorizedUrlState,

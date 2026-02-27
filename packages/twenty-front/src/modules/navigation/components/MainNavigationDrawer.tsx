@@ -10,7 +10,9 @@ import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerT
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
-  const activeTab = useAtomStateValue(navigationDrawerActiveTabState);
+  const navigationDrawerActiveTab = useAtomStateValue(
+    navigationDrawerActiveTabState,
+  );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   return (
@@ -23,7 +25,8 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
       </NavigationDrawerFixedContent>
 
       <NavigationDrawerScrollableContent>
-        {activeTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY ? (
+        {navigationDrawerActiveTab ===
+        NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY ? (
           <MainNavigationDrawerAIChatContent />
         ) : (
           <MainNavigationDrawerNavigationContent />
