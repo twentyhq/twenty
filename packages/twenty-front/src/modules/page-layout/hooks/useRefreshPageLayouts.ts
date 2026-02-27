@@ -1,4 +1,4 @@
-import { useApplyPageLayouts } from '@/page-layout/hooks/useApplyRecordPageLayouts';
+import { useApplyPageLayouts } from '@/page-layout/hooks/useApplyPageLayouts';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useFindAllPageLayoutsLazyQuery } from '~/generated-metadata/graphql';
@@ -8,7 +8,7 @@ export const useRefreshPageLayouts = () => {
 
   const { applyPageLayouts } = useApplyPageLayouts();
 
-  const refreshRecordPageLayouts = useCallback(async () => {
+  const refreshPageLayouts = useCallback(async () => {
     const result = await findAllPageLayoutsLazy({
       fetchPolicy: 'network-only',
     });
@@ -21,6 +21,6 @@ export const useRefreshPageLayouts = () => {
   }, [findAllPageLayoutsLazy, applyPageLayouts]);
 
   return {
-    refreshRecordPageLayouts,
+    refreshPageLayouts,
   };
 };
