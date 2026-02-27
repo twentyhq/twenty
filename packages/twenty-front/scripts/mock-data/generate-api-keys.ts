@@ -1,4 +1,4 @@
-/* eslint-disable no-console, lingui/no-unlocalized-strings */
+/* eslint-disable no-console */
 import { graphqlRequest, writeGeneratedFile } from './utils.js';
 
 const API_KEYS_QUERY = `
@@ -24,11 +24,7 @@ const API_KEYS_QUERY = `
 export const generateApiKeys = async (token: string) => {
   console.log('Fetching API keys from /metadata ...');
 
-  const data = (await graphqlRequest(
-    '/metadata',
-    API_KEYS_QUERY,
-    token,
-  )) as {
+  const data = (await graphqlRequest('/metadata', API_KEYS_QUERY, token)) as {
     apiKeys: Record<string, unknown>[];
   };
 

@@ -1,4 +1,4 @@
-/* eslint-disable no-console, lingui/no-unlocalized-strings */
+/* eslint-disable no-console */
 import { graphqlRequest, writeGeneratedFile } from './utils.js';
 
 const LIST_PLANS_QUERY = `
@@ -52,11 +52,7 @@ const LIST_PLANS_QUERY = `
 export const generateBillingPlans = async (token: string) => {
   console.log('Fetching billing plans from /metadata ...');
 
-  const data = (await graphqlRequest(
-    '/metadata',
-    LIST_PLANS_QUERY,
-    token,
-  )) as {
+  const data = (await graphqlRequest('/metadata', LIST_PLANS_QUERY, token)) as {
     listPlans: Record<string, unknown>[];
   };
 
