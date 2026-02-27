@@ -2,10 +2,9 @@ import {
   type CloseSidePanelFunction,
   type EnqueueSnackbarFunction,
   type NavigateFunction,
-  type OpenAskAIWithPromptFunction,
   type OpenSidePanelPageFunction,
   type RequestAccessTokenRefreshFunction,
-  type UnmountFrontComponentFunction,
+  type UnmountFrontComponentFunction
 } from '../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 
 export type FrontComponentHostCommunicationApi = {
@@ -15,5 +14,4 @@ export type FrontComponentHostCommunicationApi = {
   unmountFrontComponent: UnmountFrontComponentFunction;
   enqueueSnackbar: EnqueueSnackbarFunction;
   closeSidePanel: CloseSidePanelFunction;
-  openAskAIWithPrompt: OpenAskAIWithPromptFunction;
 };

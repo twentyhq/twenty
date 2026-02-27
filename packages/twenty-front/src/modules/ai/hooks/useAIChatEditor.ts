@@ -5,7 +5,7 @@ import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 import { Placeholder } from '@tiptap/extensions/placeholder';
 import { useEditor } from '@tiptap/react';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
@@ -17,7 +17,7 @@ import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type UseAIChatEditorProps = {
@@ -25,8 +25,7 @@ type UseAIChatEditorProps = {
 };
 
 export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
-  const [agentChatInput, setAgentChatInput] = useAtomState(agentChatInputState);
-  const hasSyncedPrefillRef = useRef(false);
+  const setAgentChatInput = useSetAtomState(agentChatInputState);
   const { searchMentionRecords } = useMentionSearch();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -94,33 +93,6 @@ export const useAIChatEditor = ({ onSendMessage }: UseAIChatEditorProps) => {
     },
     injectCSS: false,
   });
-
-  // Sync pre-filled prompt (e.g. from openAskAIWithPrompt) into the
-  // editor once on mount, then clear the atom to avoid re-syncing.
-  useEffect(() => {
-    if (
-      !hasSyncedPrefillRef.current &&
-      isDefined(editor) &&
-      isDefined(agentChatInput) &&
-      agentChatInput !== ''
-    ) {
-      hasSyncedPrefillRef.current = true;
-
-      editor.commands.setContent(
-        {
-          type: 'doc',
-          content: [
-            {
-              type: 'paragraph',
-              content: [{ type: 'text', text: agentChatInput }],
-            },
-          ],
-        },
-        { emitUpdate: false },
-      );
-      editor.commands.focus('end');
-    }
-  }, [editor, agentChatInput]);
 
   // Keep search function in sync via Tiptap extension storage,
   // avoiding stale closures without useRef

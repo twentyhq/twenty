@@ -30,10 +30,6 @@ export type CloseSidePanelFunction = () => Promise<void>;
 
 export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
-export type OpenAskAIWithPromptFunction = (params: {
-  prompt: string;
-}) => Promise<void>;
-
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
   requestAccessTokenRefresh?: RequestAccessTokenRefreshFunction;
@@ -41,7 +37,6 @@ export type FrontComponentHostCommunicationApiStore = {
   unmountFrontComponent?: UnmountFrontComponentFunction;
   enqueueSnackbar?: EnqueueSnackbarFunction;
   closeSidePanel?: CloseSidePanelFunction;
-  openAskAIWithPrompt?: OpenAskAIWithPromptFunction;
 };
 
 declare global {

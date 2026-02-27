@@ -102,8 +102,6 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
     frontComponentHostCommunicationApi.enqueueSnackbar =
       hostApi.enqueueSnackbar;
     frontComponentHostCommunicationApi.closeSidePanel = hostApi.closeSidePanel;
-    frontComponentHostCommunicationApi.openAskAIWithPrompt =
-      hostApi.openAskAIWithPrompt;
   };
 
 const updateContext: WorkerExports['updateContext'] = async (
