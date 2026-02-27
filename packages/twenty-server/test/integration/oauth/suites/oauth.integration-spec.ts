@@ -2,30 +2,132 @@ import crypto from 'crypto';
 
 import bcrypt from 'bcrypt';
 import request from 'supertest';
-import { type Repository } from 'typeorm';
+import { type DataSource } from 'typeorm';
 
-import {
-  AppTokenEntity,
-  AppTokenType,
-} from 'src/engine/core-modules/app-token/app-token.entity';
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
 
 const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
-const TEST_USER_ID = '20202020-e6b5-4680-8a32-b820973715b6';
+const TEST_USER_ID = '20202020-e6b5-4680-8a32-b8209737156b';
+
+type TestRegistration = {
+  id: string;
+  universalIdentifier: string;
+  name: string;
+  description: string | null;
+  oAuthClientId: string;
+  oAuthRedirectUris: string[];
+  oAuthScopes: string[];
+};
+
+type TestApplication = {
+  id: string;
+};
+
+const insertRegistration = async (
+  ds: DataSource,
+  params: {
+    name: string;
+    description?: string;
+    clientSecretHash: string;
+    redirectUris: string[];
+    scopes: string[];
+  },
+): Promise<TestRegistration> => {
+  const id = crypto.randomUUID();
+  const universalIdentifier = crypto.randomUUID();
+  const oAuthClientId = crypto.randomUUID();
+
+  await ds.query(
+    `INSERT INTO core."applicationRegistration"
+      (id, "universalIdentifier", name, description, "oAuthClientId", "oAuthClientSecretHash", "oAuthRedirectUris", "oAuthScopes")
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+    [
+      id,
+      universalIdentifier,
+      params.name,
+      params.description ?? null,
+      oAuthClientId,
+      params.clientSecretHash,
+      params.redirectUris,
+      params.scopes,
+    ],
+  );
+
+  return {
+    id,
+    universalIdentifier,
+    name: params.name,
+    description: params.description ?? null,
+    oAuthClientId,
+    oAuthRedirectUris: params.redirectUris,
+    oAuthScopes: params.scopes,
+  };
+};
+
+const insertApplication = async (
+  ds: DataSource,
+  params: {
+    universalIdentifier: string;
+    name: string;
+    workspaceId: string;
+    applicationRegistrationId: string;
+  },
+): Promise<TestApplication> => {
+  const id = crypto.randomUUID();
+
+  await ds.query(
+    `INSERT INTO core."application"
+      (id, "universalIdentifier", name, "workspaceId", "applicationRegistrationId", "sourceType", "sourcePath", "canBeUninstalled")
+     VALUES ($1, $2, $3, $4, $5, 'local', '', true)`,
+    [
+      id,
+      params.universalIdentifier,
+      params.name,
+      params.workspaceId,
+      params.applicationRegistrationId,
+    ],
+  );
+
+  return { id };
+};
+
+const insertAppToken = async (
+  ds: DataSource,
+  params: {
+    value: string;
+    type: AppTokenType;
+    userId: string;
+    workspaceId: string;
+    expiresAt: Date;
+  },
+): Promise<string> => {
+  const rows = await ds.query(
+    `INSERT INTO core."appToken"
+      (value, type, "userId", "workspaceId", "expiresAt")
+     VALUES ($1, $2, $3, $4, $5)
+     RETURNING id`,
+    [
+      params.value,
+      params.type,
+      params.userId,
+      params.workspaceId,
+      params.expiresAt,
+    ],
+  );
+
+  return rows[0].id;
+};
 
 describe('OAuth (integration)', () => {
   const baseUrl = `http://localhost:${APP_PORT}`;
 
-  let appRegistrationRepository: Repository<ApplicationRegistrationEntity>;
-  let appTokenRepository: Repository<AppTokenEntity>;
-  let applicationRepository: Repository<ApplicationEntity>;
+  let ds: DataSource;
 
-  let testRegistration: ApplicationRegistrationEntity;
+  let testRegistration: TestRegistration;
   let testClientSecret: string;
-  let testApplication: ApplicationEntity;
+  let testApplication: TestApplication;
 
-  let autoInstallRegistration: ApplicationRegistrationEntity;
+  let autoInstallRegistration: TestRegistration;
   let autoInstallClientSecret: string;
 
   const createdEntityIds: {
@@ -35,39 +137,25 @@ describe('OAuth (integration)', () => {
   } = { registrations: [], tokens: [], applications: [] };
 
   beforeAll(async () => {
-    appRegistrationRepository = global.testDataSource.getRepository(
-      ApplicationRegistrationEntity,
-    );
-    appTokenRepository = global.testDataSource.getRepository(AppTokenEntity);
-    applicationRepository =
-      global.testDataSource.getRepository(ApplicationEntity);
+    ds = global.testDataSource;
 
     testClientSecret = crypto.randomBytes(32).toString('hex');
     const clientSecretHash = await bcrypt.hash(testClientSecret, 10);
 
-    testRegistration = await appRegistrationRepository.save(
-      appRegistrationRepository.create({
-        universalIdentifier: crypto.randomUUID(),
-        name: 'OAuth Integration Test App',
-        oAuthClientId: crypto.randomUUID(),
-        oAuthClientSecretHash: clientSecretHash,
-        oAuthRedirectUris: ['https://example.com/callback'],
-        oAuthScopes: ['read', 'write'],
-      }),
-    );
+    testRegistration = await insertRegistration(ds, {
+      name: 'OAuth Integration Test App',
+      clientSecretHash,
+      redirectUris: ['https://example.com/callback'],
+      scopes: ['read', 'write'],
+    });
     createdEntityIds.registrations.push(testRegistration.id);
 
-    testApplication = await applicationRepository.save(
-      applicationRepository.create({
-        universalIdentifier: testRegistration.universalIdentifier,
-        name: testRegistration.name,
-        workspaceId: TEST_WORKSPACE_ID,
-        applicationRegistrationId: testRegistration.id,
-        sourceType: 'local',
-        sourcePath: '',
-        canBeUninstalled: true,
-      }),
-    );
+    testApplication = await insertApplication(ds, {
+      universalIdentifier: testRegistration.universalIdentifier,
+      name: testRegistration.name,
+      workspaceId: TEST_WORKSPACE_ID,
+      applicationRegistrationId: testRegistration.id,
+    });
 
     autoInstallClientSecret = crypto.randomBytes(32).toString('hex');
     const autoInstallSecretHash = await bcrypt.hash(
@@ -75,35 +163,54 @@ describe('OAuth (integration)', () => {
       10,
     );
 
-    autoInstallRegistration = await appRegistrationRepository.save(
-      appRegistrationRepository.create({
-        universalIdentifier: crypto.randomUUID(),
-        name: 'OAuth Auto-Install Test App',
-        description: 'App for testing OAuth auto-install',
-        oAuthClientId: crypto.randomUUID(),
-        oAuthClientSecretHash: autoInstallSecretHash,
-        oAuthRedirectUris: ['https://example.com/callback'],
-        oAuthScopes: ['api'],
-      }),
-    );
+    autoInstallRegistration = await insertRegistration(ds, {
+      name: 'OAuth Auto-Install Test App',
+      description: 'App for testing OAuth auto-install',
+      clientSecretHash: autoInstallSecretHash,
+      redirectUris: ['https://example.com/callback'],
+      scopes: ['api'],
+    });
     createdEntityIds.registrations.push(autoInstallRegistration.id);
   });
 
   afterAll(async () => {
     if (createdEntityIds.tokens.length > 0) {
-      await appTokenRepository.delete(createdEntityIds.tokens);
+      const placeholders = createdEntityIds.tokens
+        .map((_, i) => `$${i + 1}`)
+        .join(', ');
+
+      await ds.query(
+        `DELETE FROM core."appToken" WHERE id IN (${placeholders})`,
+        createdEntityIds.tokens,
+      );
     }
 
     if (createdEntityIds.applications.length > 0) {
-      await applicationRepository.delete(createdEntityIds.applications);
+      const placeholders = createdEntityIds.applications
+        .map((_, i) => `$${i + 1}`)
+        .join(', ');
+
+      await ds.query(
+        `DELETE FROM core."application" WHERE id IN (${placeholders})`,
+        createdEntityIds.applications,
+      );
     }
 
     if (testApplication) {
-      await applicationRepository.delete(testApplication.id);
+      await ds.query(`DELETE FROM core."application" WHERE id = $1`, [
+        testApplication.id,
+      ]);
     }
 
     if (createdEntityIds.registrations.length > 0) {
-      await appRegistrationRepository.delete(createdEntityIds.registrations);
+      const placeholders = createdEntityIds.registrations
+        .map((_, i) => `$${i + 1}`)
+        .join(', ');
+
+      await ds.query(
+        `DELETE FROM core."applicationRegistration" WHERE id IN (${placeholders})`,
+        createdEntityIds.registrations,
+      );
     }
   });
 
@@ -187,7 +294,7 @@ describe('OAuth (integration)', () => {
     const createAuthorizationCode = async (): Promise<string> => {
       const code = crypto.randomBytes(42).toString('hex');
 
-      const token = appTokenRepository.create({
+      const tokenId = await insertAppToken(ds, {
         value: code,
         type: AppTokenType.AuthorizationCode,
         userId: TEST_USER_ID,
@@ -195,9 +302,7 @@ describe('OAuth (integration)', () => {
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       });
 
-      const saved = await appTokenRepository.save(token);
-
-      createdEntityIds.tokens.push(saved.id);
+      createdEntityIds.tokens.push(tokenId);
 
       return code;
     };
@@ -244,7 +349,7 @@ describe('OAuth (integration)', () => {
     it('should reject an expired authorization code', async () => {
       const code = crypto.randomBytes(42).toString('hex');
 
-      const token = appTokenRepository.create({
+      const tokenId = await insertAppToken(ds, {
         value: code,
         type: AppTokenType.AuthorizationCode,
         userId: TEST_USER_ID,
@@ -252,9 +357,7 @@ describe('OAuth (integration)', () => {
         expiresAt: new Date(Date.now() - 1000),
       });
 
-      const saved = await appTokenRepository.save(token);
-
-      createdEntityIds.tokens.push(saved.id);
+      createdEntityIds.tokens.push(tokenId);
 
       const res = await postToken({
         grant_type: 'authorization_code',
@@ -312,26 +415,23 @@ describe('OAuth (integration)', () => {
 
       const code = crypto.randomBytes(42).toString('hex');
 
-      const tokens = appTokenRepository.create([
-        {
-          value: code,
-          type: AppTokenType.AuthorizationCode,
-          userId: TEST_USER_ID,
-          workspaceId: TEST_WORKSPACE_ID,
-          expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-        },
-        {
-          value: codeChallenge,
-          type: AppTokenType.CodeChallenge,
-          userId: TEST_USER_ID,
-          workspaceId: TEST_WORKSPACE_ID,
-          expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-        },
-      ]);
+      const codeTokenId = await insertAppToken(ds, {
+        value: code,
+        type: AppTokenType.AuthorizationCode,
+        userId: TEST_USER_ID,
+        workspaceId: TEST_WORKSPACE_ID,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      });
 
-      const saved = await appTokenRepository.save(tokens);
+      const challengeTokenId = await insertAppToken(ds, {
+        value: codeChallenge,
+        type: AppTokenType.CodeChallenge,
+        userId: TEST_USER_ID,
+        workspaceId: TEST_WORKSPACE_ID,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      });
 
-      createdEntityIds.tokens.push(...saved.map((token) => token.id));
+      createdEntityIds.tokens.push(codeTokenId, challengeTokenId);
 
       return { code, codeVerifier };
     };
@@ -371,7 +471,7 @@ describe('OAuth (integration)', () => {
     const createAutoInstallAuthCode = async (): Promise<string> => {
       const code = crypto.randomBytes(42).toString('hex');
 
-      const token = appTokenRepository.create({
+      const tokenId = await insertAppToken(ds, {
         value: code,
         type: AppTokenType.AuthorizationCode,
         userId: TEST_USER_ID,
@@ -379,9 +479,7 @@ describe('OAuth (integration)', () => {
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       });
 
-      const saved = await appTokenRepository.save(token);
-
-      createdEntityIds.tokens.push(saved.id);
+      createdEntityIds.tokens.push(tokenId);
 
       return code;
     };
@@ -402,24 +500,28 @@ describe('OAuth (integration)', () => {
       expect(res.body.token_type).toBe('Bearer');
       expect(res.body.scope).toBe('api');
 
-      const autoCreatedApp = await applicationRepository.findOne({
-        where: {
-          applicationRegistrationId: autoInstallRegistration.id,
-          workspaceId: TEST_WORKSPACE_ID,
-        },
-      });
+      const rows = await ds.query(
+        `SELECT id, name, description, "sourcePath", "universalIdentifier"
+         FROM core."application"
+         WHERE "applicationRegistrationId" = $1
+           AND "workspaceId" = $2`,
+        [autoInstallRegistration.id, TEST_WORKSPACE_ID],
+      );
 
-      expect(autoCreatedApp).toBeDefined();
-      expect(autoCreatedApp!.name).toBe('OAuth Auto-Install Test App');
-      expect(autoCreatedApp!.description).toBe(
+      expect(rows).toHaveLength(1);
+
+      const autoCreatedApp = rows[0];
+
+      expect(autoCreatedApp.name).toBe('OAuth Auto-Install Test App');
+      expect(autoCreatedApp.description).toBe(
         'App for testing OAuth auto-install',
       );
-      expect(autoCreatedApp!.sourcePath).toBe('oauth-install');
-      expect(autoCreatedApp!.universalIdentifier).toBe(
+      expect(autoCreatedApp.sourcePath).toBe('oauth-install');
+      expect(autoCreatedApp.universalIdentifier).toBe(
         autoInstallRegistration.universalIdentifier,
       );
 
-      createdEntityIds.applications.push(autoCreatedApp!.id);
+      createdEntityIds.applications.push(autoCreatedApp.id);
     });
 
     it('should reuse existing application on subsequent authorization code exchanges', async () => {
@@ -435,30 +537,26 @@ describe('OAuth (integration)', () => {
 
       expect(res.body.access_token).toBeDefined();
 
-      const apps = await applicationRepository.find({
-        where: {
-          applicationRegistrationId: autoInstallRegistration.id,
-          workspaceId: TEST_WORKSPACE_ID,
-        },
-      });
+      const rows = await ds.query(
+        `SELECT id FROM core."application"
+         WHERE "applicationRegistrationId" = $1
+           AND "workspaceId" = $2`,
+        [autoInstallRegistration.id, TEST_WORKSPACE_ID],
+      );
 
-      expect(apps).toHaveLength(1);
+      expect(rows).toHaveLength(1);
     });
 
     it('should fail client credentials when app is not installed in any workspace', async () => {
       const noInstallSecret = crypto.randomBytes(32).toString('hex');
       const noInstallHash = await bcrypt.hash(noInstallSecret, 10);
 
-      const noInstallRegistration = await appRegistrationRepository.save(
-        appRegistrationRepository.create({
-          universalIdentifier: crypto.randomUUID(),
-          name: 'No Install Test App',
-          oAuthClientId: crypto.randomUUID(),
-          oAuthClientSecretHash: noInstallHash,
-          oAuthRedirectUris: [],
-          oAuthScopes: ['api'],
-        }),
-      );
+      const noInstallRegistration = await insertRegistration(ds, {
+        name: 'No Install Test App',
+        clientSecretHash: noInstallHash,
+        redirectUris: [],
+        scopes: ['api'],
+      });
 
       createdEntityIds.registrations.push(noInstallRegistration.id);
 
@@ -479,7 +577,7 @@ describe('OAuth (integration)', () => {
     it('should issue new tokens from a valid refresh token', async () => {
       const code = crypto.randomBytes(42).toString('hex');
 
-      const token = appTokenRepository.create({
+      const tokenId = await insertAppToken(ds, {
         value: code,
         type: AppTokenType.AuthorizationCode,
         userId: TEST_USER_ID,
@@ -487,9 +585,7 @@ describe('OAuth (integration)', () => {
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       });
 
-      const saved = await appTokenRepository.save(token);
-
-      createdEntityIds.tokens.push(saved.id);
+      createdEntityIds.tokens.push(tokenId);
 
       const authCodeRes = await postToken({
         grant_type: 'authorization_code',
