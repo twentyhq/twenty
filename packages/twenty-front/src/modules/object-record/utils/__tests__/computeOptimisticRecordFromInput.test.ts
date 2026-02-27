@@ -1,13 +1,31 @@
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { type FieldActorForInputValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { InMemoryCache } from '@apollo/client';
-import { mockCurrentWorkspaceMembers } from '~/testing/mock-data/workspace-members';
+import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+const mockCurrentWorkspaceMembers: CurrentWorkspaceMember[] =
+  mockedWorkspaceMemberRecords.map((record) => {
+    const workspaceMember = getRecordFromRecordNode<WorkspaceMember>({
+      recordNode: record,
+    });
+    const {
+      createdAt: _createdAt,
+      updatedAt: _updatedAt,
+      userId: _userId,
+      __typename: _typename,
+      ...rest
+    } = workspaceMember;
+    return rest as CurrentWorkspaceMember;
+  });
 
 describe('computeOptimisticRecordFromInput', () => {
   const currentWorkspaceMember = mockCurrentWorkspaceMembers[0];
