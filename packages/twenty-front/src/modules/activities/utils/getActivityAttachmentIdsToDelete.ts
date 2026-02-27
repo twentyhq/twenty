@@ -7,7 +7,6 @@ export const getActivityAttachmentIdsToDelete = (
   newActivityBody: string,
   oldActivityAttachments: Attachment[] = [],
   oldActivityBody: string,
-  isFilesFieldMigrated: boolean,
 ) => {
   if (oldActivityAttachments.length === 0) return [];
 
@@ -29,10 +28,7 @@ export const getActivityAttachmentIdsToDelete = (
   return oldActivityAttachments
     .filter((attachment) =>
       pathsToDelete.some((pathToDelete) =>
-        compareUrls(
-          getAttachmentUrl({ attachment, isFilesFieldMigrated }),
-          pathToDelete,
-        ),
+        compareUrls(getAttachmentUrl({ attachment }), pathToDelete),
       ),
     )
     .map((attachment) => attachment.id);

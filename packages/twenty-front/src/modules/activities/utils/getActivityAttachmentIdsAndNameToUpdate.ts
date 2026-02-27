@@ -10,7 +10,6 @@ import { isDefined } from 'twenty-shared/utils';
 export const getActivityAttachmentIdsAndNameToUpdate = (
   newActivityBody: string,
   oldActivityAttachments: Attachment[] = [],
-  isFilesFieldMigrated: boolean,
 ) => {
   const activityAttachmentsNameAndPaths =
     getActivityAttachmentPathsAndName(newActivityBody);
@@ -19,10 +18,7 @@ export const getActivityAttachmentIdsAndNameToUpdate = (
   return activityAttachmentsNameAndPaths.reduce(
     (acc: Partial<Attachment>[], activity: AttachmentInfo) => {
       const foundActivity = oldActivityAttachments.find((attachment) =>
-        compareUrls(
-          getAttachmentUrl({ attachment, isFilesFieldMigrated }),
-          activity.path,
-        ),
+        compareUrls(getAttachmentUrl({ attachment }), activity.path),
       );
       if (isDefined(foundActivity) && foundActivity.name !== activity.name) {
         acc.push({ id: foundActivity.id, name: activity.name });

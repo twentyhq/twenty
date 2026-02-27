@@ -330,35 +330,15 @@ export class WorkspaceResolver {
 
   @ResolveField(() => String)
   async logo(@Parent() workspace: WorkspaceEntity): Promise<string> {
-    if (
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CORE_PICTURE_MIGRATED,
-        workspace.id,
-      )
-    ) {
-      if (!isDefined(workspace.logoFileId)) {
-        return '';
-      }
-
-      return this.fileUrlService.signFileByIdUrl({
-        fileId: workspace.logoFileId,
-        workspaceId: workspace.id,
-        fileFolder: FileFolder.CorePicture,
-      });
+    if (!isDefined(workspace.logoFileId)) {
+      return '';
     }
 
-    if (workspace.logo) {
-      try {
-        return this.fileService.signFileUrl({
-          url: workspace.logo,
-          workspaceId: workspace.id,
-        });
-      } catch {
-        return workspace.logo;
-      }
-    }
-
-    return workspace.logo ?? '';
+    return this.fileUrlService.signFileByIdUrl({
+      fileId: workspace.logoFileId,
+      workspaceId: workspace.id,
+      fileFolder: FileFolder.CorePicture,
+    });
   }
 
   @ResolveField(() => [BillingEntitlementDTO])

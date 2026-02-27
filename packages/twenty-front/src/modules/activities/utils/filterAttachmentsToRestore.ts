@@ -5,19 +5,14 @@ import { getAttachmentUrl } from '@/activities/utils/getAttachmentUrl';
 export const filterAttachmentsToRestore = ({
   attachmentPathsToRestore,
   softDeletedAttachments,
-  isFilesFieldMigrated,
 }: {
   attachmentPathsToRestore: string[];
   softDeletedAttachments: Attachment[];
-  isFilesFieldMigrated: boolean;
 }) => {
   return softDeletedAttachments
     .filter((attachment) =>
       attachmentPathsToRestore.some((path) =>
-        compareUrls(
-          getAttachmentUrl({ attachment, isFilesFieldMigrated }),
-          path,
-        ),
+        compareUrls(getAttachmentUrl({ attachment }), path),
       ),
     )
     .map((attachment) => attachment.id);

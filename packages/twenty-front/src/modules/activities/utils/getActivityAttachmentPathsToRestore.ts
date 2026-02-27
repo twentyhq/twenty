@@ -6,7 +6,6 @@ import { getAttachmentUrl } from '@/activities/utils/getAttachmentUrl';
 export const getActivityAttachmentPathsToRestore = (
   newActivityBody: string,
   oldActivityAttachments: Attachment[],
-  isFilesFieldMigrated: boolean,
 ) => {
   const newActivityAttachmentPaths =
     getActivityAttachmentPathsAndName(newActivityBody);
@@ -15,10 +14,7 @@ export const getActivityAttachmentPathsToRestore = (
     .filter(
       (newActivity) =>
         !oldActivityAttachments.some((attachment) =>
-          compareUrls(
-            newActivity.path,
-            getAttachmentUrl({ attachment, isFilesFieldMigrated }),
-          ),
+          compareUrls(newActivity.path, getAttachmentUrl({ attachment })),
         ),
     )
     .map((activity) => activity.path);
