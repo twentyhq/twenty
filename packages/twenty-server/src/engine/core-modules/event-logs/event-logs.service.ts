@@ -1,14 +1,17 @@
 /* @license Enterprise */
 
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { EventLogTable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 import {
   EventLogsException,
@@ -26,7 +29,7 @@ type ClickHouseEventRecord = {
   event?: string;
   name?: string;
   timestamp: string;
-  userWorkspaceId?: string;
+  userId?: string;
   properties?: Record<string, unknown>;
   recordId?: string;
   objectMetadataId?: string;
@@ -47,6 +50,8 @@ export class EventLogsService {
   constructor(
     private readonly clickHouseService: ClickHouseService,
     private readonly billingService: BillingService,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async queryEventLogs(
@@ -67,7 +72,7 @@ export class EventLogsService {
     const whereClauses: string[] = ['"workspaceId" = {workspaceId:String}'];
     const params: Record<string, unknown> = { workspaceId };
 
-    this.applyFilters(
+    await this.applyFilters(
       whereClauses,
       params,
       input.filters,
@@ -155,13 +160,13 @@ export class EventLogsService {
     }
   }
 
-  private applyFilters(
+  private async applyFilters(
     whereClauses: string[],
     params: Record<string, unknown>,
     filters: EventLogFiltersInput | undefined,
     eventFieldName: string,
     table: EventLogTable,
-  ): void {
+  ): Promise<void> {
     if (!isDefined(filters)) {
       return;
     }
@@ -174,8 +179,15 @@ export class EventLogsService {
     }
 
     if (isDefined(filters.userWorkspaceId)) {
-      whereClauses.push('"userWorkspaceId" = {userWorkspaceId:String}');
-      params.userWorkspaceId = filters.userWorkspaceId;
+      const userWorkspace = await this.userWorkspaceRepository.findOne({
+        where: { id: filters.userWorkspaceId },
+        select: ['userId'],
+      });
+
+      if (isDefined(userWorkspace)) {
+        whereClauses.push('"userId" = {userId:String}');
+        params.userId = userWorkspace.userId;
+      }
     }
 
     if (isDefined(filters.dateRange?.start)) {
@@ -222,7 +234,7 @@ export class EventLogsService {
       return {
         event: eventName,
         timestamp: new Date(record.timestamp),
-        userWorkspaceId: record.userWorkspaceId,
+        userId: record.userId,
         properties: record.properties,
         recordId: record.recordId,
         objectMetadataId: record.objectMetadataId,

@@ -4,18 +4,17 @@ import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/
 import { type FieldActorForInputValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { InMemoryCache } from '@apollo/client';
-import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
-import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 import { mockCurrentWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 describe('computeOptimisticRecordFromInput', () => {
   const currentWorkspaceMember = mockCurrentWorkspaceMembers[0];
   const currentWorkspaceMemberFullname = `${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`;
   it('should generate correct optimistic record if no relation field is present', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getMockPersonObjectMetadataItem();
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
     const result = computeOptimisticRecordFromInput({
       currentWorkspaceMember,
@@ -35,7 +34,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should generate correct optimistic record with actor field', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getMockPersonObjectMetadataItem();
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
     const actorFieldValueForInput: FieldActorForInputValue = {
       context: {},
       source: 'API',
@@ -65,7 +64,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should generate correct optimistic record createdBy when recordInput contains id', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getMockPersonObjectMetadataItem();
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
     const result = computeOptimisticRecordFromInput({
       currentWorkspaceMember,
       objectMetadataItems: generatedMockObjectMetadataItems,
@@ -94,7 +93,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should generate correct optimistic record if relation field is present but cache is empty', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getMockPersonObjectMetadataItem();
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
     const result = computeOptimisticRecordFromInput({
       currentWorkspaceMember,
@@ -114,8 +113,9 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should generate correct optimistic record even if recordInput contains field __typename', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getMockPersonObjectMetadataItem();
-    const companyObjectMetadataItem = getMockCompanyObjectMetadataItem();
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+    const companyObjectMetadataItem =
+      getMockObjectMetadataItemOrThrow('company');
 
     const companyRecord = {
       id: '123',
@@ -163,8 +163,9 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should generate correct optimistic record if relation field is present and cache is not empty', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getMockPersonObjectMetadataItem();
-    const companyObjectMetadataItem = getMockCompanyObjectMetadataItem();
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+    const companyObjectMetadataItem =
+      getMockObjectMetadataItemOrThrow('company');
 
     const companyRecord = {
       id: '123',
@@ -214,7 +215,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should generate correct optimistic record if relation field is null and cache is empty', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getMockPersonObjectMetadataItem();
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
     const result = computeOptimisticRecordFromInput({
       currentWorkspaceMember,
@@ -235,7 +236,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
   it('should throw an error if recordInput contains fields unrelated to the current objectMetadata', () => {
     const cache = new InMemoryCache();
-    const personObjectMetadataItem = getMockPersonObjectMetadataItem();
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 
     expect(() =>
       computeOptimisticRecordFromInput({

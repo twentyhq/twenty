@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console, lingui/no-unlocalized-strings */
 import { print } from 'graphql';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -8,6 +8,14 @@ import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFind
 import { graphqlRequest, writeGeneratedFile } from './utils.js';
 
 const RECORDS_LIMIT = 10;
+
+const OBJECTS_TO_GENERATE = [
+  'company',
+  'person',
+  'task',
+  'note',
+  'timelineActivity',
+];
 
 // Production query builders omit __typename on connection/edge wrappers
 // since Apollo Client injects them automatically. Raw fetch needs them explicit.
@@ -34,28 +42,27 @@ const toObjectMetadataItems = (rawMetadata: {
     } as unknown as ObjectMetadataItem;
   });
 
-export const generateRecordData = async (
+const generateForObject = async (
   token: string,
-  rawMetadata: { objects: { edges: { node: Record<string, unknown> }[] } },
+  objectMetadataItems: ObjectMetadataItem[],
+  objectNameSingular: string,
 ) => {
-  const objectMetadataItems = toObjectMetadataItems(rawMetadata);
-
-  const companyObject = objectMetadataItems.find(
-    (item) => item.nameSingular === 'company',
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === objectNameSingular,
   );
 
-  if (!companyObject) {
-    throw new Error('Company object metadata not found');
+  if (!objectMetadataItem) {
+    throw new Error(`${objectNameSingular} object metadata not found`);
   }
 
   const recordGqlFields = generateDepthRecordGqlFieldsFromObject({
     objectMetadataItems,
-    objectMetadataItem: companyObject,
+    objectMetadataItem,
     depth: 1,
   });
 
   const queryDocument = generateFindManyRecordsQuery({
-    objectMetadataItem: companyObject,
+    objectMetadataItem,
     objectMetadataItems,
     recordGqlFields,
     objectPermissionsByObjectMetadataId: {},
@@ -64,22 +71,38 @@ export const generateRecordData = async (
   const query = addTypenamesToSelections(print(queryDocument));
 
   console.log(
-    `Fetching ${companyObject.namePlural} (limit: ${RECORDS_LIMIT}) from /graphql ...`,
+    `Fetching ${objectMetadataItem.namePlural} (limit: ${RECORDS_LIMIT}) from /graphql ...`,
   );
 
   const data = (await graphqlRequest('/graphql', query, token, {
     limit: RECORDS_LIMIT,
   })) as Record<string, { edges: { node: Record<string, unknown> }[] }>;
 
-  const records = data[companyObject.namePlural].edges.map((edge) => edge.node);
+  const records = data[objectMetadataItem.namePlural].edges.map(
+    (edge) => edge.node,
+  );
 
-  console.log(`  Got ${records.length} ${companyObject.namePlural}.`);
+  console.log(`  Got ${records.length} ${objectMetadataItem.namePlural}.`);
+
+  const pascalName =
+    objectNameSingular.charAt(0).toUpperCase() + objectNameSingular.slice(1);
 
   writeGeneratedFile(
-    'data/companies/mock-companies-data.ts',
-    'mockedCompanyRecords',
-    'Record<string, unknown>[]',
-    '',
+    `data/${objectMetadataItem.namePlural}/mock-${objectMetadataItem.namePlural}-data.ts`,
+    `mocked${pascalName}Records`,
+    'ObjectRecord[]',
+    "import { type ObjectRecord } from '@/object-record/types/ObjectRecord';",
     records,
   );
+};
+
+export const generateRecordData = async (
+  token: string,
+  rawMetadata: { objects: { edges: { node: Record<string, unknown> }[] } },
+) => {
+  const objectMetadataItems = toObjectMetadataItems(rawMetadata);
+
+  for (const objectNameSingular of OBJECTS_TO_GENERATE) {
+    await generateForObject(token, objectMetadataItems, objectNameSingular);
+  }
 };

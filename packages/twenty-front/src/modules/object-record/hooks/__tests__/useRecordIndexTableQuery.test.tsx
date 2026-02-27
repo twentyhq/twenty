@@ -11,16 +11,20 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { type MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
 import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { JestRecordIndexContextProviderWrapper } from '~/testing/jest/JestRecordIndexContextProviderWrapper';
-import {
-  getMockPersonObjectMetadataItem,
-  peopleQueryResult,
-} from '~/testing/mock-data/people';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
+import { generateMockRecordConnection } from '~/testing/utils/generateMockRecordConnection';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const recordTableId = 'people';
 const objectNameSingular = 'person';
-const mockPersonObjectMetadataItem = getMockPersonObjectMetadataItem();
+const mockPersonObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+
+const flatPersonRecords = mockedPersonRecords.map((record) =>
+  getRecordFromRecordNode({ recordNode: record }),
+);
 
 const ObjectNamePluralSetter = ({ children }: { children: ReactNode }) => {
   return <>{children}</>;
@@ -104,14 +108,10 @@ const mocks: MockedResponse[] = [
     },
     result: jest.fn(() => ({
       data: {
-        people: peopleQueryResult.people,
-        pageInfo: {
-          hasNextPage: false,
-          hasPreviousPage: false,
-          startCursor: null,
-          endCursor: null,
-        },
-        totalCount: 16,
+        people: generateMockRecordConnection({
+          objectNameSingular: 'person',
+          records: flatPersonRecords,
+        }),
       },
     })),
   },
@@ -182,7 +182,7 @@ describe('useRecordIndexTableQuery', () => {
     );
 
     await waitFor(() => {
-      expect(result.current.records).toHaveLength(16);
+      expect(result.current.records).toHaveLength(flatPersonRecords.length);
     });
   });
 });
