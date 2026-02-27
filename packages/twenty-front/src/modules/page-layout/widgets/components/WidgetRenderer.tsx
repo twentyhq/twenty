@@ -28,6 +28,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type MouseEvent, useCallback } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { isDefined } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/display';
 import {
   PageLayoutTabLayoutMode,
@@ -133,7 +134,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const actions = useWidgetActions({ widget });
 
   const handleWidgetError = useCallback(
-    (error: Error, info: { componentStack?: string | null }) => {
+    async (error: Error, info: { componentStack?: string | null }) => {
       // eslint-disable-next-line no-console
       console.error(
         `Widget error [type=${widget.type}, id=${widget.id}]:`,
@@ -141,26 +142,31 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         info.componentStack,
       );
 
-      import('@sentry/react')
-        .then(({ captureException, withScope }) => {
-          withScope((scope) => {
-            scope.setTag('widgetType', widget.type);
-            scope.setTag('widgetId', widget.id);
-            scope.setContext('widget', {
-              type: widget.type,
-              id: widget.id,
-              configuration: widget.configuration,
-              objectMetadataId: widget.objectMetadataId,
-            });
-            if (info.componentStack) {
-              scope.setExtra('componentStack', info.componentStack);
-            }
-            captureException(error);
+      try {
+        const { captureException } = await import('@sentry/react');
+
+        captureException(error, (scope) => {
+          scope.setTag('widgetType', widget.type);
+          scope.setTag('widgetId', widget.id);
+          scope.setContext('widget', {
+            type: widget.type,
+            id: widget.id,
+            configuration: widget.configuration,
+            objectMetadataId: widget.objectMetadataId,
           });
-        })
-        .catch(() => {
-          // Sentry not available
+          if (isDefined(info.componentStack)) {
+            scope.setExtra('componentStack', info.componentStack);
+          }
+          scope.setFingerprint(['widget-error', widget.type, error.message]);
+          return scope;
         });
+      } catch (sentryError) {
+        // eslint-disable-next-line no-console
+        console.error(
+          'Failed to capture widget error with Sentry:',
+          sentryError,
+        );
+      }
     },
     [widget],
   );
