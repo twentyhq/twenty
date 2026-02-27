@@ -29,6 +29,25 @@ const isDockerRunning = (): boolean => {
   }
 };
 
+const isTwentyServerRunning = async (): Promise<boolean> => {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+    const response = await fetch('http://localhost:3000/healthz', {
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    const body = await response.json();
+
+    return body.status === 'ok';
+  } catch {
+    return false;
+  }
+};
+
 const getActiveWorkspaceId = (): string | null => {
   try {
     const result = execSync(
@@ -70,38 +89,44 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
   console.log('');
   console.log(chalk.blue('🐳 Setting up local Twenty instance...'));
 
-  if (!isDockerAvailable()) {
+  if (await isTwentyServerRunning()) {
     console.log(
-      chalk.yellow(
-        '⚠️  Docker Compose is not installed. Please install Docker first.',
-      ),
+      chalk.green('✅ Twenty server is already running on localhost:3000.'),
     );
-    console.log(chalk.gray('   See https://docs.docker.com/get-docker/'));
+  } else {
+    if (!isDockerAvailable()) {
+      console.log(
+        chalk.yellow(
+          '⚠️  Docker Compose is not installed. Please install Docker first.',
+        ),
+      );
+      console.log(chalk.gray('   See https://docs.docker.com/get-docker/'));
 
-    return { running: false };
-  }
+      return { running: false };
+    }
 
-  if (!isDockerRunning()) {
-    console.log(
-      chalk.yellow(
-        '⚠️  Docker is not running. Please start Docker and try again.',
-      ),
-    );
+    if (!isDockerRunning()) {
+      console.log(
+        chalk.yellow(
+          '⚠️  Docker is not running. Please start Docker and try again.',
+        ),
+      );
 
-    return { running: false };
-  }
+      return { running: false };
+    }
 
-  try {
-    execSync(`bash <(curl -sL ${INSTALL_SCRIPT_URL})`, {
-      stdio: 'inherit',
-      shell: '/bin/bash',
-    });
-  } catch {
-    console.log(
-      chalk.yellow('⚠️  Local instance setup did not complete successfully.'),
-    );
+    try {
+      execSync(`bash <(curl -sL ${INSTALL_SCRIPT_URL})`, {
+        stdio: 'inherit',
+        shell: '/bin/bash',
+      });
+    } catch {
+      console.log(
+        chalk.yellow('⚠️  Local instance setup did not complete successfully.'),
+      );
 
-    return { running: false };
+      return { running: false };
+    }
   }
 
   console.log('');
