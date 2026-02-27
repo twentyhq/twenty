@@ -8,14 +8,6 @@ export const AgentChatMessagesEffect = ({
 }: {
   incrementalStreamMessages: ExtendedUIMessage[];
 }) => {
-  // console.log(
-  //   'last incrementalStreamMessages message:',
-  //   JSON.stringify(
-  //     incrementalStreamMessages[incrementalStreamMessages.length - 1],
-  //     null,
-  //     2,
-  //   ),
-  // );
   const { scrollToBottom, isNearBottom } = useAgentChatScrollToBottom();
 
   const { processIncrementalStreamMessages } =

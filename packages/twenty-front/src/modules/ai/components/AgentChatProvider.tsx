@@ -5,21 +5,6 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Suspense } from 'react';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-const AgentChatProviderContent = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  return (
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: 'agentChatComponentInstance' }}
-    >
-      <AgentChatDataLoading />
-      {children}
-    </AgentChatComponentInstanceContext.Provider>
-  );
-};
-
 export const AgentChatProvider = ({
   children,
 }: {
@@ -33,7 +18,12 @@ export const AgentChatProvider = ({
 
   return (
     <Suspense fallback={null}>
-      <AgentChatProviderContent>{children}</AgentChatProviderContent>
+      <AgentChatComponentInstanceContext.Provider
+        value={{ instanceId: 'agentChatComponentInstance' }}
+      >
+        <AgentChatDataLoading />
+        {children}{' '}
+      </AgentChatComponentInstanceContext.Provider>
     </Suspense>
   );
 };
