@@ -1,12 +1,12 @@
 import { type RelativeDateFilterUnit } from '@/utils/filter/dates/utils/relativeDateFilterUnitSchema';
 import {
-    addDays,
-    addHours,
-    addMinutes,
-    addMonths,
-    addSeconds,
-    addWeeks,
-    addYears,
+  addDays,
+  addHours,
+  addMinutes,
+  addMonths,
+  addSeconds,
+  addWeeks,
+  addYears,
 } from 'date-fns';
 
 /** @deprecated Use addUnitToZonedDateTime */
