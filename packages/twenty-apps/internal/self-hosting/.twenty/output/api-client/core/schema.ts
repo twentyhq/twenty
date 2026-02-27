@@ -721,9 +721,9 @@ export interface Address {
 export type ActorSourceEnum = 'EMAIL' | 'CALENDAR' | 'WORKFLOW' | 'AGENT' | 'API' | 'IMPORT' | 'MANUAL' | 'SYSTEM' | 'WEBHOOK' | 'APPLICATION'
 
 export interface Actor {
-    source?: ActorSourceEnum
+    source: ActorSourceEnum
     workspaceMemberId?: Scalars['UUID']
-    name?: Scalars['String']
+    name: Scalars['String']
     context?: Scalars['JSON']
     __typename: 'Actor'
 }
@@ -14270,7 +14270,7 @@ export interface ActorGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ActorCreateInput {source?: (ActorSourceEnum | null),context?: (Scalars['JSON'] | null)}
+export interface ActorCreateInput {source: ActorSourceEnum,context?: (Scalars['JSON'] | null)}
 
 export interface ActorUpdateInput {source?: (ActorSourceEnum | null),context?: (Scalars['JSON'] | null)}
 
