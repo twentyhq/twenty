@@ -2,13 +2,19 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 
 import { type PageDecoratorArgs } from '~/testing/decorators/PageDecorator';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { allMockPersonRecords } from '~/testing/mock-data/people';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
+import { generateMockRecordConnection } from '~/testing/utils/generateMockRecordConnection';
 
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 
-const personRecord = allMockPersonRecords[0];
+const flatPersonRecords = mockedPersonRecords.map((record) =>
+  getRecordFromRecordNode({ recordNode: record }),
+);
+
+const personRecord = flatPersonRecords[0];
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordShowPage',
   component: RecordShowPage,
@@ -25,21 +31,10 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query('FindManyPeople', () => {
           return HttpResponse.json({
             data: {
-              people: {
-                __typename: 'PersonConnection',
-                edges: allMockPersonRecords.map((record) => ({
-                  __typename: 'PersonEdge',
-                  node: record,
-                  cursor: record.id,
-                })),
-                pageInfo: {
-                  hasNextPage: false,
-                  hasPreviousPage: false,
-                  startCursor: null,
-                  endCursor: null,
-                },
-                totalCount: allMockPersonRecords.length,
-              },
+              people: generateMockRecordConnection({
+                objectNameSingular: 'person',
+                records: flatPersonRecords,
+              }),
             },
           });
         }),

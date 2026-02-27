@@ -7,8 +7,6 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
-
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailRelationSection } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection';
@@ -16,10 +14,12 @@ import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingCon
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { RightDrawerDecorator } from '~/testing/decorators/RightDrawerDecorator';
-import { allMockPersonRecords } from '~/testing/mock-data/people';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-const companiesMock = getCompaniesMock();
+const companiesMock = mockedCompanyRecords;
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',
@@ -87,15 +87,19 @@ type Story = StoryObj<typeof RecordDetailRelationSection>;
 
 export const EmptyState: Story = {};
 
+const flatPersonRecords = mockedPersonRecords.map((record) =>
+  getRecordFromRecordNode({ recordNode: record }),
+);
+
 export const WithRecords: Story = {
   decorators: [RecordStoreDecorator],
   parameters: {
     records: [
       {
         ...companiesMock[0],
-        people: allMockPersonRecords,
+        people: flatPersonRecords,
       },
-      ...allMockPersonRecords,
+      ...flatPersonRecords,
     ],
   },
 };

@@ -13,7 +13,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const FIND_MANY_COMPANIES = gql`
@@ -102,7 +102,7 @@ const companyMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',
 );
 
-const companiesMock = getCompaniesMock();
+const companiesMock = mockedCompanyRecords;
 
 const companyMock = companiesMock[0];
 

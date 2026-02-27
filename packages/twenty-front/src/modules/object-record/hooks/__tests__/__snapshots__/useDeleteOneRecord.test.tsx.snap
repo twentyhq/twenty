@@ -19,7 +19,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
   "city": "New Jennifer",
   "company": {},
   "companyId": "20202020-aa0b-48a9-85ba-e223975696ea",
-  "createdAt": "2026-02-26T11:55:19.497Z",
+  "createdAt": "2026-02-27T01:17:29.464Z",
   "createdBy": {
     "__typename": "Actor",
     "context": null,
@@ -72,9 +72,8 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
     {},
     {},
     {},
-    {},
   ],
-  "updatedAt": "2026-02-26T11:55:19.497Z",
+  "updatedAt": "2026-02-27T01:17:29.464Z",
   "updatedBy": {
     "__typename": "Actor",
     "context": null,
@@ -162,7 +161,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
   "city": "New Jennifer",
   "company": {},
   "companyId": "20202020-aa0b-48a9-85ba-e223975696ea",
-  "createdAt": "2026-02-26T11:55:19.497Z",
+  "createdAt": "2026-02-27T01:17:29.464Z",
   "createdBy": {
     "__typename": "Actor",
     "context": null,
@@ -215,9 +214,8 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
     {},
     {},
     {},
-    {},
   ],
-  "updatedAt": "2026-02-26T11:55:19.497Z",
+  "updatedAt": "2026-02-27T01:17:29.464Z",
   "updatedBy": {
     "__typename": "Actor",
     "context": null,
@@ -305,7 +303,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
   "city": "New Jennifer",
   "company": {},
   "companyId": "20202020-aa0b-48a9-85ba-e223975696ea",
-  "createdAt": "2026-02-26T11:55:19.497Z",
+  "createdAt": "2026-02-27T01:17:29.464Z",
   "createdBy": {
     "__typename": "Actor",
     "context": null,
@@ -358,9 +356,8 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
     {},
     {},
     {},
-    {},
   ],
-  "updatedAt": "2026-02-26T11:55:19.497Z",
+  "updatedAt": "2026-02-27T01:17:29.464Z",
   "updatedBy": {
     "__typename": "Actor",
     "context": null,

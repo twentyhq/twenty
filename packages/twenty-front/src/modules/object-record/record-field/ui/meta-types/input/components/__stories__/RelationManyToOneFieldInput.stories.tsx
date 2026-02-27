@@ -27,7 +27,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationManyToOneFieldInput';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
@@ -42,7 +42,7 @@ const peopleFieldOnCompany = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: companyMetadata,
   fieldName: 'people',
 });
-const companiesMock = getCompaniesMock();
+const companiesMock = mockedCompanyRecords;
 
 const RelationWorkspaceSetterEffect = () => {
   const setRecordFieldInputLayoutDirectionLoading = useSetAtomComponentState(

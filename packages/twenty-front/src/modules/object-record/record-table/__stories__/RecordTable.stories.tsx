@@ -10,12 +10,12 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { sleep } from '~/utils/sleep';
 
-const companiesMock = getCompaniesMock();
+const companiesMock = mockedCompanyRecords;
 
 const meta: Meta = {
   title: 'Modules/ObjectRecord/RecordTable/RecordTable',

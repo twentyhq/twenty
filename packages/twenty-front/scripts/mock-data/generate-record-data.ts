@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console, lingui/no-unlocalized-strings */
 import { print } from 'graphql';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -9,7 +9,13 @@ import { graphqlRequest, writeGeneratedFile } from './utils.js';
 
 const RECORDS_LIMIT = 10;
 
-const OBJECTS_TO_GENERATE = ['company', 'person', 'task', 'note'];
+const OBJECTS_TO_GENERATE = [
+  'company',
+  'person',
+  'task',
+  'note',
+  'timelineActivity',
+];
 
 // Production query builders omit __typename on connection/edge wrappers
 // since Apollo Client injects them automatically. Raw fetch needs them explicit.
@@ -84,8 +90,8 @@ const generateForObject = async (
   writeGeneratedFile(
     `data/${objectMetadataItem.namePlural}/mock-${objectMetadataItem.namePlural}-data.ts`,
     `mocked${pascalName}Records`,
-    'Record<string, unknown>[]',
-    '',
+    'ObjectRecord[]',
+    "import { type ObjectRecord } from '@/object-record/types/ObjectRecord';",
     records,
   );
 };

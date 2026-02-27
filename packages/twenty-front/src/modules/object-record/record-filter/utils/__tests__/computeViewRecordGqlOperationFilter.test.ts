@@ -10,12 +10,12 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const companiesMock = getCompaniesMock();
+const companiesMock = mockedCompanyRecords;
 
 const companyMockObjectMetadataItem =
   getMockObjectMetadataItemOrThrow('company');
