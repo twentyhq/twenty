@@ -13,12 +13,13 @@ import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -211,29 +212,15 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     setAgentChatUploadedFiles,
   ]);
 
-  useEffect(() => {
-    const handler = () => {
-      handleSendMessage();
-    };
+  useListenToBrowserEvent({
+    eventName: AGENT_CHAT_SEND_MESSAGE_EVENT_NAME,
+    onBrowserEvent: handleSendMessage,
+  });
 
-    window.addEventListener(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME, handler);
-
-    return () => {
-      window.removeEventListener(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME, handler);
-    };
-  }, [handleSendMessage]);
-
-  useEffect(() => {
-    const handler = () => {
-      stop();
-    };
-
-    window.addEventListener(AGENT_CHAT_STOP_EVENT_NAME, handler);
-
-    return () => {
-      window.removeEventListener(AGENT_CHAT_STOP_EVENT_NAME, handler);
-    };
-  }, [stop]);
+  useListenToBrowserEvent({
+    eventName: AGENT_CHAT_STOP_EVENT_NAME,
+    onBrowserEvent: stop,
+  });
 
   return {
     messages,
