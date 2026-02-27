@@ -1,30 +1,15 @@
 import { processedToolExecutionPartIdsComponentState } from '@/ai/states/processedToolExecutionPartIdsComponentState';
+import { type AgentChatMessageUIToolCallPart } from '@/ai/types/AgentChatMessageUIToolCallPart';
+import { isUIToolCallPart } from '@/ai/utils/isUIToolCallPart';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 import { useStore } from 'jotai';
-import {
-  type ExtendedUIMessage,
-  type NavigateAppToolOutput,
-} from 'twenty-shared/ai';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { sleep } from '~/utils/sleep';
-
-export type AgentChatMessageUIToolCallPart = {
-  type: 'tool-execute_tool';
-  toolCallId: string;
-  state: string;
-  output: {
-    toolName: string;
-    result: {
-      message: string;
-      result: NavigateAppToolOutput;
-      success: boolean;
-    };
-  };
-};
 
 export const useProcessUIToolCallMessage = () => {
   const navigateApp = useNavigateApp();
@@ -42,9 +27,7 @@ export const useProcessUIToolCallMessage = () => {
     uiToolCallMessage: ExtendedUIMessage,
   ) => {
     const uiToolCallMessageParts = uiToolCallMessage.parts.filter(
-      (part) =>
-        part.type === 'tool-execute_tool' &&
-        (part.input as any)?.toolName === 'navigate_app',
+      isUIToolCallPart,
     ) as unknown as AgentChatMessageUIToolCallPart[];
 
     const alreadyProcessedToolExecutionPartIds = store.get(
@@ -56,8 +39,6 @@ export const useProcessUIToolCallMessage = () => {
     );
 
     for (const toolExecutionPart of toolCallMessagePartsToProcess) {
-      // console.log({ toolExecutionPart });-
-
       if (!isDefined(toolExecutionPart.output)) {
         continue;
       }
@@ -73,23 +54,13 @@ export const useProcessUIToolCallMessage = () => {
 
       const navigateAppOutput = toolExecutionPart.output.result.result;
 
-      // console.log({
-      //   navigateAppOutput,
-      // });
-
       switch (navigateAppOutput.action) {
-        case 'navigateToDefaultViewForObject': {
+        case 'navigateToObject': {
           const objectNamePlural =
             objectMetadataItems.find(
               (item) =>
                 item.nameSingular === navigateAppOutput.objectNameSingular,
             )?.namePlural ?? 'companies';
-
-          // console.log(
-          //   'navigating to default view for object',
-          //   navigateAppOutput.objectNameSingular,
-          //   objectNamePlural,
-          // );
 
           navigateApp(AppPath.RecordIndexPage, {
             objectNamePlural: objectNamePlural,
@@ -97,7 +68,7 @@ export const useProcessUIToolCallMessage = () => {
 
           break;
         }
-        case 'navigateToRecordPage': {
+        case 'navigateToRecord': {
           navigateApp(AppPath.RecordShowPage, {
             objectNameSingular: navigateAppOutput.objectNameSingular,
             objectRecordId: navigateAppOutput.recordId,
@@ -105,7 +76,7 @@ export const useProcessUIToolCallMessage = () => {
 
           break;
         }
-        case 'navigateToIndexPageView':
+        case 'navigateToView':
           // TODO: implement
           break;
         case 'wait': {
