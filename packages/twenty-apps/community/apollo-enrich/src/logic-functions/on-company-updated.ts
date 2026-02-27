@@ -5,12 +5,7 @@ import {
 } from 'twenty-sdk';
 import { CoreApiClient } from 'twenty-sdk/generated';
 
-const APOLLO_ACCESS_TOKEN_FALLBACK =
-  'REPLACE_ME';
 
-const getApolloAccessToken = (): string =>
-  process.env.APOLLO_ACCESS_TOKEN || APOLLO_ACCESS_TOKEN_FALLBACK;
-const DEBUG_URL = 'https://testcharlescharles.requestcatcher.com/';
 
 type CompanyRecord = {
   id: string;
@@ -43,17 +38,7 @@ type ApolloEnrichResponse = {
   organization?: ApolloOrganization;
 };
 
-const debugLog = async (step: string, data: unknown): Promise<void> => {
-  try {
-    await fetch(DEBUG_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ step, data, timestamp: new Date().toISOString() }),
-    });
-  } catch {
-    // ignore debug failures
-  }
-};
+
 
 const extractDomain = (
   domainName?: CompanyRecord['domainName'],
@@ -84,22 +69,10 @@ const fetchApolloEnrichment = async (
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${getApolloAccessToken()}`,
+        Authorization: `Bearer ${process.env.APOLLO_ACCESS_TOKEN ?? ''}`,
       },
     },
   );
-
-  if (!response.ok) {
-    const errorText = await response.text();
-
-    await debugLog('apollo-api-error', {
-      domain,
-      status: response.status,
-      body: errorText,
-    });
-
-    return undefined;
-  }
 
   const data: ApolloEnrichResponse = await response.json();
 
@@ -110,6 +83,10 @@ const buildCompanyUpdateData = (
   apolloOrganization: ApolloOrganization,
 ): Record<string, unknown> => {
   const updateData: Record<string, unknown> = {};
+
+  if (apolloOrganization.name) {
+    updateData.name = apolloOrganization.name;
+  }
 
   if (apolloOrganization.estimated_num_employees) {
     updateData.employees = apolloOrganization.estimated_num_employees;
@@ -195,6 +172,7 @@ const updateCompanyInTwenty = async (
   }
 };
 
+
 type CompanyUpdateEvent = DatabaseEventPayload<
   ObjectRecordUpdateEvent<CompanyRecord>
 >;
@@ -202,16 +180,8 @@ type CompanyUpdateEvent = DatabaseEventPayload<
 const handler = async (
   event: CompanyUpdateEvent,
 ): Promise<object | undefined> => {
-  await debugLog('env-vars', {
-    APOLLO_ACCESS_TOKEN: process.env.APOLLO_ACCESS_TOKEN ?? '(not set)',
-    APOLLO_REFRESH_TOKEN: process.env.APOLLO_REFRESH_TOKEN ?? '(not set)',
-    APOLLO_CLIENT_ID: process.env.APOLLO_CLIENT_ID ?? '(not set)',
-    APOLLO_CLIENT_SECRET: process.env.APOLLO_CLIENT_SECRET ?? '(not set)',
-    TWENTY_API_URL: process.env.TWENTY_API_URL ?? '(not set)',
-    TWENTY_APP_ACCESS_TOKEN: process.env.TWENTY_APP_ACCESS_TOKEN ?? '(not set)',
-  });
 
-  try {
+
     const { recordId, properties } = event;
     const { after: companyAfter } = properties;
 
@@ -236,7 +206,6 @@ const handler = async (
       return { skipped: true, reason: 'no enrichment data to apply' };
     }
 
-    await debugLog('updating-company', { recordId, updateData });
 
     await updateCompanyInTwenty(recordId, updateData);
 
@@ -247,17 +216,8 @@ const handler = async (
       updatedFields: Object.keys(updateData),
     };
 
-    await debugLog('success', result);
-
     return result;
-  } catch (error) {
-    await debugLog('error', {
-      message: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-    });
 
-    throw error;
-  }
 };
 
 export default defineLogicFunction({

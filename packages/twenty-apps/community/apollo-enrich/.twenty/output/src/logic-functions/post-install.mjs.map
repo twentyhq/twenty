@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../../src/logic-functions/post-install.ts"],
-  "sourcesContent": ["import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';\n\nconst handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {\n  console.log('Post install logic function executed successfully!', payload.previousVersion);\n};\n\nexport default definePostInstallLogicFunction({\n  universalIdentifier: '08292efc-d7ba-4ec3-ab95-e7c33bd3a3bc',\n  name: 'post-install',\n  description: 'Runs after installation to set up the application.',\n  timeoutSeconds: 300,\n  handler,\n});\n"],
-  "mappings": ";;;;AAAA,SAAS,sCAAwE;AAEjF,IAAM,UAAU,OAAO,YAAwD;AAC7E,UAAQ,IAAI,sDAAsD,QAAQ,eAAe;AAC3F;AAEA,IAAO,uBAAQ,+BAA+B;AAAA,EAC5C,qBAAqB;AAAA,EACrB,MAAM;AAAA,EACN,aAAa;AAAA,EACb,gBAAgB;AAAA,EAChB;AACF,CAAC;",
-  "names": []
-}

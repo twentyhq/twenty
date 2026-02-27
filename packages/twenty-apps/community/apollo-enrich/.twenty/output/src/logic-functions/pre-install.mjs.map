@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../../src/logic-functions/pre-install.ts"],
-  "sourcesContent": ["import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';\n\nconst handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {\n  console.log('Pre install logic function executed successfully!', payload.previousVersion);\n};\n\nexport default definePreInstallLogicFunction({\n  universalIdentifier: 'af7cd86e-149e-466a-8d60-312b6e46d604',\n  name: 'pre-install',\n  description: 'Runs before installation to prepare the application.',\n  timeoutSeconds: 300,\n  handler,\n});\n"],
-  "mappings": ";;;;AAAA,SAAS,qCAAuE;AAEhF,IAAM,UAAU,OAAO,YAAwD;AAC7E,UAAQ,IAAI,qDAAqD,QAAQ,eAAe;AAC1F;AAEA,IAAO,sBAAQ,8BAA8B;AAAA,EAC3C,qBAAqB;AAAA,EACrB,MAAM;AAAA,EACN,aAAa;AAAA,EACb,gBAAgB;AAAA,EAChB;AACF,CAAC;",
-  "names": []
-}
