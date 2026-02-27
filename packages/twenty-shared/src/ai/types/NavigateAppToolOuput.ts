@@ -1,14 +1,14 @@
 export type NavigateAppToolOutput =
   | {
-      action: 'navigateToDefaultViewForObject';
+      action: 'navigateToObject';
       objectNameSingular: string;
     }
   | {
-      action: 'navigateToIndexPageView';
+      action: 'navigateToView';
       viewName: string;
     }
   | {
-      action: 'navigateToRecordPage';
+      action: 'navigateToRecord';
       objectNameSingular: string;
       recordId: string;
     }

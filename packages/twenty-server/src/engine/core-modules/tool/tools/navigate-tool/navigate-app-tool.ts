@@ -11,7 +11,7 @@ import {
   NavigateAppInputZodSchema,
 } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool.schema';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
-import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import {
   type Tool,
   type ToolExecutionContext,
@@ -20,7 +20,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -37,7 +36,6 @@ export class NavigateAppTool implements Tool {
 
   constructor(
     private readonly navigationMenuItemService: NavigationMenuItemService,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly viewService: ViewService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -101,7 +99,7 @@ export class NavigateAppTool implements Tool {
     viewName: string,
     workspaceId: string,
     userWorkspaceId?: string,
-  ): Promise<ToolOutput> {
+  ): Promise<ToolOutput<NavigateAppToolOutput>> {
     const views = await this.viewService.findByWorkspaceId(
       workspaceId,
       userWorkspaceId,
@@ -129,7 +127,7 @@ export class NavigateAppTool implements Tool {
       success: true,
       message: `Navigating to view "${matchingView.name}"`,
       result: {
-        action: 'navigateToIndexPageView',
+        action: 'navigateToView',
         viewName: matchingView.name,
       },
     };
@@ -213,7 +211,7 @@ export class NavigateAppTool implements Tool {
       success: true,
       message: `Navigating to ${firstMatchingNavigationItemLabel} default view`,
       result: {
-        action: 'navigateToDefaultViewForObject',
+        action: 'navigateToObject',
         objectNameSingular: firstMatchingNavigationItemLabel,
       },
     };
@@ -304,7 +302,7 @@ export class NavigateAppTool implements Tool {
             );
 
           return repository.find({
-            select: selectColumns as any,
+            select: selectColumns,
           });
         },
         authContext,
@@ -350,7 +348,7 @@ export class NavigateAppTool implements Tool {
       success: true,
       message: `Navigating to ${objectNameSingular} record "${matchingRecord.displayName}"`,
       result: {
-        action: 'navigateToRecordPage',
+        action: 'navigateToRecord',
         objectNameSingular,
         recordId: matchingRecord.id,
       },
