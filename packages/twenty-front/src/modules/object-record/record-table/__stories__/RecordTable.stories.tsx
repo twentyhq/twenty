@@ -17,6 +17,7 @@ import { sleep } from '~/utils/sleep';
 
 const companyView = mockedCoreViews.find((v) => v.name === 'All Companies')!;
 
+
 const meta: Meta = {
   title: 'Modules/ObjectRecord/RecordTable/RecordTable',
   component: RecordTableWithWrappers,
