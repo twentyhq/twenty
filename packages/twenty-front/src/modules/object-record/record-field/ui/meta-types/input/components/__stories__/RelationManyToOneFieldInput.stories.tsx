@@ -42,7 +42,6 @@ const peopleFieldOnCompany = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: companyMetadata,
   fieldName: 'people',
 });
-const companiesMock = mockedCompanyRecords;
 
 const RelationWorkspaceSetterEffect = () => {
   const setRecordFieldInputLayoutDirectionLoading = useSetAtomComponentState(
@@ -169,9 +168,13 @@ export const Submit: Story = {
 
     expect(handleSubmitMocked).toHaveBeenCalledTimes(0);
 
-    const item = await canvas.findByText(companiesMock[0].name, undefined, {
-      timeout: 3000,
-    });
+    const item = await canvas.findByText(
+      mockedCompanyRecords[0].name,
+      undefined,
+      {
+        timeout: 3000,
+      },
+    );
 
     await userEvent.click(item);
 
@@ -186,7 +189,7 @@ export const Cancel: Story = {
     const canvas = within(canvasElement);
 
     expect(handleCancelMocked).toHaveBeenCalledTimes(0);
-    await canvas.findByText(companiesMock[0].name, undefined, {
+    await canvas.findByText(mockedCompanyRecords[0].name, undefined, {
       timeout: 3000,
     });
 

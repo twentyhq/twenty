@@ -18,8 +18,8 @@ import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMet
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockedTasks = mockedTaskRecords.map((record) =>
-  getRecordFromRecordNode({ recordNode: record }),
-) as Task[];
+  getRecordFromRecordNode<Task>({ recordNode: record }),
+);
 
 const RecordMockSetterEffect = ({
   companies,

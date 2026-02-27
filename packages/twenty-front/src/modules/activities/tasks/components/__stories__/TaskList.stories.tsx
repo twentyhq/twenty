@@ -13,8 +13,8 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
 
 const mockedTasks = mockedTaskRecords.map((record) =>
-  getRecordFromRecordNode({ recordNode: record }),
-) as Task[];
+  getRecordFromRecordNode<Task>({ recordNode: record }),
+);
 
 const meta: Meta<typeof TaskList> = {
   title: 'Modules/Activity/TaskList',

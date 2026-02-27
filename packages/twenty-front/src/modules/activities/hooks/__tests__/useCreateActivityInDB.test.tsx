@@ -13,8 +13,8 @@ import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockO
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockedTasks = mockedTaskRecords.map((record) =>
-  getRecordFromRecordNode({ recordNode: record }),
-) as Task[];
+  getRecordFromRecordNode<Task>({ recordNode: record }),
+);
 
 const mockedDate = '2024-03-15T12:00:00.000Z';
 const toISOStringMock = jest.fn(() => mockedDate);

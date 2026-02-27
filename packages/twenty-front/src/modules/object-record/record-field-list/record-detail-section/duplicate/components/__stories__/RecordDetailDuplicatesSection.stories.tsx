@@ -11,8 +11,6 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 
-const companiesMock = mockedCompanyRecords;
-
 const meta: Meta<typeof RecordDetailDuplicatesSection> = {
   title:
     'Modules/ObjectRecord/RecordShow/RecordDetailSection/RecordDetailDuplicatesSection',
@@ -22,7 +20,7 @@ const meta: Meta<typeof RecordDetailDuplicatesSection> = {
       <LayoutRenderingProvider
         value={{
           targetRecordIdentifier: {
-            id: companiesMock[0].id,
+            id: mockedCompanyRecords[0].id,
             targetObjectNameSingular: 'company',
           },
           layoutType: PageLayoutType.RECORD_PAGE,
@@ -38,7 +36,7 @@ const meta: Meta<typeof RecordDetailDuplicatesSection> = {
     MemoryRouterDecorator,
   ],
   args: {
-    objectRecordId: companiesMock[0].id,
+    objectRecordId: mockedCompanyRecords[0].id,
     objectNameSingular: CoreObjectNameSingular.Company,
   },
   parameters: {

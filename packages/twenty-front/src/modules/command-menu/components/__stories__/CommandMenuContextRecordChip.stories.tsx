@@ -102,9 +102,7 @@ const companyMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',
 );
 
-const companiesMock = mockedCompanyRecords;
-
-const companyMock = companiesMock[0];
+const companyMock = mockedCompanyRecords[0];
 
 const chipGeneratorPerObjectPerField: Record<
   string,
@@ -144,7 +142,7 @@ const createContextStoreWrapper = ({
   companies,
   componentInstanceId,
 }: {
-  companies: typeof companiesMock;
+  companies: typeof mockedCompanyRecords;
   componentInstanceId: string;
 }) => {
   return getJestMetadataAndApolloMocksAndActionMenuWrapper({
@@ -236,7 +234,7 @@ export const Default: Story = {};
 export const WithTwoCompanies: Story = {
   decorators: [
     (Story) => {
-      const twoCompaniesMock = companiesMock.slice(0, 2);
+      const twoCompaniesMock = mockedCompanyRecords.slice(0, 2);
       const TwoCompaniesWrapper = createContextStoreWrapper({
         companies: twoCompaniesMock,
         componentInstanceId: '2',
@@ -254,7 +252,7 @@ export const WithTwoCompanies: Story = {
 export const WithTenCompanies: Story = {
   decorators: [
     (Story) => {
-      const tenCompaniesMock = companiesMock.slice(0, 10);
+      const tenCompaniesMock = mockedCompanyRecords.slice(0, 10);
       const TenCompaniesWrapper = createContextStoreWrapper({
         companies: tenCompaniesMock,
         componentInstanceId: '3',

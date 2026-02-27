@@ -48,8 +48,8 @@ const duplicateCompanyMock = {
 };
 
 const flatTaskRecords = mockedTaskRecords.map((record) =>
-  getRecordFromRecordNode({ recordNode: record }),
-) as Task[];
+  getRecordFromRecordNode<Task>({ recordNode: record }),
+);
 
 // Wraps raw server-fetched records (which already have correct field shapes)
 // into a GraphQL connection response structure.
