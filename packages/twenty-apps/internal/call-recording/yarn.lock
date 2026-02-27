@@ -3243,7 +3243,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-loading-skeleton: "npm:^3.5.0"
     react-markdown: "npm:^10.1.0"
-    twenty-sdk: "portal:../../../twenty-sdk"
+    twenty-sdk: "npm:0.6.3-alpha"
     typescript: "npm:^5.9.3"
     typescript-eslint: "npm:^8.50.0"
   languageName: unknown
@@ -7327,9 +7327,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-sdk@portal:../../../twenty-sdk::locator=call-recording%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "twenty-sdk@portal:../../../twenty-sdk::locator=call-recording%40workspace%3A."
+"twenty-sdk@npm:0.6.3-alpha":
+  version: 0.6.3-alpha
+  resolution: "twenty-sdk@npm:0.6.3-alpha"
   dependencies:
     "@chakra-ui/react": "npm:^3.33.0"
     "@emotion/react": "npm:^11.14.0"
@@ -7365,8 +7365,9 @@ __metadata:
     zod: "npm:^4.1.11"
   bin:
     twenty: dist/cli.cjs
+  checksum: 10c0/c8f2ec528f7b5c76323edd7112ac7d10e13b1158efbccb08247d8ad0176bcf4cd12942c96ad129e1d5318f54f0b48115334629952544edd2319b8b1f9a8111f6
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "type-check@npm:^0.4.0, type-check@npm:~0.4.0":
   version: 0.4.0

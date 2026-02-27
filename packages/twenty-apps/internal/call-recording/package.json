@@ -18,7 +18,7 @@
     "@emotion/styled": "^11.11.0",
     "react-loading-skeleton": "^3.5.0",
     "react-markdown": "^10.1.0",
-    "twenty-sdk": "portal:../../../twenty-sdk"
+    "twenty-sdk": "0.6.3-alpha"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
