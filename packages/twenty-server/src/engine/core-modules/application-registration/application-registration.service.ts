@@ -23,6 +23,7 @@ import { type CreateApplicationRegistrationVariableInput } from 'src/engine/core
 import { type UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration.input';
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationEncryptionService } from 'src/engine/core-modules/application-registration/application-registration-encryption.service';
+import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 const BCRYPT_SALT_ROUNDS = 10;
@@ -363,30 +364,11 @@ export class ApplicationRegistrationService {
 
   private validateRedirectUris(uris: string[]): void {
     for (const uri of uris) {
-      let parsed: URL;
+      const result = validateRedirectUri(uri);
 
-      try {
-        parsed = new URL(uri);
-      } catch {
+      if (!result.valid) {
         throw new ApplicationRegistrationException(
-          `Invalid redirect URI: ${uri}`,
-          ApplicationRegistrationExceptionCode.INVALID_REDIRECT_URI,
-        );
-      }
-
-      const isLocalhost =
-        parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1';
-
-      if (parsed.protocol !== 'https:' && !isLocalhost) {
-        throw new ApplicationRegistrationException(
-          `Redirect URIs must use HTTPS (except localhost): ${uri}`,
-          ApplicationRegistrationExceptionCode.INVALID_REDIRECT_URI,
-        );
-      }
-
-      if (parsed.hash) {
-        throw new ApplicationRegistrationException(
-          `Redirect URIs must not contain fragments: ${uri}`,
+          result.reason,
           ApplicationRegistrationExceptionCode.INVALID_REDIRECT_URI,
         );
       }

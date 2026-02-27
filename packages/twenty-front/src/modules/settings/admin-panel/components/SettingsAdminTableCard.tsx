@@ -4,8 +4,9 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Card } from 'twenty-ui/layout';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
+import { Card } from 'twenty-ui/layout';
 
 const StyledCard = styled(Card)`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -33,8 +34,10 @@ const StyledTableCellLabel = styled(TableCell)<{
 
 const StyledTableCellValue = styled(TableCell)<{
   align?: 'left' | 'center' | 'right';
+  clickable?: boolean;
 }>`
   color: ${({ theme }) => theme.font.color.primary};
+  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
   height: ${({ theme }) => theme.spacing(6)};
   justify-content: ${({ align }) =>
     align === 'left'
@@ -86,7 +89,7 @@ export const SettingsAdminTableCard = ({
               <StyledTableCellValue
                 align={valueAlign}
                 onClick={item.onClick}
-                style={item.onClick ? { cursor: 'pointer' } : undefined}
+                clickable={isDefined(item.onClick)}
               >
                 {item.value}
               </StyledTableCellValue>

@@ -213,7 +213,7 @@ describe('ApplicationRegistrationService', () => {
 
   describe('syncVariableSchemas', () => {
     it('should create variables for new keys', async () => {
-      variableRepository.findOne.mockResolvedValue(null);
+      variableRepository.find.mockResolvedValue([]);
       variableRepository.create.mockImplementation(
         (entity) => entity as ApplicationRegistrationVariableEntity,
       );
@@ -253,13 +253,15 @@ describe('ApplicationRegistrationService', () => {
     });
 
     it('should update metadata for existing keys without overwriting values', async () => {
-      variableRepository.findOne.mockResolvedValue({
-        id: 'var-1',
-        key: 'API_KEY',
-        encryptedValue: 'enc_existing_value',
-        isSecret: true,
-        isRequired: false,
-      } as ApplicationRegistrationVariableEntity);
+      variableRepository.find.mockResolvedValue([
+        {
+          id: 'var-1',
+          key: 'API_KEY',
+          encryptedValue: 'enc_existing_value',
+          isSecret: true,
+          isRequired: false,
+        } as ApplicationRegistrationVariableEntity,
+      ]);
 
       await service.syncVariableSchemas('reg-1', {
         API_KEY: {
@@ -278,7 +280,7 @@ describe('ApplicationRegistrationService', () => {
     });
 
     it('should delete variables not in schema', async () => {
-      variableRepository.findOne.mockResolvedValue(null);
+      variableRepository.find.mockResolvedValue([]);
       variableRepository.create.mockImplementation(
         (entity) => entity as ApplicationRegistrationVariableEntity,
       );

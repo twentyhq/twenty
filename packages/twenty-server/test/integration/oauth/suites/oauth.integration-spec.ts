@@ -5,6 +5,7 @@ import request from 'supertest';
 import { type DataSource } from 'typeorm';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
+import { base64UrlEncode } from 'src/engine/core-modules/auth/utils/base64url-encode.util';
 
 const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 const TEST_USER_ID = '20202020-e6b5-4680-8a32-b8209737156b';
@@ -404,14 +405,9 @@ describe('OAuth (integration)', () => {
       codeVerifier: string;
     }> => {
       const codeVerifier = crypto.randomBytes(32).toString('hex');
-      const codeChallenge = crypto
-        .createHash('sha256')
-        .update(codeVerifier)
-        .digest()
-        .toString('base64')
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=/g, '');
+      const codeChallenge = base64UrlEncode(
+        crypto.createHash('sha256').update(codeVerifier).digest(),
+      );
 
       const code = crypto.randomBytes(42).toString('hex');
 

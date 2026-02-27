@@ -1,6 +1,6 @@
 import { FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID } from '@/settings/application-registrations/graphql/queries/findApplicationRegistrationByClientId';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
@@ -87,7 +87,7 @@ export const Authorize = () => {
   const [searchParam] = useSearchParams();
   const { redirect } = useRedirect();
 
-  const oauthScopeLabels: Record<string, string> = {
+  const oauthScopeLabels: { [scope: string]: string | undefined } = {
     api: t`Access workspace data`,
     profile: t`Read your profile`,
   };
@@ -108,17 +108,14 @@ export const Authorize = () => {
   const [authorizeApp] = useAuthorizeAppMutation();
   const [hasLogoError, setHasLogoError] = useState(false);
 
-  if (!isDefined(clientId)) {
-    navigate(AppPath.NotFound);
+  const shouldRedirectToNotFound =
+    !isDefined(clientId) || (!loading && !isDefined(applicationRegistration));
 
-    return null;
-  }
-
-  if (!loading && !isDefined(applicationRegistration)) {
-    navigate(AppPath.NotFound);
-
-    return null;
-  }
+  useEffect(() => {
+    if (shouldRedirectToNotFound) {
+      navigate(AppPath.NotFound);
+    }
+  }, [shouldRedirectToNotFound, navigate]);
 
   const handleAuthorize = async () => {
     if (isDefined(clientId) && isDefined(redirectUrl)) {

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import ms from 'ms';
 import { IsNull, Repository } from 'typeorm';
 
 import {
@@ -16,9 +17,9 @@ import { ApplicationService } from 'src/engine/core-modules/application/services
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { OAuthErrorResponse } from 'src/engine/core-modules/auth/types/oauth-error-response.type';
 import { OAuthTokenResponse } from 'src/engine/core-modules/auth/types/oauth-token-response.type';
+import { base64UrlEncode } from 'src/engine/core-modules/auth/utils/base64url-encode.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-
-const OAUTH_ACCESS_TOKEN_EXPIRES_IN = 1800;
 
 @Injectable()
 export class OAuthService {
@@ -34,6 +35,7 @@ export class OAuthService {
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationService: ApplicationService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async exchangeAuthorizationCode(params: {
@@ -161,7 +163,7 @@ export class OAuthService {
     return {
       access_token: applicationAccessToken.token,
       token_type: 'Bearer',
-      expires_in: OAUTH_ACCESS_TOKEN_EXPIRES_IN,
+      expires_in: this.getAccessTokenExpiresInSeconds(),
       refresh_token: applicationRefreshToken.token,
       scope: applicationRegistration.oAuthScopes.join(' '),
     };
@@ -219,7 +221,7 @@ export class OAuthService {
     return {
       access_token: applicationAccessToken.token,
       token_type: 'Bearer',
-      expires_in: OAUTH_ACCESS_TOKEN_EXPIRES_IN,
+      expires_in: this.getAccessTokenExpiresInSeconds(),
       scope: applicationRegistration.oAuthScopes.join(' '),
     };
   }
@@ -262,7 +264,7 @@ export class OAuthService {
       return {
         access_token: applicationAccessToken.token,
         token_type: 'Bearer',
-        expires_in: OAUTH_ACCESS_TOKEN_EXPIRES_IN,
+        expires_in: this.getAccessTokenExpiresInSeconds(),
         refresh_token: applicationRefreshToken.token,
         scope: applicationRegistration.oAuthScopes.join(' '),
       };
@@ -310,14 +312,9 @@ export class OAuthService {
     codeVerifier: string,
     authCodeToken: AppTokenEntity,
   ): Promise<OAuthErrorResponse | null> {
-    const codeChallenge = crypto
-      .createHash('sha256')
-      .update(codeVerifier)
-      .digest()
-      .toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=/g, '');
+    const codeChallenge = base64UrlEncode(
+      crypto.createHash('sha256').update(codeVerifier).digest(),
+    );
 
     const challengeToken = await this.appTokenRepository.findOne({
       where: {
@@ -375,6 +372,15 @@ export class OAuthService {
       applicationRegistrationId: applicationRegistration.id,
       workspaceId,
     });
+  }
+
+  // OAuth RFC 6749 requires expires_in as seconds
+  private getAccessTokenExpiresInSeconds(): number {
+    const duration = this.twentyConfigService.get(
+      'APPLICATION_ACCESS_TOKEN_EXPIRES_IN',
+    );
+
+    return Math.floor(ms(duration) / 1000);
   }
 
   private errorResponse(

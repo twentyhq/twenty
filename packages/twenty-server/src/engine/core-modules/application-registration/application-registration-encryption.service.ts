@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, type OnModuleInit } from '@nestjs/common';
+
+import { promisify } from 'util';
 
 import crypto from 'crypto';
 
@@ -9,15 +11,21 @@ const IV_LENGTH = 16;
 const AUTH_TAG_LENGTH = 16;
 const HKDF_CONTEXT = 'application-registration-variable';
 
-@Injectable()
-export class ApplicationRegistrationEncryptionService {
-  private encryptionKey: Buffer;
+const hkdf = promisify(crypto.hkdf);
 
-  constructor(private readonly twentyConfigService: TwentyConfigService) {
+@Injectable()
+export class ApplicationRegistrationEncryptionService
+  implements OnModuleInit
+{
+  private encryptionKey!: Buffer;
+
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
+
+  async onModuleInit(): Promise<void> {
     const appSecret = this.twentyConfigService.get('APP_SECRET');
 
     this.encryptionKey = Buffer.from(
-      crypto.hkdfSync('sha256', appSecret, '', HKDF_CONTEXT, 32),
+      await hkdf('sha256', appSecret, '', HKDF_CONTEXT, 32),
     );
   }
 
@@ -34,7 +42,6 @@ export class ApplicationRegistrationEncryptionService {
 
     const authTag = cipher.getAuthTag();
 
-    // Format: base64(iv + authTag + ciphertext)
     return Buffer.concat([iv, authTag, encrypted]).toString('base64');
   }
 

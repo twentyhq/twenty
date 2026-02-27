@@ -29,6 +29,7 @@ import {
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
+import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { type AuthorizeAppOutput } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { type AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { type UpdatePasswordOutput } from 'src/engine/core-modules/auth/dto/update-password.dto';
@@ -525,24 +526,13 @@ export class AuthService {
       );
     }
 
-    let parsedRedirectUrl: URL;
+    const redirectUriValidation = validateRedirectUri(
+      authorizeAppInput.redirectUrl,
+    );
 
-    try {
-      parsedRedirectUrl = new URL(authorizeAppInput.redirectUrl);
-    } catch {
+    if (!redirectUriValidation.valid) {
       throw new AuthException(
-        'Invalid redirect URL format',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    const isLocalhost =
-      parsedRedirectUrl.hostname === 'localhost' ||
-      parsedRedirectUrl.hostname === '127.0.0.1';
-
-    if (parsedRedirectUrl.protocol !== 'https:' && !isLocalhost) {
-      throw new AuthException(
-        'Redirect URL must use HTTPS',
+        redirectUriValidation.reason,
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
@@ -582,9 +572,12 @@ export class AuthService {
       await this.appTokenRepository.save(token);
     }
 
-    parsedRedirectUrl.searchParams.set('authorizationCode', authorizationCode);
+    redirectUriValidation.parsed.searchParams.set(
+      'authorizationCode',
+      authorizationCode,
+    );
 
-    return { redirectUrl: parsedRedirectUrl.toString() };
+    return { redirectUrl: redirectUriValidation.parsed.toString() };
   }
 
   async updatePassword(
