@@ -5,7 +5,7 @@ import { EventRowCalendarEvent } from '@/activities/timeline-activities/rows/cal
 import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObject';
 import { EventRowMessage } from '@/activities/timeline-activities/rows/message/components/EventRowMessage';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export interface EventRowDynamicComponentProps {

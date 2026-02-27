@@ -1,6 +1,6 @@
 import { type ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { type ActionType } from '@/action-menu/actions/types/ActionType';
-import { type ActionViewType } from '@/action-menu/actions/types/ActionViewType';
+import { type ActionViewType } from 'twenty-shared/types';
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { type MessageDescriptor } from '@lingui/core';
 import { type IconComponent } from 'twenty-ui/display';

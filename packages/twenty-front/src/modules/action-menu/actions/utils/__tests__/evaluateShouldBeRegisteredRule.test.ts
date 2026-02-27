@@ -276,10 +276,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
           {
             or: [
               {
-                '!==': [
-                  { var: 'objectMetadataItem.nameSingular' },
-                  'workflow',
-                ],
+                '!==': [{ var: 'objectMetadataItem.nameSingular' }, 'workflow'],
               },
               { '===': [{ var: 'viewType' }, 'SHOW_PAGE'] },
             ],
@@ -305,9 +302,9 @@ describe('evaluateShouldBeRegisteredRule', () => {
         getTargetObjectReadPermission: () => true,
       };
 
-      expect(
-        evaluateShouldBeRegisteredRule(rule, onSameObjectShowPage),
-      ).toBe(true);
+      expect(evaluateShouldBeRegisteredRule(rule, onSameObjectShowPage)).toBe(
+        true,
+      );
 
       const onSameObjectIndexPage = {
         ...baseParams,
@@ -316,9 +313,9 @@ describe('evaluateShouldBeRegisteredRule', () => {
         getTargetObjectReadPermission: () => true,
       };
 
-      expect(
-        evaluateShouldBeRegisteredRule(rule, onSameObjectIndexPage),
-      ).toBe(false);
+      expect(evaluateShouldBeRegisteredRule(rule, onSameObjectIndexPage)).toBe(
+        false,
+      );
 
       const noPermission = {
         ...baseParams,
@@ -365,9 +362,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
         selectedRecord: { status: 'COMPLETED' } as any,
       };
 
-      expect(evaluateShouldBeRegisteredRule(rule, completedRecord)).toBe(
-        false,
-      );
+      expect(evaluateShouldBeRegisteredRule(rule, completedRecord)).toBe(false);
     });
 
     it('evaluates feature flag + permissions rule', () => {
@@ -379,10 +374,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
           { '!': [{ isDefined: [{ var: 'selectedRecord.deletedAt' }] }] },
           { var: 'objectPermissions.canUpdateObjectRecords' },
           {
-            '!==': [
-              { var: 'objectMetadataItem.nameSingular' },
-              'dashboard',
-            ],
+            '!==': [{ var: 'objectMetadataItem.nameSingular' }, 'dashboard'],
           },
         ],
       } as RulesLogic;
@@ -394,9 +386,7 @@ describe('evaluateShouldBeRegisteredRule', () => {
         objectMetadataItem: { nameSingular: 'person' } as any,
       };
 
-      expect(evaluateShouldBeRegisteredRule(rule, allConditionsMet)).toBe(
-        true,
-      );
+      expect(evaluateShouldBeRegisteredRule(rule, allConditionsMet)).toBe(true);
 
       const flagDisabled = {
         ...baseParams,

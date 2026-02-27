@@ -1,9 +1,9 @@
 import 'reflect-metadata';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 
 import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
-import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 
 export interface ReflectMetadataTypeMap {
