@@ -6,6 +6,7 @@ import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 
+import { AGENT_CHAT_RETRY_EVENT_NAME } from '@/ai/constants/AgentChatRetryEventName';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
@@ -222,6 +223,11 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     onBrowserEvent: stop,
   });
 
+  useListenToBrowserEvent({
+    eventName: AGENT_CHAT_RETRY_EVENT_NAME,
+    onBrowserEvent: regenerate,
+  });
+
   return {
     messages,
     handleSendMessage,
@@ -229,6 +235,5 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     isLoading,
     isStreaming,
     error,
-    handleRetry: regenerate,
   };
 };
