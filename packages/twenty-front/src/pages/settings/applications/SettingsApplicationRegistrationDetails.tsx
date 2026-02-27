@@ -30,7 +30,6 @@ import {
   IconCheck,
   IconDownload,
   IconKey,
-  IconLock,
   IconRefresh,
   IconShield,
   IconTag,
@@ -329,11 +328,6 @@ export const SettingsApplicationRegistrationDetails = () => {
         copyToClipboard(registration.oAuthClientId, t`Client ID copied`),
     },
     {
-      Icon: IconLock,
-      label: t`Client Secret`,
-      value: displayedSecret ? t`Visible below` : '••••••••••••••••',
-    },
-    {
       Icon: IconShield,
       label: t`Scopes`,
       value: (registration.oAuthScopes ?? []).join(', ') || '—',
@@ -458,17 +452,25 @@ export const SettingsApplicationRegistrationDetails = () => {
               items={credentialItems}
               gridAutoColumns="3fr 8fr"
             />
-            {displayedSecret && <ApiKeyInput apiKey={displayedSecret} />}
             <StyledRotateContainer>
               <Button
                 Icon={IconRefresh}
                 title={t`Rotate client secret`}
                 variant="secondary"
-                size="medium"
                 onClick={() => openModal(ROTATE_SECRET_MODAL_ID)}
               />
             </StyledRotateContainer>
           </Section>
+
+          {displayedSecret && (
+            <Section>
+              <H2Title
+                title={t`Client Secret`}
+                description={t`Copy this secret as it will not be visible again`}
+              />
+              <ApiKeyInput apiKey={displayedSecret} />
+            </Section>
+          )}
 
           <Section>
             <H2Title

@@ -29,6 +29,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 import { AuthService } from './auth.service';
@@ -168,6 +169,10 @@ describe('AuthService', () => {
               .fn()
               .mockResolvedValue(false),
           },
+        },
+        {
+          provide: ApplicationRegistrationService,
+          useValue: {},
         },
       ],
     }).compile();
