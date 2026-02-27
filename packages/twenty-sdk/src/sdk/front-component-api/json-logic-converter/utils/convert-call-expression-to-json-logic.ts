@@ -8,7 +8,7 @@ import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic
 import { convertIncludesCallToJsonLogic } from './convert-includes-call-to-json-logic';
 import { convertKnownFunctionCallToJsonLogic } from './convert-known-function-call-to-json-logic';
 import { convertSomeCallToJsonLogic } from './convert-some-call-to-json-logic';
-import { isKnownParamReference } from './is-known-param-reference';
+import { isAllowedParameterInShouldBeRegistered } from './is-allowed-parameter-in-should-be-registered';
 
 const getRequiredFirstArgument = ({
   callArguments,
@@ -81,7 +81,7 @@ export const convertCallExpressionToJsonLogic = ({
         return { '!!': [convertExpressionToJsonLogic({ node: argument })] };
       }
       default: {
-        if (!isKnownParamReference({ name: functionName })) {
+        if (!isAllowedParameterInShouldBeRegistered({ name: functionName })) {
           throw new JsonLogicConversionError(
             `Unknown function call: ${functionName}`,
           );
@@ -129,7 +129,7 @@ export const convertCallExpressionToJsonLogic = ({
 
     if (
       Node.isIdentifier(receiverExpression) &&
-      isKnownParamReference({ name: methodName })
+      isAllowedParameterInShouldBeRegistered({ name: methodName })
     ) {
       const expressionArguments = callArguments.filter(
         (argument): argument is Expression => Node.isExpression(argument),

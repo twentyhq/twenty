@@ -1,7 +1,7 @@
 import { type Expression, Project, SyntaxKind } from 'ts-morph';
 import { describe, expect, it } from 'vitest';
 
-import { flattenPropertyAccessToDotPath } from '../utils/flatten-property-access-to-dot-path';
+import { resolvePropertyPath } from '../utils/resolve-property-path';
 
 const getExpression = (code: string): Expression => {
   const project = new Project({ useInMemoryFileSystem: true });
@@ -12,34 +12,34 @@ const getExpression = (code: string): Expression => {
     .getExpression();
 };
 
-describe('flattenPropertyAccessToDotPath', () => {
+describe('resolvePropertyPath', () => {
   it('returns the identifier name for a simple identifier', () => {
     expect(
-      flattenPropertyAccessToDotPath({ node: getExpression('foo;') }),
+      resolvePropertyPath({ node: getExpression('foo;') }),
     ).toBe('foo');
   });
 
   it('flattens a single property access', () => {
     expect(
-      flattenPropertyAccessToDotPath({ node: getExpression('foo.bar;') }),
+      resolvePropertyPath({ node: getExpression('foo.bar;') }),
     ).toBe('foo.bar');
   });
 
   it('flattens deeply nested property access', () => {
     expect(
-      flattenPropertyAccessToDotPath({ node: getExpression('a.b.c.d;') }),
+      resolvePropertyPath({ node: getExpression('a.b.c.d;') }),
     ).toBe('a.b.c.d');
   });
 
   it('strips non-null assertions', () => {
     expect(
-      flattenPropertyAccessToDotPath({ node: getExpression('foo!.bar;') }),
+      resolvePropertyPath({ node: getExpression('foo!.bar;') }),
     ).toBe('foo.bar');
   });
 
   it('strips chained non-null assertions', () => {
     expect(
-      flattenPropertyAccessToDotPath({ node: getExpression('a!.b!.c;') }),
+      resolvePropertyPath({ node: getExpression('a!.b!.c;') }),
     ).toBe('a.b.c');
   });
 
@@ -47,7 +47,7 @@ describe('flattenPropertyAccessToDotPath', () => {
     const expression = getExpression('foo[0];');
 
     expect(() =>
-      flattenPropertyAccessToDotPath({ node: expression }),
+      resolvePropertyPath({ node: expression }),
     ).toThrow('Cannot flatten property access');
   });
 });

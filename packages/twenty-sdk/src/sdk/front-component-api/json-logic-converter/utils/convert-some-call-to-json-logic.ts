@@ -4,7 +4,7 @@ import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 import { type JsonLogicRule } from '../types/json-logic-rule';
 
 import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
-import { flattenPropertyAccessToDotPath } from './flatten-property-access-to-dot-path';
+import { resolvePropertyPath } from './resolve-property-path';
 
 export const convertSomeCallToJsonLogic = ({
   receiverExpression,
@@ -13,7 +13,7 @@ export const convertSomeCallToJsonLogic = ({
   receiverExpression: Expression;
   predicateArgument: Expression;
 }): JsonLogicRule => {
-  const flattenedPropertyPath = flattenPropertyAccessToDotPath({
+  const flattenedPropertyPath = resolvePropertyPath({
     node: receiverExpression,
   });
 

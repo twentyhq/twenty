@@ -5,10 +5,10 @@ import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 import { type JsonLogicRule } from '../types/json-logic-rule';
 
 import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
-import { flattenPropertyAccessToDotPath } from './flatten-property-access-to-dot-path';
-import { isKnownParamReference } from './is-known-param-reference';
+import { isAllowedParameterInShouldBeRegistered } from './is-allowed-parameter-in-should-be-registered';
 import { resolveArrayLiteralElements } from './resolve-array-literal-elements';
 import { resolveLocalArrayVariable } from './resolve-local-array-variable';
+import { resolvePropertyPath } from './resolve-property-path';
 
 export const convertIncludesCallToJsonLogic = ({
   receiverExpression,
@@ -19,7 +19,9 @@ export const convertIncludesCallToJsonLogic = ({
 }): JsonLogicRule => {
   if (
     Node.isIdentifier(receiverExpression) &&
-    !isKnownParamReference({ name: receiverExpression.getText() })
+    !isAllowedParameterInShouldBeRegistered({
+      name: receiverExpression.getText(),
+    })
   ) {
     const resolvedArrayElements = resolveLocalArrayVariable({
       identifier: receiverExpression,
@@ -44,11 +46,11 @@ export const convertIncludesCallToJsonLogic = ({
     };
   }
 
-  const flattenedPropertyPath = flattenPropertyAccessToDotPath({
+  const flattenedPropertyPath = resolvePropertyPath({
     node: receiverExpression,
   });
 
-  if (isKnownParamReference({ name: flattenedPropertyPath })) {
+  if (isAllowedParameterInShouldBeRegistered({ name: flattenedPropertyPath })) {
     return {
       in: [
         convertExpressionToJsonLogic({ node: searchArgument }),

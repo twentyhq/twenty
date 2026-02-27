@@ -1,4 +1,4 @@
-export const KNOWN_PARAM_NAMES = new Set([
+export const ALLOWED_PARAMETERS_IN_SHOULD_BE_REGISTERED = new Set([
   'objectMetadataItem',
   'objectPermissions',
   'recordFilters',

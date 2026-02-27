@@ -15,8 +15,8 @@ import { type JsonLogicRule } from '../types/json-logic-rule';
 import { convertArrowFunctionToJsonLogic } from './convert-arrow-function-to-json-logic';
 import { convertBinaryExpressionToJsonLogic } from './convert-binary-expression-to-json-logic';
 import { convertCallExpressionToJsonLogic } from './convert-call-expression-to-json-logic';
-import { flattenPropertyAccessToDotPath } from './flatten-property-access-to-dot-path';
-import { isKnownParamReference } from './is-known-param-reference';
+import { isAllowedParameterInShouldBeRegistered } from './is-allowed-parameter-in-should-be-registered';
+import { resolvePropertyPath } from './resolve-property-path';
 import { tryResolveKnownConstant } from './try-resolve-known-constant';
 
 export const convertExpressionToJsonLogic = ({
@@ -54,7 +54,7 @@ export const convertExpressionToJsonLogic = ({
         return null;
       }
 
-      if (isKnownParamReference({ name: identifierName })) {
+      if (isAllowedParameterInShouldBeRegistered({ name: identifierName })) {
         return { var: identifierName };
       }
 
@@ -70,9 +70,11 @@ export const convertExpressionToJsonLogic = ({
     }
 
     case SyntaxKind.PropertyAccessExpression: {
-      const flattenedPropertyPath = flattenPropertyAccessToDotPath({ node });
+      const flattenedPropertyPath = resolvePropertyPath({ node });
 
-      if (isKnownParamReference({ name: flattenedPropertyPath })) {
+      if (
+        isAllowedParameterInShouldBeRegistered({ name: flattenedPropertyPath })
+      ) {
         return { var: flattenedPropertyPath };
       }
 
