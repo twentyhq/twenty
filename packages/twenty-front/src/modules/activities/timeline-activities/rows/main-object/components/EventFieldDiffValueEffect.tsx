@@ -32,6 +32,10 @@ export const EventFieldDiffValueEffect = ({
     };
 
     setRecordStore(forgedObjectRecord);
+
+    return () => {
+      setRecordStore(null);
+    };
   }, [
     diffRecord,
     diffArtificialRecordStoreId,
