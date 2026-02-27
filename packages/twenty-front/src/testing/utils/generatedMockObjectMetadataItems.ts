@@ -1,27 +1,15 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
+import { enrichObjectMetadataItemsWithPermissions } from '@/object-metadata/utils/enrichObjectMetadataItemsWithPermissions';
+import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
+import { type ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 
-import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
+import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata';
 
 export const generatedMockObjectMetadataItems: ObjectMetadataItem[] =
-  mockedStandardObjectMetadataQueryResult.objects.edges.map((edge) => {
-    const labelIdentifierFieldMetadataId =
-      objectMetadataItemSchema.shape.labelIdentifierFieldMetadataId.parse(
-        edge.node.labelIdentifierFieldMetadataId,
-      );
-
-    const { fieldsList, indexMetadataList, ...objectWithoutFieldsList } =
-      edge.node;
-
-    return {
-      ...objectWithoutFieldsList,
-      fields: fieldsList,
-      readableFields: fieldsList,
-      updatableFields: fieldsList,
-      labelIdentifierFieldMetadataId,
-      indexMetadatas: indexMetadataList.map((index) => ({
-        ...index,
-        indexFieldMetadatas: [],
-      })),
-    };
+  enrichObjectMetadataItemsWithPermissions({
+    objectMetadataItems: mapPaginatedObjectMetadataItemsToObjectMetadataItems({
+      pagedObjectMetadataItems:
+        mockedStandardObjectMetadataQueryResult as unknown as ObjectMetadataItemsQuery,
+    }),
+    objectPermissionsByObjectMetadataId: {},
   });

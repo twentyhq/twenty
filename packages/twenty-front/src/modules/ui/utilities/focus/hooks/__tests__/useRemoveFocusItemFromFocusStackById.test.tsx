@@ -3,7 +3,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -22,8 +22,8 @@ const renderHooks = () => {
       const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
       const { removeFocusItemFromFocusStackById } =
         useRemoveFocusItemFromFocusStackById();
-      const focusStack = useRecoilValueV2(focusStackState);
-      const currentFocusId = useRecoilValueV2(currentFocusIdSelector);
+      const focusStack = useAtomStateValue(focusStackState);
+      const currentFocusId = useAtomStateValue(currentFocusIdSelector);
 
       return {
         pushFocusItemToFocusStack,

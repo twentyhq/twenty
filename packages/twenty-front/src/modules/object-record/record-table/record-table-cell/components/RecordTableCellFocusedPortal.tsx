@@ -1,5 +1,6 @@
 import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
@@ -12,38 +13,38 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableCellFocusedPortal = () => {
-  const focusPosition = useRecoilComponentValue(
+  const recordTableFocusPosition = useAtomComponentStateValue(
     recordTableFocusPositionComponentState,
   );
 
-  const isRecordTableScrolledVertically = useRecoilComponentValue(
+  const isRecordTableScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
-  const isRecordTableScrolledHorizontally = useRecoilComponentValue(
+  const isRecordTableScrolledHorizontally = useAtomComponentStateValue(
     isRecordTableScrolledHorizontallyComponentState,
   );
 
-  const hasRecordGroups = useRecoilComponentValue(
+  const hasRecordGroups = useAtomComponentSelectorValue(
     hasRecordGroupsComponentSelector,
   );
 
-  const hoverPosition = useRecoilComponentValue(
+  const recordTableHoverPosition = useAtomComponentStateValue(
     recordTableHoverPositionComponentState,
   );
 
   const isUnderHoveredPortal =
-    isDefined(hoverPosition) &&
-    isDefined(focusPosition) &&
-    hoverPosition.column === focusPosition.column &&
-    hoverPosition.row === focusPosition.row;
+    isDefined(recordTableHoverPosition) &&
+    isDefined(recordTableFocusPosition) &&
+    recordTableHoverPosition.column === recordTableFocusPosition.column &&
+    recordTableHoverPosition.row === recordTableFocusPosition.row;
 
-  if (!isDefined(focusPosition) || isUnderHoveredPortal) {
+  if (!isDefined(recordTableFocusPosition) || isUnderHoveredPortal) {
     return null;
   }
 
-  const isOnFirstScrollableColumn = focusPosition.column === 1;
-  const isOnLabelIdentifierStickyColumn = focusPosition.column === 0;
+  const isOnFirstScrollableColumn = recordTableFocusPosition.column === 1;
+  const isOnLabelIdentifierStickyColumn = recordTableFocusPosition.column === 0;
 
   const zIndexForHoveredPortalOnFirstScrollableColumnWithoutGroups =
     isRecordTableScrolledHorizontally && isRecordTableScrolledVertically
@@ -140,7 +141,7 @@ export const RecordTableCellFocusedPortal = () => {
     : zIndexForHoveredPortalWithoutGroups;
 
   return (
-    <RecordTableCellPortalWrapper position={focusPosition}>
+    <RecordTableCellPortalWrapper position={recordTableFocusPosition}>
       <RecordTableCellPortalRootContainer zIndex={zIndex}>
         <RecordTableCellFocusedPortalContent />
       </RecordTableCellPortalRootContainer>

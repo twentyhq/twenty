@@ -1,8 +1,8 @@
 import { ClickOutsideListenerComponentInstanceContext } from '@/ui/utilities/pointer-event/states/contexts/ClickOutsideListenerComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/jotai/utils/createComponentStateV2';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const clickOutsideListenerIsActivatedComponentState =
-  createComponentStateV2<boolean>({
+  createAtomComponentState<boolean>({
     key: 'clickOutsideListenerIsActivatedComponentState',
     defaultValue: true,
     componentInstanceContext: ClickOutsideListenerComponentInstanceContext,

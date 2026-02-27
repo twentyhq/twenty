@@ -1,18 +1,20 @@
 import { objectOptionsDropdownSearchInputComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownSearchInputComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useMemo } from 'react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useSearchRecordGroupField = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const [recordGroupFieldSearchInput, setRecordGroupFieldSearchInput] =
-    useRecoilComponentState(objectOptionsDropdownSearchInputComponentState);
+  const [
+    objectOptionsDropdownSearchInput,
+    setObjectOptionsDropdownSearchInput,
+  ] = useAtomComponentState(objectOptionsDropdownSearchInputComponentState);
 
   const filteredRecordGroupFieldMetadataItems = useMemo(() => {
     const searchInputLowerCase =
-      recordGroupFieldSearchInput.toLocaleLowerCase();
+      objectOptionsDropdownSearchInput.toLocaleLowerCase();
 
     return objectMetadataItem.readableFields.filter(
       (field) =>
@@ -20,11 +22,11 @@ export const useSearchRecordGroupField = () => {
         field.isActive &&
         field.label.toLocaleLowerCase().includes(searchInputLowerCase),
     );
-  }, [objectMetadataItem.readableFields, recordGroupFieldSearchInput]);
+  }, [objectMetadataItem.readableFields, objectOptionsDropdownSearchInput]);
 
   return {
-    recordGroupFieldSearchInput,
-    setRecordGroupFieldSearchInput,
+    recordGroupFieldSearchInput: objectOptionsDropdownSearchInput,
+    setRecordGroupFieldSearchInput: setObjectOptionsDropdownSearchInput,
     filteredRecordGroupFieldMetadataItems,
   };
 };

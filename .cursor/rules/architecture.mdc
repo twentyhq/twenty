@@ -7,7 +7,7 @@ alwaysApply: true
 # Twenty Architecture
 
 ## Tech Stack
-- **Frontend**: React 18, TypeScript, Recoil, Styled Components, Vite
+- **Frontend**: React 18, TypeScript, Jotai, Styled Components, Vite
 - **Backend**: NestJS, TypeORM, PostgreSQL, Redis, GraphQL
 - **Monorepo**: Nx workspace with yarn
 

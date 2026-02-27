@@ -1,15 +1,15 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useOpenRecordsSearchPageInCommandMenu } from '@/command-menu/hooks/useOpenRecordsSearchPageInCommandMenu';
-import { isCommandMenuOpenedStateV2 } from '@/command-menu/states/isCommandMenuOpenedStateV2';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useNavigate } from 'react-router-dom';
 import {
   type IconComponent,
@@ -26,23 +26,22 @@ type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
 export const MobileNavigationBar = () => {
   const navigate = useNavigate();
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const isCommandMenuOpened = useRecoilValueV2(isCommandMenuOpenedStateV2);
+  const isCommandMenuOpened = useAtomStateValue(isCommandMenuOpenedState);
   const { closeCommandMenu } = useCommandMenu();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInCommandMenu();
   const isSettingsPage = useIsSettingsPage();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useRecoilStateV2(isNavigationDrawerExpandedState);
+    useAtomState(isNavigationDrawerExpandedState);
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
-    useRecoilStateV2(currentMobileNavigationDrawerState);
+    useAtomState(currentMobileNavigationDrawerState);
   const { openSettingsMenu } = useOpenSettingsMenu();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
-  const [, setContextStoreCurrentObjectMetadataItemId] =
-    useRecoilComponentState(
-      contextStoreCurrentObjectMetadataItemIdComponentState,
-      MAIN_CONTEXT_STORE_INSTANCE_ID,
-    );
+  const [, setContextStoreCurrentObjectMetadataItemId] = useAtomComponentState(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
 
   const activeItemName = isNavigationDrawerExpanded
     ? currentMobileNavigationDrawer

@@ -1,7 +1,7 @@
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { recordFieldListCellEditModePositionComponentState } from '@/object-record/record-field-list/states/recordFieldListCellEditModePositionComponentState';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseFieldListFieldMetadataFromPositionProps = {
@@ -11,11 +11,11 @@ type UseFieldListFieldMetadataFromPositionProps = {
 export const useFieldListFieldMetadataFromPosition = ({
   objectNameSingular,
 }: UseFieldListFieldMetadataFromPositionProps) => {
-  const hoverPosition = useRecoilComponentValue(
+  const recordFieldListHoverPosition = useAtomComponentStateValue(
     recordFieldListHoverPositionComponentState,
   );
 
-  const editModePosition = useRecoilComponentValue(
+  const recordFieldListCellEditModePosition = useAtomComponentStateValue(
     recordFieldListCellEditModePositionComponentState,
   );
 
@@ -33,12 +33,12 @@ export const useFieldListFieldMetadataFromPosition = ({
     ...boxedRelationFieldMetadataItems,
   ];
 
-  const hoveredFieldMetadataItem = isDefined(hoverPosition)
-    ? fieldMetadataItems.at(hoverPosition)
+  const hoveredFieldMetadataItem = isDefined(recordFieldListHoverPosition)
+    ? fieldMetadataItems.at(recordFieldListHoverPosition)
     : undefined;
 
-  const editedFieldMetadataItem = isDefined(editModePosition)
-    ? fieldMetadataItems.at(editModePosition)
+  const editedFieldMetadataItem = isDefined(recordFieldListCellEditModePosition)
+    ? fieldMetadataItems.at(recordFieldListCellEditModePosition)
     : undefined;
 
   return {

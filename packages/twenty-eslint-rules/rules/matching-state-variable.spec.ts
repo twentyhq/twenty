@@ -1,178 +1,135 @@
 import { TSESLint } from '@typescript-eslint/utils';
-
 import { rule, RULE_NAME } from './matching-state-variable';
 
-const ruleTester = new TSESLint.RuleTester({
-  parser: require.resolve('@typescript-eslint/parser'),
-});
+const ruleTester = new TSESLint.RuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
+    // useAtomState / useAtomStateValue (existing)
     {
-      code: 'const variable = useRecoilValue(variableState);',
+      code: 'const variable = useAtomStateValue(variableState);',
     },
     {
-      code: 'const variable = useRecoilScopedValue(variableScopedState);',
+      code: 'const [variable, setVariable] = useAtomState(variableState);',
+    },
+
+    // useAtomComponentStateValue / useAtomComponentState
+    {
+      code: 'const variable = useAtomComponentStateValue(variableComponentState);',
     },
     {
-      code: 'const [variable, setVariable] = useRecoilState(variableScopedState);',
+      code: 'const [variable, setVariable] = useAtomComponentState(variableComponentState);',
+    },
+
+    // useAtomFamilyStateValue
+    {
+      code: 'const variable = useAtomFamilyStateValue(variableFamilyState, key);',
+    },
+
+    // useAtomComponentFamilyStateValue / useAtomComponentFamilyState
+    {
+      code: 'const variable = useAtomComponentFamilyStateValue(variableComponentFamilyState, key);',
     },
     {
-      code: 'const [variable, setVariable] = useRecoilScopedState(variableScopedState);',
+      code: 'const [variable, setVariable] = useAtomComponentFamilyState(variableComponentFamilyState, key);',
+    },
+
+    // Setter hooks
+    {
+      code: 'const setVariable = useSetAtomState(variableState);',
     },
     {
-      code: 'const [variable, setVariable] = useRecoilFamilyState(variableScopedState);',
+      code: 'const setVariable = useSetAtomComponentState(variableComponentState);',
     },
     {
-      code: 'const [variable, setVariable] = useRecoilScopedFamilyState(variableScopedState);',
+      code: 'const setVariable = useSetAtomFamilyState(variableFamilyState, key);',
+    },
+    {
+      code: 'const setVariable = useSetAtomComponentFamilyState(variableComponentFamilyState, key);',
     },
   ],
   invalid: [
+    // useAtomStateValue - wrong variable name
     {
-      code: 'const myValue = useRecoilValue(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-      ],
-      output: 'const variable = useRecoilValue(variableState);',
-    },
-    {
-      code: 'const myValue = useRecoilScopedValue(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-      ],
-      output: 'const variable = useRecoilScopedValue(variableState);',
+      code: 'const myValue = useAtomStateValue(variableState);',
+      errors: [{ messageId: 'invalidVariableName' }],
     },
 
+    // useAtomState - wrong variable and setter
     {
-      code: 'const [myValue, setMyValue] = useRecoilState(variableState);',
+      code: 'const [myValue, setMyValue] = useAtomState(variableState);',
       errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-        {
-          messageId: 'invalidSetterName',
-        },
+        { messageId: 'invalidVariableName' },
+        { messageId: 'invalidSetterName' },
       ],
-      output: 'const [variable, setVariable] = useRecoilState(variableState);',
     },
     {
-      code: 'const [myValue] = useRecoilState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-      ],
-      output: 'const [variable] = useRecoilState(variableState);',
+      code: 'const [myValue] = useAtomState(variableState);',
+      errors: [{ messageId: 'invalidVariableName' }],
     },
     {
-      code: 'const [, setMyValue] = useRecoilState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidSetterName',
-        },
-      ],
-      output: 'const [, setVariable] = useRecoilState(variableState);',
+      code: 'const [, setMyValue] = useAtomState(variableState);',
+      errors: [{ messageId: 'invalidSetterName' }],
     },
 
+    // useAtomComponentStateValue - wrong variable name
     {
-      code: 'const [myValue, setMyValue] = useRecoilScopedState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-        {
-          messageId: 'invalidSetterName',
-        },
-      ],
-      output:
-        'const [variable, setVariable] = useRecoilScopedState(variableState);',
-    },
-    {
-      code: 'const [myValue] = useRecoilScopedState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-      ],
-      output: 'const [variable] = useRecoilScopedState(variableState);',
-    },
-    {
-      code: 'const [, setMyValue] = useRecoilScopedState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidSetterName',
-        },
-      ],
-      output: 'const [, setVariable] = useRecoilScopedState(variableState);',
+      code: 'const myValue = useAtomComponentStateValue(variableComponentState);',
+      errors: [{ messageId: 'invalidVariableName' }],
     },
 
+    // useAtomComponentState - wrong variable and setter
     {
-      code: 'const [myValue, setMyValue] = useRecoilFamilyState(variableState);',
+      code: 'const [myValue, setMyValue] = useAtomComponentState(variableComponentState);',
       errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-        {
-          messageId: 'invalidSetterName',
-        },
+        { messageId: 'invalidVariableName' },
+        { messageId: 'invalidSetterName' },
       ],
-      output:
-        'const [variable, setVariable] = useRecoilFamilyState(variableState);',
-    },
-    {
-      code: 'const [myValue] = useRecoilFamilyState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-      ],
-      output: 'const [variable] = useRecoilFamilyState(variableState);',
-    },
-    {
-      code: 'const [, setMyValue] = useRecoilFamilyState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidSetterName',
-        },
-      ],
-      output: 'const [, setVariable] = useRecoilFamilyState(variableState);',
     },
 
+    // useAtomFamilyStateValue - wrong variable name
     {
-      code: 'const [myValue, setMyValue] = useRecoilScopedFamilyState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-        {
-          messageId: 'invalidSetterName',
-        },
-      ],
-      output:
-        'const [variable, setVariable] = useRecoilScopedFamilyState(variableState);',
+      code: 'const myValue = useAtomFamilyStateValue(variableFamilyState, key);',
+      errors: [{ messageId: 'invalidVariableName' }],
     },
+
+    // useAtomComponentFamilyStateValue - wrong variable name
     {
-      code: 'const [myValue] = useRecoilScopedFamilyState(variableState);',
-      errors: [
-        {
-          messageId: 'invalidVariableName',
-        },
-      ],
-      output: 'const [variable] = useRecoilScopedFamilyState(variableState);',
+      code: 'const myValue = useAtomComponentFamilyStateValue(variableComponentFamilyState, key);',
+      errors: [{ messageId: 'invalidVariableName' }],
     },
+
+    // useAtomComponentFamilyState - wrong variable and setter
     {
-      code: 'const [, setMyValue] = useRecoilScopedFamilyState(variableState);',
+      code: 'const [myValue, setMyValue] = useAtomComponentFamilyState(variableComponentFamilyState, key);',
       errors: [
-        {
-          messageId: 'invalidSetterName',
-        },
+        { messageId: 'invalidVariableName' },
+        { messageId: 'invalidSetterName' },
       ],
-      output:
-        'const [, setVariable] = useRecoilScopedFamilyState(variableState);',
+    },
+
+    // useSetAtomState - wrong setter name
+    {
+      code: 'const myValue = useSetAtomState(variableState);',
+      errors: [{ messageId: 'invalidSetterName' }],
+    },
+
+    // useSetAtomComponentState - wrong setter name
+    {
+      code: 'const myValue = useSetAtomComponentState(variableComponentState);',
+      errors: [{ messageId: 'invalidSetterName' }],
+    },
+
+    // useSetAtomFamilyState - wrong setter name
+    {
+      code: 'const myValue = useSetAtomFamilyState(variableFamilyState, key);',
+      errors: [{ messageId: 'invalidSetterName' }],
+    },
+
+    // useSetAtomComponentFamilyState - wrong setter name
+    {
+      code: 'const myValue = useSetAtomComponentFamilyState(variableComponentFamilyState, key);',
+      errors: [{ messageId: 'invalidSetterName' }],
     },
   ],
 });

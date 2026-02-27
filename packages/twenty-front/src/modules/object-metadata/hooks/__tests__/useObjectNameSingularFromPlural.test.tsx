@@ -1,5 +1,4 @@
 import { renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
 
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
@@ -10,11 +9,9 @@ describe('useObjectNameSingularFromPlural', () => {
       () => useObjectNameSingularFromPlural({ objectNamePlural: 'people' }),
       {
         wrapper: ({ children }) => (
-          <RecoilRoot>
-            <JestObjectMetadataItemSetter>
-              {children}
-            </JestObjectMetadataItemSetter>
-          </RecoilRoot>
+          <JestObjectMetadataItemSetter>
+            {children}
+          </JestObjectMetadataItemSetter>
         ),
       },
     );

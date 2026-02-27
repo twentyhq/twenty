@@ -6,91 +6,87 @@ import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useCallback } from 'react';
+import { useStore } from 'jotai';
 
 export const useSetAdvancedFilterDropdownStates = () => {
-  const rootLevelRecordFilterGroup = useRecoilComponentValue(
+  const store = useStore();
+  const rootLevelRecordFilterGroup = useAtomComponentSelectorValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
-  const currentRecordFilterGroups = useRecoilComponentValue(
+  const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
   );
 
-  const setAdvancedFilterDropdownStates = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        const rootLevelRecordFilters = currentRecordFilters.filter(
-          (recordFilter) =>
-            recordFilter.recordFilterGroupId === rootLevelRecordFilterGroup?.id,
+  const setAdvancedFilterDropdownStates = useCallback(() => {
+    const rootLevelRecordFilters = currentRecordFilters.filter(
+      (recordFilter) =>
+        recordFilter.recordFilterGroupId === rootLevelRecordFilterGroup?.id,
+    );
+
+    const setAdvancedFilterStatesForRecordFilter = (
+      recordFilter: RecordFilter,
+    ) => {
+      const instanceId =
+        getAdvancedFilterObjectFilterDropdownComponentInstanceId(
+          recordFilter.id,
         );
 
-        const setAdvancedFilterStatesForRecordFilter = (
-          recordFilter: RecordFilter,
-        ) => {
-          set(
-            objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
-              instanceId:
-                getAdvancedFilterObjectFilterDropdownComponentInstanceId(
-                  recordFilter.id,
-                ),
-            }),
-            recordFilter,
-          );
+      store.set(
+        objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
+          instanceId,
+        }),
+        recordFilter,
+      );
 
-          set(
-            fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
-              instanceId:
-                getAdvancedFilterObjectFilterDropdownComponentInstanceId(
-                  recordFilter.id,
-                ),
-            }),
-            recordFilter.fieldMetadataId,
-          );
+      store.set(
+        fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
+          instanceId,
+        }),
+        recordFilter.fieldMetadataId,
+      );
 
-          set(
-            subFieldNameUsedInDropdownComponentState.atomFamily({
-              instanceId:
-                getAdvancedFilterObjectFilterDropdownComponentInstanceId(
-                  recordFilter.id,
-                ),
-            }),
-            recordFilter.subFieldName,
-          );
-        };
+      store.set(
+        subFieldNameUsedInDropdownComponentState.atomFamily({
+          instanceId,
+        }),
+        recordFilter.subFieldName,
+      );
+    };
 
-        for (const rootLevelRecordFilter of rootLevelRecordFilters) {
-          setAdvancedFilterStatesForRecordFilter(rootLevelRecordFilter);
-        }
+    for (const rootLevelRecordFilter of rootLevelRecordFilters) {
+      setAdvancedFilterStatesForRecordFilter(rootLevelRecordFilter);
+    }
 
-        const childRecordFilterGroups = currentRecordFilterGroups.filter(
-          (currentRecordGroupToFilter) =>
-            currentRecordGroupToFilter.parentRecordFilterGroupId ===
-            rootLevelRecordFilterGroup?.id,
-        );
+    const childRecordFilterGroups = currentRecordFilterGroups.filter(
+      (currentRecordGroupToFilter) =>
+        currentRecordGroupToFilter.parentRecordFilterGroupId ===
+        rootLevelRecordFilterGroup?.id,
+    );
 
-        for (const childRecordFilterGroup of childRecordFilterGroups) {
-          const recordFiltersInThisGroup = currentRecordFilters.filter(
-            (recordFilter) =>
-              recordFilter.recordFilterGroupId === childRecordFilterGroup.id,
-          );
+    for (const childRecordFilterGroup of childRecordFilterGroups) {
+      const recordFiltersInThisGroup = currentRecordFilters.filter(
+        (recordFilter) =>
+          recordFilter.recordFilterGroupId === childRecordFilterGroup.id,
+      );
 
-          for (const recordFilterInThisGroup of recordFiltersInThisGroup) {
-            setAdvancedFilterStatesForRecordFilter(recordFilterInThisGroup);
-          }
-        }
-      },
-    [
-      currentRecordFilterGroups,
-      currentRecordFilters,
-      rootLevelRecordFilterGroup,
-    ],
-  );
+      for (const recordFilterInThisGroup of recordFiltersInThisGroup) {
+        setAdvancedFilterStatesForRecordFilter(recordFilterInThisGroup);
+      }
+    }
+  }, [
+    currentRecordFilterGroups,
+    currentRecordFilters,
+    rootLevelRecordFilterGroup,
+    store,
+  ]);
 
   return {
     setAdvancedFilterDropdownStates,

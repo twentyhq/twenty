@@ -42,10 +42,10 @@ export const FileBlock = createReactBlockSpec(
     type: 'file',
     propSchema: {
       url: {
-        default: '' as string,
+        default: '',
       },
       name: {
-        default: '' as string,
+        default: '',
       },
       fileCategory: {
         default: 'OTHER' as AttachmentFileCategory,

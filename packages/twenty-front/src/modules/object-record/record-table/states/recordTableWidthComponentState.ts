@@ -1,7 +1,7 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const recordTableWidthComponentState = createComponentState<number>({
+export const recordTableWidthComponentState = createAtomComponentState<number>({
   key: 'recordTableWidthComponentState',
   defaultValue: 0,
   componentInstanceContext: RecordTableComponentInstanceContext,

@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const isCommandMenuOpenedState = atom({
+export const isCommandMenuOpenedState = createAtomState<boolean>({
   key: 'command-menu/isCommandMenuOpenedState',
-  default: false,
+  defaultValue: false,
 });

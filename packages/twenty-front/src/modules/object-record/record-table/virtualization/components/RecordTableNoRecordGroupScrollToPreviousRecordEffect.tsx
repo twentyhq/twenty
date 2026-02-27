@@ -6,19 +6,19 @@ import { useProcessTreadmillScrollTop } from '@/object-record/record-table/virtu
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
 import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
 
 export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
-  const allRecordIds = useRecoilComponentValue(
+  const allRecordIds = useAtomComponentSelectorValue(
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const [lastShowPageRecordId, setLastShowPageRecordId] = useRecoilState(
+  const [lastShowPageRecordId, setLastShowPageRecordId] = useAtomState(
     lastShowPageRecordIdState,
   );
 

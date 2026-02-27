@@ -29,7 +29,8 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledSearchInput = styled.input`
   background: transparent;
@@ -76,11 +77,11 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
         objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
       });
 
-    const selectedFieldMetadataItem = useRecoilComponentValue(
+    const selectedFieldMetadataItem = useAtomComponentSelectorValue(
       fieldMetadataItemUsedInDropdownComponentSelector,
     );
 
-    const currentRecordFilters = useRecoilComponentValue(
+    const currentRecordFilters = useAtomComponentStateValue(
       currentRecordFiltersComponentState,
     );
 

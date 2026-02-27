@@ -1,17 +1,17 @@
 import { emptyRecordGroupByIdComponentFamilyState } from '@/object-record/record-group/states/emptyRecordGroupByIdComponentFamilyState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useShouldHideRecordGroup = (recordGroupId: string): boolean => {
-  const shouldHideEmptyRecordGroups = useRecoilComponentValue(
+  const recordIndexShouldHideEmptyRecordGroups = useAtomComponentStateValue(
     recordIndexShouldHideEmptyRecordGroupsComponentState,
   );
 
-  const isRecordGroupEmpty = useRecoilComponentFamilyValue(
+  const emptyRecordGroupById = useAtomComponentFamilyStateValue(
     emptyRecordGroupByIdComponentFamilyState,
     recordGroupId,
   );
 
-  return shouldHideEmptyRecordGroups && isRecordGroupEmpty;
+  return recordIndexShouldHideEmptyRecordGroups && emptyRecordGroupById;
 };

@@ -26,6 +26,7 @@ export const GOOGLE_MODELS: AIModelConfig[] = [
     maxOutputTokens: 65536,
     supportedFileTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
     doesSupportThinking: true,
+    isRecommended: true,
   },
   {
     modelId: 'gemini-3-flash-preview',

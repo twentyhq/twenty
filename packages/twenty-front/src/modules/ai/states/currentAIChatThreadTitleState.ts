@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const currentAIChatThreadTitleState = atom<string | null>({
+export const currentAIChatThreadTitleState = createAtomState<string | null>({
   key: 'ai/currentAIChatThreadTitleState',
-  default: null,
+  defaultValue: null,
 });

@@ -10,6 +10,7 @@ export const defineEntitiesTests = (appPath: string): void => {
       const sortedFiles = files.map((f) => f.toString()).sort();
 
       expect(sortedFiles).toEqual([
+        'api-client',
         'manifest.json',
         'package.json',
         'public',

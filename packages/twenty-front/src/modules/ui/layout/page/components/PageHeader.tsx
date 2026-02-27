@@ -7,7 +7,7 @@ import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawe
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AnimatePresence } from 'framer-motion';
 import {
@@ -96,7 +96,7 @@ export const PageHeader = ({
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const theme = useTheme();
-  const isNavigationDrawerExpanded = useRecoilValueV2(
+  const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
 

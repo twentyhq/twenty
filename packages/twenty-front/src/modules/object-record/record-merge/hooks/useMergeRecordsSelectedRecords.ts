@@ -2,14 +2,15 @@ import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/state
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import { useRecoilValue } from 'recoil';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useMergeRecordsSelectedRecords = () => {
   const mergeRecordsPageInstanceId = useComponentInstanceStateContext(
     CommandMenuPageComponentInstanceContext,
   )?.instanceId;
 
-  const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+  const commandMenuNavigationMorphItemsByPage = useAtomStateValue(
     commandMenuNavigationMorphItemsByPageState,
   );
 
@@ -18,10 +19,11 @@ export const useMergeRecordsSelectedRecords = () => {
       .get(mergeRecordsPageInstanceId ?? '')
       ?.map((morphItem) => morphItem.recordId) ?? [];
 
-  const selectedRecords = useRecoilValue(
-    recordStoreRecordsSelector({
+  const selectedRecords = useAtomFamilySelectorValue(
+    recordStoreRecordsSelector,
+    {
       recordIds: selectedRecordIds,
-    }),
+    },
   );
 
   return {

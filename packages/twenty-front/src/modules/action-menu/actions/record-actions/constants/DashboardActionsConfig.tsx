@@ -90,7 +90,6 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         isDefined(selectedRecord) &&
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
-        isDefined(selectedRecord?.pageLayoutId) &&
         objectPermissions.canUpdateObjectRecords,
       availableOn: [
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,

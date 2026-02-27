@@ -15,8 +15,8 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import styled from '@emotion/styled';
 
 const StyledRecordCardBodyContainer = styled(RecordCardBodyContainer)`
@@ -54,7 +54,7 @@ export const RecordCalendarCardBody = ({
     fieldDefinitionByFieldMetadataItemId,
   } = useRecordIndexContextOrThrow();
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
 
@@ -63,7 +63,7 @@ export const RecordCalendarCardBody = ({
       recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
   );
 
-  const setRecordCalendarCardHoverPosition = useSetRecoilComponentState(
+  const setRecordCalendarCardHoverPosition = useSetAtomComponentState(
     recordCalendarCardHoverPositionComponentState,
   );
 

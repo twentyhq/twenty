@@ -6,7 +6,6 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { getObjectMetadataNamePluralFromViewId } from '@/favorites/utils/getObjectMetadataNamePluralFromViewId';
 import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
 import {
@@ -33,13 +32,16 @@ export const sortNavigationMenuItems = (
         );
 
         if (isDefined(view)) {
-          const { namePlural } = getObjectMetadataNamePluralFromViewId(
-            view,
-            objectMetadataItems,
-          );
           const objectMetadataItem = objectMetadataItems.find(
             (meta) => meta.id === view.objectMetadataId,
           );
+
+          if (!isDefined(objectMetadataItem)) {
+            return null;
+          }
+
+          const namePlural = objectMetadataItem.namePlural;
+
           const isIndexView = view.key === ViewKey.Index;
           const labelIdentifier =
             isIndexView && isDefined(objectMetadataItem)

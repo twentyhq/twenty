@@ -23,6 +23,7 @@ export const XAI_MODELS: AIModelConfig[] = [
       webSearch: true,
       twitterSearch: true,
     },
+    isRecommended: true,
   },
   {
     modelId: 'grok-4-1-fast-reasoning',

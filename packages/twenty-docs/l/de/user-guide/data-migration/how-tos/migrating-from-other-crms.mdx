@@ -59,17 +59,17 @@ Bereiten Sie Ihren Twenty-Arbeitsbereich vor, bevor Sie Daten importieren:
 4. Konfigurieren Sie die Feldeinstellungen (eindeutig, erforderlich, Auswahloptionen usw.)
 
 <Warning>
-  **Felder müssen vor dem Import vorhanden sein.**
+**Felder müssen vor dem Import vorhanden sein.**
 
-  Der CSV-Import erstellt Datensätze, nicht Felder. Erstellen Sie alle benutzerdefinierten Felder vor dem Import unter Einstellungen → Datenmodell.
+Der CSV-Import erstellt Datensätze, nicht Felder. Erstellen Sie alle benutzerdefinierten Felder vor dem Import unter Einstellungen → Datenmodell.
 </Warning>
 
 ### Laden Sie Ihr Team ein
 
 <Warning>
-  **Laden Sie Benutzer ein, BEVOR Sie Daten importieren.**
+**Laden Sie Benutzer ein, BEVOR Sie Daten importieren.**
 
-  Wenn Ihre Daten Benutzerreferenzen enthalten (Account Owner, Assignee usw.), müssen diese Benutzer vor dem Import in Twenty existieren. Andernfalls können diese Beziehungen nicht zugeordnet werden.
+Wenn Ihre Daten Benutzerreferenzen enthalten (Account Owner, Assignee usw.), müssen diese Benutzer vor dem Import in Twenty existieren. Andernfalls können diese Beziehungen nicht zugeordnet werden.
 </Warning>
 
 1. Gehen Sie zu **Einstellungen → Mitglieder**
@@ -116,9 +116,9 @@ Exportieren Sie Ihre Daten aus Ihrem aktuellen CRM:
 | **Auswahlfelder** | Verwenden Sie API-Namen, nicht Anzeigenamen      |
 
 <Warning>
-  **Das Domain-Format ist entscheidend.**
+**Das Domain-Format ist entscheidend.**
 
-  Verwenden Sie `https://domain.com` (nicht `domain.com` oder `www.domain.com`). Dies entspricht dem Format von Twenty und verhindert Duplikate, wenn Sie die E-Mail-/Kalendersynchronisierung verbinden.
+Verwenden Sie `https://domain.com` (nicht `domain.com` oder `www.domain.com`). Dies entspricht dem Format von Twenty und verhindert Duplikate, wenn Sie die E-Mail-/Kalendersynchronisierung verbinden.
 </Warning>
 
 Siehe [So bereiten Sie Ihre CSV-Dateien vor](/l/de/user-guide/data-migration/how-tos/prepare-your-csv-files) für vollständige Formatierungsanforderungen für alle Feldtypen.
@@ -149,17 +149,16 @@ Siehe [So bereiten Sie Ihre CSV-Dateien vor](/l/de/user-guide/data-migration/how
 ## Schritt 6: In Twenty importieren
 
 <Warning>
-  **Die Importreihenfolge ist wichtig!**
+**Die Importreihenfolge ist wichtig!**
 
-  Importieren Sie immer in dieser Reihenfolge:
+Importieren Sie immer in dieser Reihenfolge:
+1. Zuerst **Unternehmen** (keine Abhängigkeiten)
+2. **Personen** an zweiter Stelle (mit Unternehmen verknüpfen)
+3. **Opportunities** an dritter Stelle (mit Unternehmen/Personen verknüpfen)
+4. **Notizen und Aufgaben** (mit Datensätzen verknüpfen)
+5. **Benutzerdefinierte Objekte** entsprechend ihren Abhängigkeiten
 
-  1. Zuerst **Unternehmen** (keine Abhängigkeiten)
-  2. **Personen** an zweiter Stelle (mit Unternehmen verknüpfen)
-  3. **Opportunities** an dritter Stelle (mit Unternehmen/Personen verknüpfen)
-  4. **Notizen und Aufgaben** (mit Datensätzen verknüpfen)
-  5. **Benutzerdefinierte Objekte** entsprechend ihren Abhängigkeiten
-
-  Der übergeordnete Datensatz muss existieren, bevor Sie darauf verweisen können.
+Der übergeordnete Datensatz muss existieren, bevor Sie darauf verweisen können.
 </Warning>
 
 ### Jedes Objekt importieren

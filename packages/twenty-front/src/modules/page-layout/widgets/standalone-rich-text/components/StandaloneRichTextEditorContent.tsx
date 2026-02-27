@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useState } from 'react';
 
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
@@ -16,13 +16,13 @@ import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBloc
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
 import { t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
+import { useStore } from 'jotai';
 import { useDebouncedCallback } from 'use-debounce';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
@@ -45,40 +45,37 @@ export const StandaloneRichTextEditorContent = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
-  const isPageLayoutInEditModeState = useRecoilComponentCallbackState(
+  const isPageLayoutInEditModeState = useAtomComponentStateCallbackState(
     isPageLayoutInEditModeComponentState,
   );
-  const pageLayoutEditingWidgetIdState = useRecoilComponentCallbackState(
+  const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
     pageLayoutEditingWidgetIdComponentState,
   );
 
   const { syncAttachments } = useAttachmentSync(attachments);
 
-  const shouldPersistDraft = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const isPageLayoutInEditMode = snapshot
-          .getLoadable(isPageLayoutInEditModeState)
-          .getValue();
-        const editingWidgetId = snapshot
-          .getLoadable(pageLayoutEditingWidgetIdState)
-          .getValue();
+  const store = useStore();
 
-        return isPageLayoutInEditMode && editingWidgetId === widget.id;
-      },
-    [isPageLayoutInEditModeState, pageLayoutEditingWidgetIdState, widget.id],
-  );
+  const shouldPersistDraft = useCallback(() => {
+    const isPageLayoutInEditMode = store.get(isPageLayoutInEditModeState);
+    const editingWidgetId = store.get(pageLayoutEditingWidgetIdState);
 
-  const initialContent = useMemo(
-    () => filterSupportedBlocks(parseInitialBlocknote(currentBody)),
-    [currentBody],
+    return isPageLayoutInEditMode && editingWidgetId === widget.id;
+  }, [
+    isPageLayoutInEditModeState,
+    pageLayoutEditingWidgetIdState,
+    widget.id,
+    store,
+  ]);
+
+  const [initialContent] = useState(() =>
+    filterSupportedBlocks(parseInitialBlocknote(currentBody)),
   );
 
   const editor = useCreateBlockNote({
     initialContent,
     domAttributes: { editor: { class: 'editor' } },
     schema: DASHBOARD_BLOCK_SCHEMA,
-    sideMenuDetection: 'editor',
     placeholders: {
       default: t`Enter text or type '/' for commands`,
     },
@@ -116,7 +113,7 @@ export const StandaloneRichTextEditorContent = ({
     handleAttachmentSync(newStringifiedBody, currentBody);
   };
 
-  const handleBlockEditorFocus = useCallback(() => {
+  const handleBlockEditorFocus = () => {
     pushFocusItemToFocusStack({
       component: {
         instanceId: widget.id,
@@ -125,14 +122,14 @@ export const StandaloneRichTextEditorContent = ({
       focusId: widget.id,
       globalHotkeysConfig: BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG,
     });
-  }, [pushFocusItemToFocusStack, widget.id]);
+  };
 
-  const handleBlockEditorBlur = useCallback(() => {
+  const handleBlockEditorBlur = () => {
     handlePersistBody.flush();
     removeFocusItemFromFocusStackById({
       focusId: widget.id,
     });
-  }, [handlePersistBody, removeFocusItemFromFocusStackById, widget.id]);
+  };
 
   return (
     <>

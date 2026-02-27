@@ -8,8 +8,9 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RightDrawerDecorator } from '~/testing/decorators/RightDrawerDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedTasks } from '~/testing/mock-data/tasks';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 
 const meta: Meta<typeof TaskGroups> = {
   title: 'Modules/Activity/TaskGroups',
@@ -38,10 +39,14 @@ type Story = StoryObj<typeof TaskGroups>;
 
 export const Empty: Story = {};
 
+const flatPersonRecords = mockedPersonRecords.map((record) =>
+  getRecordFromRecordNode({ recordNode: record }),
+);
+
 export const WithTasks: Story = {
   args: {
     targetableObject: {
-      id: mockedTasks[0].taskTargets?.[0].targetPersonId,
+      id: flatPersonRecords[0].id,
       targetObjectNameSingular: 'person',
     } as ActivityTargetableObject,
   },

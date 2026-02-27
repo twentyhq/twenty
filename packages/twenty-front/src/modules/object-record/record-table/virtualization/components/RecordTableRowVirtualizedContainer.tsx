@@ -6,8 +6,8 @@ import { TABLE_VIRTUALIZATION_DEBUG_ACTIVATED } from '@/object-record/record-tab
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,21 +26,26 @@ type RecordTableRowVirtualizedContainerProps = {
 export const RecordTableRowVirtualizedContainer = ({
   virtualIndex,
 }: RecordTableRowVirtualizedContainerProps) => {
-  const realIndex = useRecoilComponentFamilyValue(
+  const realIndexByVirtualIndex = useAtomComponentFamilyStateValue(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
   );
 
   const totalNumberOfRecordsToVirtualize =
-    useRecoilComponentValue(totalNumberOfRecordsToVirtualizeComponentState) ??
-    0;
+    useAtomComponentStateValue(
+      totalNumberOfRecordsToVirtualizeComponentState,
+    ) ?? 0;
 
-  if (!isDefined(realIndex) || realIndex >= totalNumberOfRecordsToVirtualize) {
+  if (
+    !isDefined(realIndexByVirtualIndex) ||
+    realIndexByVirtualIndex >= totalNumberOfRecordsToVirtualize
+  ) {
     return null;
   }
 
   const pixelsFromTop =
-    realIndex * (RECORD_TABLE_ROW_HEIGHT + 1) + (RECORD_TABLE_ROW_HEIGHT + 1);
+    realIndexByVirtualIndex * (RECORD_TABLE_ROW_HEIGHT + 1) +
+    (RECORD_TABLE_ROW_HEIGHT + 1);
 
   return (
     <StyledVirtualizedRowContainer
@@ -50,7 +55,9 @@ export const RecordTableRowVirtualizedContainer = ({
       {TABLE_VIRTUALIZATION_DEBUG_ACTIVATED && (
         <RecordTableRowVirtualizedDebugRowHelper virtualIndex={virtualIndex} />
       )}
-      <RecordTableRowVirtualizedRouterLevel1 realIndex={realIndex} />
+      <RecordTableRowVirtualizedRouterLevel1
+        realIndex={realIndexByVirtualIndex}
+      />
     </StyledVirtualizedRowContainer>
   );
 };

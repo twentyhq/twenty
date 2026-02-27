@@ -1,4 +1,4 @@
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -16,14 +16,14 @@ export const WorkflowVersionVisualizerEffect = ({
 }) => {
   const workflowVersion = useWorkflowVersion(workflowVersionId);
 
-  const setFlow = useSetRecoilComponentState(flowComponentState);
-  const setWorkflowDiagram = useSetRecoilComponentState(
+  const setFlow = useSetAtomComponentState(flowComponentState);
+  const setWorkflowDiagram = useSetAtomComponentState(
     workflowDiagramComponentState,
   );
-  const setWorkflowVisualizerWorkflowId = useSetRecoilComponentState(
+  const setWorkflowVisualizerWorkflowId = useSetAtomComponentState(
     workflowVisualizerWorkflowIdComponentState,
   );
-  const setWorkflowVisualizerWorkflowVersionId = useSetRecoilComponentState(
+  const setWorkflowVisualizerWorkflowVersionId = useSetAtomComponentState(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
 

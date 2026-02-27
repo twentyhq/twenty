@@ -14,10 +14,11 @@ import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/rec
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import {
   computeRecordGqlOperationFilter,
@@ -34,15 +35,15 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
 
-  const currentRecordFilterGroups = useRecoilComponentValue(
+  const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
-  const dateLocale = useRecoilValue(dateLocaleState);
+  const dateLocale = useAtomStateValue(dateLocaleState);
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
@@ -64,27 +65,27 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   // TODO: This shouldn't be set with impossible values,
   // see problem with view id not being set early enoughby Effect component in context store,
   // This happens here when switching from a view to another.
-  const aggregateOperationForViewFieldWithProbableImpossibleValues =
-    useRecoilValue(viewFieldAggregateOperationState({ viewFieldId }));
+  const viewFieldAggregateOperation = useAtomFamilyStateValue(
+    viewFieldAggregateOperationState,
+    { viewFieldId },
+  );
 
   const isAggregateOperationImpossibleForDateField =
     isDefined(fieldMetadataItem) &&
     isFieldMetadataDateKind(fieldMetadataItem.type) &&
-    isDefined(aggregateOperationForViewFieldWithProbableImpossibleValues) &&
-    (aggregateOperationForViewFieldWithProbableImpossibleValues ===
-      AggregateOperations.MIN ||
-      aggregateOperationForViewFieldWithProbableImpossibleValues ===
-        AggregateOperations.MAX);
+    isDefined(viewFieldAggregateOperation) &&
+    (viewFieldAggregateOperation === AggregateOperations.MIN ||
+      viewFieldAggregateOperation === AggregateOperations.MAX);
 
   const aggregateOperationForViewField:
     | ExtendedAggregateOperations
     | undefined
     | null = isAggregateOperationImpossibleForDateField
     ? convertAggregateOperationToExtendedAggregateOperation(
-        aggregateOperationForViewFieldWithProbableImpossibleValues,
+        viewFieldAggregateOperation,
         fieldMetadataItem.type,
       )
-    : aggregateOperationForViewFieldWithProbableImpossibleValues;
+    : viewFieldAggregateOperation;
 
   const fieldName = fieldMetadataItem?.name;
 
@@ -95,7 +96,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
         }
       : {};
 
-  const anyFieldFilterValue = useRecoilComponentValue(
+  const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
   );
 

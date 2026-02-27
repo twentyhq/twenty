@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isUndefined } from '@sniptt/guards';
-import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 export const ContextStoreDecorator: Decorator = (Story, context) => {
   const { contextStore } = context.parameters;
@@ -17,19 +17,19 @@ export const ContextStoreDecorator: Decorator = (Story, context) => {
     componentInstanceId = MAIN_CONTEXT_STORE_INSTANCE_ID;
   }
 
-  const setCurrentObjectMetadataItemId = useSetRecoilComponentState(
+  const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     componentInstanceId,
   );
 
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const objectMetadataItem = getMockCompanyObjectMetadataItem();
+  const objectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 
   useEffect(() => {
-    setCurrentObjectMetadataItemId(objectMetadataItem.id);
+    setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
     setIsLoaded(true);
-  }, [setCurrentObjectMetadataItemId, objectMetadataItem]);
+  }, [setContextStoreCurrentObjectMetadataItemId, objectMetadataItem]);
 
   return (
     <ContextStoreComponentInstanceContext.Provider

@@ -1,10 +1,11 @@
 import { type SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilState } from 'recoil';
 import { Checkbox } from 'twenty-ui/input';
 
 const StyledNameHeader = styled(TableHeader)`
@@ -29,8 +30,13 @@ export const SettingsRolePermissionsObjectsTableHeader = ({
   objectPermissionsConfig,
   isEditable,
 }: SettingsRolePermissionsObjectsTableHeaderProps) => {
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+  const setSettingsDraftRole = useSetAtomFamilyState(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const allPermissionsEnabled = objectPermissionsConfig.every(

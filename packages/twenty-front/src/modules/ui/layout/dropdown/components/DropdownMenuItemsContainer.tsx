@@ -56,15 +56,15 @@ export const DropdownMenuItemsContainer = ({
   scrollable?: boolean;
 }) => {
   return scrollable === true ? (
-    <StyledExternalContainer role="listbox">
-      <StyledScrollableContainer
-        maxHeight={
-          hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined
-        }
-      >
+    <StyledScrollableContainer
+      maxHeight={
+        hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined
+      }
+    >
+      <StyledExternalContainer role="listbox">
         <StyledInternalContainer>{children}</StyledInternalContainer>
-      </StyledScrollableContainer>
-    </StyledExternalContainer>
+      </StyledExternalContainer>
+    </StyledScrollableContainer>
   ) : (
     <StyledExternalContainer role="listbox">
       <StyledInternalContainer>{children}</StyledInternalContainer>

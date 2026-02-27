@@ -1,8 +1,8 @@
 import { RecordFieldsComponentInstanceContext } from '@/object-record/record-field/states/context/RecordFieldsComponentInstanceContext';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const currentRecordFieldsComponentState = createComponentState<
+export const currentRecordFieldsComponentState = createAtomComponentState<
   RecordField[]
 >({
   key: 'currentRecordFieldsComponentState',

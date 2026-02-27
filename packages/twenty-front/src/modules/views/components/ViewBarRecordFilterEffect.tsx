@@ -1,10 +1,10 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useFamilySelectorValueV2 } from '@/ui/utilities/state/jotai/hooks/useFamilySelectorValueV2';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useMapViewFiltersToFilters } from '@/views/hooks/useMapViewFiltersToFilters';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
@@ -12,29 +12,32 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordFilterEffect = () => {
-  const currentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
 
-  const currentView = useFamilySelectorValueV2(
+  const currentView = useAtomFamilySelectorValue(
     coreViewFromViewIdFamilySelector,
-    { viewId: currentViewId ?? '' },
+    {
+      viewId: contextStoreCurrentViewId ?? '',
+    },
   );
 
   const [
     hasInitializedCurrentRecordFilters,
     setHasInitializedCurrentRecordFilters,
-  ] = useRecoilComponentFamilyState(
+  ] = useAtomComponentFamilyState(
     hasInitializedCurrentRecordFiltersComponentFamilyState,
     {
-      viewId: currentViewId ?? undefined,
+      viewId: contextStoreCurrentViewId ?? undefined,
     },
   );
 
-  const setCurrentRecordFilters = useSetRecoilComponentState(
+  const setCurrentRecordFilters = useSetAtomComponentState(
     currentRecordFiltersComponentState,
+    recordIndexId,
   );
 
   const { mapViewFiltersToRecordFilters } = useMapViewFiltersToFilters();
@@ -52,7 +55,7 @@ export const ViewBarRecordFilterEffect = () => {
       setHasInitializedCurrentRecordFilters(true);
     }
   }, [
-    currentViewId,
+    contextStoreCurrentViewId,
     setCurrentRecordFilters,
     mapViewFiltersToRecordFilters,
     hasInitializedCurrentRecordFilters,

@@ -4,8 +4,7 @@ import { type ReactNode, useMemo } from 'react';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { AdvancedFilterDropdownButton } from '@/views/advanced-filter-chip/components/AdvancedFilterDropdownButton';
 import { ViewBarDetailsAddFilterButton } from '@/views/components/ViewBarDetailsAddFilterButton';
 import { EditableSortChip } from '@/views/editable-chip/components/EditableSortChip';
@@ -107,26 +106,30 @@ export const ViewBarDetails = ({
   viewBarId,
   objectNamePlural,
 }: ViewBarDetailsProps) => {
-  const isViewBarExpanded = useRecoilComponentValue(
+  const isViewBarExpanded = useAtomComponentStateValue(
     isViewBarExpandedComponentState,
   );
 
   const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
-  const currentRecordFilterGroups = useRecoilComponentValue(
+  const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
+    viewBarId,
   );
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
+    viewBarId,
   );
 
-  const currentRecordSorts = useRecoilComponentValue(
+  const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
+    viewBarId,
   );
 
-  const anyFieldFilterValue = useRecoilComponentValue(
+  const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
+    viewBarId,
   );
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
@@ -186,7 +189,7 @@ export const ViewBarDetails = ({
   const shouldShowAdvancedFilterDropdownButton =
     currentRecordFilterGroups.length > 0;
 
-  const isAnyFieldSearchDropdownOpen = useRecoilComponentValueV2(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     ANY_FIELD_SEARCH_DROPDOWN_ID,
   );
@@ -199,7 +202,7 @@ export const ViewBarDetails = ({
     !hasFiltersQueryParams;
 
   const shouldShowAnyFieldSearchChip =
-    isNonEmptyString(anyFieldFilterValue) || isAnyFieldSearchDropdownOpen;
+    isNonEmptyString(anyFieldFilterValue) || isDropdownOpen;
 
   const shouldExpandViewBar =
     shouldShowAnyFieldSearchChip ||

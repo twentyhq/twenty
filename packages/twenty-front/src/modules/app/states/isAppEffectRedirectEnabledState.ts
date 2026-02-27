@@ -1,5 +1,5 @@
-import { createStateV2 } from '@/ui/utilities/state/jotai/utils/createStateV2';
-export const isAppEffectRedirectEnabledState = createStateV2<boolean>({
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+export const isAppEffectRedirectEnabledState = createAtomState<boolean>({
   key: 'isAppEffectRedirectEnabledState',
   defaultValue: true,
 });

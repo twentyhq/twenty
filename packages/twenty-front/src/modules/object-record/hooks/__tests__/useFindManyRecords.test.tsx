@@ -7,14 +7,10 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
+jotaiStore.set(objectMetadataItemsState.atom, generatedMockObjectMetadataItems);
+
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
-  onInitializeRecoilSnapshot: () => {
-    jotaiStore.set(
-      objectMetadataItemsState.atom,
-      generatedMockObjectMetadataItems,
-    );
-  },
 });
 
 describe('useFindManyRecords', () => {

@@ -1,7 +1,4 @@
-import {
-  useBlockNoteEditor,
-  useEditorContentOrSelectionChange,
-} from '@blocknote/react';
+import { useActiveStyles, useBlockNoteEditor } from '@blocknote/react';
 import styled from '@emotion/styled';
 import {
   autoUpdate,
@@ -47,18 +44,12 @@ export const DashboardFormattingToolbarColorButton = () => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [currentTextColor, setCurrentTextColor] =
-    useState<BlockNoteColor>('default');
-  const [currentBackgroundColor, setCurrentBackgroundColor] =
-    useState<BlockNoteColor>('default');
-
-  useEditorContentOrSelectionChange(() => {
-    const activeStyles = editor.getActiveStyles();
-    setCurrentTextColor(extractColorFromProps(activeStyles, 'text'));
-    setCurrentBackgroundColor(
-      extractColorFromProps(activeStyles, 'background'),
-    );
-  }, editor);
+  const activeStyles = useActiveStyles(editor);
+  const currentTextColor = extractColorFromProps(activeStyles, 'text');
+  const currentBackgroundColor = extractColorFromProps(
+    activeStyles,
+    'background',
+  );
 
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',

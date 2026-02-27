@@ -1,44 +1,40 @@
-import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { type SelectOption } from 'twenty-ui/input';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { MODEL_FAMILY_CONFIG } from '~/pages/settings/ai/constants/SettingsAiModelProviders';
+import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
 
 export const useAiModelOptions = (
   includeDeprecated = false,
 ): SelectOption<string>[] => {
-  const aiModels = useRecoilValueV2(aiModelsState);
+  const aiModels = useAtomStateValue(aiModelsState);
+  const { isModelEnabled } = useWorkspaceAiModelAvailability();
 
   return aiModels
-    .filter((model) => includeDeprecated || !model.deprecated)
+    .filter(
+      (model) =>
+        (includeDeprecated || !model.deprecated) &&
+        isModelEnabled(model.modelId, model),
+    )
     .map((model) => ({
       value: model.modelId,
       label:
         model.modelId === DEFAULT_FAST_MODEL ||
         model.modelId === DEFAULT_SMART_MODEL
           ? model.label
-          : `${model.label} (${getModelFamilyLabel(model.modelFamily) ?? model.inferenceProvider})`,
+          : `${model.label} (${getModelProviderLabel(model.modelFamily) || model.inferenceProvider})`,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
-};
-
-const getModelFamilyLabel = (
-  modelFamily: string | null | undefined,
-): string | undefined => {
-  if (!modelFamily) {
-    return undefined;
-  }
-
-  return MODEL_FAMILY_CONFIG[modelFamily]?.label || modelFamily;
 };
 
 export const useAiModelLabel = (
   modelId: string | undefined,
   includeProvider = true,
 ): string => {
-  const aiModels = useRecoilValueV2(aiModelsState);
+  const aiModels = useAtomStateValue(aiModelsState);
 
   if (!modelId) {
     return '';
@@ -58,5 +54,5 @@ export const useAiModelLabel = (
     return model.label;
   }
 
-  return `${model.label} (${getModelFamilyLabel(model.modelFamily) ?? model.inferenceProvider})`;
+  return `${model.label} (${getModelProviderLabel(model.modelFamily) || model.inferenceProvider})`;
 };

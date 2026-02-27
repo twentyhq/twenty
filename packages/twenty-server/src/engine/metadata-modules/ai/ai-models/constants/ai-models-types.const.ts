@@ -101,4 +101,5 @@ export interface AIModelConfig {
     twitterSearch?: boolean;
   };
   deprecated?: boolean;
+  isRecommended?: boolean;
 }
