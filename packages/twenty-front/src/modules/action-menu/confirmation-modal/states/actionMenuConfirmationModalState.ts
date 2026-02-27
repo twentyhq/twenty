@@ -6,7 +6,6 @@ import { type ButtonAccent } from 'twenty-ui/input';
 export type ActionMenuConfirmationModalConfig = {
   title: string;
   subtitle: ReactNode;
-  onConfirmClick: () => void | Promise<void>;
   confirmButtonText?: string;
   confirmButtonAccent?: ButtonAccent;
 };

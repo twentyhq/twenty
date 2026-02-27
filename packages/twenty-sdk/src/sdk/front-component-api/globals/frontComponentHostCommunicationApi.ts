@@ -20,6 +20,17 @@ export type OpenSidePanelPageFunction = (params: {
   shouldResetSearchState?: boolean;
 }) => Promise<void>;
 
+export type ActionConfirmationModalResult = 'confirm' | 'cancel';
+
+export type ActionConfirmationModalAccent = 'default' | 'blue' | 'danger';
+
+export type OpenActionConfirmationModalFunction = (params: {
+  title: string;
+  subtitle: string;
+  confirmButtonText?: string;
+  confirmButtonAccent?: ActionConfirmationModalAccent;
+}) => Promise<ActionConfirmationModalResult>;
+
 export type UnmountFrontComponentFunction = () => Promise<void>;
 
 export type EnqueueSnackbarFunction = (
@@ -34,6 +45,7 @@ export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
   requestAccessTokenRefresh?: RequestAccessTokenRefreshFunction;
   openSidePanelPage?: OpenSidePanelPageFunction;
+  openActionConfirmationModal?: OpenActionConfirmationModalFunction;
   unmountFrontComponent?: UnmountFrontComponentFunction;
   enqueueSnackbar?: EnqueueSnackbarFunction;
   closeSidePanel?: CloseSidePanelFunction;

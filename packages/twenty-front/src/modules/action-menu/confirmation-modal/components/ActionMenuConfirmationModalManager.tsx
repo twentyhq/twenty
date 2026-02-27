@@ -1,5 +1,6 @@
-import { ACTION_MENU_CONFIRMATION_MODAL_ID } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
+import { ACTION_MENU_CONFIRMATION_MODAL_ID } from '@/action-menu/confirmation-modal/constants/actionMenuConfirmationModalId';
 import { actionMenuConfirmationModalState } from '@/action-menu/confirmation-modal/states/actionMenuConfirmationModalState';
+import { consumeActionMenuConfirmationModalCallbacks } from '@/action-menu/confirmation-modal/stores/actionMenuConfirmationModalCallbacksStore';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -18,16 +19,30 @@ export const ActionMenuConfirmationModalManager = () => {
     actionMenuConfirmationModalState,
   );
 
+  const clearActionMenuConfirmationModal = () => {
+    setActionMenuConfirmationModal(null);
+  };
+
   const handleConfirmClick = async () => {
+    const actionMenuConfirmationModalCallbacks =
+      consumeActionMenuConfirmationModalCallbacks();
+
     try {
-      await actionMenuConfirmationModal?.onConfirmClick();
+      await actionMenuConfirmationModalCallbacks?.onConfirmClick();
     } finally {
-      setActionMenuConfirmationModal(null);
+      clearActionMenuConfirmationModal();
     }
   };
 
-  const handleClose = () => {
-    setActionMenuConfirmationModal(null);
+  const handleClose = async () => {
+    const actionMenuConfirmationModalCallbacks =
+      consumeActionMenuConfirmationModalCallbacks();
+
+    try {
+      await actionMenuConfirmationModalCallbacks?.onClose?.();
+    } finally {
+      clearActionMenuConfirmationModal();
+    }
   };
 
   if (!actionMenuConfirmationModal || !isModalOpened) {
@@ -40,7 +55,9 @@ export const ActionMenuConfirmationModalManager = () => {
       title={actionMenuConfirmationModal.title}
       subtitle={actionMenuConfirmationModal.subtitle}
       onConfirmClick={handleConfirmClick}
-      onClose={handleClose}
+      onClose={() => {
+        void handleClose();
+      }}
       confirmButtonText={actionMenuConfirmationModal.confirmButtonText}
       confirmButtonAccent={actionMenuConfirmationModal.confirmButtonAccent}
     />

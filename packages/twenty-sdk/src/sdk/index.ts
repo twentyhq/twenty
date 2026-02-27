@@ -77,6 +77,8 @@ export { ActionLink } from './action';
 export type { ActionLinkProps } from './action';
 export { ActionOpenSidePanelPage } from './action';
 export type { ActionOpenSidePanelPageProps } from './action';
+export { ActionModal } from './action';
+export type { ActionModalProps } from './action';
 
 // Front Component API exports
 export {
@@ -84,13 +86,18 @@ export {
   getFrontComponentActionErrorDedupeKey,
   closeSidePanel,
   navigate,
+  openActionConfirmationModal,
   openSidePanelPage,
   unmountFrontComponent,
   useFrontComponentExecutionContext,
   useFrontComponentId,
   useUserId,
 } from './front-component-api';
-export type { FrontComponentExecutionContext } from './front-component-api';
+export type {
+  ActionConfirmationModalAccent,
+  ActionConfirmationModalResult,
+  FrontComponentExecutionContext,
+} from './front-component-api';
 
 export { AppPath, CommandMenuPages } from 'twenty-shared/types';
 export type {

@@ -2,6 +2,7 @@ export { setFrontComponentExecutionContext } from './context/frontComponentConte
 export { closeSidePanel } from './functions/closeSidePanel';
 export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
+export { openActionConfirmationModal } from './functions/openActionConfirmationModal';
 export { openSidePanelPage } from './functions/openSidePanelPage';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
@@ -9,6 +10,10 @@ export { useFrontComponentId } from './hooks/useFrontComponentId';
 export { useUserId } from './hooks/useUserId';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
 export { getFrontComponentActionErrorDedupeKey } from './utils/getFrontComponentActionErrorDedupeKey';
+export type {
+  ActionConfirmationModalAccent,
+  ActionConfirmationModalResult,
+} from './globals/frontComponentHostCommunicationApi';
 
 export { ALLOWED_HTML_ELEMENTS } from './constants/AllowedHtmlElements';
 export type { AllowedHtmlElement } from './constants/AllowedHtmlElements';

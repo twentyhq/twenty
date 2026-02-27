@@ -97,6 +97,8 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
       hostApi.requestAccessTokenRefresh;
     frontComponentHostCommunicationApi.openSidePanelPage =
       hostApi.openSidePanelPage;
+    frontComponentHostCommunicationApi.openActionConfirmationModal =
+      hostApi.openActionConfirmationModal;
     frontComponentHostCommunicationApi.unmountFrontComponent =
       hostApi.unmountFrontComponent;
     frontComponentHostCommunicationApi.enqueueSnackbar =

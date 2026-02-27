@@ -6,6 +6,7 @@ import {
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -30,6 +31,7 @@ export const useFrontComponentExecutionContext = ({
   const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
     frontComponentId,
   });
+  const { openConfirmationModal } = useActionMenuConfirmationModal();
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const setCommandMenuSearch = useSetAtomState(commandMenuSearchState);
   const { getIcon } = useIcons();
@@ -67,6 +69,37 @@ export const useFrontComponentExecutionContext = ({
       if (shouldResetSearchState === true) {
         setCommandMenuSearch('');
       }
+    };
+
+  const openActionConfirmationModal: FrontComponentHostCommunicationApi['openActionConfirmationModal'] =
+    async ({ title, subtitle, confirmButtonText, confirmButtonAccent }) => {
+      return new Promise((resolve) => {
+        let hasResolvedActionConfirmationModal = false;
+
+        const resolveActionConfirmationModal = (
+          actionConfirmationModalResult: 'confirm' | 'cancel',
+        ) => {
+          if (hasResolvedActionConfirmationModal) {
+            return;
+          }
+
+          hasResolvedActionConfirmationModal = true;
+          resolve(actionConfirmationModalResult);
+        };
+
+        openConfirmationModal({
+          title,
+          subtitle,
+          confirmButtonText,
+          confirmButtonAccent,
+          onConfirmClick: () => {
+            resolveActionConfirmationModal('confirm');
+          },
+          onClose: () => {
+            resolveActionConfirmationModal('cancel');
+          },
+        });
+      });
     };
 
   const enqueueSnackbar: FrontComponentHostCommunicationApi['enqueueSnackbar'] =
@@ -121,6 +154,7 @@ export const useFrontComponentExecutionContext = ({
       navigate,
       requestAccessTokenRefresh,
       openSidePanelPage,
+      openActionConfirmationModal,
       enqueueSnackbar,
       unmountFrontComponent,
       closeSidePanel,
