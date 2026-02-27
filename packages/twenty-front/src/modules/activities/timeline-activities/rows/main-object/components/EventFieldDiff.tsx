@@ -34,6 +34,10 @@ const StyledEmptyValue = styled.div`
 const StyledBeforeValue = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   text-decoration: line-through;
+
+  * {
+    color: inherit;
+  }
 `;
 
 export const EventFieldDiff = ({
