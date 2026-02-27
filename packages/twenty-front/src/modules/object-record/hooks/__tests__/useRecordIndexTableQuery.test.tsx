@@ -14,8 +14,8 @@ import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { JestRecordIndexContextProviderWrapper } from '~/testing/jest/JestRecordIndexContextProviderWrapper';
 import {
+  allMockPersonRecords,
   getMockPersonObjectMetadataItem,
-  peopleQueryResult,
 } from '~/testing/mock-data/people';
 
 const recordTableId = 'people';
@@ -104,14 +104,21 @@ const mocks: MockedResponse[] = [
     },
     result: jest.fn(() => ({
       data: {
-        people: peopleQueryResult.people,
-        pageInfo: {
-          hasNextPage: false,
-          hasPreviousPage: false,
-          startCursor: null,
-          endCursor: null,
+        people: {
+          __typename: 'PersonConnection',
+          edges: allMockPersonRecords.map((record) => ({
+            __typename: 'PersonEdge',
+            node: record,
+            cursor: record.id,
+          })),
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: null,
+            endCursor: null,
+          },
+          totalCount: allMockPersonRecords.length,
         },
-        totalCount: 16,
       },
     })),
   },
@@ -182,7 +189,9 @@ describe('useRecordIndexTableQuery', () => {
     );
 
     await waitFor(() => {
-      expect(result.current.records).toHaveLength(16);
+      expect(result.current.records).toHaveLength(
+        allMockPersonRecords.length,
+      );
     });
   });
 });

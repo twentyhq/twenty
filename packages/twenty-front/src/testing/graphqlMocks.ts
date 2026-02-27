@@ -411,90 +411,37 @@ export const graphqlMocks = {
     graphql.query('FindManyPeople', () => {
       return HttpResponse.json({
         data: {
-          people: {
-            edges: peopleMock.map((person) => ({
-              node: person,
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
+          people: wrapRecordsAsConnection('person', peopleMock),
         },
       });
     }),
     graphql.query('FindManyNotes', () => {
       return HttpResponse.json({
         data: {
-          activities: {
-            edges: mockedNotes.map(({ noteTargets, ...rest }) => ({
-              node: {
-                ...rest,
-                noteTargets: {
-                  edges: noteTargets?.map((t) => ({ node: t })),
-                },
-                attachments: {
-                  edges: [],
-                },
-              },
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
+          notes: wrapRecordsAsConnection('note', [...mockedNotes]),
         },
       });
     }),
     graphql.query('FindManyTasks', () => {
       return HttpResponse.json({
         data: {
-          tasks: {
-            edges: mockedTasks.map(({ taskTargets, ...rest }) => ({
-              node: {
-                ...rest,
-                taskTargets: {
-                  edges: taskTargets?.map((t) => ({ node: t })),
-                },
-                attachments: {
-                  edges: [],
-                },
-              },
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
+          tasks: wrapRecordsAsConnection('task', [...mockedTasks]),
         },
       });
     }),
     graphql.query('FindManyTaskTargets', () => {
+      const taskTargetNodes = mockedTasks.flatMap((task) => {
+        const targets = task.taskTargets as
+          | { edges: { node: Record<string, unknown> }[] }
+          | undefined;
+        return (targets?.edges ?? []).map(
+          (edge: { node: Record<string, unknown> }) => edge.node,
+        );
+      });
+
       return HttpResponse.json({
         data: {
-          taskTargets: {
-            edges: mockedTasks.flatMap((task) =>
-              task.taskTargets.map((target) => ({
-                node: target,
-                cursor: null,
-              })),
-            ),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
+          taskTargets: wrapRecordsAsConnection('taskTarget', taskTargetNodes),
         },
       });
     }),

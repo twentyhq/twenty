@@ -9,10 +9,7 @@ import { type MockedResponse } from '@apollo/client/testing';
 import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCacheInstance';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
-import {
-  allMockCompanyRecordsWithRelation,
-  findMockCompanyWithRelationRecord,
-} from '~/testing/mock-data/companiesWithRelations';
+import { allMockCompanyRecordsWithRelation } from '~/testing/mock-data/companiesWithRelations';
 import {
   allMockPersonRecords,
   getMockPersonObjectMetadataItem,
@@ -27,12 +24,13 @@ const mockRefetchAggregateQueries = jest.fn();
 });
 
 describe('useDeleteOneRecord', () => {
+  const matchingCompanyId = allMockCompanyRecordsWithRelation[0].id;
   const personRecord = getMockPersonRecord({
     deletedAt: null,
+    companyId: matchingCompanyId,
+    company: { ...allMockCompanyRecordsWithRelation[0] },
   });
-  const relatedCompanyRecord = findMockCompanyWithRelationRecord({
-    id: personRecord.company.id,
-  });
+  const relatedCompanyRecord = allMockCompanyRecordsWithRelation[0];
   const personObjectMetadataItem = getMockPersonObjectMetadataItem();
   const companyObjectMetadataItem = getMockCompanyObjectMetadataItem();
   const objectMetadataItems = generatedMockObjectMetadataItems;

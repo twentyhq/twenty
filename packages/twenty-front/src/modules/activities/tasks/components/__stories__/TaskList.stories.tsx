@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
+import { type Task } from '@/activities/types/Task';
 import { TaskList } from '@/activities/tasks/components/TaskList';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
@@ -9,6 +10,8 @@ import { RightDrawerDecorator } from '~/testing/decorators/RightDrawerDecorator'
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedTasks } from '~/testing/mock-data/tasks';
+
+const tasks = mockedTasks as unknown as Task[];
 
 const meta: Meta<typeof TaskList> = {
   title: 'Modules/Activity/TaskList',
@@ -23,7 +26,7 @@ const meta: Meta<typeof TaskList> = {
   ],
   args: {
     title: 'Tasks',
-    tasks: mockedTasks,
+    tasks,
   },
   parameters: {
     msw: graphqlMocks,
@@ -39,6 +42,6 @@ type Story = StoryObj<typeof TaskList>;
 export const Default: Story = {
   args: {
     title: 'Tasks',
-    tasks: mockedTasks,
+    tasks,
   },
 };

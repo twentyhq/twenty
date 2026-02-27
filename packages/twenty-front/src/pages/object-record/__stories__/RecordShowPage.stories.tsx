@@ -3,10 +3,7 @@ import { HttpResponse, graphql } from 'msw';
 
 import { type PageDecoratorArgs } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import {
-  allMockPersonRecords,
-  peopleQueryResult,
-} from '~/testing/mock-data/people';
+import { allMockPersonRecords } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
@@ -27,7 +24,23 @@ const meta: Meta<PageDecoratorArgs> = {
       handlers: [
         graphql.query('FindManyPeople', () => {
           return HttpResponse.json({
-            data: peopleQueryResult,
+            data: {
+              people: {
+                __typename: 'PersonConnection',
+                edges: allMockPersonRecords.map((record) => ({
+                  __typename: 'PersonEdge',
+                  node: record,
+                  cursor: record.id,
+                })),
+                pageInfo: {
+                  hasNextPage: false,
+                  hasPreviousPage: false,
+                  startCursor: null,
+                  endCursor: null,
+                },
+                totalCount: allMockPersonRecords.length,
+              },
+            },
           });
         }),
         graphql.query('FindOnePerson', () => {

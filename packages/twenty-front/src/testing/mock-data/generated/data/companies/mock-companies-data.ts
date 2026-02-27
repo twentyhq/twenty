@@ -35,6 +35,14 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "amountMicros": null,
       "currencyCode": null
     },
+    "apolloFoundedYear": null,
+    "apolloIndustry": "",
+    "apolloShortDescription": "",
+    "apolloTotalFunding": {
+      "__typename": "Currency",
+      "amountMicros": null,
+      "currencyCode": null
+    },
     "attachments": {
       "__typename": "AttachmentConnection",
       "edges": []
@@ -223,6 +231,14 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "addressLng": null
     },
     "annualRecurringRevenue": {
+      "__typename": "Currency",
+      "amountMicros": null,
+      "currencyCode": null
+    },
+    "apolloFoundedYear": null,
+    "apolloIndustry": "",
+    "apolloShortDescription": "",
+    "apolloTotalFunding": {
       "__typename": "Currency",
       "amountMicros": null,
       "currencyCode": null
@@ -423,6 +439,14 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "addressLng": null
     },
     "annualRecurringRevenue": {
+      "__typename": "Currency",
+      "amountMicros": null,
+      "currencyCode": null
+    },
+    "apolloFoundedYear": null,
+    "apolloIndustry": "",
+    "apolloShortDescription": "",
+    "apolloTotalFunding": {
       "__typename": "Currency",
       "amountMicros": null,
       "currencyCode": null
@@ -639,6 +663,14 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "addressLng": null
     },
     "annualRecurringRevenue": {
+      "__typename": "Currency",
+      "amountMicros": null,
+      "currencyCode": null
+    },
+    "apolloFoundedYear": null,
+    "apolloIndustry": "",
+    "apolloShortDescription": "",
+    "apolloTotalFunding": {
       "__typename": "Currency",
       "amountMicros": null,
       "currencyCode": null
@@ -864,6 +896,14 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "addressLng": null
     },
     "annualRecurringRevenue": {
+      "__typename": "Currency",
+      "amountMicros": null,
+      "currencyCode": null
+    },
+    "apolloFoundedYear": null,
+    "apolloIndustry": "",
+    "apolloShortDescription": "",
+    "apolloTotalFunding": {
       "__typename": "Currency",
       "amountMicros": null,
       "currencyCode": null
@@ -1109,6 +1149,14 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "amountMicros": null,
       "currencyCode": null
     },
+    "apolloFoundedYear": null,
+    "apolloIndustry": "",
+    "apolloShortDescription": "",
+    "apolloTotalFunding": {
+      "__typename": "Currency",
+      "amountMicros": null,
+      "currencyCode": null
+    },
     "attachments": {
       "__typename": "AttachmentConnection",
       "edges": []
@@ -1329,6 +1377,14 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "addressLng": null
     },
     "annualRecurringRevenue": {
+      "__typename": "Currency",
+      "amountMicros": null,
+      "currencyCode": null
+    },
+    "apolloFoundedYear": null,
+    "apolloIndustry": "",
+    "apolloShortDescription": "",
+    "apolloTotalFunding": {
       "__typename": "Currency",
       "amountMicros": null,
       "currencyCode": null
@@ -1557,6 +1613,14 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "amountMicros": null,
       "currencyCode": null
     },
+    "apolloFoundedYear": null,
+    "apolloIndustry": "",
+    "apolloShortDescription": "",
+    "apolloTotalFunding": {
+      "__typename": "Currency",
+      "amountMicros": null,
+      "currencyCode": null
+    },
     "attachments": {
       "__typename": "AttachmentConnection",
       "edges": []
@@ -1765,6 +1829,14 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "amountMicros": null,
       "currencyCode": null
     },
+    "apolloFoundedYear": null,
+    "apolloIndustry": "",
+    "apolloShortDescription": "",
+    "apolloTotalFunding": {
+      "__typename": "Currency",
+      "amountMicros": null,
+      "currencyCode": null
+    },
     "attachments": {
       "__typename": "AttachmentConnection",
       "edges": []
@@ -1953,6 +2025,14 @@ export const mockedCompanyRecords: Record<string, unknown>[] =
       "addressLng": null
     },
     "annualRecurringRevenue": {
+      "__typename": "Currency",
+      "amountMicros": null,
+      "currencyCode": null
+    },
+    "apolloFoundedYear": null,
+    "apolloIndustry": "",
+    "apolloShortDescription": "",
+    "apolloTotalFunding": {
       "__typename": "Currency",
       "amountMicros": null,
       "currencyCode": null

@@ -41,7 +41,7 @@ export const Empty: Story = {};
 export const WithTasks: Story = {
   args: {
     targetableObject: {
-      id: mockedTasks[0].taskTargets?.[0].targetPersonId,
+      id: '20202020-b000-4485-94de-70c2a98daef2',
       targetObjectNameSingular: 'person',
     } as ActivityTargetableObject,
   },
