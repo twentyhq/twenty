@@ -8,7 +8,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
 
 import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
-import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
+import { agentChatMessageByIdComponentFamilyState } from '@/ai/states/agentChatMessageByIdComponentFamilyState';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -30,14 +30,14 @@ const AgentChatMessageSetter = ({
   message: ExtendedUIMessage;
   children: React.ReactNode;
 }) => {
-  const setMessage = useSetAtomComponentFamilyState(
-    agentChatMessageComponentFamilyState,
+  const setAgentChatMessageById = useSetAtomComponentFamilyState(
+    agentChatMessageByIdComponentFamilyState,
     message.id,
   );
 
   useEffect(() => {
-    setMessage(message);
-  }, [message, setMessage]);
+    setAgentChatMessageById(message);
+  }, [message, setAgentChatMessageById]);
 
   return <>{children}</>;
 };

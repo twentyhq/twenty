@@ -1,5 +1,5 @@
-import { useProcessUnprocessedMessageStreamIncrement } from '@/ai/hooks/useProcessUnprocessedMessageStreamIncrement';
-import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
+import { useProcessNewMessageStreamIncrement } from '@/ai/hooks/useProcessNewMessageStreamIncrement';
+import { agentChatMessageByIdComponentFamilyState } from '@/ai/states/agentChatMessageByIdComponentFamilyState';
 import { agentChatMessagesComponentState } from '@/ai/states/agentChatMessagesComponentState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -19,11 +19,11 @@ export const useProcessIncrementalStreamMessages = () => {
 
   const agentChatMessageFamilyCallbackState =
     useAtomComponentFamilyStateCallbackState(
-      agentChatMessageComponentFamilyState,
+      agentChatMessageByIdComponentFamilyState,
     );
 
-  const { processUnprocessedMessageStreamIncrement } =
-    useProcessUnprocessedMessageStreamIncrement();
+  const { processNewMessageStreamIncrement } =
+    useProcessNewMessageStreamIncrement();
 
   const processIncrementalStreamMessages = useCallback(
     (incrementalStreamMessages: ExtendedUIMessage[]) => {
@@ -54,7 +54,7 @@ export const useProcessIncrementalStreamMessages = () => {
                   clonedMessage,
                 );
 
-                processUnprocessedMessageStreamIncrement(updatedMessage);
+                processNewMessageStreamIncrement(updatedMessage);
               }
             } else {
               const clonedMessage = cloneDeep(updatedMessage);
@@ -69,7 +69,7 @@ export const useProcessIncrementalStreamMessages = () => {
                 clonedMessage,
               );
 
-              processUnprocessedMessageStreamIncrement(updatedMessage);
+              processNewMessageStreamIncrement(updatedMessage);
             }
           }
         }),
@@ -81,7 +81,7 @@ export const useProcessIncrementalStreamMessages = () => {
       agentChatMessagesCallbackState,
       agentChatMessageFamilyCallbackState,
       store,
-      processUnprocessedMessageStreamIncrement,
+      processNewMessageStreamIncrement,
     ],
   );
 

@@ -2,9 +2,9 @@ import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponen
 import { createAtomComponentFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilyState';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-export const agentChatMessageComponentFamilyState =
+export const agentChatMessageByIdComponentFamilyState =
   createAtomComponentFamilyState<ExtendedUIMessage | null, string>({
-    key: 'agentChatMessageComponentFamilyState',
+    key: 'agentChatMessageByIdComponentFamilyState',
     defaultValue: null,
     componentInstanceContext: AgentChatComponentInstanceContext,
   });
