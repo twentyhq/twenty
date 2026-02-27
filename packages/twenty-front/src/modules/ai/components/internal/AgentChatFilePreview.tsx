@@ -43,12 +43,20 @@ export const AgentChatFilePreview = ({
   );
 
   const rightComponent = onRemove ? (
-    <AvatarChip
-      Icon={IconX}
-      IconColor={theme.font.color.secondary}
-      onClick={onRemove}
-      divider="left"
-    />
+    <div
+      onMouseDown={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        onRemove();
+      }}
+    >
+      <AvatarChip
+        Icon={IconX}
+        IconColor={theme.font.color.secondary}
+        divider="left"
+      />
+    </div>
   ) : undefined;
 
   if (isDefined(fileUrl)) {
