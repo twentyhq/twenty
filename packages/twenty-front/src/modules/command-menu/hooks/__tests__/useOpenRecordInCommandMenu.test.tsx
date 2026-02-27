@@ -12,6 +12,7 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { CommandMenuPages } from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/display';
@@ -197,7 +198,9 @@ describe('useOpenRecordInCommandMenu', () => {
 
     expect(mockOpenNewRecordTitleCell).toHaveBeenCalledWith({
       recordId: 'new-record-123',
-      fieldName: expect.any(String),
+      fieldName: getLabelIdentifierFieldMetadataItem(
+        personMockObjectMetadataItem,
+      )?.name,
     });
   });
 
