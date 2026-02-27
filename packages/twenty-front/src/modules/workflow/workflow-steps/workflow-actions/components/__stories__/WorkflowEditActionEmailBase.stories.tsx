@@ -180,7 +180,7 @@ export const Configured: Story = {
     expect(await canvas.findByText('Account')).toBeVisible();
     expect(await canvas.findByText('To')).toBeVisible();
 
-    const emailInput = await canvas.findByText('tim@twenty.com');
+    const emailInput = await canvas.findByText('test@twenty.com');
     expect(emailInput).toBeVisible();
 
     const subjectInput = await canvas.findByText('Welcome to Twenty!');
