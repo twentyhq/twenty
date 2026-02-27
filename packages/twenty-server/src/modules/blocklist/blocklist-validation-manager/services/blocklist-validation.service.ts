@@ -36,9 +36,9 @@ export class BlocklistValidationService {
     payload: CreateManyResolverArgs<BlocklistItem>,
     userId: string,
     workspaceId: string,
-  ) {
+  ): Promise<{ workspaceMemberId: string }> {
     await this.validateSchema(payload.data);
-    await this.validateUniquenessForCreateMany(payload, userId, workspaceId);
+    return this.validateUniquenessForCreateMany(payload, userId, workspaceId);
   }
 
   public async validateBlocklistForUpdateOne(
@@ -83,7 +83,7 @@ export class BlocklistValidationService {
     payload: CreateManyResolverArgs<BlocklistItem>,
     userId: string,
     workspaceId: string,
-  ) {
+  ): Promise<{ workspaceMemberId: string }> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     const currentWorkspaceMember =
@@ -117,6 +117,8 @@ export class BlocklistValidationService {
     ) {
       throw new BadRequestException('Blocklist handle already exists');
     }
+
+    return { workspaceMemberId: currentWorkspaceMember.id };
   }
 
   public async validateUniquenessForUpdateOne(

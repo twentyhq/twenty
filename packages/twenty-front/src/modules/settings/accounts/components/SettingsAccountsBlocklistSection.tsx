@@ -43,10 +43,7 @@ export const SettingsAccountsBlocklistSection = () => {
   };
 
   const updateBlockedEmailList = (handle: string) => {
-    createBlocklistItem({
-      handle,
-      workspaceMemberId: currentWorkspaceMember?.id,
-    });
+    createBlocklistItem({ handle });
   };
 
   return (
