@@ -5,7 +5,7 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
-import { agentChatMessageByIdComponentFamilyState } from '@/ai/states/agentChatMessageByIdComponentFamilyState';
+import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -142,33 +142,32 @@ export const AIChatMessage = ({
   isLastMessageStreaming: boolean;
   error?: Error | null;
 }) => {
-  const agentChatMessageById = useAtomComponentFamilyStateValue(
-    agentChatMessageByIdComponentFamilyState,
+  const agentChatMessage = useAtomComponentFamilyStateValue(
+    agentChatMessageComponentFamilyState,
     messageId,
   );
 
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  if (!isDefined(agentChatMessageById)) {
+  if (!isDefined(agentChatMessage)) {
     return null;
   }
 
-  const isUser = agentChatMessageById.role === AgentMessageRole.USER;
+  const isUser = agentChatMessage.role === AgentMessageRole.USER;
   const showError =
-    isDefined(error) &&
-    agentChatMessageById.role === AgentMessageRole.ASSISTANT;
+    isDefined(error) && agentChatMessage.role === AgentMessageRole.ASSISTANT;
 
-  const fileParts = agentChatMessageById.parts.filter(
+  const fileParts = agentChatMessage.parts.filter(
     (part) => part.type === 'file',
   );
 
   return (
-    <StyledMessageBubble key={agentChatMessageById.id} isUser={isUser}>
+    <StyledMessageBubble key={agentChatMessage.id} isUser={isUser}>
       <StyledMessageContainer isUser={isUser}>
         <StyledMessageText isUser={isUser}>
           <AIChatAssistantMessageRenderer
             isLastMessageStreaming={isLastMessageStreaming}
-            messageParts={agentChatMessageById.parts}
+            messageParts={agentChatMessage.parts}
             hasError={showError}
           />
         </StyledMessageText>
@@ -181,18 +180,18 @@ export const AIChatMessage = ({
         )}
         {showError && <AIChatErrorRenderer error={error} />}
       </StyledMessageContainer>
-      {agentChatMessageById.parts.length > 0 &&
-        agentChatMessageById.metadata?.createdAt && (
+      {agentChatMessage.parts.length > 0 &&
+        agentChatMessage.metadata?.createdAt && (
           <StyledMessageFooter className="message-footer">
             <StyledMessageTimestamp>
               {beautifyPastDateRelativeToNow(
-                agentChatMessageById.metadata?.createdAt,
+                agentChatMessage.metadata?.createdAt,
                 localeCatalog,
               )}
             </StyledMessageTimestamp>
             <LightCopyIconButton
               copyText={
-                agentChatMessageById.parts.find((part) => part.type === 'text')
+                agentChatMessage.parts.find((part) => part.type === 'text')
                   ?.text ?? ''
               }
             />

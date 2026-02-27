@@ -1,5 +1,5 @@
 import { useProcessNewMessageStreamIncrement } from '@/ai/hooks/useProcessNewMessageStreamIncrement';
-import { agentChatMessageByIdComponentFamilyState } from '@/ai/states/agentChatMessageByIdComponentFamilyState';
+import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
 import { agentChatMessagesComponentState } from '@/ai/states/agentChatMessagesComponentState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -19,7 +19,7 @@ export const useProcessIncrementalStreamMessages = () => {
 
   const agentChatMessageFamilyCallbackState =
     useAtomComponentFamilyStateCallbackState(
-      agentChatMessageByIdComponentFamilyState,
+      agentChatMessageComponentFamilyState,
     );
 
   const { processNewMessageStreamIncrement } =
