@@ -20,16 +20,16 @@ import { Select } from '@/ui/input/components/Select';
 export const MyComponent = () => {
 
   return (
-      <Select
-        className
-        disabled={false}
-        label="Bir seçenek seçin"
-        options={[
-          { value: 'option1', label: 'Seçenek A', Icon: IconTwentyStar },
-          { value: 'option2', label: 'Seçenek B', Icon: IconTwentyStar },
-        ]}
-        value="option1"
-      />
+    <Select
+      className
+      disabled={false}
+      label="Select an option"
+      options={[
+        { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+        { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+      ]}
+      value="option1"
+    />
   );
 };
 

@@ -25,15 +25,11 @@ export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
   const { t } = useLingui();
   return (
     <SideMenuController
-      sideMenu={(props) => (
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        <SideMenu {...props}>
+      sideMenu={() => (
+        <SideMenu>
           <DragHandleButton
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...props}
-            dragHandleMenu={(props) => (
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              <DragHandleMenu {...props}>
+            dragHandleMenu={() => (
+              <DragHandleMenu>
                 <CustomAddBlockItem editor={editor}>
                   <CustomSideMenuOptions
                     LeftIcon={IconPlus}
@@ -41,17 +37,14 @@ export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
                     Variant="normal"
                   />
                 </CustomAddBlockItem>
-                {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                <BlockColorsItem {...props}>
+                <BlockColorsItem>
                   <CustomSideMenuOptions
                     LeftIcon={IconColorSwatch}
                     text={t`Change Color`}
                     Variant="normal"
                   />
                 </BlockColorsItem>
-                {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                <RemoveBlockItem {...props}>
-                  {' '}
+                <RemoveBlockItem>
                   <CustomSideMenuOptions
                     LeftIcon={IconTrash}
                     text={t`Delete`}

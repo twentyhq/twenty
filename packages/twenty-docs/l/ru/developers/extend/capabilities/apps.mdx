@@ -52,22 +52,25 @@ npx create-twenty-app@latest my-app --interactive
 Отсюда вы можете:
 
 ```bash filename="Terminal"
-# Добавить новую сущность в ваше приложение (с мастером)
+# Add a new entity to your application (guided)
 yarn twenty entity:add
 
-# Просматривать логи функций вашего приложения
+# Watch your application's function logs
 yarn twenty function:logs
 
-# Выполнить функцию по имени
-yarn twenty function:execute -n my-function -p '{\"name\": \"test\"}'
+# Execute a function by name
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Выполнить послеустановочную функцию
+# Execute the pre-install function
+yarn twenty function:execute --preInstall
+
+# Execute the post-install function
 yarn twenty function:execute --postInstall
 
-# Удалить приложение из текущего рабочего пространства
+# Uninstall the application from the current workspace
 yarn twenty app:uninstall
 
-# Показать справку по командам
+# Display commands' help
 yarn twenty help
 ```
 
@@ -80,7 +83,7 @@ yarn twenty help
 * Копирует минимальное базовое приложение в `my-twenty-app/`
 * Добавляет локальную зависимость `twenty-sdk` и конфигурацию Yarn 4
 * Создаёт файлы конфигурации и скрипты, подключённые к CLI `twenty`
-* Генерирует основные файлы (конфигурацию приложения, роль функций по умолчанию, постустановочную функцию), а также примерные файлы в зависимости от выбранного режима создания каркаса
+* Generates core files (application config, default function role, pre-install and post-install functions) plus example files based on the scaffolding mode
 
 Сгенерированное с помощью каркаса приложение с режимом по умолчанию `--exhaustive` выглядит так:
 
@@ -96,29 +99,30 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Папка публичных ресурсов (изображения, шрифты и т. д.)
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Обязательный — основная конфигурация приложения
+  ├── application-config.ts           # Required - main application configuration
   ├── roles/
-  │   └── default-role.ts               # Роль по умолчанию для логических функций
+  │   └── default-role.ts               # Default role for logic functions
   ├── objects/
-  │   └── example-object.ts             # Пример определения пользовательского объекта
+  │   └── example-object.ts             # Example custom object definition
   ├── fields/
-  │   └── example-field.ts              # Пример определения отдельного поля
+  │   └── example-field.ts              # Example standalone field definition
   ├── logic-functions/
-  │   ├── hello-world.ts                # Пример логической функции
-  │   └── post-install.ts               # Постустановочная логическая функция
+  │   ├── hello-world.ts                # Example logic function
+  │   ├── pre-install.ts                # Pre-install logic function
+  │   └── post-install.ts               # Post-install logic function
   ├── front-components/
-  │   └── hello-world.tsx               # Пример фронтенд-компонента
+  │   └── hello-world.tsx               # Example front component
   ├── views/
-  │   └── example-view.ts                # Пример определения сохранённого представления
+  │   └── example-view.ts                # Example saved view definition
   ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Пример ссылки боковой панели навигации
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
   └── skills/
-      └── example-skill.ts                # Пример определения навыка агента ИИ
+      └── example-skill.ts                # Example AI agent skill definition
 ```
 
-С `--minimal` создаются только основные файлы (`application-config.ts`, `roles/default-role.ts` и `logic-functions/post-install.ts`). С `--interactive` вы выбираете, какие примерные файлы включить.
+With `--minimal`, only the core files are created (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`). С `--interactive` вы выбираете, какие примерные файлы включить.
 
 В общих чертах:
 
@@ -135,16 +139,18 @@ my-twenty-app/
 
 SDK обнаруживает сущности, разбирая ваши файлы TypeScript в поисках вызовов **`export default define<Entity>({...})`**. Для каждого типа сущности существует соответствующая вспомогательная функция, экспортируемая из `twenty-sdk`:
 
-| Вспомогательная функция      | Тип сущности                               |
-| ---------------------------- | ------------------------------------------ |
-| `defineObject()`             | Определения пользовательских объектов      |
-| `defineLogicFunction()`      | Определения логических функций             |
-| `defineFrontComponent()`     | Определения компонентов фронтенда          |
-| `defineRole()`               | Определения ролей                          |
-| `defineField()`              | Расширения полей для существующих объектов |
-| `defineView()`               | Определения сохранённых представлений      |
-| `defineNavigationMenuItem()` | Определения пунктов меню навигации         |
-| `defineSkill()`              | Определения навыков агента ИИ              |
+| Вспомогательная функция            | Тип сущности                                          |
+| ---------------------------------- | ----------------------------------------------------- |
+| `defineObject()`                   | Определения пользовательских объектов                 |
+| `defineLogicFunction()`            | Определения логических функций                        |
+| `definePreInstallLogicFunction()`  | Pre-install logic function (runs before installation) |
+| `definePostInstallLogicFunction()` | Post-install logic function (runs after installation) |
+| `defineFrontComponent()`           | Определения компонентов фронтенда                     |
+| `defineRole()`                     | Определения ролей                                     |
+| `defineField()`                    | Расширения полей для существующих объектов            |
+| `defineView()`                     | Определения сохранённых представлений                 |
+| `defineNavigationMenuItem()`       | Определения пунктов меню навигации                    |
+| `defineSkill()`                    | Определения навыков агента ИИ                         |
 
 <Note>
 **Имена файлов заданы гибко.** Обнаружение сущностей основано на AST — SDK сканирует ваши исходные файлы в поисках шаблона `export default define<Entity>({...})`. Вы можете организовывать файлы и папки как угодно. Группировка по типу сущности (например, `logic-functions/`, `roles/`) — это лишь соглашение для организации кода, а не требование.
@@ -165,7 +171,7 @@ export default defineObject({
 
 Позднее команды добавят больше файлов и папок:
 
-* `yarn twenty app:dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
+* `yarn twenty app:dev` автоматически сгенерирует два типизированных клиента API в `node_modules/twenty-sdk/generated`: `CoreApiClient` (для данных рабочего пространства через `/graphql`) и `MetadataApiClient` (для конфигурации рабочего пространства и загрузки файлов через `/metadata`).
 * `yarn twenty entity:add` добавит файлы определений сущностей в `src/` для ваших пользовательских объектов, функций, фронтенд-компонентов, ролей, навыков и многого другого.
 
 ## Аутентификация
@@ -209,17 +215,19 @@ yarn twenty auth:status
 
 SDK предоставляет вспомогательные функции для определения сущностей вашего приложения. Как описано в [Обнаружение сущностей](#entity-detection), вы должны использовать `export default define<Entity>({...})`, чтобы ваши сущности были обнаружены:
 
-| Функция                      | Назначение                                                             |
-| ---------------------------- | ---------------------------------------------------------------------- |
-| `defineApplication()`        | Настройка метаданных приложения (обязательно, по одному на приложение) |
-| `defineObject()`             | Определяет пользовательские объекты с полями                           |
-| `defineLogicFunction()`      | Определение логических функций с обработчиками                         |
-| `defineFrontComponent()`     | Определение фронт-компонентов для настраиваемого интерфейса            |
-| `defineRole()`               | Настраивает права роли и доступ к объектам                             |
-| `defineField()`              | Расширение существующих объектов дополнительными полями                |
-| `defineView()`               | Определяйте сохранённые представления для объектов                     |
-| `defineNavigationMenuItem()` | Определяйте ссылки боковой панели навигации                            |
-| `defineSkill()`              | Определение навыков агента ИИ                                          |
+| Функция                            | Назначение                                                             |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| `defineApplication()`              | Настройка метаданных приложения (обязательно, по одному на приложение) |
+| `defineObject()`                   | Определяет пользовательские объекты с полями                           |
+| `defineLogicFunction()`            | Определение логических функций с обработчиками                         |
+| `definePreInstallLogicFunction()`  | Define a pre-install logic function (one per app)                      |
+| `definePostInstallLogicFunction()` | Define a post-install logic function (one per app)                     |
+| `defineFrontComponent()`           | Определение фронт-компонентов для настраиваемого интерфейса            |
+| `defineRole()`                     | Настраивает права роли и доступ к объектам                             |
+| `defineField()`                    | Расширение существующих объектов дополнительными полями                |
+| `defineView()`                     | Определяйте сохранённые представления для объектов                     |
+| `defineNavigationMenuItem()`       | Определяйте ссылки боковой панели навигации                            |
+| `defineSkill()`                    | Определение навыков агента ИИ                                          |
 
 Эти функции проверяют вашу конфигурацию на этапе сборки и обеспечивают автодополнение в IDE и безопасность типов.
 
@@ -319,6 +327,7 @@ export default defineObject({
 * **Что это за приложение**: идентификаторы, отображаемое имя и описание.
 * **Как запускаются его функции**: какую роль они используют для прав доступа.
 * **(Необязательно) переменные**: пары ключ-значение, предоставляемые вашим функциям как переменные окружения.
+* **(Optional) pre-install function**: a logic function that runs before the app is installed.
 * **(Необязательно) послеустановочная функция**: функция логики, которая запускается после установки приложения.
 
 Используйте `defineApplication()` для определения конфигурации вашего приложения:
@@ -327,7 +336,6 @@ export default defineObject({
 // src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -343,7 +351,6 @@ export default defineApplication({
     },
   },
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -352,7 +359,7 @@ export default defineApplication({
 * `universalIdentifier` — это детерминированные идентификаторы, которыми вы управляете; сгенерируйте их один раз и сохраняйте стабильными между синхронизациями.
 * `applicationVariables` становятся переменными окружения для ваших функций (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` должен соответствовать файлу роли (см. ниже).
-* `postInstallLogicFunctionUniversalIdentifier` (необязательно) указывает на логическую функцию, которая автоматически выполняется после установки приложения. См. [Послеустановочные функции](#post-install-functions).
+* Pre-install and post-install functions are automatically detected during the manifest build. See [Pre-install functions](#pre-install-functions) and [Post-install functions](#post-install-functions).
 
 #### Роли и разрешения
 
@@ -491,6 +498,44 @@ export default defineLogicFunction({
 * Массив `triggers` необязателен. Функции без триггеров можно использовать как вспомогательные, вызываемые другими функциями.
 * Вы можете сочетать несколько типов триггеров в одной функции.
 
+### Pre-install functions
+
+A pre-install function is a logic function that runs automatically before your app is installed on a workspace. This is useful for validation tasks, prerequisite checks, or preparing workspace state before the main installation proceeds.
+
+When you scaffold a new app with `create-twenty-app`, a pre-install function is generated for you at `src/logic-functions/pre-install.ts`:
+
+```typescript
+// src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+You can also manually execute the pre-install function at any time using the CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --preInstall
+```
+
+Основные моменты:
+
+* Pre-install functions use `definePreInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
+* Only one pre-install function is allowed per application. The manifest build will error if more than one is detected.
+* The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
+* The default timeout is set to 300 seconds (5 minutes) to allow for longer preparation tasks.
+* Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `function:execute --preInstall`.
+
 ### Послеустановочные функции
 
 Послеустановочная функция — это функция логики, которая автоматически выполняется после установки вашего приложения в рабочем пространстве. Это полезно для одноразовых задач настройки, таких как инициализация данных по умолчанию, создание начальных записей или настройка параметров рабочего пространства.
@@ -499,31 +544,18 @@ export default defineLogicFunction({
 
 ```typescript
 // src/logic-functions/post-install.ts
-import { defineLogicFunction } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
 
-export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '<generated-uuid>';
-
-const handler = async (): Promise<void> => {
-  console.log('Post install logic function executed successfully!');
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
-export default defineLogicFunction({
-  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+export default definePostInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
   handler,
-});
-```
-
-Функция подключается к вашему приложению посредством ссылки на её универсальный идентификатор в `application-config.ts`:
-
-```typescript
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
-
-export default defineApplication({
-  // ...
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -535,8 +567,10 @@ yarn twenty function:execute --postInstall
 
 Основные моменты:
 
-* Постустановочные функции — это стандартные логические функции: они используют `defineLogicFunction()` как и любые другие функции.
-* Поле `postInstallLogicFunctionUniversalIdentifier` в `defineApplication()` является необязательным. Если его опустить, после установки никакая функция выполняться не будет.
+* Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
+* Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
+* The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
 * Тайм-аут по умолчанию установлен на 300 секунд (5 минут), чтобы позволить выполнять более длительные задачи настройки, такие как инициализация данных.
 * Постустановочным функциям не нужны триггеры — платформа вызывает их во время установки или вручную через `function:execute --postInstall`.
 
@@ -685,7 +719,7 @@ export default defineLogicFunction({
     },
     required: ['companyName'],
   },
-});
+});},{
 ```
 
 Основные моменты:
@@ -734,7 +768,7 @@ export default defineFrontComponent({
 Вы можете создать новые фронт-компоненты двумя способами:
 
 * **Сгенерировано**: Запустите `yarn twenty entity:add` и выберите опцию добавления нового фронтенд-компонента.
-* **Manual**: Create a new `.tsx` file and use `defineFrontComponent()`, following the same pattern.
+* **Вручную**: Создайте новый файл `.tsx` и используйте `defineFrontComponent()`, следуя тому же шаблону.
 
 ### Навыки
 
@@ -771,12 +805,12 @@ export default defineSkill({
 * **Сгенерировано**: Запустите `yarn twenty entity:add` и выберите опцию добавления нового навыка.
 * **Вручную**: Создайте новый файл и используйте `defineSkill()`, следуя тому же шаблону.
 
-### Generated typed clients
+### Сгенерированные типизированные клиенты
 
-Two typed clients are auto-generated by `yarn twenty app:dev` and stored in `node_modules/twenty-sdk/generated` based on your workspace schema:
+Два типизированных клиента автоматически генерируются с помощью `yarn twenty app:dev` и сохраняются в `node_modules/twenty-sdk/generated` на основе схемы вашего рабочего пространства:
 
-* **`CoreApiClient`** — queries the `/graphql` endpoint for workspace data
-* **`MetadataApiClient`** — queries the `/metadata` endpoint for workspace configuration and file uploads
+* **`CoreApiClient`** — выполняет запросы к конечной точке `/graphql` для получения данных рабочего пространства
+* **`MetadataApiClient`** — выполняет запросы к эндпоинту `/metadata` для получения конфигурации рабочего пространства и загрузки файлов.
 
 ```typescript
 import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
@@ -788,7 +822,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Both clients are re-generated automatically by `yarn twenty app:dev` whenever your objects or fields change.
+Оба клиента автоматически перегенерируются с помощью `yarn twenty app:dev` при изменении ваших объектов или полей.
 
 #### Учётные данные времени выполнения в логических функциях
 
@@ -805,7 +839,7 @@ Both clients are re-generated automatically by `yarn twenty app:dev` whenever yo
 
 #### Загрузка файлов
 
-The generated `MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields on your workspace objects. Поскольку стандартные клиенты GraphQL изначально не поддерживают многочастовую загрузку файлов, клиент предоставляет специальный метод, который под капотом реализует [спецификацию многочастных запросов GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+Сгенерированный `MetadataApiClient` включает метод `uploadFile` для прикрепления файлов к полям типа «файл» в объектах вашего рабочего пространства. Поскольку стандартные клиенты GraphQL изначально не поддерживают многочастовую загрузку файлов, клиент предоставляет специальный метод, который под капотом реализует [спецификацию многочастных запросов GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 ```typescript
 import { MetadataApiClient } from 'twenty-sdk/generated';
@@ -846,7 +880,7 @@ uploadFile(
 
 Основные моменты:
 
-* The `uploadFile` method is available on `MetadataApiClient` because the upload mutation is resolved by the `/metadata` endpoint.
+* Метод `uploadFile` доступен в `MetadataApiClient`, потому что мутация загрузки обрабатывается эндпоинтом `/metadata`.
 * Он использует `universalIdentifier` поля (а не его идентификатор, специфичный для рабочего пространства), поэтому ваш код загрузки будет работать в любом рабочем пространстве, где установлено ваше приложение — в соответствии с тем, как приложения ссылаются на поля повсюду.
 * Возвращаемый `url` — это подписанный URL, который можно использовать для доступа к загруженному файлу.
 

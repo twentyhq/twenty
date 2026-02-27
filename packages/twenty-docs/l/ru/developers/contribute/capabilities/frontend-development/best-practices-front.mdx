@@ -6,9 +6,9 @@ title: Лучшие практики
 
 ## Управление состоянием
 
-React и Jotai отвечают за управление состоянием в коде.
+React and Jotai handle state management in the codebase.
 
-### Используйте `useAtomState` для хранения состояния
+### Use Jotai atoms to store state
 
 Полезно создавать столько атомов, сколько вам нужно для хранения состояния.
 
@@ -45,7 +45,7 @@ export const MyComponent = () => {
 
 Избегайте использования `useRef` для хранения состояния.
 
-Если вы хотите сохранить состояние, вам следует использовать `useState` или `useAtomState`.
+If you want to store state, you should use `useState` or Jotai atoms with `useAtomState`.
 
 Смотрите [как управлять повторными рендерами](#managing-re-renders), если вы считаете, что вам нужен `useRef`, чтобы предотвратить их.
 
@@ -132,9 +132,9 @@ export const App = () => (
 );
 ```
 
-### Используйте состояния семейства Jotai и селекторы семейства Jotai
+### Use atom family states and selectors
 
-Состояния семейства Jotai и селекторы — отличный способ избежать повторных рендеров.
+Atom family states and selectors are a great way to avoid re-renders.
 
 Они полезны, когда нужно хранить список элементов.
 

@@ -10,7 +10,7 @@ exports[`Install application should fail when entity does not exist should fail 
           "errors": [
             {
               "code": "ENTITY_MALFORMED",
-              "message": "Invalid universalIdentifier: "not-a-valid-uuid" is not a valid UUID v4",
+              "message": "Invalid universalIdentifier: "not-a-valid-uuid" is not a valid UUID, uuid version should be greater than 4",
               "value": "not-a-valid-uuid",
             },
           ],
