@@ -17,9 +17,7 @@ export const convertArrowFunctionToJsonLogic = (
 
   if (!Node.isExpression(functionBody)) {
     throw new JsonLogicConversionError(
-      'Unexpected arrow function body kind',
-      functionBody.getText(),
-      functionBody.getKindName(),
+      `Unexpected arrow function body kind: ${functionBody.getKindName()} (${functionBody.getText()})`,
     );
   }
 

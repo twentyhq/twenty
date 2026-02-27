@@ -26,6 +26,7 @@ export const convertBlockBodyToJsonLogic = (block: Block): JsonLogicRule => {
       const { condition, result } = convertIfStatementToJsonLogic(statement);
 
       conditionalBranches.push({ condition, result });
+
       continue;
     }
 
@@ -40,9 +41,7 @@ export const convertBlockBodyToJsonLogic = (block: Block): JsonLogicRule => {
     }
 
     throw new JsonLogicConversionError(
-      'Unsupported block statement',
-      statement.getText(),
-      statement.getKindName(),
+      `Unsupported block statement: ${statement.getKindName()} (${statement.getText()})`,
     );
   }
 

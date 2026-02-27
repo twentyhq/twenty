@@ -24,9 +24,7 @@ const getRequiredFirstArgument = (
 
   if (!Node.isExpression(firstArgument)) {
     throw new JsonLogicConversionError(
-      `Expected expression argument for ${context}`,
-      firstArgument.getText(),
-      firstArgument.getKindName(),
+      `Expected expression argument for ${context}, got ${firstArgument.getKindName()} (${firstArgument.getText()})`,
     );
   }
 
@@ -38,9 +36,7 @@ export const convertCallExpressionToJsonLogic = (
 ): JsonLogicRule => {
   if (!Node.isCallExpression(node)) {
     throw new JsonLogicConversionError(
-      'Expected CallExpression',
-      node.getText(),
-      node.getKindName(),
+      `Expected CallExpression, got ${node.getKindName()} (${node.getText()})`,
     );
   }
 
@@ -127,8 +123,6 @@ export const convertCallExpressionToJsonLogic = (
   }
 
   throw new JsonLogicConversionError(
-    'Unsupported call expression',
-    node.getText(),
-    node.getKindName(),
+    `Unsupported call expression: ${node.getKindName()} (${node.getText()})`,
   );
 };

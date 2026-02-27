@@ -11,9 +11,7 @@ export const convertBinaryExpressionToJsonLogic = (
 ): JsonLogicRule => {
   if (!Node.isBinaryExpression(node)) {
     throw new JsonLogicConversionError(
-      'Expected BinaryExpression',
-      node.getText(),
-      node.getKindName(),
+      `Expected BinaryExpression, got ${node.getKindName()} (${node.getText()})`,
     );
   }
 
@@ -67,9 +65,7 @@ export const convertBinaryExpressionToJsonLogic = (
       return { '>=': [convertedLeftExpression, convertedRightExpression] };
     default:
       throw new JsonLogicConversionError(
-        `Unsupported binary operator: ${node.getOperatorToken().getText()}`,
-        node.getText(),
-        node.getKindName(),
+        `Unsupported binary operator: ${node.getOperatorToken().getText()} (${node.getText()})`,
       );
   }
 };

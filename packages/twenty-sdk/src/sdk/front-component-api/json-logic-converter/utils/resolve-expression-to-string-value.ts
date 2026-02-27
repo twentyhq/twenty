@@ -20,8 +20,6 @@ export const resolveExpressionToStringValue = (
   }
 
   throw new JsonLogicConversionError(
-    'Cannot resolve argument to string',
-    argumentExpression.getText(),
-    argumentExpression.getKindName(),
+    `Cannot resolve argument to string: ${argumentExpression.getKindName()} (${argumentExpression.getText()})`,
   );
 };

@@ -19,8 +19,6 @@ export const flattenPropertyAccessToDotPath = (node: Expression): string => {
   }
 
   throw new JsonLogicConversionError(
-    'Cannot flatten property access',
-    node.getText(),
-    node.getKindName(),
+    `Cannot flatten property access: ${node.getKindName()} (${node.getText()})`,
   );
 };

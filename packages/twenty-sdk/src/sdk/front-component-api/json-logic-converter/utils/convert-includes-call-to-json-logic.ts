@@ -52,8 +52,6 @@ export const convertIncludesCallToJsonLogic = (
   }
 
   throw new JsonLogicConversionError(
-    'Cannot handle .includes() receiver',
-    receiverExpression.getText(),
-    receiverExpression.getKindName(),
+    `Cannot handle .includes() receiver: ${receiverExpression.getKindName()} (${receiverExpression.getText()})`,
   );
 };

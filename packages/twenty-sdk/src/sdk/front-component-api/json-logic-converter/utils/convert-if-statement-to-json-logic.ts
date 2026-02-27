@@ -17,9 +17,7 @@ export const convertIfStatementToJsonLogic = (
 
     if (!isDefined(returnStatement)) {
       throw new JsonLogicConversionError(
-        'If block must have a return statement',
-        thenBranchStatement.getText(),
-        thenBranchStatement.getKindName(),
+        `If block must have a return statement: ${thenBranchStatement.getKindName()} (${thenBranchStatement.getText()})`,
       );
     }
 
@@ -43,8 +41,6 @@ export const convertIfStatementToJsonLogic = (
   }
 
   throw new JsonLogicConversionError(
-    'Unsupported then statement',
-    thenBranchStatement.getText(),
-    thenBranchStatement.getKindName(),
+    `Unsupported then statement: ${thenBranchStatement.getKindName()} (${thenBranchStatement.getText()})`,
   );
 };

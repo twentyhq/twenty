@@ -1,0 +1,810 @@
+{
+  "application": {
+    "universalIdentifier": "4daa5147-7e70-4e43-b091-c27e1e8a32e3",
+    "displayName": "Call recording",
+    "description": "Allows to record calls",
+    "defaultRoleUniversalIdentifier": "f9cfb3ce-cb1e-4f55-af85-be45f6059054",
+    "yarnLockChecksum": "b4d63a18e98280baf6056c7035971951",
+    "packageJsonChecksum": "f7f136b386f07450a7159b08116d1cf5",
+    "apiClientChecksum": "367567b5fa72356895f1193b953fa239"
+  },
+  "objects": [
+    {
+      "universalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+      "nameSingular": "callRecording",
+      "namePlural": "callRecordings",
+      "labelSingular": "Call recording",
+      "labelPlural": "Call recordings",
+      "description": "A recorded call",
+      "icon": "IconPhone",
+      "labelIdentifierFieldMetadataUniversalIdentifier": "272dca6f-b3aa-49f5-b7ed-39780052f1fe",
+      "fields": [
+        {
+          "universalIdentifier": "272dca6f-b3aa-49f5-b7ed-39780052f1fe",
+          "type": "TEXT",
+          "name": "name",
+          "label": "Name",
+          "description": "Name of the call recording",
+          "icon": "IconAbc"
+        },
+        {
+          "universalIdentifier": "c581a044-f646-464b-aa4b-56b8ea9bf05a",
+          "type": "DATE_TIME",
+          "name": "createdAt",
+          "label": "Created at",
+          "description": "When the call recording was created",
+          "icon": "IconCalendar"
+        },
+        {
+          "universalIdentifier": "56185e64-6591-41c1-a3e0-af8de20a5471",
+          "type": "DATE_TIME",
+          "name": "endedAt",
+          "label": "Ended at",
+          "description": "When the call ended",
+          "icon": "IconCalendar"
+        },
+        {
+          "universalIdentifier": "e78d41fd-a493-4d06-b036-0dd7b7617dbe",
+          "type": "FILES",
+          "name": "recordingFile",
+          "label": "Recording file",
+          "description": "The recording file of the call recording",
+          "icon": "IconFile",
+          "universalSettings": {
+            "maxNumberOfValues": 1
+          }
+        },
+        {
+          "universalIdentifier": "b2a3c8e1-7f94-4d5b-a6e2-9c1d0f3e8b47",
+          "type": "FILES",
+          "name": "transcriptFile",
+          "label": "Transcript file",
+          "description": "The transcript file of the call recording",
+          "icon": "IconFileText",
+          "universalSettings": {
+            "maxNumberOfValues": 1
+          }
+        },
+        {
+          "universalIdentifier": "a1d4e7c3-5b28-4f96-8e3a-0c7d9f2b6a15",
+          "type": "RICH_TEXT_V2",
+          "name": "transcript",
+          "label": "Transcript",
+          "description": "Human-readable transcript of the call",
+          "icon": "IconMessage"
+        },
+        {
+          "universalIdentifier": "24c92ad0-4559-4bf9-a9fa-09168914a142",
+          "type": "SELECT",
+          "name": "status",
+          "label": "Status",
+          "description": "Status of the call recording",
+          "icon": "IconStatusChange",
+          "defaultValue": "'ONGOING'",
+          "options": [
+            {
+              "id": "8b275a4d-98ba-4718-912d-b1d97e713f5d",
+              "value": "ONGOING",
+              "label": "Ongoing",
+              "position": 0,
+              "color": "blue"
+            },
+            {
+              "id": "a515ac77-44f8-4744-9c50-0a29352a800d",
+              "value": "ENDED",
+              "label": "Ended",
+              "position": 1,
+              "color": "green"
+            }
+          ]
+        },
+        {
+          "universalIdentifier": "55eb083f-0b68-4f5c-bcd7-c853ad77ba11",
+          "type": "RICH_TEXT_V2",
+          "name": "summary",
+          "label": "Summary",
+          "description": "AI-generated summary of the call",
+          "icon": "IconSparkles"
+        },
+        {
+          "name": "id",
+          "label": "Id",
+          "description": "Id",
+          "icon": "Icon123",
+          "isNullable": false,
+          "defaultValue": "uuid",
+          "type": "UUID",
+          "universalIdentifier": "4d586b73-5b9e-5145-83c8-6155cc8fbc3e"
+        },
+        {
+          "name": "updatedAt",
+          "label": "Last update",
+          "description": "Last time the record was changed",
+          "icon": "IconCalendarClock",
+          "isNullable": false,
+          "defaultValue": "now",
+          "type": "DATE_TIME",
+          "universalIdentifier": "e2d0bac9-54ce-52a4-8c5a-d28bee583788"
+        },
+        {
+          "name": "deletedAt",
+          "label": "Deleted at",
+          "description": "Deletion date",
+          "icon": "IconCalendarClock",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "DATE_TIME",
+          "universalIdentifier": "0c274e94-3354-566d-819f-ca74806b3d58"
+        },
+        {
+          "name": "createdBy",
+          "label": "Created by",
+          "description": "The creator of the record",
+          "icon": "IconCreativeCommonsSa",
+          "isNullable": false,
+          "defaultValue": {
+            "name": "''",
+            "source": "'MANUAL'"
+          },
+          "type": "ACTOR",
+          "universalIdentifier": "9b66c4c3-85c0-5c11-921b-646ac7a5d28f"
+        },
+        {
+          "name": "updatedBy",
+          "label": "Updated by",
+          "description": "The workspace member who last updated the record",
+          "icon": "IconUserCircle",
+          "isNullable": false,
+          "defaultValue": {
+            "name": "''",
+            "source": "'MANUAL'"
+          },
+          "type": "ACTOR",
+          "universalIdentifier": "c8aff94a-3ec6-59e4-af72-5d60b73cc5b4"
+        },
+        {
+          "name": "position",
+          "label": "Position",
+          "description": "Position",
+          "icon": "IconHierarchy2",
+          "isNullable": false,
+          "defaultValue": 0,
+          "type": "POSITION",
+          "universalIdentifier": "3b103139-902f-57c3-8691-e1429fe8a01c"
+        },
+        {
+          "name": "searchVector",
+          "label": "Search vector",
+          "icon": "IconSearch",
+          "description": "Search vector",
+          "isNullable": true,
+          "defaultValue": null,
+          "type": "TS_VECTOR",
+          "universalIdentifier": "c78d5f11-018c-5ba7-a41f-cf0bb641e285"
+        },
+        {
+          "name": "timelineActivities",
+          "label": "Timeline Activities",
+          "description": "Call recordings tied to the CallRecording",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": false,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "2a36158d-5be8-55b4-956f-a18f62de9820",
+          "relationTargetFieldMetadataUniversalIdentifier": "1d5ed4a6-6d27-5321-8fe4-a0abd201b2eb",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5"
+        },
+        {
+          "name": "favorites",
+          "label": "Favorites",
+          "description": "Call recordings tied to the CallRecording",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": false,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "fd677e13-ec50-5013-bcaa-8cc1a1f3de0a",
+          "relationTargetFieldMetadataUniversalIdentifier": "22bf5efc-68a6-5624-b2fd-6af754be9430",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-ab56-4e05-92a3-e2414a499860"
+        },
+        {
+          "name": "attachments",
+          "label": "Attachments",
+          "description": "Call recordings tied to the CallRecording",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": false,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "5f42f5d0-18c3-5e03-aec6-fe1eb2ea1967",
+          "relationTargetFieldMetadataUniversalIdentifier": "8102c051-b9ad-5890-9f0c-6223a525d0e9",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a"
+        },
+        {
+          "name": "noteTargets",
+          "label": "Note Targets",
+          "description": "Call recordings tied to the CallRecording",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": false,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "f954b27b-5286-5ab5-9958-ca3bf53eeb92",
+          "relationTargetFieldMetadataUniversalIdentifier": "90fe1f35-1940-5ffd-aab8-0096321726a4",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400"
+        },
+        {
+          "name": "taskTargets",
+          "label": "Task Targets",
+          "description": "Call recordings tied to the CallRecording",
+          "icon": "IconBuildingSkyscraper",
+          "isNullable": false,
+          "type": "RELATION",
+          "universalSettings": {
+            "relationType": "ONE_TO_MANY"
+          },
+          "universalIdentifier": "16273300-5331-51ce-bf8b-8168263cbb3d",
+          "relationTargetFieldMetadataUniversalIdentifier": "6d2d552b-5340-5bba-913f-ff6593397311",
+          "relationTargetObjectMetadataUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1"
+        }
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "targetCallRecording",
+      "label": "CallRecording",
+      "description": "CallRecording Call recording",
+      "icon": "IconTimelineEvent",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetCallRecordingId"
+      },
+      "universalIdentifier": "1d5ed4a6-6d27-5321-8fe4-a0abd201b2eb",
+      "objectUniversalIdentifier": "20202020-6736-4337-b5c4-8b39fae325a5",
+      "relationTargetFieldMetadataUniversalIdentifier": "2a36158d-5be8-55b4-956f-a18f62de9820",
+      "relationTargetObjectMetadataUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1"
+    },
+    {
+      "name": "targetCallRecording",
+      "label": "CallRecording",
+      "description": "CallRecording Call recording",
+      "icon": "IconHeart",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetCallRecordingId"
+      },
+      "universalIdentifier": "22bf5efc-68a6-5624-b2fd-6af754be9430",
+      "objectUniversalIdentifier": "20202020-ab56-4e05-92a3-e2414a499860",
+      "relationTargetFieldMetadataUniversalIdentifier": "fd677e13-ec50-5013-bcaa-8cc1a1f3de0a",
+      "relationTargetObjectMetadataUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+      "type": "RELATION"
+    },
+    {
+      "name": "targetCallRecording",
+      "label": "CallRecording",
+      "description": "CallRecording Call recording",
+      "icon": "IconFileImport",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetCallRecordingId"
+      },
+      "universalIdentifier": "8102c051-b9ad-5890-9f0c-6223a525d0e9",
+      "objectUniversalIdentifier": "20202020-bd3d-4c60-8dca-571c71d4447a",
+      "relationTargetFieldMetadataUniversalIdentifier": "5f42f5d0-18c3-5e03-aec6-fe1eb2ea1967",
+      "relationTargetObjectMetadataUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f634-435d-ab8d-e1168b375c69"
+    },
+    {
+      "name": "targetCallRecording",
+      "label": "CallRecording",
+      "description": "CallRecording Call recording",
+      "icon": "IconCheckbox",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetCallRecordingId"
+      },
+      "universalIdentifier": "90fe1f35-1940-5ffd-aab8-0096321726a4",
+      "objectUniversalIdentifier": "20202020-fff0-4b44-be82-bda313884400",
+      "relationTargetFieldMetadataUniversalIdentifier": "f954b27b-5286-5ab5-9958-ca3bf53eeb92",
+      "relationTargetObjectMetadataUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f635-435d-ab8d-e1168b375c70"
+    },
+    {
+      "name": "targetCallRecording",
+      "label": "CallRecording",
+      "description": "CallRecording Call recording",
+      "icon": "IconCheckbox",
+      "isNullable": true,
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "onDelete": "SET_NULL",
+        "joinColumnName": "targetCallRecordingId"
+      },
+      "universalIdentifier": "6d2d552b-5340-5bba-913f-ff6593397311",
+      "objectUniversalIdentifier": "20202020-5a9a-44e8-95df-771cd06d0fb1",
+      "relationTargetFieldMetadataUniversalIdentifier": "16273300-5331-51ce-bf8b-8168263cbb3d",
+      "relationTargetObjectMetadataUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+      "type": "MORPH_RELATION",
+      "morphId": "20202020-f636-435d-ab8d-e1168b375c71"
+    },
+    {
+      "universalIdentifier": "c62ae064-88aa-48a7-84b3-c9940e3a5db9",
+      "objectUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
+      "type": "RELATION",
+      "name": "callRecordings",
+      "label": "Call Recordings",
+      "relationTargetObjectMetadataUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+      "relationTargetFieldMetadataUniversalIdentifier": "0066e1d2-59f6-4ca7-8073-ca9bd964bfe0",
+      "universalSettings": {
+        "relationType": "ONE_TO_MANY"
+      }
+    },
+    {
+      "universalIdentifier": "ae57f5bc-b9f1-4867-887a-834c14737bae",
+      "objectUniversalIdentifier": "20202020-3319-4234-a34c-82d5c0e881a6",
+      "type": "RELATION",
+      "name": "callRecordings",
+      "label": "Call Recordings",
+      "relationTargetObjectMetadataUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+      "relationTargetFieldMetadataUniversalIdentifier": "5550e26a-4354-434b-b32e-3f7b04585113",
+      "universalSettings": {
+        "relationType": "ONE_TO_MANY"
+      }
+    },
+    {
+      "universalIdentifier": "0066e1d2-59f6-4ca7-8073-ca9bd964bfe0",
+      "objectUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+      "type": "RELATION",
+      "name": "person",
+      "label": "Person",
+      "relationTargetObjectMetadataUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213",
+      "relationTargetFieldMetadataUniversalIdentifier": "c62ae064-88aa-48a7-84b3-c9940e3a5db9",
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "joinColumnName": "personId"
+      },
+      "icon": "IconUser"
+    },
+    {
+      "universalIdentifier": "5550e26a-4354-434b-b32e-3f7b04585113",
+      "objectUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+      "type": "RELATION",
+      "name": "workspaceMember",
+      "label": "Workspace Member",
+      "relationTargetObjectMetadataUniversalIdentifier": "20202020-3319-4234-a34c-82d5c0e881a6",
+      "relationTargetFieldMetadataUniversalIdentifier": "ae57f5bc-b9f1-4867-887a-834c14737bae",
+      "universalSettings": {
+        "relationType": "MANY_TO_ONE",
+        "joinColumnName": "workspaceMemberId"
+      },
+      "icon": "IconUser"
+    }
+  ],
+  "roles": [
+    {
+      "universalIdentifier": "f9cfb3ce-cb1e-4f55-af85-be45f6059054",
+      "label": "Call recording default function role",
+      "description": "Call recording default function role",
+      "canReadAllObjectRecords": true,
+      "canUpdateAllObjectRecords": true,
+      "canSoftDeleteAllObjectRecords": true,
+      "canDestroyAllObjectRecords": false,
+      "permissionFlags": [
+        "UPLOAD_FILE",
+        "AI"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "universalIdentifier": "11fb51a7-4d5a-4168-91d7-9fbe5eb7d609",
+      "name": "call-transcript-summarization",
+      "label": "Call Transcript Summarization",
+      "description": "Instructions for summarizing and analyzing call recording transcripts",
+      "content": "# Call Transcript Summarization\n\n## When to Use\nUse this skill when a user asks you to summarize, analyze, or extract insights from a call recording.\n\n## How to Access the Data\n1. Use `find_one_callRecording` to fetch the call recording by its ID.\n2. Read the `transcript` field (RICH_TEXT_V2, markdown format) which contains the full conversation.\n3. The transcript uses the format: **Speaker Name:** spoken text\n\n## What to Produce\nGenerate a structured summary with these sections:\n\n### Overview\nA 2-3 sentence high-level description of what the call was about, who participated, and the general outcome.\n\n### Key Discussion Points\nBullet points covering the main topics discussed, organized chronologically or by theme.\n\n### Decisions Made\nAny explicit decisions or agreements reached during the call.\n\n### Action Items\nConcrete next steps mentioned during the call, including who is responsible (if stated).\n\n### Sentiment & Tone\nA brief note on the overall tone of the conversation (collaborative, tense, exploratory, etc.).\n\n## Output Format\n- Use markdown formatting.\n- Keep the summary concise — aim for roughly 20% of the transcript length.\n- If the transcript is very short (under 200 words), provide a brief 2-3 sentence summary instead of the full structure.\n\n## Saving the Summary\nAfter generating the summary, use `update_callRecording` to save it in the `summary` field with the format:\n```json\n{ \"summary\": { \"blocknote\": null, \"markdown\": \"<your summary>\" } }\n```\n"
+    }
+  ],
+  "logicFunctions": [
+    {
+      "universalIdentifier": "471353f6-5933-417b-8062-9ad0fc44cd7f",
+      "name": "end-recording",
+      "description": "Endpoint to end a call recording",
+      "timeoutSeconds": 60,
+      "httpRouteTriggerSettings": {
+        "path": "/end-recording",
+        "httpMethod": "POST",
+        "isAuthRequired": false
+      },
+      "toolInputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "handlerName": "default.config.handler",
+      "sourceHandlerPath": "src/logic-functions/end-recording.ts",
+      "builtHandlerPath": "src/logic-functions/end-recording.mjs",
+      "builtHandlerChecksum": "5bec2a4c3a3bf48acb86e9784f3b1ccc"
+    }
+  ],
+  "frontComponents": [
+    {
+      "universalIdentifier": "43aae2d4-396a-4c5e-9f45-0162a2904825",
+      "name": "Call Recording Summary Viewer",
+      "description": "Displays the AI-generated summary of a call recording",
+      "componentName": "CallRecordingSummaryViewer",
+      "sourceComponentPath": "src/front-components/call-recording-summary-viewer.tsx",
+      "builtComponentPath": "src/front-components/call-recording-summary-viewer.mjs",
+      "builtComponentChecksum": "d5fc85c117003dc89bc595639b7a0727",
+      "isHeadless": false
+    },
+    {
+      "universalIdentifier": "9f3bbb39-042d-4216-b8fc-bedfc3487208",
+      "name": "Call Recording Viewer",
+      "description": "A viewer for call recordings",
+      "componentName": "CallRecordingViewer",
+      "sourceComponentPath": "src/front-components/call-recording-viewer.tsx",
+      "builtComponentPath": "src/front-components/call-recording-viewer.mjs",
+      "builtComponentChecksum": "b28bce494c03216b1f902017e594056e",
+      "isHeadless": false
+    },
+    {
+      "universalIdentifier": "0894353c-86d2-484c-84f2-802cf5c4d22b",
+      "name": "Seed Call Recordings",
+      "description": "Seeds the workspace with mock call recordings for testing",
+      "isHeadless": true,
+      "command": {
+        "universalIdentifier": "e0e5b7a1-d472-4897-88d0-ce5f1bf6a5ea",
+        "label": "Seed call recordings",
+        "icon": "IconDatabase",
+        "isPinned": false,
+        "availabilityType": "GLOBAL"
+      },
+      "componentName": "SeedCallRecordings",
+      "sourceComponentPath": "src/front-components/seed-call-recordings.tsx",
+      "builtComponentPath": "src/front-components/seed-call-recordings.mjs",
+      "builtComponentChecksum": "fd4b5e9205aa23c04d4db4549b8362f1"
+    },
+    {
+      "universalIdentifier": "958c796e-baf0-472c-838f-8d0a7f572774",
+      "name": "Summarize Person Call Recordings",
+      "description": "Generates and displays a summary of recent call recordings for a person",
+      "command": {
+        "universalIdentifier": "30e73886-18e7-476f-9c55-b19c59397a81",
+        "label": "Summarize call recordings",
+        "icon": "IconSparkles",
+        "isPinned": false,
+        "availabilityType": "SINGLE_RECORD",
+        "availabilityObjectUniversalIdentifier": "20202020-e674-48e5-a542-72570eee7213"
+      },
+      "componentName": "SummarizePersonRecordings",
+      "sourceComponentPath": "src/front-components/summarize-person-recordings.tsx",
+      "builtComponentPath": "src/front-components/summarize-person-recordings.mjs",
+      "builtComponentChecksum": "9a795c8304e87ea72b2471f1076c263c",
+      "isHeadless": false
+    }
+  ],
+  "publicAssets": [],
+  "views": [
+    {
+      "universalIdentifier": "9c9c09bb-de9f-4248-89f2-e7d91f29c3ed",
+      "name": "Call recordings",
+      "objectUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+      "icon": "IconPhone",
+      "position": 0,
+      "fields": [
+        {
+          "universalIdentifier": "b5609679-8451-45ec-ad52-5a4e3720af45",
+          "fieldMetadataUniversalIdentifier": "272dca6f-b3aa-49f5-b7ed-39780052f1fe",
+          "isVisible": true,
+          "size": 12,
+          "position": 0
+        },
+        {
+          "universalIdentifier": "d791bea6-c49e-4d6f-8864-737ed00276f8",
+          "fieldMetadataUniversalIdentifier": "c581a044-f646-464b-aa4b-56b8ea9bf05a",
+          "isVisible": true,
+          "size": 12,
+          "position": 1
+        },
+        {
+          "universalIdentifier": "db96d9cf-cbd8-407b-b748-7b12913f018b",
+          "fieldMetadataUniversalIdentifier": "56185e64-6591-41c1-a3e0-af8de20a5471",
+          "isVisible": true,
+          "size": 12,
+          "position": 2
+        },
+        {
+          "universalIdentifier": "17c4e68a-5b62-4509-b8ed-19f82dfb8e2f",
+          "fieldMetadataUniversalIdentifier": "24c92ad0-4559-4bf9-a9fa-09168914a142",
+          "isVisible": true,
+          "size": 12,
+          "position": 3
+        },
+        {
+          "universalIdentifier": "a7bce6c7-39ce-406a-bc6f-00b495951b4a",
+          "fieldMetadataUniversalIdentifier": "e78d41fd-a493-4d06-b036-0dd7b7617dbe",
+          "isVisible": true,
+          "size": 12,
+          "position": 4
+        },
+        {
+          "universalIdentifier": "f3e2d1c0-a9b8-47c6-85d4-3e2f1a0b9c8d",
+          "fieldMetadataUniversalIdentifier": "b2a3c8e1-7f94-4d5b-a6e2-9c1d0f3e8b47",
+          "isVisible": true,
+          "size": 12,
+          "position": 5
+        },
+        {
+          "universalIdentifier": "e4c3b2a1-0d9e-48f7-a6b5-1c2d3e4f5a6b",
+          "fieldMetadataUniversalIdentifier": "a1d4e7c3-5b28-4f96-8e3a-0c7d9f2b6a15",
+          "isVisible": true,
+          "size": 12,
+          "position": 6
+        },
+        {
+          "universalIdentifier": "56925631-0077-4b65-a25a-24afec4d8bff",
+          "fieldMetadataUniversalIdentifier": "5550e26a-4354-434b-b32e-3f7b04585113",
+          "isVisible": true,
+          "size": 12,
+          "position": 7
+        },
+        {
+          "universalIdentifier": "1ba8538d-9c8e-47bf-b485-a8ba07b3d9a3",
+          "fieldMetadataUniversalIdentifier": "0066e1d2-59f6-4ca7-8073-ca9bd964bfe0",
+          "isVisible": true,
+          "size": 12,
+          "position": 8
+        },
+        {
+          "universalIdentifier": "58124ded-56ff-40a0-8858-eae1b5ae75d7",
+          "fieldMetadataUniversalIdentifier": "55eb083f-0b68-4f5c-bcd7-c853ad77ba11",
+          "isVisible": true,
+          "size": 12,
+          "position": 6
+        }
+      ]
+    }
+  ],
+  "navigationMenuItems": [
+    {
+      "universalIdentifier": "5248a62d-7d2e-43a7-ba45-6e8f61876a71",
+      "name": "Call recordings",
+      "icon": "IconPhone",
+      "position": 0,
+      "viewUniversalIdentifier": "9c9c09bb-de9f-4248-89f2-e7d91f29c3ed"
+    }
+  ],
+  "pageLayouts": [
+    {
+      "universalIdentifier": "17ff2924-00c9-4105-ac4e-64c28cba781f",
+      "name": "Call Recording Insights",
+      "type": "DASHBOARD",
+      "tabs": [
+        {
+          "universalIdentifier": "aa3398e8-b7e8-402f-9681-4cdc44fdd6d8",
+          "title": "Overview",
+          "position": 0,
+          "icon": "IconChartBar",
+          "layoutMode": "CANVAS",
+          "widgets": [
+            {
+              "universalIdentifier": "1a04a308-5318-4f75-9b3a-4ee414750508",
+              "title": "Total Calls",
+              "type": "GRAPH",
+              "objectUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+              "gridPosition": {
+                "row": 0,
+                "column": 0,
+                "rowSpan": 2,
+                "columnSpan": 3
+              },
+              "configuration": {
+                "configurationType": "AGGREGATE_CHART",
+                "aggregateFieldMetadataUniversalIdentifier": "272dca6f-b3aa-49f5-b7ed-39780052f1fe",
+                "aggregateOperation": "COUNT",
+                "label": "Total Calls"
+              }
+            },
+            {
+              "universalIdentifier": "26c8190f-ff63-45f8-9cd9-d8bfd1380cca",
+              "title": "Calls per Person",
+              "type": "GRAPH",
+              "objectUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+              "gridPosition": {
+                "row": 0,
+                "column": 3,
+                "rowSpan": 6,
+                "columnSpan": 4
+              },
+              "configuration": {
+                "configurationType": "PIE_CHART",
+                "aggregateFieldMetadataUniversalIdentifier": "272dca6f-b3aa-49f5-b7ed-39780052f1fe",
+                "aggregateOperation": "COUNT",
+                "groupByFieldMetadataUniversalIdentifier": "0066e1d2-59f6-4ca7-8073-ca9bd964bfe0",
+                "groupBySubFieldName": "name.firstName",
+                "showCenterMetric": true,
+                "displayLegend": true,
+                "displayDataLabel": false,
+                "color": "blue"
+              }
+            },
+            {
+              "universalIdentifier": "d3741561-e9ca-4dd2-8510-4f49d25911e5",
+              "title": "Calls per Workspace Member",
+              "type": "GRAPH",
+              "objectUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+              "gridPosition": {
+                "row": 0,
+                "column": 7,
+                "rowSpan": 6,
+                "columnSpan": 5
+              },
+              "configuration": {
+                "configurationType": "BAR_CHART",
+                "aggregateFieldMetadataUniversalIdentifier": "272dca6f-b3aa-49f5-b7ed-39780052f1fe",
+                "aggregateOperation": "COUNT",
+                "primaryAxisGroupByFieldMetadataUniversalIdentifier": "5550e26a-4354-434b-b32e-3f7b04585113",
+                "primaryAxisGroupBySubFieldName": "name.firstName",
+                "displayDataLabel": true,
+                "displayLegend": false,
+                "color": "turquoise",
+                "layout": "VERTICAL"
+              }
+            },
+            {
+              "universalIdentifier": "7916f127-8f60-4226-a0b8-45632cf3cfe7",
+              "title": "Calls Over Time",
+              "type": "GRAPH",
+              "objectUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+              "gridPosition": {
+                "row": 6,
+                "column": 0,
+                "rowSpan": 6,
+                "columnSpan": 12
+              },
+              "configuration": {
+                "configurationType": "LINE_CHART",
+                "aggregateFieldMetadataUniversalIdentifier": "272dca6f-b3aa-49f5-b7ed-39780052f1fe",
+                "aggregateOperation": "COUNT",
+                "primaryAxisGroupByFieldMetadataUniversalIdentifier": "c581a044-f646-464b-aa4b-56b8ea9bf05a",
+                "primaryAxisDateGranularity": "MONTH",
+                "displayDataLabel": false,
+                "displayLegend": false,
+                "color": "purple"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "universalIdentifier": "b7e3a1d4-5c92-4f68-9a0b-3e8d7c6f1a25",
+      "name": "Call Recording Record Page",
+      "type": "RECORD_PAGE",
+      "objectUniversalIdentifier": "af251b70-85c6-49bd-bf4a-2631f34c8f1a",
+      "tabs": [
+        {
+          "universalIdentifier": "e6b2d8f4-7a13-4c59-b2e1-9d4f0c8a3b67",
+          "title": "Summary",
+          "position": 50,
+          "icon": "IconSparkles",
+          "layoutMode": "CANVAS",
+          "widgets": [
+            {
+              "universalIdentifier": "e5c93fce-76b4-41e9-9c5d-9b17e034366c",
+              "title": "Summary",
+              "type": "FRONT_COMPONENT",
+              "configuration": {
+                "configurationType": "FRONT_COMPONENT",
+                "frontComponentUniversalIdentifier": "43aae2d4-396a-4c5e-9f45-0162a2904825"
+              }
+            }
+          ]
+        },
+        {
+          "universalIdentifier": "c4f8e2a6-3d71-4b95-8e0c-1a9f6d5b7c34",
+          "title": "Transcript",
+          "position": 100,
+          "icon": "IconVideo",
+          "layoutMode": "CANVAS",
+          "widgets": [
+            {
+              "universalIdentifier": "d5a9f3b7-4e82-4c06-9f1d-2b0a7e6c8d45",
+              "title": "Media Player",
+              "type": "FRONT_COMPONENT",
+              "configuration": {
+                "configurationType": "FRONT_COMPONENT",
+                "frontComponentUniversalIdentifier": "9f3bbb39-042d-4216-b8fc-bedfc3487208"
+              }
+            }
+          ]
+        },
+        {
+          "universalIdentifier": "f7c1b5d9-6a04-4e28-b13f-4d2c9a8e0f67",
+          "title": "Timeline",
+          "position": 200,
+          "icon": "IconTimelineEvent",
+          "layoutMode": "CANVAS",
+          "widgets": [
+            {
+              "universalIdentifier": "23c87a9c-25e3-4e83-84d9-02fb1a6fde76",
+              "title": "Timeline",
+              "type": "TIMELINE",
+              "configuration": {
+                "configurationType": "TIMELINE"
+              }
+            }
+          ]
+        },
+        {
+          "universalIdentifier": "498e47e5-bed1-4492-a08d-b12b7ff40ed9",
+          "title": "Tasks",
+          "position": 300,
+          "icon": "IconCheckbox",
+          "layoutMode": "CANVAS",
+          "widgets": [
+            {
+              "universalIdentifier": "ae93482f-384f-42a8-9c06-6bc14b10da6a",
+              "title": "Tasks",
+              "type": "TASKS",
+              "configuration": {
+                "configurationType": "TASKS"
+              }
+            }
+          ]
+        },
+        {
+          "universalIdentifier": "c111ccf0-b95b-4333-b2bc-a7a9da40f913",
+          "title": "Notes",
+          "position": 400,
+          "icon": "IconNotes",
+          "layoutMode": "CANVAS",
+          "widgets": [
+            {
+              "universalIdentifier": "e2b6a0c4-1f59-4d73-a684-9c7b4f3d5e12",
+              "title": "Notes",
+              "type": "NOTES",
+              "configuration": {
+                "configurationType": "NOTES"
+              }
+            }
+          ]
+        },
+        {
+          "universalIdentifier": "f3c7b1d5-2a60-4e84-b795-0d8c5a4e6f23",
+          "title": "Files",
+          "position": 500,
+          "icon": "IconPaperclip",
+          "layoutMode": "CANVAS",
+          "widgets": [
+            {
+              "universalIdentifier": "a17bf74a-a7ff-48a0-8628-3fd905539c8d",
+              "title": "Files",
+              "type": "FILES",
+              "configuration": {
+                "configurationType": "FILES"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

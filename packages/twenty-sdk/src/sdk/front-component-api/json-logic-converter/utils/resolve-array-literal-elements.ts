@@ -25,8 +25,6 @@ export const resolveArrayLiteralElements = (
     }
 
     throw new JsonLogicConversionError(
-      'Cannot resolve array element',
-      element.getText(),
-      element.getKindName(),
+      `Cannot resolve array element: ${element.getKindName()} (${element.getText()})`,
     );
   });

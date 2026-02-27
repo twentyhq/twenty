@@ -15,9 +15,7 @@ export const convertSomeCallToJsonLogic = (
 
   if (!Node.isArrowFunction(predicateArgument)) {
     throw new JsonLogicConversionError(
-      'Cannot handle .some() with non-arrow predicate',
-      predicateArgument.getText(),
-      predicateArgument.getKindName(),
+      `Cannot handle .some() with non-arrow predicate: ${predicateArgument.getKindName()} (${predicateArgument.getText()})`,
     );
   }
 
@@ -25,9 +23,7 @@ export const convertSomeCallToJsonLogic = (
 
   if (!Node.isExpression(predicateBodyExpression)) {
     throw new JsonLogicConversionError(
-      'Unexpected .some() predicate body kind',
-      predicateBodyExpression.getText(),
-      predicateBodyExpression.getKindName(),
+      `Unexpected .some() predicate body kind: ${predicateBodyExpression.getKindName()} (${predicateBodyExpression.getText()})`,
     );
   }
 

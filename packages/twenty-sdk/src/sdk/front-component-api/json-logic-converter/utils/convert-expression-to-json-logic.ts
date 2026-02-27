@@ -90,9 +90,7 @@ export const convertExpressionToJsonLogic = (
     }
 
     throw new JsonLogicConversionError(
-      `Unsupported prefix unary operator: ${prefixOperatorKind}`,
-      node.getText(),
-      node.getKindName(),
+      `Unsupported prefix unary operator: ${prefixOperatorKind} (${node.getText()})`,
     );
   }
 
@@ -109,8 +107,6 @@ export const convertExpressionToJsonLogic = (
   }
 
   throw new JsonLogicConversionError(
-    'Unsupported expression kind',
-    node.getText(),
-    node.getKindName(),
+    `Unsupported expression kind: ${node.getKindName()} (${node.getText()})`,
   );
 };
