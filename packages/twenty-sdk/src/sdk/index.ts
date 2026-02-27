@@ -112,7 +112,7 @@ export {
   convertArrowFunctionToJsonLogic,
   convertShouldBeRegisteredToJsonLogic,
   extractShouldBeRegisteredFromConfig,
-  KNOWN_CONSTANTS,
+  ALLOWED_CONSTANTS_IN_SHOULD_BE_REGISTERED,
 } from './front-component-api/json-logic-converter';
 
 // Style bridge utilities for CSS-in-JS libraries in remote components

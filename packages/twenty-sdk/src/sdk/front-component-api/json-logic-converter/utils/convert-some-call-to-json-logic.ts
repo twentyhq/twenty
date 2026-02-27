@@ -4,7 +4,7 @@ import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 import { type JsonLogicRule } from '../types/json-logic-rule';
 
 import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
-import { resolvePropertyPath } from './resolve-property-path';
+import { getNestedFieldPath } from './get-nested-field-path';
 
 export const convertSomeCallToJsonLogic = ({
   receiverExpression,
@@ -13,7 +13,7 @@ export const convertSomeCallToJsonLogic = ({
   receiverExpression: Expression;
   predicateArgument: Expression;
 }): JsonLogicRule => {
-  const flattenedPropertyPath = resolvePropertyPath({
+  const nestedFieldPath = getNestedFieldPath({
     node: receiverExpression,
   });
 
@@ -33,7 +33,7 @@ export const convertSomeCallToJsonLogic = ({
 
   return {
     some: [
-      { var: flattenedPropertyPath },
+      { var: nestedFieldPath },
       convertExpressionToJsonLogic({ node: predicateBodyExpression }),
     ],
   };

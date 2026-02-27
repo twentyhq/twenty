@@ -1,7 +1,7 @@
 import { isNumber, isString } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
 
-import { KNOWN_CONSTANTS } from '../resolve-constants';
+import { ALLOWED_CONSTANTS_IN_SHOULD_BE_REGISTERED } from '../constants/allowed-constants-in-should-be-registered';
 
 const isResolvedPrimitive = (value: unknown): value is string | number =>
   isString(value) || isNumber(value);
@@ -11,8 +11,8 @@ export const tryResolveKnownConstant = ({
 }: {
   constantPath: string;
 }): string | number | undefined => {
-  if (constantPath in KNOWN_CONSTANTS) {
-    const constantValue = KNOWN_CONSTANTS[constantPath];
+  if (constantPath in ALLOWED_CONSTANTS_IN_SHOULD_BE_REGISTERED) {
+    const constantValue = ALLOWED_CONSTANTS_IN_SHOULD_BE_REGISTERED[constantPath];
 
     return isResolvedPrimitive(constantValue) ? constantValue : undefined;
   }
@@ -25,11 +25,11 @@ export const tryResolveKnownConstant = ({
 
   const [objectName, propertyName] = pathSegments;
 
-  if (!(objectName in KNOWN_CONSTANTS)) {
+  if (!(objectName in ALLOWED_CONSTANTS_IN_SHOULD_BE_REGISTERED)) {
     return undefined;
   }
 
-  const constantObject = KNOWN_CONSTANTS[objectName];
+  const constantObject = ALLOWED_CONSTANTS_IN_SHOULD_BE_REGISTERED[objectName];
 
   if (!isPlainObject(constantObject) || !(propertyName in constantObject)) {
     return undefined;

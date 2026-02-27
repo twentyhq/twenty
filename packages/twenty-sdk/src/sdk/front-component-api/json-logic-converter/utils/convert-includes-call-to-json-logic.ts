@@ -1,14 +1,14 @@
 import { type Expression, Node } from 'ts-morph';
 import { isDefined } from 'twenty-shared/utils';
 
-import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 import { type JsonLogicRule } from '../types/json-logic-rule';
+import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 
 import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
+import { getNestedFieldPath } from './get-nested-field-path';
 import { isAllowedParameterInShouldBeRegistered } from './is-allowed-parameter-in-should-be-registered';
 import { resolveArrayLiteralElements } from './resolve-array-literal-elements';
 import { resolveLocalArrayVariable } from './resolve-local-array-variable';
-import { resolvePropertyPath } from './resolve-property-path';
 
 export const convertIncludesCallToJsonLogic = ({
   receiverExpression,
@@ -46,15 +46,15 @@ export const convertIncludesCallToJsonLogic = ({
     };
   }
 
-  const flattenedPropertyPath = resolvePropertyPath({
+  const nestedFieldPath = getNestedFieldPath({
     node: receiverExpression,
   });
 
-  if (isAllowedParameterInShouldBeRegistered({ name: flattenedPropertyPath })) {
+  if (isAllowedParameterInShouldBeRegistered({ name: nestedFieldPath })) {
     return {
       in: [
         convertExpressionToJsonLogic({ node: searchArgument }),
-        { var: flattenedPropertyPath },
+        { var: nestedFieldPath },
       ],
     };
   }

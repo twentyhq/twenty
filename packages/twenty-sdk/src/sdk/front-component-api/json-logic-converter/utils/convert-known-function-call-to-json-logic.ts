@@ -2,10 +2,8 @@ import { type Expression } from 'ts-morph';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
-import {
-  type JsonLogicOperator,
-  type JsonLogicRule,
-} from '../types/json-logic-rule';
+import { type JsonLogicOperator } from '../types/json-logic-operator';
+import { type JsonLogicRule } from '../types/json-logic-rule';
 
 import { resolveExpressionToStringValue } from './resolve-expression-to-string-value';
 

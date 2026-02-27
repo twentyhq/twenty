@@ -2,13 +2,13 @@ import { type Expression, Node } from 'ts-morph';
 
 import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 
-export const resolvePropertyPath = ({ node }: { node: Expression }): string => {
+export const getNestedFieldPath = ({ node }: { node: Expression }): string => {
   if (Node.isIdentifier(node)) {
     return node.getText();
   }
 
   if (Node.isPropertyAccessExpression(node)) {
-    const objectPath = resolvePropertyPath({
+    const objectPath = getNestedFieldPath({
       node: node.getExpression(),
     });
 
@@ -18,7 +18,7 @@ export const resolvePropertyPath = ({ node }: { node: Expression }): string => {
   }
 
   if (Node.isNonNullExpression(node)) {
-    return resolvePropertyPath({ node: node.getExpression() });
+    return getNestedFieldPath({ node: node.getExpression() });
   }
 
   throw new JsonLogicConversionError(

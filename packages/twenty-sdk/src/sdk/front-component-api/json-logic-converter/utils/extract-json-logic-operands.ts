@@ -1,8 +1,11 @@
-import {
-  isJsonLogicObject,
-  type JsonLogicOperator,
-  type JsonLogicRule,
-} from '../types/json-logic-rule';
+import { isPlainObject } from 'twenty-shared/utils';
+
+import type { JsonLogicObject } from '../types/json-logic-object';
+import type { JsonLogicOperator } from '../types/json-logic-operator';
+import type { JsonLogicRule } from '../types/json-logic-rule';
+
+const isJsonLogicObject = (rule: JsonLogicRule): rule is JsonLogicObject =>
+  isPlainObject(rule) && !Array.isArray(rule);
 
 export const extractJsonLogicOperands = ({
   rule,

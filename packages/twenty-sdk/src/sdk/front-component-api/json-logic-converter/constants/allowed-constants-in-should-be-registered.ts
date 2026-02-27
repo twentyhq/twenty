@@ -10,7 +10,10 @@ import {
 
 type KnownConstantValue = string | number | Record<string, string | number>;
 
-export const KNOWN_CONSTANTS: Record<string, KnownConstantValue> = {
+export const ALLOWED_CONSTANTS_IN_SHOULD_BE_REGISTERED: Record<
+  string,
+  KnownConstantValue
+> = {
   BACKEND_BATCH_REQUEST_MAX_COUNT,
   MUTATION_MAX_MERGE_RECORDS,
   CoreObjectNameSingular: {

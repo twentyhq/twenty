@@ -9,14 +9,14 @@ import {
 } from 'ts-morph';
 import { isDefined } from 'twenty-shared/utils';
 
-import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 import { type JsonLogicRule } from '../types/json-logic-rule';
+import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 
 import { convertArrowFunctionToJsonLogic } from './convert-arrow-function-to-json-logic';
 import { convertBinaryExpressionToJsonLogic } from './convert-binary-expression-to-json-logic';
 import { convertCallExpressionToJsonLogic } from './convert-call-expression-to-json-logic';
+import { getNestedFieldPath } from './get-nested-field-path';
 import { isAllowedParameterInShouldBeRegistered } from './is-allowed-parameter-in-should-be-registered';
-import { resolvePropertyPath } from './resolve-property-path';
 import { tryResolveKnownConstant } from './try-resolve-known-constant';
 
 export const convertExpressionToJsonLogic = ({
@@ -70,23 +70,21 @@ export const convertExpressionToJsonLogic = ({
     }
 
     case SyntaxKind.PropertyAccessExpression: {
-      const flattenedPropertyPath = resolvePropertyPath({ node });
+      const nestedFieldPath = getNestedFieldPath({ node });
 
-      if (
-        isAllowedParameterInShouldBeRegistered({ name: flattenedPropertyPath })
-      ) {
-        return { var: flattenedPropertyPath };
+      if (isAllowedParameterInShouldBeRegistered({ name: nestedFieldPath })) {
+        return { var: nestedFieldPath };
       }
 
       const resolvedConstantValue = tryResolveKnownConstant({
-        constantPath: flattenedPropertyPath,
+        constantPath: nestedFieldPath,
       });
 
       if (isDefined(resolvedConstantValue)) {
         return resolvedConstantValue;
       }
 
-      return { var: flattenedPropertyPath };
+      return { var: nestedFieldPath };
     }
 
     case SyntaxKind.PrefixUnaryExpression: {
