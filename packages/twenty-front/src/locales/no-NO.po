@@ -13678,6 +13678,8 @@ msgstr ""
 #. js-lingui-id: 7PzzBU
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
@@ -13720,12 +13722,6 @@ msgstr ""
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "User is not logged in"
 msgstr "Brukeren er ikke logget inn"
-
-#. js-lingui-id: X0w+FW
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-msgid "User Workspace"
-msgstr ""
 
 #. js-lingui-id: Sxm8rQ
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
