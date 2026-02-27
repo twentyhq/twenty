@@ -23,7 +23,7 @@ export const RecordFieldListCellHoveredPortal = ({
     RecordFieldListComponentInstanceContext,
   );
 
-  const hoverPosition = useAtomComponentStateValue(
+  const recordFieldListHoverPosition = useAtomComponentStateValue(
     recordFieldListHoverPositionComponentState,
   );
 
@@ -31,7 +31,10 @@ export const RecordFieldListCellHoveredPortal = ({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  if (!isDefined(hoverPosition) || !isDefined(hoveredFieldMetadataItem)) {
+  if (
+    !isDefined(recordFieldListHoverPosition) ||
+    !isDefined(hoveredFieldMetadataItem)
+  ) {
     return null;
   }
 

@@ -22,9 +22,8 @@ export const PageLayoutInitializationQueryEffect = ({
   pageLayoutId,
   onInitialized,
 }: PageLayoutInitializationQueryEffectProps) => {
-  const [isInitialized, setIsInitialized] = useAtomComponentState(
-    pageLayoutIsInitializedComponentState,
-  );
+  const [pageLayoutIsInitialized, setPageLayoutIsInitialized] =
+    useAtomComponentState(pageLayoutIsInitializedComponentState);
 
   const basePageLayout = useBasePageLayout(pageLayoutId);
 
@@ -70,17 +69,17 @@ export const PageLayoutInitializationQueryEffect = ({
   );
 
   useEffect(() => {
-    if (!isInitialized && isDefined(pageLayout)) {
+    if (!pageLayoutIsInitialized && isDefined(pageLayout)) {
       initializePageLayout(pageLayout);
       onInitialized?.(pageLayout);
-      setIsInitialized(true);
+      setPageLayoutIsInitialized(true);
     }
   }, [
     initializePageLayout,
-    isInitialized,
+    pageLayoutIsInitialized,
     pageLayout,
     onInitialized,
-    setIsInitialized,
+    setPageLayoutIsInitialized,
   ]);
 
   return null;

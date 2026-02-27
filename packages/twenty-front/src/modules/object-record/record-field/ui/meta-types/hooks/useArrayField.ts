@@ -24,14 +24,14 @@ export const useArrayField = () => {
 
   const { setDraftValue } = useRecordFieldInput<FieldArrayValue>();
 
-  const draftValue = useAtomComponentStateValue(
+  const recordFieldInputDraftValue = useAtomComponentStateValue(
     recordFieldInputDraftValueComponentState,
   );
 
   return {
     fieldValue,
     fieldDefinition,
-    draftValue,
+    draftValue: recordFieldInputDraftValue,
     setFieldValue,
     setDraftValue,
   };

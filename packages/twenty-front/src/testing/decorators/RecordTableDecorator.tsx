@@ -36,9 +36,10 @@ import { type View } from '@/views/types/View';
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { mockedViewFieldsData } from '~/testing/mock-data/view-fields';
-import { mockedViewsData } from '~/testing/mock-data/views';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
+import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+
+const companyView = mockedCoreViews.find((v) => v.name === 'All Companies')!;
 
 const InternalTableStateLoaderEffect = ({
   objectMetadataItem,
@@ -64,17 +65,15 @@ const InternalTableStateLoaderEffect = ({
 
   const view = useMemo(() => {
     return {
-      ...mockedViewsData[0],
-      viewFields: mockedViewFieldsData.filter(
-        (viewField) => viewField.viewId === mockedViewsData[0].id,
-      ),
+      ...companyView,
+      viewFields: companyView.viewFields,
     } as unknown as View;
   }, []);
 
   useEffect(() => {
     loadRecordIndexStates(view, objectMetadataItem);
     setRecordTableData({
-      records: getCompaniesMock(),
+      records: [...mockedCompanyRecords],
     });
     const recordFields = view.viewFields
       .map(mapViewFieldToRecordField)
@@ -221,7 +220,7 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem.namePlural,
-    mockedViewsData[0].id,
+    companyView.id,
   );
 
   return (

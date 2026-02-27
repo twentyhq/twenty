@@ -19,7 +19,7 @@ import { useStore } from 'jotai';
 export const useUpdateViewAggregate = () => {
   const store = useStore();
   const { canPersistChanges } = useCanPersistViewChanges();
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();
@@ -47,12 +47,12 @@ export const useUpdateViewAggregate = () => {
           )
         : null;
 
-      if (!isDefined(currentViewId)) {
+      if (!isDefined(contextStoreCurrentViewId)) {
         return;
       }
 
       const updatedViewResult = await performViewAPIUpdate({
-        id: currentViewId,
+        id: contextStoreCurrentViewId,
         input: {
           kanbanAggregateOperationFieldMetadataId,
           kanbanAggregateOperation: convertedKanbanAggregateOperation,
@@ -81,7 +81,7 @@ export const useUpdateViewAggregate = () => {
     },
     [
       canPersistChanges,
-      currentViewId,
+      contextStoreCurrentViewId,
       performViewAPIUpdate,
       loadRecordIndexStates,
       store,

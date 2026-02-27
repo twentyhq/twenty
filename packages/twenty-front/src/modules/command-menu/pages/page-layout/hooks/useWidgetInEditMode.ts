@@ -3,7 +3,7 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const useWidgetInEditMode = (pageLayoutId: string) => {
-  const draftPageLayout = useAtomComponentStateValue(
+  const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
@@ -13,7 +13,7 @@ export const useWidgetInEditMode = (pageLayoutId: string) => {
     pageLayoutId,
   );
 
-  const widgetInEditMode = draftPageLayout.tabs
+  const widgetInEditMode = pageLayoutDraft.tabs
     .flatMap((tab) => tab.widgets)
     .find((widget) => widget.id === pageLayoutEditingWidgetId);
 

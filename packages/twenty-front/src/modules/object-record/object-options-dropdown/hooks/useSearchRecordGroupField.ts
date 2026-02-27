@@ -7,12 +7,14 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const useSearchRecordGroupField = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const [recordGroupFieldSearchInput, setRecordGroupFieldSearchInput] =
-    useAtomComponentState(objectOptionsDropdownSearchInputComponentState);
+  const [
+    objectOptionsDropdownSearchInput,
+    setObjectOptionsDropdownSearchInput,
+  ] = useAtomComponentState(objectOptionsDropdownSearchInputComponentState);
 
   const filteredRecordGroupFieldMetadataItems = useMemo(() => {
     const searchInputLowerCase =
-      recordGroupFieldSearchInput.toLocaleLowerCase();
+      objectOptionsDropdownSearchInput.toLocaleLowerCase();
 
     return objectMetadataItem.readableFields.filter(
       (field) =>
@@ -20,11 +22,11 @@ export const useSearchRecordGroupField = () => {
         field.isActive &&
         field.label.toLocaleLowerCase().includes(searchInputLowerCase),
     );
-  }, [objectMetadataItem.readableFields, recordGroupFieldSearchInput]);
+  }, [objectMetadataItem.readableFields, objectOptionsDropdownSearchInput]);
 
   return {
-    recordGroupFieldSearchInput,
-    setRecordGroupFieldSearchInput,
+    recordGroupFieldSearchInput: objectOptionsDropdownSearchInput,
+    setRecordGroupFieldSearchInput: setObjectOptionsDropdownSearchInput,
     filteredRecordGroupFieldMetadataItems,
   };
 };

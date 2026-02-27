@@ -33,7 +33,7 @@ export const RecordTableFirstRowOfGroup = forwardRef<
     },
     ref,
   ) => {
-    const isScrolledVertically = useAtomComponentStateValue(
+    const isRecordTableScrolledVertically = useAtomComponentStateValue(
       isRecordTableScrolledVerticallyComponentState,
     );
 
@@ -48,7 +48,7 @@ export const RecordTableFirstRowOfGroup = forwardRef<
         data-next-row-active-or-focused={isNextRowActiveOrFocused}
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
-        isScrolledVertically={isScrolledVertically}
+        isScrolledVertically={isRecordTableScrolledVertically}
         isFirstRowOfGroup={true}
       >
         {children}

@@ -87,7 +87,7 @@ export const WorkflowRunDiagramStepNode = ({
   const { getIcon } = useIcons();
   const theme = useTheme();
 
-  const workflowId = useAtomComponentStateValue(
+  const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
   );
   const workflowRunId = useWorkflowRunIdOrThrow();
@@ -116,7 +116,7 @@ export const WorkflowRunDiagramStepNode = ({
       : 0;
 
   const handleClick = () => {
-    if (!isDefined(workflowId)) {
+    if (!isDefined(workflowVisualizerWorkflowId)) {
       throw new Error('Workflow ID must be defined');
     }
 
@@ -127,7 +127,7 @@ export const WorkflowRunDiagramStepNode = ({
     setWorkflowSelectedNode(id);
 
     openWorkflowRunViewStepInCommandMenu({
-      workflowId,
+      workflowId: workflowVisualizerWorkflowId,
       workflowRunId,
       title: data.name,
       icon: getIcon(getWorkflowNodeIconKey(data)),

@@ -38,7 +38,7 @@ export const RecordCalendarCardHeader = ({
   recordId,
 }: RecordCalendarCardHeaderProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-  const record = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const { currentView } = useGetCurrentViewOnly();
@@ -49,7 +49,7 @@ export const RecordCalendarCardHeader = ({
     isDraggingRecordComponentState,
   );
 
-  const [isCurrentCardSelected, setIsCurrentCardSelected] =
+  const [isRecordCalendarCardSelected, setIsRecordCalendarCardSelected] =
     useAtomComponentFamilyState(
       isRecordCalendarCardSelectedComponentFamilyState,
       recordId,
@@ -62,7 +62,7 @@ export const RecordCalendarCardHeader = ({
     openRecordFromIndexView({ recordId });
   };
 
-  if (!isDefined(record)) {
+  if (!isDefined(recordStore)) {
     return null;
   }
 
@@ -72,7 +72,7 @@ export const RecordCalendarCardHeader = ({
         <StopPropagationContainer>
           <RecordChip
             objectNameSingular={objectMetadataItem.nameSingular}
-            record={record}
+            record={recordStore}
             variant={ChipVariant.Transparent}
             isIconHidden={true}
             onClick={handleChipClick}
@@ -84,9 +84,9 @@ export const RecordCalendarCardHeader = ({
         <StopPropagationContainer>
           <Checkbox
             hoverable
-            checked={isCurrentCardSelected}
+            checked={isRecordCalendarCardSelected}
             onChange={(value) => {
-              setIsCurrentCardSelected(value.target.checked);
+              setIsRecordCalendarCardSelected(value.target.checked);
             }}
             variant={CheckboxVariant.Secondary}
           />

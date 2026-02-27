@@ -35,7 +35,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
 
   const { t } = useLingui();
 
-  const isSelected = useAtomComponentFamilyStateValue(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER,
   );
@@ -130,7 +130,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
         text={t`Advanced filter`}
         onClick={handleClick}
         LeftIcon={IconFilter}
-        focused={isSelected}
+        focused={isSelectedItemId}
       />
       {advancedFilterQuerySubFilterCount > 0 && (
         <StyledPill label={advancedFilterQuerySubFilterCount.toString()} />

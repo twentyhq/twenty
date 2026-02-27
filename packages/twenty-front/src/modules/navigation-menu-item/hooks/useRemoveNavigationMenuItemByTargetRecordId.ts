@@ -12,7 +12,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
   const apolloCoreClient = useApolloCoreClient();
   const cache = apolloCoreClient.cache;
 
-  const setNavigationMenuItemsState = useSetAtomState(
+  const setPrefetchNavigationMenuItems = useSetAtomState(
     prefetchNavigationMenuItemsState,
   );
 
@@ -29,7 +29,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
           !targetRecordIdsSet.has(item.targetRecordId),
       );
 
-      setNavigationMenuItemsState(updatedNavigationMenuItems);
+      setPrefetchNavigationMenuItems(updatedNavigationMenuItems);
 
       cache.updateQuery({ query: FIND_MANY_NAVIGATION_MENU_ITEMS }, (data) => {
         if (!isDefined(data?.navigationMenuItems)) {
@@ -42,7 +42,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
         };
       });
     },
-    [cache, setNavigationMenuItemsState, store],
+    [cache, setPrefetchNavigationMenuItems, store],
   );
 
   return {

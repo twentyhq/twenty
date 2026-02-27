@@ -33,7 +33,7 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
 
   const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
 
-  const isScrolledVertically = useAtomComponentStateValue(
+  const isRecordTableScrolledVertically = useAtomComponentStateValue(
     isRecordTableScrolledVerticallyComponentState,
   );
 
@@ -68,7 +68,7 @@ export const RecordTableDraggableTrFirstRowOfGroup = ({
             data-selectable-id={recordId}
             onClick={onClick}
             isFirstRowOfGroup={true}
-            isScrolledVertically={isScrolledVertically}
+            isScrolledVertically={isRecordTableScrolledVertically}
           >
             <RecordTableRowDraggableContextProvider
               value={{

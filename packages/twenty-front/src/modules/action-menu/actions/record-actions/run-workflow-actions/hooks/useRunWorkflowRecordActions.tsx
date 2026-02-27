@@ -35,7 +35,7 @@ export const useRunWorkflowRecordActions = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const isPageInEditMode = useAtomComponentStateValue(
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
 
@@ -138,7 +138,7 @@ export const useRunWorkflowRecordActions = ({
         position: index,
         Icon,
         isPinned:
-          !isPageInEditMode &&
+          !contextStoreIsPageInEditMode &&
           activeWorkflowVersion.trigger?.settings?.isPinned,
         shouldBeRegistered: () => true,
         component: (

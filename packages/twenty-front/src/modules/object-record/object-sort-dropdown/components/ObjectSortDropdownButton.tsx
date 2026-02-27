@@ -131,13 +131,13 @@ export const ObjectSortDropdownButton = () => {
   const [selectedRecordSortDirection, setSelectedRecordSortDirection] =
     useAtomComponentState(selectedRecordSortDirectionComponentState);
 
-  const setIsRecordSortDirectionMenuUnfolded = useSetAtomComponentState(
+  const setIsRecordSortDirectionDropdownMenuUnfolded = useSetAtomComponentState(
     isRecordSortDirectionDropdownMenuUnfoldedComponentState,
   );
 
   const handleSortDirectionClick = (sortDirection: ViewSortDirection) => {
     setSelectedRecordSortDirection(sortDirection);
-    setIsRecordSortDirectionMenuUnfolded(false);
+    setIsRecordSortDirectionDropdownMenuUnfolded(false);
   };
 
   const isDropdownOpen = useAtomComponentStateValue(

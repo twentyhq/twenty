@@ -10,7 +10,7 @@ export const useScrollRestoration = (componentInstanceId: string) => {
   const storageKey = `scroll-${location.pathname}`;
   const [isRestoring, setIsRestoring] = useState(false);
 
-  const scrollTop = useAtomComponentStateValue(
+  const scrollWrapperScrollTop = useAtomComponentStateValue(
     scrollWrapperScrollTopComponentState,
     componentInstanceId,
   );
@@ -46,13 +46,13 @@ export const useScrollRestoration = (componentInstanceId: string) => {
   useEffect(() => {
     if (isRestoring) return;
 
-    if (scrollTop <= SCROLL_RESTORATION_TOP_THRESHOLD_PX) {
+    if (scrollWrapperScrollTop <= SCROLL_RESTORATION_TOP_THRESHOLD_PX) {
       sessionStorage.removeItem(storageKey);
       return;
     }
 
-    sessionStorage.setItem(storageKey, scrollTop.toString());
-  }, [scrollTop, storageKey, isRestoring]);
+    sessionStorage.setItem(storageKey, scrollWrapperScrollTop.toString());
+  }, [scrollWrapperScrollTop, storageKey, isRestoring]);
 
   useEffect(() => {
     const savedPosition = sessionStorage.getItem(storageKey);

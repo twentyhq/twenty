@@ -19,14 +19,17 @@ export const RecordCalendarCardCellEditModePortal = ({
 }: RecordCalendarCardCellEditModePortalProps) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
-  const editModePosition = useAtomComponentStateValue(
+  const recordCalendarCardEditModePosition = useAtomComponentStateValue(
     recordCalendarCardEditModePositionComponentState,
   );
 
   const { editedFieldMetadataItem } =
     useRecordCalendarCardMetadataFromPosition();
 
-  if (!isDefined(editModePosition) || !isDefined(editedFieldMetadataItem)) {
+  if (
+    !isDefined(recordCalendarCardEditModePosition) ||
+    !isDefined(editedFieldMetadataItem)
+  ) {
     return null;
   }
 

@@ -60,19 +60,20 @@ const renderHooks = () => {
         viewableRecordNameSingularComponentState,
         'mocked-uuid',
       );
-      const currentObjectMetadataItemId = useAtomComponentStateValue(
-        contextStoreCurrentObjectMetadataItemIdComponentState,
-        'mocked-uuid',
-      );
-      const targetedRecordsRule = useAtomComponentStateValue(
+      const contextStoreCurrentObjectMetadataItemId =
+        useAtomComponentStateValue(
+          contextStoreCurrentObjectMetadataItemIdComponentState,
+          'mocked-uuid',
+        );
+      const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
         contextStoreTargetedRecordsRuleComponentState,
         'mocked-uuid',
       );
-      const numberOfSelectedRecords = useAtomComponentStateValue(
+      const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
         contextStoreNumberOfSelectedRecordsComponentState,
         'mocked-uuid',
       );
-      const currentViewType = useAtomComponentStateValue(
+      const contextStoreCurrentViewType = useAtomComponentStateValue(
         contextStoreCurrentViewTypeComponentState,
         'mocked-uuid',
       );
@@ -82,10 +83,10 @@ const renderHooks = () => {
         openRecordInCommandMenu,
         viewableRecordId,
         viewableRecordNameSingular,
-        currentObjectMetadataItemId,
-        targetedRecordsRule,
-        numberOfSelectedRecords,
-        currentViewType,
+        contextStoreCurrentObjectMetadataItemId,
+        contextStoreTargetedRecordsRule,
+        contextStoreNumberOfSelectedRecords,
+        contextStoreCurrentViewType,
         getIcon,
       };
     },
@@ -116,15 +117,17 @@ describe('useOpenRecordInCommandMenu', () => {
 
     expect(result.current.viewableRecordId).toBe(recordId);
     expect(result.current.viewableRecordNameSingular).toBe(objectNameSingular);
-    expect(result.current.currentObjectMetadataItemId).toBe(
+    expect(result.current.contextStoreCurrentObjectMetadataItemId).toBe(
       personMockObjectMetadataItem.id,
     );
-    expect(result.current.targetedRecordsRule).toEqual({
+    expect(result.current.contextStoreTargetedRecordsRule).toEqual({
       mode: 'selection',
       selectedRecordIds: [recordId],
     });
-    expect(result.current.numberOfSelectedRecords).toBe(1);
-    expect(result.current.currentViewType).toBe(ContextStoreViewType.ShowPage);
+    expect(result.current.contextStoreNumberOfSelectedRecords).toBe(1);
+    expect(result.current.contextStoreCurrentViewType).toBe(
+      ContextStoreViewType.ShowPage,
+    );
 
     const commandMenuNavigationMorphItemsByPage = jotaiStore.get(
       commandMenuNavigationMorphItemsByPageState.atom,

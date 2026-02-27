@@ -16,31 +16,28 @@ Permite aos usuários inserir e editar texto.
 <Tab title="Uso">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
   const handleChange = (text) => {
-    console.log("Input changed:", text);
+    console.log("Entrada alterada:", text);
   };
 
   const handleKeyDown = (event) => {
-    console.log("Key pressed:", event.key);
+    console.log("Tecla pressionada:", event.key);
   };
 
   return (
-    <RecoilRoot>
-      <TextInput
-        className
-        label="Username"
-        onChange={handleChange}
-        fullWidth={false}
-        disableHotkeys={false}
-        error="Invalid username"
-        onKeyDown={handleKeyDown}
-        RightIcon={null}
-      />
-    </RecoilRoot>
+    <TextInput
+      className
+      label="Nome de usuário"
+      onChange={handleChange}
+      fullWidth={false}
+      disableHotkeys={false}
+      error="Nome de usuário inválido"
+      onKeyDown={handleKeyDown}
+      RightIcon={null}
+    />
   );
 };
 
@@ -81,22 +78,19 @@ Componente de entrada de texto que ajusta automaticamente sua altura com base no
 <Tab title="Uso">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
 export const MyComponent = () => {
   return (
-    <RecoilRoot>
-      <AutosizeTextInput
-        onValidate={() => console.log("onValidate function fired")}
-        minRows={1}
-        placeholder="Write a comment"
-        onFocus={() => console.log("onFocus function fired")}
-        variant="icon"
-        buttonTitle
-        value="Task: "
-      />
-    </RecoilRoot>
+    <AutosizeTextInput
+      onValidate={() => console.log("função onValidate executada")}
+      minRows={1}
+      placeholder="Escreva um comentário"
+      onFocus={() => console.log("função onFocus executada")}
+      variant="icon"
+      buttonTitle
+      value="Tarefa: "
+    />
   );
 };
 ```

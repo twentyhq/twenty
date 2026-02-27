@@ -12,7 +12,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
   () => {
-    const currentViewId = useAtomComponentStateValue(
+    const contextStoreCurrentViewId = useAtomComponentStateValue(
       contextStoreCurrentViewIdComponentState,
     );
 
@@ -30,7 +30,7 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
       useCallback(() => {
         const currentView = store.get(
           coreViewFromViewIdFamilySelector.selectorFamily({
-            viewId: currentViewId ?? '',
+            viewId: contextStoreCurrentViewId ?? '',
           }),
         );
 
@@ -50,7 +50,7 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
           }
         }
       }, [
-        currentViewId,
+        contextStoreCurrentViewId,
         setCurrentRecordFilterGroups,
         currentRecordFilterGroups,
         store,

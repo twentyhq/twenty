@@ -16,31 +16,28 @@ image: /images/user-guide/notes/notes_header.png
 <Tab title="Использование">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import { TextInput } from "@/ui/input/components/TextInput";
 
 export const MyComponent = () => {
   const handleChange = (text) => {
-    console.log("Input changed:", text);
+    console.log("Ввод изменён:", text);
   };
 
   const handleKeyDown = (event) => {
-    console.log("Key pressed:", event.key);
+    console.log("Нажата клавиша:", event.key);
   };
 
   return (
-    <RecoilRoot>
-      <TextInput
-        className
-        label="Username"
-        onChange={handleChange}
-        fullWidth={false}
-        disableHotkeys={false}
-        error="Invalid username"
-        onKeyDown={handleKeyDown}
-        RightIcon={null}
-      />
-    </RecoilRoot>
+    <TextInput
+      className
+      label="Имя пользователя"
+      onChange={handleChange}
+      fullWidth={false}
+      disableHotkeys={false}
+      error="Недопустимое имя пользователя"
+      onKeyDown={handleKeyDown}
+      RightIcon={null}
+    />
   );
 };
 
@@ -81,22 +78,19 @@ export const MyComponent = () => {
 <Tab title="Использование">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
 export const MyComponent = () => {
   return (
-    <RecoilRoot>
-      <AutosizeTextInput
-        onValidate={() => console.log("onValidate function fired")}
-        minRows={1}
-        placeholder="Write a comment"
-        onFocus={() => console.log("onFocus function fired")}
-        variant="icon"
-        buttonTitle
-        value="Task: "
-      />
-    </RecoilRoot>
+    <AutosizeTextInput
+      onValidate={() => console.log("Функция onValidate вызвана")}
+      minRows={1}
+      placeholder="Напишите комментарий"
+      onFocus={() => console.log("Функция onFocus вызвана")}
+      variant="icon"
+      buttonTitle
+      value="Задача: "
+    />
   );
 };
 ```

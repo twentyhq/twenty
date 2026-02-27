@@ -52,7 +52,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     targetObjectId: recordId,
   });
 
-  const activeTabIdInRightDrawer = useAtomComponentStateValue(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     tabListComponentId,
   );
@@ -61,7 +61,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     targetObjectId: recordId,
   });
 
-  const setActiveTabIdInRecordPage = useSetAtomComponentState(
+  const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     tabListComponentIdInRecordPage,
   );
@@ -83,14 +83,14 @@ export const RecordShowRightDrawerOpenRecordButton = ({
 
   const handleOpenRecord = useCallback(() => {
     const tabIdToOpen =
-      activeTabIdInRightDrawer === 'home'
+      activeTabId === 'home'
         ? objectNameSingular === CoreObjectNameSingular.Note ||
           objectNameSingular === CoreObjectNameSingular.Task
           ? 'richText'
           : 'timeline'
-        : activeTabIdInRightDrawer;
+        : activeTabId;
 
-    setActiveTabIdInRecordPage(tabIdToOpen);
+    setActiveTabId(tabIdToOpen);
 
     const parentView = store.get(parentViewState);
 
@@ -110,14 +110,14 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     closeCommandMenu();
   }, [
     actionMenuId,
-    activeTabIdInRightDrawer,
+    activeTabId,
     closeCommandMenu,
     closeDropdown,
     navigate,
     objectNameSingular,
     parentViewState,
     recordId,
-    setActiveTabIdInRecordPage,
+    setActiveTabId,
     store,
   ]);
 

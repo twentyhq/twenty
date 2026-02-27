@@ -9,13 +9,13 @@ export const FilesFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
   const { fieldValue, disableChipClick } = useFilesFieldDisplay();
 
-  const uploadState = useAtomFamilyStateValue(filesFieldUploadState, {
+  const filesFieldUpload = useAtomFamilyStateValue(filesFieldUploadState, {
     recordId,
     fieldName: fieldDefinition.metadata.fieldName,
   });
 
-  const isUploadWindowOpen = uploadState === 'UPLOAD_WINDOW_OPEN';
-  const isFileUploading = uploadState === 'UPLOADING_FILE';
+  const isUploadWindowOpen = filesFieldUpload === 'UPLOAD_WINDOW_OPEN';
+  const isFileUploading = filesFieldUpload === 'UPLOADING_FILE';
 
   return (
     <FilesDisplay

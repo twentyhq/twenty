@@ -9,7 +9,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { mockedTimelineActivities } from '~/testing/mock-data/timeline-activities';
+import { mockedTimelineActivityRecords } from '~/testing/mock-data/generated/data/timelineActivities/mock-timelineActivities-data';
 
 const meta: Meta<typeof TimelineCard> = {
   title: 'Modules/TimelineActivities/TimelineCard',
@@ -59,9 +59,9 @@ const meta: Meta<typeof TimelineCard> = {
           return HttpResponse.json({
             data: {
               timelineActivities: {
-                edges: mockedTimelineActivities.map((activity) => ({
-                  node: activity,
-                  cursor: activity.id,
+                edges: mockedTimelineActivityRecords.map((record) => ({
+                  node: record,
+                  cursor: record.id,
                 })),
                 pageInfo: {
                   hasNextPage: false,

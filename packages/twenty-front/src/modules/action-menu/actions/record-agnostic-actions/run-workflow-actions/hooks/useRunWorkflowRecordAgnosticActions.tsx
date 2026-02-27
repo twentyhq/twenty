@@ -14,7 +14,7 @@ import { useIcons } from 'twenty-ui/display';
 export const useRunWorkflowRecordAgnosticActions = () => {
   const { getIcon } = useIcons();
 
-  const isPageInEditMode = useAtomComponentStateValue(
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
 
@@ -50,7 +50,7 @@ export const useRunWorkflowRecordAgnosticActions = () => {
         shortLabel: name,
         position: index,
         isPinned:
-          !isPageInEditMode &&
+          !contextStoreIsPageInEditMode &&
           activeWorkflowVersion.trigger?.settings?.isPinned,
         Icon,
         shouldBeRegistered: () => true,

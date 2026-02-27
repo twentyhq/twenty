@@ -45,19 +45,19 @@ export type RecordTableCellEditModeProps = {
 export const RecordTableCellEditMode = ({
   children,
 }: RecordTableCellEditModeProps) => {
-  const isFieldInError = useAtomComponentStateValue(
+  const recordFieldInputIsFieldInError = useAtomComponentStateValue(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
   const recordFieldComponentInstanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
-  const setFieldInputLayoutDirection = useSetAtomComponentState(
+  const setRecordFieldInputLayoutDirection = useSetAtomComponentState(
     recordFieldInputLayoutDirectionComponentState,
     recordFieldComponentInstanceId,
   );
 
-  const setFieldInputLayoutDirectionLoading = useSetAtomComponentState(
+  const setRecordFieldInputLayoutDirectionLoading = useSetAtomComponentState(
     recordFieldInputLayoutDirectionLoadingComponentState,
     recordFieldComponentInstanceId,
   );
@@ -65,10 +65,10 @@ export const RecordTableCellEditMode = ({
   const setFieldInputLayoutDirectionMiddleware = {
     name: 'middleware',
     fn: async (state: MiddlewareState) => {
-      setFieldInputLayoutDirection(
+      setRecordFieldInputLayoutDirection(
         state.placement.startsWith('bottom') ? 'downward' : 'upward',
       );
-      setFieldInputLayoutDirectionLoading(false);
+      setRecordFieldInputLayoutDirectionLoading(false);
       return {};
     },
   };
@@ -112,7 +112,7 @@ export const RecordTableCellEditMode = ({
           ref={refs.setFloating}
           style={floatingStyles}
           borderRadius="sm"
-          hasDangerBorder={isFieldInError}
+          hasDangerBorder={recordFieldInputIsFieldInError}
         >
           {children}
         </OverlayContainer>

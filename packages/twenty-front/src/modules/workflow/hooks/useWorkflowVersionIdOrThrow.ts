@@ -3,13 +3,13 @@ import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/st
 import { isDefined } from 'twenty-shared/utils';
 
 export const useWorkflowVersionIdOrThrow = () => {
-  const workflowVersionId = useAtomComponentStateValue(
+  const workflowVisualizerWorkflowVersionId = useAtomComponentStateValue(
     workflowVisualizerWorkflowVersionIdComponentState,
   );
 
-  if (!isDefined(workflowVersionId)) {
+  if (!isDefined(workflowVisualizerWorkflowVersionId)) {
     throw new Error('Expected the workflow version ID to be defined');
   }
 
-  return workflowVersionId;
+  return workflowVisualizerWorkflowVersionId;
 };

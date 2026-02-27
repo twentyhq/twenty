@@ -24,8 +24,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
-import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockPushFocusItemToFocusStack = jest.fn();
 
@@ -35,7 +35,7 @@ jest.mock('@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack', () => ({
   }),
 }));
 
-const peopleObjectMetadataItemMock = getMockPersonObjectMetadataItem();
+const peopleObjectMetadataItemMock = getMockObjectMetadataItemOrThrow('person');
 const personCityFieldMetadataItemMock =
   peopleObjectMetadataItemMock.fields.find((field) => field.name === 'city');
 const personCompanyFieldMetadataItemMock =

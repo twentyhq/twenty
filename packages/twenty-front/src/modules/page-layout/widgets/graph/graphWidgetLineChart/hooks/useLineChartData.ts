@@ -22,7 +22,7 @@ export const useLineChartData = ({
   id,
   colorMode,
 }: UseLineChartDataProps) => {
-  const hiddenLegendIds = useAtomComponentStateValue(
+  const graphWidgetHiddenLegendIds = useAtomComponentStateValue(
     graphWidgetHiddenLegendIdsComponentState,
   );
 
@@ -55,11 +55,11 @@ export const useLineChartData = ({
   );
 
   const visibleData = data.filter(
-    (series) => !hiddenLegendIds.includes(series.id),
+    (series) => !graphWidgetHiddenLegendIds.includes(series.id),
   );
 
   const enrichedSeries = allEnrichedSeries.filter(
-    (series) => !hiddenLegendIds.includes(series.id),
+    (series) => !graphWidgetHiddenLegendIds.includes(series.id),
   );
 
   const nivoData: LineSeries[] = visibleData.map((series) => ({

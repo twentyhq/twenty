@@ -9,7 +9,7 @@ export const useHandleIndexIdentifierClick = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const currentViewId = useAtomComponentStateValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -21,7 +21,7 @@ export const useHandleIndexIdentifierClick = ({
         objectRecordId: recordId,
       },
       {
-        viewId: currentViewId,
+        viewId: contextStoreCurrentViewId,
       },
     );
   };

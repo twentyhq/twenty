@@ -48,7 +48,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const recordGroupFieldMetadata = useAtomComponentStateValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -61,14 +61,16 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const hideEmptyRecordGroup = useAtomComponentStateValue(
+  const recordIndexShouldHideEmptyRecordGroups = useAtomComponentStateValue(
     recordIndexShouldHideEmptyRecordGroupsComponentState,
   );
 
   const shouldHideEmptyGroups =
-    hideEmptyRecordGroup ?? currentView?.shouldHideEmptyGroups ?? false;
+    recordIndexShouldHideEmptyRecordGroups ??
+    currentView?.shouldHideEmptyGroups ??
+    false;
 
-  const recordGroupSort = useAtomComponentStateValue(
+  const recordIndexRecordGroupSort = useAtomComponentStateValue(
     recordIndexRecordGroupSortComponentState,
   );
 
@@ -136,7 +138,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                   onClick={() => onContentChange('recordGroupFields')}
                   LeftIcon={IconLayoutList}
                   text={t`Group by`}
-                  contextualText={recordGroupFieldMetadata?.label}
+                  contextualText={recordIndexGroupFieldMetadataItem?.label}
                   contextualTextPosition="right"
                   hasSubMenu
                 />
@@ -150,7 +152,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                   onClick={() => onContentChange('recordGroupSort')}
                   LeftIcon={IconSortDescending}
                   text={t`Sort`}
-                  contextualText={recordGroupSort}
+                  contextualText={recordIndexRecordGroupSort}
                   contextualTextPosition="right"
                   hasSubMenu
                 />
@@ -201,7 +203,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
                 <MenuItemNavigate
                   onClick={() => onContentChange('hiddenRecordGroups')}
                   LeftIcon={IconEyeOff}
-                  text={`${t`Hidden`} ${recordGroupFieldMetadata?.label ?? ''}`}
+                  text={`${t`Hidden`} ${recordIndexGroupFieldMetadataItem?.label ?? ''}`}
                 />
               </SelectableListItem>
             </SelectableList>

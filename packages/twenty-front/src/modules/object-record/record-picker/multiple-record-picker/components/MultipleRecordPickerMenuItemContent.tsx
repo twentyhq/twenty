@@ -43,7 +43,7 @@ export const MultipleRecordPickerMenuItemContent = ({
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
 
-  const isSelectedByKeyboard = useAtomComponentFamilyStateValue(
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     searchRecord.recordId,
     selectableListComponentInstanceId,
@@ -68,12 +68,14 @@ export const MultipleRecordPickerMenuItemContent = ({
   const displayText =
     searchRecord.label?.trim() || t`Untitled ${labelSingular}`;
 
-  const searchableObjectMetadataItems = useAtomComponentStateValue(
-    multipleRecordPickerSearchableObjectMetadataItemsComponentState,
-    componentInstanceId,
-  );
+  const multipleRecordPickerSearchableObjectMetadataItems =
+    useAtomComponentStateValue(
+      multipleRecordPickerSearchableObjectMetadataItemsComponentState,
+      componentInstanceId,
+    );
 
-  const showObjectName = searchableObjectMetadataItems.length > 1;
+  const showObjectName =
+    multipleRecordPickerSearchableObjectMetadataItems.length > 1;
 
   return (
     <StyledSelectableItem
@@ -83,7 +85,7 @@ export const MultipleRecordPickerMenuItemContent = ({
     >
       <MenuItemMultiSelectAvatar
         onSelectChange={(isSelected) => handleSelectChange(isSelected)}
-        isKeySelected={isSelectedByKeyboard}
+        isKeySelected={isSelectedItemId}
         selected={isRecordSelectedWithObjectItem}
         avatar={
           <Avatar

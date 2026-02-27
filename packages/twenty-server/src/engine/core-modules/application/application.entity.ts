@@ -88,6 +88,9 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
 
+  @Column({ nullable: true, type: 'uuid' })
+  settingsCustomTabFrontComponentId: string | null;
+
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
 

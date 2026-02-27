@@ -54,7 +54,7 @@ export const ObjectOptionsDropdownCustomView = ({
       }
     : null;
 
-  const recordGroupFieldMetadata = useAtomComponentStateValue(
+  const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
@@ -224,7 +224,7 @@ export const ObjectOptionsDropdownCustomView = ({
               <SelectableListItem
                 itemId="Group"
                 onEnter={() =>
-                  isDefined(recordGroupFieldMetadata)
+                  isDefined(recordIndexGroupFieldMetadataItem)
                     ? onContentChange('recordGroups')
                     : onContentChange('recordGroupFields')
                 }
@@ -232,7 +232,7 @@ export const ObjectOptionsDropdownCustomView = ({
                 <MenuItem
                   focused={selectedItemId === 'Group'}
                   onClick={() =>
-                    isDefined(recordGroupFieldMetadata)
+                    isDefined(recordIndexGroupFieldMetadataItem)
                       ? onContentChange('recordGroups')
                       : onContentChange('recordGroupFields')
                   }
@@ -241,7 +241,7 @@ export const ObjectOptionsDropdownCustomView = ({
                   contextualText={
                     isDefaultView
                       ? t`Not available on Default View`
-                      : recordGroupFieldMetadata?.label
+                      : recordIndexGroupFieldMetadataItem?.label
                   }
                   contextualTextPosition="right"
                   hasSubMenu
