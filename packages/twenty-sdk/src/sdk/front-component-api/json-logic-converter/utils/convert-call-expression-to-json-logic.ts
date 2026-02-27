@@ -10,10 +10,13 @@ import { convertKnownFunctionCallToJsonLogic } from './convert-known-function-ca
 import { convertSomeCallToJsonLogic } from './convert-some-call-to-json-logic';
 import { isKnownParamReference } from './is-known-param-reference';
 
-const getRequiredFirstArgument = (
-  callArguments: Node[],
-  context: string,
-): Expression => {
+const getRequiredFirstArgument = ({
+  callArguments,
+  context,
+}: {
+  callArguments: Node[];
+  context: string;
+}): Expression => {
   const firstArgument = callArguments[0];
 
   if (!isDefined(firstArgument)) {
@@ -31,9 +34,11 @@ const getRequiredFirstArgument = (
   return firstArgument;
 };
 
-export const convertCallExpressionToJsonLogic = (
-  node: Expression,
-): JsonLogicRule => {
+export const convertCallExpressionToJsonLogic = ({
+  node,
+}: {
+  node: Expression;
+}): JsonLogicRule => {
   if (!Node.isCallExpression(node)) {
     throw new JsonLogicConversionError(
       `Expected CallExpression, got ${node.getKindName()} (${node.getText()})`,
@@ -48,39 +53,48 @@ export const convertCallExpressionToJsonLogic = (
 
     switch (functionName) {
       case 'isDefined': {
-        const argument = getRequiredFirstArgument(callArguments, 'isDefined()');
-
-        return { isDefined: [convertExpressionToJsonLogic(argument)] };
-      }
-      case 'isNonEmptyString': {
-        const argument = getRequiredFirstArgument(
+        const argument = getRequiredFirstArgument({
           callArguments,
-          'isNonEmptyString()',
-        );
+          context: 'isDefined()',
+        });
 
         return {
-          isNonEmptyString: [convertExpressionToJsonLogic(argument)],
+          isDefined: [convertExpressionToJsonLogic({ node: argument })],
+        };
+      }
+      case 'isNonEmptyString': {
+        const argument = getRequiredFirstArgument({
+          callArguments,
+          context: 'isNonEmptyString()',
+        });
+
+        return {
+          isNonEmptyString: [convertExpressionToJsonLogic({ node: argument })],
         };
       }
       case 'Boolean': {
-        const argument = getRequiredFirstArgument(callArguments, 'Boolean()');
+        const argument = getRequiredFirstArgument({
+          callArguments,
+          context: 'Boolean()',
+        });
 
-        return { '!!': [convertExpressionToJsonLogic(argument)] };
+        return { '!!': [convertExpressionToJsonLogic({ node: argument })] };
       }
       default: {
-        if (isKnownParamReference(functionName)) {
-          const expressionArguments = callArguments.filter(
-            (argument): argument is Expression => Node.isExpression(argument),
-          );
-
-          return convertKnownFunctionCallToJsonLogic(
-            functionName,
-            expressionArguments,
+        if (!isKnownParamReference({ name: functionName })) {
+          throw new JsonLogicConversionError(
+            `Unknown function call: ${functionName}`,
           );
         }
-        throw new JsonLogicConversionError(
-          `Unknown function call: ${functionName}`,
+
+        const expressionArguments = callArguments.filter(
+          (argument): argument is Expression => Node.isExpression(argument),
         );
+
+        return convertKnownFunctionCallToJsonLogic({
+          functionName,
+          args: expressionArguments,
+        });
       }
     }
   }
@@ -90,35 +104,41 @@ export const convertCallExpressionToJsonLogic = (
     const receiverExpression = calleeExpression.getExpression();
 
     if (methodName === 'includes') {
-      const searchArgument = getRequiredFirstArgument(
+      const searchArgument = getRequiredFirstArgument({
         callArguments,
-        '.includes()',
-      );
+        context: '.includes()',
+      });
 
-      return convertIncludesCallToJsonLogic(receiverExpression, searchArgument);
+      return convertIncludesCallToJsonLogic({
+        receiverExpression,
+        searchArgument,
+      });
     }
 
     if (methodName === 'some') {
-      const predicateArgument = getRequiredFirstArgument(
+      const predicateArgument = getRequiredFirstArgument({
         callArguments,
-        '.some()',
-      );
+        context: '.some()',
+      });
 
-      return convertSomeCallToJsonLogic(receiverExpression, predicateArgument);
+      return convertSomeCallToJsonLogic({
+        receiverExpression,
+        predicateArgument,
+      });
     }
 
     if (
       Node.isIdentifier(receiverExpression) &&
-      isKnownParamReference(methodName)
+      isKnownParamReference({ name: methodName })
     ) {
       const expressionArguments = callArguments.filter(
         (argument): argument is Expression => Node.isExpression(argument),
       );
 
-      return convertKnownFunctionCallToJsonLogic(
-        methodName,
-        expressionArguments,
-      );
+      return convertKnownFunctionCallToJsonLogic({
+        functionName: methodName,
+        args: expressionArguments,
+      });
     }
   }
 

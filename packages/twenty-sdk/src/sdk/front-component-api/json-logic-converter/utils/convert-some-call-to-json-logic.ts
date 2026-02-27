@@ -6,12 +6,16 @@ import { type JsonLogicRule } from '../types/json-logic-rule';
 import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
 import { flattenPropertyAccessToDotPath } from './flatten-property-access-to-dot-path';
 
-export const convertSomeCallToJsonLogic = (
-  receiverExpression: Expression,
-  predicateArgument: Expression,
-): JsonLogicRule => {
-  const flattenedPropertyPath =
-    flattenPropertyAccessToDotPath(receiverExpression);
+export const convertSomeCallToJsonLogic = ({
+  receiverExpression,
+  predicateArgument,
+}: {
+  receiverExpression: Expression;
+  predicateArgument: Expression;
+}): JsonLogicRule => {
+  const flattenedPropertyPath = flattenPropertyAccessToDotPath({
+    node: receiverExpression,
+  });
 
   if (!Node.isArrowFunction(predicateArgument)) {
     throw new JsonLogicConversionError(
@@ -30,7 +34,7 @@ export const convertSomeCallToJsonLogic = (
   return {
     some: [
       { var: flattenedPropertyPath },
-      convertExpressionToJsonLogic(predicateBodyExpression),
+      convertExpressionToJsonLogic({ node: predicateBodyExpression }),
     ],
   };
 };

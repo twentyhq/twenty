@@ -1,4 +1,12 @@
-import { type Expression, Node, SyntaxKind } from 'ts-morph';
+import {
+  type ArrowFunction,
+  type Expression,
+  type NumericLiteral,
+  type ParenthesizedExpression,
+  type PrefixUnaryExpression,
+  type StringLiteral,
+  SyntaxKind,
+} from 'ts-morph';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
@@ -11,102 +19,103 @@ import { flattenPropertyAccessToDotPath } from './flatten-property-access-to-dot
 import { isKnownParamReference } from './is-known-param-reference';
 import { tryResolveKnownConstant } from './try-resolve-known-constant';
 
-export const convertExpressionToJsonLogic = (
-  node: Expression,
-): JsonLogicRule => {
-  if (
-    Node.isParenthesizedExpression(node) ||
-    Node.isAsExpression(node) ||
-    Node.isNonNullExpression(node)
-  ) {
-    return convertExpressionToJsonLogic(node.getExpression());
-  }
+export const convertExpressionToJsonLogic = ({
+  node,
+}: {
+  node: Expression;
+}): JsonLogicRule => {
+  switch (node.getKind()) {
+    case SyntaxKind.ParenthesizedExpression:
+    case SyntaxKind.AsExpression:
+    case SyntaxKind.NonNullExpression:
+      return convertExpressionToJsonLogic({
+        node: (node as ParenthesizedExpression).getExpression(),
+      });
 
-  if (Node.isTrueLiteral(node)) {
-    return true;
-  }
+    case SyntaxKind.TrueKeyword:
+      return true;
 
-  if (Node.isFalseLiteral(node)) {
-    return false;
-  }
+    case SyntaxKind.FalseKeyword:
+      return false;
 
-  if (Node.isNullLiteral(node)) {
-    return null;
-  }
-
-  if (Node.isStringLiteral(node)) {
-    return node.getLiteralValue();
-  }
-
-  if (Node.isNumericLiteral(node)) {
-    return node.getLiteralValue();
-  }
-
-  if (Node.isIdentifier(node)) {
-    const identifierName = node.getText();
-
-    if (identifierName === 'undefined') {
+    case SyntaxKind.NullKeyword:
       return null;
-    }
 
-    if (isKnownParamReference(identifierName)) {
+    case SyntaxKind.StringLiteral:
+      return (node as StringLiteral).getLiteralValue();
+
+    case SyntaxKind.NumericLiteral:
+      return (node as NumericLiteral).getLiteralValue();
+
+    case SyntaxKind.Identifier: {
+      const identifierName = node.getText();
+
+      if (identifierName === 'undefined') {
+        return null;
+      }
+
+      if (isKnownParamReference({ name: identifierName })) {
+        return { var: identifierName };
+      }
+
+      const resolvedConstantValue = tryResolveKnownConstant({
+        constantPath: identifierName,
+      });
+
+      if (isDefined(resolvedConstantValue)) {
+        return resolvedConstantValue;
+      }
+
       return { var: identifierName };
     }
 
-    const resolvedConstantValue = tryResolveKnownConstant(identifierName);
+    case SyntaxKind.PropertyAccessExpression: {
+      const flattenedPropertyPath = flattenPropertyAccessToDotPath({ node });
 
-    if (isDefined(resolvedConstantValue)) {
-      return resolvedConstantValue;
-    }
+      if (isKnownParamReference({ name: flattenedPropertyPath })) {
+        return { var: flattenedPropertyPath };
+      }
 
-    return { var: identifierName };
-  }
+      const resolvedConstantValue = tryResolveKnownConstant({
+        constantPath: flattenedPropertyPath,
+      });
 
-  if (Node.isPropertyAccessExpression(node)) {
-    const flattenedPropertyPath = flattenPropertyAccessToDotPath(node);
+      if (isDefined(resolvedConstantValue)) {
+        return resolvedConstantValue;
+      }
 
-    if (isKnownParamReference(flattenedPropertyPath)) {
       return { var: flattenedPropertyPath };
     }
 
-    const resolvedConstantValue = tryResolveKnownConstant(
-      flattenedPropertyPath,
-    );
+    case SyntaxKind.PrefixUnaryExpression: {
+      const prefixNode = node as PrefixUnaryExpression;
+      const prefixOperatorKind = prefixNode.getOperatorToken();
 
-    if (isDefined(resolvedConstantValue)) {
-      return resolvedConstantValue;
+      if (prefixOperatorKind === SyntaxKind.ExclamationToken) {
+        return {
+          '!': [
+            convertExpressionToJsonLogic({ node: prefixNode.getOperand() }),
+          ],
+        };
+      }
+
+      throw new JsonLogicConversionError(
+        `Unsupported prefix unary operator: ${prefixOperatorKind} (${node.getText()})`,
+      );
     }
 
-    return { var: flattenedPropertyPath };
+    case SyntaxKind.BinaryExpression:
+      return convertBinaryExpressionToJsonLogic({ node });
+
+    case SyntaxKind.CallExpression:
+      return convertCallExpressionToJsonLogic({ node });
+
+    case SyntaxKind.ArrowFunction:
+      return convertArrowFunctionToJsonLogic({ node: node as ArrowFunction });
+
+    default:
+      throw new JsonLogicConversionError(
+        `Unsupported expression kind: ${node.getKindName()} (${node.getText()})`,
+      );
   }
-
-  if (Node.isPrefixUnaryExpression(node)) {
-    const prefixOperatorKind = node.getOperatorToken();
-
-    if (prefixOperatorKind === SyntaxKind.ExclamationToken) {
-      const unaryOperand = node.getOperand();
-
-      return { '!': [convertExpressionToJsonLogic(unaryOperand)] };
-    }
-
-    throw new JsonLogicConversionError(
-      `Unsupported prefix unary operator: ${prefixOperatorKind} (${node.getText()})`,
-    );
-  }
-
-  if (Node.isBinaryExpression(node)) {
-    return convertBinaryExpressionToJsonLogic(node);
-  }
-
-  if (Node.isCallExpression(node)) {
-    return convertCallExpressionToJsonLogic(node);
-  }
-
-  if (Node.isArrowFunction(node)) {
-    return convertArrowFunctionToJsonLogic(node);
-  }
-
-  throw new JsonLogicConversionError(
-    `Unsupported expression kind: ${node.getKindName()} (${node.getText()})`,
-  );
 };

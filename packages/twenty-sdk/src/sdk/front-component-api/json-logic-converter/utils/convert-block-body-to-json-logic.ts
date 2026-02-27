@@ -7,7 +7,11 @@ import { type JsonLogicRule } from '../types/json-logic-rule';
 import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
 import { convertIfStatementToJsonLogic } from './convert-if-statement-to-json-logic';
 
-export const convertBlockBodyToJsonLogic = (block: Block): JsonLogicRule => {
+export const convertBlockBodyToJsonLogic = ({
+  block,
+}: {
+  block: Block;
+}): JsonLogicRule => {
   const statements = block.getStatements();
 
   const conditionalBranches: Array<{
@@ -23,7 +27,9 @@ export const convertBlockBodyToJsonLogic = (block: Block): JsonLogicRule => {
     }
 
     if (Node.isIfStatement(statement)) {
-      const { condition, result } = convertIfStatementToJsonLogic(statement);
+      const { condition, result } = convertIfStatementToJsonLogic({
+        statement,
+      });
 
       conditionalBranches.push({ condition, result });
 
@@ -33,11 +39,13 @@ export const convertBlockBodyToJsonLogic = (block: Block): JsonLogicRule => {
     if (Node.isReturnStatement(statement)) {
       const returnExpression = statement.getExpression();
 
-      if (returnExpression) {
-        defaultReturnValue = convertExpressionToJsonLogic(returnExpression);
+      if (!isDefined(returnExpression)) {
+        continue;
       }
 
-      continue;
+      defaultReturnValue = convertExpressionToJsonLogic({
+        node: returnExpression,
+      });
     }
 
     throw new JsonLogicConversionError(

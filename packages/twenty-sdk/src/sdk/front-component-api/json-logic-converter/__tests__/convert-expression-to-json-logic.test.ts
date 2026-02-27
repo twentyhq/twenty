@@ -16,44 +16,54 @@ const getExpression = (code: string): Expression => {
 describe('convertExpressionToJsonLogic', () => {
   describe('literals', () => {
     it('converts true', () => {
-      expect(convertExpressionToJsonLogic(getExpression('true;'))).toBe(true);
+      expect(
+        convertExpressionToJsonLogic({ node: getExpression('true;') }),
+      ).toBe(true);
     });
 
     it('converts false', () => {
-      expect(convertExpressionToJsonLogic(getExpression('false;'))).toBe(false);
+      expect(
+        convertExpressionToJsonLogic({ node: getExpression('false;') }),
+      ).toBe(false);
     });
 
     it('converts null', () => {
-      expect(convertExpressionToJsonLogic(getExpression('null;'))).toBeNull();
+      expect(
+        convertExpressionToJsonLogic({ node: getExpression('null;') }),
+      ).toBeNull();
     });
 
     it('converts string literal', () => {
-      expect(convertExpressionToJsonLogic(getExpression('"hello";'))).toBe(
-        'hello',
-      );
+      expect(
+        convertExpressionToJsonLogic({ node: getExpression('"hello";') }),
+      ).toBe('hello');
     });
 
     it('converts numeric literal', () => {
-      expect(convertExpressionToJsonLogic(getExpression('42;'))).toBe(42);
+      expect(convertExpressionToJsonLogic({ node: getExpression('42;') })).toBe(
+        42,
+      );
     });
   });
 
   describe('identifiers', () => {
     it('converts undefined to null', () => {
       expect(
-        convertExpressionToJsonLogic(getExpression('undefined;')),
+        convertExpressionToJsonLogic({ node: getExpression('undefined;') }),
       ).toBeNull();
     });
 
     it('converts unknown identifier to var', () => {
       expect(
-        convertExpressionToJsonLogic(getExpression('someUnknownVar;')),
+        convertExpressionToJsonLogic({
+          node: getExpression('someUnknownVar;'),
+        }),
       ).toEqual({ var: 'someUnknownVar' });
     });
 
     it('converts known param to var', () => {
       expect(
-        convertExpressionToJsonLogic(getExpression('isShowPage;')),
+        convertExpressionToJsonLogic({ node: getExpression('isShowPage;') }),
       ).toEqual({ var: 'isShowPage' });
     });
   });
@@ -61,34 +71,40 @@ describe('convertExpressionToJsonLogic', () => {
   describe('property access', () => {
     it('converts known param property to var', () => {
       expect(
-        convertExpressionToJsonLogic(
-          getExpression('objectPermissions.canUpdate;'),
-        ),
+        convertExpressionToJsonLogic({
+          node: getExpression('objectPermissions.canUpdate;'),
+        }),
       ).toEqual({ var: 'objectPermissions.canUpdate' });
     });
 
     it('resolves known constant dot path', () => {
       expect(
-        convertExpressionToJsonLogic(
-          getExpression('CoreObjectNameSingular.Company;'),
-        ),
+        convertExpressionToJsonLogic({
+          node: getExpression('CoreObjectNameSingular.Company;'),
+        }),
       ).toBe('company');
     });
   });
 
   describe('wrapper expressions', () => {
     it('unwraps parenthesized expression', () => {
-      expect(convertExpressionToJsonLogic(getExpression('(true);'))).toBe(true);
+      expect(
+        convertExpressionToJsonLogic({ node: getExpression('(true);') }),
+      ).toBe(true);
     });
 
     it('unwraps as expression', () => {
       expect(
-        convertExpressionToJsonLogic(getExpression('(a as boolean);')),
+        convertExpressionToJsonLogic({
+          node: getExpression('(a as boolean);'),
+        }),
       ).toEqual({ var: 'a' });
     });
 
     it('unwraps non-null expression', () => {
-      expect(convertExpressionToJsonLogic(getExpression('a!;'))).toEqual({
+      expect(
+        convertExpressionToJsonLogic({ node: getExpression('a!;') }),
+      ).toEqual({
         var: 'a',
       });
     });
@@ -96,21 +112,23 @@ describe('convertExpressionToJsonLogic', () => {
 
   describe('unary expressions', () => {
     it('converts negation', () => {
-      expect(convertExpressionToJsonLogic(getExpression('!a;'))).toEqual({
+      expect(
+        convertExpressionToJsonLogic({ node: getExpression('!a;') }),
+      ).toEqual({
         '!': [{ var: 'a' }],
       });
     });
 
     it('throws for unsupported unary operators', () => {
-      expect(() => convertExpressionToJsonLogic(getExpression('~a;'))).toThrow(
-        JsonLogicConversionError,
-      );
+      expect(() =>
+        convertExpressionToJsonLogic({ node: getExpression('~a;') }),
+      ).toThrow(JsonLogicConversionError);
     });
   });
 
   it('throws for unsupported expression kinds', () => {
     expect(() =>
-      convertExpressionToJsonLogic(getExpression('[1, 2, 3];')),
+      convertExpressionToJsonLogic({ node: getExpression('[1, 2, 3];') }),
     ).toThrow(JsonLogicConversionError);
   });
 });

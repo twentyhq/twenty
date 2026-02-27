@@ -4,10 +4,13 @@ import {
   type JsonLogicRule,
 } from '../types/json-logic-rule';
 
-export const extractJsonLogicOperands = (
-  rule: JsonLogicRule,
-  operatorKey: JsonLogicOperator,
-): JsonLogicRule[] => {
+export const extractJsonLogicOperands = ({
+  rule,
+  operatorKey,
+}: {
+  rule: JsonLogicRule;
+  operatorKey: JsonLogicOperator;
+}): JsonLogicRule[] => {
   if (isJsonLogicObject(rule) && operatorKey in rule) {
     const operands = rule[operatorKey];
 

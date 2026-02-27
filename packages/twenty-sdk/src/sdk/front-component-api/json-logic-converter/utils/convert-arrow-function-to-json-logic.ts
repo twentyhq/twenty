@@ -6,13 +6,15 @@ import { type JsonLogicRule } from '../types/json-logic-rule';
 import { convertBlockBodyToJsonLogic } from './convert-block-body-to-json-logic';
 import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
 
-export const convertArrowFunctionToJsonLogic = (
-  node: ArrowFunction,
-): JsonLogicRule => {
+export const convertArrowFunctionToJsonLogic = ({
+  node,
+}: {
+  node: ArrowFunction;
+}): JsonLogicRule => {
   const functionBody = node.getBody();
 
   if (Node.isBlock(functionBody)) {
-    return convertBlockBodyToJsonLogic(functionBody);
+    return convertBlockBodyToJsonLogic({ block: functionBody });
   }
 
   if (!Node.isExpression(functionBody)) {
@@ -21,5 +23,5 @@ export const convertArrowFunctionToJsonLogic = (
     );
   }
 
-  return convertExpressionToJsonLogic(functionBody);
+  return convertExpressionToJsonLogic({ node: functionBody });
 };

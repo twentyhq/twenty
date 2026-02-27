@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { JsonLogicConversionError } from '../types/json-logic-conversion-error';
 import {
-  type JsonLogicObject,
   type JsonLogicOperator,
   type JsonLogicRule,
 } from '../types/json-logic-rule';
@@ -16,10 +15,13 @@ const KNOWN_FUNCTION_TO_OPERATOR: Record<string, JsonLogicOperator> = {
   isFeatureFlagEnabled: 'isFeatureFlagEnabled',
 };
 
-export const convertKnownFunctionCallToJsonLogic = (
-  functionName: string,
-  args: Expression[],
-): JsonLogicRule => {
+export const convertKnownFunctionCallToJsonLogic = ({
+  functionName,
+  args,
+}: {
+  functionName: string;
+  args: Expression[];
+}): JsonLogicRule => {
   const operatorName = KNOWN_FUNCTION_TO_OPERATOR[functionName];
 
   if (!isDefined(operatorName)) {
@@ -36,11 +38,11 @@ export const convertKnownFunctionCallToJsonLogic = (
     );
   }
 
-  const resolvedArgumentString = resolveExpressionToStringValue(firstArgument);
+  const resolvedArgumentString = resolveExpressionToStringValue({
+    argumentExpression: firstArgument,
+  });
 
-  const rule: JsonLogicObject = {};
-
-  rule[operatorName] = [resolvedArgumentString];
-
-  return rule;
+  return {
+    [operatorName]: [resolvedArgumentString],
+  };
 };

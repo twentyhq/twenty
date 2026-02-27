@@ -4,9 +4,11 @@ import { type JsonLogicRule } from '../types/json-logic-rule';
 
 import { resolveArrayLiteralElements } from './resolve-array-literal-elements';
 
-export const resolveLocalArrayVariable = (
-  identifier: Node,
-): JsonLogicRule[] | undefined => {
+export const resolveLocalArrayVariable = ({
+  identifier,
+}: {
+  identifier: Node;
+}): JsonLogicRule[] | undefined => {
   if (!Node.isIdentifier(identifier)) {
     return undefined;
   }
@@ -32,5 +34,5 @@ export const resolveLocalArrayVariable = (
     return undefined;
   }
 
-  return resolveArrayLiteralElements(initializer);
+  return resolveArrayLiteralElements({ arrayLiteral: initializer });
 };

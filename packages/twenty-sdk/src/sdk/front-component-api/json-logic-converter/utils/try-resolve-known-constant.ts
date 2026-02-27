@@ -6,9 +6,11 @@ import { KNOWN_CONSTANTS } from '../resolve-constants';
 const isResolvedPrimitive = (value: unknown): value is string | number =>
   isString(value) || isNumber(value);
 
-export const tryResolveKnownConstant = (
-  constantPath: string,
-): string | number | undefined => {
+export const tryResolveKnownConstant = ({
+  constantPath,
+}: {
+  constantPath: string;
+}): string | number | undefined => {
   if (constantPath in KNOWN_CONSTANTS) {
     const constantValue = KNOWN_CONSTANTS[constantPath];
 

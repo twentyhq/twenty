@@ -6,9 +6,11 @@ import { type JsonLogicRule } from '../types/json-logic-rule';
 
 import { convertArrowFunctionToJsonLogic } from './convert-arrow-function-to-json-logic';
 
-export const convertSourceFileToJsonLogic = (
-  sourceFile: SourceFile,
-): JsonLogicRule => {
+export const convertSourceFileToJsonLogic = ({
+  sourceFile,
+}: {
+  sourceFile: SourceFile;
+}): JsonLogicRule => {
   const arrowFunctionNodes = sourceFile.getDescendantsOfKind(
     SyntaxKind.ArrowFunction,
   );
@@ -19,5 +21,5 @@ export const convertSourceFileToJsonLogic = (
     throw new JsonLogicConversionError('No arrow function found in source');
   }
 
-  return convertArrowFunctionToJsonLogic(firstArrowFunction);
+  return convertArrowFunctionToJsonLogic({ node: firstArrowFunction });
 };

@@ -1,57 +1,67 @@
+import { JsonLogicConversionError } from '@/sdk/front-component-api/json-logic-converter/types/json-logic-conversion-error';
 import {
   type ArrowFunction,
   Node,
   type SourceFile,
   SyntaxKind,
 } from 'ts-morph';
+import { isDefined } from 'twenty-shared/utils';
 
 type ExtractedAction = {
   key: string;
   shouldBeRegisteredNode: ArrowFunction;
 };
 
-export const extractShouldBeRegisteredFromConfig = (
-  sourceFile: SourceFile,
-): ExtractedAction[] => {
-  const results: ExtractedAction[] = [];
+const generateErrorMessage = (sourceFile: SourceFile) =>
+  `Object with 'shouldBeRegistered' is missing a valid 'key' property in ${sourceFile.getFilePath()}`;
 
+export const extractShouldBeRegisteredFromConfig = ({
+  sourceFile,
+}: {
+  sourceFile: SourceFile;
+}): ExtractedAction[] => {
   const objectLiterals = sourceFile.getDescendantsOfKind(
     SyntaxKind.ObjectLiteralExpression,
   );
 
-  for (const objectLiteral of objectLiterals) {
-    const keyProp = objectLiteral.getProperty('key');
-    const shouldBeRegisteredProp =
-      objectLiteral.getProperty('shouldBeRegistered');
+  return objectLiterals.reduce<ExtractedAction[]>(
+    (extractedActions, objectLiteral) => {
+      const shouldBeRegisteredProp =
+        objectLiteral.getProperty('shouldBeRegistered');
 
-    if (
-      !shouldBeRegisteredProp ||
-      !Node.isPropertyAssignment(shouldBeRegisteredProp)
-    ) {
-      continue;
-    }
-
-    const initializer = shouldBeRegisteredProp.getInitializer();
-
-    if (!initializer || !Node.isArrowFunction(initializer)) {
-      continue;
-    }
-
-    let actionKey = 'unknown';
-
-    if (keyProp && Node.isPropertyAssignment(keyProp)) {
-      const keyInit = keyProp.getInitializer();
-
-      if (keyInit) {
-        actionKey = keyInit.getText();
+      if (
+        !isDefined(shouldBeRegisteredProp) ||
+        !Node.isPropertyAssignment(shouldBeRegisteredProp)
+      ) {
+        return extractedActions;
       }
-    }
 
-    results.push({
-      key: actionKey,
-      shouldBeRegisteredNode: initializer,
-    });
-  }
+      const initializer = shouldBeRegisteredProp.getInitializer();
 
-  return results;
+      if (!initializer || !Node.isArrowFunction(initializer)) {
+        return extractedActions;
+      }
+
+      const keyProp = objectLiteral.getProperty('key');
+
+      if (!Node.isPropertyAssignment(keyProp)) {
+        throw new JsonLogicConversionError(generateErrorMessage(sourceFile));
+      }
+
+      const actionKey = keyProp?.getInitializer()?.getText();
+
+      if (!isDefined(actionKey)) {
+        throw new JsonLogicConversionError(generateErrorMessage(sourceFile));
+      }
+
+      return [
+        ...extractedActions,
+        {
+          key: actionKey,
+          shouldBeRegisteredNode: initializer,
+        },
+      ];
+    },
+    [],
+  );
 };

@@ -16,79 +16,89 @@ const getExpression = (code: string): Expression => {
 describe('convertBinaryExpressionToJsonLogic', () => {
   it('converts && to and', () => {
     expect(
-      convertBinaryExpressionToJsonLogic(getExpression('a && b;')),
+      convertBinaryExpressionToJsonLogic({ node: getExpression('a && b;') }),
     ).toEqual({ and: [{ var: 'a' }, { var: 'b' }] });
   });
 
   it('converts || to or', () => {
     expect(
-      convertBinaryExpressionToJsonLogic(getExpression('a || b;')),
+      convertBinaryExpressionToJsonLogic({ node: getExpression('a || b;') }),
     ).toEqual({ or: [{ var: 'a' }, { var: 'b' }] });
   });
 
   it('converts === to strict equal', () => {
     expect(
-      convertBinaryExpressionToJsonLogic(getExpression('a === "x";')),
+      convertBinaryExpressionToJsonLogic({
+        node: getExpression('a === "x";'),
+      }),
     ).toEqual({ '===': [{ var: 'a' }, 'x'] });
   });
 
   it('converts !== to strict not equal', () => {
     expect(
-      convertBinaryExpressionToJsonLogic(getExpression('a !== "x";')),
+      convertBinaryExpressionToJsonLogic({
+        node: getExpression('a !== "x";'),
+      }),
     ).toEqual({ '!==': [{ var: 'a' }, 'x'] });
   });
 
   it('converts < to less than', () => {
     expect(
-      convertBinaryExpressionToJsonLogic(getExpression('a < 10;')),
+      convertBinaryExpressionToJsonLogic({ node: getExpression('a < 10;') }),
     ).toEqual({ '<': [{ var: 'a' }, 10] });
   });
 
   it('converts <= to less than or equal', () => {
     expect(
-      convertBinaryExpressionToJsonLogic(getExpression('a <= 10;')),
+      convertBinaryExpressionToJsonLogic({ node: getExpression('a <= 10;') }),
     ).toEqual({ '<=': [{ var: 'a' }, 10] });
   });
 
   it('converts > to greater than', () => {
     expect(
-      convertBinaryExpressionToJsonLogic(getExpression('a > 10;')),
+      convertBinaryExpressionToJsonLogic({ node: getExpression('a > 10;') }),
     ).toEqual({ '>': [{ var: 'a' }, 10] });
   });
 
   it('converts >= to greater than or equal', () => {
     expect(
-      convertBinaryExpressionToJsonLogic(getExpression('a >= 10;')),
+      convertBinaryExpressionToJsonLogic({ node: getExpression('a >= 10;') }),
     ).toEqual({ '>=': [{ var: 'a' }, 10] });
   });
 
   it('strips ?? false by returning left operand', () => {
     expect(
-      convertBinaryExpressionToJsonLogic(getExpression('a ?? false;')),
+      convertBinaryExpressionToJsonLogic({
+        node: getExpression('a ?? false;'),
+      }),
     ).toEqual({ var: 'a' });
   });
 
   it('strips || false by returning left operand', () => {
     expect(
-      convertBinaryExpressionToJsonLogic(getExpression('a || false;')),
+      convertBinaryExpressionToJsonLogic({
+        node: getExpression('a || false;'),
+      }),
     ).toEqual({ var: 'a' });
   });
 
   it('flattens nested && into a single and', () => {
     expect(
-      convertBinaryExpressionToJsonLogic(getExpression('a && b && c;')),
+      convertBinaryExpressionToJsonLogic({
+        node: getExpression('a && b && c;'),
+      }),
     ).toEqual({ and: [{ var: 'a' }, { var: 'b' }, { var: 'c' }] });
   });
 
   it('throws JsonLogicConversionError for unsupported operators', () => {
     expect(() =>
-      convertBinaryExpressionToJsonLogic(getExpression('a + b;')),
+      convertBinaryExpressionToJsonLogic({ node: getExpression('a + b;') }),
     ).toThrow(JsonLogicConversionError);
   });
 
   it('throws JsonLogicConversionError for non-binary expression', () => {
     expect(() =>
-      convertBinaryExpressionToJsonLogic(getExpression('a;')),
+      convertBinaryExpressionToJsonLogic({ node: getExpression('a;') }),
     ).toThrow(JsonLogicConversionError);
   });
 });

@@ -21,7 +21,7 @@ const resolveIdentifier = (code: string, identifierName: string): unknown => {
     );
   }
 
-  return resolveLocalArrayVariable(targetIdentifier);
+  return resolveLocalArrayVariable({ identifier: targetIdentifier });
 };
 
 describe('resolveLocalArrayVariable', () => {
@@ -47,7 +47,9 @@ describe('resolveLocalArrayVariable', () => {
       SyntaxKind.StringLiteral,
     );
 
-    expect(resolveLocalArrayVariable(stringLiteral)).toBeUndefined();
+    expect(
+      resolveLocalArrayVariable({ identifier: stringLiteral }),
+    ).toBeUndefined();
   });
 
   it('returns undefined when variable is not declared as array', () => {

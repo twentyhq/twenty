@@ -25,10 +25,10 @@ describe('convertKnownFunctionCallToJsonLogic', () => {
     );
 
     expect(
-      convertKnownFunctionCallToJsonLogic(
-        'getTargetObjectReadPermission',
+      convertKnownFunctionCallToJsonLogic({
+        functionName: 'getTargetObjectReadPermission',
         args,
-      ),
+      }),
     ).toEqual({ hasReadPermission: ['workflow'] });
   });
 
@@ -38,10 +38,10 @@ describe('convertKnownFunctionCallToJsonLogic', () => {
     );
 
     expect(
-      convertKnownFunctionCallToJsonLogic(
-        'getTargetObjectWritePermission',
+      convertKnownFunctionCallToJsonLogic({
+        functionName: 'getTargetObjectWritePermission',
         args,
-      ),
+      }),
     ).toEqual({ hasWritePermission: ['workflow'] });
   });
 
@@ -51,19 +51,28 @@ describe('convertKnownFunctionCallToJsonLogic', () => {
     );
 
     expect(
-      convertKnownFunctionCallToJsonLogic('isFeatureFlagEnabled', args),
+      convertKnownFunctionCallToJsonLogic({
+        functionName: 'isFeatureFlagEnabled',
+        args,
+      }),
     ).toEqual({ isFeatureFlagEnabled: ['IS_COMMAND_MENU_ITEM_ENABLED'] });
   });
 
   it('throws for unknown function names', () => {
     expect(() =>
-      convertKnownFunctionCallToJsonLogic('unknownFunction', []),
+      convertKnownFunctionCallToJsonLogic({
+        functionName: 'unknownFunction',
+        args: [],
+      }),
     ).toThrow(JsonLogicConversionError);
   });
 
   it('throws when no arguments are provided', () => {
     expect(() =>
-      convertKnownFunctionCallToJsonLogic('getTargetObjectReadPermission', []),
+      convertKnownFunctionCallToJsonLogic({
+        functionName: 'getTargetObjectReadPermission',
+        args: [],
+      }),
     ).toThrow(JsonLogicConversionError);
   });
 });

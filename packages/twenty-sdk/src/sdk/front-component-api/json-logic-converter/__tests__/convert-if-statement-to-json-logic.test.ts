@@ -13,48 +13,50 @@ const getIfStatement = (code: string): IfStatement => {
 
 describe('convertIfStatementToJsonLogic', () => {
   it('converts if block with return expression', () => {
-    const result = convertIfStatementToJsonLogic(
-      getIfStatement('if (a) { return true; }'),
-    );
+    const result = convertIfStatementToJsonLogic({
+      statement: getIfStatement('if (a) { return true; }'),
+    });
 
     expect(result).toEqual({ condition: { var: 'a' }, result: true });
   });
 
   it('converts if with direct return statement', () => {
-    const result = convertIfStatementToJsonLogic(
-      getIfStatement('if (a) return true;'),
-    );
+    const result = convertIfStatementToJsonLogic({
+      statement: getIfStatement('if (a) return true;'),
+    });
 
     expect(result).toEqual({ condition: { var: 'a' }, result: true });
   });
 
   it('defaults result to true when return has no expression in block', () => {
-    const result = convertIfStatementToJsonLogic(
-      getIfStatement('if (a) { return; }'),
-    );
+    const result = convertIfStatementToJsonLogic({
+      statement: getIfStatement('if (a) { return; }'),
+    });
 
     expect(result).toEqual({ condition: { var: 'a' }, result: true });
   });
 
   it('defaults result to true when direct return has no expression', () => {
-    const result = convertIfStatementToJsonLogic(
-      getIfStatement('if (a) return;'),
-    );
+    const result = convertIfStatementToJsonLogic({
+      statement: getIfStatement('if (a) return;'),
+    });
 
     expect(result).toEqual({ condition: { var: 'a' }, result: true });
   });
 
   it('throws when if block has no return statement', () => {
     expect(() =>
-      convertIfStatementToJsonLogic(getIfStatement('if (a) { const x = 1; }')),
+      convertIfStatementToJsonLogic({
+        statement: getIfStatement('if (a) { const x = 1; }'),
+      }),
     ).toThrow(JsonLogicConversionError);
   });
 
   it('throws for unsupported then statement kinds', () => {
     expect(() =>
-      convertIfStatementToJsonLogic(
-        getIfStatement('if (a) throw new Error("x");'),
-      ),
+      convertIfStatementToJsonLogic({
+        statement: getIfStatement('if (a) throw new Error("x");'),
+      }),
     ).toThrow(JsonLogicConversionError);
   });
 });

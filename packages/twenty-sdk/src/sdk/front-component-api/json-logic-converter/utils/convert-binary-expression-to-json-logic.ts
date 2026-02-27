@@ -6,9 +6,11 @@ import { type JsonLogicRule } from '../types/json-logic-rule';
 import { convertExpressionToJsonLogic } from './convert-expression-to-json-logic';
 import { extractJsonLogicOperands } from './extract-json-logic-operands';
 
-export const convertBinaryExpressionToJsonLogic = (
-  node: Expression,
-): JsonLogicRule => {
+export const convertBinaryExpressionToJsonLogic = ({
+  node,
+}: {
+  node: Expression;
+}): JsonLogicRule => {
   if (!Node.isBinaryExpression(node)) {
     throw new JsonLogicConversionError(
       `Expected BinaryExpression, got ${node.getKindName()} (${node.getText()})`,
@@ -23,32 +25,48 @@ export const convertBinaryExpressionToJsonLogic = (
     operatorKind === SyntaxKind.QuestionQuestionToken &&
     Node.isFalseLiteral(rightOperand)
   ) {
-    return convertExpressionToJsonLogic(leftOperand);
+    return convertExpressionToJsonLogic({ node: leftOperand });
   }
 
   if (
     operatorKind === SyntaxKind.BarBarToken &&
     Node.isFalseLiteral(rightOperand)
   ) {
-    return convertExpressionToJsonLogic(leftOperand);
+    return convertExpressionToJsonLogic({ node: leftOperand });
   }
 
-  const convertedLeftExpression = convertExpressionToJsonLogic(leftOperand);
-  const convertedRightExpression = convertExpressionToJsonLogic(rightOperand);
+  const convertedLeftExpression = convertExpressionToJsonLogic({
+    node: leftOperand,
+  });
+  const convertedRightExpression = convertExpressionToJsonLogic({
+    node: rightOperand,
+  });
 
   switch (operatorKind) {
     case SyntaxKind.AmpersandAmpersandToken:
       return {
         and: [
-          ...extractJsonLogicOperands(convertedLeftExpression, 'and'),
-          ...extractJsonLogicOperands(convertedRightExpression, 'and'),
+          ...extractJsonLogicOperands({
+            rule: convertedLeftExpression,
+            operatorKey: 'and',
+          }),
+          ...extractJsonLogicOperands({
+            rule: convertedRightExpression,
+            operatorKey: 'and',
+          }),
         ],
       };
     case SyntaxKind.BarBarToken:
       return {
         or: [
-          ...extractJsonLogicOperands(convertedLeftExpression, 'or'),
-          ...extractJsonLogicOperands(convertedRightExpression, 'or'),
+          ...extractJsonLogicOperands({
+            rule: convertedLeftExpression,
+            operatorKey: 'or',
+          }),
+          ...extractJsonLogicOperands({
+            rule: convertedRightExpression,
+            operatorKey: 'or',
+          }),
         ],
       };
     case SyntaxKind.EqualsEqualsEqualsToken:

@@ -17,9 +17,9 @@ describe('convertCallExpressionToJsonLogic', () => {
   describe('isDefined', () => {
     it('converts isDefined(param) to isDefined operator', () => {
       expect(
-        convertCallExpressionToJsonLogic(
-          getCallExpression('isDefined(selectedRecord);'),
-        ),
+        convertCallExpressionToJsonLogic({
+          node: getCallExpression('isDefined(selectedRecord);'),
+        }),
       ).toEqual({ isDefined: [{ var: 'selectedRecord' }] });
     });
   });
@@ -27,9 +27,9 @@ describe('convertCallExpressionToJsonLogic', () => {
   describe('isNonEmptyString', () => {
     it('converts isNonEmptyString(param) to isNonEmptyString operator', () => {
       expect(
-        convertCallExpressionToJsonLogic(
-          getCallExpression('isNonEmptyString(name);'),
-        ),
+        convertCallExpressionToJsonLogic({
+          node: getCallExpression('isNonEmptyString(name);'),
+        }),
       ).toEqual({ isNonEmptyString: [{ var: 'name' }] });
     });
   });
@@ -37,7 +37,9 @@ describe('convertCallExpressionToJsonLogic', () => {
   describe('Boolean', () => {
     it('converts Boolean(param) to !! operator', () => {
       expect(
-        convertCallExpressionToJsonLogic(getCallExpression('Boolean(value);')),
+        convertCallExpressionToJsonLogic({
+          node: getCallExpression('Boolean(value);'),
+        }),
       ).toEqual({ '!!': [{ var: 'value' }] });
     });
   });
@@ -45,9 +47,9 @@ describe('convertCallExpressionToJsonLogic', () => {
   describe('known function calls', () => {
     it('converts getTargetObjectReadPermission to hasReadPermission', () => {
       expect(
-        convertCallExpressionToJsonLogic(
-          getCallExpression('getTargetObjectReadPermission("workflow");'),
-        ),
+        convertCallExpressionToJsonLogic({
+          node: getCallExpression('getTargetObjectReadPermission("workflow");'),
+        }),
       ).toEqual({ hasReadPermission: ['workflow'] });
     });
   });
@@ -55,11 +57,11 @@ describe('convertCallExpressionToJsonLogic', () => {
   describe('.includes()', () => {
     it('converts property.includes(value) to in operator', () => {
       expect(
-        convertCallExpressionToJsonLogic(
-          getCallExpression(
+        convertCallExpressionToJsonLogic({
+          node: getCallExpression(
             'workflowWithCurrentVersion.statuses.includes("ACTIVE");',
           ),
-        ),
+        }),
       ).toEqual({
         in: ['ACTIVE', { var: 'workflowWithCurrentVersion.statuses' }],
       });
@@ -69,9 +71,9 @@ describe('convertCallExpressionToJsonLogic', () => {
   describe('error cases', () => {
     it('throws for unknown function calls', () => {
       expect(() =>
-        convertCallExpressionToJsonLogic(
-          getCallExpression('unknownFunction(a);'),
-        ),
+        convertCallExpressionToJsonLogic({
+          node: getCallExpression('unknownFunction(a);'),
+        }),
       ).toThrow(JsonLogicConversionError);
     });
 
@@ -82,16 +84,16 @@ describe('convertCallExpressionToJsonLogic', () => {
         .getFirstDescendantByKindOrThrow(SyntaxKind.ExpressionStatement)
         .getExpression();
 
-      expect(() => convertCallExpressionToJsonLogic(expression)).toThrow(
-        JsonLogicConversionError,
-      );
+      expect(() =>
+        convertCallExpressionToJsonLogic({ node: expression }),
+      ).toThrow(JsonLogicConversionError);
     });
 
     it('throws for unsupported call expressions', () => {
       expect(() =>
-        convertCallExpressionToJsonLogic(
-          getCallExpression('obj.unknownMethod();'),
-        ),
+        convertCallExpressionToJsonLogic({
+          node: getCallExpression('obj.unknownMethod();'),
+        }),
       ).toThrow(JsonLogicConversionError);
     });
   });

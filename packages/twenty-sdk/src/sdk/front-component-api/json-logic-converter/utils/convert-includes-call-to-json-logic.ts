@@ -10,20 +10,25 @@ import { isKnownParamReference } from './is-known-param-reference';
 import { resolveArrayLiteralElements } from './resolve-array-literal-elements';
 import { resolveLocalArrayVariable } from './resolve-local-array-variable';
 
-export const convertIncludesCallToJsonLogic = (
-  receiverExpression: Expression,
-  searchArgument: Expression,
-): JsonLogicRule => {
+export const convertIncludesCallToJsonLogic = ({
+  receiverExpression,
+  searchArgument,
+}: {
+  receiverExpression: Expression;
+  searchArgument: Expression;
+}): JsonLogicRule => {
   if (
     Node.isIdentifier(receiverExpression) &&
-    !isKnownParamReference(receiverExpression.getText())
+    !isKnownParamReference({ name: receiverExpression.getText() })
   ) {
-    const resolvedArrayElements = resolveLocalArrayVariable(receiverExpression);
+    const resolvedArrayElements = resolveLocalArrayVariable({
+      identifier: receiverExpression,
+    });
 
     if (isDefined(resolvedArrayElements)) {
       return {
         in: [
-          convertExpressionToJsonLogic(searchArgument),
+          convertExpressionToJsonLogic({ node: searchArgument }),
           resolvedArrayElements,
         ],
       };
@@ -33,19 +38,20 @@ export const convertIncludesCallToJsonLogic = (
   if (Node.isArrayLiteralExpression(receiverExpression)) {
     return {
       in: [
-        convertExpressionToJsonLogic(searchArgument),
-        resolveArrayLiteralElements(receiverExpression),
+        convertExpressionToJsonLogic({ node: searchArgument }),
+        resolveArrayLiteralElements({ arrayLiteral: receiverExpression }),
       ],
     };
   }
 
-  const flattenedPropertyPath =
-    flattenPropertyAccessToDotPath(receiverExpression);
+  const flattenedPropertyPath = flattenPropertyAccessToDotPath({
+    node: receiverExpression,
+  });
 
-  if (isKnownParamReference(flattenedPropertyPath)) {
+  if (isKnownParamReference({ name: flattenedPropertyPath })) {
     return {
       in: [
-        convertExpressionToJsonLogic(searchArgument),
+        convertExpressionToJsonLogic({ node: searchArgument }),
         { var: flattenedPropertyPath },
       ],
     };

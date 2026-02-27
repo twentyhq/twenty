@@ -6,9 +6,11 @@ import { type JsonLogicRule } from '../types/json-logic-rule';
 
 import { tryResolveKnownConstant } from './try-resolve-known-constant';
 
-export const resolveArrayLiteralElements = (
-  arrayLiteral: ArrayLiteralExpression,
-): JsonLogicRule[] =>
+export const resolveArrayLiteralElements = ({
+  arrayLiteral,
+}: {
+  arrayLiteral: ArrayLiteralExpression;
+}): JsonLogicRule[] =>
   arrayLiteral.getElements().map((element) => {
     if (Node.isStringLiteral(element)) {
       return element.getLiteralValue();
@@ -18,7 +20,9 @@ export const resolveArrayLiteralElements = (
       return element.getLiteralValue();
     }
 
-    const resolvedConstantValue = tryResolveKnownConstant(element.getText());
+    const resolvedConstantValue = tryResolveKnownConstant({
+      constantPath: element.getText(),
+    });
 
     if (isDefined(resolvedConstantValue)) {
       return resolvedConstantValue;

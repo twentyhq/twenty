@@ -14,7 +14,7 @@ const convert = (arrowFnSource: string): unknown => {
     SyntaxKind.ArrowFunction,
   );
 
-  return convertArrowFunctionToJsonLogic(arrowFunctions[0]);
+  return convertArrowFunctionToJsonLogic({ node: arrowFunctions[0] });
 };
 
 describe('convertIncludesCallToJsonLogic', () => {
