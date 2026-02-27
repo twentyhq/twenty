@@ -85,9 +85,7 @@ describe('stringifyRelativeDateFilter', () => {
       expect(stringifyRelativeDateFilter(dayFilter)).toBe('PAST_1_DAY');
       expect(stringifyRelativeDateFilter(weekFilter)).toBe('PAST_1_WEEK');
       expect(stringifyRelativeDateFilter(monthFilter)).toBe('PAST_1_MONTH');
-      expect(stringifyRelativeDateFilter(quarterFilter)).toBe(
-        'PAST_1_QUARTER',
-      );
+      expect(stringifyRelativeDateFilter(quarterFilter)).toBe('PAST_1_QUARTER');
       expect(stringifyRelativeDateFilter(yearFilter)).toBe('PAST_1_YEAR');
     });
   });
