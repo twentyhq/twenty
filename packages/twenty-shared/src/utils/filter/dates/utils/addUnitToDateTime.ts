@@ -1,12 +1,12 @@
 import { type RelativeDateFilterUnit } from '@/utils/filter/dates/utils/relativeDateFilterUnitSchema';
 import {
-  addDays,
-  addHours,
-  addMinutes,
-  addMonths,
-  addSeconds,
-  addWeeks,
-  addYears,
+    addDays,
+    addHours,
+    addMinutes,
+    addMonths,
+    addSeconds,
+    addWeeks,
+    addYears,
 } from 'date-fns';
 
 /** @deprecated Use addUnitToZonedDateTime */
@@ -28,6 +28,8 @@ export const addUnitToDateTime = (
       return addWeeks(dateTime, amount);
     case 'MONTH':
       return addMonths(dateTime, amount);
+    case 'QUARTER':
+      return addMonths(dateTime, amount * 3);
     case 'YEAR':
       return addYears(dateTime, amount);
   }
