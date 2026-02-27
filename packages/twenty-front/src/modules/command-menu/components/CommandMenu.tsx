@@ -7,9 +7,9 @@ import { useMatchingCommandMenuActions } from '@/command-menu/hooks/useMatchingC
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export type ActionGroupConfig = {
@@ -20,7 +20,7 @@ export type ActionGroupConfig = {
 export const CommandMenu = () => {
   const { t } = useLingui();
 
-  const commandMenuSearch = useRecoilValue(commandMenuSearchState);
+  const commandMenuSearch = useAtomStateValue(commandMenuSearchState);
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const {
@@ -39,17 +39,18 @@ export const CommandMenu = () => {
     commandMenuSearch,
   });
 
+  // eslint-disable-next-line twenty/matching-state-variable
   const previousContextStoreCurrentObjectMetadataItemId =
-    useRecoilComponentValue(
+    useAtomComponentStateValue(
       contextStoreCurrentObjectMetadataItemIdComponentState,
       'command-menu-previous',
     );
 
-  const objectMetadataItemId = useRecoilComponentValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
   const currentObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === objectMetadataItemId,
+    (item) => item.id === contextStoreCurrentObjectMetadataItemId,
   );
 
   const commandGroups: ActionGroupConfig[] = [

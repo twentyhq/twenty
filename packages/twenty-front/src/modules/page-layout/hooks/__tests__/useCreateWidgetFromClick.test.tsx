@@ -1,11 +1,11 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { act, renderHook } from '@testing-library/react';
-import { type ReactNode } from 'react';
+import { useCreateWidgetFromClick } from '@/page-layout/hooks/useCreateWidgetFromClick';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { useCreateWidgetFromClick } from '@/page-layout/hooks/useCreateWidgetFromClick';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { act, renderHook } from '@testing-library/react';
+import { type ReactNode } from 'react';
+import { CommandMenuPages } from 'twenty-shared/types';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
@@ -29,11 +29,11 @@ describe('useCreateWidgetFromClick', () => {
     const { result } = renderHook(
       () => ({
         createWidget: useCreateWidgetFromClick(),
-        draggedArea: useRecoilComponentValue(
+        draggedArea: useAtomComponentStateValue(
           pageLayoutDraggedAreaComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),
-        editingWidgetId: useRecoilComponentValue(
+        editingWidgetId: useAtomComponentStateValue(
           pageLayoutEditingWidgetIdComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         ),

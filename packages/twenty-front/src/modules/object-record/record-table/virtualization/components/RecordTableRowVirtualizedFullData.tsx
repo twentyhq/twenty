@@ -6,13 +6,15 @@ import { RecordTableDraggableTr } from '@/object-record/record-table/record-tabl
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
 import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
 import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { RecordTableRowVirtualizedSkeleton } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedSkeleton';
 import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
 
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableRowVirtualizedFullDataProps = {
@@ -23,16 +25,19 @@ type RecordTableRowVirtualizedFullDataProps = {
 export const RecordTableRowVirtualizedFullData = ({
   realIndex,
 }: RecordTableRowVirtualizedFullDataProps) => {
-  const isFocused = useRecoilComponentFamilyValue(
+  const { recordTableId } = useRecordTableContextOrThrow();
+
+  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
     isRecordTableRowFocusedComponentFamilyState,
     realIndex,
   );
 
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
+    recordTableId,
   );
 
-  const recordId = useRecoilComponentFamilyValue(
+  const recordId = useAtomComponentFamilySelectorValue(
     recordIdByRealIndexComponentFamilySelector,
     realIndex,
   );
@@ -47,7 +52,7 @@ export const RecordTableRowVirtualizedFullData = ({
       draggableIndex={realIndex}
       focusIndex={realIndex}
     >
-      {isRowFocusActive && isFocused && (
+      {isRecordTableRowFocusActive && isRecordTableRowFocused && (
         <>
           <RecordTableRowHotkeyEffect />
           <RecordTableRowArrowKeysEffect />

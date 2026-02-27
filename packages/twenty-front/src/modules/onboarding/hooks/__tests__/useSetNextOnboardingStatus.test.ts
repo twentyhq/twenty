@@ -1,11 +1,18 @@
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot, useRecoilState, useSetRecoilState } from 'recoil';
+import { createElement } from 'react';
+import { Provider as JotaiProvider } from 'jotai';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 
 import {
   OnboardingStatus,
@@ -17,6 +24,9 @@ import {
   mockedUserData,
 } from '~/testing/mock-data/users';
 
+const Wrapper = ({ children }: { children: React.ReactNode }) =>
+  createElement(JotaiProvider, { store: jotaiStore }, children);
+
 const renderHooks = (
   onboardingStatus: OnboardingStatus,
   withCurrentBillingSubscription: boolean,
@@ -25,11 +35,11 @@ const renderHooks = (
 ) => {
   const { result } = renderHook(
     () => {
-      const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
-      const setCurrentUserWorkspace = useSetRecoilState(
+      const [currentUser, setCurrentUser] = useAtomState(currentUserState);
+      const setCurrentUserWorkspace = useSetAtomState(
         currentUserWorkspaceState,
       );
-      const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+      const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
       const setNextOnboardingStatus = useSetNextOnboardingStatus();
       return {
         currentUser,
@@ -40,7 +50,7 @@ const renderHooks = (
       };
     },
     {
-      wrapper: RecoilRoot,
+      wrapper: Wrapper,
     },
   );
   act(() => {
@@ -69,6 +79,10 @@ const renderHooks = (
 };
 
 describe('useSetNextOnboardingStatus', () => {
+  beforeEach(() => {
+    resetJotaiStore();
+  });
+
   it('should set next onboarding status for ProfileCreation', () => {
     const nextOnboardingStatus = renderHooks(
       OnboardingStatus.PROFILE_CREATION,

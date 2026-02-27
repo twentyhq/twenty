@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
-  generateObject,
   generateText,
   jsonSchema,
+  Output,
   stepCountIs,
   type ToolSet,
 } from 'ai';
@@ -19,6 +19,8 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import {
   AgentException,
   AgentExceptionCode,
@@ -29,6 +31,7 @@ import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entiti
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -46,6 +49,8 @@ export class AgentAsyncExecutorService {
     private readonly toolRegistry: ToolRegistryService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   private extractRoleIds(
@@ -107,6 +112,19 @@ export class AgentAsyncExecutorService {
     authContext?: WorkspaceAuthContext;
   }): Promise<AgentExecutionResult> {
     try {
+      if (agent) {
+        const workspace = await this.workspaceRepository.findOneBy({
+          id: agent.workspaceId,
+        });
+
+        if (workspace) {
+          this.aiModelRegistryService.validateModelAvailability(
+            agent.modelId,
+            workspace,
+          );
+        }
+      }
+
       const registeredModel =
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
@@ -185,6 +203,10 @@ export class AgentAsyncExecutorService {
         },
       });
 
+      const cacheCreationTokens = extractCacheCreationTokensFromSteps(
+        textResponse.steps,
+      );
+
       const agentSchema =
         agent?.responseFormat?.type === 'json'
           ? agent.responseFormat.schema
@@ -194,10 +216,11 @@ export class AgentAsyncExecutorService {
         return {
           result: { response: textResponse.text },
           usage: textResponse.usage,
+          cacheCreationTokens,
         };
       }
 
-      const output = await generateObject({
+      const structuredResult = await generateText({
         system: WORKFLOW_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
         model: registeredModel.model,
         prompt: `Based on the following execution results, generate the structured output according to the schema:
@@ -205,23 +228,24 @@ export class AgentAsyncExecutorService {
                  Execution Results: ${textResponse.text}
 
                  Please generate the structured output based on the execution results and context above.`,
-        schema: jsonSchema(agentSchema),
+        output: Output.object({ schema: jsonSchema(agentSchema) }),
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
+      if (structuredResult.output == null) {
+        throw new AgentException(
+          'Failed to generate structured output from execution results',
+          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        );
+      }
+
       return {
-        result: output.object as object,
-        usage: {
-          inputTokens:
-            (textResponse.usage?.inputTokens ?? 0) +
-            (output.usage?.inputTokens ?? 0),
-          outputTokens:
-            (textResponse.usage?.outputTokens ?? 0) +
-            (output.usage?.outputTokens ?? 0),
-          totalTokens:
-            (textResponse.usage?.totalTokens ?? 0) +
-            (output.usage?.totalTokens ?? 0),
-        },
+        result: structuredResult.output as object,
+        usage: mergeLanguageModelUsage(
+          textResponse.usage,
+          structuredResult.usage,
+        ),
+        cacheCreationTokens,
       };
     } catch (error) {
       if (error instanceof AgentException) {

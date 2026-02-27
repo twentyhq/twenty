@@ -4,5 +4,6 @@ import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/works
 export type FlatEntityMaps<T extends SyncableFlatEntity> =
   UniversalFlatEntityMaps<T> & {
     universalIdentifierById: Partial<Record<string, string>>;
+    // TODO refactor or replicate to be universal and UniversalFlatEntityMaps lvl located
     universalIdentifiersByApplicationId: Partial<Record<string, string[]>>;
   };

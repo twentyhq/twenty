@@ -7,7 +7,7 @@ import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/r
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const MorphRelationOneToManyFieldInput = () => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
@@ -23,7 +23,7 @@ export const MorphRelationOneToManyFieldInput = () => {
     onSubmit?.({ skipPersist: true });
   };
 
-  const layoutDirection = useRecoilComponentValue(
+  const recordFieldInputLayoutDirection = useAtomComponentStateValue(
     recordFieldInputLayoutDirectionComponentState,
   );
 
@@ -37,7 +37,7 @@ export const MorphRelationOneToManyFieldInput = () => {
       }}
       onClickOutside={handleSubmit}
       layoutDirection={
-        layoutDirection === 'downward'
+        recordFieldInputLayoutDirection === 'downward'
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'
       }

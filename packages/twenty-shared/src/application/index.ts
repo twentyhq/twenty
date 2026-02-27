@@ -13,9 +13,11 @@ export type {
 } from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
+export { API_CLIENT_DIR } from './constants/ApiClientDirectory';
 export { ASSETS_DIR } from './constants/AssetDirectory';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
+export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessTokenName';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
@@ -25,7 +27,11 @@ export type {
   RelationFieldManifest,
   FieldManifest,
 } from './fieldManifestType';
-export type { FrontComponentManifest } from './frontComponentManifestType';
+export type {
+  CommandMenuItemManifest,
+  FrontComponentCommandManifest,
+  FrontComponentManifest,
+} from './frontComponentManifestType';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
@@ -46,6 +52,7 @@ export type {
   FieldPermissionManifest,
   RoleManifest,
 } from './roleManifestType';
+export type { SkillManifest } from './skillManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type {
   ViewManifestFilterValue,

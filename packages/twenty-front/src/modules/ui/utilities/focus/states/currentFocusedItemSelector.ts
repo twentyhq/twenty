@@ -1,8 +1,8 @@
 import { type FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
-import { createSelectorV2 } from '@/ui/utilities/state/jotai/utils/createSelectorV2';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { focusStackState } from './focusStackState';
 
-export const currentFocusedItemSelector = createSelectorV2<
+export const currentFocusedItemSelector = createAtomSelector<
   FocusStackItem | undefined
 >({
   key: 'currentFocusedItemSelector',

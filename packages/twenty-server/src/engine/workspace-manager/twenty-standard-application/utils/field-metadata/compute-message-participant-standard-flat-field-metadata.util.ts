@@ -209,24 +209,28 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
       defaultValue: `'${MessageParticipantRole.FROM}'`,
       options: [
         {
+          id: '20202020-761b-4f02-bc28-795f9a67be48',
           value: MessageParticipantRole.FROM,
           label: 'From',
           position: 0,
           color: 'green',
         },
         {
+          id: '20202020-86bc-4cf1-a887-c992c1a0f97f',
           value: MessageParticipantRole.TO,
           label: 'To',
           position: 1,
           color: 'blue',
         },
         {
+          id: '20202020-fc2b-431f-805c-650ab60c4f88',
           value: MessageParticipantRole.CC,
           label: 'Cc',
           position: 2,
           color: 'orange',
         },
         {
+          id: '20202020-fc9c-436e-842a-7e3a9b92766f',
           value: MessageParticipantRole.BCC,
           label: 'Bcc',
           position: 3,

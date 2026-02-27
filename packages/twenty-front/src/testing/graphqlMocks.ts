@@ -26,7 +26,7 @@ import { LIST_PLANS } from '@/billing/graphql/queries/listPlans';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { isDefined } from 'twenty-shared/utils';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
-import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
+import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata';
 import { getRolesMock } from '~/testing/mock-data/roles';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 import {
@@ -35,11 +35,30 @@ import {
   workflowQueryResult,
 } from '~/testing/mock-data/workflow';
 import { oneSucceededWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
+import { getConnectionTypename } from '@/object-record/cache/utils/getConnectionTypename';
+import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
+import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
 const peopleMock = getPeopleRecordConnectionMock();
 const companiesMock = getCompaniesRecordConnectionMock();
 const duplicateCompanyMock = getCompanyDuplicateMock();
+
+// Wraps raw server-fetched records (which already have correct field shapes)
+// into a GraphQL connection response structure.
+const wrapRecordsAsConnection = (
+  objectNameSingular: string,
+  records: Record<string, unknown>[],
+) => ({
+  __typename: getConnectionTypename(objectNameSingular),
+  edges: records.map((node) => ({
+    __typename: getEdgeTypename(objectNameSingular),
+    node,
+    cursor: '',
+  })),
+  pageInfo: getEmptyPageInfo(),
+  totalCount: records.length,
+});
 
 const getRootFieldNamesFromQuery = (query: string) => {
   try {
@@ -201,62 +220,48 @@ export const graphqlMocks = {
       });
     }),
     graphql.query('Search', () => {
+      const personSearchEdges = peopleMock
+        .slice(0, 2)
+        .map((person: Record<string, unknown>, index: number) => ({
+          node: {
+            __typename: 'SearchRecordDTO',
+            recordId: person.id,
+            objectNameSingular: 'person',
+            objectLabelSingular: 'Person',
+            label:
+              `${(person.name as Record<string, string>)?.firstName ?? ''} ${(person.name as Record<string, string>)?.lastName ?? ''}`.trim(),
+            imageUrl: '',
+            tsRankCD: 0.2,
+            tsRank: 0.12158542,
+          },
+          cursor: `cursor-${index + 1}`,
+        }));
+
+      const companySearchEdges = companiesMock
+        .slice(0, 2)
+        .map((company: Record<string, unknown>, index: number) => ({
+          node: {
+            __typename: 'SearchRecordDTO',
+            recordId: company.id,
+            objectNameSingular: 'company',
+            objectLabelSingular: 'Company',
+            label: company.name,
+            imageUrl: '',
+            tsRankCD: 0.2,
+            tsRank: 0.12158542,
+          },
+          cursor: `cursor-${personSearchEdges.length + index + 1}`,
+        }));
+
+      const allEdges = [...personSearchEdges, ...companySearchEdges];
+
       return HttpResponse.json({
         data: {
           search: {
-            edges: [
-              {
-                node: {
-                  __typename: 'SearchRecordDTO',
-                  recordId: '20202020-2d40-4e49-8df4-9c6a049191de',
-                  objectNameSingular: 'person',
-                  label: 'Louis Duss',
-                  imageUrl: '',
-                  tsRankCD: 0.2,
-                  tsRank: 0.12158542,
-                },
-                cursor: 'cursor-1',
-              },
-              {
-                node: {
-                  __typename: 'SearchRecordDTO',
-                  recordId: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
-                  objectNameSingular: 'company',
-                  label: 'Linkedin',
-                  imageUrl: 'https://twenty-icons.com/linkedin.com',
-                  tsRankCD: 0.2,
-                  tsRank: 0.12158542,
-                },
-                cursor: 'cursor-2',
-              },
-              {
-                node: {
-                  __typename: 'SearchRecordDTO',
-                  recordId: '20202020-3f74-492d-a101-2a70f50a1645',
-                  objectNameSingular: 'company',
-                  label: 'Libeo',
-                  imageUrl: 'https://twenty-icons.com/libeo.io',
-                  tsRankCD: 0.2,
-                  tsRank: 0.12158542,
-                },
-                cursor: 'cursor-3',
-              },
-              {
-                node: {
-                  __typename: 'SearchRecordDTO',
-                  recordId: '20202020-ac73-4797-824e-87a1f5aea9e0',
-                  objectNameSingular: 'person',
-                  label: 'Sylvie Palmer',
-                  imageUrl: '',
-                  tsRankCD: 0.1,
-                  tsRank: 0.06079271,
-                },
-                cursor: 'cursor-4',
-              },
-            ],
+            edges: allEdges,
             pageInfo: {
               hasNextPage: true,
-              endCursor: 'cursor-4',
+              endCursor: allEdges[allEdges.length - 1]?.cursor ?? null,
             },
           },
         },
@@ -390,45 +395,7 @@ export const graphqlMocks = {
 
       return HttpResponse.json({
         data: {
-          companies: {
-            edges: mockedData.map((company) => ({
-              node: {
-                ...company,
-                favorites: {
-                  edges: [],
-                  __typename: 'FavoriteConnection',
-                },
-                attachments: {
-                  edges: [],
-                  __typename: 'AttachmentConnection',
-                },
-                people: {
-                  edges: [],
-                  __typename: 'PersonConnection',
-                },
-                opportunities: {
-                  edges: [],
-                  __typename: 'OpportunityConnection',
-                },
-                taskTargets: {
-                  edges: [],
-                  __typename: 'TaskTargetConnection',
-                },
-                noteTargets: {
-                  edges: [],
-                  __typename: 'NoteTargetConnection',
-                },
-              },
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-            totalCount: mockedData.length,
-          },
+          companies: wrapRecordsAsConnection('company', mockedData),
         },
       });
     }),
@@ -436,46 +403,7 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           companyDuplicates: [
-            {
-              edges: [
-                {
-                  node: {
-                    ...duplicateCompanyMock,
-                    favorites: {
-                      edges: [],
-                      __typename: 'FavoriteConnection',
-                    },
-                    attachments: {
-                      edges: [],
-                      __typename: 'AttachmentConnection',
-                    },
-                    people: {
-                      edges: [],
-                      __typename: 'PersonConnection',
-                    },
-                    opportunities: {
-                      edges: [],
-                      __typename: 'OpportunityConnection',
-                    },
-                    taskTargets: {
-                      edges: [],
-                      __typename: 'TaskTargetConnection',
-                    },
-                    noteTargets: {
-                      edges: [],
-                      __typename: 'NoteTargetConnection',
-                    },
-                  },
-                  cursor: null,
-                },
-              ],
-              pageInfo: {
-                hasNextPage: false,
-                hasPreviousPage: false,
-                startCursor: null,
-                endCursor: null,
-              },
-            },
+            wrapRecordsAsConnection('company', [duplicateCompanyMock]),
           ],
         },
       });

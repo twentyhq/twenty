@@ -1,8 +1,8 @@
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
+import { createAtomComponentFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilyState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 export const emptyRecordGroupByIdComponentFamilyState =
-  createComponentFamilyState<boolean, string>({
+  createAtomComponentFamilyState<boolean, string>({
     key: 'emptyRecordGroupByIdComponentFamilyState',
     defaultValue: false,
     componentInstanceContext: ViewComponentInstanceContext,

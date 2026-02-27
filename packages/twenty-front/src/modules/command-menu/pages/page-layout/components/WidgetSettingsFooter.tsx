@@ -6,8 +6,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,26 +23,26 @@ export const WidgetSettingsFooter = ({
   const { closeDropdown } = useCloseDropdown();
   const { duplicateWidget } = useDuplicatePageLayoutWidget(pageLayoutId);
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget(pageLayoutId);
-  const editingWidgetId = useRecoilComponentValue(
+  const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );
 
   const handleDuplicateWidget = () => {
-    if (isDefined(editingWidgetId)) {
-      duplicateWidget(editingWidgetId);
+    if (isDefined(pageLayoutEditingWidgetId)) {
+      duplicateWidget(pageLayoutEditingWidgetId);
     }
     closeDropdown(dropdownId);
   };
 
   const handleDeleteWidget = () => {
-    if (isDefined(editingWidgetId)) {
-      deletePageLayoutWidget(editingWidgetId);
+    if (isDefined(pageLayoutEditingWidgetId)) {
+      deletePageLayoutWidget(pageLayoutEditingWidgetId);
     }
     closeDropdown(dropdownId);
   };
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
     dropdownId,
   );

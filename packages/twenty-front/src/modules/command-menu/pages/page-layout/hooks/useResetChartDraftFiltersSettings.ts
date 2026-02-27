@@ -5,51 +5,53 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useStore } from 'jotai';
 
 export const useResetChartDraftFiltersSettings = () => {
+  const store = useStore();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const resetChartDraftFiltersSettings = useRecoilCallback(
-    ({ set }) =>
-      (objectMetadataItemId: string) => {
-        if (!isDefined(widgetInEditMode)) {
-          return;
-        }
+  const resetChartDraftFiltersSettings = useCallback(
+    (objectMetadataItemId: string) => {
+      if (!isDefined(widgetInEditMode)) {
+        return;
+      }
 
-        const { instanceId } = getChartFiltersSettingsInstanceId({
-          widgetId: widgetInEditMode.id,
-          objectMetadataItemId: objectMetadataItemId,
-        });
+      const { instanceId } = getChartFiltersSettingsInstanceId({
+        widgetId: widgetInEditMode.id,
+        objectMetadataItemId: objectMetadataItemId,
+      });
 
-        set(
-          hasInitializedCurrentRecordFilterGroupsComponentFamilyState.atomFamily(
-            {
-              familyKey: {},
-              instanceId,
-            },
-          ),
-          false,
-        );
+      store.set(
+        hasInitializedCurrentRecordFilterGroupsComponentFamilyState.atomFamily({
+          familyKey: {},
+          instanceId,
+        }),
+        false,
+      );
 
-        set(
-          hasInitializedCurrentRecordFiltersComponentFamilyState.atomFamily({
-            familyKey: {},
-            instanceId,
-          }),
-          false,
-        );
+      store.set(
+        hasInitializedCurrentRecordFiltersComponentFamilyState.atomFamily({
+          familyKey: {},
+          instanceId,
+        }),
+        false,
+      );
 
-        set(currentRecordFiltersComponentState.atomFamily({ instanceId }), []);
-        set(
-          currentRecordFilterGroupsComponentState.atomFamily({ instanceId }),
-          [],
-        );
-      },
-    [widgetInEditMode],
+      store.set(
+        currentRecordFiltersComponentState.atomFamily({ instanceId }),
+        [],
+      );
+      store.set(
+        currentRecordFilterGroupsComponentState.atomFamily({ instanceId }),
+        [],
+      );
+    },
+    [widgetInEditMode, store],
   );
 
   return {

@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { DateFormat } from '@/localization/constants/DateFormat';
@@ -18,6 +17,9 @@ import { getFormatPreferencesFromWorkspaceMember } from '@/localization/utils/fo
 import { getWorkspaceMemberUpdateFromFormatPreferences } from '@/localization/utils/format-preferences/getWorkspaceMemberUpdateFromFormatPreferences';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { logError } from '~/utils/logError';
 
@@ -27,9 +29,9 @@ export const useFormatPreferences = () => {
   const [
     workspaceMemberFormatPreferences,
     setWorkspaceMemberFormatPreferences,
-  ] = useRecoilState(workspaceMemberFormatPreferencesState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const setCurrentWorkspaceMember = useSetRecoilState(
+  ] = useAtomState(workspaceMemberFormatPreferencesState);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const setCurrentWorkspaceMember = useSetAtomState(
     currentWorkspaceMemberState,
   );
 

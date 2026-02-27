@@ -4,6 +4,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
 ---
 
 <AccordionGroup>
+
   <Accordion title="Bir iş akışını neden etkinleştiremiyorum?">
     Bu muhtemelen bir yetki sorunudur. İş akışlarını oluşturmak ve etkinleştirmek için iş akışlarına erişiminiz olmalıdır.
 
@@ -27,7 +28,6 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
   <Accordion title="Single, Global ve Bulk manuel tetikleyiciler arasındaki fark nedir?">
     | Tür | Gerekli Kayıtlar | İş Akışı Çalıştırmaları |
     | --- | ---------------- | ----------------------- |
-
     \| **Global** | Yok | Bir kez, kayıt girişi olmadan |
     \| **Single** | Bir veya daha fazlası seçili | Seçilen her kayıt için bir kez |
     \| **Bulk** | Bir veya daha fazlası seçili | Bir kez, tüm kayıtlar dizi olarak |
@@ -61,7 +61,6 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     **Evet**, dallar varsayılan olarak paralel çalışır.
 
     Yalnızca bir dalın çalışmasını istiyorsanız:
-
     * Her dalın başlangıcına bir **Filter** eylemi ekleyin
     * Zıt koşullar ayarlayın (ör. Dal A: status = "Open", Dal B: status ≠ "Open")
 
@@ -72,7 +71,6 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     **Evet**. Paralel dallarınız tamamlandıktan sonra, her iki dalın da bağlanacağı bir adım ekleyebilirsiniz.
 
     İş Akışı Düzenleyicisinde:
-
     1. Dallanmış eylemlerinizi tamamlayın
     2. Dallardan sonra yeni bir adım ekleyin
     3. Her dalın sonundan bu yeni adıma bağlantıları sürükleyin
@@ -84,7 +82,6 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     **Search Records en fazla 200 kayıt döndürür.**
 
     Daha fazlasını işlemeniz gerekiyorsa:
-
     * Sonuçları azaltmak için daha spesifik filtreler ekleyin
     * Toplu işlem yapmak için zamanlanmış iş akışlarını kullanın
     * Toplu işlemler için API kullanmayı düşünün
@@ -102,12 +99,10 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     Her eylem, sonraki adımlarda kullanılabilecek çıktı verileri üretir.
 
     **Önceki adım verilerine başvurmak için**:
-
     * Bir alanı yapılandırırken değişken seçiciyi kullanın
     * Ya da doğrudan `{{stepName.fieldName}}` yazın
 
     **Örnekler**:
-
     * Tetikleyici verisi: `{{trigger.object.email}}`
     * Arama sonuçları: `{{searchRecords[0].name}}`
     * Kod çıktısı: `{{code.calculatedValue}}`
@@ -123,7 +118,6 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     3. **Yanlış değişken seçildi**: Tek bir kayıt yerine dizinin kendisini seçtiğinizden emin olun
 
     **Doğru kurulum**:
-
     1. Search Records (dizi döndürür)
     2. Filter: length > 0
     3. Iterator: `{{searchRecords}}` öğesini seçin
@@ -138,7 +132,6 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     Kodunuz bu sınırı aşarsa, eylem zaman aşımı hatasıyla başarısız olur.
 
     **Zaman aşımından kaçınma ipuçları**:
-
     * Büyük işlemleri Iterator kullanarak daha küçük parçalara bölün
     * Ağır hesaplamalardan kaçının; yoğun işlemler için HTTP Request üzerinden harici hizmetler kullanın
     * Yürütme süresini azaltmak için kodunuzu optimize edin
@@ -149,12 +142,10 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     İş akışı çalıştırmaları yürütme geçmişini gösterir ve sorunları ayıklamanıza yardımcı olur.
 
     **Çalıştırmalara erişim**:
-
     * İş akışı düzenleyicisinde → sağdaki **Runs** paneli
     * Ya da kenar çubuğunda **İş Akışı Çalıştırmaları**'na gidin
 
     **Bir çalıştırmayı anlamak**:
-
     * **Durum**: Running, Completed, Failed, Waiting
     * **Adımlar**: Hangi adımların çalıştığını ve çıktısını görün
     * **Hatalar**: Hata ile sonuçlanan adımlara tıklayarak hata mesajlarını görün
@@ -171,13 +162,11 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     Bu sınırı aşarsanız, iş akışları derhal başarısız olarak işaretlenir ve beklendiği gibi çalıştırma listenizde görünmez.
 
     **Bu sınıra ulaşan yaygın senaryolar**:
-
     * Single manuel tetikleyici ile 5.000'den fazla kayıt seçmek
     * Çalışma alanınız genelinde eşzamanlı olarak birden fazla iş akışının çalışması
     * Yüksek frekanslı otomatik tetikleyiciler (ör. yoğun bir nesnede Record Updated)
 
     **Çözümler**:
-
     * Tek bir çalıştırmada birçok kaydı işlemek için Single yerine **Bulk** tetikleyicileri kullanın
     * Büyük toplu işlemleri zamana yayın
     * Tetikleyici frekansını azaltmak için filtreler kullanın
@@ -189,7 +178,6 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
 
     | Sınır | Değer | Davranış |
     | ----- | ----- | -------- |
-
     \| **Yumuşak sınır** | dakikada 100 çalıştırma | Çalıştırmalar "Not Started" durumunda kuyruğa alınır, kademeli olarak işlenir |
     \| **Katı sınır** | saatte 5.000 çalıştırma | Çalıştırmalar anında başarısız olur |
 
@@ -198,7 +186,6 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     **Katı sınır (5.000/saat)**: Bu, tüm çalışma alanınız için geçerlidir. Tüm iş akışlarınız toplamda bir saat içinde 5.000 çalıştırmayı aşarsa, ilave çalıştırmalar anında başarısız olur.
 
     **Sınırlar içinde kalmak için ipuçları**:
-
     * Büyük toplu işlemler için Single tetikleyiciler yerine Iterator ile birlikte Bulk tetikleyicileri kullanın
     * İlgili otomasyonları daha az sayıda iş akışında birleştirin
     * Yükü zamana yaymak için zamanlanmış iş akışlarını kullanın
@@ -208,13 +195,11 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     **Hayır, şu anda otomatik yeniden deneme işlevi yok.**
 
     Bir iş akışı çalıştırması başarısız olursa şunları yapmanız gerekir:
-
     1. **Ayarlar → İş Akışları → [Your Workflow] → Runs** içinde hatayı inceleyin
     2. Sorunu düzeltin (veri, yapılandırma veya harici hizmet)
     3. Etkilenen kayıt(lar) üzerinde iş akışını manuel olarak yeniden tetikleyin
 
     **Hataları azaltmak için ipuçları**:
-
     * Eylemlerden önce veriyi doğrulamak için **Filter** düğümleri ekleyin
     * İlgili kayıtların var olup olmadığını kontrol etmek için **Search Records** kullanın
     * Toplu işlemlerden önce birkaç kayıtla kapsamlı şekilde test edin
@@ -226,14 +211,12 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     **Evet, iş akışlarınız kayıt oluşturma veya güncellemelerle tetikleniyorsa.**
 
     CSV ile veri içe aktardığınızda, oluşturulan veya güncellenen her kayıt iş akışlarını tetikleyebilir. Büyük bir içe aktarma (binlerce kayıt) şunlara yol açabilir:
-
     * Saatte 5.000 çalıştırma sınırına ulaşmak
     * Önemli miktarda iş akışı kredisi tüketmek
     * Beklenmedik e-postalar veya bildirimler göndermek
     * Yinelenen görevler veya kayıtlar oluşturmak
 
     **Toplu bir içe aktarmadan önce**:
-
     1. **Ayarlar → İş Akışları** bölümüne gidin
     2. İçe aktardığınız nesne tarafından tetiklenen iş akışlarını belirleyin
     3. Bunları geçici olarak **devre dışı bırakın**
@@ -251,4 +234,5 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
 
     Bu, tüm düğümleri otomatik olarak temiz ve düzenli bir yerleşime yeniden düzenleyecektir.
   </Accordion>
+
 </AccordionGroup>

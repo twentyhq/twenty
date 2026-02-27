@@ -1,13 +1,11 @@
 import { renderHook } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
-
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
-import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -15,8 +13,11 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { CommandMenuPages } from 'twenty-shared/types';
 import { IconList } from 'twenty-ui/display';
 
 const mockCloseDropdown = jest.fn();
@@ -49,9 +50,9 @@ jest.mock('@/ui/layout/right-drawer/utils/emitSidePanelCloseEvent', () => ({
 }));
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>
+  <JotaiProvider store={jotaiStore}>
     <MemoryRouter>{children}</MemoryRouter>
-  </RecoilRoot>
+  </JotaiProvider>
 );
 
 describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
@@ -65,62 +66,13 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
         const { commandMenuCloseAnimationCompleteCleanup } =
           useCommandMenuCloseAnimationCompleteCleanup();
 
-        const commandMenuPage = useRecoilValue(commandMenuPageState);
-        const commandMenuPageInfo = useRecoilValue(commandMenuPageInfoState);
-        const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
-        const commandMenuSearch = useRecoilValue(commandMenuSearchState);
-        const commandMenuNavigationStack = useRecoilValue(
-          commandMenuNavigationStackState,
-        );
+        const viewableRecordId = useAtomStateValue(viewableRecordIdState);
 
-        const commandMenuNavigationMorphItemsByPage = useRecoilValue(
-          commandMenuNavigationMorphItemsByPageState,
-        );
-        const hasUserSelectedCommand = useRecoilValue(
-          hasUserSelectedCommandState,
-        );
-        const isCommandMenuClosing = useRecoilValue(isCommandMenuClosingState);
-        const viewableRecordId = useRecoilValue(viewableRecordIdState);
-
-        // Get setters for state modification in tests
-        const setCommandMenuPage = useSetRecoilState(commandMenuPageState);
-        const setCommandMenuPageInfo = useSetRecoilState(
-          commandMenuPageInfoState,
-        );
-        const setIsCommandMenuOpened = useSetRecoilState(
-          isCommandMenuOpenedState,
-        );
-        const setCommandMenuSearch = useSetRecoilState(commandMenuSearchState);
-        const setCommandMenuNavigationStack = useSetRecoilState(
-          commandMenuNavigationStackState,
-        );
-
-        const setHasUserSelectedCommand = useSetRecoilState(
-          hasUserSelectedCommandState,
-        );
-        const setIsCommandMenuClosing = useSetRecoilState(
-          isCommandMenuClosingState,
-        );
-        const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
+        const setViewableRecordId = useSetAtomState(viewableRecordIdState);
 
         return {
           commandMenuCloseAnimationCompleteCleanup,
-          commandMenuPage,
-          commandMenuPageInfo,
-          isCommandMenuOpened,
-          commandMenuSearch,
-          commandMenuNavigationStack,
-          commandMenuNavigationMorphItemsByPage,
-          hasUserSelectedCommand,
-          isCommandMenuClosing,
           viewableRecordId,
-          setCommandMenuPage,
-          setCommandMenuPageInfo,
-          setIsCommandMenuOpened,
-          setCommandMenuSearch,
-          setCommandMenuNavigationStack,
-          setHasUserSelectedCommand,
-          setIsCommandMenuClosing,
           setViewableRecordId,
         };
       },
@@ -135,15 +87,15 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.setCommandMenuPage(CommandMenuPages.ViewRecord);
-      result.current.setCommandMenuPageInfo({
+      jotaiStore.set(commandMenuPageState.atom, CommandMenuPages.ViewRecord);
+      jotaiStore.set(commandMenuPageInfoState.atom, {
         title: 'Test Record',
         Icon: IconList,
         instanceId: 'test-id',
       });
-      result.current.setIsCommandMenuOpened(true);
-      result.current.setCommandMenuSearch('test search');
-      result.current.setCommandMenuNavigationStack([
+      jotaiStore.set(isCommandMenuOpenedState.atom, true);
+      jotaiStore.set(commandMenuSearchState.atom, 'test search');
+      jotaiStore.set(commandMenuNavigationStackState.atom, [
         {
           page: CommandMenuPages.SearchRecords,
           pageTitle: 'Search',
@@ -151,20 +103,22 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
           pageId: '1',
         },
       ]);
-      result.current.setHasUserSelectedCommand(true);
-      result.current.setIsCommandMenuClosing(true);
+      jotaiStore.set(hasUserSelectedCommandState.atom, true);
+      jotaiStore.set(isCommandMenuClosingState.atom, true);
       result.current.setViewableRecordId('record-123');
     });
 
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.ViewRecord);
-    expect(result.current.commandMenuPageInfo).toEqual({
+    expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
+      CommandMenuPages.ViewRecord,
+    );
+    expect(jotaiStore.get(commandMenuPageInfoState.atom)).toEqual({
       title: 'Test Record',
       Icon: IconList,
       instanceId: 'test-id',
     });
-    expect(result.current.isCommandMenuOpened).toBe(true);
-    expect(result.current.commandMenuSearch).toBe('test search');
-    expect(result.current.commandMenuNavigationStack).toEqual([
+    expect(jotaiStore.get(isCommandMenuOpenedState.atom)).toBe(true);
+    expect(jotaiStore.get(commandMenuSearchState.atom)).toBe('test search');
+    expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toEqual([
       {
         page: CommandMenuPages.SearchRecords,
         pageTitle: 'Search',
@@ -172,25 +126,27 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
         pageId: '1',
       },
     ]);
-    expect(result.current.hasUserSelectedCommand).toBe(true);
-    expect(result.current.isCommandMenuClosing).toBe(true);
+    expect(jotaiStore.get(hasUserSelectedCommandState.atom)).toBe(true);
+    expect(jotaiStore.get(isCommandMenuClosingState.atom)).toBe(true);
     expect(result.current.viewableRecordId).toBe('record-123');
 
     act(() => {
       result.current.commandMenuCloseAnimationCompleteCleanup();
     });
 
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
-    expect(result.current.commandMenuPageInfo).toEqual({
+    expect(jotaiStore.get(commandMenuPageState.atom)).toBe(
+      CommandMenuPages.Root,
+    );
+    expect(jotaiStore.get(commandMenuPageInfoState.atom)).toEqual({
       title: undefined,
       Icon: undefined,
       instanceId: '',
     });
-    expect(result.current.isCommandMenuOpened).toBe(false);
-    expect(result.current.commandMenuSearch).toBe('');
-    expect(result.current.commandMenuNavigationStack).toEqual([]);
-    expect(result.current.hasUserSelectedCommand).toBe(false);
-    expect(result.current.isCommandMenuClosing).toBe(false);
+    expect(jotaiStore.get(isCommandMenuOpenedState.atom)).toBe(false);
+    expect(jotaiStore.get(commandMenuSearchState.atom)).toBe('');
+    expect(jotaiStore.get(commandMenuNavigationStackState.atom)).toEqual([]);
+    expect(jotaiStore.get(hasUserSelectedCommandState.atom)).toBe(false);
+    expect(jotaiStore.get(isCommandMenuClosingState.atom)).toBe(false);
     expect(result.current.viewableRecordId).toBe(null);
   });
 

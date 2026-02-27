@@ -1,8 +1,8 @@
 {
   "name": "twenty-zapier",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Effortlessly sync Twenty with 3000+ apps. Automate tasks, boost productivity, and supercharge your customer relationships!",
-  "main": "src/index.ts",
+  "main": "lib/index.cjs",
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
@@ -22,9 +22,10 @@
   "devDependencies": {
     "jest": "29.7.0",
     "rimraf": "^3.0.2",
+    "twenty-shared": "workspace:*",
+    "vite": "^7.0.0",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-tsconfig-paths": "^4.2.1",
     "zapier-platform-cli": "^15.4.1"
-  },
-  "installConfig": {
-    "hoistingLimits": "dependencies"
   }
 }

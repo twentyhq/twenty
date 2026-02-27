@@ -1,6 +1,6 @@
-import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
+import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const recordLoadingFamilyState = createFamilyState<boolean, string>({
+export const recordLoadingFamilyState = createAtomFamilyState<boolean, string>({
   key: 'recordLoadingFamilyState',
   defaultValue: false,
 });

@@ -1,4 +1,4 @@
-import { isAttachmentPreviewEnabledStateV2 } from '@/client-config/states/isAttachmentPreviewEnabledStateV2';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useFilesField } from '@/object-record/record-field/ui/meta-types/hooks/useFilesField';
@@ -11,10 +11,10 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { filesSchema } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { filePreviewStateV2 } from '@/ui/field/display/states/filePreviewStateV2';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import { useSetRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useSetRecoilStateV2';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
@@ -28,9 +28,9 @@ export const FilesFieldInput = () => {
   const { t } = useLingui();
   const [isUploading, setIsUploading] = useState(false);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const setFilePreview = useSetRecoilStateV2(filePreviewStateV2);
-  const isAttachmentPreviewEnabled = useRecoilValueV2(
-    isAttachmentPreviewEnabledStateV2,
+  const setFilePreview = useSetAtomState(filePreviewState);
+  const isAttachmentPreviewEnabled = useAtomStateValue(
+    isAttachmentPreviewEnabledState,
   );
 
   const { onEscape, onClickOutside, onEnter } = useContext(
@@ -122,12 +122,12 @@ export const FilesFieldInput = () => {
     fieldDefinition,
   ]);
 
-  const setIsFieldInError = useSetRecoilComponentState(
+  const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
   const handleError = (hasError: boolean, values: FieldFilesValue[]) => {
-    setIsFieldInError(hasError && values.length === 0);
+    setRecordFieldInputIsFieldInError(hasError && values.length === 0);
   };
 
   const handleClickOutside = (

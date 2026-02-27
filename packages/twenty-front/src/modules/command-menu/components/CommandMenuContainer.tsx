@@ -8,8 +8,8 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilValue } from 'recoil';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledCommandMenuContainer = styled.div<{ isMobile: boolean }>`
   max-height: ${({ theme, isMobile }) => {
@@ -29,26 +29,27 @@ type CommandMenuContainerProps = {
 export const CommandMenuContainer = ({
   children,
 }: CommandMenuContainerProps) => {
-  const objectMetadataItemId = useRecoilComponentValue(
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
   const isMobile = useIsMobile();
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
+    (objectMetadataItem) =>
+      objectMetadataItem.id === contextStoreCurrentObjectMetadataItemId,
   );
 
-  const currentViewId = useRecoilComponentValue(
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem?.namePlural ?? '',
-    currentViewId ?? '',
+    contextStoreCurrentViewId ?? '',
   );
 
   return (

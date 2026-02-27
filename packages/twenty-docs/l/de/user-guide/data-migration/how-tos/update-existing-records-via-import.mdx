@@ -25,11 +25,11 @@ Wenn Sie eine Datei importieren, die einen **eindeutigen Bezeichner** enthält, 
 | Fehlt in Ihrer Datei                           | **Erstellt** einen neuen Datensatz (mit automatisch generierter ID) |
 
 <Warning>
-  **Mehrfachauswahl-Felder werden überschrieben, nicht zusammengeführt.**
+**Mehrfachauswahl-Felder werden überschrieben, nicht zusammengeführt.**
 
-  Wenn in einem Datensatz `Option A` und `Option B` ausgewählt sind und Sie `[\"Option C\"]` importieren, hat der Datensatz nach dem Import nur noch `Option C`. Der Import ersetzt alle bisherigen Auswahlen — er fügt ihnen nichts hinzu.
+Wenn in einem Datensatz `Option A` und `Option B` ausgewählt sind und Sie `[\"Option C\"]` importieren, hat der Datensatz nach dem Import nur noch `Option C`. Der Import ersetzt alle bisherigen Auswahlen — er fügt ihnen nichts hinzu.
 
-  Um vorhandene Werte beizubehalten, schließen Sie sie alle in Ihren Import ein: `[\"Option A\",\"Option B\",\"Option C\"]`
+Um vorhandene Werte beizubehalten, schließen Sie sie alle in Ihren Import ein: `[\"Option A\",\"Option B\",\"Option C\"]`
 </Warning>
 
 ## Schritt 1: Exportieren Sie Ihre aktuellen Daten
@@ -80,9 +80,9 @@ id,email,firstName,lastName,jobTitle
 ```
 
 <Warning>
-  **Ändern Sie die Werte der eindeutigen Bezeichner nicht.**
+**Ändern Sie die Werte der eindeutigen Bezeichner nicht.**
 
-  Wenn Sie `john@acme.com` in `john.smith@acme.com` ändern, erstellt Twenty einen neuen Datensatz, anstatt den vorhandenen zu aktualisieren.
+Wenn Sie `john@acme.com` in `john.smith@acme.com` ändern, erstellt Twenty einen neuen Datensatz, anstatt den vorhandenen zu aktualisieren.
 </Warning>
 
 ## Schritt 3: Importieren Sie die aktualisierte Datei

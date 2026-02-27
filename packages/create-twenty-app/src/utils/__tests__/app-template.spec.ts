@@ -1,8 +1,9 @@
-import * as fs from 'fs-extra';
-import { join } from 'path';
-import { tmpdir } from 'os';
-import { copyBaseApplicationProject } from '@/utils/app-template';
 import { type ExampleOptions } from '@/types/scaffolding-options';
+import { GENERATED_DIR } from 'twenty-shared/application';
+import { copyBaseApplicationProject } from '@/utils/app-template';
+import * as fs from 'fs-extra';
+import { tmpdir } from 'os';
+import { join } from 'path';
 
 // Mock fs-extra's copy function to skip copying base template (not available during tests)
 jest.mock('fs-extra', () => {
@@ -23,11 +24,13 @@ const ALL_EXAMPLES: ExampleOptions = {
   includeExampleFrontComponent: true,
   includeExampleView: true,
   includeExampleNavigationMenuItem: true,
+  includeExampleSkill: true,
 };
 
 const NO_EXAMPLES: ExampleOptions = {
   includeExampleObject: false,
   includeExampleField: false,
+  includeExampleSkill: false,
   includeExampleLogicFunction: false,
   includeExampleFrontComponent: false,
   includeExampleView: false,
@@ -109,7 +112,7 @@ describe('copyBaseApplicationProject', () => {
 
     const gitignoreContent = await fs.readFile(gitignorePath, 'utf8');
     expect(gitignoreContent).toContain('/node_modules');
-    expect(gitignoreContent).toContain('generated');
+    expect(gitignoreContent).toContain(GENERATED_DIR);
   });
 
   it('should create yarn.lock file', async () => {
@@ -372,6 +375,18 @@ describe('copyBaseApplicationProject', () => {
             ),
           ),
         ).toBe(true);
+
+        // Install functions should always exist
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'logic-functions', 'pre-install.ts'),
+          ),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'logic-functions', 'post-install.ts'),
+          ),
+        ).toBe(true);
       });
     });
 
@@ -393,6 +408,18 @@ describe('copyBaseApplicationProject', () => {
         );
         expect(
           await fs.pathExists(join(srcPath, 'roles', DEFAULT_ROLE_FILE_NAME)),
+        ).toBe(true);
+
+        // Install functions should always exist (not gated by exampleOptions)
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'logic-functions', 'pre-install.ts'),
+          ),
+        ).toBe(true);
+        expect(
+          await fs.pathExists(
+            join(srcPath, 'logic-functions', 'post-install.ts'),
+          ),
         ).toBe(true);
 
         // Example files should not exist
@@ -437,6 +464,7 @@ describe('copyBaseApplicationProject', () => {
           exampleOptions: {
             includeExampleObject: false,
             includeExampleField: false,
+            includeExampleSkill: false,
             includeExampleLogicFunction: false,
             includeExampleFrontComponent: true,
             includeExampleView: false,
@@ -472,6 +500,7 @@ describe('copyBaseApplicationProject', () => {
           appDirectory: testAppDirectory,
           exampleOptions: {
             includeExampleObject: false,
+            includeExampleSkill: false,
             includeExampleField: false,
             includeExampleLogicFunction: true,
             includeExampleFrontComponent: false,
@@ -669,6 +698,126 @@ describe('copyBaseApplicationProject', () => {
       expect(content).toContain("name: 'example-navigation-menu-item'");
       expect(content).toContain("icon: 'IconList'");
       expect(content).toContain('position: 0');
+    });
+  });
+
+  describe('pre-install logic function', () => {
+    it('should create pre-install.ts with definePreInstallLogicFunction and typed payload', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: NO_EXAMPLES,
+      });
+
+      const preInstallPath = join(
+        testAppDirectory,
+        'src',
+        'logic-functions',
+        'pre-install.ts',
+      );
+
+      expect(await fs.pathExists(preInstallPath)).toBe(true);
+
+      const content = await fs.readFile(preInstallPath, 'utf8');
+
+      expect(content).toContain(
+        "import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk'",
+      );
+      expect(content).toContain(
+        'export default definePreInstallLogicFunction({',
+      );
+      expect(content).toContain("name: 'pre-install'");
+      expect(content).toContain('timeoutSeconds: 300');
+      expect(content).toContain(
+        'const handler = async (payload: InstallLogicFunctionPayload): Promise<void>',
+      );
+      expect(content).toContain('payload.previousVersion');
+
+      // Verify it has a universalIdentifier (UUID format)
+      expect(content).toMatch(
+        /universalIdentifier: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,
+      );
+    });
+
+    it('should always create pre-install.ts regardless of example options', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: NO_EXAMPLES,
+      });
+
+      const preInstallPath = join(
+        testAppDirectory,
+        'src',
+        'logic-functions',
+        'pre-install.ts',
+      );
+
+      expect(await fs.pathExists(preInstallPath)).toBe(true);
+    });
+  });
+
+  describe('post-install logic function', () => {
+    it('should create post-install.ts with definePostInstallLogicFunction and typed payload', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: NO_EXAMPLES,
+      });
+
+      const postInstallPath = join(
+        testAppDirectory,
+        'src',
+        'logic-functions',
+        'post-install.ts',
+      );
+
+      expect(await fs.pathExists(postInstallPath)).toBe(true);
+
+      const content = await fs.readFile(postInstallPath, 'utf8');
+
+      expect(content).toContain(
+        "import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk'",
+      );
+      expect(content).toContain(
+        'export default definePostInstallLogicFunction({',
+      );
+      expect(content).toContain("name: 'post-install'");
+      expect(content).toContain('timeoutSeconds: 300');
+      expect(content).toContain(
+        'const handler = async (payload: InstallLogicFunctionPayload): Promise<void>',
+      );
+      expect(content).toContain('payload.previousVersion');
+
+      // Verify it has a universalIdentifier (UUID format)
+      expect(content).toMatch(
+        /universalIdentifier: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'/,
+      );
+    });
+
+    it('should always create post-install.ts regardless of example options', async () => {
+      await copyBaseApplicationProject({
+        appName: 'my-test-app',
+        appDisplayName: 'My Test App',
+        appDescription: 'A test application',
+        appDirectory: testAppDirectory,
+        exampleOptions: NO_EXAMPLES,
+      });
+
+      const postInstallPath = join(
+        testAppDirectory,
+        'src',
+        'logic-functions',
+        'post-install.ts',
+      );
+
+      expect(await fs.pathExists(postInstallPath)).toBe(true);
     });
   });
 });

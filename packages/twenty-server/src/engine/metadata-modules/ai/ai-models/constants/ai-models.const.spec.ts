@@ -6,21 +6,24 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 import {
   AI_MODELS,
   DEFAULT_SMART_MODEL,
-  ModelProvider,
+  InferenceProvider,
 } from './ai-models.const';
 
 describe('AI_MODELS', () => {
-  it('should have at least one model per provider', () => {
-    const providers = [
-      ModelProvider.OPENAI,
-      ModelProvider.ANTHROPIC,
-      ModelProvider.XAI,
-      ModelProvider.GROQ,
+  it('should have at least one model per inference provider', () => {
+    const inferenceProviders = [
+      InferenceProvider.OPENAI,
+      InferenceProvider.ANTHROPIC,
+      InferenceProvider.BEDROCK,
+      InferenceProvider.GOOGLE,
+      InferenceProvider.XAI,
+      InferenceProvider.GROQ,
+      InferenceProvider.MISTRAL,
     ];
 
-    providers.forEach((provider) => {
+    inferenceProviders.forEach((inferenceProvider) => {
       const modelsForProvider = AI_MODELS.filter(
-        (model) => model.provider === provider,
+        (model) => model.inferenceProvider === inferenceProvider,
       );
 
       expect(modelsForProvider.length).toBeGreaterThan(0);
@@ -32,9 +35,10 @@ describe('AI_MODELS', () => {
       expect(model.modelId).toBeDefined();
       expect(model.label).toBeDefined();
       expect(model.description).toBeDefined();
-      expect(model.provider).toBeDefined();
-      expect(model.inputCostPer1kTokensInCents).toBeDefined();
-      expect(model.outputCostPer1kTokensInCents).toBeDefined();
+      expect(model.modelFamily).toBeDefined();
+      expect(model.inferenceProvider).toBeDefined();
+      expect(model.inputCostPerMillionTokens).toBeDefined();
+      expect(model.outputCostPerMillionTokens).toBeDefined();
       expect(model.contextWindowTokens).toBeGreaterThan(0);
       expect(model.maxOutputTokens).toBeGreaterThan(0);
     });
@@ -47,17 +51,21 @@ describe('AI_MODELS', () => {
     expect(uniqueModelIds.size).toBe(modelIds.length);
   });
 
-  it('should have at least one non-deprecated model per provider', () => {
-    const providers = [
-      ModelProvider.OPENAI,
-      ModelProvider.ANTHROPIC,
-      ModelProvider.XAI,
-      ModelProvider.GROQ,
+  it('should have at least one non-deprecated model per inference provider', () => {
+    const inferenceProviders = [
+      InferenceProvider.OPENAI,
+      InferenceProvider.ANTHROPIC,
+      InferenceProvider.BEDROCK,
+      InferenceProvider.GOOGLE,
+      InferenceProvider.XAI,
+      InferenceProvider.GROQ,
+      InferenceProvider.MISTRAL,
     ];
 
-    providers.forEach((provider) => {
+    inferenceProviders.forEach((inferenceProvider) => {
       const activeModelsForProvider = AI_MODELS.filter(
-        (model) => model.provider === provider && !model.deprecated,
+        (model) =>
+          model.inferenceProvider === inferenceProvider && !model.deprecated,
       );
 
       expect(activeModelsForProvider.length).toBeGreaterThan(0);
@@ -88,35 +96,35 @@ describe('AiModelRegistryService', () => {
   });
 
   it('should return effective model config for DEFAULT_SMART_MODEL', () => {
-    MOCK_CONFIG_SERVICE.get.mockReturnValue('gpt-4o');
+    MOCK_CONFIG_SERVICE.get.mockReturnValue('gpt-5.2');
 
     expect(() => SERVICE.getEffectiveModelConfig(DEFAULT_SMART_MODEL)).toThrow(
-      'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, XAI_API_KEY, or GROQ_API_KEY).',
+      'No AI models are available. Please configure at least one AI provider (OPENAI_API_KEY, ANTHROPIC_API_KEY, AWS_BEDROCK_REGION, GOOGLE_API_KEY, XAI_API_KEY, GROQ_API_KEY, or MISTRAL_API_KEY).',
     );
   });
 
   it('should return effective model config for DEFAULT_SMART_MODEL when models are available', () => {
-    MOCK_CONFIG_SERVICE.get.mockReturnValue('gpt-4o');
+    MOCK_CONFIG_SERVICE.get.mockReturnValue('gpt-5.2');
 
     jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
       {
-        modelId: 'gpt-4o',
-        provider: ModelProvider.OPENAI,
+        modelId: 'gpt-5.2',
+        inferenceProvider: InferenceProvider.OPENAI,
         model: {} as any,
       },
     ]);
 
     jest.spyOn(SERVICE, 'getModel').mockReturnValue({
-      modelId: 'gpt-4o',
-      provider: ModelProvider.OPENAI,
+      modelId: 'gpt-5.2',
+      inferenceProvider: InferenceProvider.OPENAI,
       model: {} as any,
     });
 
     const RESULT = SERVICE.getEffectiveModelConfig(DEFAULT_SMART_MODEL);
 
     expect(RESULT).toBeDefined();
-    expect(RESULT.modelId).toBe('gpt-4o');
-    expect(RESULT.provider).toBe(ModelProvider.OPENAI);
+    expect(RESULT.modelId).toBe('gpt-5.2');
+    expect(RESULT.inferenceProvider).toBe(InferenceProvider.OPENAI);
   });
 
   it('should return effective model config for DEFAULT_SMART_MODEL with custom model', () => {
@@ -125,14 +133,14 @@ describe('AiModelRegistryService', () => {
     jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
       {
         modelId: 'mistral',
-        provider: ModelProvider.OPENAI_COMPATIBLE,
+        inferenceProvider: InferenceProvider.OPENAI_COMPATIBLE,
         model: {} as any,
       },
     ]);
 
     jest.spyOn(SERVICE, 'getModel').mockReturnValue({
       modelId: 'mistral',
-      provider: ModelProvider.OPENAI_COMPATIBLE,
+      inferenceProvider: InferenceProvider.OPENAI_COMPATIBLE,
       model: {} as any,
     });
 
@@ -140,25 +148,24 @@ describe('AiModelRegistryService', () => {
 
     expect(RESULT).toBeDefined();
     expect(RESULT.modelId).toBe('mistral');
-    expect(RESULT.provider).toBe(ModelProvider.OPENAI_COMPATIBLE);
+    expect(RESULT.inferenceProvider).toBe(InferenceProvider.OPENAI_COMPATIBLE);
     expect(RESULT.label).toBe('mistral');
-    expect(RESULT.inputCostPer1kTokensInCents).toBe(0);
-    expect(RESULT.outputCostPer1kTokensInCents).toBe(0);
+    expect(RESULT.inputCostPerMillionTokens).toBe(0);
+    expect(RESULT.outputCostPerMillionTokens).toBe(0);
   });
 
   it('should return effective model config for specific model', () => {
-    const RESULT = SERVICE.getEffectiveModelConfig('gpt-4o-mini');
+    const RESULT = SERVICE.getEffectiveModelConfig('gpt-5.2');
 
     expect(RESULT).toBeDefined();
-    expect(RESULT.modelId).toBe('gpt-4o-mini');
-    expect(RESULT.provider).toBe(ModelProvider.OPENAI);
+    expect(RESULT.modelId).toBe('gpt-5.2');
+    expect(RESULT.inferenceProvider).toBe(InferenceProvider.OPENAI);
   });
 
   it('should return effective model config for custom model', () => {
-    // Mock that the custom model exists in registry
     jest.spyOn(SERVICE, 'getModel').mockReturnValue({
       modelId: 'mistral',
-      provider: ModelProvider.OPENAI_COMPATIBLE,
+      inferenceProvider: InferenceProvider.OPENAI_COMPATIBLE,
       model: {} as any,
     });
 
@@ -166,10 +173,10 @@ describe('AiModelRegistryService', () => {
 
     expect(RESULT).toBeDefined();
     expect(RESULT.modelId).toBe('mistral');
-    expect(RESULT.provider).toBe(ModelProvider.OPENAI_COMPATIBLE);
+    expect(RESULT.inferenceProvider).toBe(InferenceProvider.OPENAI_COMPATIBLE);
     expect(RESULT.label).toBe('mistral');
-    expect(RESULT.inputCostPer1kTokensInCents).toBe(0);
-    expect(RESULT.outputCostPer1kTokensInCents).toBe(0);
+    expect(RESULT.inputCostPerMillionTokens).toBe(0);
+    expect(RESULT.outputCostPerMillionTokens).toBe(0);
   });
 
   it('should throw error for non-existent model', () => {
@@ -181,9 +188,8 @@ describe('AiModelRegistryService', () => {
   });
 
   it('should find first available model from comma-separated list', () => {
-    // First model not available, second model available
     MOCK_CONFIG_SERVICE.get.mockReturnValue(
-      'gpt-4.1-mini,claude-haiku-4-5-20251001,grok-3-mini',
+      'gpt-5-mini,claude-haiku-4-5-20251001,gemini-3-flash-preview',
     );
 
     const getModelSpy = jest
@@ -192,7 +198,7 @@ describe('AiModelRegistryService', () => {
         if (modelId === 'claude-haiku-4-5-20251001') {
           return {
             modelId: 'claude-haiku-4-5-20251001',
-            provider: ModelProvider.ANTHROPIC,
+            inferenceProvider: InferenceProvider.ANTHROPIC,
             model: {} as any,
           };
         }
@@ -204,7 +210,7 @@ describe('AiModelRegistryService', () => {
 
     expect(result).toBeDefined();
     expect(result.modelId).toBe('claude-haiku-4-5-20251001');
-    expect(getModelSpy).toHaveBeenCalledWith('gpt-4.1-mini');
+    expect(getModelSpy).toHaveBeenCalledWith('gpt-5-mini');
     expect(getModelSpy).toHaveBeenCalledWith('claude-haiku-4-5-20251001');
   });
 
@@ -215,7 +221,7 @@ describe('AiModelRegistryService', () => {
     jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
       {
         modelId: 'fallback-model',
-        provider: ModelProvider.OPENAI_COMPATIBLE,
+        inferenceProvider: InferenceProvider.OPENAI_COMPATIBLE,
         model: {} as any,
       },
     ]);

@@ -36,6 +36,10 @@ yarn twenty function:execute  # Execute a function with JSON payload
 yarn twenty app:uninstall  # Uninstall app from workspace
 ```
 
+## LLMs instructions
+
+Main docs and pitfalls are available in LLMS.md file.
+
 ## Learn More
 
 To learn more about Twenty applications, take a look at the following resources:

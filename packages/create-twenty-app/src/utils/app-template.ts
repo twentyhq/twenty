@@ -89,6 +89,20 @@ export const copyBaseApplicationProject = async ({
     });
   }
 
+  if (exampleOptions.includeExampleSkill) {
+    await createExampleSkill({
+      appDirectory: sourceFolderPath,
+      fileFolder: 'skills',
+      fileName: 'example-skill.ts',
+    });
+  }
+
+  await createDefaultPreInstallFunction({
+    appDirectory: sourceFolderPath,
+    fileFolder: 'logic-functions',
+    fileName: 'pre-install.ts',
+  });
+
   await createDefaultPostInstallFunction({
     appDirectory: sourceFolderPath,
     fileFolder: 'logic-functions',
@@ -260,6 +274,36 @@ export default defineLogicFunction({
   await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
 };
 
+const createDefaultPreInstallFunction = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: '${universalIdentifier}',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
 const createDefaultPostInstallFunction = async ({
   appDirectory,
   fileFolder,
@@ -271,16 +315,14 @@ const createDefaultPostInstallFunction = async ({
 }) => {
   const universalIdentifier = v4();
 
-  const content = `import { defineLogicFunction } from 'twenty-sdk';
+  const content = `import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
 
-export const POST_INSTALL_UNIVERSAL_IDENTIFIER = '${universalIdentifier}';
-
-const handler = async (): Promise<void> => {
-  console.log('Post install logic function executed successfully!');
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
-export default defineLogicFunction({
-  universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
+export default definePostInstallLogicFunction({
+  universalIdentifier: '${universalIdentifier}',
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
@@ -424,6 +466,36 @@ export default defineNavigationMenuItem({
   await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
 };
 
+const createExampleSkill = async ({
+  appDirectory,
+  fileFolder,
+  fileName,
+}: {
+  appDirectory: string;
+  fileFolder?: string;
+  fileName: string;
+}) => {
+  const universalIdentifier = v4();
+
+  const content = `import { defineSkill } from 'twenty-sdk';
+
+export const EXAMPLE_SKILL_UNIVERSAL_IDENTIFIER =
+  '${universalIdentifier}';
+
+export default defineSkill({
+  universalIdentifier: EXAMPLE_SKILL_UNIVERSAL_IDENTIFIER,
+  name: 'example-skill',
+  label: 'Example Skill',
+  description: 'A sample skill for your application',
+  icon: 'IconBrain',
+  content: 'Add your skill instructions here. Skills provide context and capabilities to AI agents.',
+});
+`;
+
+  await fs.ensureDir(join(appDirectory, fileFolder ?? ''));
+  await fs.writeFile(join(appDirectory, fileFolder ?? '', fileName), content);
+};
+
 const createApplicationConfig = async ({
   displayName,
   description,
@@ -439,14 +511,12 @@ const createApplicationConfig = async ({
 }) => {
   const content = `import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
-import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/logic-functions/post-install';
 
 export default defineApplication({
   universalIdentifier: '${v4()}',
   displayName: '${displayName}',
   description: '${description ?? ''}',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  postInstallLogicFunctionUniversalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
 });
 `;
 

@@ -9,9 +9,9 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { useRecoilValue } from 'recoil';
 
 type RecordTableContextProviderProps = {
   viewBarId: string;
@@ -36,12 +36,14 @@ export const RecordTableContextProvider = ({
     objectMetadataItem.id,
   );
 
-  const visibleRecordFields = useRecoilComponentValue(
+  const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
     recordTableId,
   );
 
-  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const recordIndexOpenRecordIn = useAtomStateValue(
+    recordIndexOpenRecordInState,
+  );
   const triggerEvent =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
       ? 'CLICK'

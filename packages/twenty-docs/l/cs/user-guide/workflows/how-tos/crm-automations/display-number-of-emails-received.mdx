@@ -30,7 +30,7 @@ Než tento pracovní postup nastavíte, vytvořte v objektu **Lidé** vlastní p
 3. Zvolte **Účastníci zpráv** (k dispozici v části Pokročilé objekty)
 
 <Note>
-  Účastník zprávy je kombinace ID zprávy a ID osoby, čímž vzniká jeden jedinečný záznam na zprávu. To je snazší sledovat než přímo Zprávy, protože můžeme přistupovat k poli `handle`, které obsahuje e-mailovou adresu odesílatele (nebo příjemce).
+Účastník zprávy je kombinace ID zprávy a ID osoby, čímž vzniká jeden jedinečný záznam na zprávu. To je snazší sledovat než přímo Zprávy, protože můžeme přistupovat k poli `handle`, které obsahuje e-mailovou adresu odesílatele (nebo příjemce).
 </Note>
 
 ### Krok 2: Filtrování podle role
@@ -50,7 +50,7 @@ Tím zajistíte, že budete počítat pouze zprávy odeslané touto osobou, niko
 Tímto najdete všechny zprávy z této e-mailové adresy a získáte celkový počet.
 
 <Note>
-  Akce Vyhledat záznamy je omezena na vrácení maximálně 200 záznamů. Protože však používáte pouze hodnotu `totalCount` (nikoli jednotlivé záznamy), tento krok vrátí celkový počet e-mailů odeslaných touto osobou.
+Akce Vyhledat záznamy je omezena na vrácení maximálně 200 záznamů. Protože však používáte pouze hodnotu `totalCount` (nikoli jednotlivé záznamy), tento krok vrátí celkový počet e-mailů odeslaných touto osobou.
 </Note>
 
 ### Krok 4: Aktualizujte záznam osoby pomocí akce Vytvořit nebo aktualizovat záznam
@@ -58,7 +58,7 @@ Tímto najdete všechny zprávy z této e-mailové adresy a získáte celkový p
 1. Přidejte akci **Vytvořit nebo aktualizovat záznam**
 
 <Warning>
-  Zde použijte **Upsert Record** místo **Update Record**. To vám umožní identifikovat osobu podle její e-mailové adresy (pole `handle`) místo požadavku na ID záznamu z předchozího kroku.
+Zde použijte **Upsert Record** místo **Update Record**. To vám umožní identifikovat osobu podle její e-mailové adresy (pole `handle`) místo požadavku na ID záznamu z předchozího kroku.
 </Warning>
 
 2. Vyberte jako objekt **Lidé**

@@ -9,8 +9,8 @@ import {
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
+import { ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewVisibility } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -112,16 +112,23 @@ export class ViewResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @Args('objectMetadataId', { type: () => String, nullable: true })
     objectMetadataId?: string,
+    @Args('viewTypes', { type: () => [ViewType], nullable: true })
+    viewTypes?: ViewType[],
   ): Promise<ViewEntity[]> {
     if (objectMetadataId) {
       return this.viewService.findByObjectMetadataId(
         workspace.id,
         objectMetadataId,
         userWorkspaceId,
+        viewTypes,
       );
     }
 
-    return this.viewService.findByWorkspaceId(workspace.id, userWorkspaceId);
+    return this.viewService.findByWorkspaceId(
+      workspace.id,
+      userWorkspaceId,
+      viewTypes,
+    );
   }
 
   @Query(() => ViewDTO, { nullable: true })

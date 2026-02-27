@@ -1,4 +1,3 @@
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
 import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDragAndDrop';
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
@@ -9,14 +8,11 @@ import { RecordTableDraggableTrFirstRowOfGroup } from '@/object-record/record-ta
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
 import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
 import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { ListenRecordUpdatesEffect } from '@/sse-db-event/components/ListenRecordUpdatesEffect';
-import { getDefaultRecordFieldsToListen } from '@/sse-db-event/utils/getDefaultRecordFieldsToListen';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type RecordTableRowProps = {
   recordId: string;
@@ -31,19 +27,15 @@ export const RecordTableRow = ({
   rowIndexForDrag,
   isFirstRowOfGroup,
 }: RecordTableRowProps) => {
-  const { objectNameSingular } = useRecordIndexContextOrThrow();
-  const listenedFields = getDefaultRecordFieldsToListen({
-    objectNameSingular,
-  });
-  const isFocused = useRecoilComponentFamilyValue(
+  const { recordTableId } = useRecordTableContextOrThrow();
+
+  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
     isRecordTableRowFocusedComponentFamilyState,
     rowIndexForFocus,
   );
-  const isRowFocusActive = useRecoilComponentValue(
+  const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
-  );
-  const isSseDbEventsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
+    recordTableId,
   );
 
   return isFirstRowOfGroup ? (
@@ -52,7 +44,7 @@ export const RecordTableRow = ({
       draggableIndex={rowIndexForDrag}
       focusIndex={rowIndexForFocus}
     >
-      {isRowFocusActive && isFocused && (
+      {isRecordTableRowFocusActive && isRecordTableRowFocused && (
         <>
           <RecordTableRowHotkeyEffect />
           <RecordTableRowArrowKeysEffect />
@@ -63,13 +55,6 @@ export const RecordTableRow = ({
       <RecordTableFieldsCells />
       <RecordTablePlusButtonCellPlaceholder />
       <RecordTableLastEmptyCell />
-      {!isSseDbEventsEnabled && (
-        <ListenRecordUpdatesEffect
-          objectNameSingular={objectNameSingular}
-          recordId={recordId}
-          listenedFields={listenedFields}
-        />
-      )}
     </RecordTableDraggableTrFirstRowOfGroup>
   ) : (
     <RecordTableDraggableTr
@@ -77,7 +62,7 @@ export const RecordTableRow = ({
       draggableIndex={rowIndexForDrag}
       focusIndex={rowIndexForFocus}
     >
-      {isRowFocusActive && isFocused && (
+      {isRecordTableRowFocusActive && isRecordTableRowFocused && (
         <>
           <RecordTableRowHotkeyEffect />
           <RecordTableRowArrowKeysEffect />

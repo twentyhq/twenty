@@ -1,6 +1,7 @@
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { AdvancedFilterCommandMenuValueFormCompositeFieldInput } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuValueFormCompositeFieldInput';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
+import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { shouldShowFilterTextInput } from '@/object-record/advanced-filter/utils/shouldShowFilterTextInput';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
@@ -18,10 +19,11 @@ import {
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -41,12 +43,16 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
     isWorkflowFindRecords,
   } = useContext(AdvancedFilterContext);
 
-  const currentRecordFilters = useRecoilComponentValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
 
-  const subFieldNameUsedInDropdown = useRecoilComponentValue(
+  const dropdownInstanceId =
+    getAdvancedFilterObjectFilterDropdownComponentInstanceId(recordFilterId);
+
+  const subFieldNameUsedInDropdown = useAtomComponentStateValue(
     subFieldNameUsedInDropdownComponentState,
+    dropdownInstanceId,
   );
 
   const recordFilter = currentRecordFilters.find(
@@ -77,12 +83,17 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
     }
   };
 
+  const handleClear = () => {
+    applyObjectFilterDropdownFilterValue('');
+  };
+
   const handleRelativeDateFilterChange = (newValue: RelativeDateFilter) => {
     applyObjectFilterDropdownFilterValue(stringifyRelativeDateFilter(newValue));
   };
 
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
+  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
+    dropdownInstanceId,
   );
 
   const fieldDefinition = fieldMetadataItemUsedInDropdown
@@ -144,6 +155,7 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
       <AdvancedFilterCommandMenuValueFormCompositeFieldInput
         recordFilter={recordFilter}
         onChange={handleChange}
+        onClear={handleClear}
       />
     );
   }

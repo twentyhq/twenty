@@ -14,6 +14,7 @@ export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
+export { CommandMenuPages } from './CommandMenuPages';
 export type { ActorMetadata } from './composite-types/actor.composite-type';
 export {
   FieldActorSource,
@@ -52,6 +53,10 @@ export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameTyp
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { CrudOperationType } from './CrudOperationType';
+export type {
+  SnackBarVariant,
+  EnqueueSnackbarParams,
+} from './EnqueueSnackbarParams';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export { EventLogTable } from './EventLogTable';
 export type { ExcludeFunctions } from './ExcludeFunctions';

@@ -1,6 +1,6 @@
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useLingui } from '@lingui/react/macro';
@@ -11,7 +11,7 @@ export const AnyFieldSearchChip = () => {
 
   const { closeDropdown } = useCloseDropdown();
 
-  const [anyFieldFilterValue, setAnyFieldFilterValue] = useRecoilComponentState(
+  const [anyFieldFilterValue, setAnyFieldFilterValue] = useAtomComponentState(
     anyFieldFilterValueComponentState,
   );
 

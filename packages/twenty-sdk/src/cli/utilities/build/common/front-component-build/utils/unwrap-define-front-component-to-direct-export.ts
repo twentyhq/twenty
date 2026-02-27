@@ -2,7 +2,7 @@ const DEFINE_FRONT_COMPONENT_IMPORT_PATTERN =
   /import\s*\{\s*defineFrontComponent\s*\}\s*from\s*['"][^'"]+['"];?\n?/g;
 
 const DEFINE_FRONT_COMPONENT_EXPORT_PATTERN =
-  /export\s+default\s+defineFrontComponent\s*\(\s*\{[^}]*component\s*:\s*(\w+)[^}]*\}\s*\)\s*;?/s;
+  /export\s+default\s+defineFrontComponent\s*\(\s*\{[\s\S]*?component\s*:\s*(\w+)[\s\S]*?\}\s*\)\s*;?/s;
 
 export const unwrapDefineFrontComponentToDirectExport = (
   sourceCode: string,

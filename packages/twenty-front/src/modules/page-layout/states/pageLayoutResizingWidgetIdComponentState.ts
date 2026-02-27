@@ -1,11 +1,10 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 import { PageLayoutComponentInstanceContext } from './contexts/PageLayoutComponentInstanceContext';
 
-export const pageLayoutResizingWidgetIdComponentState = createComponentState<
-  string | null
->({
-  key: 'pageLayoutResizingWidgetIdComponentState',
-  defaultValue: null,
-  componentInstanceContext: PageLayoutComponentInstanceContext,
-});
+export const pageLayoutResizingWidgetIdComponentState =
+  createAtomComponentState<string | null>({
+    key: 'pageLayoutResizingWidgetIdComponentState',
+    defaultValue: null,
+    componentInstanceContext: PageLayoutComponentInstanceContext,
+  });

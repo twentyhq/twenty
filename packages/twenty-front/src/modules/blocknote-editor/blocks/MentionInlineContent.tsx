@@ -6,9 +6,9 @@ import { createReactInlineContentSpec } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip, ChipVariant } from 'twenty-ui/components';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledRecordChip = styled(RecordChip)`
   height: auto;
@@ -30,7 +30,7 @@ const LegacyMentionRenderer = ({
   recordId: string;
   objectMetadataId: string;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.id === objectMetadataId,

@@ -1,13 +1,15 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { AuthContext } from '@/auth/contexts/AuthContext';
 import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
-  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
-  const currentWorkspaceDeletedMembers = useRecoilValue(
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
+  const currentWorkspaceDeletedMembers = useAtomStateValue(
     currentWorkspaceDeletedMembersState,
   );
 

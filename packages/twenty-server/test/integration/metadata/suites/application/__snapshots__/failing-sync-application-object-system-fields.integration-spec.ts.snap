@@ -79,80 +79,6 @@ exports[`Sync application should fail due to object system fields integrity shou
 }
 `;
 
-exports[`Sync application should fail due to object system fields integrity when object has createdAt field with wrong type (TEXT instead of DATE_TIME) 1`] = `
-{
-  "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "fieldMetadata": [
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "title",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "createdAt",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-      "objectMetadata": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_OBJECT_INPUT",
-              "message": "Names are not synced with labels",
-              "userFriendlyMessage": "Names are not synced with labels",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "namePlural": "wrongCreatedAtObjects",
-            "nameSingular": "wrongCreatedAtObject",
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "objectMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 2 fieldMetadatas, 1 objectMetadata",
-    "summary": {
-      "fieldMetadata": 2,
-      "objectMetadata": 1,
-      "totalErrors": 3,
-    },
-    "userFriendlyMessage": "Metadata validation failed",
-  },
-  "message": "Validation errors occurred while syncing application manifest metadata",
-  "name": "GraphQLError",
-}
-`;
-
 exports[`Sync application should fail due to object system fields integrity when object has id field with wrong type (TEXT instead of UUID) 1`] = `
 {
   "extensions": {
@@ -371,6 +297,85 @@ exports[`Sync application should fail due to object system fields integrity when
           "flatEntityMinimalInformation": {
             "namePlural": "noSystemFieldsObjects",
             "nameSingular": "noSystemFieldsObject",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "objectMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 objectMetadata",
+    "summary": {
+      "objectMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail due to object system fields integrity when object miss default fields 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field id is missing",
+              "userFriendlyMessage": "System field id is missing",
+              "value": "id",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field createdAt is missing",
+              "userFriendlyMessage": "System field createdAt is missing",
+              "value": "createdAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field updatedAt is missing",
+              "userFriendlyMessage": "System field updatedAt is missing",
+              "value": "updatedAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field deletedAt is missing",
+              "userFriendlyMessage": "System field deletedAt is missing",
+              "value": "deletedAt",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field createdBy is missing",
+              "userFriendlyMessage": "System field createdBy is missing",
+              "value": "createdBy",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field updatedBy is missing",
+              "userFriendlyMessage": "System field updatedBy is missing",
+              "value": "updatedBy",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field position is missing",
+              "userFriendlyMessage": "System field position is missing",
+              "value": "position",
+            },
+            {
+              "code": "MISSING_SYSTEM_FIELD",
+              "message": "System field searchVector is missing",
+              "userFriendlyMessage": "System field searchVector is missing",
+              "value": "searchVector",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "namePlural": "wrongCreatedAtObjects",
+            "nameSingular": "wrongCreatedAtObject",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "objectMetadata",

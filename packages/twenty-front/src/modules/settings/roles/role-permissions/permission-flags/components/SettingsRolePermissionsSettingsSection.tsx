@@ -3,9 +3,10 @@ import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/rol
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
 import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilState } from 'recoil';
 import { H2Title, IconSettings } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
 
@@ -31,8 +32,13 @@ export const SettingsRolePermissionsSettingsSection = ({
   roleId,
   isEditable,
 }: SettingsRolePermissionsSettingsSectionProps) => {
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
-    settingsDraftRoleFamilyState(roleId),
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+  const setSettingsDraftRole = useSetAtomFamilyState(
+    settingsDraftRoleFamilyState,
+    roleId,
   );
 
   const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig({

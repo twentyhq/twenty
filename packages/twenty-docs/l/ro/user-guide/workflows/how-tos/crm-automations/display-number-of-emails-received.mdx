@@ -30,7 +30,7 @@ Before setting up this workflow, create a custom field on the **People** object:
 3. Choose **Message Participants** (available under Advanced objects)
 
 <Note>
-  A Message Participant is a combination of a message ID and a person ID, creating one unique record per message. This is easier to track than Messages directly because we can access the `handle` field, which contains the sender's (or recipient's) email address.
+A Message Participant is a combination of a message ID and a person ID, creating one unique record per message. This is easier to track than Messages directly because we can access the `handle` field, which contains the sender's (or recipient's) email address.
 </Note>
 
 ### Step 2: Filter on Role
@@ -50,7 +50,7 @@ This ensures you only count messages sent by this person, not messages sent to t
 This finds all messages from this email address to get the total count.
 
 <Note>
-  The Search Records action is limited to returning 200 records maximum. However, since you're only using the `totalCount` value (not the individual records), this step will return the total number of emails sent by this person.
+The Search Records action is limited to returning 200 records maximum. However, since you're only using the `totalCount` value (not the individual records), this step will return the total number of emails sent by this person.
 </Note>
 
 ### Step 4: Update the Person Record with a Create or Update Record action
@@ -58,7 +58,7 @@ This finds all messages from this email address to get the total count.
 1. Add a **Create or Update Record** action
 
 <Warning>
-  Use **Upsert Record** instead of **Update Record** here. This lets you identify the person by their email address (the `handle` field) rather than requiring a record ID from a previous step.
+Use **Upsert Record** instead of **Update Record** here. This lets you identify the person by their email address (the `handle` field) rather than requiring a record ID from a previous step.
 </Warning>
 
 2. Select **People** as the object

@@ -1,4 +1,5 @@
-import { type ToolCallOptions, type ToolSet } from 'ai';
+import { jsonSchema, type ToolExecutionOptions, type ToolSet } from 'ai';
+import { type JSONSchema7 } from 'json-schema';
 import { z } from 'zod';
 
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -6,16 +7,38 @@ import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/to
 
 export const EXECUTE_TOOL_TOOL_NAME = 'execute_tool';
 
-export const executeToolInputSchema = z.object({
-  toolName: z.string().describe('Exact name of the tool to execute.'),
+const executeToolInputZodSchema = z.object({
+  toolName: z
+    .string()
+    .describe('Exact tool name from get_tool_catalog. Do not guess.'),
   arguments: z
     .record(z.string(), z.unknown())
-    .describe(
-      'Arguments to pass to the tool. Must match the schema from learn_tools.',
-    ),
+    .describe('Arguments matching the schema returned by learn_tools.'),
 });
 
-export type ExecuteToolInput = z.infer<typeof executeToolInputSchema>;
+export type ExecuteToolInput = z.infer<typeof executeToolInputZodSchema>;
+
+export const executeToolInputSchema = jsonSchema<ExecuteToolInput>(
+  () => {
+    const schema = z.toJSONSchema(executeToolInputZodSchema, {
+      target: 'draft-7',
+      io: 'input',
+    }) as JSONSchema7;
+
+    schema.additionalProperties = false;
+
+    return schema;
+  },
+  {
+    validate: async (value) => {
+      const result = await z.safeParseAsync(executeToolInputZodSchema, value);
+
+      return result.success
+        ? { success: true, value: result.data }
+        : { success: false, error: result.error };
+    },
+  },
+);
 
 export type ExecuteToolResult = {
   toolName: string;
@@ -30,18 +53,27 @@ export const createExecuteToolTool = (
   toolRegistry: ToolRegistryService,
   context: ToolContext,
   directTools?: ToolSet,
+  excludeTools?: Set<string>,
 ) => ({
   description:
-    'Execute a tool by name. Use learn_tools first to discover the correct schema, then call this with the tool name and arguments.',
+    'STEP 3: Execute a tool by name with arguments. You MUST call get_tool_catalog (step 1) and learn_tools (step 2) first to discover the tool name and its required input schema.',
   inputSchema: executeToolInputSchema,
   execute: async (
     parameters: ExecuteToolInput,
-    options: ToolCallOptions,
+    options: ToolExecutionOptions,
   ): Promise<ExecuteToolResult> => {
     const { toolName, arguments: args } = parameters;
 
-    // Native provider tools and preloaded tools are already in the ToolSet;
-    // dispatch directly if the LLM routes them through execute_tool.
+    if (excludeTools?.has(toolName)) {
+      return {
+        toolName,
+        error: {
+          message: `Tool "${toolName}" is not available in this context.`,
+          suggestion: 'Use get_tool_catalog to see which tools are available.',
+        },
+      };
+    }
+
     const directTool = directTools?.[toolName];
 
     if (directTool?.execute) {

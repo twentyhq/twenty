@@ -10,14 +10,13 @@ Workflows beginnen immer mit einem einzelnen Auslöser, der festlegt, wann die A
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Erweiterte Objekte werden unterstützt!** Über die standardmäßigen CRM-Objekte hinaus (Personen, Unternehmen, Chancen) können Sie auch Workflows auslösen und Aktionen ausführen für:
+**Erweiterte Objekte werden unterstützt!** Über die standardmäßigen CRM-Objekte hinaus (Personen, Unternehmen, Chancen) können Sie auch Workflows auslösen und Aktionen ausführen für:
+* Arbeitsbereichsmitglieder
+* Kalenderereignisse
+* Nachrichten (E-Mails)
+* Aufgaben, Notizen und viele andere Systemobjekte
 
-  * Arbeitsbereichsmitglieder
-  * Kalenderereignisse
-  * Nachrichten (E-Mails)
-  * Aufgaben, Notizen und viele andere Systemobjekte
-
-  Dies ermöglicht leistungsstarke Automatisierungen, etwa das Benachrichtigen von Teammitgliedern, wenn Kalenderereignisse erstellt werden, oder das automatische Verarbeiten eingehender E-Mails.
+Dies ermöglicht leistungsstarke Automatisierungen, etwa das Benachrichtigen von Teammitgliedern, wenn Kalenderereignisse erstellt werden, oder das automatische Verarbeiten eingehender E-Mails.
 </Tip>
 
 ## Datensatz wird erstellt
@@ -27,9 +26,9 @@ Startet den Workflow, wenn ein neuer Datensatz in einem ausgewählten Objekt (Pe
 **Konfiguration**: Wählen Sie den Objekttyp aus, der auf neue Datensätze überwacht werden soll.
 
 <Note>
-  * Dieser Auslöser eignet sich hervorragend für Datensätze, die durch CSV-, Postfach- und Kalender-Synchronisierung oder per API erstellt wurden.
-  * **Für manuell erstellte Datensätze nicht empfohlen**: Mit diesem Auslöser starten Workflows, sobald der Datensatz erstellt wird. Da Twenty UI ein automatisches Speichern in Echtzeit bietet (es gibt keinen Bearbeitungsmodus und anschließend eine Validierung zum Speichern von Datensätzen), wird der Workflow ausgelöst, bevor der Benutzer alle Felder eingibt.
-    Um diesen Workflow bei manuell erstellten Datensätzen auszulösen, wird empfohlen, stattdessen den Auslöser `Record is created or updated` zu verwenden.
+* Dieser Auslöser eignet sich hervorragend für Datensätze, die durch CSV-, Postfach- und Kalender-Synchronisierung oder per API erstellt wurden.
+* **Für manuell erstellte Datensätze nicht empfohlen**: Mit diesem Auslöser starten Workflows, sobald der Datensatz erstellt wird. Da Twenty UI ein automatisches Speichern in Echtzeit bietet (es gibt keinen Bearbeitungsmodus und anschließend eine Validierung zum Speichern von Datensätzen), wird der Workflow ausgelöst, bevor der Benutzer alle Felder eingibt.
+  Um diesen Workflow bei manuell erstellten Datensätzen auszulösen, wird empfohlen, stattdessen den Auslöser `Record is created or updated` zu verwenden.
 </Note>
 
 ## Datensatz wird aktualisiert
@@ -81,7 +80,7 @@ Startet den Workflow, wenn er durch eine Benutzeraktion ausgelöst wird. Dieser 
 * **Bulk**: Die ausgewählten Datensätze werden an Ihren Workflow übergeben. Dies ist für ein bestimmtes Objekt konfiguriert. Es können mehrere Datensätze ausgewählt werden, bevor der Workflow ausgelöst wird. Der Workflow wird einmal ausgeführt, wobei die gesamte Liste der Datensätze als Eingabe verwendet wird. Das bedeutet, dass der Workflow eine [Iterator-Aktion](/l/de/user-guide/workflows/capabilities/workflow-actions#iterator) enthalten muss.
 
 <Note>
-  Dies ist fortgeschrittener und am besten für Personen geeignet, die die Anzahl der Workflow-Ausführungen optimieren möchten.
+Dies ist fortgeschrittener und am besten für Personen geeignet, die die Anzahl der Workflow-Ausführungen optimieren möchten.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
@@ -107,7 +106,7 @@ Startet den Workflow auf regelmäßiger Basis, die Sie definieren.
 * Geben Sie einen Wert ein oder verwenden Sie benutzerdefinierte Cron-Ausdrücke für erweitertes Scheduling
 
 <Note>
-  **Zeitzone**: Geplante Workflows laufen in **UTC**. Wenn Sie Uhrzeiten für tägliche Zeitpläne festlegen, konvertieren Sie Ihre lokale Zeit in UTC.
+**Zeitzone**: Geplante Workflows laufen in **UTC**. Wenn Sie Uhrzeiten für tägliche Zeitpläne festlegen, konvertieren Sie Ihre lokale Zeit in UTC.
 </Note>
 
 ## Externer Auslöser: Webhook

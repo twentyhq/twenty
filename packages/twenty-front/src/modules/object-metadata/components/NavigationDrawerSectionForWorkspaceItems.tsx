@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconPlus } from 'twenty-ui/display';
 
@@ -27,6 +26,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -71,11 +71,11 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection('Workspace');
-  const coreViews = useRecoilValue(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsState);
   const views = coreViews.map(convertCoreViewToView);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { isDragging } = useContext(NavigationMenuItemDragContext);
   const { addToNavigationFallbackDestination } = useContext(
     NavigationDropTargetContext,

@@ -1,11 +1,14 @@
 import { type MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
-import gql from 'graphql-tag';
 
+import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generateCreateOneRecordMutation';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockedTasks } from '~/testing/mock-data/tasks';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockedDate = '2024-03-15T12:00:00.000Z';
 const toISOStringMock = jest.fn(() => mockedDate);
@@ -21,74 +24,41 @@ const mockedActivity = {
   updatedAt: mockedDate,
 };
 
+const taskMetadataItem = getMockObjectMetadataItemOrThrow('task');
+
+const operationSignature = createOneActivityOperationSignatureFactory({
+  objectNameSingular: CoreObjectNameSingular.Task,
+});
+
+const createOneTaskMutation = generateCreateOneRecordMutation({
+  objectMetadataItem: taskMetadataItem,
+  objectMetadataItems: generatedMockObjectMetadataItems,
+  recordGqlFields: operationSignature.fields,
+  objectPermissionsByObjectMetadataId: {},
+});
+
+const mockResult = jest.fn(() => ({
+  data: {
+    createTask: {
+      ...mockedActivity,
+      __typename: 'Activity',
+      assigneeId: '',
+      authorId: '1',
+      reminderAt: null,
+      createdAt: mockedDate,
+    },
+  },
+}));
+
 const mocks: MockedResponse[] = [
   {
     request: {
-      query: gql`
-        mutation CreateOneTask($input: TaskCreateInput!) {
-          createTask(data: $input) {
-            __typename
-            assignee {
-              __typename
-              id
-              name {
-                firstName
-                lastName
-              }
-            }
-            assigneeId
-            attachments {
-              edges {
-                node {
-                  __typename
-                  authorId
-                  companyId
-                  createdAt
-                  deletedAt
-                  fullPath
-                  id
-                  name
-                  noteId
-                  opportunityId
-                  personId
-                  petId
-                  rocketId
-                  surveyResultId
-                  taskId
-                  type
-                  updatedAt
-                }
-              }
-            }
-            bodyV2 {
-              blocknote
-              markdown
-            }
-            createdAt
-            dueAt
-            id
-            status
-            title
-            updatedAt
-          }
-        }
-      `,
+      query: createOneTaskMutation,
       variables: {
         input: mockedActivity,
       },
     },
-    result: jest.fn(() => ({
-      data: {
-        createTask: {
-          ...mockedActivity,
-          __typename: 'Activity',
-          assigneeId: '',
-          authorId: '1',
-          reminderAt: null,
-          createdAt: mockedDate,
-        },
-      },
-    })),
+    result: mockResult,
   },
 ];
 
@@ -114,6 +84,6 @@ describe('useCreateActivityInDB', () => {
       });
     });
 
-    expect(mocks[0].result).toHaveBeenCalled();
+    expect(mockResult).toHaveBeenCalled();
   });
 });

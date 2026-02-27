@@ -1,32 +1,31 @@
+import { useCallback } from 'react';
+
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilCallback } from 'recoil';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 
 export const useEmptyRecordFilter = (componentInstanceId?: string) => {
-  const objectFilterDropdownSearchInputCallbackState =
-    useRecoilComponentCallbackState(
-      objectFilterDropdownSearchInputComponentState,
-      componentInstanceId,
-    );
+  const store = useStore();
+  const objectFilterDropdownSearchInput = useAtomComponentStateCallbackState(
+    objectFilterDropdownSearchInputComponentState,
+    componentInstanceId,
+  );
 
   const objectFilterDropdownCurrentRecordFilter =
-    useRecoilComponentCallbackState(
+    useAtomComponentStateCallbackState(
       objectFilterDropdownCurrentRecordFilterComponentState,
       componentInstanceId,
     );
 
-  const emptyRecordFilter = useRecoilCallback(
-    ({ set }) =>
-      () => {
-        set(objectFilterDropdownSearchInputCallbackState, '');
-        set(objectFilterDropdownCurrentRecordFilter, undefined);
-      },
-    [
-      objectFilterDropdownSearchInputCallbackState,
-      objectFilterDropdownCurrentRecordFilter,
-    ],
-  );
+  const emptyRecordFilter = useCallback(() => {
+    store.set(objectFilterDropdownSearchInput, '');
+    store.set(objectFilterDropdownCurrentRecordFilter, undefined);
+  }, [
+    objectFilterDropdownSearchInput,
+    objectFilterDropdownCurrentRecordFilter,
+    store,
+  ]);
 
   return {
     emptyRecordFilter,

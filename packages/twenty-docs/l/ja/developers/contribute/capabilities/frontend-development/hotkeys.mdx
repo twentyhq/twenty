@@ -160,7 +160,7 @@ export enum PageHotkeyScope {
 }
 ```
 
-内部的には、現在選択されているスコープはアプリケーション全体で共有されるRecoilステートに格納されています：
+内部的には、現在選択されているスコープはアプリケーション全体で共有されるJotaiステートに格納されています：
 
 ```tsx
 export const currentHotkeyScopeState = createState<HotkeyScope>({
@@ -169,10 +169,10 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 });
 ```
 
-しかし、このRecoilステートは手動で処理しないでください！ 次のセクションでその使用方法を見ていきます。 次のセクションでその使用方法を見ていきます。 次のセクションでその使用方法を見ていきます。
+しかし、このJotaiステートは手動で処理しないでください！ 次のセクションでその使用方法を見ていきます。 次のセクションでその使用方法を見ていきます。 次のセクションでその使用方法を見ていきます。
 
 ## 内部的にはどう機能しているのか？
 
 [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro)の上に薄いラッパーを作成し、より効率的にし、不必要な再レンダリングを避けます。
 
-また、ホットキースコープの状態を処理し、アプリケーション全体で利用できるRecoilステートを作成しました。
+また、ホットキースコープの状態を処理し、アプリケーション全体で利用できるJotaiステートを作成しました。

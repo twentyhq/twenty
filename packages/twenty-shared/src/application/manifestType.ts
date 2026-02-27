@@ -7,6 +7,7 @@ import { type NavigationMenuItemManifest } from './navigationMenuItemManifestTyp
 import { type ObjectManifest } from './objectManifestType';
 import { type PageLayoutManifest } from './pageLayoutManifestType';
 import { type RoleManifest } from './roleManifestType';
+import { type SkillManifest } from './skillManifestType';
 import { type ViewManifest } from './viewManifestType';
 
 export type Manifest = {
@@ -16,6 +17,7 @@ export type Manifest = {
   logicFunctions: LogicFunctionManifest[];
   frontComponents: FrontComponentManifest[];
   roles: RoleManifest[];
+  skills: SkillManifest[];
   publicAssets: AssetManifest[];
   views: ViewManifest[];
   navigationMenuItems: NavigationMenuItemManifest[];

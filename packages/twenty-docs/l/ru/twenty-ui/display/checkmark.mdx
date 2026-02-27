@@ -10,19 +10,25 @@ image: /images/user-guide/tasks/tasks_header.png
 Представляет успешное или завершенное действие.
 
 <Tabs>
-  <Tab title="Использование">
-    ```jsx
-    import { Checkmark } from 'twenty-ui/display';
+<Tab title="Использование">
 
-    export const MyComponent = () => {
-      return <Checkmark />;
-    };
-    ```
-  </Tab>
+```jsx
+import { Checkmark } from 'twenty-ui/display';
 
-  <Tab title="Свойства">
-    Расширяет `React.ComponentPropsWithoutRef<'div'>` и принимает все свойства обычного элемента `div`.
-  </Tab>
+export const MyComponent = () => {
+  return <Checkmark />;
+};
+```
+
+
+</Tab>
+
+<Tab title="Свойства">
+
+Расширяет `React.ComponentPropsWithoutRef<'div'>` и принимает все свойства обычного элемента `div`.
+
+</Tab>
+
 </Tabs>
 
 ## Анимированная галочка
@@ -30,29 +36,38 @@ image: /images/user-guide/tasks/tasks_header.png
 Представляет иконку галочки с дополнительной функцией анимации.
 
 <Tabs>
-  <Tab title="Использование">
-    ```jsx
-    import { AnimatedCheckmark } from 'twenty-ui/display';
 
-    export const MyComponent = () => {
-      return (
-        <AnimatedCheckmark
-          isAnimating={true}
-          color="green"
-          duration={0.5}
-          size={30}
-        />
-      );
-    };
-    ```
-  </Tab>
+<Tab title="Использование">
 
-  <Tab title="Свойства">
-    | Свойства          | Тип    | Описание                         | По умолчанию |
-    | ----------------- | ------ | -------------------------------- | ------------ |
-    | isAnimating       | булево | Управляет анимацией галочки      | ложь         |
-    | цвет              | строка | Цвет галочки                     |              |
-    | Продолжительность | число  | Длительность анимации в секундах | 0.5 секунды  |
-    | размер            | число  | Размер галочки                   | 28 пикселей  |
-  </Tab>
+```jsx
+import { AnimatedCheckmark } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return (
+    <AnimatedCheckmark
+      isAnimating={true}
+      color="green"
+      duration={0.5}
+      size={30}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Свойства">
+
+
+| Свойства          | Тип    | Описание                         | По умолчанию |
+| ----------------- | ------ | -------------------------------- | ------------ |
+| isAnimating       | булево | Управляет анимацией галочки      | ложь         |
+| цвет              | строка | Цвет галочки                     |              |
+| Продолжительность | число  | Длительность анимации в секундах | 0.5 секунды  |
+| размер            | число  | Размер галочки                   | 28 пикселей  |
+
+
+
+</Tab>
+
 </Tabs>

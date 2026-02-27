@@ -1,11 +1,11 @@
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { createStepSelector } from '@/workflow/states/selectors/stepSelector';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useFilterCounter = ({ stepId }: { stepId: string }) => {
   const stepSelector = useMemo(() => createStepSelector(stepId), [stepId]);
-  const step = useRecoilComponentValue(stepSelector);
+  const step = useAtomComponentSelectorValue(stepSelector);
 
   if (!isDefined(step)) {
     return {

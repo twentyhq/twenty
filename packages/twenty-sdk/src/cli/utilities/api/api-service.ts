@@ -356,9 +356,27 @@ export class ApiService {
         message: `Successfully synced application: ${manifest.application.displayName}`,
       };
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const graphqlErrors = error.response.data?.errors;
+
+        if (Array.isArray(graphqlErrors) && graphqlErrors.length > 0) {
+          return {
+            success: false,
+            error: graphqlErrors[0]?.message || error.message,
+          };
+        }
+
+        return {
+          success: false,
+          error:
+            error.response.data?.message ||
+            `HTTP ${error.response.status}: ${error.message}`,
+        };
+      }
+
       return {
         success: false,
-        error,
+        error: error instanceof Error ? error.message : error,
       };
     }
   }
@@ -416,6 +434,19 @@ export class ApiService {
   async getSchema(options?: {
     authToken?: string;
   }): Promise<ApiResponse<string>> {
+    return this.introspectEndpoint('/graphql', options);
+  }
+
+  async getMetadataSchema(options?: {
+    authToken?: string;
+  }): Promise<ApiResponse<string>> {
+    return this.introspectEndpoint('/metadata', options);
+  }
+
+  private async introspectEndpoint(
+    endpoint: string,
+    options?: { authToken?: string },
+  ): Promise<ApiResponse<string>> {
     try {
       const introspectionQuery = getIntrospectionQuery();
 
@@ -429,7 +460,7 @@ export class ApiService {
       }
 
       const response = await this.client.post(
-        '/graphql',
+        endpoint,
         {
           query: introspectionQuery,
         },
@@ -448,7 +479,7 @@ export class ApiService {
       return {
         success: true,
         data: printSchema(schema),
-        message: 'Successfully load schema',
+        message: `Successfully loaded schema from ${endpoint}`,
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -456,7 +487,7 @@ export class ApiService {
           success: false,
           error:
             error.response.data.errors[0]?.message ||
-            'Failed to load graphql Schema',
+            `Failed to load schema from ${endpoint}`,
         };
       }
       throw error;
@@ -602,7 +633,7 @@ export class ApiService {
     const twentyConfig = await this.configService.getConfig();
 
     const wsClient = createClient({
-      url: twentyConfig.apiUrl + '/graphql',
+      url: twentyConfig.apiUrl + '/metadata',
       headers: {
         Authorization: `Bearer ${twentyConfig.apiKey}`,
         'Content-Type': 'application/json',

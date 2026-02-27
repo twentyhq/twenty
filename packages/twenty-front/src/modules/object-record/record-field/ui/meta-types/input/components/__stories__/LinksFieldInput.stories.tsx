@@ -52,7 +52,7 @@ type LinksInputWithContextProps = {
 const LinksFieldValueGater = () => {
   const { fieldValue } = useLinksField();
 
-  return fieldValue && <LinksFieldInput />;
+  return fieldValue ? <LinksFieldInput /> : null;
 };
 
 const LinksInputWithContext = ({

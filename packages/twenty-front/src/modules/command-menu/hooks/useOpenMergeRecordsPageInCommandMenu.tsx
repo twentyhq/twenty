@@ -1,15 +1,16 @@
 import { useCommandMenuUpdateNavigationMorphItemsByPage } from '@/command-menu/hooks/useCommandMenuUpdateNavigationMorphItemsByPage';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { CommandMenuPages } from 'twenty-shared/types';
 
 import { msg, t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
+import { useCallback } from 'react';
 import { IconArrowMerge } from 'twenty-ui/display';
 import { v4 } from 'uuid';
+import { useStore } from 'jotai';
 
 type UseOpenMergeRecordsPageInCommandMenuProps = {
   objectNameSingular: string;
@@ -20,6 +21,7 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
   objectNameSingular,
   objectRecordIds,
 }: UseOpenMergeRecordsPageInCommandMenuProps) => {
+  const store = useStore();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -39,43 +41,39 @@ export const useOpenMergeRecordsPageInCommandMenu = ({
     },
   });
 
-  const openMergeRecordsPageInCommandMenu = useRecoilCallback(
-    ({ set }) => {
-      return async () => {
-        const pageId = v4();
+  const openMergeRecordsPageInCommandMenu = useCallback(async () => {
+    const pageId = v4();
 
-        set(
-          contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-            instanceId: pageId,
-          }),
-          objectMetadataItem.id,
-        );
-
-        await updateCommandMenuNavigationMorphItemsByPage({
-          pageId,
-          objectMetadataId: objectMetadataItem.id,
-          objectRecordIds,
-        });
-        const { records } = await findManyRecordsLazy();
-        upsertRecordsInStore({ partialRecords: records ?? [] });
-
-        navigateCommandMenu({
-          page: CommandMenuPages.MergeRecords,
-          pageTitle: t(msg`Merge records`),
-          pageIcon: IconArrowMerge,
-          pageId,
-        });
-      };
-    },
-    [
+    store.set(
+      contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
+        instanceId: pageId,
+      }),
       objectMetadataItem.id,
+    );
+
+    await updateCommandMenuNavigationMorphItemsByPage({
+      pageId,
+      objectMetadataId: objectMetadataItem.id,
       objectRecordIds,
-      findManyRecordsLazy,
-      upsertRecordsInStore,
-      navigateCommandMenu,
-      updateCommandMenuNavigationMorphItemsByPage,
-    ],
-  );
+    });
+    const { records } = await findManyRecordsLazy();
+    upsertRecordsInStore({ partialRecords: records ?? [] });
+
+    navigateCommandMenu({
+      page: CommandMenuPages.MergeRecords,
+      pageTitle: t(msg`Merge records`),
+      pageIcon: IconArrowMerge,
+      pageId,
+    });
+  }, [
+    objectMetadataItem.id,
+    objectRecordIds,
+    findManyRecordsLazy,
+    upsertRecordsInStore,
+    navigateCommandMenu,
+    updateCommandMenuNavigationMorphItemsByPage,
+    store,
+  ]);
 
   return {
     openMergeRecordsPageInCommandMenu,

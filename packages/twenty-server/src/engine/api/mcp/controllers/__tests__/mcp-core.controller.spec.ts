@@ -9,6 +9,7 @@ import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.ser
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -55,6 +56,7 @@ describe('McpCoreController', () => {
 
   describe('handleMcpCore', () => {
     const mockWorkspace = { id: 'workspace-1' } as WorkspaceEntity;
+    const mockUser = { id: 'user-1' } as UserEntity;
     const mockUserWorkspaceId = 'user-workspace-1';
     const mockApiKey = { id: 'api-key-1' } as ApiKeyEntity;
 
@@ -81,6 +83,7 @@ describe('McpCoreController', () => {
         mockRequest,
         mockWorkspace,
         mockApiKey,
+        mockUser,
         mockUserWorkspaceId,
       );
 
@@ -88,6 +91,7 @@ describe('McpCoreController', () => {
         mockRequest,
         {
           workspace: mockWorkspace,
+          userId: mockUser.id,
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
         },
@@ -121,6 +125,7 @@ describe('McpCoreController', () => {
         mockRequest,
         mockWorkspace,
         mockApiKey,
+        mockUser,
         mockUserWorkspaceId,
       );
 
@@ -128,6 +133,7 @@ describe('McpCoreController', () => {
         mockRequest,
         {
           workspace: mockWorkspace,
+          userId: mockUser.id,
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
         },
@@ -166,6 +172,7 @@ describe('McpCoreController', () => {
         mockRequest,
         mockWorkspace,
         mockApiKey,
+        mockUser,
         mockUserWorkspaceId,
       );
 
@@ -173,7 +180,47 @@ describe('McpCoreController', () => {
         mockRequest,
         {
           workspace: mockWorkspace,
+          userId: mockUser.id,
           userWorkspaceId: mockUserWorkspaceId,
+          apiKey: mockApiKey,
+        },
+      );
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should handle API key auth without user', async () => {
+      const mockRequest: JsonRpc = {
+        jsonrpc: '2.0',
+        method: 'tools/call',
+        params: { name: 'get_tool_catalog', arguments: {} },
+        id: '456',
+      };
+
+      const mockResponse = {
+        id: '456',
+        jsonrpc: '2.0',
+        result: {
+          content: [{ type: 'text', text: '{}' }],
+          isError: false,
+        },
+      };
+
+      mcpProtocolService.handleMCPCoreQuery.mockResolvedValue(mockResponse);
+
+      const result = await controller.handleMcpCore(
+        mockRequest,
+        mockWorkspace,
+        mockApiKey,
+        undefined,
+        undefined,
+      );
+
+      expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledWith(
+        mockRequest,
+        {
+          workspace: mockWorkspace,
+          userId: undefined,
+          userWorkspaceId: undefined,
           apiKey: mockApiKey,
         },
       );

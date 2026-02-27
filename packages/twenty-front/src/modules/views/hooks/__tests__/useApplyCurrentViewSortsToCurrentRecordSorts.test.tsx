@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
@@ -74,13 +74,14 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
           useApplyCurrentViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useRecoilComponentValue(
+        const currentRecordSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
+          'recordIndexId',
         );
 
         return {
           applyCurrentViewSortsToCurrentRecordSorts,
-          currentSorts,
+          currentRecordSorts,
         };
       },
       {
@@ -90,8 +91,8 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           contextStoreCurrentViewId: mockView.id,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(coreViewsState, [mockCoreView]);
+          onInitializeJotaiStore: (store) => {
+            store.set(coreViewsState.atom, [mockCoreView]);
           },
         }),
       },
@@ -101,7 +102,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
       result.current.applyCurrentViewSortsToCurrentRecordSorts();
     });
 
-    expect(result.current.currentSorts).toEqual([
+    expect(result.current.currentRecordSorts).toEqual([
       {
         id: mockViewSort.id,
         fieldMetadataId: mockViewSort.fieldMetadataId,
@@ -116,13 +117,14 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
           useApplyCurrentViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useRecoilComponentValue(
+        const currentRecordSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
+          'recordIndexId',
         );
 
         return {
           applyCurrentViewSortsToCurrentRecordSorts,
-          currentSorts,
+          currentRecordSorts,
         };
       },
       {
@@ -131,15 +133,13 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
+          onInitializeJotaiStore: (store) => {
+            store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
               mockView.id,
             );
-
-            snapshot.set(coreViewsState, []);
           },
         }),
       },
@@ -149,7 +149,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
       result.current.applyCurrentViewSortsToCurrentRecordSorts();
     });
 
-    expect(result.current.currentSorts).toEqual([]);
+    expect(result.current.currentRecordSorts).toEqual([]);
   });
 
   it('should handle view with empty sorts', () => {
@@ -163,13 +163,14 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
         const { applyCurrentViewSortsToCurrentRecordSorts } =
           useApplyCurrentViewSortsToCurrentRecordSorts();
 
-        const currentSorts = useRecoilComponentValue(
+        const currentRecordSorts = useAtomComponentStateValue(
           currentRecordSortsComponentState,
+          'recordIndexId',
         );
 
         return {
           applyCurrentViewSortsToCurrentRecordSorts,
-          currentSorts,
+          currentRecordSorts,
         };
       },
       {
@@ -178,15 +179,14 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           componentInstanceId: 'instanceId',
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
-          onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(
+          onInitializeJotaiStore: (store) => {
+            store.set(coreViewsState.atom, [viewWithNoSorts]);
+            store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',
               }),
               mockView.id,
             );
-
-            snapshot.set(coreViewsState, [viewWithNoSorts]);
           },
         }),
       },
@@ -196,6 +196,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
       result.current.applyCurrentViewSortsToCurrentRecordSorts();
     });
 
-    expect(result.current.currentSorts).toEqual([]);
+    expect(result.current.currentRecordSorts).toEqual([]);
   });
 });

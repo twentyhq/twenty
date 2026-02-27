@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useEffect, useMemo, useState } from 'react';
 
 import { type TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -7,7 +8,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -18,8 +19,8 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -38,36 +39,49 @@ const meta: Meta<typeof RecordCalendarMonth> = {
       )!;
       const instanceId = companyObjectMetadataItem.id;
 
-      const setCurrentRecordFields = useSetRecoilComponentState(
+      const setCurrentRecordFields = useSetAtomComponentState(
         currentRecordFieldsComponentState,
         instanceId,
       );
 
-      const setCoreViews = useSetRecoilState(coreViewsState);
+      const setCoreViews = useSetAtomState(coreViewsState);
 
       const mockCoreView = mockedCoreViewsData[0];
 
-      setCoreViews([mockCoreView]);
-
-      const setCurrentViewId = useSetRecoilComponentState(
+      const setContextStoreCurrentViewId = useSetAtomComponentState(
         contextStoreCurrentViewIdComponentState,
         MAIN_CONTEXT_STORE_INSTANCE_ID,
       );
 
-      setCurrentViewId(mockCoreView.id);
-
-      const columns = companyObjectMetadataItem.fields.map(
-        (fieldMetadataItem, index) =>
-          ({
-            id: fieldMetadataItem.id,
-            fieldMetadataItemId: fieldMetadataItem.id,
-            isVisible: true,
-            position: index,
-            size: 100,
-          }) satisfies RecordField,
+      const columns = useMemo(
+        () =>
+          companyObjectMetadataItem.fields.map(
+            (fieldMetadataItem, index) =>
+              ({
+                id: fieldMetadataItem.id,
+                fieldMetadataItemId: fieldMetadataItem.id,
+                isVisible: true,
+                position: index,
+                size: 100,
+              }) satisfies RecordField,
+          ),
+        [companyObjectMetadataItem.fields],
       );
 
-      setCurrentRecordFields(columns);
+      const [isLoaded, setIsLoaded] = useState(false);
+
+      useEffect(() => {
+        setCoreViews([mockCoreView]);
+        setContextStoreCurrentViewId(mockCoreView.id);
+        setCurrentRecordFields(columns);
+        setIsLoaded(true);
+      }, [
+        setCoreViews,
+        setContextStoreCurrentViewId,
+        setCurrentRecordFields,
+        mockCoreView,
+        columns,
+      ]);
 
       const {
         fieldDefinitionByFieldMetadataItemId,
@@ -78,6 +92,10 @@ const meta: Meta<typeof RecordCalendarMonth> = {
         companyObjectMetadataItem,
         instanceId,
       );
+
+      if (!isLoaded) {
+        return <></>;
+      }
 
       return (
         <RecordIndexContextProvider

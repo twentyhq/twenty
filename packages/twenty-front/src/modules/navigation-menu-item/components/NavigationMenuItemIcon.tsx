@@ -1,5 +1,4 @@
 import { useTheme } from '@emotion/react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -13,6 +12,7 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const NavigationMenuItemIcon = ({
   navigationMenuItem,
@@ -24,7 +24,7 @@ export const NavigationMenuItemIcon = ({
   const isNavigationMenuItemEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED,
   );
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
     navigationMenuItem.objectNameSingular || '',
   );
