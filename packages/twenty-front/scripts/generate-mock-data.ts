@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { generateMetadata } from './mock-data/generate-metadata.js';
 import { generateRecordData } from './mock-data/generate-record-data.js';
+import { generateRoles } from './mock-data/generate-roles.js';
 import { authenticate } from './mock-data/utils.js';
 
 const main = async () => {
@@ -8,6 +9,7 @@ const main = async () => {
 
   const metadata = await generateMetadata(token);
   await generateRecordData(token, metadata);
+  await generateRoles(token);
 
   console.log('All mock data generated!');
 };

@@ -7,15 +7,11 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queri
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { mockedApiKeys } from '~/testing/mock-data/api-keys';
-import {
-  getCompaniesRecordConnectionMock,
-  getCompanyDuplicateMock,
-} from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedFavoritesData } from '~/testing/mock-data/favorite';
 import { mockedFavoriteFoldersData } from '~/testing/mock-data/favorite-folders';
-import { mockedNotes } from '~/testing/mock-data/notes';
-import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
+import { mockedNoteRecords } from '~/testing/mock-data/generated/data/notes/mock-notes-data';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
@@ -26,23 +22,34 @@ import { LIST_PLANS } from '@/billing/graphql/queries/listPlans';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { isDefined } from 'twenty-shared/utils';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata';
-import { getRolesMock } from '~/testing/mock-data/roles';
-import { mockedTasks } from '~/testing/mock-data/tasks';
+import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
+import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
+
 import {
   getWorkflowMock,
   getWorkflowVersionsMock,
   workflowQueryResult,
 } from '~/testing/mock-data/workflow';
 import { oneSucceededWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
+import { type Task } from '@/activities/types/Task';
 import { getConnectionTypename } from '@/object-record/cache/utils/getConnectionTypename';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
-const peopleMock = getPeopleRecordConnectionMock();
-const companiesMock = getCompaniesRecordConnectionMock();
-const duplicateCompanyMock = getCompanyDuplicateMock();
+const peopleMock = [...mockedPersonRecords];
+const companiesMock = [...mockedCompanyRecords];
+const duplicateCompanyMock = {
+  ...mockedCompanyRecords[0],
+  id: '8b40856a-2ec9-4c03-8bc0-c032c89e1824',
+};
+
+const flatTaskRecords = mockedTaskRecords.map((record) =>
+  getRecordFromRecordNode<Task>({ recordNode: record }),
+);
 
 // Wraps raw server-fetched records (which already have correct field shapes)
 // into a GraphQL connection response structure.
@@ -411,90 +418,35 @@ export const graphqlMocks = {
     graphql.query('FindManyPeople', () => {
       return HttpResponse.json({
         data: {
-          people: {
-            edges: peopleMock.map((person) => ({
-              node: person,
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
+          people: wrapRecordsAsConnection('person', peopleMock),
         },
       });
     }),
     graphql.query('FindManyNotes', () => {
       return HttpResponse.json({
         data: {
-          activities: {
-            edges: mockedNotes.map(({ noteTargets, ...rest }) => ({
-              node: {
-                ...rest,
-                noteTargets: {
-                  edges: noteTargets?.map((t) => ({ node: t })),
-                },
-                attachments: {
-                  edges: [],
-                },
-              },
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
+          notes: wrapRecordsAsConnection('note', [...mockedNoteRecords]),
         },
       });
     }),
     graphql.query('FindManyTasks', () => {
       return HttpResponse.json({
         data: {
-          tasks: {
-            edges: mockedTasks.map(({ taskTargets, ...rest }) => ({
-              node: {
-                ...rest,
-                taskTargets: {
-                  edges: taskTargets?.map((t) => ({ node: t })),
-                },
-                attachments: {
-                  edges: [],
-                },
-              },
-              cursor: null,
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
+          tasks: wrapRecordsAsConnection('task', [...mockedTaskRecords]),
         },
       });
     }),
     graphql.query('FindManyTaskTargets', () => {
+      const taskTargetNodes = flatTaskRecords.flatMap(
+        (task) => task.taskTargets ?? [],
+      );
+
       return HttpResponse.json({
         data: {
-          taskTargets: {
-            edges: mockedTasks.flatMap((task) =>
-              task.taskTargets.map((target) => ({
-                node: target,
-                cursor: null,
-              })),
-            ),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
-            },
-          },
+          taskTargets: wrapRecordsAsConnection(
+            'taskTarget',
+            taskTargetNodes as Record<string, unknown>[],
+          ),
         },
       });
     }),
@@ -638,7 +590,7 @@ export const graphqlMocks = {
     graphql.query(getOperationName(GET_ROLES) ?? '', () => {
       return HttpResponse.json({
         data: {
-          getRoles: getRolesMock(),
+          getRoles: mockedRoles,
         },
       });
     }),

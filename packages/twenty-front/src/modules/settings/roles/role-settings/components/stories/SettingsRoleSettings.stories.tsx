@@ -4,7 +4,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { getRolesMock } from '~/testing/mock-data/roles';
+import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 
 const SettingsRoleSettingsWrapper = (
   args: React.ComponentProps<typeof SettingsRoleSettings>,
@@ -14,7 +14,7 @@ const SettingsRoleSettingsWrapper = (
     args.roleId,
   );
 
-  const role = getRolesMock().find((role) => role.id === args.roleId);
+  const role = mockedRoles.find((role) => role.id === args.roleId);
 
   if (isDefined(role)) {
     setSettingsDraftRole(role);
@@ -40,7 +40,7 @@ type Story = StoryObj<typeof SettingsRoleSettingsWrapper>;
 
 export const Default: Story = {
   args: {
-    roleId: '1',
+    roleId: mockedRoles[0].id,
     isEditable: true,
     isCreateMode: false,
   },
@@ -48,7 +48,7 @@ export const Default: Story = {
 
 export const ReadOnly: Story = {
   args: {
-    roleId: '1',
+    roleId: mockedRoles[0].id,
     isEditable: false,
     isCreateMode: false,
   },
@@ -64,7 +64,7 @@ export const PendingRole: Story = {
 
 export const CreateMode: Story = {
   args: {
-    roleId: '1',
+    roleId: mockedRoles[0].id,
     isEditable: true,
     isCreateMode: true,
   },

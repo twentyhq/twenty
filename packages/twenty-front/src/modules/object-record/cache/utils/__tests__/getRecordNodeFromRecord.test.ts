@@ -1,11 +1,10 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
-
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 
-const peopleMock = getPeopleRecordConnectionMock();
+const peopleMock = [...mockedPersonRecords];
 
 describe('getRecordNodeFromRecord', () => {
   it('computes relation records cache references by default', () => {
