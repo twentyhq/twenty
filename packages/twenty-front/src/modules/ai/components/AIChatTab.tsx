@@ -9,6 +9,7 @@ import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
+import { AIChatErrorUnderMessageList } from '@/ai/components/AIChatErrorUnderMessageList';
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
 import { AIChatStandaloneError } from '@/ai/components/AIChatStandaloneError';
 import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContextUsageButton';
@@ -20,7 +21,6 @@ import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
-import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
 import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -147,10 +147,6 @@ export const AIChatTab = () => {
     agentChatMessageIdsComponentSelector,
   );
 
-  console.log({
-    agentChatMessageIds,
-  });
-
   const hasMessages = agentChatMessageIds.length > 0;
 
   const { uploadFiles } = useAIChatFileUpload();
@@ -158,7 +154,6 @@ export const AIChatTab = () => {
   const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
 
   const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
-  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
 
   const { editor, handleSendAndClear } = useAIChatEditor();
 
@@ -181,30 +176,10 @@ export const AIChatTab = () => {
             <StyledScrollWrapper
               componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}
             >
-              {agentChatMessageIds.map((messageId, index) => {
-                const isLastMessage = index === agentChatMessageIds.length - 1;
-                const isLastMessageStreaming =
-                  agentChatIsStreaming && isLastMessage;
-                // const isLastAssistantMessage =
-                //   isLastMessage &&
-                //   lastMessage?.role === AgentMessageRole.ASSISTANT;
-                // const shouldShowError =
-                //   agentChatError && isLastAssistantMessage;
-
-                return (
-                  <AIChatMessage
-                    isLastMessageStreaming={isLastMessageStreaming}
-                    messageId={messageId}
-                    key={messageId}
-                    error={null}
-                  />
-                );
+              {agentChatMessageIds.map((messageId) => {
+                return <AIChatMessage messageId={messageId} key={messageId} />;
               })}
-              {/* {agentChatError &&
-                !agentChatIsStreaming &&
-                lastMessage?.role === AgentMessageRole.USER && (
-                  <AIChatStandaloneError error={agentChatError} />
-                )} */}
+              <AIChatErrorUnderMessageList />
             </StyledScrollWrapper>
           )}
           {!hasMessages && !agentChatError && !agentChatIsLoading && (

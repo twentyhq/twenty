@@ -297,88 +297,42 @@ type Story = StoryObj<typeof AIChatMessage>;
 export const ConversationWithCodeExecution: Story = {
   render: () => (
     <StyledConversationContainer>
-      <AIChatMessage
-        messageId={mockUserMessage.id}
-        isLastMessageStreaming={false}
-      />
-      <AIChatMessage
-        messageId={mockAssistantWithCodeExecution.id}
-        isLastMessageStreaming={false}
-      />
+      <AIChatMessage messageId={mockUserMessage.id} />
+      <AIChatMessage messageId={mockAssistantWithCodeExecution.id} />
     </StyledConversationContainer>
   ),
 };
 
 export const UserMessage: Story = {
-  render: () => (
-    <AIChatMessage
-      messageId={mockUserMessage.id}
-      isLastMessageStreaming={false}
-    />
-  ),
+  render: () => <AIChatMessage messageId={mockUserMessage.id} />,
 };
 
 export const AssistantTextResponse: Story = {
-  render: () => (
-    <AIChatMessage
-      messageId={mockSimpleTextResponse.id}
-      isLastMessageStreaming={false}
-    />
-  ),
+  render: () => <AIChatMessage messageId={mockSimpleTextResponse.id} />,
 };
 
 export const AssistantStreaming: Story = {
-  render: () => (
-    <AIChatMessage
-      messageId={mockStreamingMessage.id}
-      isLastMessageStreaming={true}
-    />
-  ),
+  render: () => <AIChatMessage messageId={mockStreamingMessage.id} />,
 };
 
 export const CodeExecutionRunning: Story = {
-  render: () => (
-    <AIChatMessage
-      messageId={mockCodeExecutionRunning.id}
-      isLastMessageStreaming={false}
-    />
-  ),
+  render: () => <AIChatMessage messageId={mockCodeExecutionRunning.id} />,
 };
 
 export const CodeExecutionWithError: Story = {
-  render: () => (
-    <AIChatMessage
-      messageId={mockCodeExecutionError.id}
-      isLastMessageStreaming={false}
-    />
-  ),
+  render: () => <AIChatMessage messageId={mockCodeExecutionError.id} />,
 };
 
 export const ThinkingStepsThinkingState: Story = {
-  render: () => (
-    <AIChatMessage
-      messageId={mockThinkingStepsStreaming.id}
-      isLastMessageStreaming={true}
-    />
-  ),
+  render: () => <AIChatMessage messageId={mockThinkingStepsStreaming.id} />,
 };
 
 export const ThinkingStepsDoneCollapsed: Story = {
-  render: () => (
-    <AIChatMessage
-      messageId={mockThinkingStepsDone.id}
-      isLastMessageStreaming={false}
-    />
-  ),
+  render: () => <AIChatMessage messageId={mockThinkingStepsDone.id} />,
 };
 
 export const ThinkingStepsDoneExpanded: Story = {
-  render: () => (
-    <AIChatMessage
-      messageId={mockThinkingStepsDone.id}
-      isLastMessageStreaming={false}
-    />
-  ),
+  render: () => <AIChatMessage messageId={mockThinkingStepsDone.id} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const summaryButton = await canvas.findByRole('button', {

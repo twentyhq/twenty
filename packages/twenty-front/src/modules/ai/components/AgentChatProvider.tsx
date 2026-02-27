@@ -22,7 +22,7 @@ export const AgentChatProvider = ({
         value={{ instanceId: 'agentChatComponentInstance' }}
       >
         <AgentChatDataLoading />
-        {children}{' '}
+        {children}
       </AgentChatComponentInstanceContext.Provider>
     </Suspense>
   );

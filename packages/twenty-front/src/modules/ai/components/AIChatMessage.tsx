@@ -5,9 +5,13 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
+import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
+import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
 import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
+import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -133,19 +137,19 @@ const StyledFilesContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const AIChatMessage = ({
-  messageId,
-  isLastMessageStreaming,
-  error,
-}: {
-  messageId: string;
-  isLastMessageStreaming: boolean;
-  error?: Error | null;
-}) => {
+export const AIChatMessage = ({ messageId }: { messageId: string }) => {
   const agentChatMessage = useAtomComponentFamilyStateValue(
     agentChatMessageComponentFamilyState,
     messageId,
   );
+
+  const agentChatMessageIds = useAtomComponentSelectorValue(
+    agentChatMessageIdsComponentSelector,
+  );
+
+  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
+
+  const agentChatError = useAtomStateValue(agentChatErrorState);
 
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
@@ -153,9 +157,14 @@ export const AIChatMessage = ({
     return null;
   }
 
+  const isLastMessage = agentChatMessageIds.at(-1) === messageId;
+
+  const isLastMessageStreaming = agentChatIsStreaming && isLastMessage;
+  const isLastAssistantMessage =
+    isLastMessage && agentChatMessage?.role === AgentMessageRole.ASSISTANT;
+  const shouldShowError = isDefined(agentChatError) && isLastAssistantMessage;
+
   const isUser = agentChatMessage.role === AgentMessageRole.USER;
-  const showError =
-    isDefined(error) && agentChatMessage.role === AgentMessageRole.ASSISTANT;
 
   const fileParts = agentChatMessage.parts.filter(
     (part) => part.type === 'file',
@@ -168,7 +177,7 @@ export const AIChatMessage = ({
           <AIChatAssistantMessageRenderer
             isLastMessageStreaming={isLastMessageStreaming}
             messageParts={agentChatMessage.parts}
-            hasError={showError}
+            hasError={shouldShowError}
           />
         </StyledMessageText>
         {fileParts.length > 0 && (
@@ -178,7 +187,7 @@ export const AIChatMessage = ({
             ))}
           </StyledFilesContainer>
         )}
-        {showError && <AIChatErrorRenderer error={error} />}
+        {shouldShowError && <AIChatErrorRenderer error={agentChatError} />}
       </StyledMessageContainer>
       {agentChatMessage.parts.length > 0 &&
         agentChatMessage.metadata?.createdAt && (

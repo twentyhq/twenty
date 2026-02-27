@@ -1,4 +1,6 @@
+import { AGENT_CHAT_RETRY_EVENT_NAME } from '@/ai/constants/AgentChatRetryEventName';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
+import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -50,6 +52,10 @@ export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
 
   const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
 
+  const handleRetryClick = () => {
+    dispatchBrowserEvent(AGENT_CHAT_RETRY_EVENT_NAME);
+  };
+
   return (
     <StyledErrorContainer>
       <StyledErrorIcon>
@@ -65,7 +71,7 @@ export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
         variant="secondary"
         size="small"
         Icon={IconRefresh}
-        onClick={() => {}}
+        onClick={handleRetryClick}
         disabled={agentChatIsStreaming}
         title={t`Retry`}
       />

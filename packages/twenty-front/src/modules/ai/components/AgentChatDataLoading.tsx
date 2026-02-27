@@ -17,7 +17,7 @@ export const AgentChatDataLoading = () => {
 
   const combinedIsLoading = chatState.isLoading || isLoading;
 
-  const setAgentChatDataLoading = useSetAtomState(agentChatIsLoadingState);
+  const setAgentChatIsLoading = useSetAtomState(agentChatIsLoadingState);
   const setAgentChatMessages = useSetAtomComponentState(
     agentChatMessagesComponentState,
   );
@@ -27,8 +27,8 @@ export const AgentChatDataLoading = () => {
     useAtomState(agentChatUISessionStartTimeState);
 
   useEffect(() => {
-    setAgentChatDataLoading(combinedIsLoading);
-  }, [combinedIsLoading, setAgentChatDataLoading]);
+    setAgentChatIsLoading(combinedIsLoading);
+  }, [combinedIsLoading, setAgentChatIsLoading]);
 
   useEffect(() => {
     setAgentChatMessages(chatState.messages);
