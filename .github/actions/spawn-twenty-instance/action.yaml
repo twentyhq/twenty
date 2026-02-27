@@ -1,0 +1,182 @@
+name: Spawn Twenty Instance
+description: >
+  Starts a full Twenty instance (server, worker, database, redis) using Docker
+  Compose. The server is available at http://localhost:3000 for subsequent steps
+  in the caller's job.
+  Provide either 'twenty-version' (Docker Hub tag) or 'twenty-ref' (git branch/tag
+  to build from source). If neither is provided, defaults to 'latest' from Docker Hub.
+  Designed to be consumed from external repositories (e.g., twenty-app).
+
+inputs:
+  twenty-version:
+    description: 'Twenty Docker Hub image tag (e.g., latest, v0.40.0). Mutually exclusive with twenty-ref.'
+    required: false
+    default: ''
+  twenty-ref:
+    description: 'Git branch, tag, or SHA to build from source. Mutually exclusive with twenty-version.'
+    required: false
+    default: ''
+  twenty-repository:
+    description: 'Twenty repository to checkout from (e.g., twentyhq/twenty or your-org/twenty-fork).'
+    required: false
+    default: 'twentyhq/twenty'
+  github-token:
+    description: 'GitHub token for cross-repo checkout. Required when calling from an external repository.'
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  server-url:
+    description: 'URL where the Twenty server can be reached'
+    value: ${{ steps.server-ready.outputs.server-url }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate inputs
+      shell: bash
+      run: |
+        VERSION="${{ inputs.twenty-version }}"
+        REF="${{ inputs.twenty-ref }}"
+
+        if [ -n "$VERSION" ] && [ -n "$REF" ]; then
+          echo "::error::Cannot provide both 'twenty-version' and 'twenty-ref'. Pick one."
+          exit 1
+        fi
+
+        if [ -n "$REF" ]; then
+          echo "MODE=build" >> "$GITHUB_ENV"
+          echo "Will build Twenty from ref: $REF on ${{ inputs.twenty-repository }}"
+        else
+          TAG="${VERSION:-latest}"
+          echo "MODE=pull" >> "$GITHUB_ENV"
+          echo "TWENTY_TAG=$TAG" >> "$GITHUB_ENV"
+          echo "Will pull Twenty image: twentycrm/twenty:$TAG"
+        fi
+
+    - name: Checkout full repo (build from source)
+      if: env.MODE == 'build'
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.twenty-repository }}
+        ref: ${{ inputs.twenty-ref }}
+        token: ${{ inputs.github-token }}
+        path: .twenty-spawn
+
+    - name: Checkout docker compose files only (pull from Docker Hub)
+      if: env.MODE == 'pull'
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.twenty-repository }}
+        ref: main
+        token: ${{ inputs.github-token }}
+        sparse-checkout: |
+          packages/twenty-docker
+        sparse-checkout-cone-mode: false
+        path: .twenty-spawn
+
+    - name: Prepare environment
+      shell: bash
+      working-directory: ./.twenty-spawn/packages/twenty-docker
+      run: |
+        cp .env.example .env
+        echo "" >> .env
+        echo "APP_SECRET=$(openssl rand -base64 32)" >> .env
+        echo "SERVER_URL=http://localhost:3000" >> .env
+
+    - name: Build image from source
+      if: env.MODE == 'build'
+      shell: bash
+      working-directory: ./.twenty-spawn/packages/twenty-docker
+      run: |
+        echo "Building Twenty image from source..."
+        yq eval 'del(.services.server.image)' -i docker-compose.yml
+        yq eval '.services.server.build.context = "../../"' -i docker-compose.yml
+        yq eval '.services.server.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i docker-compose.yml
+
+        yq eval 'del(.services.worker.image)' -i docker-compose.yml
+        yq eval '.services.worker.build.context = "../../"' -i docker-compose.yml
+        yq eval '.services.worker.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i docker-compose.yml
+
+    - name: Set image tag for Docker Hub pull
+      if: env.MODE == 'pull'
+      shell: bash
+      working-directory: ./.twenty-spawn/packages/twenty-docker
+      run: echo "TAG=${{ env.TWENTY_TAG }}" >> .env
+
+    - name: Start Twenty instance
+      shell: bash
+      working-directory: ./.twenty-spawn/packages/twenty-docker
+      run: |
+        docker compose up -d || {
+          echo "::error::Docker compose failed to start"
+          docker compose logs
+          exit 1
+        }
+        docker compose logs db server worker -f &
+
+    - name: Wait for database to be healthy
+      shell: bash
+      working-directory: ./.twenty-spawn/packages/twenty-docker
+      run: |
+        echo "Waiting for database..."
+        count=0
+        while [ "$(docker inspect --format='{{.State.Health.Status}}' twenty-db-1 2>/dev/null)" != "healthy" ]; do
+          sleep 2
+          count=$((count + 2))
+
+          status=$(docker inspect --format='{{.State.Status}}' twenty-db-1 2>/dev/null || echo "not found")
+          if [ "$status" = "exited" ]; then
+            echo "::error::Database container exited unexpectedly"
+            docker compose logs db
+            exit 1
+          fi
+
+          if [ $count -gt 120 ]; then
+            echo "::error::Database did not become healthy within 2 minutes"
+            docker compose logs db
+            exit 1
+          fi
+
+          echo "Still waiting for database... (${count}s/120s)"
+        done
+        echo "Database is healthy!"
+
+    - name: Wait for server to be healthy
+      id: server-ready
+      shell: bash
+      working-directory: ./.twenty-spawn/packages/twenty-docker
+      run: |
+        echo "Waiting for server..."
+        count=0
+        while [ "$(docker inspect --format='{{.State.Health.Status}}' twenty-server-1 2>/dev/null)" != "healthy" ]; do
+          sleep 3
+          count=$((count + 3))
+
+          status=$(docker inspect --format='{{.State.Status}}' twenty-server-1 2>/dev/null || echo "not found")
+          if [ "$status" = "exited" ]; then
+            echo "::error::Server container exited unexpectedly"
+            docker compose logs server
+            exit 1
+          fi
+
+          if [ $count -gt 300 ]; then
+            echo "::error::Server did not become healthy within 5 minutes"
+            docker compose logs server
+            exit 1
+          fi
+
+          echo "Still waiting for server... (${count}s/300s)"
+        done
+
+        echo "Server is healthy!"
+        echo "server-url=http://localhost:3000" >> "$GITHUB_OUTPUT"
+
+    - name: Verify server is reachable
+      shell: bash
+      run: |
+        curl -f http://localhost:3000/healthz || {
+          echo "::error::Server health check failed after startup"
+          exit 1
+        }
+        echo "Twenty instance is ready at http://localhost:3000"

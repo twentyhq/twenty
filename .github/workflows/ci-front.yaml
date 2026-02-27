@@ -237,114 +237,36 @@ jobs:
       #     retention-days: 1
   e2e-test:
     runs-on: depot-ubuntu-24.04
-    needs: [changed-files-check-e2e, front-build]
+    needs: [changed-files-check-e2e]
     if: |
       always() &&
       needs.changed-files-check-e2e.outputs.any_changed == 'true' &&
-      (needs.front-build.result == 'success' || needs.front-build.result == 'skipped') &&
       (github.event_name == 'push' || github.event_name == 'merge_group' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-e2e')))
     timeout-minutes: 30
-    env:
-      NODE_OPTIONS: "--max-old-space-size=10240"
-    services:
-      postgres:
-        image: twentycrm/twenty-postgres-spilo
-        env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: "true"
-          SPILO_PROVIDER: "local"
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Spawn Twenty instance
+        uses: ./.github/actions/spawn-twenty-instance
+        with:
+          twenty-ref: ${{ github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-
-      - name: Check system resources
-        run: |
-          echo "Available memory:"
-          free -h
-          echo "Available disk space:"
-          df -h
-          echo "CPU info:"
-          lscpu
-
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-
-      - name: Build twenty-shared
-        run: npx nx build twenty-shared
-
       - name: Install Playwright Browsers
         run: npx nx setup twenty-e2e-testing
-
-      - name: Setup environment files
+      - name: Configure E2E environment
         run: |
-          cp packages/twenty-front/.env.example packages/twenty-front/.env
-          npx nx reset:env:e2e-testing-server twenty-server
-
-      # - name: Download frontend build artifact
-      #   if: needs.front-build.result == 'success'
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: frontend-build
-      #     path: packages/twenty-front/build
-
-      # - name: Build frontend (if not available from front-build)
-      #   if: needs.front-build.result == 'skipped'
-      #   run: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-front
-
-      - name: Build frontend
-        run: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=10240" npx nx build twenty-front
-
-      - name: Build server
-        run: npx nx build twenty-server
-
-      - name: Create and setup database
-        run: |
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-          npx nx run twenty-server:database:reset
-
-      - name: Start server
-        run: |
-          npx nx start twenty-server &
-          echo "Waiting for server to be ready..."
-          timeout 60 bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done'
-
-      - name: Start frontend
-        run: |
-          npm_config_yes=true npx serve -s packages/twenty-front/build -l 3001 &
-          echo "Waiting for frontend to be ready..."
-          timeout 60 bash -c 'until curl -s http://localhost:3001; do sleep 2; done'
-
-      - name: Start worker
-        run: |
-          npx nx run twenty-server:worker &
-          echo "Worker started"
-
+          echo "FRONTEND_BASE_URL=http://localhost:3000" > packages/twenty-e2e-testing/.env
+          echo "BACKEND_BASE_URL=http://localhost:3000" >> packages/twenty-e2e-testing/.env
+          echo "DEFAULT_LOGIN=tim@apple.dev" >> packages/twenty-e2e-testing/.env
+          echo "DEFAULT_PASSWORD=tim@apple.dev" >> packages/twenty-e2e-testing/.env
+          echo "WEBSITE_URL=https://twenty.com" >> packages/twenty-e2e-testing/.env
       - name: Run Playwright tests
         run: npx nx test twenty-e2e-testing
-
-      # - uses: actions/upload-artifact@v4
-      #   if: always()
-      #   with:
-      #     name: playwright-report
-      #     path: packages/twenty-e2e-testing/run_results/
-      #     retention-days: 30
 
   ci-front-status-check:
     if: always() && !cancelled()
