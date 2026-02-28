@@ -2,34 +2,40 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import type { IconComponent } from 'twenty-ui/display';
 
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
+import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/get-navigation-menu-item-icon-style-from-color';
 
 const StyledCompositeContainer = styled.div`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
+  border-radius: 4px;
+  box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
-  height: ${({ theme }) => theme.spacing(4.5)};
+  height: 16px;
   justify-content: center;
   position: relative;
-  width: ${({ theme }) => theme.spacing(4.5)};
+  width: 16px;
 `;
 
-const StyledObjectIconWrapper = styled.div<{ $backgroundColor: string }>`
+const StyledObjectIconWrapper = styled.div<{
+  $backgroundColor: string;
+  $borderColor?: string;
+}>`
   position: absolute;
   inset: 0;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
+  border-radius: 4px;
+  box-sizing: border-box;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   display: flex;
   align-items: center;
   justify-content: center;
+  ${({ $borderColor }) =>
+    $borderColor ? `border: 1px solid ${$borderColor};` : ''}
 `;
 
 const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`
   align-items: center;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
-  border: 1px solid ${({ theme }) => theme.background.primary};
-  border-radius: ${({ theme }) => theme.border.radius.xs};
+  border-radius: 4px;
   bottom: -7px;
   display: flex;
   height: ${({ theme }) => theme.spacing(3.5)};
@@ -42,29 +48,37 @@ const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`
 export type ObjectIconWithViewOverlayProps = {
   ObjectIcon: IconComponent;
   ViewIcon: IconComponent;
+  objectColor?: string | null;
 };
 
 export const ObjectIconWithViewOverlay = ({
   ObjectIcon,
   ViewIcon,
+  objectColor,
 }: ObjectIconWithViewOverlayProps) => {
   const theme = useTheme();
-  const iconColors = getNavigationMenuItemIconColors(theme);
+  const objectStyle = getNavigationMenuItemIconStyleFromColor(
+    theme,
+    objectColor,
+  );
 
   return (
     <StyledCompositeContainer>
-      <StyledObjectIconWrapper $backgroundColor={iconColors.object}>
+      <StyledObjectIconWrapper
+        $backgroundColor={objectStyle.backgroundColor}
+        $borderColor={objectStyle.borderColor}
+      >
         <ObjectIcon
           size={theme.spacing(3.5)}
           stroke={theme.icon.stroke.md}
-          color={theme.grayScale.gray1}
+          color={objectStyle.iconColor}
         />
       </StyledObjectIconWrapper>
-      <StyledViewOverlay $backgroundColor={iconColors.view}>
+      <StyledViewOverlay $backgroundColor={theme.grayScale.gray4}>
         <ViewIcon
-          size={theme.spacing(2)}
-          stroke={theme.icon.stroke.sm}
-          color={theme.grayScale.gray1}
+          size={theme.spacing(2.5)}
+          stroke={theme.icon.stroke.lg}
+          color={theme.grayScale.gray10}
         />
       </StyledViewOverlay>
     </StyledCompositeContainer>

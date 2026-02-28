@@ -3,6 +3,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { RecordIndexPageHeaderIcon } from '@/object-record/record-index/components/RecordIndexPageHeaderIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
@@ -10,7 +11,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
 
 const StyledTitleWithSelectedRecords = styled.div`
   display: flex;
@@ -41,9 +41,6 @@ export const RecordIndexPageHeader = () => {
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
-  const { getIcon } = useIcons();
-  const Icon = getIcon(objectMetadataItem?.icon);
-
   const label = objectMetadataItem?.labelPlural ?? objectNamePlural;
 
   const pageHeaderTitle =
@@ -65,7 +62,12 @@ export const RecordIndexPageHeader = () => {
   );
 
   return (
-    <PageHeader title={pageHeaderTitle} Icon={Icon}>
+    <PageHeader
+      title={pageHeaderTitle}
+      Icon={() => (
+        <RecordIndexPageHeaderIcon objectMetadataItem={objectMetadataItem} />
+      )}
+    >
       {isDefined(contextStoreCurrentViewId) && (
         <>
           <RecordIndexActionMenu />
