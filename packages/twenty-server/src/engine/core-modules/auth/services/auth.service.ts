@@ -538,48 +538,31 @@ export class AuthService {
     }
 
     const authorizationCode = crypto.randomBytes(42).toString('hex');
+    const hashedAuthorizationCode = crypto
+      .createHash('sha256')
+      .update(authorizationCode)
+      .digest('hex');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms('5m'));
 
-    const authCodeContext = { redirectUri: authorizeAppInput.redirectUrl };
+    const authCodeContext = {
+      redirectUri: authorizeAppInput.redirectUrl,
+      clientId: applicationRegistration.oAuthClientId,
+      ...(codeChallenge ? { codeChallenge } : {}),
+    };
 
-    if (codeChallenge) {
-      const tokens = this.appTokenRepository.create([
-        {
-          value: codeChallenge,
-          type: AppTokenType.CodeChallenge,
-          userId: user.id,
-          workspaceId: workspace.id,
-          expiresAt,
-        },
-        {
-          value: authorizationCode,
-          type: AppTokenType.AuthorizationCode,
-          userId: user.id,
-          workspaceId: workspace.id,
-          expiresAt,
-          context: authCodeContext,
-        },
-      ]);
+    const token = this.appTokenRepository.create({
+      value: hashedAuthorizationCode,
+      type: AppTokenType.AuthorizationCode,
+      userId: user.id,
+      workspaceId: workspace.id,
+      expiresAt,
+      context: authCodeContext,
+    });
 
-      await this.appTokenRepository.save(tokens);
-    } else {
-      const token = this.appTokenRepository.create({
-        value: authorizationCode,
-        type: AppTokenType.AuthorizationCode,
-        userId: user.id,
-        workspaceId: workspace.id,
-        expiresAt,
-        context: authCodeContext,
-      });
+    await this.appTokenRepository.save(token);
 
-      await this.appTokenRepository.save(token);
-    }
-
-    redirectUriValidation.parsed.searchParams.set(
-      'authorizationCode',
-      authorizationCode,
-    );
+    redirectUriValidation.parsed.searchParams.set('code', authorizationCode);
 
     return { redirectUrl: redirectUriValidation.parsed.toString() };
   }

@@ -79,9 +79,14 @@ export class OAuthService {
       }
     }
 
+    const hashedAuthorizationCode = crypto
+      .createHash('sha256')
+      .update(authorizationCode)
+      .digest('hex');
+
     const authCodeToken = await this.appTokenRepository.findOne({
       where: {
-        value: authorizationCode,
+        value: hashedAuthorizationCode,
         type: AppTokenType.AuthorizationCode,
         revokedAt: IsNull(),
       },
@@ -96,6 +101,16 @@ export class OAuthService {
 
     if (authCodeToken.expiresAt.getTime() < Date.now()) {
       return this.errorResponse('invalid_grant', 'Authorization code expired');
+    }
+
+    // RFC 6749 §4.1.3: auth code must have been issued to this client
+    const storedClientId = authCodeToken.context?.clientId;
+
+    if (storedClientId && storedClientId !== clientId) {
+      return this.errorResponse(
+        'invalid_grant',
+        'Authorization code was not issued to this client',
+      );
     }
 
     // RFC 6749 §4.1.3: redirect_uri must match the one used in the authorization request
@@ -117,15 +132,35 @@ export class OAuthService {
       }
     }
 
-    if (codeVerifier) {
-      const pkceError = await this.validatePkce(codeVerifier, authCodeToken);
+    // PKCE: if code_challenge was stored, code_verifier is required
+    const storedCodeChallenge = authCodeToken.context?.codeChallenge;
 
-      if (pkceError) {
-        return pkceError;
+    if (storedCodeChallenge) {
+      if (!codeVerifier) {
+        return this.errorResponse(
+          'invalid_request',
+          'code_verifier is required (PKCE was used in authorization)',
+        );
       }
+
+      const computedChallenge = base64UrlEncode(
+        crypto.createHash('sha256').update(codeVerifier).digest(),
+      );
+
+      if (computedChallenge !== storedCodeChallenge) {
+        return this.errorResponse(
+          'invalid_grant',
+          'Code verifier does not match the code challenge',
+        );
+      }
+    } else if (codeVerifier) {
+      return this.errorResponse(
+        'invalid_request',
+        'code_verifier provided but no code_challenge was used in authorization',
+      );
     }
 
-    if (!clientSecret && !codeVerifier) {
+    if (!clientSecret && !storedCodeChallenge) {
       return this.errorResponse(
         'invalid_request',
         'Either client_secret or code_verifier (PKCE) is required',
@@ -261,6 +296,21 @@ export class OAuthService {
           refreshToken,
         );
 
+      // Verify the refresh token belongs to this client
+      const application = await this.applicationRepository.findOne({
+        where: { id: payload.applicationId },
+      });
+
+      if (
+        !application ||
+        application.applicationRegistrationId !== applicationRegistration.id
+      ) {
+        return this.errorResponse(
+          'invalid_grant',
+          'Refresh token was not issued to this client',
+        );
+      }
+
       const { applicationAccessToken, applicationRefreshToken } =
         await this.applicationTokenService.renewApplicationTokens(payload);
 
@@ -307,41 +357,6 @@ export class OAuthService {
     if (!isValid) {
       return this.errorResponse('invalid_client', 'Invalid client secret');
     }
-
-    return null;
-  }
-
-  private async validatePkce(
-    codeVerifier: string,
-    authCodeToken: AppTokenEntity,
-  ): Promise<OAuthErrorResponse | null> {
-    const codeChallenge = base64UrlEncode(
-      crypto.createHash('sha256').update(codeVerifier).digest(),
-    );
-
-    const challengeToken = await this.appTokenRepository.findOne({
-      where: {
-        value: codeChallenge,
-        type: AppTokenType.CodeChallenge,
-        revokedAt: IsNull(),
-        ...(authCodeToken.userId ? { userId: authCodeToken.userId } : {}),
-      },
-    });
-
-    if (!challengeToken) {
-      return this.errorResponse(
-        'invalid_grant',
-        'Code verifier does not match the code challenge',
-      );
-    }
-
-    if (challengeToken.expiresAt.getTime() < Date.now()) {
-      return this.errorResponse('invalid_grant', 'Code challenge expired');
-    }
-
-    await this.appTokenRepository.update(challengeToken.id, {
-      revokedAt: new Date(),
-    });
 
     return null;
   }

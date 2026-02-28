@@ -10,6 +10,7 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application-registration/dtos/application-registration-stats.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/create-application-registration.input';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application-registration/dtos/create-application-registration.dto';
+import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application-registration/dtos/public-application-registration.dto';
 import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application-registration/dtos/create-application-registration-variable.input';
 import { RotateClientSecretDTO } from 'src/engine/core-modules/application-registration/dtos/rotate-client-secret.dto';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration.input';
@@ -38,11 +39,11 @@ export class ApplicationRegistrationResolver {
   ) {}
 
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  @Query(() => ApplicationRegistrationEntity, { nullable: true })
+  @Query(() => PublicApplicationRegistrationDTO, { nullable: true })
   async findApplicationRegistrationByClientId(
     @Args('clientId') clientId: string,
-  ): Promise<ApplicationRegistrationEntity | null> {
-    return this.applicationRegistrationService.findOneByClientId(clientId);
+  ): Promise<PublicApplicationRegistrationDTO | null> {
+    return this.applicationRegistrationService.findPublicByClientId(clientId);
   }
 
   @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
@@ -88,7 +89,10 @@ export class ApplicationRegistrationResolver {
     return this.applicationRegistrationService.getStats(id);
   }
 
-  @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+  )
   @Mutation(() => CreateApplicationRegistrationDTO)
   async createApplicationRegistration(
     @Args('input') input: CreateApplicationRegistrationInput,

@@ -16,6 +16,7 @@ import {
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application-registration/constants/oauth-scopes';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/create-application-registration.input';
+import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application-registration/dtos/public-application-registration.dto';
 import { type UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration.input';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
@@ -58,6 +59,27 @@ export class ApplicationRegistrationService {
     return this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId: clientId },
     });
+  }
+
+  async findPublicByClientId(
+    clientId: string,
+  ): Promise<PublicApplicationRegistrationDTO | null> {
+    const registration = await this.applicationRegistrationRepository.findOne({
+      where: { oAuthClientId: clientId },
+      select: ['id', 'name', 'logoUrl', 'websiteUrl', 'oAuthScopes'],
+    });
+
+    if (!registration) {
+      return null;
+    }
+
+    return {
+      id: registration.id,
+      name: registration.name,
+      logoUrl: registration.logoUrl,
+      websiteUrl: registration.websiteUrl,
+      oAuthScopes: registration.oAuthScopes,
+    };
   }
 
   async findOneByUniversalIdentifier(
