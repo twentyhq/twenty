@@ -203,12 +203,19 @@ export class OAuthService {
       },
     });
 
+    if (!userWorkspace) {
+      return this.errorResponse(
+        'invalid_grant',
+        'User no longer has access to this workspace',
+      );
+    }
+
     const { applicationAccessToken, applicationRefreshToken } =
       await this.applicationTokenService.generateApplicationTokenPair({
         workspaceId: authCodeToken.workspaceId,
         applicationId: application.id,
         userId: authCodeToken.userId,
-        userWorkspaceId: userWorkspace?.id,
+        userWorkspaceId: userWorkspace.id,
       });
 
     const grantedScope =
@@ -303,6 +310,14 @@ export class OAuthService {
     }
 
     const applicationRegistration = clientValidation;
+
+    // Confidential clients (those with a secret) must authenticate
+    if (applicationRegistration.oAuthClientSecretHash && !clientSecret) {
+      return this.errorResponse(
+        'invalid_client',
+        'Client authentication required for confidential clients',
+      );
+    }
 
     if (clientSecret) {
       const secretError = await this.validateClientSecret(
@@ -463,16 +478,13 @@ export class OAuthService {
         iat: decoded.iat,
       };
     } catch {
-      // Try as access token
+      // Try as access token (with signature verification)
       try {
-        const decoded = this.applicationTokenService.decodeToken(token);
-
-        if (!decoded) {
-          return { active: false };
-        }
+        const payload =
+          this.applicationTokenService.validateApplicationAccessToken(token);
 
         const application = await this.applicationRepository.findOne({
-          where: { id: decoded.applicationId },
+          where: { id: payload.applicationId },
         });
 
         if (
@@ -482,19 +494,14 @@ export class OAuthService {
           return { active: false };
         }
 
-        const now = Math.floor(Date.now() / 1000);
-        const isExpired = decoded.exp && decoded.exp < now;
-
         return {
-          active: !isExpired,
-          sub: decoded.sub,
+          active: true,
+          sub: payload.sub,
           client_id: clientId,
           token_type: 'Bearer',
           scope: clientValidation.oAuthScopes.join(' '),
-          aud: decoded.workspaceId,
+          aud: payload.workspaceId,
           iss: this.twentyConfigService.get('SERVER_URL'),
-          exp: decoded.exp,
-          iat: decoded.iat,
         };
       } catch {
         return { active: false };

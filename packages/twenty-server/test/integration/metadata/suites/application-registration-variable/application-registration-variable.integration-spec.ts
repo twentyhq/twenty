@@ -47,9 +47,7 @@ describe('ApplicationRegistrationVariable (integration)', () => {
   let registrationId: string;
 
   beforeAll(async () => {
-    const registration = await insertRegistrationDirect(
-      'Variable Test App',
-    );
+    const registration = await insertRegistrationDirect('Variable Test App');
 
     registrationId = registration.id;
   });
@@ -275,25 +273,22 @@ describe('ApplicationRegistrationVariable (integration)', () => {
           expectToFail: false,
         });
 
-      expect(
-        createVarData.createApplicationRegistrationVariable.key,
-      ).toBe('WEBHOOK_SECRET');
-      expect(
-        createVarData.createApplicationRegistrationVariable.isFilled,
-      ).toBe(true);
+      expect(createVarData.createApplicationRegistrationVariable.key).toBe(
+        'WEBHOOK_SECRET',
+      );
+      expect(createVarData.createApplicationRegistrationVariable.isFilled).toBe(
+        true,
+      );
 
-      const { data: findVarData } =
-        await findApplicationRegistrationVariables({
-          applicationRegistrationId: gqlRegistrationId,
-          expectToFail: false,
-        });
+      const { data: findVarData } = await findApplicationRegistrationVariables({
+        applicationRegistrationId: gqlRegistrationId,
+        expectToFail: false,
+      });
 
-      expect(
-        findVarData.findApplicationRegistrationVariables,
-      ).toHaveLength(1);
-      expect(
-        findVarData.findApplicationRegistrationVariables[0].key,
-      ).toBe('WEBHOOK_SECRET');
+      expect(findVarData.findApplicationRegistrationVariables).toHaveLength(1);
+      expect(findVarData.findApplicationRegistrationVariables[0].key).toBe(
+        'WEBHOOK_SECRET',
+      );
     });
   });
 });

@@ -148,6 +148,37 @@ export class ApplicationTokenService {
     }
   }
 
+  validateApplicationAccessToken(
+    token: string,
+  ): ApplicationAccessTokenJwtPayload {
+    try {
+      this.jwtWrapperService.verifyJwtToken(token);
+
+      const payload =
+        this.jwtWrapperService.decode<ApplicationAccessTokenJwtPayload>(token, {
+          json: true,
+        });
+
+      if (payload.type !== JwtTokenTypeEnum.APPLICATION_ACCESS) {
+        throw new AuthException(
+          'Expected an application access token',
+          AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+        );
+      }
+
+      return payload;
+    } catch (error) {
+      if (error instanceof AuthException) {
+        throw error;
+      }
+
+      throw new AuthException(
+        'Invalid application access token',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+  }
+
   decodeToken(token: string): (
     | ApplicationAccessTokenJwtPayload
     | ApplicationRefreshTokenJwtPayload

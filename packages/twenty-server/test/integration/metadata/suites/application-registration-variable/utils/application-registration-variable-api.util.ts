@@ -84,14 +84,15 @@ export const createApplicationRegistrationVariable = async ({
 }): CommonResponseBody<{
   createApplicationRegistrationVariable: VariableFields;
 }> => {
-  const graphqlOperation =
-    createApplicationRegistrationVariableMutationFactory({
+  const graphqlOperation = createApplicationRegistrationVariableMutationFactory(
+    {
       applicationRegistrationId,
       key,
       value,
       description,
       isSecret,
-    });
+    },
+  );
 
   const response = await makeMetadataAPIRequest(graphqlOperation, token);
 
@@ -115,12 +116,13 @@ export const updateApplicationRegistrationVariable = async ({
 }): CommonResponseBody<{
   updateApplicationRegistrationVariable: VariableFields;
 }> => {
-  const graphqlOperation =
-    updateApplicationRegistrationVariableMutationFactory({
+  const graphqlOperation = updateApplicationRegistrationVariableMutationFactory(
+    {
       id,
       value,
       description,
-    });
+    },
+  );
 
   const response = await makeMetadataAPIRequest(graphqlOperation, token);
 
@@ -140,8 +142,9 @@ export const deleteApplicationRegistrationVariable = async ({
 }): CommonResponseBody<{
   deleteApplicationRegistrationVariable: boolean;
 }> => {
-  const graphqlOperation =
-    deleteApplicationRegistrationVariableMutationFactory({ id });
+  const graphqlOperation = deleteApplicationRegistrationVariableMutationFactory(
+    { id },
+  );
 
   const response = await makeMetadataAPIRequest(graphqlOperation, token);
 

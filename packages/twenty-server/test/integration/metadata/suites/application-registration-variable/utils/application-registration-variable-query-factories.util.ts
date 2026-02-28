@@ -99,7 +99,7 @@ export const deleteApplicationRegistrationVariableMutationFactory = ({
 }) => ({
   query: gql`
     mutation DeleteApplicationRegistrationVariable($id: String!) {
-      deleteApplicationRegistrationVariable(id: $id) 
+      deleteApplicationRegistrationVariable(id: $id)
     }
   `,
   variables: { id },
