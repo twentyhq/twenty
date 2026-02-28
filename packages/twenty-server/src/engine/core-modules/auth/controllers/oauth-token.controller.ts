@@ -11,7 +11,7 @@ import {
 
 import { type Response } from 'express';
 
-import { OAuthTokenRequestDTO } from 'src/engine/core-modules/auth/controllers/dtos/oauth-token-request.dto';
+import { OAuthTokenInput } from 'src/engine/core-modules/auth/controllers/dtos/oauth-token.input';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { OAuthErrorResponse } from 'src/engine/core-modules/auth/types/oauth-error-response.type';
@@ -28,7 +28,7 @@ export class OAuthTokenController {
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @UsePipes(new ValidationPipe())
   async token(
-    @Body() body: OAuthTokenRequestDTO,
+    @Body() body: OAuthTokenInput,
     @Res({ passthrough: true }) res: Response,
   ) {
     let result: OAuthTokenResponse | OAuthErrorResponse;

@@ -1,6 +1,6 @@
 import { IsOptional, IsString, MaxLength } from 'class-validator';
 
-export class OAuthTokenRequestDTO {
+export class OAuthTokenInput {
   @IsString()
   @MaxLength(50)
   grant_type: string;

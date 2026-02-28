@@ -1,6 +1,13 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-import { VersionDistributionEntry } from 'src/engine/core-modules/application-registration/dtos/version-distribution-entry.dto';
+@ObjectType('VersionDistributionEntry')
+export class VersionDistributionEntryDTO {
+  @Field(() => String)
+  version: string;
+
+  @Field(() => Int)
+  count: number;
+}
 
 @ObjectType('ApplicationRegistrationStats')
 export class ApplicationRegistrationStatsDTO {
@@ -10,6 +17,6 @@ export class ApplicationRegistrationStatsDTO {
   @Field(() => String, { nullable: true })
   mostInstalledVersion: string | null;
 
-  @Field(() => [VersionDistributionEntry])
-  versionDistribution: VersionDistributionEntry[];
+  @Field(() => [VersionDistributionEntryDTO])
+  versionDistribution: VersionDistributionEntryDTO[];
 }

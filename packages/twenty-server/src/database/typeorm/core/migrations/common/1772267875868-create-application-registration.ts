@@ -1,26 +1,26 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class CreateApplicationRegistration1772000000000
+export class CreateApplicationRegistration1772267875868
   implements MigrationInterface
 {
-  name = 'CreateApplicationRegistration1772000000000';
+  name = 'CreateApplicationRegistration1772267875868';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE TABLE "core"."applicationRegistration" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "universalIdentifier" uuid NOT NULL,
-        "name" text NOT NULL,
-        "description" text,
-        "logoUrl" text,
-        "author" text,
-        "oAuthClientId" text NOT NULL,
-        "oAuthClientSecretHash" text,
+        "name" character varying NOT NULL,
+        "description" character varying,
+        "logoUrl" character varying,
+        "author" character varying,
+        "oAuthClientId" character varying NOT NULL,
+        "oAuthClientSecretHash" character varying,
         "oAuthRedirectUris" text[] NOT NULL DEFAULT '{}',
         "oAuthScopes" text[] NOT NULL DEFAULT '{}',
         "createdByUserId" uuid,
-        "websiteUrl" text,
-        "termsUrl" text,
+        "websiteUrl" character varying,
+        "termsUrl" character varying,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "deletedAt" TIMESTAMP WITH TIME ZONE,
@@ -55,9 +55,9 @@ export class CreateApplicationRegistration1772000000000
     await queryRunner.query(`
       CREATE TABLE "core"."applicationRegistrationVariable" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-        "key" text NOT NULL,
-        "encryptedValue" text NOT NULL DEFAULT '',
-        "description" text NOT NULL DEFAULT '',
+        "key" character varying NOT NULL,
+        "encryptedValue" character varying NOT NULL DEFAULT '',
+        "description" character varying NOT NULL DEFAULT '',
         "isSecret" boolean NOT NULL DEFAULT true,
         "isRequired" boolean NOT NULL DEFAULT false,
         "applicationRegistrationId" uuid NOT NULL,

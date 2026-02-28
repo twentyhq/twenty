@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Not, type Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { ApplicationRegistrationEncryptionService } from 'src/engine/core-modules/application-registration/application-registration-encryption.service';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application-registration/application-registration-variable.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import {
@@ -15,6 +14,7 @@ import {
 } from 'src/engine/core-modules/application-registration/application-registration.exception';
 import { type CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application-registration/dtos/create-application-registration-variable.input';
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration-variable.input';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 @Injectable()
 export class ApplicationRegistrationVariableService {
@@ -23,7 +23,7 @@ export class ApplicationRegistrationVariableService {
     private readonly variableRepository: Repository<ApplicationRegistrationVariableEntity>,
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    private readonly encryptionService: ApplicationRegistrationEncryptionService,
+    private readonly encryptionService: SecretEncryptionService,
   ) {}
 
   async findVariables(
