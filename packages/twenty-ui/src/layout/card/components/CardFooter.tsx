@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { theme } from '@ui/theme';
-import { type ReactNode } from 'react';
+import { type ComponentPropsWithoutRef } from 'react';
 
 const StyledCardFooter = styled.div<{ divider?: boolean }>`
   background-color: ${theme.background.primary};
@@ -10,17 +10,19 @@ const StyledCardFooter = styled.div<{ divider?: boolean }>`
   padding: ${theme.spacing[2]} ${theme.spacing[4]};
 `;
 
+type CardFooterProps = ComponentPropsWithoutRef<'div'> & {
+  divider?: boolean;
+};
+
 export const CardFooter = ({
   children,
   className,
   divider,
-}: {
-  children?: ReactNode;
-  className?: string;
-  divider?: boolean;
-}) => {
+  ...rest
+}: CardFooterProps) => {
   return (
-    <StyledCardFooter className={className} divider={divider}>
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <StyledCardFooter className={className} divider={divider} {...rest}>
       {children}
     </StyledCardFooter>
   );

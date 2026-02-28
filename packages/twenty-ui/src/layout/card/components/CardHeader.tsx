@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { theme } from '@ui/theme';
-import { type ReactNode } from 'react';
+import { type ComponentPropsWithoutRef } from 'react';
 
 const StyledCardHeader = styled.div`
   background-color: ${theme.background.primary};
@@ -10,12 +10,17 @@ const StyledCardHeader = styled.div`
   padding: ${theme.spacing[2]} ${theme.spacing[4]};
 `;
 
+type CardHeaderProps = ComponentPropsWithoutRef<'div'>;
+
 export const CardHeader = ({
   children,
   className,
-}: {
-  children?: ReactNode;
-  className?: string;
-}) => {
-  return <StyledCardHeader className={className}>{children}</StyledCardHeader>;
+  ...rest
+}: CardHeaderProps) => {
+  return (
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <StyledCardHeader className={className} {...rest}>
+      {children}
+    </StyledCardHeader>
+  );
 };

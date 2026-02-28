@@ -65,4 +65,9 @@ export type { ThemeType } from './types/ThemeType';
 export { flattenThemeToVars } from './utils/flattenThemeToVars';
 export { getNextThemeColor } from './utils/getNextThemeColor';
 export { themeColorSchema } from './utils/themeColorSchema';
+export {
+  camelToKebab,
+  formatSpacingKey,
+  SPACING_VALUES,
+} from './utils/themeConstants';
 export { theme } from './utils/themeVar';

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
@@ -15,12 +16,12 @@ import {
   ComponentWithRouterDecorator,
   JotaiRootDecorator,
 } from '@ui/testing';
-import { type ReactNode, useContext } from 'react';
-import { ThemeContext, type ThemeType } from '@ui/theme';
+import { type ReactNode } from 'react';
+import { theme } from '@ui/theme';
 
-const StyledTabContainer = styled.div<{ theme: ThemeType }>`
+const StyledTabContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${theme.spacing[1]};
   height: 40px;
   user-select: none;
   position: relative;
@@ -33,13 +34,12 @@ const StyledTabContainer = styled.div<{ theme: ThemeType }>`
     left: 0;
     right: 0;
     height: 1px;
-    background-color: ${({ theme }) => theme.border.color.light};
+    background-color: ${theme.border.color.light};
   }
 `;
 
 const TabContainer = ({ children }: { children?: ReactNode }) => {
-  const { theme } = useContext(ThemeContext);
-  return <StyledTabContainer theme={theme}>{children}</StyledTabContainer>;
+  return <StyledTabContainer>{children}</StyledTabContainer>;
 };
 
 const meta: Meta<typeof TabButton> = {
@@ -74,20 +74,7 @@ export const Default: Story = {
   },
   render: (args) => (
     <TabContainer>
-      <TabButton
-        id={args.id}
-        title={args.title}
-        LeftIcon={args.LeftIcon}
-        RightIcon={args.RightIcon}
-        active={args.active}
-        disabled={args.disabled}
-        pill={args.pill}
-        to={args.to}
-        logo={args.logo}
-        onClick={args.onClick}
-        className={args.className}
-        contentSize={args.contentSize}
-      />
+      <TabButton {...args} />
     </TabContainer>
   ),
 };
@@ -100,20 +87,7 @@ export const Active: Story = {
   },
   render: (args) => (
     <TabContainer>
-      <TabButton
-        id={args.id}
-        title={args.title}
-        LeftIcon={args.LeftIcon}
-        RightIcon={args.RightIcon}
-        active={args.active}
-        disabled={args.disabled}
-        pill={args.pill}
-        to={args.to}
-        logo={args.logo}
-        onClick={args.onClick}
-        className={args.className}
-        contentSize={args.contentSize}
-      />
+      <TabButton {...args} />
     </TabContainer>
   ),
 };
@@ -126,20 +100,7 @@ export const Disabled: Story = {
   },
   render: (args) => (
     <TabContainer>
-      <TabButton
-        id={args.id}
-        title={args.title}
-        LeftIcon={args.LeftIcon}
-        RightIcon={args.RightIcon}
-        active={args.active}
-        disabled={args.disabled}
-        pill={args.pill}
-        to={args.to}
-        logo={args.logo}
-        onClick={args.onClick}
-        className={args.className}
-        contentSize={args.contentSize}
-      />
+      <TabButton {...args} />
     </TabContainer>
   ),
 };
@@ -151,20 +112,7 @@ export const WithLogo: Story = {
   },
   render: (args) => (
     <TabContainer>
-      <TabButton
-        id={args.id}
-        title={args.title}
-        LeftIcon={args.LeftIcon}
-        RightIcon={args.RightIcon}
-        active={args.active}
-        disabled={args.disabled}
-        pill={args.pill}
-        to={args.to}
-        logo={args.logo}
-        onClick={args.onClick}
-        className={args.className}
-        contentSize={args.contentSize}
-      />
+      <TabButton {...args} />
     </TabContainer>
   ),
 };
@@ -177,20 +125,7 @@ export const WithStringPill: Story = {
   },
   render: (args) => (
     <TabContainer>
-      <TabButton
-        id={args.id}
-        title={args.title}
-        LeftIcon={args.LeftIcon}
-        RightIcon={args.RightIcon}
-        active={args.active}
-        disabled={args.disabled}
-        pill={args.pill}
-        to={args.to}
-        logo={args.logo}
-        onClick={args.onClick}
-        className={args.className}
-        contentSize={args.contentSize}
-      />
+      <TabButton {...args} />
     </TabContainer>
   ),
 };
@@ -203,20 +138,7 @@ export const WithBothIcons: Story = {
   },
   render: (args) => (
     <TabContainer>
-      <TabButton
-        id={args.id}
-        title={args.title}
-        LeftIcon={args.LeftIcon}
-        RightIcon={args.RightIcon}
-        active={args.active}
-        disabled={args.disabled}
-        pill={args.pill}
-        to={args.to}
-        logo={args.logo}
-        onClick={args.onClick}
-        className={args.className}
-        contentSize={args.contentSize}
-      />
+      <TabButton {...args} />
     </TabContainer>
   ),
 };
@@ -229,20 +151,7 @@ export const AsLink: Story = {
   },
   render: (args) => (
     <TabContainer>
-      <TabButton
-        id={args.id}
-        title={args.title}
-        LeftIcon={args.LeftIcon}
-        RightIcon={args.RightIcon}
-        active={args.active}
-        disabled={args.disabled}
-        pill={args.pill}
-        to={args.to}
-        logo={args.logo}
-        onClick={args.onClick}
-        className={args.className}
-        contentSize={args.contentSize}
-      />
+      <TabButton {...args} />
     </TabContainer>
   ),
 };
@@ -255,20 +164,7 @@ export const SmallContent: Story = {
   },
   render: (args) => (
     <TabContainer>
-      <TabButton
-        id={args.id}
-        title={args.title}
-        LeftIcon={args.LeftIcon}
-        RightIcon={args.RightIcon}
-        active={args.active}
-        disabled={args.disabled}
-        pill={args.pill}
-        to={args.to}
-        logo={args.logo}
-        onClick={args.onClick}
-        className={args.className}
-        contentSize={args.contentSize}
-      />
+      <TabButton {...args} />
     </TabContainer>
   ),
 };
@@ -281,20 +177,7 @@ export const MediumContent: Story = {
   },
   render: (args) => (
     <TabContainer>
-      <TabButton
-        id={args.id}
-        title={args.title}
-        LeftIcon={args.LeftIcon}
-        RightIcon={args.RightIcon}
-        active={args.active}
-        disabled={args.disabled}
-        pill={args.pill}
-        to={args.to}
-        logo={args.logo}
-        onClick={args.onClick}
-        className={args.className}
-        contentSize={args.contentSize}
-      />
+      <TabButton {...args} />
     </TabContainer>
   ),
 };
@@ -312,20 +195,7 @@ export const Catalog: CatalogStory<Story, typeof TabButton> = {
   },
   render: (args) => (
     <TabContainer>
-      <TabButton
-        id={args.id}
-        title={args.title}
-        LeftIcon={args.LeftIcon}
-        RightIcon={args.RightIcon}
-        active={args.active}
-        disabled={args.disabled}
-        pill={args.pill}
-        to={args.to}
-        logo={args.logo}
-        onClick={args.onClick}
-        className={args.className}
-        contentSize={args.contentSize}
-      />
+      <TabButton {...args} />
     </TabContainer>
   ),
   parameters: {

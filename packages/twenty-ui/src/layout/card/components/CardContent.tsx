@@ -25,15 +25,11 @@ export const CardContent = ({
   children,
   className,
   divider,
-  ...motionProps
+  ...rest
 }: CardContentProps) => {
   return (
-    <MotionCardContent
-      className={className}
-      divider={divider}
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...motionProps}
-    >
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <MotionCardContent className={className} divider={divider} {...rest}>
       {children}
     </MotionCardContent>
   );

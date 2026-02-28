@@ -13,7 +13,7 @@ const StyledIconButton = styled.div<{ isActive?: boolean }>`
   display: flex;
   height: ${theme.spacing[10]};
   justify-content: center;
-  transition: background-color ${theme.animation.duration.fast}s ease;
+  transition: background-color calc(${theme.animation.duration.fast} * 1s) ease;
   width: ${theme.spacing[10]};
 
   &:hover {

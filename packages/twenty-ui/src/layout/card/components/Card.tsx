@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { theme } from '@ui/theme';
-import { type ReactNode } from 'react';
+import { type ComponentPropsWithoutRef } from 'react';
 
 const StyledCard = styled.div<{
   fullWidth?: boolean;
@@ -14,19 +14,26 @@ const StyledCard = styled.div<{
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
+type CardProps = ComponentPropsWithoutRef<'div'> & {
+  fullWidth?: boolean;
+  rounded?: boolean;
+};
+
 export const Card = ({
   children,
   className,
   fullWidth,
   rounded,
-}: {
-  children?: ReactNode;
-  className?: string;
-  fullWidth?: boolean;
-  rounded?: boolean;
-}) => {
+  ...rest
+}: CardProps) => {
   return (
-    <StyledCard className={className} fullWidth={fullWidth} rounded={rounded}>
+    <StyledCard
+      className={className}
+      fullWidth={fullWidth}
+      rounded={rounded}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...rest}
+    >
       {children}
     </StyledCard>
   );

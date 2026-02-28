@@ -59,9 +59,9 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
 
   &:hover {
     background: ${({ accent, disabled, isHoverBackgroundDisabled }) => {
-      if (disabled === true || isHoverBackgroundDisabled === true)
-        return 'transparent';
+      if (disabled === true) return '';
       if (accent === 'danger') return theme.background.transparent.danger;
+      if (isHoverBackgroundDisabled === true) return 'transparent';
       return theme.background.transparent.light;
     }};
   }
@@ -137,7 +137,7 @@ export const StyledHoverableMenuItemBase = styled(
       isIconDisplayedOnHoverOnly === true ? '0' : '1'};
     right: ${({ isIconDisplayedOnHoverOnly }) =>
       isIconDisplayedOnHoverOnly === true ? theme.spacing[2] : 'auto'};
-    transition: opacity ${theme.animation.duration.instant}s ease;
+    transition: opacity calc(${theme.animation.duration.instant} * 1s) ease;
   }
 
   &:hover {

@@ -9,6 +9,7 @@ import { Pill } from '@ui/components/Pill/Pill';
 import { ThemeContext, theme } from '@ui/theme';
 import {
   type ButtonAccent,
+  type ButtonPosition,
   type ButtonProps,
   type ButtonSize,
   type ButtonVariant,
@@ -36,6 +37,7 @@ const computeAnimatedButtonDynamicStyles = (
   accent: ButtonAccent,
   disabled: boolean,
   focus: boolean,
+  position: ButtonPosition,
 ): AnimatedButtonDynamicStyles => {
   const result: AnimatedButtonDynamicStyles = {
     background: 'transparent',
@@ -280,6 +282,20 @@ const computeAnimatedButtonDynamicStyles = (
       break;
   }
 
+  if (result.borderWidthOverride !== '' && position !== 'standalone') {
+    switch (position) {
+      case 'left':
+        result.borderWidthOverride = '1px 0px 1px 1px';
+        break;
+      case 'middle':
+        result.borderWidthOverride = '1px 0px 1px 0px';
+        break;
+      case 'right':
+        result.borderWidthOverride = '1px 1px 1px 0px';
+        break;
+    }
+  }
+
   return result;
 };
 
@@ -434,6 +450,7 @@ export const AnimatedButton = ({
       accent,
       isDisabled,
       focus,
+      position,
     );
     return {
       '--abtn-bg': s.background,
@@ -444,7 +461,7 @@ export const AnimatedButton = ({
       '--abtn-hover-bg': s.hoverBackground,
       '--abtn-active-bg': s.activeBackground,
     } as React.CSSProperties;
-  }, [variant, inverted, accent, isDisabled, focus]);
+  }, [variant, inverted, accent, isDisabled, focus, position]);
 
   const ButtonComponent = to ? Link : 'button';
 

@@ -58,7 +58,7 @@ const StyledRadioInputBase = styled.input<RadioInputProps>`
         if (!checked) {
           return theme.background.tertiary;
         }
-        return '';
+        return theme.color.transparent.blue2;
       }};
   }
 

@@ -15,13 +15,17 @@ const StyledButtonWrapper = styled.div<{
   isSelected?: boolean;
 }>`
   button {
-    background-color: ${({ isSelected }) =>
-      isSelected ? theme.background.transparent.medium : 'inherit'};
+    ${({ isSelected }) =>
+      isSelected
+        ? `background-color: ${theme.background.transparent.medium};`
+        : ''}
+  }
 
-    &:hover {
-      background-color: ${({ isSelected }) =>
-        isSelected ? theme.background.transparent.medium : 'inherit'};
-    }
+  button:hover {
+    ${({ isSelected }) =>
+      isSelected
+        ? `background-color: ${theme.background.transparent.medium};`
+        : ''}
   }
 `;
 

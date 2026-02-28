@@ -14,18 +14,15 @@ const StyledTag = styled.h3<{
   preventPadding?: boolean;
 }>`
   align-items: center;
-  background: ${({ color }) => {
-    if (color === 'transparent') {
-      return 'transparent';
-    } else {
-      return `var(--t-tag-background-${color}, ${theme.tag.background.gray})`;
-    }
-  }};
+  background: ${({ color }) =>
+    color === 'transparent'
+      ? 'transparent'
+      : (theme.tag.background[color] ?? theme.tag.background.gray)};
   border-radius: ${theme.border.radius.sm};
   color: ${({ color }) =>
     color === 'transparent'
       ? theme.font.color.secondary
-      : `var(--t-tag-text-${color})`};
+      : (theme.tag.text[color] ?? theme.font.color.secondary)};
   display: inline-flex;
   font-size: ${theme.font.size.md};
   font-style: normal;

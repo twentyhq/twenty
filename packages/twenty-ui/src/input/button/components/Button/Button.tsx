@@ -56,6 +56,7 @@ const computeButtonDynamicStyles = (
   inverted: boolean,
   disabled: boolean,
   focus: boolean,
+  position: ButtonPosition,
 ): ButtonDynamicStyles => {
   const result: ButtonDynamicStyles = {
     background: 'transparent',
@@ -301,6 +302,20 @@ const computeButtonDynamicStyles = (
       break;
   }
 
+  if (result.borderWidthOverride !== '' && position !== 'standalone') {
+    switch (position) {
+      case 'left':
+        result.borderWidthOverride = '1px 0px 1px 1px';
+        break;
+      case 'middle':
+        result.borderWidthOverride = '1px 0px 1px 0px';
+        break;
+      case 'right':
+        result.borderWidthOverride = '1px 1px 1px 0px';
+        break;
+    }
+  }
+
   return result;
 };
 
@@ -462,6 +477,7 @@ export const Button = ({
       inverted,
       isDisabled,
       isFocused,
+      position,
     );
     return {
       '--btn-bg': s.background,
@@ -478,7 +494,7 @@ export const Button = ({
         isDisabled,
       ),
     } as React.CSSProperties;
-  }, [variant, accent, inverted, isDisabled, isFocused]);
+  }, [variant, accent, inverted, isDisabled, isFocused, position]);
 
   return (
     <StyledButtonWrapper

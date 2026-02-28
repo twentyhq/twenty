@@ -14,14 +14,14 @@ const StyledIconSwapContainer = styled.div`
 
 const StyledDefaultIcon = styled.div`
   display: flex;
-  transition: opacity ${theme.animation.duration.instant}s ease;
+  transition: opacity calc(${theme.animation.duration.instant} * 1s) ease;
 `;
 
 const StyledHoverIcon = styled.div`
   position: absolute;
   display: flex;
   opacity: 0;
-  transition: opacity ${theme.animation.duration.instant}s ease;
+  transition: opacity calc(${theme.animation.duration.instant} * 1s) ease;
 `;
 
 export type MenuItemIconWithGripSwapProps = {

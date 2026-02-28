@@ -51,7 +51,8 @@ export const EMPTY_PLACEHOLDER_TRANSITION_PROPS = {
   },
 };
 
-const StyledEmptyTextContainer = styled.div`
+// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+export const AnimatedPlaceholderEmptyTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -61,37 +62,15 @@ const StyledEmptyTextContainer = styled.div`
   width: 100%;
 `;
 
-export const AnimatedPlaceholderEmptyTextContainer = ({
-  children,
-  className,
-}: {
-  children?: ReactNode;
-  className?: string;
-}) => {
-  return (
-    <StyledEmptyTextContainer className={className}>
-      {children}
-    </StyledEmptyTextContainer>
-  );
-};
-
-const StyledEmptyTitle = styled.div`
+// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+export const AnimatedPlaceholderEmptyTitle = styled.div`
   color: ${theme.font.color.primary};
   font-size: ${theme.font.size.lg};
   font-weight: ${theme.font.weight.semiBold};
 `;
 
-export const AnimatedPlaceholderEmptyTitle = ({
-  children,
-  className,
-}: {
-  children?: ReactNode;
-  className?: string;
-}) => {
-  return <StyledEmptyTitle className={className}>{children}</StyledEmptyTitle>;
-};
-
-const StyledEmptySubTitle = styled.div`
+// eslint-disable-next-line twenty/styled-components-prefixed-with-styled
+export const AnimatedPlaceholderEmptySubTitle = styled.div`
   color: ${theme.font.color.tertiary};
   font-size: ${theme.font.size.sm};
   font-weight: ${theme.font.weight.regular};
@@ -100,15 +79,3 @@ const StyledEmptySubTitle = styled.div`
   overflow: hidden;
   width: 50%;
 `;
-
-export const AnimatedPlaceholderEmptySubTitle = ({
-  children,
-  className,
-}: {
-  children?: ReactNode;
-  className?: string;
-}) => {
-  return (
-    <StyledEmptySubTitle className={className}>{children}</StyledEmptySubTitle>
-  );
-};

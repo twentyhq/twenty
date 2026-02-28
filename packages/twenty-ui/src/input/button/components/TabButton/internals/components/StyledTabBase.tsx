@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 import { theme } from '@ui/theme';
-import React from 'react';
 
-const StyledTabButtonInner = styled.button<{
+export const StyledTabButton = styled.button<{
   active?: boolean;
   disabled?: boolean;
   to?: string;
@@ -38,26 +37,7 @@ const StyledTabButtonInner = styled.button<{
   }
 `;
 
-export const StyledTabButton = React.forwardRef<
-  HTMLButtonElement,
-  {
-    active?: boolean;
-    disabled?: boolean;
-    to?: string;
-    as?: React.ElementType;
-  } & React.ComponentPropsWithoutRef<'button'>
->((props, ref) => {
-  return (
-    <StyledTabButtonInner
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...props}
-      ref={ref}
-    />
-  );
-});
-StyledTabButton.displayName = 'StyledTabButton';
-
-const StyledTabContainerInner = styled.div<{
+export const StyledTabContainer = styled.div<{
   active?: boolean;
   disabled?: boolean;
 }>`
@@ -89,24 +69,7 @@ const StyledTabContainerInner = styled.div<{
   }
 `;
 
-export const StyledTabContainer = React.forwardRef<
-  HTMLDivElement,
-  {
-    active?: boolean;
-    disabled?: boolean;
-  } & React.ComponentPropsWithoutRef<'div'>
->((props, ref) => {
-  return (
-    <StyledTabContainerInner
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...props}
-      ref={ref}
-    />
-  );
-});
-StyledTabContainer.displayName = 'StyledTabContainer';
-
-const StyledTabHoverInner = styled.span<{
+export const StyledTabHover = styled.span<{
   contentSize?: 'sm' | 'md';
 }>`
   display: flex;
@@ -126,19 +89,3 @@ const StyledTabHoverInner = styled.span<{
     background: ${theme.background.quaternary};
   }
 `;
-
-export const StyledTabHover = React.forwardRef<
-  HTMLSpanElement,
-  {
-    contentSize?: 'sm' | 'md';
-  } & React.ComponentPropsWithoutRef<'span'>
->((props, ref) => {
-  return (
-    <StyledTabHoverInner
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...props}
-      ref={ref}
-    />
-  );
-});
-StyledTabHover.displayName = 'StyledTabHover';

@@ -1,4 +1,4 @@
-import { forwardRef, type ReactElement, type ReactNode } from 'react';
+import { type ReactElement, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { theme } from '@ui/theme';
 
@@ -8,7 +8,7 @@ type StyledTextProps = {
   color?: string;
 };
 
-const StyledTextContentInner = styled.div`
+export const StyledTextContent = styled.div`
   font-size: ${theme.font.size.sm};
   font-weight: ${theme.font.weight.regular};
 
@@ -18,21 +18,7 @@ const StyledTextContentInner = styled.div`
   white-space: nowrap;
 `;
 
-export const StyledTextContent = forwardRef<
-  HTMLDivElement,
-  React.ComponentPropsWithoutRef<'div'>
->((props, ref) => {
-  return (
-    <StyledTextContentInner
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...props}
-      ref={ref}
-    />
-  );
-});
-StyledTextContent.displayName = 'StyledTextContent';
-
-const StyledTextWrapperInner = styled.div<{
+export const StyledTextWrapper = styled.div<{
   color?: string;
 }>`
   --horizontal-padding: ${theme.spacing[1]};
@@ -52,22 +38,6 @@ const StyledTextWrapperInner = styled.div<{
 
   color: ${({ color }) => color ?? theme.font.color.primary};
 `;
-
-export const StyledTextWrapper = forwardRef<
-  HTMLDivElement,
-  {
-    color?: string;
-  } & React.ComponentPropsWithoutRef<'div'>
->((props, ref) => {
-  return (
-    <StyledTextWrapperInner
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...props}
-      ref={ref}
-    />
-  );
-});
-StyledTextWrapper.displayName = 'StyledTextWrapper';
 
 export const StyledText = ({
   PrefixComponent,

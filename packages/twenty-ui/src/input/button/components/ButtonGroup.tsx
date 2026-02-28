@@ -46,7 +46,7 @@ export const ButtonGroup = ({
         }
 
         if (isDefined(accent)) {
-          additionalProps.variant = variant;
+          additionalProps.accent = accent;
         }
 
         if (isDefined(size)) {

@@ -29,7 +29,7 @@ const StyledMenuPicker = styled.button<{
   justify-content: center;
   min-height: ${theme.spacing[8]};
   padding: ${theme.spacing[1.5]} ${theme.spacing[1]};
-  transition: all ${theme.animation.duration.instant}s ease;
+  transition: all calc(${theme.animation.duration.instant} * 1s) ease;
   user-select: none;
   width: 100%;
 
@@ -75,9 +75,9 @@ const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  height: ${theme.icon.size.md}px;
+  height: calc(${theme.icon.size.md} * 1px);
   justify-content: center;
-  width: ${theme.icon.size.md}px;
+  width: calc(${theme.icon.size.md} * 1px);
 `;
 
 const StyledLabel = styled.div<{

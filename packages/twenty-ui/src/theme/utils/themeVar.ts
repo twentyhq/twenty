@@ -1,6 +1,12 @@
 import { type ThemeType } from '@ui/theme/types/ThemeType';
 import { THEME_LIGHT } from '@ui/theme/constants/ThemeLight';
 
+import {
+  camelToKebab,
+  formatSpacingKey,
+  SPACING_VALUES,
+} from './themeConstants';
+
 type DeepCSSVarRefs<T> = {
   [K in keyof T]: T[K] extends (...args: never[]) => unknown
     ? Record<string | number, string>
@@ -8,16 +14,6 @@ type DeepCSSVarRefs<T> = {
       ? DeepCSSVarRefs<T[K]>
       : string;
 };
-
-const camelToKebab = (str: string): string =>
-  str.replace(/([A-Z])/g, (match) => `-${match.toLowerCase()}`);
-
-const formatKey = (n: number | string): string => String(n).replace('.', '_');
-
-const SPACING_VALUES = [
-  0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 7, 8, 9,
-  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 24, 30, 32,
-];
 
 const buildVarRefs = (
   obj: Record<string, unknown>,
@@ -31,7 +27,7 @@ const buildVarRefs = (
     if (typeof value === 'function' && key === 'spacing') {
       const spacingObj: Record<string, string> = {};
       for (const n of SPACING_VALUES) {
-        spacingObj[n] = `var(--${varPath}-${formatKey(n)})`;
+        spacingObj[n] = `var(--${varPath}-${formatSpacingKey(n)})`;
       }
       result[key] = spacingObj;
     } else if (typeof value === 'object' && value !== null) {
