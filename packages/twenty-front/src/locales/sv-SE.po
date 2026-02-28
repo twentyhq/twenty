@@ -913,8 +913,14 @@ msgstr "Lägg till objekt"
 msgid "Add Item"
 msgstr "Lägg till objekt"
 
+#. js-lingui-id: cI2ZVO
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNavigationMenuItemEditPage.tsx
+msgid "Add item to folder"
+msgstr ""
+
 #. js-lingui-id: gaZXkv
 #: src/modules/object-metadata/components/NavigationDrawerSectionForWorkspaceItems.tsx
+#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder.tsx
 msgid "Add menu item"
 msgstr ""
 
@@ -1484,6 +1490,11 @@ msgstr "Tillåt användare att logga in med e-postadress och lösenord."
 #: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 #: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 msgid "alphabetical"
+msgstr ""
+
+#. js-lingui-id: eO7HSp
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuObjectMenuItem.tsx
+msgid "Already in navbar"
 msgstr ""
 
 #. js-lingui-id: uprOiC
@@ -2814,6 +2825,11 @@ msgstr "Kollapsa"
 msgid "Collapse folder"
 msgstr "Fäll ihop mapp"
 
+#. js-lingui-id: jZlrte
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditColorOption.tsx
+msgid "Color"
+msgstr ""
+
 #. js-lingui-id: Xose0w
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Color code"
@@ -3704,6 +3720,9 @@ msgstr "Anpassning"
 
 #. js-lingui-id: srRMnJ
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNavigationMenuItemEditPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNavigationMenuItemEditPage.tsx
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditObjectViewBase.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditLinkItemView.tsx
 msgid "Customize"
 msgstr ""
@@ -4646,6 +4665,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput.tsx
+#: src/modules/command-menu/hooks/useCommandMenu.ts
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Edit"
 msgstr "Redigera"
@@ -6216,6 +6236,7 @@ msgstr "Flöde"
 
 #. js-lingui-id: kNqMMd
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
+#: src/modules/command-menu/components/CommandMenuFolderInfo.tsx
 msgid "Folder"
 msgstr ""
 
@@ -7698,13 +7719,9 @@ msgstr ""
 msgid "Line Chart"
 msgstr "Linjediagram"
 
-#. js-lingui-id: LdyooL
-#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
-msgid "link"
-msgstr ""
-
 #. js-lingui-id: yzF66j
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
+#: src/modules/command-menu/components/CommandMenuLinkInfo.tsx
 msgid "Link"
 msgstr ""
 
@@ -8638,8 +8655,10 @@ msgid "New record"
 msgstr "Ny post"
 
 #. js-lingui-id: x6Ckh1
+#: src/modules/navigation-menu-item/hooks/useOpenAddItemToFolderPage.ts
 #: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/hooks/useNavigationMenuItemEditOrganizeActions.ts
+#: src/modules/command-menu/hooks/useCommandMenu.ts
 msgid "New sidebar item"
 msgstr ""
 
@@ -9318,7 +9337,6 @@ msgstr ""
 
 #. js-lingui-id: pNEViR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/command-menu/components/CommandMenuObjectViewRecordInfo.tsx
 msgid "object"
 msgstr "objekt"
 
@@ -9332,6 +9350,7 @@ msgstr "objekt"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
+#: src/modules/command-menu/components/CommandMenuObjectViewRecordInfo.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
 msgstr "Objekt"
@@ -10414,7 +10433,6 @@ msgstr "Återanslut"
 
 #. js-lingui-id: hVS0gK
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
-#: src/modules/command-menu/components/CommandMenuObjectViewRecordInfo.tsx
 msgid "record"
 msgstr "post"
 
@@ -11204,6 +11222,11 @@ msgstr "Sök API-nycklar"
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
 msgid "Search colors"
 msgstr "Sök färger"
+
+#. js-lingui-id: AR3FV/
+#: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditColorOption.tsx
+msgid "Search colors..."
+msgstr ""
 
 #. js-lingui-id: 3UPqHL
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableSearchInput.tsx
@@ -13863,7 +13886,6 @@ msgstr "Vietnamese"
 
 #. js-lingui-id: jUNY/d
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/command-menu/components/CommandMenuObjectViewRecordInfo.tsx
 msgid "view"
 msgstr "vy"
 
@@ -13871,6 +13893,7 @@ msgstr "vy"
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuNewSidebarItemMainMenu.tsx
+#: src/modules/command-menu/components/CommandMenuObjectViewRecordInfo.tsx
 msgid "View"
 msgstr "Vy"
 
