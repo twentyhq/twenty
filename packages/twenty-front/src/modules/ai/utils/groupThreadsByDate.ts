@@ -1,17 +1,17 @@
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
-export const groupThreadsByDate = (threads: AgentChatThread[]) => {
+import { type DateGroupKey } from '@/ai/utils/dateGroupKey';
+
+export const groupThreadsByDate = (
+  threads: AgentChatThread[],
+): Record<DateGroupKey, AgentChatThread[]> => {
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
 
-  return threads.reduce<{
-    today: AgentChatThread[];
-    yesterday: AgentChatThread[];
-    older: AgentChatThread[];
-  }>(
+  return threads.reduce<Record<DateGroupKey, AgentChatThread[]>>(
     (acc, thread) => {
-      const threadDate = new Date(thread.createdAt);
+      const threadDate = new Date(thread.updatedAt);
       const threadDateString = threadDate.toDateString();
 
       if (threadDateString === today.toDateString()) {

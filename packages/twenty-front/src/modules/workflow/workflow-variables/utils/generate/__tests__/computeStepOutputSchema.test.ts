@@ -44,15 +44,6 @@ describe('computeStepOutputSchema', () => {
       expect(result).toBeUndefined();
     });
 
-    it('should return undefined for AI_AGENT step type', () => {
-      const result = computeStepOutputSchema({
-        step: { type: 'AI_AGENT', settings: {} } as any,
-        objectMetadataItems: [],
-      });
-
-      expect(result).toBeUndefined();
-    });
-
     it('should return undefined for WEBHOOK step type', () => {
       const result = computeStepOutputSchema({
         step: { type: 'WEBHOOK', settings: {} } as any,
@@ -417,6 +408,24 @@ describe('computeStepOutputSchema', () => {
     });
   });
 
+  describe('AI_AGENT step', () => {
+    it('should return response schema', () => {
+      const result = computeStepOutputSchema({
+        step: { type: 'AI_AGENT', settings: {} } as any,
+        objectMetadataItems: [],
+      });
+
+      expect(result).toEqual({
+        response: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Response',
+          value: null,
+        },
+      });
+    });
+  });
+
   describe('Empty output schema steps', () => {
     it.each(['FILTER', 'DELAY', 'EMPTY'])(
       'should return empty object for %s step type',
@@ -452,8 +461,8 @@ describe('shouldComputeOutputSchemaOnFrontend', () => {
     expect(shouldComputeOutputSchemaOnFrontend('HTTP_REQUEST')).toBe(false);
   });
 
-  it('should return false for AI_AGENT', () => {
-    expect(shouldComputeOutputSchemaOnFrontend('AI_AGENT')).toBe(false);
+  it('should return true for AI_AGENT', () => {
+    expect(shouldComputeOutputSchemaOnFrontend('AI_AGENT')).toBe(true);
   });
 
   it('should return false for WEBHOOK', () => {

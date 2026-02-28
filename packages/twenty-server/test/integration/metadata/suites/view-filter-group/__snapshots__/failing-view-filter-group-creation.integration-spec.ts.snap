@@ -46,7 +46,7 @@ exports[`View Filter Group creation should fail when viewId is not a valid UUID 
     "userFriendlyMessage": "An error occurred.",
     "value": "invalid-uuid",
   },
-  "message": "Invalid UUID: 'not-a-valid-uuid'",
+  "message": "Invalid UUID: 'invalid-uuid'",
   "name": "ValidationError",
 }
 `;

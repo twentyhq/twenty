@@ -33,7 +33,7 @@ export const CustomSlashMenu = ({
   const currentBlock = editor?.getTextCursorPosition()?.block;
   const blockType = currentBlock?.type;
   const headingLevel =
-    blockType === 'heading' ? (currentBlock?.props?.level as number) : null;
+    blockType === 'heading' ? Number(currentBlock?.props?.level) : null;
 
   const getOffsetValue = (placement: string) => {
     if (!placement.startsWith('top')) return 0;

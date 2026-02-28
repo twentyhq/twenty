@@ -36,18 +36,18 @@ export const userByIdState = createAtomFamilyState<User | null, string>({
 
 ## Jotai Hooks
 ```typescript
-// useAtomState - read and write (like useRecoilState)
+// useAtomState - read and write
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
-// useAtomStateValue - read only (like useRecoilValue)
+// useAtomStateValue - read only
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// useSetAtomState - write only (like useSetRecoilState)
+// useSetAtomState - write only
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 ```
 
 ## Provider
-Jotai works without a Provider by default (unlike Recoil's RecoilRoot). For scoped stores or testing, use `Provider` from `jotai`.
+Jotai works without a Provider by default. For scoped stores or testing, use `Provider` from `jotai`.
 
 ## Local State Guidelines
 ```typescript

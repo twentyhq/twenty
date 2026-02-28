@@ -8,17 +8,11 @@ import { type MockedResponse } from '@apollo/client/testing';
 
 import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCacheInstance';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
-import {
-  allMockCompanyRecordsWithRelation,
-  findMockCompanyWithRelationRecord,
-} from '~/testing/mock-data/companiesWithRelations';
-import {
-  allMockPersonRecords,
-  getMockPersonObjectMetadataItem,
-  getMockPersonRecord,
-} from '~/testing/mock-data/people';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
+import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
 const mockRefetchAggregateQueries = jest.fn();
@@ -26,15 +20,25 @@ const mockRefetchAggregateQueries = jest.fn();
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
 
+const flatPersonRecords = mockedPersonRecords.map((record) =>
+  getRecordFromRecordNode({ recordNode: record }),
+);
+
+const flatCompanyRecords = mockedCompanyRecords.map((record) =>
+  getRecordFromRecordNode({ recordNode: record }),
+);
+
 describe('useDeleteOneRecord', () => {
-  const personRecord = getMockPersonRecord({
+  const matchingCompanyId = flatCompanyRecords[0].id;
+  const personRecord = {
+    ...flatPersonRecords[0],
     deletedAt: null,
-  });
-  const relatedCompanyRecord = findMockCompanyWithRelationRecord({
-    id: personRecord.company.id,
-  });
-  const personObjectMetadataItem = getMockPersonObjectMetadataItem();
-  const companyObjectMetadataItem = getMockCompanyObjectMetadataItem();
+    companyId: matchingCompanyId,
+    company: { ...flatCompanyRecords[0] },
+  };
+  const relatedCompanyRecord = flatCompanyRecords[0];
+  const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+  const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
   const objectMetadataItems = generatedMockObjectMetadataItems;
 
   const getDefaultMocks = (
@@ -199,11 +203,11 @@ describe('useDeleteOneRecord', () => {
       initialRecordsInCache: [
         {
           objectMetadataItem: companyObjectMetadataItem,
-          records: allMockCompanyRecordsWithRelation,
+          records: flatCompanyRecords,
         },
         {
           objectMetadataItem: personObjectMetadataItem,
-          records: allMockPersonRecords,
+          records: flatPersonRecords,
         },
       ],
     });
