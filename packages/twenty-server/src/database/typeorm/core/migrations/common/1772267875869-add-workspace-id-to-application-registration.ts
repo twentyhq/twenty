@@ -25,17 +25,14 @@ export class AddWorkspaceIdToApplicationRegistration1772267875869
       ON "core"."applicationRegistration" ("workspaceId")
     `);
 
-    await queryRunner.query(`
-      ALTER TABLE "core"."applicationRegistration"
-      ADD CONSTRAINT "FK_application_registration_workspace"
-      FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id")
-      ON DELETE CASCADE ON UPDATE NO ACTION
-    `);
+    await queryRunner.query(
+      `ALTER TABLE "core"."applicationRegistration" ADD CONSTRAINT "FK_94ab20372e448d45088357f884e" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationRegistration" DROP CONSTRAINT "FK_application_registration_workspace"`,
+      `ALTER TABLE "core"."applicationRegistration" DROP CONSTRAINT "FK_94ab20372e448d45088357f884e"`,
     );
 
     await queryRunner.query(
