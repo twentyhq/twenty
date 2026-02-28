@@ -9,28 +9,13 @@ import {
   useRef,
   useState,
 } from 'react';
-import { styled } from '@linaria/react';
+
+import { LinariaStaticCell as StyledCell } from './perf-linaria-cells';
 
 const ROWS = 50;
 const COLS = 8;
 const TOTAL_CELLS = ROWS * COLS;
 const ITERATIONS = 5;
-
-// ---------------------------------------------------------------------------
-// Styled cells (Linaria)
-// ---------------------------------------------------------------------------
-
-const StyledCell = styled.div`
-  height: 32px;
-  border-bottom: 1px solid #eee;
-  border-right: 1px solid #eee;
-  padding: 0 8px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  white-space: nowrap;
-  font-size: 13px;
-`;
 
 const gridCss = {
   display: 'grid',
@@ -508,9 +493,11 @@ export const RecordTableStateAccessAudit = () => {
           const min = Math.min(...times);
           const max = Math.max(...times);
 
+          const benchName = currentBenchRef.current?.name ?? 'unknown';
+
           setResults((prev) => [
             ...prev,
-            { name: currentBenchRef.current!.name, times, avg, min, max },
+            { name: benchName, times, avg, min, max },
           ]);
 
           setTestGrid(null);

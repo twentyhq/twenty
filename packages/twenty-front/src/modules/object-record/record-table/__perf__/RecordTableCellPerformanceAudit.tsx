@@ -1,8 +1,7 @@
 import { type Theme, withTheme } from '@emotion/react';
 import emotionStyled from '@emotion/styled';
-import { atom, createStore, Provider, useAtomValue, useSetAtom } from 'jotai';
+import { atom, createStore, Provider, useAtomValue } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { styled } from '@linaria/react';
 import {
   createContext,
   memo,
@@ -12,6 +11,15 @@ import {
   useRef,
   useState,
 } from 'react';
+
+import {
+  LinariaStaticCell,
+  LinariaDynamicCell,
+  LinariaOuterWrapper,
+  LinariaBaseContainer,
+  LinariaDisplayOuter,
+  LinariaDisplayInner,
+} from './perf-linaria-cells';
 
 const ROWS = 50;
 const COLS = 8;
@@ -42,98 +50,7 @@ const cellCss: React.CSSProperties = {
 };
 
 // ---------------------------------------------------------------------------
-// Linaria styled components (compile-time)
-// ---------------------------------------------------------------------------
-
-const LinariaStaticCell = styled.div`
-  height: 32px;
-  border-bottom: 1px solid #eee;
-  border-right: 1px solid #eee;
-  padding: 0 8px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  white-space: nowrap;
-  font-size: 13px;
-`;
-
-const LinariaDynamicCell = styled.div<{
-  bgColor: string;
-  borderColor: string;
-  fontColor: string;
-  isReadOnly: boolean;
-}>`
-  height: 32px;
-  border-bottom: 1px solid ${({ borderColor }) => borderColor};
-  border-right: 1px solid ${({ borderColor }) => borderColor};
-  padding: 0 8px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  white-space: nowrap;
-  font-size: 13px;
-  background: ${({ bgColor }) => bgColor};
-  color: ${({ fontColor }) => fontColor};
-  cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
-`;
-
-const LinariaOuterWrapper = styled.div<{
-  backgroundColor: string;
-  borderColor: string;
-}>`
-  border-bottom: 1px solid ${({ borderColor }) => borderColor};
-  border-right: 1px solid ${({ borderColor }) => borderColor};
-  padding: 0;
-  text-align: left;
-  background: ${({ backgroundColor }) => backgroundColor};
-`;
-
-const LinariaBaseContainer = styled.div<{
-  fontColorMedium: string;
-  bgSecondary: string;
-  fontColorSecondary: string;
-  isReadOnly: boolean;
-}>`
-  align-items: center;
-  box-sizing: border-box;
-  cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
-  display: flex;
-  height: 32px;
-  user-select: none;
-  position: relative;
-
-  &:hover {
-    ${(props) => {
-      if (!props.isReadOnly) return '';
-      return `
-        outline: 1px solid ${props.fontColorMedium};
-        background-color: ${props.bgSecondary};
-        color: ${props.fontColorSecondary};
-      `;
-    }}
-  }
-`;
-
-const LinariaDisplayOuter = styled.div`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  overflow: hidden;
-  padding-left: 8px;
-  width: 100%;
-`;
-
-const LinariaDisplayInner = styled.div`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  overflow: hidden;
-  width: 100%;
-  white-space: nowrap;
-`;
-
-// ---------------------------------------------------------------------------
-// Emotion styled components (runtime)
+// Emotion styled components (runtime — NOT processed by wyw)
 // ---------------------------------------------------------------------------
 
 const EmotionStaticCell = emotionStyled.div`
@@ -182,7 +99,6 @@ const EmotionThemeCell = emotionStyled.div`
   color: ${({ theme }) => theme.font.color.primary};
 `;
 
-// Emotion styled with withTheme (pattern used in actual codebase)
 const EmotionWithThemeCell = withTheme(emotionStyled.div<{ theme: Theme }>`
   height: 32px;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -231,7 +147,10 @@ const TableCtx = createContext({
   visibleTableColumns: [] as unknown[],
 });
 
-const FocusCtx = createContext({ isFocused: false, setIsFocused: (() => {}) as (v: boolean) => void });
+const FocusCtx = createContext({
+  isFocused: false,
+  setIsFocused: (() => {}) as (v: boolean) => void,
+});
 
 // ---------------------------------------------------------------------------
 // Jotai store (simulating real RecordTable atoms)
@@ -262,17 +181,14 @@ const cellIsHoveredFamily = atomFamily(
 // Cell variants — each adds one more layer of real-world complexity
 // ---------------------------------------------------------------------------
 
-// 1. Baseline: plain div + inline style
 const Cell01_InlineStyle = ({ value }: { value: string }) => (
   <div style={cellCss}>{value}</div>
 );
 
-// 2. Linaria static (no dynamic props)
 const Cell02_LinariaStatic = ({ value }: { value: string }) => (
   <LinariaStaticCell>{value}</LinariaStaticCell>
 );
 
-// 3. Linaria dynamic (4 props, like RecordTableCellStyleWrapper)
 const Cell03_LinariaDynamic = ({ value }: { value: string }) => (
   <LinariaDynamicCell
     bgColor="white"
@@ -284,12 +200,10 @@ const Cell03_LinariaDynamic = ({ value }: { value: string }) => (
   </LinariaDynamicCell>
 );
 
-// 4. Emotion static
 const Cell04_EmotionStatic = ({ value }: { value: string }) => (
   <EmotionStaticCell>{value}</EmotionStaticCell>
 );
 
-// 5. Emotion with dynamic props
 const Cell05_EmotionDynamic = ({ value }: { value: string }) => (
   <EmotionDynamicCell
     bgColor="white"
@@ -301,17 +215,14 @@ const Cell05_EmotionDynamic = ({ value }: { value: string }) => (
   </EmotionDynamicCell>
 );
 
-// 6. Emotion with theme interpolation (auto-injected theme)
 const Cell06_EmotionTheme = ({ value }: { value: string }) => (
   <EmotionThemeCell>{value}</EmotionThemeCell>
 );
 
-// 7. Emotion with withTheme HOC pattern
 const Cell07_EmotionWithTheme = ({ value }: { value: string }) => (
   <EmotionWithThemeCell>{value}</EmotionWithThemeCell>
 );
 
-// 8. Linaria dynamic + 3 context reads (like real cell: RowCtx + CellCtx + FieldCtx)
 const Cell08_LinariaPlusContexts = ({ value }: { value: string }) => {
   useContext(RowCtx);
   useContext(CellCtx);
@@ -328,7 +239,6 @@ const Cell08_LinariaPlusContexts = ({ value }: { value: string }) => {
   );
 };
 
-// 9. + 5 context reads (real cell reads: RowCtx, CellCtx, FieldCtx, TableCtx, FocusCtx)
 const Cell09_FiveContexts = ({ value }: { value: string }) => {
   useContext(RowCtx);
   useContext(CellCtx);
@@ -347,7 +257,6 @@ const Cell09_FiveContexts = ({ value }: { value: string }) => {
   );
 };
 
-// 10. + useState per cell (simulating FieldFocusContextProvider pattern)
 const Cell10_WithUseState = ({ value }: { value: string }) => {
   const [_isFocused] = useState(false);
   useContext(RowCtx);
@@ -365,7 +274,6 @@ const Cell10_WithUseState = ({ value }: { value: string }) => {
   );
 };
 
-// 11. + 2x useState (simulating FieldFocusProvider + OverflowingTextWithTooltip)
 const Cell11_TwoUseStates = ({ value }: { value: string }) => {
   const [_isFocused] = useState(false);
   const [_isOverflowing] = useState(false);
@@ -384,7 +292,6 @@ const Cell11_TwoUseStates = ({ value }: { value: string }) => {
   );
 };
 
-// 12. + 3 event handler closures per cell
 const Cell12_EventHandlers = ({ value }: { value: string }) => {
   const [_isFocused, setIsFocused] = useState(false);
   useContext(RowCtx);
@@ -410,7 +317,6 @@ const Cell12_EventHandlers = ({ value }: { value: string }) => {
   );
 };
 
-// 13. + Jotai atom reads per cell (simulating recordFieldValue + isSelected + isHovered)
 const Cell13_JotaiAtoms = ({
   value,
   recordId,
@@ -442,7 +348,6 @@ const Cell13_JotaiAtoms = ({
   );
 };
 
-// 14. 4-level Linaria styled nesting (real pattern: StyleWrapper > BaseContainer > DisplayOuter > DisplayInner)
 const Cell14_FourLinariaLevels = ({ value }: { value: string }) => {
   useContext(RowCtx);
   useContext(CellCtx);
@@ -463,7 +368,6 @@ const Cell14_FourLinariaLevels = ({ value }: { value: string }) => {
   );
 };
 
-// 15. Full RecordTable simulation: 3 context providers + 4 styled wrappers + hooks + handlers
 const FullSimProvider = ({
   children,
   row,
@@ -483,7 +387,9 @@ const FullSimProvider = ({
       isFocused: false,
     }}
   >
-    <CellCtx.Provider value={{ column: col, row, fieldMetadataItemId: `fld-${col}` }}>
+    <CellCtx.Provider
+      value={{ column: col, row, fieldMetadataItemId: `fld-${col}` }}
+    >
       <FieldCtx.Provider
         value={{
           fieldName: `field-${col}`,
@@ -544,7 +450,6 @@ const Cell15_FullSimulation = ({
   </FullSimProvider>
 );
 
-// 16. Full simulation + Jotai atoms (closest to real RecordTable)
 const FullSimAtomInner = ({
   value,
   recordId,
@@ -611,7 +516,6 @@ const Cell16_FullWithAtoms = ({
   </FullSimProvider>
 );
 
-// 17. Component depth: 14 pass-through wrappers (fragment wrappers, simulating real hierarchy)
 const W1 = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 const W2 = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 const W3 = ({ children }: { children: React.ReactNode }) => <>{children}</>;
@@ -633,15 +537,10 @@ const Cell17_14Wrappers = ({ value }: { value: string }) => (
   </W14></W13></W12></W11></W10></W9></W8></W7></W6></W5></W4></W3></W2></W1>
 );
 
-// 18. Re-render benchmark: memoized cells + one atom change
 const MemoizedCell = memo(({ value }: { value: string }) => (
   <LinariaStaticCell>{value}</LinariaStaticCell>
 ));
 MemoizedCell.displayName = 'MemoizedCell';
-
-const NonMemoizedCell = ({ value }: { value: string }) => (
-  <LinariaStaticCell>{value}</LinariaStaticCell>
-);
 
 // ---------------------------------------------------------------------------
 // Benchmark harness
@@ -658,7 +557,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell01_InlineStyle key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell01_InlineStyle key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -668,7 +569,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell02_LinariaStatic key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell02_LinariaStatic key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -678,7 +581,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell03_LinariaDynamic key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell03_LinariaDynamic key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -688,7 +593,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell04_EmotionStatic key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell04_EmotionStatic key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -698,7 +605,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell05_EmotionDynamic key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell05_EmotionDynamic key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -708,7 +617,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell06_EmotionTheme key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell06_EmotionTheme key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -718,7 +629,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell07_EmotionWithTheme key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell07_EmotionWithTheme key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -728,7 +641,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell08_LinariaPlusContexts key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell08_LinariaPlusContexts key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -738,7 +653,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell09_FiveContexts key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell09_FiveContexts key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -748,7 +665,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell10_WithUseState key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell10_WithUseState key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -758,7 +677,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell11_TwoUseStates key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell11_TwoUseStates key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -768,7 +689,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell12_EventHandlers key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell12_EventHandlers key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -799,7 +722,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell14_FourLinariaLevels key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell14_FourLinariaLevels key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -810,7 +735,12 @@ const BENCHMARKS: BenchmarkDef[] = [
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
           row.map((v, ci) => (
-            <Cell15_FullSimulation key={`${ri}-${ci}`} value={v} row={ri} col={ci} />
+            <Cell15_FullSimulation
+              key={`${ri}-${ci}`}
+              value={v}
+              row={ri}
+              col={ci}
+            />
           )),
         )}
       </div>
@@ -823,7 +753,12 @@ const BENCHMARKS: BenchmarkDef[] = [
         <div style={gridCss}>
           {data.flatMap((row, ri) =>
             row.map((v, ci) => (
-              <Cell16_FullWithAtoms key={`${ri}-${ci}`} value={v} row={ri} col={ci} />
+              <Cell16_FullWithAtoms
+                key={`${ri}-${ci}`}
+                value={v}
+                row={ri}
+                col={ci}
+              />
             )),
           )}
         </div>
@@ -835,7 +770,9 @@ const BENCHMARKS: BenchmarkDef[] = [
     render: (data) => (
       <div style={gridCss}>
         {data.flatMap((row, ri) =>
-          row.map((v, ci) => <Cell17_14Wrappers key={`${ri}-${ci}`} value={v} />),
+          row.map((v, ci) => (
+            <Cell17_14Wrappers key={`${ri}-${ci}`} value={v} />
+          )),
         )}
       </div>
     ),
@@ -857,54 +794,6 @@ const generateData = () =>
 
 const generateRecordIds = () =>
   Array.from({ length: ROWS }, (_, i) => `rec-${i}`);
-
-// ---------------------------------------------------------------------------
-// Re-render benchmark component
-// ---------------------------------------------------------------------------
-
-const RerenderGrid = ({
-  useMemo: useMemoFlag,
-  onMounted,
-}: {
-  useMemo: boolean;
-  onMounted: () => void;
-}) => {
-  const setHover = useSetAtom(hoverPositionAtom);
-  const data = useRef(generateData());
-  const mounted = useRef(false);
-  const CellComp = useMemoFlag ? MemoizedCell : NonMemoizedCell;
-
-  useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      onMounted();
-    }
-  }, [onMounted]);
-
-  return (
-    <div>
-      <button
-        onClick={() => {
-          const start = performance.now();
-          setHover({ row: 5, col: 3 });
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              const elapsed = performance.now() - start;
-              alert(`Re-render after atom change: ${elapsed.toFixed(1)}ms (${useMemoFlag ? 'with' : 'without'} React.memo)`);
-            });
-          });
-        }}
-      >
-        Trigger re-render ({useMemoFlag ? 'memo' : 'no memo'})
-      </button>
-      <div style={gridCss}>
-        {data.current.flatMap((row, ri) =>
-          row.map((v, ci) => <CellComp key={`${ri}-${ci}`} value={v} />),
-        )}
-      </div>
-    </div>
-  );
-};
 
 // ---------------------------------------------------------------------------
 // Main component
@@ -943,6 +832,7 @@ export const RecordTableCellPerformanceAudit = () => {
           setTestGrid(null);
           setTimeout(() => runSingleIteration(currentBenchRef.current!), 50);
         } else {
+          const benchName = currentBenchRef.current?.name ?? 'unknown';
           const times = [...timesRef.current];
           const avg = times.reduce((a, b) => a + b, 0) / times.length;
           const min = Math.min(...times);
@@ -950,7 +840,7 @@ export const RecordTableCellPerformanceAudit = () => {
 
           setResults((prev) => [
             ...prev,
-            { name: currentBenchRef.current!.name, times, avg, min, max },
+            { name: benchName, times, avg, min, max },
           ]);
 
           setTestGrid(null);
@@ -966,15 +856,18 @@ export const RecordTableCellPerformanceAudit = () => {
         }
       });
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTest, testGrid]);
 
-  const startBenchmark = useCallback((bench: BenchmarkDef) => {
-    currentBenchRef.current = bench;
-    iterationRef.current = 0;
-    timesRef.current = [];
-    runSingleIteration(bench);
-  }, [runSingleIteration]);
+  const startBenchmark = useCallback(
+    (bench: BenchmarkDef) => {
+      currentBenchRef.current = bench;
+      iterationRef.current = 0;
+      timesRef.current = [];
+      runSingleIteration(bench);
+    },
+    [runSingleIteration],
+  );
 
   const runAll = useCallback(() => {
     setResults([]);
@@ -1005,8 +898,8 @@ export const RecordTableCellPerformanceAudit = () => {
     <div style={{ padding: 16, fontFamily: 'system-ui, sans-serif' }}>
       <h2 style={{ marginBottom: 4 }}>RecordTable Cell Performance Audit</h2>
       <p style={{ color: '#666', marginTop: 0 }}>
-        {TOTAL_CELLS} cells ({ROWS}×{COLS}), {ITERATIONS} iterations each.
-        Each test incrementally adds one real-world cost factor.
+        {TOTAL_CELLS} cells ({ROWS}x{COLS}), {ITERATIONS} iterations each. Each
+        test incrementally adds one real-world cost factor.
       </p>
 
       <div style={{ marginBottom: 12 }}>
@@ -1040,7 +933,14 @@ export const RecordTableCellPerformanceAudit = () => {
         <summary style={{ cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>
           Run individual tests
         </summary>
-        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 8 }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: 4,
+            flexWrap: 'wrap',
+            marginTop: 8,
+          }}
+        >
           {BENCHMARKS.map((bench) => (
             <button
               key={bench.name}
@@ -1064,16 +964,40 @@ export const RecordTableCellPerformanceAudit = () => {
             overflow: 'auto',
           }}
         >
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <table
+            style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              fontSize: 13,
+            }}
+          >
             <thead>
               <tr style={{ background: '#f1f5f9' }}>
-                <th style={{ textAlign: 'left', padding: '8px 12px' }}>Test</th>
-                <th style={{ textAlign: 'right', padding: '8px 12px' }}>Avg</th>
-                <th style={{ textAlign: 'right', padding: '8px 12px' }}>Min</th>
-                <th style={{ textAlign: 'right', padding: '8px 12px' }}>Max</th>
-                <th style={{ textAlign: 'right', padding: '8px 12px' }}>Per cell</th>
-                <th style={{ textAlign: 'right', padding: '8px 12px' }}>vs baseline</th>
-                <th style={{ textAlign: 'left', padding: '8px 12px', width: 200 }}>
+                <th style={{ textAlign: 'left', padding: '8px 12px' }}>
+                  Test
+                </th>
+                <th style={{ textAlign: 'right', padding: '8px 12px' }}>
+                  Avg
+                </th>
+                <th style={{ textAlign: 'right', padding: '8px 12px' }}>
+                  Min
+                </th>
+                <th style={{ textAlign: 'right', padding: '8px 12px' }}>
+                  Max
+                </th>
+                <th style={{ textAlign: 'right', padding: '8px 12px' }}>
+                  Per cell
+                </th>
+                <th style={{ textAlign: 'right', padding: '8px 12px' }}>
+                  vs baseline
+                </th>
+                <th
+                  style={{
+                    textAlign: 'left',
+                    padding: '8px 12px',
+                    width: 200,
+                  }}
+                >
                   Bar
                 </th>
               </tr>
@@ -1092,19 +1016,48 @@ export const RecordTableCellPerformanceAudit = () => {
                       background: isBaseline ? '#eff6ff' : undefined,
                     }}
                   >
-                    <td style={{ padding: '6px 12px', fontWeight: isBaseline ? 600 : 400 }}>
+                    <td
+                      style={{
+                        padding: '6px 12px',
+                        fontWeight: isBaseline ? 600 : 400,
+                      }}
+                    >
                       {r.name}
                     </td>
-                    <td style={{ textAlign: 'right', padding: '6px 12px', fontWeight: 600 }}>
+                    <td
+                      style={{
+                        textAlign: 'right',
+                        padding: '6px 12px',
+                        fontWeight: 600,
+                      }}
+                    >
                       {r.avg.toFixed(1)}ms
                     </td>
-                    <td style={{ textAlign: 'right', padding: '6px 12px', color: '#666' }}>
+                    <td
+                      style={{
+                        textAlign: 'right',
+                        padding: '6px 12px',
+                        color: '#666',
+                      }}
+                    >
                       {r.min.toFixed(1)}
                     </td>
-                    <td style={{ textAlign: 'right', padding: '6px 12px', color: '#666' }}>
+                    <td
+                      style={{
+                        textAlign: 'right',
+                        padding: '6px 12px',
+                        color: '#666',
+                      }}
+                    >
                       {r.max.toFixed(1)}
                     </td>
-                    <td style={{ textAlign: 'right', padding: '6px 12px', color: '#666' }}>
+                    <td
+                      style={{
+                        textAlign: 'right',
+                        padding: '6px 12px',
+                        color: '#666',
+                      }}
+                    >
                       {perCell(r.avg)}ms
                     </td>
                     <td
@@ -1146,7 +1099,14 @@ export const RecordTableCellPerformanceAudit = () => {
         <p style={{ color: '#666' }}>Running: {activeTest}...</p>
       )}
 
-      <div style={{ position: 'absolute', left: -9999, top: -9999, visibility: 'hidden' }}>
+      <div
+        style={{
+          position: 'absolute',
+          left: -9999,
+          top: -9999,
+          visibility: 'hidden',
+        }}
+      >
         {testGrid}
       </div>
     </div>
