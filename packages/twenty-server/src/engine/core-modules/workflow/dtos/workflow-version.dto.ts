@@ -16,10 +16,10 @@ export class WorkflowVersionDTO {
   name: string;
 
   @Field(() => GraphQLISODateTime)
-  createdAt: Date;
+  createdAt: string;
 
   @Field(() => GraphQLISODateTime)
-  updatedAt: Date;
+  updatedAt: string;
 
   @Field(() => UUIDScalarType)
   workflowId: string;

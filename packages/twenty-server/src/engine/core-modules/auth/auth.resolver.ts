@@ -253,7 +253,10 @@ export class AuthResolver {
         getAuthTokenFromEmailVerificationTokenInput,
       );
 
-    if (appToken.context && appToken.context.email !== appToken.user.email) {
+    if (
+      appToken.context?.email &&
+      appToken.context.email !== appToken.user.email
+    ) {
       await this.userService.updateEmailFromVerificationToken(
         appToken.user.id,
         appToken.context.email,
@@ -294,7 +297,10 @@ export class AuthResolver {
         getAuthTokenFromEmailVerificationTokenInput,
       );
 
-    if (appToken.context && appToken.context.email !== appToken.user.email) {
+    if (
+      appToken.context?.email &&
+      appToken.context.email !== appToken.user.email
+    ) {
       await this.userService.updateEmailFromVerificationToken(
         appToken.user.id,
         appToken.context.email,
