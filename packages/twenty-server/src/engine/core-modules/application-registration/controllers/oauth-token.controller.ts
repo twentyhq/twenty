@@ -11,11 +11,11 @@ import {
 
 import { type Response } from 'express';
 
-import { OAuthTokenInput } from 'src/engine/core-modules/auth/controllers/dtos/oauth-token.input';
+import { OAuthTokenInput } from 'src/engine/core-modules/application-registration/dtos/oauth-token.input';
+import { OAuthService } from 'src/engine/core-modules/application-registration/oauth.service';
+import { OAuthErrorResponse } from 'src/engine/core-modules/application-registration/types/oauth-error-response.type';
+import { OAuthTokenResponse } from 'src/engine/core-modules/application-registration/types/oauth-token-response.type';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
-import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
-import { OAuthErrorResponse } from 'src/engine/core-modules/auth/types/oauth-error-response.type';
-import { OAuthTokenResponse } from 'src/engine/core-modules/auth/types/oauth-token-response.type';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
