@@ -3,7 +3,6 @@ import { useContext, type ReactNode } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordTableRenderProfiler } from '@/object-record/record-table/__perf__/useRecordTableRenderProfiler';
-import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/ui/meta-types/display/utils/isFieldIdentifierDisplay';
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
@@ -62,7 +61,6 @@ export const RecordTableCellBaseContainer = ({
     fieldDefinition,
     isLabelIdentifier,
   } = useContext(FieldContext);
-  const { setIsFocused } = useFieldFocus();
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { theme } = useContext(ThemeContext);
 
@@ -75,12 +73,7 @@ export const RecordTableCellBaseContainer = ({
   const { onMoveHoverToCurrentCell } = useRecordTableBodyContextOrThrow();
 
   const handleContainerMouseMove = () => {
-    setIsFocused(true);
     onMoveHoverToCurrentCell(cellPosition);
-  };
-
-  const handleContainerMouseLeave = () => {
-    setIsFocused(false);
   };
 
   const handleContainerClick = () => {
@@ -90,7 +83,6 @@ export const RecordTableCellBaseContainer = ({
 
   return (
     <StyledBaseContainer
-      onMouseLeave={handleContainerMouseLeave}
       onMouseMove={handleContainerMouseMove}
       onClick={handleContainerClick}
       backgroundColorTransparentSecondary={

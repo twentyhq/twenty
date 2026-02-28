@@ -104,6 +104,7 @@ const InternalTableContextProviders = ({
   children: React.ReactNode;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
+  const allObjectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const currentRecordFields = useAtomComponentStateValue(
@@ -174,6 +175,7 @@ const InternalTableContextProviders = ({
         value={{
           objectNameSingular: objectMetadataItem.nameSingular,
           objectMetadataItem: objectMetadataItem,
+          objectMetadataItems: allObjectMetadataItems,
           recordTableId: objectMetadataItem.namePlural,
           viewBarId: 'view-bar',
           objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({

@@ -1,4 +1,3 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
@@ -29,15 +28,13 @@ export const RecordTableCellFieldContextGeneric = ({
   useRecordTableRenderProfiler('RecordTableCellFieldContextGeneric');
   const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
 
-  const { objectMetadataItem, objectPermissions } =
+  const { objectMetadataItem, objectMetadataItems, objectPermissions } =
     useRecordTableContextOrThrow();
 
   const {
     objectPermissionsByObjectMetadataId,
     fieldDefinitionByFieldMetadataItemId,
   } = useRecordIndexContextOrThrow();
-
-  const { objectMetadataItems } = useObjectMetadataItems();
 
   const fieldDefinition =
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
