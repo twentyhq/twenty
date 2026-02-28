@@ -6,7 +6,6 @@ import crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
@@ -138,7 +137,7 @@ export class ApplicationRegistrationService {
       this.validateScopes(update.oAuthScopes);
     }
 
-    const updateData: QueryDeepPartialEntity<ApplicationRegistrationEntity> = {
+    const updateData: Partial<ApplicationRegistrationEntity> = {
       ...(isDefined(update.name) && { name: update.name }),
       ...(isDefined(update.description) && {
         description: update.description,
@@ -155,7 +154,9 @@ export class ApplicationRegistrationService {
       ...(isDefined(update.termsUrl) && { termsUrl: update.termsUrl }),
     };
 
-    await this.applicationRegistrationRepository.update(id, updateData);
+    if (Object.keys(updateData).length > 0) {
+      await this.applicationRegistrationRepository.update(id, updateData);
+    }
 
     return this.findOneById(id);
   }

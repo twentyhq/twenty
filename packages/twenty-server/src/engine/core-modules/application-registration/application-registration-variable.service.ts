@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type ServerVariables } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, type Repository } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application-registration/application-registration-variable.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
@@ -69,15 +68,14 @@ export class ApplicationRegistrationVariableService {
       );
     }
 
-    const updateData: QueryDeepPartialEntity<ApplicationRegistrationVariableEntity> =
-      {
-        ...(isDefined(update.value) && {
-          encryptedValue: this.encryptionService.encrypt(update.value),
-        }),
-        ...(isDefined(update.description) && {
-          description: update.description,
-        }),
-      };
+    const updateData: Partial<ApplicationRegistrationVariableEntity> = {
+      ...(isDefined(update.value) && {
+        encryptedValue: this.encryptionService.encrypt(update.value),
+      }),
+      ...(isDefined(update.description) && {
+        description: update.description,
+      }),
+    };
 
     if (Object.keys(updateData).length > 0) {
       await this.variableRepository.update(id, updateData);
