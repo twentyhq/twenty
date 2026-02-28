@@ -1,4 +1,3 @@
-import type { Theme } from '@emotion/react';
 import type {
   FlatWorkspaceItem,
   NavigationMenuItemClickParams,
@@ -16,7 +15,6 @@ export type WorkspaceSectionItemContentProps = {
   item: FlatWorkspaceItem;
   editModeProps: EditModeProps;
   useDndKit: boolean;
-  theme: Theme;
   isEditMode: boolean;
   isDragging: boolean;
   folderChildrenById: Map<string, ProcessedNavigationMenuItem[]>;
@@ -47,7 +45,6 @@ export type WorkspaceSectionListCommonProps = {
   ) => void;
   objectMetadataItems: ObjectMetadataItem[];
   views: View[];
-  theme: Theme;
   isAddMenuItemButtonVisible: boolean;
   addToNavigationFallbackDestination: {
     droppableId: string;
