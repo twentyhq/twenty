@@ -183,9 +183,20 @@ window.__RECORD_TABLE_PROFILE = true
 Results batch-log every 2s showing per-component render counts, total/avg/max times.
 
 ### POC Benchmarks
-Available at `/__perf__/table` (outside auth — no login required). Both run 5 iterations per test with min/avg/max stats and visual bar chart.
+Available at `/__perf__/table` (outside auth — no login required). 2,000 cells (200 rows x 10 cols), 3 iterations each, min/avg/max stats with visual bar chart.
 
-**Cell Render Benchmark** — 17 tests isolating each cost factor for 400 cells:
+**Cell Render Benchmark** — 17 tests isolating each cost factor:
+
+![Cell Render Benchmark Results](./cell-render-benchmark.png)
+
+Key findings (2,000 cells):
+- Styling engines (01–07): Linaria and Emotion are comparable (~40–45ms). Emotion theme interpolation adds ~12% overhead.
+- Context reads (08–09) and useState (10–11) are nearly free compared to baseline.
+- **Jotai atoms are the dominant cost**: 10 atom reads/cell = +312% (44ms → 181ms). This is the single biggest bottleneck.
+- 4-level Linaria nesting (14) adds +82% — component depth is expensive.
+- Full simulation with atoms (16) = **253ms (+476%)**, 0.127ms/cell.
+- 14 fragment wrappers (17) = +109% — pure component depth without any styled wrappers.
+
 | # | Test | What it measures |
 |---|------|-----------------|
 | 01 | Inline style (baseline) | Absolute minimum: plain div + style object |
@@ -200,13 +211,23 @@ Available at `/__perf__/table` (outside auth — no login required). Both run 5 
 | 10 | + 1 useState per cell | Simulating FieldFocusContextProvider |
 | 11 | + 2 useState per cell | + OverflowingTextWithTooltip |
 | 12 | + 3 event handlers/cell | Closure creation for onMouseMove, onMouseLeave, onClick |
-| 13 | + 3 Jotai atom reads/cell | fieldValue + isSelected + isHovered selectors |
+| 13 | + 10 Jotai atom reads/cell | fieldValue + selected + hovered + focused + active + dragging + pending + readOnly + forbidden + objectMetadata |
 | 14 | 4-level Linaria nesting | StyleWrapper > BaseContainer > DisplayOuter > DisplayInner |
 | 15 | Full sim (providers + styled + hooks + handlers) | 3 context providers + 4 styled wrappers + 2 useState + 3 handlers |
-| 16 | Full sim + Jotai atoms | Closest to real RecordTable cell |
+| 16 | Full sim + 10 Jotai atoms | Closest to real RecordTable cell |
 | 17 | 14 fragment wrappers | Pure component depth cost (no styling/state) |
 
-**State Access Benchmark** — 12 tests comparing state access patterns:
+**State Access Benchmark** — 13 tests comparing state access patterns:
+
+![State Access Benchmark Results](./state-access-benchmark.png)
+
+Key findings (2,000 cells):
+- Context reads are cheap: 1 ctx = +6%, 2 ctx = +21%. Pre-resolved context is **faster than baseline** (−22%).
+- **Jotai atoms scale linearly**: 1 atom = +32%, 3 atoms = +95%, 8 atoms = +175%.
+- 1 derived atom (12 sources) = +93% vs 12 individual reads = **+294%**. Derived atoms are significantly cheaper when combining many sources.
+- Unstable context values (new object per render) are surprisingly cheap on initial mount (−7%), but would be devastating on re-renders.
+- Row/cell provider hierarchy + atom = +54%.
+
 | # | Test | What it measures |
 |---|------|-----------------|
 | A | Props only (baseline) | No state reads |
@@ -215,15 +236,16 @@ Available at `/__perf__/table` (outside auth — no login required). Both run 5 
 | D | Pre-resolved context | Optimal: parent pushes final value via context |
 | E | 1 Jotai selector/cell | Derived atom from atomFamily |
 | F | 3 Jotai atoms/cell | value + selected + hovered (real pattern) |
-| G | 5 Jotai atoms/cell | + focused + active |
-| H | 1 heavy derived atom | Single atom combining 4 sources |
+| G | 8 Jotai atoms/cell | + focused + active + dragging + pending + readOnly |
+| H | 1 derived atom (12 sources) | Single atom reading 12 source atoms |
+| H2 | 12 individual atom reads/cell | Same 12 sources but read individually per cell |
 | I | 2 ctx + 2 atoms | Real pattern: context for position, atoms for data |
 | J | Unstable ctx value per cell | New object reference per render (forces children to re-render) |
 | K | Stable ctx + React.memo child | Same as J but with memo |
 | L | Row provider > cell provider > atom | Real hierarchy: nested providers + atom read |
 
 ### Linaria Configuration
-The `@wyw-in-js/vite` plugin requires an explicit `include` whitelist in `vite.config.ts`. Files in `__perf__/` are included via `'**/__perf__/**/*.tsx'`. The dev server must be restarted after changing this config.
+The `@wyw-in-js/vite` plugin requires an explicit `include` whitelist in `vite.config.ts`. Linaria styled components live in `perf-linaria-cells.tsx` (included via `'**/perf-linaria-cells.tsx'`). Emotion and Linaria must NOT be mixed in the same wyw-processed file — wyw incorrectly transforms Emotion tagged templates. The dev server must be restarted after changing the vite config.
 
 ## Expected Impact
 
