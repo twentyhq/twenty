@@ -10,7 +10,7 @@ exports[`NavigationMenuItem creation should fail when creating with empty target
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID: 'not-a-valid-uuid'",
+  "message": "Invalid UUID: ''",
   "name": "ValidationError",
 }
 `;
@@ -25,7 +25,7 @@ exports[`NavigationMenuItem creation should fail when creating with empty target
     "userFriendlyMessage": "An error occurred.",
     "value": "",
   },
-  "message": "Invalid UUID: 'not-a-valid-uuid'",
+  "message": "Invalid UUID: ''",
   "name": "ValidationError",
 }
 `;
@@ -141,4 +141,3 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
   "name": "NotFoundError",
 }
 `;
-

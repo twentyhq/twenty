@@ -14,27 +14,24 @@ Um seletor de ícones baseado em lista suspensa que permite aos usuários seleci
 <Tab title="Uso">
 
 ```jsx
-import { RecoilRoot } from "recoil";
 import React, { useState } from "react";
 import { IconPicker } from "@/ui/input/components/IconPicker";
 
-export const MyComponent = () => {
+export const MeuComponente = () => {
 
    const [selectedIcon, setSelectedIcon] = useState("");
    const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Selected Icon:", iconKey);
+     console.log("Ícone Selecionado:", iconKey);
      setSelectedIcon(iconKey);
    };
 
   return (
-    <RecoilRoot>
-      <IconPicker
-        disabled={false}
-        onChange={handleIconChange}
-        selectedIconKey={selectedIcon}
-        variant="primary"
-      />
-    </RecoilRoot>
+    <IconPicker
+      disabled={false}
+      onChange={handleIconChange}
+      selectedIconKey={selectedIcon}
+      variant="primary"
+    />
   );
 };
 ```

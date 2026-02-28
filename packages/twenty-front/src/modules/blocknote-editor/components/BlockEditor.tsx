@@ -1,4 +1,4 @@
-import { filterSuggestionItems } from '@blocknote/core';
+import { filterSuggestionItems } from '@blocknote/core/extensions';
 import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
 import { useTheme } from '@emotion/react';

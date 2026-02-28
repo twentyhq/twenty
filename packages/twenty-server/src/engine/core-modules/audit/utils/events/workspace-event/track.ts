@@ -15,7 +15,7 @@ export type GenericTrackEvent<E extends string = string> = {
   properties: any;
   timestamp: string;
   version: string;
-  userWorkspaceId?: string;
+  userId?: string;
   workspaceId?: string;
 };
 

@@ -14,12 +14,14 @@ export type ApplicationMarketplaceData = {
 
 export type ApplicationManifest = SyncableEntityOptions & {
   defaultRoleUniversalIdentifier: string;
-  postInstallLogicFunctionUniversalIdentifier?: string;
   displayName: string;
   description: string;
   icon?: string;
   applicationVariables?: ApplicationVariables;
   marketplaceData?: ApplicationMarketplaceData;
+  preInstallLogicFunctionUniversalIdentifier?: string;
+  postInstallLogicFunctionUniversalIdentifier?: string;
+  settingsCustomTabFrontComponentUniversalIdentifier?: string;
   packageJsonChecksum: string | null;
   yarnLockChecksum: string | null;
   apiClientChecksum: string | null;

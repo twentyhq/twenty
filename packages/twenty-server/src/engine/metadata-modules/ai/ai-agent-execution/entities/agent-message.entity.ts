@@ -55,6 +55,6 @@ export class AgentMessageEntity {
   @OneToMany(() => AgentMessagePartEntity, (part) => part.message)
   parts: Relation<AgentMessagePartEntity[]>;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 }

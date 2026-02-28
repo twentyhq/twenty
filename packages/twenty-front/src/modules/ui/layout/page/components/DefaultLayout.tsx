@@ -12,7 +12,13 @@ import { PageDragDropProvider } from '@/navigation/components/PageDragDropProvid
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
-import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
+import { lazy, Suspense } from 'react';
+
+const SignInBackgroundMockPage = lazy(() =>
+  import('@/sign-in-background-mock/components/SignInBackgroundMockPage').then(
+    (module) => ({ default: module.SignInBackgroundMockPage }),
+  ),
+);
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
@@ -106,7 +112,9 @@ export const DefaultLayout = () => {
                 {showAuthModal ? (
                   <>
                     <StyledMainContainer>
-                      <SignInBackgroundMockPage />
+                      <Suspense fallback={null}>
+                        <SignInBackgroundMockPage />
+                      </Suspense>
                     </StyledMainContainer>
                     <AnimatePresence mode="wait">
                       <LayoutGroup>
