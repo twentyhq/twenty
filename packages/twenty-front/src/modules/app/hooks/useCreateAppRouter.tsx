@@ -35,12 +35,14 @@ export const useCreateAppRouter = (
 ) =>
   createBrowserRouter(
     createRoutesFromElements(
-      <Route
-        element={<AppRouterProviders />}
-        // To switch state to `loading` temporarily to enable us
-        // to set scroll position before the page is rendered
-        loader={async () => Promise.resolve(null)}
-      >
+      <>
+        <Route path="/__perf__/table" element={<RecordTablePerfPage />} />
+        <Route
+          element={<AppRouterProviders />}
+          // To switch state to `loading` temporarily to enable us
+          // to set scroll position before the page is rendered
+          loader={async () => Promise.resolve(null)}
+        >
         <Route element={<DefaultLayout />}>
           <Route path={AppPath.Verify} element={<VerifyLoginTokenEffect />} />
           <Route path={AppPath.VerifyEmail} element={<VerifyEmailEffect />} />
@@ -77,8 +79,8 @@ export const useCreateAppRouter = (
         </Route>
         <Route element={<BlankLayout />}>
           <Route path={AppPath.Authorize} element={<Authorize />} />
-          <Route path="/__perf__/table" element={<RecordTablePerfPage />} />
         </Route>
-      </Route>,
+        </Route>
+      </>,
     ),
   );
