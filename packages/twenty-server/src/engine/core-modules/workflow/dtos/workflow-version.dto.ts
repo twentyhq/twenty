@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
@@ -15,11 +15,11 @@ export class WorkflowVersionDTO {
   @Field(() => String)
   name: string;
 
-  @Field(() => String)
-  createdAt: string;
+  @Field(() => GraphQLISODateTime)
+  createdAt: Date;
 
-  @Field(() => String)
-  updatedAt: string;
+  @Field(() => GraphQLISODateTime)
+  updatedAt: Date;
 
   @Field(() => UUIDScalarType)
   workflowId: string;

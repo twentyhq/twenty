@@ -17,8 +17,8 @@ import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application-registrati
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/create-application-registration.input';
 import { type UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration.input';
-import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 
 const BCRYPT_SALT_ROUNDS = 10;
 
@@ -200,10 +200,10 @@ export class ApplicationRegistrationService {
         .select("COALESCE(application.version, 'unknown')", 'version')
         .addSelect('COUNT(*)::int', 'count')
         .where(
-          'application.applicationRegistrationId = :applicationRegistrationId',
+          'application."applicationRegistrationId" = :applicationRegistrationId',
           { applicationRegistrationId },
         )
-        .andWhere('application.deletedAt IS NULL')
+        .andWhere('application."deletedAt" IS NULL')
         .groupBy('version')
         .orderBy('count', 'DESC')
         .getRawMany();

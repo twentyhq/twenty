@@ -541,6 +541,8 @@ export class AuthService {
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms('5m'));
 
+    const authCodeContext = { redirectUri: authorizeAppInput.redirectUrl };
+
     if (codeChallenge) {
       const tokens = this.appTokenRepository.create([
         {
@@ -556,6 +558,7 @@ export class AuthService {
           userId: user.id,
           workspaceId: workspace.id,
           expiresAt,
+          context: authCodeContext,
         },
       ]);
 
@@ -567,6 +570,7 @@ export class AuthService {
         userId: user.id,
         workspaceId: workspace.id,
         expiresAt,
+        context: authCodeContext,
       });
 
       await this.appTokenRepository.save(token);

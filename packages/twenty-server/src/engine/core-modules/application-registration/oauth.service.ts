@@ -68,22 +68,6 @@ export class OAuthService {
 
     const applicationRegistration = clientValidation;
 
-    if (applicationRegistration.oAuthRedirectUris.length > 0) {
-      if (!redirectUri) {
-        return this.errorResponse(
-          'invalid_request',
-          'redirect_uri is required when redirect URIs are registered',
-        );
-      }
-
-      if (!applicationRegistration.oAuthRedirectUris.includes(redirectUri)) {
-        return this.errorResponse(
-          'invalid_grant',
-          'Redirect URI does not match any registered redirect URI',
-        );
-      }
-    }
-
     if (clientSecret) {
       const secretError = await this.validateClientSecret(
         applicationRegistration,
@@ -112,6 +96,25 @@ export class OAuthService {
 
     if (authCodeToken.expiresAt.getTime() < Date.now()) {
       return this.errorResponse('invalid_grant', 'Authorization code expired');
+    }
+
+    // RFC 6749 §4.1.3: redirect_uri must match the one used in the authorization request
+    const storedRedirectUri = authCodeToken.context?.redirectUri;
+
+    if (storedRedirectUri) {
+      if (!redirectUri) {
+        return this.errorResponse(
+          'invalid_request',
+          'redirect_uri is required',
+        );
+      }
+
+      if (redirectUri !== storedRedirectUri) {
+        return this.errorResponse(
+          'invalid_grant',
+          'redirect_uri does not match the one used in the authorization request',
+        );
+      }
     }
 
     if (codeVerifier) {
