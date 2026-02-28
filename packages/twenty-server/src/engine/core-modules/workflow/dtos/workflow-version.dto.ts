@@ -7,7 +7,7 @@ import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-obje
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-@ObjectType('WorkflowVersionDTO')
+@ObjectType('WorkflowVersion')
 export class WorkflowVersionDTO {
   @Field(() => UUIDScalarType)
   id: string;

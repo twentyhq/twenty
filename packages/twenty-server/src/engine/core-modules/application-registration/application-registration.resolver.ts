@@ -4,13 +4,14 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application-registration/application-registration-variable.entity';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application-registration/application-registration-variable.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
-import { ApplicationRegistrationStatsOutput } from 'src/engine/core-modules/application-registration/dtos/application-registration-stats.output';
+import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application-registration/dtos/application-registration-stats.dto';
 import { CreateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/create-application-registration.input';
-import { CreateApplicationRegistrationOutput } from 'src/engine/core-modules/application-registration/dtos/create-application-registration.output';
+import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application-registration/dtos/create-application-registration.dto';
 import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application-registration/dtos/create-application-registration-variable.input';
-import { RotateClientSecretOutput } from 'src/engine/core-modules/application-registration/dtos/rotate-client-secret.output';
+import { RotateClientSecretDTO } from 'src/engine/core-modules/application-registration/dtos/rotate-client-secret.dto';
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration.input';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration-variable.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -33,6 +34,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class ApplicationRegistrationResolver {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
   ) {}
 
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -79,19 +81,19 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @Query(() => ApplicationRegistrationStatsOutput)
+  @Query(() => ApplicationRegistrationStatsDTO)
   async findApplicationRegistrationStats(
     @Args('id') id: string,
-  ): Promise<ApplicationRegistrationStatsOutput> {
+  ): Promise<ApplicationRegistrationStatsDTO> {
     return this.applicationRegistrationService.getStats(id);
   }
 
   @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
-  @Mutation(() => CreateApplicationRegistrationOutput)
+  @Mutation(() => CreateApplicationRegistrationDTO)
   async createApplicationRegistration(
     @Args('input') input: CreateApplicationRegistrationInput,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
-  ): Promise<CreateApplicationRegistrationOutput> {
+  ): Promise<CreateApplicationRegistrationDTO> {
     return this.applicationRegistrationService.create(input, user?.id ?? null);
   }
 
@@ -121,10 +123,10 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @Mutation(() => RotateClientSecretOutput)
+  @Mutation(() => RotateClientSecretDTO)
   async rotateApplicationRegistrationClientSecret(
     @Args('id') id: string,
-  ): Promise<RotateClientSecretOutput> {
+  ): Promise<RotateClientSecretDTO> {
     const clientSecret =
       await this.applicationRegistrationService.rotateClientSecret(id);
 
@@ -139,7 +141,7 @@ export class ApplicationRegistrationResolver {
   async findApplicationRegistrationVariables(
     @Args('applicationRegistrationId') applicationRegistrationId: string,
   ): Promise<ApplicationRegistrationVariableEntity[]> {
-    return this.applicationRegistrationService.findVariables(
+    return this.applicationRegistrationVariableService.findVariables(
       applicationRegistrationId,
     );
   }
@@ -152,7 +154,7 @@ export class ApplicationRegistrationResolver {
   async createApplicationRegistrationVariable(
     @Args('input') input: CreateApplicationRegistrationVariableInput,
   ): Promise<ApplicationRegistrationVariableEntity> {
-    return this.applicationRegistrationService.createVariable(input);
+    return this.applicationRegistrationVariableService.createVariable(input);
   }
 
   @UseGuards(
@@ -163,7 +165,7 @@ export class ApplicationRegistrationResolver {
   async updateApplicationRegistrationVariable(
     @Args('input') input: UpdateApplicationRegistrationVariableInput,
   ): Promise<ApplicationRegistrationVariableEntity> {
-    return this.applicationRegistrationService.updateVariable(input);
+    return this.applicationRegistrationVariableService.updateVariable(input);
   }
 
   @UseGuards(
@@ -174,6 +176,6 @@ export class ApplicationRegistrationResolver {
   async deleteApplicationRegistrationVariable(
     @Args('id') id: string,
   ): Promise<boolean> {
-    return this.applicationRegistrationService.deleteVariable(id);
+    return this.applicationRegistrationVariableService.deleteVariable(id);
   }
 }

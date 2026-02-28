@@ -1,20 +1,19 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   IsArray,
+  IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
   MaxLength,
+  ValidateNested,
 } from 'class-validator';
 
 @InputType()
-export class UpdateApplicationRegistrationInput {
-  @Field()
-  @IsUUID()
-  id: string;
-
+export class UpdateApplicationRegistrationPayload {
   @Field({ nullable: true })
   @IsString()
   @MaxLength(256)
@@ -66,4 +65,17 @@ export class UpdateApplicationRegistrationInput {
   @MaxLength(2048)
   @IsOptional()
   termsUrl?: string;
+}
+
+@InputType()
+export class UpdateApplicationRegistrationInput {
+  @IsNotEmpty()
+  @Field()
+  @IsUUID()
+  id: string;
+
+  @Type(() => UpdateApplicationRegistrationPayload)
+  @ValidateNested()
+  @Field(() => UpdateApplicationRegistrationPayload)
+  update: UpdateApplicationRegistrationPayload;
 }

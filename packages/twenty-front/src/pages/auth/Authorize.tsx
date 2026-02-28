@@ -57,10 +57,6 @@ const StyledButtonContainer = styled.div`
   flex-direction: row;
   gap: 10px;
   width: 100%;
-
-  > * {
-    flex: 1;
-  }
 `;
 
 const StyledScopeList = styled.ul`

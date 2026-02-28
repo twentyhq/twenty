@@ -30,12 +30,12 @@ import {
 } from 'src/engine/core-modules/auth/auth.util';
 import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
-import { type AuthorizeAppOutput } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
+import { type AuthorizeAppDTO } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { type AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { type UpdatePasswordOutput } from 'src/engine/core-modules/auth/dto/update-password.dto';
+import { type UpdatePasswordDTO } from 'src/engine/core-modules/auth/dto/update-password.dto';
 import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
-import { type CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.dto';
-import { type WorkspaceInviteHashValidOutput } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.dto';
+import { type CheckUserExistDTO } from 'src/engine/core-modules/auth/dto/user-exists.dto';
+import { type WorkspaceInviteHashValidDTO } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.dto';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
@@ -468,7 +468,7 @@ export class AuthService {
     ).flat(2).length;
   }
 
-  async checkUserExists(email: string): Promise<CheckUserExistOutput> {
+  async checkUserExists(email: string): Promise<CheckUserExistDTO> {
     const user = await this.userService.findUserByEmail(email);
 
     const isUserExist = isDefined(user);
@@ -483,7 +483,7 @@ export class AuthService {
 
   async checkWorkspaceInviteHashIsValid(
     inviteHash: string,
-  ): Promise<WorkspaceInviteHashValidOutput> {
+  ): Promise<WorkspaceInviteHashValidDTO> {
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash,
     });
@@ -495,7 +495,7 @@ export class AuthService {
     authorizeAppInput: AuthorizeAppInput,
     user: UserEntity,
     workspace: WorkspaceEntity,
-  ): Promise<AuthorizeAppOutput> {
+  ): Promise<AuthorizeAppDTO> {
     const { clientId, codeChallenge } = authorizeAppInput;
 
     const applicationRegistration =
@@ -583,7 +583,7 @@ export class AuthService {
   async updatePassword(
     userId: string,
     newPassword: string,
-  ): Promise<UpdatePasswordOutput> {
+  ): Promise<UpdatePasswordDTO> {
     if (!userId) {
       throw new AuthException(
         'User ID is required',

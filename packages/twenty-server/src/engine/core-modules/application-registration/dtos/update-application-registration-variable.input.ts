@@ -1,13 +1,17 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator';
 
 @InputType()
-export class UpdateApplicationRegistrationVariableInput {
-  @Field()
-  @IsUUID()
-  id: string;
-
+export class UpdateApplicationRegistrationVariablePayload {
   @Field({ nullable: true })
   @IsString()
   @MaxLength(10000)
@@ -19,4 +23,17 @@ export class UpdateApplicationRegistrationVariableInput {
   @MaxLength(2000)
   @IsOptional()
   description?: string;
+}
+
+@InputType()
+export class UpdateApplicationRegistrationVariableInput {
+  @IsNotEmpty()
+  @Field()
+  @IsUUID()
+  id: string;
+
+  @Type(() => UpdateApplicationRegistrationVariablePayload)
+  @ValidateNested()
+  @Field(() => UpdateApplicationRegistrationVariablePayload)
+  update: UpdateApplicationRegistrationVariablePayload;
 }

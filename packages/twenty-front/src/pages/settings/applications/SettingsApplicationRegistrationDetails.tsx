@@ -193,7 +193,9 @@ export const SettingsApplicationRegistrationDetails = () => {
         variables: {
           input: {
             id: applicationRegistrationId,
-            oAuthRedirectUris: formRedirectUris,
+            update: {
+              oAuthRedirectUris: formRedirectUris,
+            },
           },
         },
       });
@@ -295,7 +297,9 @@ export const SettingsApplicationRegistrationDetails = () => {
         variables: {
           input: {
             id: variable.id,
-            value,
+            update: {
+              value,
+            },
           },
         },
       });

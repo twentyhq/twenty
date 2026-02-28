@@ -10,50 +10,14 @@ import {
 } from '@nestjs/common';
 
 import { type Response } from 'express';
-import { IsOptional, IsString, MaxLength } from 'class-validator';
 
+import { OAuthTokenRequestDTO } from 'src/engine/core-modules/auth/controllers/dtos/oauth-token-request.dto';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { OAuthErrorResponse } from 'src/engine/core-modules/auth/types/oauth-error-response.type';
 import { OAuthTokenResponse } from 'src/engine/core-modules/auth/types/oauth-token-response.type';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-
-export class OAuthTokenRequestDto {
-  @IsString()
-  @MaxLength(50)
-  grant_type: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(512)
-  code?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(2048)
-  redirect_uri?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(256)
-  client_id?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(512)
-  client_secret?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(512)
-  code_verifier?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(2048)
-  refresh_token?: string;
-}
 
 @Controller('oauth')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -64,7 +28,7 @@ export class OAuthTokenController {
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @UsePipes(new ValidationPipe())
   async token(
-    @Body() body: OAuthTokenRequestDto,
+    @Body() body: OAuthTokenRequestDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
     let result: OAuthTokenResponse | OAuthErrorResponse;

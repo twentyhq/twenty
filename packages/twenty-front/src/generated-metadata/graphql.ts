@@ -56,8 +56,8 @@ export type AdminAiModelConfig = {
   modelId: Scalars['String'];
 };
 
-export type AdminAiModelsOutput = {
-  __typename?: 'AdminAIModelsOutput';
+export type AdminAiModels = {
+  __typename?: 'AdminAIModels';
   autoEnableNewModels: Scalars['Boolean'];
   models: Array<AdminAiModelConfig>;
 };
@@ -328,8 +328,8 @@ export type ApplicationRegistration = {
   websiteUrl?: Maybe<Scalars['String']>;
 };
 
-export type ApplicationRegistrationStatsOutput = {
-  __typename?: 'ApplicationRegistrationStatsOutput';
+export type ApplicationRegistrationStats = {
+  __typename?: 'ApplicationRegistrationStats';
   activeInstalls: Scalars['Int'];
   mostInstalledVersion?: Maybe<Scalars['String']>;
   versionDistribution: Array<VersionDistributionEntry>;
@@ -403,8 +403,8 @@ export type AuthTokens = {
   tokens: AuthTokenPair;
 };
 
-export type AuthorizeAppOutput = {
-  __typename?: 'AuthorizeAppOutput';
+export type AuthorizeApp = {
+  __typename?: 'AuthorizeApp';
   redirectUrl: Scalars['String'];
 };
 
@@ -432,8 +432,8 @@ export type AvailableWorkspaces = {
   availableWorkspacesForSignUp: Array<AvailableWorkspace>;
 };
 
-export type AvailableWorkspacesAndAccessTokensOutput = {
-  __typename?: 'AvailableWorkspacesAndAccessTokensOutput';
+export type AvailableWorkspacesAndAccessTokens = {
+  __typename?: 'AvailableWorkspacesAndAccessTokens';
   availableWorkspaces: AvailableWorkspaces;
   tokens: AuthTokenPair;
 };
@@ -478,13 +478,8 @@ export type BarChartConfiguration = {
   timezone?: Maybe<Scalars['String']>;
 };
 
-export type BarChartDataInput = {
-  configuration: Scalars['JSON'];
-  objectMetadataId: Scalars['UUID'];
-};
-
-export type BarChartDataOutput = {
-  __typename?: 'BarChartDataOutput';
+export type BarChartData = {
+  __typename?: 'BarChartData';
   data: Array<Scalars['JSON']>;
   formattedToRawLookup: Scalars['JSON'];
   groupMode: BarChartGroupMode;
@@ -497,6 +492,11 @@ export type BarChartDataOutput = {
   showLegend: Scalars['Boolean'];
   xAxisLabel: Scalars['String'];
   yAxisLabel: Scalars['String'];
+};
+
+export type BarChartDataInput = {
+  configuration: Scalars['JSON'];
+  objectMetadataId: Scalars['UUID'];
 };
 
 /** Display mode for bar charts with secondary grouping */
@@ -524,8 +524,8 @@ export type Billing = {
   trialPeriods: Array<BillingTrialPeriod>;
 };
 
-export type BillingEndTrialPeriodOutput = {
-  __typename?: 'BillingEndTrialPeriodOutput';
+export type BillingEndTrialPeriod = {
+  __typename?: 'BillingEndTrialPeriod';
   /** Billing portal URL for payment method update (returned when no payment method exists) */
   billingPortalUrl?: Maybe<Scalars['String']>;
   /** Boolean that confirms if a payment method was found */
@@ -565,8 +565,8 @@ export type BillingMeteredProduct = BillingProductDto & {
   prices?: Maybe<Array<BillingPriceMetered>>;
 };
 
-export type BillingMeteredProductUsageOutput = {
-  __typename?: 'BillingMeteredProductUsageOutput';
+export type BillingMeteredProductUsage = {
+  __typename?: 'BillingMeteredProductUsage';
   grantedCredits: Scalars['Float'];
   periodEnd: Scalars['DateTime'];
   periodStart: Scalars['DateTime'];
@@ -577,18 +577,18 @@ export type BillingMeteredProductUsageOutput = {
   usedCredits: Scalars['Float'];
 };
 
+export type BillingPlan = {
+  __typename?: 'BillingPlan';
+  licensedProducts: Array<BillingLicensedProduct>;
+  meteredProducts: Array<BillingMeteredProduct>;
+  planKey: BillingPlanKey;
+};
+
 /** The different billing plans available */
 export enum BillingPlanKey {
   ENTERPRISE = 'ENTERPRISE',
   PRO = 'PRO'
 }
-
-export type BillingPlanOutput = {
-  __typename?: 'BillingPlanOutput';
-  licensedProducts: Array<BillingLicensedProduct>;
-  meteredProducts: Array<BillingMeteredProduct>;
-  planKey: BillingPlanKey;
-};
 
 export type BillingPriceLicensed = {
   __typename?: 'BillingPriceLicensed';
@@ -641,14 +641,14 @@ export type BillingProductMetadata = {
   productKey: BillingProductKey;
 };
 
-export type BillingSessionOutput = {
-  __typename?: 'BillingSessionOutput';
+export type BillingSession = {
+  __typename?: 'BillingSession';
   url?: Maybe<Scalars['String']>;
 };
 
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
-  billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItemDto>>;
+  billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItem>>;
   currentPeriodEnd?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   interval?: Maybe<SubscriptionInterval>;
@@ -657,8 +657,8 @@ export type BillingSubscription = {
   status: SubscriptionStatus;
 };
 
-export type BillingSubscriptionItemDto = {
-  __typename?: 'BillingSubscriptionItemDTO';
+export type BillingSubscriptionItem = {
+  __typename?: 'BillingSubscriptionItem';
   billingProduct: BillingProductDto;
   hasReachedCurrentPeriodCap: Scalars['Boolean'];
   id: Scalars['UUID'];
@@ -685,8 +685,8 @@ export type BillingTrialPeriod = {
   isCreditCardRequired: Scalars['Boolean'];
 };
 
-export type BillingUpdateOutput = {
-  __typename?: 'BillingUpdateOutput';
+export type BillingUpdate = {
+  __typename?: 'BillingUpdate';
   /** All billing subscriptions */
   billingSubscriptions: Array<BillingSubscription>;
   /** Current billing subscription */
@@ -724,8 +724,8 @@ export type ChannelSyncSuccess = {
   success: Scalars['Boolean'];
 };
 
-export type CheckUserExistOutput = {
-  __typename?: 'CheckUserExistOutput';
+export type CheckUserExist = {
+  __typename?: 'CheckUserExist';
   availableWorkspacesCount: Scalars['Float'];
   exists: Scalars['Boolean'];
   isEmailVerified: Scalars['Boolean'];
@@ -824,6 +824,11 @@ export enum ConfigVariableType {
   STRING = 'STRING'
 }
 
+export type ConfigVariables = {
+  __typename?: 'ConfigVariables';
+  groups: Array<ConfigVariablesGroupData>;
+};
+
 export enum ConfigVariablesGroup {
   ANALYTICS_CONFIG = 'ANALYTICS_CONFIG',
   AWS_SES_SETTINGS = 'AWS_SES_SETTINGS',
@@ -855,11 +860,6 @@ export type ConfigVariablesGroupData = {
   isHiddenOnLoad: Scalars['Boolean'];
   name: ConfigVariablesGroup;
   variables: Array<ConfigVariable>;
-};
-
-export type ConfigVariablesOutput = {
-  __typename?: 'ConfigVariablesOutput';
-  groups: Array<ConfigVariablesGroupData>;
 };
 
 export type ConnectedImapSmtpCaldavAccount = {
@@ -1038,6 +1038,12 @@ export type CreateApplicationInput = {
   version: Scalars['String'];
 };
 
+export type CreateApplicationRegistration = {
+  __typename?: 'CreateApplicationRegistration';
+  applicationRegistration: ApplicationRegistration;
+  clientSecret: Scalars['String'];
+};
+
 export type CreateApplicationRegistrationInput = {
   author?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
@@ -1048,12 +1054,6 @@ export type CreateApplicationRegistrationInput = {
   termsUrl?: InputMaybe<Scalars['String']>;
   universalIdentifier?: InputMaybe<Scalars['String']>;
   websiteUrl?: InputMaybe<Scalars['String']>;
-};
-
-export type CreateApplicationRegistrationOutput = {
-  __typename?: 'CreateApplicationRegistrationOutput';
-  applicationRegistration: ApplicationRegistration;
-  clientSecret: Scalars['String'];
 };
 
 export type CreateApplicationRegistrationVariableInput = {
@@ -1336,17 +1336,17 @@ export type DeleteOneObjectInput = {
   id: Scalars['UUID'];
 };
 
+export type DeleteSso = {
+  __typename?: 'DeleteSso';
+  identityProviderId: Scalars['UUID'];
+};
+
 export type DeleteSsoInput = {
   identityProviderId: Scalars['UUID'];
 };
 
-export type DeleteSsoOutput = {
-  __typename?: 'DeleteSsoOutput';
-  identityProviderId: Scalars['UUID'];
-};
-
-export type DeleteTwoFactorAuthenticationMethodOutput = {
-  __typename?: 'DeleteTwoFactorAuthenticationMethodOutput';
+export type DeleteTwoFactorAuthenticationMethod = {
+  __typename?: 'DeleteTwoFactorAuthenticationMethod';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
@@ -1426,18 +1426,18 @@ export type DuplicatedDashboard = {
   updatedAt: Scalars['String'];
 };
 
-export type EditSsoInput = {
-  id: Scalars['UUID'];
-  status: SsoIdentityProviderStatus;
-};
-
-export type EditSsoOutput = {
-  __typename?: 'EditSsoOutput';
+export type EditSso = {
+  __typename?: 'EditSso';
   id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
+};
+
+export type EditSsoInput = {
+  id: Scalars['UUID'];
+  status: SsoIdentityProviderStatus;
 };
 
 export type EmailAccountConnectionParameters = {
@@ -1446,8 +1446,8 @@ export type EmailAccountConnectionParameters = {
   SMTP?: InputMaybe<ConnectionParameters>;
 };
 
-export type EmailPasswordResetLinkOutput = {
-  __typename?: 'EmailPasswordResetLinkOutput';
+export type EmailPasswordResetLink = {
+  __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
@@ -1546,13 +1546,6 @@ export type ExecuteOneLogicFunctionInput = {
 
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
-  id: Scalars['UUID'];
-  key: FeatureFlagKey;
-  value: Scalars['Boolean'];
-};
-
-export type FeatureFlagDto = {
-  __typename?: 'FeatureFlagDTO';
   key: FeatureFlagKey;
   value: Scalars['Boolean'];
 };
@@ -1742,8 +1735,8 @@ export type FilesConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
-export type FindAvailableSsoidpOutput = {
-  __typename?: 'FindAvailableSSOIDPOutput';
+export type FindAvailableSsoidp = {
+  __typename?: 'FindAvailableSSOIDP';
   id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
@@ -1798,16 +1791,16 @@ export type GetApiKeyInput = {
   id: Scalars['UUID'];
 };
 
-export type GetAuthorizationUrlForSsoInput = {
-  identityProviderId: Scalars['UUID'];
-  workspaceInviteHash?: InputMaybe<Scalars['String']>;
-};
-
-export type GetAuthorizationUrlForSsoOutput = {
-  __typename?: 'GetAuthorizationUrlForSSOOutput';
+export type GetAuthorizationUrlForSso = {
+  __typename?: 'GetAuthorizationUrlForSSO';
   authorizationURL: Scalars['String'];
   id: Scalars['UUID'];
   type: Scalars['String'];
+};
+
+export type GetAuthorizationUrlForSsoInput = {
+  identityProviderId: Scalars['UUID'];
+  workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };
 
 /** Order by options for graph widgets */
@@ -1868,8 +1861,8 @@ export type ImapSmtpCaldavConnectionSuccess = {
   success: Scalars['Boolean'];
 };
 
-export type ImpersonateOutput = {
-  __typename?: 'ImpersonateOutput';
+export type Impersonate = {
+  __typename?: 'Impersonate';
   loginToken: AuthToken;
   workspace: WorkspaceUrlsAndId;
 };
@@ -1982,13 +1975,13 @@ export enum InferenceProvider {
   XAI = 'XAI'
 }
 
-export type InitiateTwoFactorAuthenticationProvisioningOutput = {
-  __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput';
+export type InitiateTwoFactorAuthenticationProvisioning = {
+  __typename?: 'InitiateTwoFactorAuthenticationProvisioning';
   uri: Scalars['String'];
 };
 
-export type InvalidatePasswordOutput = {
-  __typename?: 'InvalidatePasswordOutput';
+export type InvalidatePassword = {
+  __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
@@ -2042,13 +2035,8 @@ export type LineChartConfiguration = {
   timezone?: Maybe<Scalars['String']>;
 };
 
-export type LineChartDataInput = {
-  configuration: Scalars['JSON'];
-  objectMetadataId: Scalars['UUID'];
-};
-
-export type LineChartDataOutput = {
-  __typename?: 'LineChartDataOutput';
+export type LineChartData = {
+  __typename?: 'LineChartData';
   formattedToRawLookup: Scalars['JSON'];
   hasTooManyGroups: Scalars['Boolean'];
   series: Array<LineChartSeries>;
@@ -2056,6 +2044,11 @@ export type LineChartDataOutput = {
   showLegend: Scalars['Boolean'];
   xAxisLabel: Scalars['String'];
   yAxisLabel: Scalars['String'];
+};
+
+export type LineChartDataInput = {
+  configuration: Scalars['JSON'];
+  objectMetadataId: Scalars['UUID'];
 };
 
 export type LineChartDataPoint = {
@@ -2137,8 +2130,8 @@ export type LogicFunctionLogsInput = {
   universalIdentifier?: InputMaybe<Scalars['UUID']>;
 };
 
-export type LoginTokenOutput = {
-  __typename?: 'LoginTokenOutput';
+export type LoginToken = {
+  __typename?: 'LoginToken';
   loginToken: AuthToken;
 };
 
@@ -2269,15 +2262,15 @@ export type Mutation = {
   addQueryToEventStream: Scalars['Boolean'];
   assignRoleToAgent: Scalars['Boolean'];
   assignRoleToApiKey: Scalars['Boolean'];
-  authorizeApp: AuthorizeAppOutput;
-  cancelSwitchBillingInterval: BillingUpdateOutput;
-  cancelSwitchBillingPlan: BillingUpdateOutput;
-  cancelSwitchMeteredPrice: BillingUpdateOutput;
+  authorizeApp: AuthorizeApp;
+  cancelSwitchBillingInterval: BillingUpdate;
+  cancelSwitchBillingPlan: BillingUpdate;
+  cancelSwitchMeteredPrice: BillingUpdate;
   checkCustomDomainValidRecords?: Maybe<DomainValidRecords>;
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
-  checkoutSession: BillingSessionOutput;
+  checkoutSession: BillingSession;
   createApiKey: ApiKey;
-  createApplicationRegistration: CreateApplicationRegistrationOutput;
+  createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
   createApprovedAccessDomain: ApprovedAccessDomain;
   createChatThread: AgentChatThread;
@@ -2298,7 +2291,7 @@ export type Mutation = {
   createManyCoreViewFields: Array<CoreViewField>;
   createManyCoreViewGroups: Array<CoreViewGroup>;
   createNavigationMenuItem: NavigationMenuItem;
-  createOIDCIdentityProvider: SetupSsoOutput;
+  createOIDCIdentityProvider: SetupSso;
   createObjectEvent: Analytics;
   createOneAgent: Agent;
   createOneAppToken: AppToken;
@@ -2311,7 +2304,7 @@ export type Mutation = {
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
   createPublicDomain: PublicDomain;
-  createSAMLIdentityProvider: SetupSsoOutput;
+  createSAMLIdentityProvider: SetupSso;
   createSkill: Skill;
   createWebhook: Webhook;
   deactivateSkill: Skill;
@@ -2340,9 +2333,9 @@ export type Mutation = {
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
   deletePublicDomain: Scalars['Boolean'];
-  deleteSSOIdentityProvider: DeleteSsoOutput;
+  deleteSSOIdentityProvider: DeleteSso;
   deleteSkill: Skill;
-  deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
+  deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod;
   deleteUser: User;
   deleteUserFromWorkspace: UserWorkspace;
   deleteWebhook: Webhook;
@@ -2359,48 +2352,48 @@ export type Mutation = {
   destroyPageLayoutWidget: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   duplicateDashboard: DuplicatedDashboard;
-  editSSOIdentityProvider: EditSsoOutput;
-  emailPasswordResetLink: EmailPasswordResetLinkOutput;
+  editSSOIdentityProvider: EditSso;
+  emailPasswordResetLink: EmailPasswordResetLink;
   enablePostgresProxy: PostgresCredentials;
-  endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
+  endSubscriptionTrialPeriod: BillingEndTrialPeriod;
   evaluateAgentTurn: AgentTurnEvaluation;
   executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateApplicationToken: ApplicationTokenPair;
-  generateTransientToken: TransientTokenOutput;
+  generateTransientToken: TransientToken;
   getAuthTokensFromLoginToken: AuthTokens;
   getAuthTokensFromOTP: AuthTokens;
-  getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
-  getLoginTokenFromCredentials: LoginTokenOutput;
-  impersonate: ImpersonateOutput;
-  initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
-  initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
+  getAuthorizationUrlForSSO: GetAuthorizationUrlForSso;
+  getLoginTokenFromCredentials: LoginToken;
+  impersonate: Impersonate;
+  initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioning;
+  initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning;
   installApplication: Scalars['Boolean'];
   installMarketplaceApp: Scalars['Boolean'];
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewApplicationToken: ApplicationTokenPair;
   renewToken: AuthTokens;
-  resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
-  resendWorkspaceInvitation: SendInvitationsOutput;
+  resendEmailVerificationToken: ResendEmailVerificationToken;
+  resendWorkspaceInvitation: SendInvitations;
   retryJobs: RetryJobsResponse;
   revokeApiKey?: Maybe<ApiKey>;
-  rotateApplicationRegistrationClientSecret: RotateClientSecretOutput;
+  rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runEvaluationInput: AgentTurn;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
-  sendInvitations: SendInvitationsOutput;
+  sendInvitations: SendInvitations;
   setAdminAiModelEnabled: Scalars['Boolean'];
-  setMeteredSubscriptionPrice: BillingUpdateOutput;
-  signIn: AvailableWorkspacesAndAccessTokensOutput;
-  signUp: AvailableWorkspacesAndAccessTokensOutput;
-  signUpInNewWorkspace: SignUpOutput;
-  signUpInWorkspace: SignUpOutput;
+  setMeteredSubscriptionPrice: BillingUpdate;
+  signIn: AvailableWorkspacesAndAccessTokens;
+  signUp: AvailableWorkspacesAndAccessTokens;
+  signUpInNewWorkspace: SignUp;
+  signUpInWorkspace: SignUp;
   skipBookOnboardingStep: OnboardingStepSuccess;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   startChannelSync: ChannelSyncSuccess;
-  switchBillingPlan: BillingUpdateOutput;
-  switchSubscriptionInterval: BillingUpdateOutput;
-  syncApplication: WorkspaceMigrationDto;
+  switchBillingPlan: BillingUpdate;
+  switchSubscriptionInterval: BillingUpdate;
+  syncApplication: WorkspaceMigration;
   trackAnalytics: Analytics;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
@@ -2416,7 +2409,7 @@ export type Mutation = {
   updateCoreViewSort: CoreViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
-  updateLabPublicFeatureFlag: FeatureFlagDto;
+  updateLabPublicFeatureFlag: FeatureFlag;
   updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
@@ -2428,7 +2421,7 @@ export type Mutation = {
   updatePageLayoutTab: PageLayoutTab;
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
-  updatePasswordViaResetToken: InvalidatePasswordOutput;
+  updatePasswordViaResetToken: InvalidatePassword;
   updateSkill: Skill;
   updateUserEmail: Scalars['Boolean'];
   updateWebhook: Webhook;
@@ -2453,10 +2446,10 @@ export type Mutation = {
   upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
-  verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginTokenOutput;
-  verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokensOutput;
+  verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
+  verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokens;
   verifyEmailingDomain: EmailingDomain;
-  verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
+  verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethod;
 };
 
 
@@ -3771,6 +3764,16 @@ export type PieChartConfiguration = {
   timezone?: Maybe<Scalars['String']>;
 };
 
+export type PieChartData = {
+  __typename?: 'PieChartData';
+  data: Array<PieChartDataItem>;
+  formattedToRawLookup: Scalars['JSON'];
+  hasTooManyGroups: Scalars['Boolean'];
+  showCenterMetric: Scalars['Boolean'];
+  showDataLabels: Scalars['Boolean'];
+  showLegend: Scalars['Boolean'];
+};
+
 export type PieChartDataInput = {
   configuration: Scalars['JSON'];
   objectMetadataId: Scalars['UUID'];
@@ -3780,16 +3783,6 @@ export type PieChartDataItem = {
   __typename?: 'PieChartDataItem';
   id: Scalars['String'];
   value: Scalars['Float'];
-};
-
-export type PieChartDataOutput = {
-  __typename?: 'PieChartDataOutput';
-  data: Array<PieChartDataItem>;
-  formattedToRawLookup: Scalars['JSON'];
-  hasTooManyGroups: Scalars['Boolean'];
-  showCenterMetric: Scalars['Boolean'];
-  showDataLabels: Scalars['Boolean'];
-  showLegend: Scalars['Boolean'];
 };
 
 export type PlaceDetailsResult = {
@@ -3830,8 +3823,8 @@ export type PublicFeatureFlagMetadata = {
   label: Scalars['String'];
 };
 
-export type PublicWorkspaceDataOutput = {
-  __typename?: 'PublicWorkspaceDataOutput';
+export type PublicWorkspaceData = {
+  __typename?: 'PublicWorkspaceData';
   authBypassProviders?: Maybe<AuthBypassProviders>;
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']>;
@@ -3845,13 +3838,13 @@ export type Query = {
   agentTurns: Array<AgentTurn>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
-  barChartData: BarChartDataOutput;
-  billingPortalSession: BillingSessionOutput;
+  barChartData: BarChartData;
+  billingPortalSession: BillingSession;
   chatMessages: Array<AgentMessage>;
   chatThread: AgentChatThread;
   chatThreads: Array<AgentChatThread>;
-  checkUserExists: CheckUserExistOutput;
-  checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
+  checkUserExists: CheckUserExist;
+  checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   commandMenuItem?: Maybe<CommandMenuItem>;
   commandMenuItems: Array<CommandMenuItem>;
   currentUser: User;
@@ -3861,7 +3854,7 @@ export type Query = {
   fields: FieldConnection;
   findApplicationRegistrationByClientId?: Maybe<ApplicationRegistration>;
   findApplicationRegistrationByUniversalIdentifier?: Maybe<ApplicationRegistration>;
-  findApplicationRegistrationStats: ApplicationRegistrationStatsOutput;
+  findApplicationRegistrationStats: ApplicationRegistrationStats;
   findApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
   findManyAgents: Array<Agent>;
   findManyApplicationRegistrations: Array<ApplicationRegistration>;
@@ -3879,11 +3872,11 @@ export type Query = {
   frontComponents: Array<FrontComponent>;
   getAISystemPromptPreview: AiSystemPromptPreview;
   getAddressDetails: PlaceDetailsResult;
-  getAdminAiModels: AdminAiModelsOutput;
+  getAdminAiModels: AdminAiModels;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON'];
-  getConfigVariablesGrouped: ConfigVariablesOutput;
+  getConfigVariablesGrouped: ConfigVariables;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
   getCoreView?: Maybe<CoreView>;
   getCoreViewField?: Maybe<CoreViewField>;
@@ -3903,7 +3896,7 @@ export type Query = {
   getEmailingDomains: Array<EmailingDomain>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getLogicFunctionSourceCode?: Maybe<Scalars['String']>;
-  getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
+  getMeteredProductsUsage: Array<BillingMeteredProductUsage>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
   getPageLayoutTabs: Array<PageLayoutTab>;
@@ -3911,27 +3904,27 @@ export type Query = {
   getPageLayoutWidgets: Array<PageLayoutWidget>;
   getPageLayouts: Array<PageLayout>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
-  getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
+  getPublicWorkspaceDataByDomain: PublicWorkspaceData;
   getQueueJobs: QueueJobsResponse;
   getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
-  getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
+  getSSOIdentityProviders: Array<FindAvailableSsoidp>;
   getSystemHealthStatus: SystemHealth;
   getToolIndex: Array<ToolIndexEntry>;
   getToolInputSchema?: Maybe<Scalars['JSON']>;
   index: Index;
   indexMetadatas: IndexConnection;
-  lineChartData: LineChartDataOutput;
-  listPlans: Array<BillingPlanOutput>;
+  lineChartData: LineChartData;
+  listPlans: Array<BillingPlan>;
   navigationMenuItem?: Maybe<NavigationMenuItem>;
   navigationMenuItems: Array<NavigationMenuItem>;
   object: Object;
   objectRecordCounts: Array<ObjectRecordCount>;
   objects: ObjectConnection;
-  pieChartData: PieChartDataOutput;
+  pieChartData: PieChartData;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
-  validatePasswordResetToken: ValidatePasswordResetTokenOutput;
+  validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
@@ -4362,8 +4355,8 @@ export type RemoveQueryFromEventStreamInput = {
   queryId: Scalars['String'];
 };
 
-export type ResendEmailVerificationTokenOutput = {
-  __typename?: 'ResendEmailVerificationTokenOutput';
+export type ResendEmailVerificationToken = {
+  __typename?: 'ResendEmailVerificationToken';
   success: Scalars['Boolean'];
 };
 
@@ -4410,8 +4403,8 @@ export type Role = {
   workspaceMembers: Array<WorkspaceMember>;
 };
 
-export type RotateClientSecretOutput = {
-  __typename?: 'RotateClientSecretOutput';
+export type RotateClientSecret = {
+  __typename?: 'RotateClientSecret';
   clientSecret: Scalars['String'];
 };
 
@@ -4508,8 +4501,8 @@ export enum SsoIdentityProviderStatus {
   Inactive = 'Inactive'
 }
 
-export type SendInvitationsOutput = {
-  __typename?: 'SendInvitationsOutput';
+export type SendInvitations = {
+  __typename?: 'SendInvitations';
   errors: Array<Scalars['String']>;
   result: Array<WorkspaceInvitation>;
   /** Boolean that confirms query was dispatched */
@@ -4539,8 +4532,8 @@ export type SetupSamlSsoInput = {
   ssoURL: Scalars['String'];
 };
 
-export type SetupSsoOutput = {
-  __typename?: 'SetupSsoOutput';
+export type SetupSso = {
+  __typename?: 'SetupSso';
   id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
@@ -4548,8 +4541,8 @@ export type SetupSsoOutput = {
   type: IdentityProviderType;
 };
 
-export type SignUpOutput = {
-  __typename?: 'SignUpOutput';
+export type SignUp = {
+  __typename?: 'SignUp';
   loginToken: AuthToken;
   workspace: WorkspaceUrlsAndId;
 };
@@ -4669,13 +4662,13 @@ export type ToolIndexEntry = {
   objectName?: Maybe<Scalars['String']>;
 };
 
-export type TransientTokenOutput = {
-  __typename?: 'TransientTokenOutput';
+export type TransientToken = {
+  __typename?: 'TransientToken';
   transientToken: AuthToken;
 };
 
-export type TwoFactorAuthenticationMethodDto = {
-  __typename?: 'TwoFactorAuthenticationMethodDTO';
+export type TwoFactorAuthenticationMethodSummary = {
+  __typename?: 'TwoFactorAuthenticationMethodSummary';
   status: Scalars['String'];
   strategy: Scalars['String'];
   twoFactorAuthenticationMethodId: Scalars['UUID'];
@@ -4720,9 +4713,13 @@ export type UpdateApiKeyInput = {
 };
 
 export type UpdateApplicationRegistrationInput = {
+  id: Scalars['String'];
+  update: UpdateApplicationRegistrationPayload;
+};
+
+export type UpdateApplicationRegistrationPayload = {
   author?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
   logoUrl?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   oAuthRedirectUris?: InputMaybe<Array<Scalars['String']>>;
@@ -4732,8 +4729,12 @@ export type UpdateApplicationRegistrationInput = {
 };
 
 export type UpdateApplicationRegistrationVariableInput = {
-  description?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
+  update: UpdateApplicationRegistrationVariablePayload;
+};
+
+export type UpdateApplicationRegistrationVariablePayload = {
+  description?: InputMaybe<Scalars['String']>;
   value?: InputMaybe<Scalars['String']>;
 };
 
@@ -5158,7 +5159,7 @@ export type UserWorkspace = {
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   objectsPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
-  twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodDto>>;
+  twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodSummary>>;
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['UUID'];
@@ -5169,8 +5170,8 @@ export type ValidateApprovedAccessDomainInput = {
   validationToken: Scalars['String'];
 };
 
-export type ValidatePasswordResetTokenOutput = {
-  __typename?: 'ValidatePasswordResetTokenOutput';
+export type ValidatePasswordResetToken = {
+  __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String'];
   hasPassword: Scalars['Boolean'];
   id: Scalars['UUID'];
@@ -5184,14 +5185,14 @@ export type VerificationRecord = {
   value: Scalars['String'];
 };
 
-export type VerifyEmailAndGetLoginTokenOutput = {
-  __typename?: 'VerifyEmailAndGetLoginTokenOutput';
+export type VerifyEmailAndGetLoginToken = {
+  __typename?: 'VerifyEmailAndGetLoginToken';
   loginToken: AuthToken;
   workspaceUrls: WorkspaceUrls;
 };
 
-export type VerifyTwoFactorAuthenticationMethodOutput = {
-  __typename?: 'VerifyTwoFactorAuthenticationMethodOutput';
+export type VerifyTwoFactorAuthenticationMethod = {
+  __typename?: 'VerifyTwoFactorAuthenticationMethod';
   success: Scalars['Boolean'];
 };
 
@@ -5376,7 +5377,7 @@ export type Workspace = {
   enabledAiModelIds?: Maybe<Array<Scalars['String']>>;
   eventLogRetentionDays: Scalars['Float'];
   fastModel: Scalars['String'];
-  featureFlags?: Maybe<Array<FeatureFlagDto>>;
+  featureFlags?: Maybe<Array<FeatureFlag>>;
   hasValidEnterpriseKey: Scalars['Boolean'];
   id: Scalars['UUID'];
   inviteHash?: Maybe<Scalars['String']>;
@@ -5438,8 +5439,8 @@ export type WorkspaceInvitation = {
   id: Scalars['UUID'];
 };
 
-export type WorkspaceInviteHashValidOutput = {
-  __typename?: 'WorkspaceInviteHashValidOutput';
+export type WorkspaceInviteHashValid = {
+  __typename?: 'WorkspaceInviteHashValid';
   isValid: Scalars['Boolean'];
 };
 
@@ -5484,17 +5485,17 @@ export enum WorkspaceMemberTimeFormatEnum {
   SYSTEM = 'SYSTEM'
 }
 
+export type WorkspaceMigration = {
+  __typename?: 'WorkspaceMigration';
+  actions: Scalars['JSON'];
+  applicationUniversalIdentifier: Scalars['String'];
+};
+
 export enum WorkspaceMigrationActionType {
   create = 'create',
   delete = 'delete',
   update = 'update'
 }
-
-export type WorkspaceMigrationDto = {
-  __typename?: 'WorkspaceMigrationDTO';
-  actions: Scalars['JSON'];
-  applicationUniversalIdentifier: Scalars['String'];
-};
 
 export type WorkspaceMigrationDeleteActionInput = {
   metadataName: AllMetadataName;
@@ -5731,7 +5732,7 @@ export type AvailableWorkspaceFragmentFragment = { __typename?: 'AvailableWorksp
 
 export type AvailableWorkspacesFragmentFragment = { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> };
 
-export type AvailableSsoIdentityProvidersFragmentFragment = { __typename?: 'FindAvailableSSOIDPOutput', id: string, issuer: string, name: string, status: SsoIdentityProviderStatus, workspace: { __typename?: 'WorkspaceNameAndId', id: string, displayName?: string | null } };
+export type AvailableSsoIdentityProvidersFragmentFragment = { __typename?: 'FindAvailableSSOIDP', id: string, issuer: string, name: string, status: SsoIdentityProviderStatus, workspace: { __typename?: 'WorkspaceNameAndId', id: string, displayName?: string | null } };
 
 export type AuthorizeAppMutationVariables = Exact<{
   clientId: Scalars['String'];
@@ -5740,7 +5741,7 @@ export type AuthorizeAppMutationVariables = Exact<{
 }>;
 
 
-export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __typename?: 'AuthorizeAppOutput', redirectUrl: string } };
+export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __typename?: 'AuthorizeApp', redirectUrl: string } };
 
 export type EmailPasswordResetLinkMutationVariables = Exact<{
   email: Scalars['String'];
@@ -5748,7 +5749,7 @@ export type EmailPasswordResetLinkMutationVariables = Exact<{
 }>;
 
 
-export type EmailPasswordResetLinkMutation = { __typename?: 'Mutation', emailPasswordResetLink: { __typename?: 'EmailPasswordResetLinkOutput', success: boolean } };
+export type EmailPasswordResetLinkMutation = { __typename?: 'Mutation', emailPasswordResetLink: { __typename?: 'EmailPasswordResetLink', success: boolean } };
 
 export type GenerateApiKeyTokenMutationVariables = Exact<{
   apiKeyId: Scalars['UUID'];
@@ -5761,7 +5762,7 @@ export type GenerateApiKeyTokenMutation = { __typename?: 'Mutation', generateApi
 export type GenerateTransientTokenMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generateTransientToken: { __typename?: 'TransientTokenOutput', transientToken: { __typename?: 'AuthToken', token: string } } };
+export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generateTransientToken: { __typename?: 'TransientToken', transientToken: { __typename?: 'AuthToken', token: string } } };
 
 export type GetAuthTokensFromLoginTokenMutationVariables = Exact<{
   loginToken: Scalars['String'];
@@ -5786,7 +5787,7 @@ export type GetAuthorizationUrlForSsoMutationVariables = Exact<{
 }>;
 
 
-export type GetAuthorizationUrlForSsoMutation = { __typename?: 'Mutation', getAuthorizationUrlForSSO: { __typename?: 'GetAuthorizationUrlForSSOOutput', id: string, type: string, authorizationURL: string } };
+export type GetAuthorizationUrlForSsoMutation = { __typename?: 'Mutation', getAuthorizationUrlForSSO: { __typename?: 'GetAuthorizationUrlForSSO', id: string, type: string, authorizationURL: string } };
 
 export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
   email: Scalars['String'];
@@ -5796,7 +5797,7 @@ export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
 }>;
 
 
-export type GetLoginTokenFromCredentialsMutation = { __typename?: 'Mutation', getLoginTokenFromCredentials: { __typename?: 'LoginTokenOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
+export type GetLoginTokenFromCredentialsMutation = { __typename?: 'Mutation', getLoginTokenFromCredentials: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
 export type ImpersonateMutationVariables = Exact<{
   userId: Scalars['UUID'];
@@ -5804,7 +5805,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'ImpersonateOutput', workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Impersonate', workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
 export type InitiateOtpProvisioningMutationVariables = Exact<{
   loginToken: Scalars['String'];
@@ -5812,12 +5813,12 @@ export type InitiateOtpProvisioningMutationVariables = Exact<{
 }>;
 
 
-export type InitiateOtpProvisioningMutation = { __typename?: 'Mutation', initiateOTPProvisioning: { __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput', uri: string } };
+export type InitiateOtpProvisioningMutation = { __typename?: 'Mutation', initiateOTPProvisioning: { __typename?: 'InitiateTwoFactorAuthenticationProvisioning', uri: string } };
 
 export type InitiateOtpProvisioningForAuthenticatedUserMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type InitiateOtpProvisioningForAuthenticatedUserMutation = { __typename?: 'Mutation', initiateOTPProvisioningForAuthenticatedUser: { __typename?: 'InitiateTwoFactorAuthenticationProvisioningOutput', uri: string } };
+export type InitiateOtpProvisioningForAuthenticatedUserMutation = { __typename?: 'Mutation', initiateOTPProvisioningForAuthenticatedUser: { __typename?: 'InitiateTwoFactorAuthenticationProvisioning', uri: string } };
 
 export type RenewTokenMutationVariables = Exact<{
   appToken: Scalars['String'];
@@ -5832,14 +5833,14 @@ export type ResendEmailVerificationTokenMutationVariables = Exact<{
 }>;
 
 
-export type ResendEmailVerificationTokenMutation = { __typename?: 'Mutation', resendEmailVerificationToken: { __typename?: 'ResendEmailVerificationTokenOutput', success: boolean } };
+export type ResendEmailVerificationTokenMutation = { __typename?: 'Mutation', resendEmailVerificationToken: { __typename?: 'ResendEmailVerificationToken', success: boolean } };
 
 export type DeleteTwoFactorAuthenticationMethodMutationVariables = Exact<{
   twoFactorAuthenticationMethodId: Scalars['UUID'];
 }>;
 
 
-export type DeleteTwoFactorAuthenticationMethodMutation = { __typename?: 'Mutation', deleteTwoFactorAuthenticationMethod: { __typename?: 'DeleteTwoFactorAuthenticationMethodOutput', success: boolean } };
+export type DeleteTwoFactorAuthenticationMethodMutation = { __typename?: 'Mutation', deleteTwoFactorAuthenticationMethod: { __typename?: 'DeleteTwoFactorAuthenticationMethod', success: boolean } };
 
 export type SignInMutationVariables = Exact<{
   email: Scalars['String'];
@@ -5848,7 +5849,7 @@ export type SignInMutationVariables = Exact<{
 }>;
 
 
-export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'AvailableWorkspacesAndAccessTokensOutput', availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> }, tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'AvailableWorkspacesAndAccessTokens', availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> }, tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type SignUpMutationVariables = Exact<{
   email: Scalars['String'];
@@ -5859,12 +5860,12 @@ export type SignUpMutationVariables = Exact<{
 }>;
 
 
-export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'AvailableWorkspacesAndAccessTokensOutput', availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> }, tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'AvailableWorkspacesAndAccessTokens', availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> }, tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type SignUpInNewWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SignUpInNewWorkspaceMutation = { __typename?: 'Mutation', signUpInNewWorkspace: { __typename?: 'SignUpOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } } };
+export type SignUpInNewWorkspaceMutation = { __typename?: 'Mutation', signUpInNewWorkspace: { __typename?: 'SignUp', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } } };
 
 export type SignUpInWorkspaceMutationVariables = Exact<{
   email: Scalars['String'];
@@ -5878,7 +5879,7 @@ export type SignUpInWorkspaceMutationVariables = Exact<{
 }>;
 
 
-export type SignUpInWorkspaceMutation = { __typename?: 'Mutation', signUpInWorkspace: { __typename?: 'SignUpOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } } };
+export type SignUpInWorkspaceMutation = { __typename?: 'Mutation', signUpInWorkspace: { __typename?: 'SignUp', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } } };
 
 export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
   token: Scalars['String'];
@@ -5886,7 +5887,7 @@ export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePasswordViaResetTokenMutation = { __typename?: 'Mutation', updatePasswordViaResetToken: { __typename?: 'InvalidatePasswordOutput', success: boolean } };
+export type UpdatePasswordViaResetTokenMutation = { __typename?: 'Mutation', updatePasswordViaResetToken: { __typename?: 'InvalidatePassword', success: boolean } };
 
 export type VerifyEmailAndGetLoginTokenMutationVariables = Exact<{
   emailVerificationToken: Scalars['String'];
@@ -5896,7 +5897,7 @@ export type VerifyEmailAndGetLoginTokenMutationVariables = Exact<{
 }>;
 
 
-export type VerifyEmailAndGetLoginTokenMutation = { __typename?: 'Mutation', verifyEmailAndGetLoginToken: { __typename?: 'VerifyEmailAndGetLoginTokenOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } };
+export type VerifyEmailAndGetLoginTokenMutation = { __typename?: 'Mutation', verifyEmailAndGetLoginToken: { __typename?: 'VerifyEmailAndGetLoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } };
 
 export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables = Exact<{
   emailVerificationToken: Scalars['String'];
@@ -5905,7 +5906,7 @@ export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables = Exact<{
 }>;
 
 
-export type VerifyEmailAndGetWorkspaceAgnosticTokenMutation = { __typename?: 'Mutation', verifyEmailAndGetWorkspaceAgnosticToken: { __typename?: 'AvailableWorkspacesAndAccessTokensOutput', availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> }, tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutation = { __typename?: 'Mutation', verifyEmailAndGetWorkspaceAgnosticToken: { __typename?: 'AvailableWorkspacesAndAccessTokens', availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> }, tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -5913,21 +5914,21 @@ export type CheckUserExistsQueryVariables = Exact<{
 }>;
 
 
-export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename?: 'CheckUserExistOutput', exists: boolean, availableWorkspacesCount: number, isEmailVerified: boolean } };
+export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename?: 'CheckUserExist', exists: boolean, availableWorkspacesCount: number, isEmailVerified: boolean } };
 
 export type GetPublicWorkspaceDataByDomainQueryVariables = Exact<{
   origin: Scalars['String'];
 }>;
 
 
-export type GetPublicWorkspaceDataByDomainQuery = { __typename?: 'Query', getPublicWorkspaceDataByDomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, authBypassProviders?: { __typename?: 'AuthBypassProviders', google: boolean, password: boolean, microsoft: boolean } | null } };
+export type GetPublicWorkspaceDataByDomainQuery = { __typename?: 'Query', getPublicWorkspaceDataByDomain: { __typename?: 'PublicWorkspaceData', id: string, logo?: string | null, displayName?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, authBypassProviders?: { __typename?: 'AuthBypassProviders', google: boolean, password: boolean, microsoft: boolean } | null } };
 
 export type ValidatePasswordResetTokenQueryVariables = Exact<{
   token: Scalars['String'];
 }>;
 
 
-export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetTokenOutput', id: string, email: string, hasPassword: boolean } };
+export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetToken', id: string, email: string, hasPassword: boolean } };
 
 export type BillingPriceLicensedFragmentFragment = { __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType };
 
@@ -5940,17 +5941,17 @@ export type BillingSubscriptionSchedulePhaseItemFragmentFragment = { __typename?
 export type CancelSwitchBillingIntervalMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CancelSwitchBillingIntervalMutation = { __typename?: 'Mutation', cancelSwitchBillingInterval: { __typename?: 'BillingUpdateOutput', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
+export type CancelSwitchBillingIntervalMutation = { __typename?: 'Mutation', cancelSwitchBillingInterval: { __typename?: 'BillingUpdate', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
 
 export type CancelSwitchMeteredPriceMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CancelSwitchMeteredPriceMutation = { __typename?: 'Mutation', cancelSwitchMeteredPrice: { __typename?: 'BillingUpdateOutput', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
+export type CancelSwitchMeteredPriceMutation = { __typename?: 'Mutation', cancelSwitchMeteredPrice: { __typename?: 'BillingUpdate', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
 
 export type CancelSwitchBillingPlanMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CancelSwitchBillingPlanMutation = { __typename?: 'Mutation', cancelSwitchBillingPlan: { __typename?: 'BillingUpdateOutput', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
+export type CancelSwitchBillingPlanMutation = { __typename?: 'Mutation', cancelSwitchBillingPlan: { __typename?: 'BillingUpdate', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
 
 export type CheckoutSessionMutationVariables = Exact<{
   recurringInterval: SubscriptionInterval;
@@ -5960,46 +5961,46 @@ export type CheckoutSessionMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'BillingSessionOutput', url?: string | null } };
+export type CheckoutSessionMutation = { __typename?: 'Mutation', checkoutSession: { __typename?: 'BillingSession', url?: string | null } };
 
 export type EndSubscriptionTrialPeriodMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type EndSubscriptionTrialPeriodMutation = { __typename?: 'Mutation', endSubscriptionTrialPeriod: { __typename?: 'BillingEndTrialPeriodOutput', status?: SubscriptionStatus | null, hasPaymentMethod: boolean, billingPortalUrl?: string | null } };
+export type EndSubscriptionTrialPeriodMutation = { __typename?: 'Mutation', endSubscriptionTrialPeriod: { __typename?: 'BillingEndTrialPeriod', status?: SubscriptionStatus | null, hasPaymentMethod: boolean, billingPortalUrl?: string | null } };
 
 export type SetMeteredSubscriptionPriceMutationVariables = Exact<{
   priceId: Scalars['String'];
 }>;
 
 
-export type SetMeteredSubscriptionPriceMutation = { __typename?: 'Mutation', setMeteredSubscriptionPrice: { __typename?: 'BillingUpdateOutput', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
+export type SetMeteredSubscriptionPriceMutation = { __typename?: 'Mutation', setMeteredSubscriptionPrice: { __typename?: 'BillingUpdate', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
 
 export type SwitchBillingPlanMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SwitchBillingPlanMutation = { __typename?: 'Mutation', switchBillingPlan: { __typename?: 'BillingUpdateOutput', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
+export type SwitchBillingPlanMutation = { __typename?: 'Mutation', switchBillingPlan: { __typename?: 'BillingUpdate', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
 
 export type SwitchSubscriptionIntervalMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SwitchSubscriptionIntervalMutation = { __typename?: 'Mutation', switchSubscriptionInterval: { __typename?: 'BillingUpdateOutput', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
+export type SwitchSubscriptionIntervalMutation = { __typename?: 'Mutation', switchSubscriptionInterval: { __typename?: 'BillingUpdate', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
 
 export type BillingPortalSessionQueryVariables = Exact<{
   returnUrlPath?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'BillingSessionOutput', url?: string | null } };
+export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'BillingSession', url?: string | null } };
 
 export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usedCredits: number, grantedCredits: number, rolloverCredits: number, totalGrantedCredits: number, unitPriceCents: number }> };
+export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsage', productKey: BillingProductKey, usedCredits: number, grantedCredits: number, rolloverCredits: number, totalGrantedCredits: number, unitPriceCents: number }> };
 
 export type ListPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListPlansQuery = { __typename?: 'Query', listPlans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, licensedProducts: Array<{ __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }>, meteredProducts: Array<{ __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceMetered', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTier', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }> }> };
+export type ListPlansQuery = { __typename?: 'Query', listPlans: Array<{ __typename?: 'BillingPlan', planKey: BillingPlanKey, licensedProducts: Array<{ __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }>, meteredProducts: Array<{ __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceMetered', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTier', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }> }> };
 
 export type CommandMenuItemFieldsFragment = { __typename?: 'CommandMenuItem', id: string, workflowVersionId?: string | null, frontComponentId?: string | null, label: string, icon?: string | null, isPinned: boolean, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string, isHeadless: boolean } | null };
 
@@ -6267,21 +6268,21 @@ export type BarChartDataQueryVariables = Exact<{
 }>;
 
 
-export type BarChartDataQuery = { __typename?: 'Query', barChartData: { __typename?: 'BarChartDataOutput', data: Array<any>, indexBy: string, keys: Array<string>, xAxisLabel: string, yAxisLabel: string, showLegend: boolean, showDataLabels: boolean, layout: BarChartLayout, groupMode: BarChartGroupMode, hasTooManyGroups: boolean, formattedToRawLookup: any, series: Array<{ __typename?: 'BarChartSeries', key: string, label: string }> } };
+export type BarChartDataQuery = { __typename?: 'Query', barChartData: { __typename?: 'BarChartData', data: Array<any>, indexBy: string, keys: Array<string>, xAxisLabel: string, yAxisLabel: string, showLegend: boolean, showDataLabels: boolean, layout: BarChartLayout, groupMode: BarChartGroupMode, hasTooManyGroups: boolean, formattedToRawLookup: any, series: Array<{ __typename?: 'BarChartSeries', key: string, label: string }> } };
 
 export type LineChartDataQueryVariables = Exact<{
   input: LineChartDataInput;
 }>;
 
 
-export type LineChartDataQuery = { __typename?: 'Query', lineChartData: { __typename?: 'LineChartDataOutput', xAxisLabel: string, yAxisLabel: string, showLegend: boolean, showDataLabels: boolean, hasTooManyGroups: boolean, formattedToRawLookup: any, series: Array<{ __typename?: 'LineChartSeries', id: string, label: string, data: Array<{ __typename?: 'LineChartDataPoint', x: string, y: number }> }> } };
+export type LineChartDataQuery = { __typename?: 'Query', lineChartData: { __typename?: 'LineChartData', xAxisLabel: string, yAxisLabel: string, showLegend: boolean, showDataLabels: boolean, hasTooManyGroups: boolean, formattedToRawLookup: any, series: Array<{ __typename?: 'LineChartSeries', id: string, label: string, data: Array<{ __typename?: 'LineChartDataPoint', x: string, y: number }> }> } };
 
 export type PieChartDataQueryVariables = Exact<{
   input: PieChartDataInput;
 }>;
 
 
-export type PieChartDataQuery = { __typename?: 'Query', pieChartData: { __typename?: 'PieChartDataOutput', showLegend: boolean, showDataLabels: boolean, showCenterMetric: boolean, hasTooManyGroups: boolean, formattedToRawLookup: any, data: Array<{ __typename?: 'PieChartDataItem', id: string, value: number }> } };
+export type PieChartDataQuery = { __typename?: 'Query', pieChartData: { __typename?: 'PieChartData', showLegend: boolean, showDataLabels: boolean, showCenterMetric: boolean, hasTooManyGroups: boolean, formattedToRawLookup: any, data: Array<{ __typename?: 'PieChartDataItem', id: string, value: number }> } };
 
 export type SaveImapSmtpCaldavAccountMutationVariables = Exact<{
   accountOwnerId: Scalars['UUID'];
@@ -6318,7 +6319,7 @@ export type SetAdminAiModelEnabledMutation = { __typename?: 'Mutation', setAdmin
 export type GetAdminAiModelsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAdminAiModelsQuery = { __typename?: 'Query', getAdminAiModels: { __typename?: 'AdminAIModelsOutput', autoEnableNewModels: boolean, models: Array<{ __typename?: 'AdminAIModelConfig', modelId: string, label: string, modelFamily?: ModelFamily | null, inferenceProvider: InferenceProvider, isAvailable: boolean, isAdminEnabled: boolean, deprecated?: boolean | null, isRecommended?: boolean | null }> } };
+export type GetAdminAiModelsQuery = { __typename?: 'Query', getAdminAiModels: { __typename?: 'AdminAIModels', autoEnableNewModels: boolean, models: Array<{ __typename?: 'AdminAIModelConfig', modelId: string, label: string, modelFamily?: ModelFamily | null, inferenceProvider: InferenceProvider, isAvailable: boolean, isAdminEnabled: boolean, deprecated?: boolean | null, isRecommended?: boolean | null }> } };
 
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
@@ -6346,7 +6347,7 @@ export type UpdateDatabaseConfigVariableMutation = { __typename?: 'Mutation', up
 export type GetConfigVariablesGroupedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariablesOutput', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value?: any | null, isSensitive: boolean, isEnvOnly: boolean, type: ConfigVariableType, options?: any | null, source: ConfigSource }> }> } };
+export type GetConfigVariablesGroupedQuery = { __typename?: 'Query', getConfigVariablesGrouped: { __typename?: 'ConfigVariables', groups: Array<{ __typename?: 'ConfigVariablesGroupData', name: ConfigVariablesGroup, description: string, isHiddenOnLoad: boolean, variables: Array<{ __typename?: 'ConfigVariable', name: string, description: string, value?: any | null, isSensitive: boolean, isEnvOnly: boolean, type: ConfigVariableType, options?: any | null, source: ConfigSource }> }> } };
 
 export type GetDatabaseConfigVariableQueryVariables = Exact<{
   key: Scalars['String'];
@@ -6436,7 +6437,7 @@ export type RotateApplicationRegistrationClientSecretMutationVariables = Exact<{
 }>;
 
 
-export type RotateApplicationRegistrationClientSecretMutation = { __typename?: 'Mutation', rotateApplicationRegistrationClientSecret: { __typename?: 'RotateClientSecretOutput', clientSecret: string } };
+export type RotateApplicationRegistrationClientSecretMutation = { __typename?: 'Mutation', rotateApplicationRegistrationClientSecret: { __typename?: 'RotateClientSecret', clientSecret: string } };
 
 export type UpdateApplicationRegistrationMutationVariables = Exact<{
   input: UpdateApplicationRegistrationInput;
@@ -6464,7 +6465,7 @@ export type FindApplicationRegistrationStatsQueryVariables = Exact<{
 }>;
 
 
-export type FindApplicationRegistrationStatsQuery = { __typename?: 'Query', findApplicationRegistrationStats: { __typename?: 'ApplicationRegistrationStatsOutput', activeInstalls: number, mostInstalledVersion?: string | null, versionDistribution: Array<{ __typename?: 'VersionDistributionEntry', version: string, count: number }> } };
+export type FindApplicationRegistrationStatsQuery = { __typename?: 'Query', findApplicationRegistrationStats: { __typename?: 'ApplicationRegistrationStats', activeInstalls: number, mostInstalledVersion?: string | null, versionDistribution: Array<{ __typename?: 'VersionDistributionEntry', version: string, count: number }> } };
 
 export type FindApplicationRegistrationVariablesQueryVariables = Exact<{
   applicationRegistrationId: Scalars['String'];
@@ -6628,7 +6629,7 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 }>;
 
 
-export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean } };
+export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean } };
 
 export type UploadWorkspaceMemberProfilePictureMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -6740,14 +6741,14 @@ export type CreateOidcIdentityProviderMutationVariables = Exact<{
 }>;
 
 
-export type CreateOidcIdentityProviderMutation = { __typename?: 'Mutation', createOIDCIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
+export type CreateOidcIdentityProviderMutation = { __typename?: 'Mutation', createOIDCIdentityProvider: { __typename?: 'SetupSso', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
 export type CreateSamlIdentityProviderMutationVariables = Exact<{
   input: SetupSamlSsoInput;
 }>;
 
 
-export type CreateSamlIdentityProviderMutation = { __typename?: 'Mutation', createSAMLIdentityProvider: { __typename?: 'SetupSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
+export type CreateSamlIdentityProviderMutation = { __typename?: 'Mutation', createSAMLIdentityProvider: { __typename?: 'SetupSso', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
 export type DeleteApprovedAccessDomainMutationVariables = Exact<{
   input: DeleteApprovedAccessDomainInput;
@@ -6761,14 +6762,14 @@ export type DeleteSsoIdentityProviderMutationVariables = Exact<{
 }>;
 
 
-export type DeleteSsoIdentityProviderMutation = { __typename?: 'Mutation', deleteSSOIdentityProvider: { __typename?: 'DeleteSsoOutput', identityProviderId: string } };
+export type DeleteSsoIdentityProviderMutation = { __typename?: 'Mutation', deleteSSOIdentityProvider: { __typename?: 'DeleteSso', identityProviderId: string } };
 
 export type EditSsoIdentityProviderMutationVariables = Exact<{
   input: EditSsoInput;
 }>;
 
 
-export type EditSsoIdentityProviderMutation = { __typename?: 'Mutation', editSSOIdentityProvider: { __typename?: 'EditSsoOutput', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
+export type EditSsoIdentityProviderMutation = { __typename?: 'Mutation', editSSOIdentityProvider: { __typename?: 'EditSso', id: string, type: IdentityProviderType, issuer: string, name: string, status: SsoIdentityProviderStatus } };
 
 export type ValidateApprovedAccessDomainMutationVariables = Exact<{
   input: ValidateApprovedAccessDomainInput;
@@ -6785,20 +6786,20 @@ export type GetApprovedAccessDomainsQuery = { __typename?: 'Query', getApprovedA
 export type GetSsoIdentityProvidersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSsoIdentityProvidersQuery = { __typename?: 'Query', getSSOIdentityProviders: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
+export type GetSsoIdentityProvidersQuery = { __typename?: 'Query', getSSOIdentityProviders: Array<{ __typename?: 'FindAvailableSSOIDP', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
 
 export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVariables = Exact<{
   otp: Scalars['String'];
 }>;
 
 
-export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation = { __typename?: 'Mutation', verifyTwoFactorAuthenticationMethodForAuthenticatedUser: { __typename?: 'VerifyTwoFactorAuthenticationMethodOutput', success: boolean } };
+export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation = { __typename?: 'Mutation', verifyTwoFactorAuthenticationMethodForAuthenticatedUser: { __typename?: 'VerifyTwoFactorAuthenticationMethod', success: boolean } };
 
 export type BillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> };
 
-export type CurrentBillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null };
+export type CurrentBillingSubscriptionFragmentFragment = { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
 
 export type WorkspaceUrlsFragmentFragment = { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null };
 
@@ -6817,7 +6818,7 @@ export type DeleteUserWorkspaceMutation = { __typename?: 'Mutation', deleteUserF
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, hasPassword: boolean, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, numberFormat?: WorkspaceMemberNumberFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', id: string, permissionFlags?: Array<PermissionFlagType> | null, objectsPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null, rowLevelPermissionPredicates?: Array<{ __typename?: 'RowLevelPermissionPredicate', id: string, fieldMetadataId: string, objectMetadataId: string, operand: RowLevelPermissionPredicateOperand, subFieldName?: string | null, workspaceMemberFieldMetadataId?: string | null, workspaceMemberSubFieldName?: string | null, rowLevelPermissionPredicateGroupId?: string | null, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, value?: any | null }> | null, rowLevelPermissionPredicateGroups?: Array<{ __typename?: 'RowLevelPermissionPredicateGroup', id: string, parentRowLevelPermissionPredicateGroupId?: string | null, logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator, positionInRowLevelPermissionPredicateGroup?: number | null, roleId: string, objectMetadataId: string }> | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodSummary', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isGoogleAuthBypassEnabled: boolean, isMicrosoftAuthBypassEnabled: boolean, isPasswordAuthBypassEnabled: boolean, subdomain: string, customDomain?: string | null, hasValidEnterpriseKey: boolean, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, fastModel: string, smartModel: string, aiAdditionalInstructions?: string | null, autoEnableNewAiModels: boolean, disabledAiModelIds?: Array<string> | null, enabledAiModelIds?: Array<string> | null, useRecommendedModels: boolean, isTwoFactorAuthenticationEnforced: boolean, trashRetentionDays: number, eventLogRetentionDays: number, editableProfileFields?: Array<string> | null, workspaceCustomApplication?: { __typename?: 'Application', id: string } | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, billingEntitlements: Array<{ __typename?: 'BillingEntitlement', key: BillingEntitlementKey, value: boolean }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -7157,14 +7158,14 @@ export type ResendWorkspaceInvitationMutationVariables = Exact<{
 }>;
 
 
-export type ResendWorkspaceInvitationMutation = { __typename?: 'Mutation', resendWorkspaceInvitation: { __typename?: 'SendInvitationsOutput', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: string, email: string, expiresAt: string }> } };
+export type ResendWorkspaceInvitationMutation = { __typename?: 'Mutation', resendWorkspaceInvitation: { __typename?: 'SendInvitations', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: string, email: string, expiresAt: string }> } };
 
 export type SendInvitationsMutationVariables = Exact<{
   emails: Array<Scalars['String']> | Scalars['String'];
 }>;
 
 
-export type SendInvitationsMutation = { __typename?: 'Mutation', sendInvitations: { __typename?: 'SendInvitationsOutput', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: string, email: string, expiresAt: string }> } };
+export type SendInvitationsMutation = { __typename?: 'Mutation', sendInvitations: { __typename?: 'SendInvitations', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: string, email: string, expiresAt: string }> } };
 
 export type GetWorkspaceInvitationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -7432,7 +7433,7 @@ export const AuthTokenPairFragmentFragmentDoc = gql`
 }
     ${AuthTokenFragmentFragmentDoc}`;
 export const AvailableSsoIdentityProvidersFragmentFragmentDoc = gql`
-    fragment AvailableSSOIdentityProvidersFragment on FindAvailableSSOIDPOutput {
+    fragment AvailableSSOIdentityProvidersFragment on FindAvailableSSOIDP {
   id
   issuer
   name

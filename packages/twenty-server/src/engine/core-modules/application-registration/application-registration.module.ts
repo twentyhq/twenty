@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application-registration/application-registration-variable.entity';
 import { ApplicationRegistrationEncryptionService } from 'src/engine/core-modules/application-registration/application-registration-encryption.service';
-import { ApplicationRegistrationIdentifierGuardService } from 'src/engine/core-modules/application-registration/application-registration-identifier-guard.service';
+import { ApplicationRegistrationIdentifierValidationService } from 'src/engine/core-modules/application-registration/application-registration-identifier-validation.service';
 import { ApplicationRegistrationVariableResolutionService } from 'src/engine/core-modules/application-registration/application-registration-variable-resolution.service';
+import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application-registration/application-registration-variable.entity';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application-registration/application-registration-variable.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import { ApplicationRegistrationResolver } from 'src/engine/core-modules/application-registration/application-registration.resolver';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application-registration/application-registration.service';
@@ -26,16 +27,18 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
   ],
   providers: [
     ApplicationRegistrationService,
+    ApplicationRegistrationVariableService,
     ApplicationRegistrationEncryptionService,
     ApplicationRegistrationVariableResolutionService,
-    ApplicationRegistrationIdentifierGuardService,
+    ApplicationRegistrationIdentifierValidationService,
     ApplicationRegistrationResolver,
   ],
   exports: [
     ApplicationRegistrationService,
+    ApplicationRegistrationVariableService,
     ApplicationRegistrationEncryptionService,
     ApplicationRegistrationVariableResolutionService,
-    ApplicationRegistrationIdentifierGuardService,
+    ApplicationRegistrationIdentifierValidationService,
   ],
 })
 export class ApplicationRegistrationModule {}

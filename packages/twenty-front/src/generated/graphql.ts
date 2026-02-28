@@ -125,19 +125,19 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean'];
   computeStepOutputSchema: Scalars['JSON'];
-  createDraftFromWorkflowVersion: WorkflowVersionDto;
+  createDraftFromWorkflowVersion: WorkflowVersion;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   dismissReconnectAccountBanner: Scalars['Boolean'];
-  duplicateWorkflow: WorkflowVersionDto;
+  duplicateWorkflow: WorkflowVersion;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
-  runWorkflowVersion: RunWorkflowVersionOutput;
+  runWorkflowVersion: RunWorkflowVersion;
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean'];
-  testHttpRequest: TestHttpRequestOutput;
+  testHttpRequest: TestHttpRequest;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
@@ -306,6 +306,11 @@ export type QuerySearchArgs = {
   searchInput: Scalars['String'];
 };
 
+export type RunWorkflowVersion = {
+  __typename?: 'RunWorkflowVersion';
+  workflowRunId: Scalars['UUID'];
+};
+
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']>;
@@ -313,11 +318,6 @@ export type RunWorkflowVersionInput = {
   workflowRunId?: InputMaybe<Scalars['UUID']>;
   /** Workflow version ID */
   workflowVersionId: Scalars['UUID'];
-};
-
-export type RunWorkflowVersionOutput = {
-  __typename?: 'RunWorkflowVersionOutput';
-  workflowRunId: Scalars['UUID'];
 };
 
 export type SearchRecord = {
@@ -358,19 +358,8 @@ export type SubmitFormStepInput = {
   workflowRunId: Scalars['UUID'];
 };
 
-export type TestHttpRequestInput = {
-  /** Request body */
-  body?: InputMaybe<Scalars['JSON']>;
-  /** HTTP headers */
-  headers?: InputMaybe<Scalars['JSON']>;
-  /** HTTP method */
-  method: Scalars['String'];
-  /** URL to make the request to */
-  url: Scalars['String'];
-};
-
-export type TestHttpRequestOutput = {
-  __typename?: 'TestHttpRequestOutput';
+export type TestHttpRequest = {
+  __typename?: 'TestHttpRequest';
   /** Error information */
   error?: Maybe<Scalars['JSON']>;
   /** Response headers */
@@ -385,6 +374,17 @@ export type TestHttpRequestOutput = {
   statusText?: Maybe<Scalars['String']>;
   /** Whether the request was successful */
   success: Scalars['Boolean'];
+};
+
+export type TestHttpRequestInput = {
+  /** Request body */
+  body?: InputMaybe<Scalars['JSON']>;
+  /** HTTP headers */
+  headers?: InputMaybe<Scalars['JSON']>;
+  /** HTTP method */
+  method: Scalars['String'];
+  /** URL to make the request to */
+  url: Scalars['String'];
 };
 
 export type TimelineCalendarEvent = {
@@ -549,8 +549,8 @@ export type WorkflowStepPositionUpdateInput = {
   position: WorkflowStepPositionInput;
 };
 
-export type WorkflowVersionDto = {
-  __typename?: 'WorkflowVersionDTO';
+export type WorkflowVersion = {
+  __typename?: 'WorkflowVersion';
   createdAt: Scalars['String'];
   id: Scalars['UUID'];
   name: Scalars['String'];
@@ -666,7 +666,7 @@ export type CreateDraftFromWorkflowVersionMutationVariables = Exact<{
 }>;
 
 
-export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersionDTO', id: any, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } };
+export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersion', id: any, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } };
 
 export type CreateWorkflowVersionEdgeMutationVariables = Exact<{
   input: CreateWorkflowVersionEdgeInput;
@@ -708,7 +708,7 @@ export type DuplicateWorkflowMutationVariables = Exact<{
 }>;
 
 
-export type DuplicateWorkflowMutation = { __typename?: 'Mutation', duplicateWorkflow: { __typename?: 'WorkflowVersionDTO', id: any, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string, workflowId: any } };
+export type DuplicateWorkflowMutation = { __typename?: 'Mutation', duplicateWorkflow: { __typename?: 'WorkflowVersion', id: any, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string, workflowId: any } };
 
 export type DuplicateWorkflowVersionStepMutationVariables = Exact<{
   input: DuplicateWorkflowVersionStepInput;
@@ -722,7 +722,7 @@ export type RunWorkflowVersionMutationVariables = Exact<{
 }>;
 
 
-export type RunWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'RunWorkflowVersionOutput', workflowRunId: any } };
+export type RunWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'RunWorkflowVersion', workflowRunId: any } };
 
 export type StopWorkflowRunMutationVariables = Exact<{
   workflowRunId: Scalars['UUID'];
@@ -757,7 +757,7 @@ export type TestHttpRequestMutationVariables = Exact<{
 }>;
 
 
-export type TestHttpRequestMutation = { __typename?: 'Mutation', testHttpRequest: { __typename?: 'TestHttpRequestOutput', success: boolean, message: string, result?: any | null, error?: any | null, status?: number | null, statusText?: string | null, headers?: any | null } };
+export type TestHttpRequestMutation = { __typename?: 'Mutation', testHttpRequest: { __typename?: 'TestHttpRequest', success: boolean, message: string, result?: any | null, error?: any | null, status?: number | null, statusText?: string | null, headers?: any | null } };
 
 export type UpdateWorkflowVersionPositionsMutationVariables = Exact<{
   input: UpdateWorkflowVersionPositionsInput;

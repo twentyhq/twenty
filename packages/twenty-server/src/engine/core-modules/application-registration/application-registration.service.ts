@@ -4,25 +4,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
 import * as bcrypt from 'bcrypt';
-import { type ServerVariables } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Not, type Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application-registration/application-registration-variable.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application-registration/application-registration.exception';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application-registration/constants/oauth-scopes';
-import { type ApplicationRegistrationStatsOutput } from 'src/engine/core-modules/application-registration/dtos/application-registration-stats.output';
+import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/create-application-registration.input';
-import { type CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application-registration/dtos/create-application-registration-variable.input';
 import { type UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration.input';
-import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application-registration/dtos/update-application-registration-variable.input';
-import { ApplicationRegistrationEncryptionService } from 'src/engine/core-modules/application-registration/application-registration-encryption.service';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
@@ -33,11 +28,8 @@ export class ApplicationRegistrationService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    @InjectRepository(ApplicationRegistrationVariableEntity)
-    private readonly variableRepository: Repository<ApplicationRegistrationVariableEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    private readonly encryptionService: ApplicationRegistrationEncryptionService,
   ) {}
 
   async findMany(): Promise<ApplicationRegistrationEntity[]> {
@@ -134,34 +126,38 @@ export class ApplicationRegistrationService {
   async update(
     input: UpdateApplicationRegistrationInput,
   ): Promise<ApplicationRegistrationEntity> {
-    await this.findOneById(input.id);
+    const { id, update } = input;
 
-    if (isDefined(input.oAuthRedirectUris)) {
-      this.validateRedirectUris(input.oAuthRedirectUris);
+    await this.findOneById(id);
+
+    if (isDefined(update.oAuthRedirectUris)) {
+      this.validateRedirectUris(update.oAuthRedirectUris);
     }
 
-    if (isDefined(input.oAuthScopes)) {
-      this.validateScopes(input.oAuthScopes);
+    if (isDefined(update.oAuthScopes)) {
+      this.validateScopes(update.oAuthScopes);
     }
 
-    const updateData: QueryDeepPartialEntity<ApplicationRegistrationEntity> =
-      {};
+    const updateData: QueryDeepPartialEntity<ApplicationRegistrationEntity> = {
+      ...(isDefined(update.name) && { name: update.name }),
+      ...(isDefined(update.description) && {
+        description: update.description,
+      }),
+      ...(isDefined(update.logoUrl) && { logoUrl: update.logoUrl }),
+      ...(isDefined(update.author) && { author: update.author }),
+      ...(isDefined(update.oAuthRedirectUris) && {
+        oAuthRedirectUris: update.oAuthRedirectUris,
+      }),
+      ...(isDefined(update.oAuthScopes) && {
+        oAuthScopes: update.oAuthScopes,
+      }),
+      ...(isDefined(update.websiteUrl) && { websiteUrl: update.websiteUrl }),
+      ...(isDefined(update.termsUrl) && { termsUrl: update.termsUrl }),
+    };
 
-    if (isDefined(input.name)) updateData.name = input.name;
-    if (isDefined(input.description))
-      updateData.description = input.description;
-    if (isDefined(input.logoUrl)) updateData.logoUrl = input.logoUrl;
-    if (isDefined(input.author)) updateData.author = input.author;
-    if (isDefined(input.oAuthRedirectUris))
-      updateData.oAuthRedirectUris = input.oAuthRedirectUris;
-    if (isDefined(input.oAuthScopes))
-      updateData.oAuthScopes = input.oAuthScopes;
-    if (isDefined(input.websiteUrl)) updateData.websiteUrl = input.websiteUrl;
-    if (isDefined(input.termsUrl)) updateData.termsUrl = input.termsUrl;
+    await this.applicationRegistrationRepository.update(id, updateData);
 
-    await this.applicationRegistrationRepository.update(input.id, updateData);
-
-    return this.findOneById(input.id);
+    return this.findOneById(id);
   }
 
   async delete(id: string): Promise<boolean> {
@@ -195,132 +191,9 @@ export class ApplicationRegistrationService {
     return bcrypt.compare(clientSecret, registration.oAuthClientSecretHash);
   }
 
-  // Variable operations
-
-  async findVariables(
-    applicationRegistrationId: string,
-  ): Promise<ApplicationRegistrationVariableEntity[]> {
-    return this.variableRepository.find({
-      where: { applicationRegistrationId },
-      order: { key: 'ASC' },
-    });
-  }
-
-  async createVariable(
-    input: CreateApplicationRegistrationVariableInput,
-  ): Promise<ApplicationRegistrationVariableEntity> {
-    await this.findOneById(input.applicationRegistrationId);
-
-    const encryptedValue = this.encryptionService.encrypt(input.value);
-
-    const variable = this.variableRepository.create({
-      applicationRegistrationId: input.applicationRegistrationId,
-      key: input.key,
-      encryptedValue,
-      description: input.description ?? '',
-      isSecret: input.isSecret ?? true,
-    });
-
-    return this.variableRepository.save(variable);
-  }
-
-  async updateVariable(
-    input: UpdateApplicationRegistrationVariableInput,
-  ): Promise<ApplicationRegistrationVariableEntity> {
-    const variable = await this.variableRepository.findOne({
-      where: { id: input.id },
-    });
-
-    if (!variable) {
-      throw new ApplicationRegistrationException(
-        `Variable with id ${input.id} not found`,
-        ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND,
-      );
-    }
-
-    const updateData: QueryDeepPartialEntity<ApplicationRegistrationVariableEntity> =
-      {};
-
-    if (isDefined(input.value)) {
-      updateData.encryptedValue = this.encryptionService.encrypt(input.value);
-    }
-    if (isDefined(input.description)) {
-      updateData.description = input.description;
-    }
-
-    await this.variableRepository.update(input.id, updateData);
-
-    return this.variableRepository.findOneOrFail({ where: { id: input.id } });
-  }
-
-  async deleteVariable(id: string): Promise<boolean> {
-    const variable = await this.variableRepository.findOne({
-      where: { id },
-    });
-
-    if (!variable) {
-      throw new ApplicationRegistrationException(
-        `Variable with id ${id} not found`,
-        ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND,
-      );
-    }
-
-    await this.variableRepository.delete(id);
-
-    return true;
-  }
-
-  // Syncs variable schemas from manifest: creates missing, updates metadata, removes stale
-  async syncVariableSchemas(
-    applicationRegistrationId: string,
-    serverVariables: ServerVariables,
-  ): Promise<void> {
-    const declaredKeys = Object.keys(serverVariables);
-
-    const existingVariables = await this.variableRepository.find({
-      where: { applicationRegistrationId },
-    });
-
-    const existingByKey = new Map(
-      existingVariables.map((variable) => [variable.key, variable]),
-    );
-
-    for (const [key, schema] of Object.entries(serverVariables)) {
-      const existing = existingByKey.get(key);
-
-      if (existing) {
-        await this.variableRepository.update(existing.id, {
-          description: schema.description ?? '',
-          isSecret: schema.isSecret ?? true,
-          isRequired: schema.isRequired ?? false,
-        });
-      } else {
-        await this.variableRepository.save(
-          this.variableRepository.create({
-            applicationRegistrationId,
-            key,
-            encryptedValue: '',
-            description: schema.description ?? '',
-            isSecret: schema.isSecret ?? true,
-            isRequired: schema.isRequired ?? false,
-          }),
-        );
-      }
-    }
-
-    if (declaredKeys.length > 0) {
-      await this.variableRepository.delete({
-        applicationRegistrationId,
-        key: Not(In(declaredKeys)),
-      });
-    } else {
-      await this.variableRepository.delete({ applicationRegistrationId });
-    }
-  }
-
   async getStats(
     applicationRegistrationId: string,
-  ): Promise<ApplicationRegistrationStatsOutput> {
+  ): Promise<ApplicationRegistrationStatsDTO> {
     await this.findOneById(applicationRegistrationId);
 
     const installs = await this.applicationRepository.find({

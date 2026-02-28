@@ -1,7 +1,6 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
 import { promisify } from 'util';
-
 import crypto from 'crypto';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -14,9 +13,7 @@ const HKDF_CONTEXT = 'application-registration-variable';
 const hkdf = promisify(crypto.hkdf);
 
 @Injectable()
-export class ApplicationRegistrationEncryptionService
-  implements OnModuleInit
-{
+export class ApplicationRegistrationEncryptionService implements OnModuleInit {
   private encryptionKey!: Buffer;
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}

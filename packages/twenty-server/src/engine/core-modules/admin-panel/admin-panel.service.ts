@@ -9,7 +9,7 @@ import * as z from 'zod';
 
 import { type ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { type ConfigVariablesGroupDataDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
-import { type ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
+import { type ConfigVariablesDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables.dto';
 import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import { type VersionInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import {
@@ -112,7 +112,7 @@ export class AdminPanelService {
     };
   }
 
-  getConfigVariablesGrouped(): ConfigVariablesOutput {
+  getConfigVariablesGrouped(): ConfigVariablesDTO {
     const rawEnvVars = this.twentyConfigService.getAll();
     const groupedData = new Map<ConfigVariablesGroup, ConfigVariableDTO[]>();
 
