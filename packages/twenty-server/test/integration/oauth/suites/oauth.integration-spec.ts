@@ -100,12 +100,13 @@ const insertAppToken = async (
     userId: string;
     workspaceId: string;
     expiresAt: Date;
+    context?: Record<string, string>;
   },
 ): Promise<string> => {
   const rows = await ds.query(
     `INSERT INTO core."appToken"
-      (value, type, "userId", "workspaceId", "expiresAt")
-     VALUES ($1, $2, $3, $4, $5)
+      (value, type, "userId", "workspaceId", "expiresAt", context)
+     VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING id`,
     [
       params.value,
@@ -113,6 +114,7 @@ const insertAppToken = async (
       params.userId,
       params.workspaceId,
       params.expiresAt,
+      params.context ? JSON.stringify(params.context) : null,
     ],
   );
 
@@ -292,7 +294,9 @@ describe('OAuth (integration)', () => {
   });
 
   describe('Authorization code grant', () => {
-    const createAuthorizationCode = async (): Promise<string> => {
+    const createAuthorizationCode = async (
+      redirectUri = 'https://example.com/callback',
+    ): Promise<string> => {
       const code = crypto.randomBytes(42).toString('hex');
 
       const tokenId = await insertAppToken(ds, {
@@ -301,6 +305,7 @@ describe('OAuth (integration)', () => {
         userId: TEST_USER_ID,
         workspaceId: TEST_WORKSPACE_ID,
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        context: { redirectUri },
       });
 
       createdEntityIds.tokens.push(tokenId);
@@ -417,6 +422,7 @@ describe('OAuth (integration)', () => {
         userId: TEST_USER_ID,
         workspaceId: TEST_WORKSPACE_ID,
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        context: { redirectUri: 'https://example.com/callback' },
       });
 
       const challengeTokenId = await insertAppToken(ds, {
@@ -473,6 +479,7 @@ describe('OAuth (integration)', () => {
         userId: TEST_USER_ID,
         workspaceId: TEST_WORKSPACE_ID,
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        context: { redirectUri: 'https://example.com/callback' },
       });
 
       createdEntityIds.tokens.push(tokenId);
@@ -579,6 +586,7 @@ describe('OAuth (integration)', () => {
         userId: TEST_USER_ID,
         workspaceId: TEST_WORKSPACE_ID,
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        context: { redirectUri: 'https://example.com/callback' },
       });
 
       createdEntityIds.tokens.push(tokenId);
