@@ -648,6 +648,11 @@ msgstr "Σχετικά με αυτόν τον χρήστη"
 msgid "About this workspace"
 msgstr "Σχετικά με αυτό το χώρο εργασίας"
 
+#. js-lingui-id: o0Ci6l
+#: src/pages/auth/Authorize.tsx
+msgid "Access workspace data"
+msgstr ""
+
 #. js-lingui-id: c2UA7k
 #: src/pages/settings/ai/components/SettingsAIMCP.tsx
 msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor."
@@ -765,12 +770,18 @@ msgstr "Ενεργό"
 msgid "Active API keys created by you or your team."
 msgstr "Ενεργά API keys που έχουν δημιουργηθεί από εσάς ή την ομάδα σας."
 
+#. js-lingui-id: A7Ks+i
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Active installs"
+msgstr ""
+
 #. js-lingui-id: QHjErc
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
 msgid "Active Sync"
 msgstr "Ενεργός συγχρονισμός"
 
 #. js-lingui-id: m16xKo
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Add"
 msgstr "Προσθήκη"
@@ -1486,6 +1497,11 @@ msgstr "Επιτρέπεται η ανάρτηση αρχείων και συν�
 msgid "Allow users to sign in with an email and password."
 msgstr "Επιτρέψτε στους χρήστες να συνδέονται με email και κωδικό πρόσβασης."
 
+#. js-lingui-id: vj+OHl
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Allowed redirect URIs for OAuth flows"
+msgstr ""
+
 #. js-lingui-id: Yn0ZH1
 #: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 #: src/modules/command-menu/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -1721,6 +1737,11 @@ msgstr "«Απόστροφος και τελεία - {apostropheAndDotExample}»
 msgid "App"
 msgstr ""
 
+#. js-lingui-id: 2zAy1h
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "App updated"
+msgstr ""
+
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -1764,9 +1785,9 @@ msgstr ""
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Applications"
 msgstr "Εφαρμογές"
@@ -1790,6 +1811,16 @@ msgstr "Επικυρώθηκε το εγκεκριμένο domain πρόσβασ
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Approved Domains"
 msgstr "Εγκεκριμένοι Τομείς"
+
+#. js-lingui-id: VDvaN2
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Apps"
+msgstr ""
+
+#. js-lingui-id: n++nRq
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Apps you've created and published"
+msgstr ""
 
 #. js-lingui-id: 8HV3WN
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2113,7 +2144,6 @@ msgid "Availability"
 msgstr "Διαθεσιμότητα"
 
 #. js-lingui-id: csDS2L
-#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Available"
@@ -2753,14 +2783,26 @@ msgid "ClickHouse Not Configured"
 msgstr ""
 
 #. js-lingui-id: b9Y4up
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"
 msgstr "ID Πελάτη"
 
+#. js-lingui-id: 77ropN
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Client ID copied"
+msgstr ""
+
 #. js-lingui-id: Bdj4LI
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client Secret"
 msgstr "Μυστικό Πελάτη"
+
+#. js-lingui-id: 6uKe4W
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Client secret rotated. Copy it now — it won't be shown again."
+msgstr ""
 
 #. js-lingui-id: XUe4cu
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -2866,7 +2908,7 @@ msgid "command menu item"
 msgstr ""
 
 #. js-lingui-id: 4XlFx/
-#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Commands copied to clipboard"
 msgstr "Οι εντολές αντιγράφηκαν στο πρόχειρο"
 
@@ -3016,6 +3058,11 @@ msgstr ""
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
 msgstr "Ρυθμίστε τις ρυθμίσεις email και ημερολογίου σας."
+
+#. js-lingui-id: M1co/O
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Configured"
+msgstr ""
 
 #. js-lingui-id: 7VpPHA
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
@@ -3236,7 +3283,7 @@ msgid "Copy code"
 msgstr "Αντιγραφή κώδικα"
 
 #. js-lingui-id: Es0ros
-#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Copy commands"
 msgstr "Αντιγραφή εντολών"
 
@@ -3274,6 +3321,11 @@ msgstr "Αντιγραφή κλειδιού εγκατάστασης"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
 msgstr "Αντιγράψτε αυτό το κλειδί γιατί δεν θα είναι ξανά ορατό"
+
+#. js-lingui-id: /P/oME
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Copy this secret as it will not be visible again"
+msgstr ""
 
 #. js-lingui-id: /4gGIX
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
@@ -3430,13 +3482,8 @@ msgstr "Δημιουργήστε ένα workflow και επιστρέψτε ε�
 msgid "Create a workspace"
 msgstr "Δημιουργία Χώρου Εργασίας"
 
-#. js-lingui-id: f1uv2a
-#: src/pages/settings/applications/SettingsApplications.tsx
-msgid "Create an app"
-msgstr ""
-
 #. js-lingui-id: /WlFSf
-#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Create an application"
 msgstr "Δημιουργία εφαρμογής"
 
@@ -3575,6 +3622,11 @@ msgstr "Δημιουργία του μοντέλου δεδομένων σας..
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Creating your workspace"
 msgstr "Δημιουργία του χώρου εργασίας σας"
+
+#. js-lingui-id: L3dKdL
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Credentials and scopes for OAuth authorization flows"
+msgstr ""
 
 #. js-lingui-id: Efny36
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -3770,6 +3822,7 @@ msgstr "Τσέχικα"
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -4087,6 +4140,8 @@ msgstr "διαγραφή"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
@@ -4175,6 +4230,11 @@ msgstr "Διαγραφή Πράκτορα"
 msgid "Delete API key"
 msgstr "Διαγραφή κλειδιού API"
 
+#. js-lingui-id: JXU6Ex
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Delete app"
+msgstr ""
+
 #. js-lingui-id: ikGfT5
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Delete dashboard"
@@ -4245,6 +4305,11 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Delete this agent"
 msgstr "Διαγραφή αυτού του πράκτορα"
+
+#. js-lingui-id: Lz86s9
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Delete this app"
+msgstr ""
 
 #. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4356,6 +4421,7 @@ msgstr "Περιγράψτε τι θέλετε να κάνει το AI..."
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
@@ -4410,6 +4476,11 @@ msgstr "Αποσύνδεση"
 msgid "Details"
 msgstr "Λεπτομέρειες"
 
+#. js-lingui-id: 7aDnUb
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Developer"
+msgstr ""
+
 #. js-lingui-id: irW7LP
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Developers links"
@@ -4445,6 +4516,11 @@ msgstr "Μορφή εμφάνισης"
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Display text on multiple lines"
 msgstr "Εμφανίστε το κείμενο σε πολλαπλές γραμμές"
+
+#. js-lingui-id: vU/Hht
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Distribution"
+msgstr ""
 
 #. js-lingui-id: RDL+lZ
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
@@ -5166,6 +5242,11 @@ msgstr ""
 msgid "Enter phone number"
 msgstr "Εισάγετε αριθμό τηλεφώνου"
 
+#. js-lingui-id: xV28+W
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Enter secret value"
+msgstr ""
+
 #. js-lingui-id: xCiJkz
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput.tsx
 msgid "Enter test value"
@@ -5209,6 +5290,7 @@ msgid "Enter user ID or email address"
 msgstr "Εισάγετε το αναγνωριστικό χρήστη ή τη διεύθυνση e-mail"
 
 #. js-lingui-id: pubQie
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
@@ -5285,6 +5367,11 @@ msgstr "Σφάλμα"
 msgid "Error deleting api key."
 msgstr "Σφάλμα κατά τη διαγραφή κλειδιού api."
 
+#. js-lingui-id: gmjkzq
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Error deleting app"
+msgstr ""
+
 #. js-lingui-id: QnVLjD
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Error deleting invitation"
@@ -5345,15 +5432,30 @@ msgstr "Σφάλμα κατά την επαναδημιουργία κλειδι
 msgid "Error resending invitation"
 msgstr "Σφάλμα κατά την επαναποστολή της πρόσκλησης"
 
+#. js-lingui-id: cpGsq/
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Error rotating client secret"
+msgstr ""
+
 #. js-lingui-id: 5Vy8D1
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Error uninstalling application."
+msgstr ""
+
+#. js-lingui-id: ZUyXma
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Error updating app"
 msgstr ""
 
 #. js-lingui-id: lX3Yil
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error updating role"
 msgstr "Σφάλμα κατά την ενημέρωση του ρόλου"
+
+#. js-lingui-id: s+iV3f
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Error updating variable"
+msgstr ""
 
 #. js-lingui-id: nB84mG
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
@@ -6363,6 +6465,7 @@ msgstr "Διάγραμμα δείκτη"
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
@@ -6764,6 +6867,11 @@ msgstr "Απέτυχε το αίτημα HTTP"
 msgid "https://api.example.com/endpoint"
 msgstr "https://api.example.com/endpoint"
 
+#. js-lingui-id: 1Un+Rf
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "https://example.com/callback"
+msgstr ""
+
 #. js-lingui-id: yhVtER
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "https://example.com/embed"
@@ -6826,6 +6934,11 @@ msgstr ""
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 msgid "If this is unexpected, please verify your settings."
 msgstr "Αν αυτό είναι απροσδόκητο, παρακαλώ ελέγξτε τις ρυθμίσεις σας."
+
+#. js-lingui-id: Yn4NZ1
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "If you rotate this secret, any integration using the current secret will stop working. Please type \"{confirmationValue}\" to confirm."
+msgstr ""
 
 #. js-lingui-id: j843N3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -7060,6 +7173,11 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage applications"
 msgstr "Εγκατάσταση και διαχείριση εφαρμογών"
+
+#. js-lingui-id: JXiMtM
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Install Stats"
+msgstr ""
 
 #. js-lingui-id: eQkgKV
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -8036,6 +8154,11 @@ msgstr "Διαχειριστείτε τους λογαριασμούς σας σ
 msgid "Manual"
 msgstr ""
 
+#. js-lingui-id: Zt5PUS
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Marketplace"
+msgstr ""
+
 #. js-lingui-id: FCc+QF
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
 msgid "Match {fieldLabel} ({unmatchedCount} Unmatched)"
@@ -8342,6 +8465,11 @@ msgstr "Περισσότερες ενέργειες"
 msgid "More options"
 msgstr "Περισσότερες επιλογές"
 
+#. js-lingui-id: SOHptZ
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Most installed version"
+msgstr ""
+
 #. js-lingui-id: 3Ib6FN
 #: src/modules/command-menu/pages/navigation-menu-item/components/CommandMenuEditOrganizeActions.tsx
 msgid "Move down"
@@ -8396,6 +8524,11 @@ msgstr "πρέπει να είναι μια σειρά αντικειμένου 
 msgid "must be an array of valid emails"
 msgstr "πρέπει να είναι μια σειρά έγκυρων emails"
 
+#. js-lingui-id: bPl77g
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "My Apps"
+msgstr ""
+
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "My unlisted views"
@@ -8415,6 +8548,7 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
@@ -8453,6 +8587,11 @@ msgstr "Όνομα"
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 msgid "Name and describe your function"
 msgstr "Ονομάστε και περιγράψτε τη λειτουργία σας"
+
+#. js-lingui-id: /CI5+c
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Name and description are managed via your app manifest (CLI)"
+msgstr ""
 
 #. js-lingui-id: XSwyCU
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -9251,6 +9390,11 @@ msgstr "Όχι άδειο"
 msgid "Not Found"
 msgstr "Δεν Βρέθηκε"
 
+#. js-lingui-id: MTqQMG
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Not set"
+msgstr ""
+
 #. js-lingui-id: 51G4/+
 #: src/modules/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay.tsx
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
@@ -9331,6 +9475,11 @@ msgstr ""
 #. js-lingui-id: M3G9ZD
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Numbered list"
+msgstr ""
+
+#. js-lingui-id: /PKKj/
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "OAuth Credentials"
 msgstr ""
 
 #. js-lingui-id: pNEViR
@@ -10040,6 +10189,7 @@ msgid "Please check your email for a verification link."
 msgstr "Παρακαλώ ελέγξτε το email σας για έναν σύνδεσμο επιβεβαίωσης."
 
 #. js-lingui-id: jEw0Mr
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "Please enter a valid URL"
 msgstr "Παρακαλώ εισάγετε μία έγκυρη διεύθυνση URL"
@@ -10074,6 +10224,11 @@ msgstr "Παρακαλώ ξεκινήστε πρώτα τη συνδρομή σ�
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "Παρακαλώ πληκτρολογήστε \"{confirmationValue}\" για να επιβεβαιώσετε ότι θέλετε να διαγράψετε αυτό το API Key. Σημειώστε ότι κάθε σενάριο στο οποίο χρησιμοποιείται αυτό το κλειδί θα σταματήσει να λειτουργεί."
+
+#. js-lingui-id: osUElx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Please type \"{confirmationValue}\" to confirm you want to delete this app. All workspace installations linked to it will lose their OAuth credentials."
+msgstr ""
 
 #. js-lingui-id: L0SEpC
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -10393,9 +10548,14 @@ msgid "Read changelog"
 msgstr "Διαβάστε το ιστορικό αλλαγών"
 
 #. js-lingui-id: ibPuCP
-#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Read documentation"
 msgstr "Διαβάστε την τεκμηρίωση"
+
+#. js-lingui-id: afMuDE
+#: src/pages/auth/Authorize.tsx
+msgid "Read your profile"
+msgstr ""
 
 #. js-lingui-id: tCXcL7
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
@@ -10506,6 +10666,11 @@ msgstr "Εγγραφές"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Red"
 msgstr "Κόκκινο"
+
+#. js-lingui-id: dAZObA
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Redirect URIs"
+msgstr ""
 
 #. js-lingui-id: LfH+Ea
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -10724,6 +10889,11 @@ msgstr "Απάντηση σε όλους"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "Request Failed"
 msgstr "Απέτυχε το αίτημα"
+
+#. js-lingui-id: TMLAx2
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Required"
+msgstr ""
 
 #. js-lingui-id: G42SNI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -10958,6 +11128,17 @@ msgstr ""
 msgid "Romanian"
 msgstr "Ρουμανικά"
 
+#. js-lingui-id: vQrTaX
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Rotate client secret"
+msgstr ""
+
+#. js-lingui-id: 2FBgnq
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Rotate secret"
+msgstr ""
+
 #. js-lingui-id: Eb/I7b
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Routing decision"
@@ -11065,6 +11246,11 @@ msgstr "Σχήμα"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Schema name"
 msgstr "Όνομα Σχήματος"
+
+#. js-lingui-id: N/rFzD
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Scopes"
+msgstr ""
 
 #. js-lingui-id: Eq6YVV
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -11688,6 +11874,11 @@ msgstr "Αποστέλλονται και Λήφθηκαν"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
 msgstr "Σερβικά (Κυριλλικά)"
+
+#. js-lingui-id: fHVf32
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Server Variables"
+msgstr ""
 
 #. js-lingui-id: 8ZSrlB
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -12915,6 +13106,11 @@ msgstr "Αυτό το κλειδί πρέπει να οριστεί στο σώ�
 msgid "This record has been deleted"
 msgstr "Αυτή η εγγραφή έχει διαγραφεί"
 
+#. js-lingui-id: eV9Tnj
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "This redirect URI is already added"
+msgstr ""
+
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "This role can {humanReadableAction} all records"
@@ -13425,6 +13621,11 @@ msgstr ""
 msgid "Uninstall Application?"
 msgstr ""
 
+#. js-lingui-id: 7S4EZE
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Uninstall this app from all workspaces before deleting it"
+msgstr ""
+
 #. js-lingui-id: u+6vfA
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall this application"
@@ -13447,6 +13648,16 @@ msgstr "Μοναδικά πεδία"
 #: src/modules/command-menu/pages/page-layout/constants/settings/PrefixSetting.ts
 msgid "unit"
 msgstr "μονάδα"
+
+#. js-lingui-id: fMyWEp
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Universal ID"
+msgstr ""
+
+#. js-lingui-id: dIosde
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Universal identifier copied"
+msgstr ""
 
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -13688,6 +13899,11 @@ msgstr "Διεύθυνση URL"
 msgid "URL to Embed"
 msgstr "URL για ενσωμάτωση"
 
+#. js-lingui-id: 8Jr4QC
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Usage across all workspaces on this server"
+msgstr ""
+
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -13817,6 +14033,11 @@ msgstr "Η τιμή ορίζεται στο περιβάλλον διακομι�
 msgid "Values"
 msgstr "Τιμές"
 
+#. js-lingui-id: HBiN8v
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Variable {variableKey} updated"
+msgstr ""
+
 #. js-lingui-id: rawKOG
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Variable deleted successfully."
@@ -13831,6 +14052,11 @@ msgstr "Η μεταβλητή δεν βρέθηκε"
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Variable updated successfully."
 msgstr "Η μεταβλητή ενημερώθηκε με επιτυχία."
+
+#. js-lingui-id: E6Zuwm
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+msgid "Variables declared by the app manifest. Fill in values here — they apply to all workspace installations."
+msgstr ""
 
 #. js-lingui-id: QDEWii
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -14324,6 +14550,7 @@ msgstr "Ροές Εργασίας"
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -14481,6 +14708,7 @@ msgstr "Κίτρινο"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -14509,7 +14737,7 @@ msgid "You are not allowed to create records for this object"
 msgstr "Δεν επιτρέπεται να δημιουργείτε εγγραφές για αυτό το αντικείμενο"
 
 #. js-lingui-id: iibZbD
-#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "You can either create a private app or share it to others"
 msgstr "Μπορείτε είτε να δημιουργήσετε μια ιδιωτική εφαρμογή είτε να τη μοιραστείτε με άλλους"
 
