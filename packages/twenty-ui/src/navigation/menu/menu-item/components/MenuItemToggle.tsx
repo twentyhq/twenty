@@ -1,6 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { type IconComponent } from '@ui/display';
 import { Toggle, type ToggleSize } from '@ui/input';
+import { ThemeContext } from '@ui/theme';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledMenuItemBase,
@@ -38,6 +40,8 @@ export const MenuItemToggle = ({
   toggleSize,
   disabled = false,
 }: MenuItemToggleProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const handleClick = () => {
     if (!disabled) {
       onToggleChange?.(!toggled);
@@ -46,6 +50,7 @@ export const MenuItemToggle = ({
 
   return (
     <StyledMenuItemBase
+      theme={theme}
       className={className}
       focused={focused}
       disabled={disabled}
@@ -58,7 +63,10 @@ export const MenuItemToggle = ({
           withIconContainer={withIconContainer}
           disabled={disabled}
         />
-        <StyledMenuItemRightContent onClick={(e) => e.stopPropagation()}>
+        <StyledMenuItemRightContent
+          theme={theme}
+          onClick={(e) => e.stopPropagation()}
+        >
           <Toggle
             value={toggled}
             onChange={disabled ? undefined : onToggleChange}

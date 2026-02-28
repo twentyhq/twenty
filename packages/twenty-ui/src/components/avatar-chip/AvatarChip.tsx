@@ -1,9 +1,10 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { type Nullable } from '@ui/utilities';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledIconWithBackgroundContainer = styled.div<{
@@ -21,7 +22,7 @@ const StyledIconWithBackgroundContainer = styled.div<{
 const StyledAvatarChipWrapper = styled.div<{
   isClickable: boolean;
   divider: AvatarChipProps['divider'];
-  theme: any;
+  theme: ThemeType;
 }>`
   ${({ divider, theme }) => {
     const borderStyle = (side: 'left' | 'right') =>
@@ -58,7 +59,7 @@ export const AvatarChip = ({
   onClick,
   divider,
 }: AvatarChipProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   if (!isDefined(Icon)) {
     return (
       <Avatar

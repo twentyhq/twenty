@@ -1,6 +1,8 @@
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
-const StyledBanner = styled.div<{ variant?: BannerVariant }>`
+const StyledBanner = styled.div<{ variant?: BannerVariant; theme: ThemeType }>`
   align-items: center;
   backdrop-filter: blur(5px);
   background: ${({ theme, variant }) =>
@@ -32,8 +34,12 @@ export const Banner = ({
   variant = 'default',
   className,
   children,
-}: BannerProps) => (
-  <StyledBanner variant={variant} className={className}>
-    {children}
-  </StyledBanner>
-);
+}: BannerProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <StyledBanner variant={variant} className={className} theme={theme}>
+      {children}
+    </StyledBanner>
+  );
+};

@@ -1,12 +1,15 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { VisibilityHidden } from '@ui/accessibility';
 import { IconChevronDown } from '@ui/display';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
-import { ANIMATION } from '@ui/theme';
+import { ANIMATION, ThemeContext, type ThemeType } from '@ui/theme';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
 
-const StyledButton = styled(motion.button)<{ variant?: 'blue' | 'red' }>`
+const StyledButton = styled.button<{
+  variant?: 'blue' | 'red';
+  theme: ThemeType;
+}>`
   align-items: center;
   background-color: ${({ theme, variant }) =>
     variant === 'red'
@@ -37,13 +40,13 @@ export const JsonArrow = ({
   onClick: () => void;
   variant?: 'blue' | 'red';
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const { arrowButtonCollapsedLabel, arrowButtonExpandedLabel } =
     useJsonTreeContextOrThrow();
 
   return (
-    <StyledButton variant={variant} onClick={onClick}>
+    <StyledButton theme={theme} variant={variant} onClick={onClick}>
       <VisibilityHidden>
         {isOpen ? arrowButtonExpandedLabel : arrowButtonCollapsedLabel}
       </VisibilityHidden>

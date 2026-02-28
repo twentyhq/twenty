@@ -1,8 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconChartPie, TooltipDelay } from '@ui/display';
 import { MenuPicker } from '@ui/navigation/menu/components/MenuPicker';
 import { ComponentDecorator } from '@ui/testing';
+import { useContext } from 'react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 const meta: Meta<typeof MenuPicker> = {
   title: 'UI/Navigation/Menu/MenuPicker',
@@ -48,7 +50,7 @@ export const WithoutLabel: Story = {
   },
 };
 
-const StyledTitle = styled.h4`
+const StyledTitle = styled.h4<{ theme: ThemeType }>`
   align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: 12px;
@@ -56,56 +58,60 @@ const StyledTitle = styled.h4`
 `;
 
 export const AllStates: Story = {
-  render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        width: '100%',
-        gap: '16px',
-      }}
-    >
-      <div>
-        <StyledTitle>Default</StyledTitle>
-        <MenuPicker id="default" icon={IconChartPie} label="Default" />
+  render: () => {
+    const { theme } = useContext(ThemeContext);
+
+    return (
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          width: '100%',
+          gap: '16px',
+        }}
+      >
+        <div>
+          <StyledTitle theme={theme}>Default</StyledTitle>
+          <MenuPicker id="default" icon={IconChartPie} label="Default" />
+        </div>
+        <div>
+          <StyledTitle theme={theme}>Selected</StyledTitle>
+          <MenuPicker
+            id="selected"
+            icon={IconChartPie}
+            label="Selected"
+            selected
+          />
+        </div>
+        <div>
+          <StyledTitle theme={theme}>Disabled</StyledTitle>
+          <MenuPicker
+            id="disabled"
+            icon={IconChartPie}
+            label="Disabled"
+            disabled
+          />
+        </div>
+        <div>
+          <StyledTitle theme={theme}>No Label</StyledTitle>
+          <MenuPicker
+            id="no-label"
+            icon={IconChartPie}
+            label="No Label"
+            showLabel={false}
+          />
+        </div>
+        <div>
+          <StyledTitle theme={theme}> With Tooltip</StyledTitle>
+          <MenuPicker
+            id="tooltip"
+            icon={IconChartPie}
+            label="Tooltip"
+            tooltipContent="Tooltip"
+            tooltipDelay={TooltipDelay.mediumDelay}
+          />
+        </div>
       </div>
-      <div>
-        <StyledTitle>Selected</StyledTitle>
-        <MenuPicker
-          id="selected"
-          icon={IconChartPie}
-          label="Selected"
-          selected
-        />
-      </div>
-      <div>
-        <StyledTitle>Disabled</StyledTitle>
-        <MenuPicker
-          id="disabled"
-          icon={IconChartPie}
-          label="Disabled"
-          disabled
-        />
-      </div>
-      <div>
-        <StyledTitle>No Label</StyledTitle>
-        <MenuPicker
-          id="no-label"
-          icon={IconChartPie}
-          label="No Label"
-          showLabel={false}
-        />
-      </div>
-      <div>
-        <StyledTitle> With Tooltip</StyledTitle>
-        <MenuPicker
-          id="tooltip"
-          icon={IconChartPie}
-          label="Tooltip"
-          tooltipContent="Tooltip"
-          tooltipDelay={TooltipDelay.mediumDelay}
-        />
-      </div>
-    </div>
-  ),
+    );
+  },
 };

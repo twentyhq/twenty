@@ -1,16 +1,19 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
-import { type ThemeColor, type ThemeType } from '@ui/theme';
+import { type ThemeColor, ThemeContext, type ThemeType } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 export type ColorSampleVariant = 'default' | 'pipeline';
 
-export type ColorSampleProps = {
+type StyledColorSampleProps = {
   colorName: ThemeColor;
   color?: string;
   variant?: ColorSampleVariant;
+  theme: ThemeType;
 };
+
+export type ColorSampleProps = Omit<StyledColorSampleProps, 'theme'>;
 
 const getColor = (theme: ThemeType, colorName: ThemeColor, color?: string) => {
   if (isDefined(color)) {
@@ -24,7 +27,7 @@ const getBorderColor = (theme: ThemeType, colorName: ThemeColor) => {
   return theme.tag.text[colorName];
 };
 
-const StyledColorSample = styled.div<ColorSampleProps>`
+const StyledColorSample = styled.div<StyledColorSampleProps>`
   background-color: ${({ theme, colorName, color }) =>
     getColor(theme, colorName, color)};
   border: 1px solid
@@ -35,7 +38,7 @@ const StyledColorSample = styled.div<ColorSampleProps>`
 
   ${({ colorName, color, theme, variant }) => {
     if (variant === 'pipeline')
-      return css`
+      return `
         align-items: center;
         border: 0;
         display: flex;
@@ -50,7 +53,12 @@ const StyledColorSample = styled.div<ColorSampleProps>`
           width: ${theme.spacing(1)};
         }
       `;
+
+    return '';
   }}
 `;
 
-export { StyledColorSample as ColorSample };
+export const ColorSample = (props: ColorSampleProps) => {
+  const { theme } = useContext(ThemeContext);
+  return <StyledColorSample {...props} theme={theme} />;
+};

@@ -1,9 +1,9 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconInfoCircle } from '@ui/display/icon/components/TablerIcons';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 import { Button } from '@ui/input/button/components/Button/Button';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 export type InfoAccent = 'blue' | 'danger';
@@ -15,7 +15,7 @@ export type InfoProps = {
   to?: string;
 };
 
-const StyledTextContainer = styled.div`
+const StyledTextContainer = styled.div<{ theme: ThemeType }>`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -25,7 +25,7 @@ const StyledIconInfoCircle = styled(IconInfoCircle)`
   flex-shrink: 0;
 `;
 
-const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
+const StyledInfo = styled.div<Pick<InfoProps, 'accent'> & { theme: ThemeType }>`
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
@@ -37,16 +37,17 @@ const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
   ${({ theme, accent }) => {
     switch (accent) {
       case 'blue':
-        return css`
+        return `
           background: ${theme.color.blue5};
           color: ${theme.color.blue10};
         `;
       case 'danger':
-        return css`
+        return `
           background: ${theme.color.red3};
           color: ${theme.color.red};
         `;
     }
+    return '';
   }}
 `;
 
@@ -61,10 +62,10 @@ export const Info = ({
   onClick,
   to,
 }: InfoProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
-    <StyledInfo accent={accent}>
-      <StyledTextContainer>
+    <StyledInfo theme={theme} accent={accent}>
+      <StyledTextContainer theme={theme}>
         <StyledIconInfoCircle size={theme.icon.size.md} />
         {text}
       </StyledTextContainer>

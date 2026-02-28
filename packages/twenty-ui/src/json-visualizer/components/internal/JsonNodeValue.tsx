@@ -1,9 +1,12 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { useContext } from 'react';
 
 const StyledText = styled.span<{
   highlighting: JsonNodeHighlighting | undefined;
+  theme: ThemeType;
 }>`
   align-items: center;
   box-sizing: border-box;
@@ -26,13 +29,14 @@ export const JsonNodeValue = ({
   highlighting?: JsonNodeHighlighting | undefined;
 }) => {
   const { onNodeValueClick } = useJsonTreeContextOrThrow();
+  const { theme } = useContext(ThemeContext);
 
   const handleClick = () => {
     onNodeValueClick?.(valueAsString);
   };
 
   return (
-    <StyledText highlighting={highlighting} onClick={handleClick}>
+    <StyledText highlighting={highlighting} onClick={handleClick} theme={theme}>
       {valueAsString}
     </StyledText>
   );

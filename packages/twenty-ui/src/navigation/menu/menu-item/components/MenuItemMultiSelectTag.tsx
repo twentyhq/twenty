@@ -1,7 +1,8 @@
 import { Tag } from '@ui/components';
 import { type IconComponent } from '@ui/display';
 import { Checkbox, CheckboxShape, CheckboxSize } from '@ui/input';
-import { type ThemeColor } from '@ui/theme';
+import { type ThemeColor, ThemeContext } from '@ui/theme';
+import { useContext } from 'react';
 import {
   StyledMenuItemBase,
   StyledMenuItemLeftContent,
@@ -26,13 +27,16 @@ export const MenuItemMultiSelectTag = ({
   text,
   Icon,
 }: MenuItemMultiSelectTagProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledMenuItemBase
       isKeySelected={isKeySelected}
       onClick={onClick}
       className={className}
+      theme={theme}
     >
-      <StyledMenuItemLeftContent>
+      <StyledMenuItemLeftContent theme={theme}>
         <Checkbox
           size={CheckboxSize.Small}
           shape={CheckboxShape.Squared}

@@ -1,17 +1,19 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useContext } from 'react';
 import {
   AppTooltip,
   TooltipDelay,
   TooltipPosition,
   type IconComponent,
 } from '@ui/display';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledMenuPicker = styled.button<{
   selected: boolean;
   disabled: boolean;
+  theme: ThemeType;
 }>`
   box-sizing: border-box;
   background: none;
@@ -34,7 +36,7 @@ const StyledMenuPicker = styled.button<{
 
   ${({ theme, selected, disabled }) => {
     if (disabled) {
-      return css`
+      return `
         background: ${theme.background.secondary};
         border-color: ${theme.border.color.medium};
         color: ${theme.font.color.extraLight};
@@ -43,7 +45,7 @@ const StyledMenuPicker = styled.button<{
     }
 
     if (selected) {
-      return css`
+      return `
         background: transparent;
         border-color: ${theme.color.blue};
         color: ${theme.color.blue};
@@ -54,7 +56,7 @@ const StyledMenuPicker = styled.button<{
       `;
     }
 
-    return css`
+    return `
       background: transparent;
       border-color: ${theme.border.color.medium};
       color: ${theme.font.color.tertiary};
@@ -66,7 +68,7 @@ const StyledMenuPicker = styled.button<{
   }}
 `;
 
-const StyledIconContainer = styled.div`
+const StyledIconContainer = styled.div<{ theme: ThemeType }>`
   align-items: center;
   display: flex;
   flex-shrink: 0;
@@ -78,6 +80,7 @@ const StyledIconContainer = styled.div`
 const StyledLabel = styled.div<{
   disabled: boolean;
   selected: boolean;
+  theme: ThemeType;
 }>`
   font-family: ${({ theme }) => theme.font.family};
   font-size: ${({ theme }) => theme.font.size.xs};
@@ -90,18 +93,18 @@ const StyledLabel = styled.div<{
 
   ${({ theme, selected, disabled }) => {
     if (disabled) {
-      return css`
+      return `
         color: ${theme.font.color.extraLight};
       `;
     }
 
     if (selected) {
-      return css`
+      return `
         color: ${theme.color.blue};
       `;
     }
 
-    return css`
+    return `
       color: ${theme.font.color.tertiary};
     `;
   }}
@@ -136,7 +139,7 @@ export const MenuPicker = ({
   tooltipDelay = TooltipDelay.noDelay,
   tooltipOffset = 5,
 }: MenuPickerProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <>
@@ -150,13 +153,14 @@ export const MenuPicker = ({
         aria-pressed={selected}
         aria-disabled={disabled}
         aria-label={label}
+        theme={theme}
       >
-        <StyledIconContainer>
+        <StyledIconContainer theme={theme}>
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         </StyledIconContainer>
 
         {isDefined(label) && showLabel && (
-          <StyledLabel selected={selected} disabled={disabled}>
+          <StyledLabel selected={selected} disabled={disabled} theme={theme}>
             {label}
           </StyledLabel>
         )}

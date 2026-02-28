@@ -1,7 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
 
-const StyledEmptyContainer = styled(motion.div)`
+const StyledEmptyContainer = styled.div<{ theme: ThemeType }>`
   align-items: center;
   width: 100%;
   height: 100%;
@@ -12,7 +14,16 @@ const StyledEmptyContainer = styled(motion.div)`
   text-align: center;
 `;
 
-export { StyledEmptyContainer as AnimatedPlaceholderEmptyContainer };
+export const AnimatedPlaceholderEmptyContainer = (
+  props: AnimatedPlaceholderEmptyContainerProps<
+    React.ComponentProps<typeof StyledEmptyContainer> &
+      React.ComponentProps<typeof motion.div>,
+    'theme'
+  >,
+) => {
+  const { theme } = useContext(ThemeContext);
+  return <StyledEmptyContainer as={motion.div} {...props} theme={theme} />;
+};
 
 export const EMPTY_PLACEHOLDER_TRANSITION_PROPS = {
   initial: { opacity: 0 },
@@ -22,7 +33,7 @@ export const EMPTY_PLACEHOLDER_TRANSITION_PROPS = {
   },
 };
 
-const StyledEmptyTextContainer = styled.div`
+const StyledEmptyTextContainer = styled.div<{ theme: ThemeType }>`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -32,17 +43,33 @@ const StyledEmptyTextContainer = styled.div`
   width: 100%;
 `;
 
-export { StyledEmptyTextContainer as AnimatedPlaceholderEmptyTextContainer };
+export const AnimatedPlaceholderEmptyTextContainer = (
+  props: AnimatedPlaceholderEmptyTextContainerProps<
+    React.ComponentProps<typeof StyledEmptyTextContainer>,
+    'theme'
+  >,
+) => {
+  const { theme } = useContext(ThemeContext);
+  return <StyledEmptyTextContainer {...props} theme={theme} />;
+};
 
-const StyledEmptyTitle = styled.div`
+const StyledEmptyTitle = styled.div<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-export { StyledEmptyTitle as AnimatedPlaceholderEmptyTitle };
+export const AnimatedPlaceholderEmptyTitle = (
+  props: AnimatedPlaceholderEmptyTitleProps<
+    React.ComponentProps<typeof StyledEmptyTitle>,
+    'theme'
+  >,
+) => {
+  const { theme } = useContext(ThemeContext);
+  return <StyledEmptyTitle {...props} theme={theme} />;
+};
 
-const StyledEmptySubTitle = styled.div`
+const StyledEmptySubTitle = styled.div<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -52,4 +79,12 @@ const StyledEmptySubTitle = styled.div`
   width: 50%;
 `;
 
-export { StyledEmptySubTitle as AnimatedPlaceholderEmptySubTitle };
+export const AnimatedPlaceholderEmptySubTitle = (
+  props: AnimatedPlaceholderEmptySubTitleProps<
+    React.ComponentProps<typeof StyledEmptySubTitle>,
+    'theme'
+  >,
+) => {
+  const { theme } = useContext(ThemeContext);
+  return <StyledEmptySubTitle {...props} theme={theme} />;
+};

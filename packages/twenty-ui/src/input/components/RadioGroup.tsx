@@ -1,7 +1,7 @@
-import React from 'react';
-import { useTheme } from '@emotion/react';
+import React, { useContext } from 'react';
 
 import { type RadioProps } from './Radio';
+import { ThemeContext } from '@ui/theme';
 
 type RadioGroupProps = React.PropsWithChildren & {
   value?: string;
@@ -15,7 +15,7 @@ export const RadioGroup = ({
   onValueChange,
   children,
 }: RadioGroupProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.(event);

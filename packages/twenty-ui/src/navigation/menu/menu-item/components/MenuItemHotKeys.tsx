@@ -1,7 +1,9 @@
-import styled from '@emotion/styled';
-import React from 'react';
+import { styled } from '@linaria/react';
+import React, { useContext } from 'react';
 
-const StyledCommandTextContainer = styled.div`
+import { ThemeContext, type ThemeType } from '@ui/theme';
+
+const StyledCommandTextContainer = styled.div<{ theme: ThemeType }>`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -9,13 +11,13 @@ const StyledCommandTextContainer = styled.div`
   justify-content: center;
 `;
 
-const StyledCommandText = styled.div`
+const StyledCommandText = styled.div<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.font.color.light};
   vertical-align: middle;
   white-space: nowrap;
 `;
 
-const StyledCommandKey = styled.div`
+const StyledCommandKey = styled.div<{ theme: ThemeType }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.strong};
@@ -38,13 +40,15 @@ export const MenuItemHotKeys = ({
   hotKeys,
   joinLabel = 'then',
 }: MenuItemHotKeysProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <StyledCommandText>
+    <StyledCommandText theme={theme}>
       {hotKeys && (
-        <StyledCommandTextContainer>
+        <StyledCommandTextContainer theme={theme}>
           {hotKeys.map((hotKey, index) => (
             <React.Fragment key={index}>
-              <StyledCommandKey>{hotKey}</StyledCommandKey>
+              <StyledCommandKey theme={theme}>{hotKey}</StyledCommandKey>
               {index < hotKeys.length - 1 && joinLabel}
             </React.Fragment>
           ))}

@@ -1,13 +1,16 @@
-import styled from '@emotion/styled';
-import React from 'react';
+import { styled } from '@linaria/react';
+import React, { useContext } from 'react';
 
 import {
   type FloatingButtonPosition,
   type FloatingButtonProps,
 } from './FloatingButton';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledFloatingButtonGroupContainer = styled.div`
+const StyledFloatingButtonGroupContainer = styled.div<{
+  theme: ThemeType;
+}>`
   backdrop-filter: blur(20px);
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) =>
@@ -24,31 +27,35 @@ export const FloatingButtonGroup = ({
   children,
   size,
   className,
-}: FloatingButtonGroupProps) => (
-  <StyledFloatingButtonGroupContainer className={className}>
-    {React.Children.map(children, (child, index) => {
-      let position: FloatingButtonPosition;
+}: FloatingButtonGroupProps) => {
+  const { theme } = useContext(ThemeContext);
 
-      if (index === 0) {
-        position = 'left';
-      } else if (index === children.length - 1) {
-        position = 'right';
-      } else {
-        position = 'middle';
-      }
+  return (
+    <StyledFloatingButtonGroupContainer theme={theme} className={className}>
+      {React.Children.map(children, (child, index) => {
+        let position: FloatingButtonPosition;
 
-      const additionalProps: any = {
-        position,
-        size,
-        applyShadow: false,
-        applyBlur: false,
-      };
+        if (index === 0) {
+          position = 'left';
+        } else if (index === children.length - 1) {
+          position = 'right';
+        } else {
+          position = 'middle';
+        }
 
-      if (isDefined(size)) {
-        additionalProps.size = size;
-      }
+        const additionalProps: any = {
+          position,
+          size,
+          applyShadow: false,
+          applyBlur: false,
+        };
 
-      return React.cloneElement(child, additionalProps);
-    })}
-  </StyledFloatingButtonGroupContainer>
-);
+        if (isDefined(size)) {
+          additionalProps.size = size;
+        }
+
+        return React.cloneElement(child, additionalProps);
+      })}
+    </StyledFloatingButtonGroupContainer>
+  );
+};

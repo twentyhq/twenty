@@ -1,11 +1,12 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import { type MotionProps, motion } from 'framer-motion';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Pill } from '@ui/components/Pill/Pill';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import {
   type ButtonAccent,
   type ButtonProps,
@@ -34,7 +35,7 @@ const StyledButton = styled.button<
     | 'target'
     | 'dataClickOutsideId'
     | 'dataGloballyPreventClickOutside'
-  >
+  > & { theme: ThemeType }
 >`
   align-items: center;
   ${({ theme, variant, inverted, accent, disabled, focus }) => {
@@ -42,106 +43,138 @@ const StyledButton = styled.button<
       case 'primary':
         switch (accent) {
           case 'default':
-            return css`
-              background: ${!inverted
-                ? theme.background.secondary
-                : theme.background.primary};
-              border-color: ${!inverted
-                ? !disabled && focus
-                  ? theme.color.blue
+            return `
+              background: ${
+                !inverted
+                  ? theme.background.secondary
+                  : theme.background.primary
+              };
+              border-color: ${
+                !inverted
+                  ? !disabled && focus
+                    ? theme.color.blue
+                    : theme.background.transparent.light
                   : theme.background.transparent.light
-                : theme.background.transparent.light};
+              };
               border-width: 1px 1px 1px 1px !important;
-              box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${
-                    !inverted
-                      ? theme.accent.tertiary
-                      : theme.background.transparent.medium
-                  }`
-                : 'none'};
-              color: ${!inverted
-                ? !disabled
-                  ? theme.font.color.secondary
-                  : theme.font.color.extraLight
-                : theme.font.color.secondary};
+              box-shadow: ${
+                !disabled && focus
+                  ? `0 0 0 3px ${
+                      !inverted
+                        ? theme.accent.tertiary
+                        : theme.background.transparent.medium
+                    }`
+                  : 'none'
+              };
+              color: ${
+                !inverted
+                  ? !disabled
+                    ? theme.font.color.secondary
+                    : theme.font.color.extraLight
+                  : theme.font.color.secondary
+              };
               &:hover {
-                background: ${!inverted
-                  ? theme.background.tertiary
-                  : theme.background.secondary};
+                background: ${
+                  !inverted
+                    ? theme.background.tertiary
+                    : theme.background.secondary
+                };
               }
               &:active {
-                background: ${!inverted
-                  ? theme.background.quaternary
-                  : theme.background.tertiary};
+                background: ${
+                  !inverted
+                    ? theme.background.quaternary
+                    : theme.background.tertiary
+                };
               }
             `;
           case 'blue':
-            return css`
-              background: ${!inverted
-                ? theme.color.blue
-                : theme.background.primary};
-              border-color: ${!inverted
-                ? focus
-                  ? theme.color.blue
+            return `
+              background: ${
+                !inverted ? theme.color.blue : theme.background.primary
+              };
+              border-color: ${
+                !inverted
+                  ? focus
+                    ? theme.color.blue
+                    : theme.background.transparent.light
                   : theme.background.transparent.light
-                : theme.background.transparent.light};
+              };
               border-width: 1px 1px 1px 1px !important;
-              box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${
-                    !inverted
-                      ? theme.accent.tertiary
-                      : theme.background.transparent.medium
-                  }`
-                : 'none'};
+              box-shadow: ${
+                !disabled && focus
+                  ? `0 0 0 3px ${
+                      !inverted
+                        ? theme.accent.tertiary
+                        : theme.background.transparent.medium
+                    }`
+                  : 'none'
+              };
               color: ${!inverted ? theme.grayScale.gray1 : theme.color.blue};
-              ${disabled
-                ? ''
-                : css`
+              ${
+                disabled
+                  ? ''
+                  : `
                     &:hover {
-                      background: ${!inverted
-                        ? theme.color.blue10
-                        : theme.background.secondary};
+                      background: ${
+                        !inverted
+                          ? theme.color.blue10
+                          : theme.background.secondary
+                      };
                     }
                     &:active {
-                      background: ${!inverted
-                        ? theme.color.blue12
-                        : theme.background.tertiary};
+                      background: ${
+                        !inverted
+                          ? theme.color.blue12
+                          : theme.background.tertiary
+                      };
                     }
-                  `}
+                  `
+              }
             `;
           case 'danger':
-            return css`
-              background: ${!inverted
-                ? theme.color.red
-                : theme.background.primary};
-              border-color: ${!inverted
-                ? focus
-                  ? theme.color.red
+            return `
+              background: ${
+                !inverted ? theme.color.red : theme.background.primary
+              };
+              border-color: ${
+                !inverted
+                  ? focus
+                    ? theme.color.red
+                    : theme.background.transparent.light
                   : theme.background.transparent.light
-                : theme.background.transparent.light};
+              };
               border-width: 1px 1px !important;
-              box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${
-                    !inverted
-                      ? theme.color.red3
-                      : theme.background.transparent.medium
-                  }`
-                : 'none'};
+              box-shadow: ${
+                !disabled && focus
+                  ? `0 0 0 3px ${
+                      !inverted
+                        ? theme.color.red3
+                        : theme.background.transparent.medium
+                    }`
+                  : 'none'
+              };
               color: ${!inverted ? theme.background.primary : theme.color.red};
-              ${disabled
-                ? ''
-                : css`
+              ${
+                disabled
+                  ? ''
+                  : `
                     &:hover {
-                      background: ${!inverted
-                        ? theme.color.red8
-                        : theme.background.secondary};
+                      background: ${
+                        !inverted
+                          ? theme.color.red8
+                          : theme.background.secondary
+                      };
                     }
                     &:active {
-                      background: ${!inverted
-                        ? theme.color.red10
-                        : theme.background.tertiary};
+                      background: ${
+                        !inverted
+                          ? theme.color.red10
+                          : theme.background.tertiary
+                      };
                     }
-                  `}
+                  `
+              }
             `;
         }
         break;
@@ -149,143 +182,172 @@ const StyledButton = styled.button<
       case 'tertiary':
         switch (accent) {
           case 'default':
-            return css`
+            return `
               background: transparent;
-              border-color: ${!inverted
-                ? variant === 'secondary'
-                  ? !disabled && focus
-                    ? theme.color.blue
-                    : theme.background.transparent.medium
-                  : focus
-                    ? theme.color.blue
-                    : 'transparent'
-                : variant === 'secondary'
-                  ? focus || disabled
-                    ? theme.grayScale.gray1
-                    : theme.background.transparent.primary
-                  : focus
-                    ? theme.grayScale.gray1
-                    : 'transparent'};
-              border-width: 1px 1px 1px 1px !important;
-              box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${
-                    !inverted
-                      ? theme.accent.tertiary
+              border-color: ${
+                !inverted
+                  ? variant === 'secondary'
+                    ? !disabled && focus
+                      ? theme.color.blue
                       : theme.background.transparent.medium
-                  }`
-                : 'none'};
-              color: ${!inverted
-                ? !disabled
-                  ? theme.font.color.secondary
-                  : theme.font.color.extraLight
-                : theme.font.color.inverted};
-              &:hover {
-                background: ${!inverted
+                    : focus
+                      ? theme.color.blue
+                      : 'transparent'
+                  : variant === 'secondary'
+                    ? focus || disabled
+                      ? theme.grayScale.gray1
+                      : theme.background.transparent.primary
+                    : focus
+                      ? theme.grayScale.gray1
+                      : 'transparent'
+              };
+              border-width: 1px 1px 1px 1px !important;
+              box-shadow: ${
+                !disabled && focus
+                  ? `0 0 0 3px ${
+                      !inverted
+                        ? theme.accent.tertiary
+                        : theme.background.transparent.medium
+                    }`
+                  : 'none'
+              };
+              color: ${
+                !inverted
                   ? !disabled
-                    ? theme.background.transparent.light
-                    : 'transparent'
-                  : theme.background.transparent.light};
+                    ? theme.font.color.secondary
+                    : theme.font.color.extraLight
+                  : theme.font.color.inverted
+              };
+              &:hover {
+                background: ${
+                  !inverted
+                    ? !disabled
+                      ? theme.background.transparent.light
+                      : 'transparent'
+                    : theme.background.transparent.light
+                };
               }
               &:active {
-                background: ${!inverted
-                  ? !disabled
-                    ? theme.background.transparent.light
-                    : 'transparent'
-                  : theme.background.transparent.medium};
+                background: ${
+                  !inverted
+                    ? !disabled
+                      ? theme.background.transparent.light
+                      : 'transparent'
+                    : theme.background.transparent.medium
+                };
               }
             `;
           case 'blue':
-            return css`
+            return `
               background: transparent;
-              border-color: ${!inverted
-                ? variant === 'secondary'
-                  ? focus
-                    ? theme.color.blue
-                    : theme.accent.primary
-                  : focus
-                    ? theme.color.blue
-                    : 'transparent'
-                : variant === 'secondary'
-                  ? focus || disabled
-                    ? theme.grayScale.gray1
-                    : theme.background.transparent.primary
-                  : focus
-                    ? theme.grayScale.gray1
-                    : 'transparent'};
+              border-color: ${
+                !inverted
+                  ? variant === 'secondary'
+                    ? focus
+                      ? theme.color.blue
+                      : theme.accent.primary
+                    : focus
+                      ? theme.color.blue
+                      : 'transparent'
+                  : variant === 'secondary'
+                    ? focus || disabled
+                      ? theme.grayScale.gray1
+                      : theme.background.transparent.primary
+                    : focus
+                      ? theme.grayScale.gray1
+                      : 'transparent'
+              };
               border-width: 1px 1px 1px 1px !important;
-              box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${
-                    !inverted
-                      ? theme.accent.tertiary
-                      : theme.background.transparent.medium
-                  }`
-                : 'none'};
-              color: ${!inverted
-                ? !disabled
-                  ? theme.color.blue
-                  : theme.accent.accent4060
-                : theme.font.color.inverted};
-              &:hover {
-                background: ${!inverted
+              box-shadow: ${
+                !disabled && focus
+                  ? `0 0 0 3px ${
+                      !inverted
+                        ? theme.accent.tertiary
+                        : theme.background.transparent.medium
+                    }`
+                  : 'none'
+              };
+              color: ${
+                !inverted
                   ? !disabled
-                    ? theme.accent.tertiary
-                    : 'transparent'
-                  : theme.background.transparent.light};
+                    ? theme.color.blue
+                    : theme.accent.accent4060
+                  : theme.font.color.inverted
+              };
+              &:hover {
+                background: ${
+                  !inverted
+                    ? !disabled
+                      ? theme.accent.tertiary
+                      : 'transparent'
+                    : theme.background.transparent.light
+                };
               }
               &:active {
-                background: ${!inverted
-                  ? !disabled
-                    ? theme.accent.secondary
-                    : 'transparent'
-                  : theme.background.transparent.medium};
+                background: ${
+                  !inverted
+                    ? !disabled
+                      ? theme.accent.secondary
+                      : 'transparent'
+                    : theme.background.transparent.medium
+                };
               }
             `;
           case 'danger':
-            return css`
+            return `
               background: transparent;
-              border-color: ${!inverted
-                ? variant === 'secondary'
-                  ? focus
-                    ? theme.color.red
-                    : theme.border.color.danger
-                  : focus
-                    ? theme.color.red
-                    : 'transparent'
-                : variant === 'secondary'
-                  ? focus || disabled
-                    ? theme.grayScale.gray1
-                    : theme.background.transparent.primary
-                  : focus
-                    ? theme.grayScale.gray1
-                    : 'transparent'};
+              border-color: ${
+                !inverted
+                  ? variant === 'secondary'
+                    ? focus
+                      ? theme.color.red
+                      : theme.border.color.danger
+                    : focus
+                      ? theme.color.red
+                      : 'transparent'
+                  : variant === 'secondary'
+                    ? focus || disabled
+                      ? theme.grayScale.gray1
+                      : theme.background.transparent.primary
+                    : focus
+                      ? theme.grayScale.gray1
+                      : 'transparent'
+              };
               border-width: 1px 1px 1px 1px !important;
-              box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${
-                    !inverted
-                      ? theme.color.red3
-                      : theme.background.transparent.medium
-                  }`
-                : 'none'};
-              color: ${!inverted
-                ? theme.font.color.danger
-                : theme.font.color.inverted};
+              box-shadow: ${
+                !disabled && focus
+                  ? `0 0 0 3px ${
+                      !inverted
+                        ? theme.color.red3
+                        : theme.background.transparent.medium
+                    }`
+                  : 'none'
+              };
+              color: ${
+                !inverted ? theme.font.color.danger : theme.font.color.inverted
+              };
               &:hover {
-                background: ${!inverted
-                  ? !disabled
-                    ? theme.background.danger
-                    : 'transparent'
-                  : theme.background.transparent.light};
+                background: ${
+                  !inverted
+                    ? !disabled
+                      ? theme.background.danger
+                      : 'transparent'
+                    : theme.background.transparent.light
+                };
               }
               &:active {
-                background: ${!inverted
-                  ? !disabled
-                    ? theme.background.danger
-                    : 'transparent'
-                  : theme.background.transparent.medium};
+                background: ${
+                  !inverted
+                    ? !disabled
+                      ? theme.background.danger
+                      : 'transparent'
+                    : theme.background.transparent.medium
+                };
               }
             `;
         }
     }
+    return '';
   }}
 
   text-decoration: none;
@@ -300,6 +362,7 @@ const StyledButton = styled.button<
       case 'standalone':
         return theme.border.radius.sm;
     }
+    return '';
   }};
   border-style: solid;
   border-width: ${({ variant, position }) => {
@@ -310,6 +373,7 @@ const StyledButton = styled.button<
       case 'tertiary':
         return '0';
     }
+    return '';
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
@@ -319,7 +383,7 @@ const StyledButton = styled.button<
   font-size: ${({ theme }) => theme.font.size.md};
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
-  justify-content: ${({ justify }) => justify};
+  justify-content: ${({ justify }) => justify ?? ''};
   padding: ${({ theme }) => {
     return `0 ${theme.spacing(2)}`;
   }};
@@ -342,6 +406,7 @@ const StyledSoonPill = styled(Pill)`
 const StyledSeparator = styled.div<{
   buttonSize: ButtonSize;
   accent: ButtonAccent;
+  theme: ThemeType;
 }>`
   background: ${({ theme, accent }) => {
     switch (accent) {
@@ -362,6 +427,7 @@ const StyledSeparator = styled.div<{
 const StyledShortcutLabel = styled.div<{
   variant: ButtonVariant;
   accent: ButtonAccent;
+  theme: ThemeType;
 }>`
   color: ${({ theme, variant, accent }) => {
     switch (accent) {
@@ -411,13 +477,14 @@ export const AnimatedButton = ({
   dataGloballyPreventClickOutside,
   soonLabel = 'Soon',
 }: AnimatedButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
 
   const ButtonComponent = to ? Link : 'button';
 
   return (
     <StyledButton
+      theme={theme}
       as={ButtonComponent}
       fullWidth={fullWidth}
       variant={variant}
@@ -450,8 +517,8 @@ export const AnimatedButton = ({
       {title}
       {hotkeys && !isMobile && (
         <>
-          <StyledSeparator buttonSize={size} accent={accent} />
-          <StyledShortcutLabel variant={variant} accent={accent}>
+          <StyledSeparator theme={theme} buttonSize={size} accent={accent} />
+          <StyledShortcutLabel theme={theme} variant={variant} accent={accent}>
             {hotkeys.join(getOsShortcutSeparator())}
           </StyledShortcutLabel>
         </>

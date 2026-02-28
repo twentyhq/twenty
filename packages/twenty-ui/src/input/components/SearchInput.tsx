@@ -1,8 +1,8 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconFilter, IconSearch } from '@ui/display';
 import { IconButton } from '@ui/input/button/components/IconButton';
-import { type ChangeEvent, type ReactNode, useState } from 'react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { type ChangeEvent, type ReactNode, useContext, useState } from 'react';
 
 export type SearchInputProps = {
   value: string;
@@ -14,14 +14,14 @@ export type SearchInputProps = {
   className?: string;
 };
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.div<{ theme: ThemeType }>`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
-const StyledInputContainer = styled.div`
+const StyledInputContainer = styled.div<{ theme: ThemeType }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -38,7 +38,10 @@ const StyledInputContainer = styled.div`
   }
 `;
 
-const StyledIconContainer = styled.div<{ isFocused: boolean }>`
+const StyledIconContainer = styled.div<{
+  isFocused: boolean;
+  theme: ThemeType;
+}>`
   align-items: center;
   color: ${({ theme, isFocused }) =>
     isFocused ? theme.font.color.secondary : theme.font.color.light};
@@ -46,7 +49,7 @@ const StyledIconContainer = styled.div<{ isFocused: boolean }>`
   justify-content: center;
 `;
 
-const StyledInput = styled.input`
+const StyledInput = styled.input<{ theme: ThemeType }>`
   background: transparent;
   border: none;
   color: ${({ theme }) => theme.font.color.primary};
@@ -76,18 +79,19 @@ export const SearchInput = ({
   disabled,
   className,
 }: SearchInputProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   const [isFocused, setIsFocused] = useState(false);
 
   const filterButton = <IconButton Icon={IconFilter} variant="secondary" />;
 
   return (
-    <StyledWrapper className={className}>
-      <StyledInputContainer>
-        <StyledIconContainer isFocused={isFocused}>
+    <StyledWrapper theme={theme} className={className}>
+      <StyledInputContainer theme={theme}>
+        <StyledIconContainer theme={theme} isFocused={isFocused}>
           <IconSearch size={theme.icon.size.md} />
         </StyledIconContainer>
         <StyledInput
+          theme={theme}
           value={value}
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             onChange(event.target.value)

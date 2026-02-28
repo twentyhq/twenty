@@ -1,6 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { useContext } from 'react';
 
-const StyledCardHeader = styled.div`
+const StyledCardHeader = styled.div<{ theme: ThemeType }>`
   background-color: ${({ theme }) => theme.background.primary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   font-size: ${({ theme }) => theme.font.size.sm};
@@ -8,4 +10,12 @@ const StyledCardHeader = styled.div`
   padding: ${({ theme }) => theme.spacing(2, 4)};
 `;
 
-export { StyledCardHeader as CardHeader };
+export const CardHeader = (
+  props: CardHeaderProps<
+    React.ComponentProps<typeof StyledCardHeader>,
+    'theme'
+  >,
+) => {
+  const { theme } = useContext(ThemeContext);
+  return <StyledCardHeader {...props} theme={theme} />;
+};

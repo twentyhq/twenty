@@ -1,6 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
 import * as React from 'react';
+
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { RadioGroup } from './RadioGroup';
 
 export enum RadioSize {
@@ -30,7 +33,9 @@ type RadioInputProps = {
   'radio-size'?: RadioSize;
 };
 
-const StyledRadioInput = styled(motion.input)<RadioInputProps>`
+const StyledRadioInputBase = styled.input<
+  RadioInputProps & { theme: ThemeType }
+>`
   -webkit-appearance: none;
   appearance: none;
   background-color: transparent;
@@ -49,12 +54,14 @@ const StyledRadioInput = styled(motion.input)<RadioInputProps>`
       if (!checked) {
         return theme.background.tertiary;
       }
+      return '';
     }};
     outline: 4px solid
       ${({ theme, checked }) => {
         if (!checked) {
           return theme.background.tertiary;
         }
+        return '';
         return theme.color.transparent.blue2;
       }};
   }
@@ -83,12 +90,14 @@ const StyledRadioInput = styled(motion.input)<RadioInputProps>`
   }
 `;
 
+const StyledRadioInput = motion.create(StyledRadioInputBase);
+
 type LabelProps = {
   disabled?: boolean;
   labelPosition?: LabelPosition;
 };
 
-const StyledLabel = styled.label<LabelProps>`
+const StyledLabel = styled.label<LabelProps & { theme: ThemeType }>`
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   font-size: ${({ theme }) => theme.font.size.sm};
@@ -126,6 +135,8 @@ export const Radio = ({
   size = RadioSize.Small,
   value,
 }: RadioProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.(event);
     onCheckedChange?.(event.target.checked);
@@ -136,6 +147,7 @@ export const Radio = ({
   return (
     <StyledContainer className={className} labelPosition={labelPosition}>
       <StyledRadioInput
+        theme={theme}
         type="radio"
         id={optionId}
         name={name}
@@ -152,6 +164,7 @@ export const Radio = ({
       />
       {label && (
         <StyledLabel
+          theme={theme}
           htmlFor={optionId}
           labelPosition={labelPosition}
           disabled={disabled}

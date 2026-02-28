@@ -1,6 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
-const StyledEditorHeader = styled.div`
+import { ThemeContext, type ThemeType } from '@ui/theme';
+
+const StyledEditorHeader = styled.div<{ theme: ThemeType }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -14,7 +17,7 @@ const StyledEditorHeader = styled.div`
   justify-content: space-between;
 `;
 
-const StyledElementContainer = styled.div`
+const StyledElementContainer = styled.div<{ theme: ThemeType }>`
   align-content: flex-end;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -31,16 +34,18 @@ export const CoreEditorHeader = ({
   leftNodes,
   rightNodes,
 }: CoreEditorHeaderProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <StyledEditorHeader>
-      <StyledElementContainer>
+    <StyledEditorHeader theme={theme}>
+      <StyledElementContainer theme={theme}>
         {leftNodes &&
           leftNodes.map((leftButton, index) => {
             return <div key={`left-${index}`}>{leftButton}</div>;
           })}
         {title}
       </StyledElementContainer>
-      <StyledElementContainer>
+      <StyledElementContainer theme={theme}>
         {rightNodes &&
           rightNodes.map((rightButton, index) => {
             return <div key={`right-${index}`}>{rightButton}</div>;

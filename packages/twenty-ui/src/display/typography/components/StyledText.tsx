@@ -1,5 +1,6 @@
-import { type ReactElement, type ReactNode } from 'react';
-import styled from '@emotion/styled';
+import { type ReactElement, type ReactNode, useContext } from 'react';
+import { styled } from '@linaria/react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 type StyledTextProps = {
   PrefixComponent?: ReactElement;
@@ -7,7 +8,7 @@ type StyledTextProps = {
   color?: string;
 };
 
-export const StyledTextContent = styled.div`
+export const StyledTextContent = styled.div<{ theme: ThemeType }>`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
 
@@ -19,6 +20,7 @@ export const StyledTextContent = styled.div`
 
 export const StyledTextWrapper = styled.div<{
   color?: string;
+  theme: ThemeType;
 }>`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
@@ -43,10 +45,12 @@ export const StyledText = ({
   text,
   color,
 }: StyledTextProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <StyledTextWrapper color={color}>
+    <StyledTextWrapper color={color} theme={theme}>
       {PrefixComponent ? PrefixComponent : null}
-      <StyledTextContent>{text}</StyledTextContent>
+      <StyledTextContent theme={theme}>{text}</StyledTextContent>
     </StyledTextWrapper>
   );
 };

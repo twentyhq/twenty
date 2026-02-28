@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 export type ProgressBarProps = {
   value: number;
@@ -14,20 +15,22 @@ export type StyledBarProps = {
   className?: string;
   backgroundColor?: string;
   withBorderRadius?: boolean;
+  theme: ThemeType;
 };
 
 const StyledBar = styled.div<StyledBarProps>`
   height: ${({ theme }) => theme.spacing(2)};
-  background-color: ${({ backgroundColor }) => backgroundColor};
+  background-color: ${({ backgroundColor }) => backgroundColor ?? ''};
   border-radius: ${({ withBorderRadius, theme }) =>
     withBorderRadius ? theme.border.radius.xxl : '0'};
   overflow: hidden;
   width: 100%;
 `;
 
-const StyledBarFilling = styled(motion.div)<{
+const StyledBarFillingBase = styled.div<{
   barColor?: string;
   withBorderRadius?: boolean;
+  theme: ThemeType;
 }>`
   background-color: ${({ barColor, theme }) =>
     barColor ?? theme.font.color.primary};
@@ -35,6 +38,8 @@ const StyledBarFilling = styled(motion.div)<{
   border-radius: ${({ withBorderRadius, theme }) =>
     withBorderRadius ? theme.border.radius.md : '0'};
 `;
+
+const StyledBarFilling = motion.create(StyledBarFillingBase);
 
 export const ProgressBar = ({
   value,
@@ -44,6 +49,7 @@ export const ProgressBar = ({
   withBorderRadius = false,
 }: ProgressBarProps) => {
   const [initialValue] = useState(value);
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledBar
@@ -52,6 +58,7 @@ export const ProgressBar = ({
       withBorderRadius={withBorderRadius}
       role="progressbar"
       aria-valuenow={Math.ceil(value)}
+      theme={theme}
     >
       <StyledBarFilling
         initial={{ width: `${initialValue}%` }}
@@ -59,6 +66,7 @@ export const ProgressBar = ({
         barColor={barColor}
         transition={{ ease: 'linear' }}
         withBorderRadius={withBorderRadius}
+        theme={theme}
       />
     </StyledBar>
   );

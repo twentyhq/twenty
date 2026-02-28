@@ -1,7 +1,8 @@
-import React from 'react';
-import styled from '@emotion/styled';
+import React, { useContext } from 'react';
+import { styled } from '@linaria/react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ theme: ThemeType }>`
   display: flex;
   align-items: center;
   width: 100%;
@@ -30,5 +31,7 @@ export const SeparatorLineText = ({
 }: {
   children: React.ReactNode;
 }) => {
-  return <StyledContainer>{children}</StyledContainer>;
+  const { theme } = useContext(ThemeContext);
+
+  return <StyledContainer theme={theme}>{children}</StyledContainer>;
 };

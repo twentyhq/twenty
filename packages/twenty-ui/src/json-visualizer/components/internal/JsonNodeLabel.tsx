@@ -1,10 +1,12 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { useContext } from 'react';
 
 const StyledLabelContainer = styled.span<{
   highlighting?: JsonNodeHighlighting;
+  theme: ThemeType;
 }>`
   background-color: ${({ theme, highlighting }) =>
     highlighting === 'blue'
@@ -52,10 +54,10 @@ export const JsonNodeLabel = ({
   Icon: IconComponent;
   highlighting?: JsonNodeHighlighting | undefined;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledLabelContainer highlighting={highlighting}>
+    <StyledLabelContainer theme={theme} highlighting={highlighting}>
       <Icon
         size={theme.icon.size.md}
         color={

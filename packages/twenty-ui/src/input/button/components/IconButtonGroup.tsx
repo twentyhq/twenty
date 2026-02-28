@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { type MouseEvent } from 'react';
+import { type MouseEvent, useContext } from 'react';
 
 import { InsideButton } from '@ui/input/button/components/InsideButton';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 export type IconButtonGroupProps = {
   disabled?: boolean;
@@ -14,7 +15,7 @@ export type IconButtonGroupProps = {
 };
 
 const StyledIconButtonGroupContainer = styled.div<
-  Pick<IconButtonGroupProps, 'disabled'>
+  Pick<IconButtonGroupProps, 'disabled'> & { theme: ThemeType }
 >`
   display: inline-flex;
   align-items: flex-start;
@@ -35,17 +36,25 @@ export const IconButtonGroup = ({
   iconButtons,
   disabled,
   className,
-}: IconButtonGroupProps) => (
-  <StyledIconButtonGroupContainer className={className} disabled={disabled}>
-    {iconButtons.map(({ Icon, onClick }, index) => {
-      return (
-        <InsideButton
-          key={index}
-          Icon={Icon}
-          onClick={onClick}
-          disabled={disabled}
-        />
-      );
-    })}
-  </StyledIconButtonGroupContainer>
-);
+}: IconButtonGroupProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <StyledIconButtonGroupContainer
+      theme={theme}
+      className={className}
+      disabled={disabled}
+    >
+      {iconButtons.map(({ Icon, onClick }, index) => {
+        return (
+          <InsideButton
+            key={index}
+            Icon={Icon}
+            onClick={onClick}
+            disabled={disabled}
+          />
+        );
+      })}
+    </StyledIconButtonGroupContainer>
+  );
+};

@@ -1,7 +1,7 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { type ComponentProps, type MouseEvent } from 'react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { type ComponentProps, type MouseEvent, useContext } from 'react';
 
 export type LightIconButtonAccent = 'secondary' | 'tertiary';
 export type LightIconButtonSize = 'small' | 'medium';
@@ -20,7 +20,9 @@ export type LightIconButtonProps = {
 } & Pick<ComponentProps<'button'>, 'aria-label' | 'title'>;
 
 const StyledButton = styled.button<
-  Pick<LightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'>
+  Pick<LightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'> & {
+    theme: ThemeType;
+  }
 >`
   align-items: center;
   background: transparent;
@@ -46,6 +48,7 @@ const StyledButton = styled.button<
             ? theme.font.color.tertiary
             : theme.font.color.extraLight;
     }
+    return '';
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
@@ -94,7 +97,7 @@ export const LightIconButton = ({
   onClick,
   title,
 }: LightIconButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledButton
@@ -108,6 +111,7 @@ export const LightIconButton = ({
       size={size}
       active={active}
       title={title}
+      theme={theme}
     >
       {Icon && (
         <Icon

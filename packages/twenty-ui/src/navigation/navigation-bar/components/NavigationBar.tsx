@@ -1,9 +1,12 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
+
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 import { NavigationBarItem } from './NavigationBarItem';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ theme: ThemeType }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
   justify-content: center;
@@ -19,15 +22,19 @@ type NavigationBarProps = {
 export const NavigationBar = ({
   activeItemName,
   items,
-}: NavigationBarProps) => (
-  <StyledContainer>
-    {items.map(({ Icon, name, onClick }) => (
-      <NavigationBarItem
-        key={name}
-        Icon={Icon}
-        isActive={activeItemName === name}
-        onClick={onClick}
-      />
-    ))}
-  </StyledContainer>
-);
+}: NavigationBarProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <StyledContainer theme={theme}>
+      {items.map(({ Icon, name, onClick }) => (
+        <NavigationBarItem
+          key={name}
+          Icon={Icon}
+          isActive={activeItemName === name}
+          onClick={onClick}
+        />
+      ))}
+    </StyledContainer>
+  );
+};

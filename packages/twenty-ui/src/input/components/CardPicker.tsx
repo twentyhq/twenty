@@ -1,9 +1,12 @@
-import React from 'react';
-import styled from '@emotion/styled';
+import React, { useContext } from 'react';
+import { styled } from '@linaria/react';
 
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { Radio } from './Radio';
 
-const StyledSubscriptionCardContainer = styled.button`
+const StyledSubscriptionCardContainer = styled.button<{
+  theme: ThemeType;
+}>`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -17,7 +20,7 @@ const StyledSubscriptionCardContainer = styled.button`
   }
 `;
 
-const StyledRadioContainer = styled.div`
+const StyledRadioContainer = styled.div<{ theme: ThemeType }>`
   position: absolute;
   right: ${({ theme }) => theme.spacing(2)};
   top: ${({ theme }) => theme.spacing(2)};
@@ -34,9 +37,11 @@ export const CardPicker = ({
   checked,
   handleChange,
 }: CardPickerProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <StyledSubscriptionCardContainer onClick={handleChange}>
-      <StyledRadioContainer>
+    <StyledSubscriptionCardContainer theme={theme} onClick={handleChange}>
+      <StyledRadioContainer theme={theme}>
         <Radio checked={checked} />
       </StyledRadioContainer>
       {children}

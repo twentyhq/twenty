@@ -1,5 +1,7 @@
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { type PlacesType, type PositionStrategy, Tooltip } from 'react-tooltip';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 export enum TooltipPosition {
   Top = 'top',
@@ -15,7 +17,7 @@ export enum TooltipDelay {
   longDelay = '1000ms',
 }
 
-const StyledAppTooltip = styled(Tooltip)<{ width?: string }>`
+const StyledAppTooltip = styled(Tooltip)<{ width?: string; theme: ThemeType }>`
   backdrop-filter: ${({ theme }) => theme.blur.strong};
   background-color: ${({ theme }) => theme.color.transparent.gray11};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -67,6 +69,8 @@ export const AppTooltip = ({
   width,
   isOpen,
 }: AppTooltipProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const getDelayInMis = (delay: TooltipDelay) => {
     switch (delay) {
       case TooltipDelay.noDelay:
@@ -98,6 +102,7 @@ export const AppTooltip = ({
         width,
         isOpen,
       }}
+      theme={theme}
     />
   );
 };

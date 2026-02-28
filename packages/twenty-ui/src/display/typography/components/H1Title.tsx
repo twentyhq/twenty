@@ -1,5 +1,6 @@
-import { type ReactNode } from 'react';
-import styled from '@emotion/styled';
+import { type ReactNode, useContext } from 'react';
+import { styled } from '@linaria/react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 type H1TitleProps = {
   title: ReactNode;
@@ -15,6 +16,7 @@ export enum H1TitleFontColor {
 
 const StyledTitle = styled.h2<{
   fontColor: H1TitleFontColor;
+  theme: ThemeType;
 }>`
   color: ${({ theme, fontColor }) => theme.font.color[fontColor]};
   font-size: ${({ theme }) => theme.font.size.lg};
@@ -29,8 +31,10 @@ export const H1Title = ({
   fontColor = H1TitleFontColor.Tertiary,
   className,
 }: H1TitleProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <StyledTitle fontColor={fontColor} className={className}>
+    <StyledTitle fontColor={fontColor} className={className} theme={theme}>
       {title}
     </StyledTitle>
   );

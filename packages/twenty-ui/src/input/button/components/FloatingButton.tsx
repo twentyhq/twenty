@@ -1,7 +1,7 @@
-import isPropValid from '@emotion/is-prop-valid';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 export type FloatingButtonSize = 'small' | 'medium';
@@ -20,11 +20,7 @@ export type FloatingButtonProps = {
   to?: string;
 };
 
-const StyledButton = styled('button', {
-  shouldForwardProp: (prop) =>
-    !['applyBlur', 'applyShadow', 'focus', 'position', 'size'].includes(prop) &&
-    isPropValid(prop),
-})<
+const StyledButton = styled.button<
   Pick<
     FloatingButtonProps,
     | 'size'
@@ -34,7 +30,7 @@ const StyledButton = styled('button', {
     | 'applyShadow'
     | 'position'
     | 'to'
-  >
+  > & { theme: ThemeType }
 >`
   align-items: center;
   backdrop-filter: ${({ applyBlur }) => (applyBlur ? 'blur(20px)' : 'none')};
@@ -53,6 +49,7 @@ const StyledButton = styled('button', {
       case 'standalone':
         return theme.border.radius.sm;
     }
+    return '';
   }};
   box-shadow: ${({ theme, applyShadow, focus }) =>
     applyShadow
@@ -114,7 +111,7 @@ export const FloatingButton = ({
   focus = false,
   to,
 }: FloatingButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledButton
       disabled={disabled}
@@ -126,6 +123,7 @@ export const FloatingButton = ({
       className={className}
       to={to}
       as={to ? Link : 'button'}
+      theme={theme}
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}

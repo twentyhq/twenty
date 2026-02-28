@@ -1,10 +1,14 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { useContext } from 'react';
 
 export type RoundedIconButtonSize = 'small' | 'medium';
 
-const StyledIconButton = styled.button<{ size: RoundedIconButtonSize }>`
+const StyledIconButton = styled.button<{
+  size: RoundedIconButtonSize;
+  theme: ThemeType;
+}>`
   align-items: center;
   background: ${({ theme }) => theme.color.blue};
   border: none;
@@ -40,7 +44,7 @@ export const RoundedIconButton = ({
   className,
   size = 'small',
 }: RoundedIconButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledIconButton
@@ -48,6 +52,7 @@ export const RoundedIconButton = ({
       disabled={disabled}
       onClick={onClick}
       size={size}
+      theme={theme}
     >
       <Icon size={theme.icon.size.md} />
     </StyledIconButton>

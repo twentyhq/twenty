@@ -1,5 +1,7 @@
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 type H2TitleProps = {
   title: string;
@@ -8,7 +10,7 @@ type H2TitleProps = {
   className?: string;
 };
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ theme: ThemeType }>`
   display: flex;
   flex-direction: column;
   margin-bottom: ${({ theme }) => theme.spacing(4)};
@@ -20,14 +22,14 @@ const StyledTitleContainer = styled.div`
   justify-content: space-between;
 `;
 
-const StyledTitle = styled.h2`
+const StyledTitle = styled.h2<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin: 0;
 `;
 
-const StyledDescription = styled.h3`
+const StyledDescription = styled.h3<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -40,20 +42,24 @@ export const H2Title = ({
   description,
   adornment,
   className,
-}: H2TitleProps) => (
-  <StyledContainer className={className}>
-    <StyledTitleContainer>
-      <StyledTitle>{title}</StyledTitle>
-      {adornment}
-    </StyledTitleContainer>
-    {description && (
-      <StyledDescription>
-        <OverflowingTextWithTooltip
-          text={description}
-          displayedMaxRows={5}
-          isTooltipMultiline={true}
-        />
-      </StyledDescription>
-    )}
-  </StyledContainer>
-);
+}: H2TitleProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <StyledContainer className={className} theme={theme}>
+      <StyledTitleContainer>
+        <StyledTitle theme={theme}>{title}</StyledTitle>
+        {adornment}
+      </StyledTitleContainer>
+      {description && (
+        <StyledDescription theme={theme}>
+          <OverflowingTextWithTooltip
+            text={description}
+            displayedMaxRows={5}
+            isTooltipMultiline={true}
+          />
+        </StyledDescription>
+      )}
+    </StyledContainer>
+  );
+};

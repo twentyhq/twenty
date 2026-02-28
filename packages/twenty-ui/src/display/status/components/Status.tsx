@@ -1,5 +1,11 @@
-import styled from '@emotion/styled';
-import { MAIN_COLOR_NAMES, type ThemeColor } from '@ui/theme';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
+import {
+  MAIN_COLOR_NAMES,
+  ThemeContext,
+  type ThemeColor,
+  type ThemeType,
+} from '@ui/theme';
 
 import { Loader } from '@ui/feedback/loader/components/Loader';
 
@@ -12,6 +18,7 @@ const StyledStatus = styled.h3<{
   color: ThemeColor;
   weight: 'regular' | 'medium';
   isLoaderVisible: boolean;
+  theme: ThemeType;
 }>`
   align-items: center;
   background: ${({ color, theme }) => theme.tag.background[color]};
@@ -63,15 +70,20 @@ export const Status = ({
   text,
   onClick,
   weight = 'regular',
-}: StatusProps) => (
-  <StyledStatus
-    className={className}
-    color={parseThemeColor(color)}
-    onClick={onClick}
-    weight={weight}
-    isLoaderVisible={isLoaderVisible}
-  >
-    <StyledContent>{text}</StyledContent>
-    {isLoaderVisible ? <Loader color={color} /> : null}
-  </StyledStatus>
-);
+}: StatusProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <StyledStatus
+      className={className}
+      color={parseThemeColor(color)}
+      onClick={onClick}
+      weight={weight}
+      isLoaderVisible={isLoaderVisible}
+      theme={theme}
+    >
+      <StyledContent>{text}</StyledContent>
+      {isLoaderVisible ? <Loader color={color} /> : null}
+    </StyledStatus>
+  );
+};

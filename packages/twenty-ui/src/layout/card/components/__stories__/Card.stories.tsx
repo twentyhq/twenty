@@ -24,7 +24,6 @@ const meta: Meta<typeof Card> = {
   ),
   argTypes: {
     as: { control: false },
-    theme: { control: false },
   },
 };
 

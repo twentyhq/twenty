@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { type MouseEvent } from 'react';
+import { styled } from '@linaria/react';
+import { type MouseEvent, useContext } from 'react';
 
 import { type IconComponent } from '@ui/display';
-import { HOVER_BACKGROUND } from '@ui/theme';
+import { HOVER_BACKGROUND, ThemeContext, type ThemeType } from '@ui/theme';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuItemBase';
 
@@ -19,6 +19,7 @@ export type MenuItemSuggestionProps = {
 
 const StyledSuggestionMenuItem = styled.li<{
   selected?: boolean;
+  theme: ThemeType;
 }>`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
@@ -63,6 +64,8 @@ export const MenuItemSuggestion = ({
   selected,
   onClick,
 }: MenuItemSuggestionProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const handleMenuItemClick = (event: MouseEvent<HTMLLIElement>) => {
     if (!onClick) return;
     event.preventDefault();
@@ -76,8 +79,9 @@ export const MenuItemSuggestion = ({
       onClick={handleMenuItemClick}
       className={className}
       selected={selected}
+      theme={theme}
     >
-      <StyledMenuItemLeftContent>
+      <StyledMenuItemLeftContent theme={theme}>
         <MenuItemLeftContent
           LeftIcon={LeftIcon ?? undefined}
           text={text}

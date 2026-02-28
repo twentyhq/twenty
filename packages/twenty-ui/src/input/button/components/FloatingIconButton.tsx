@@ -1,7 +1,7 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import React from 'react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import React, { useContext } from 'react';
 
 export type FloatingIconButtonSize = 'small' | 'medium';
 export type FloatingIconButtonPosition =
@@ -22,21 +22,11 @@ export type FloatingIconButtonProps = {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   isActive?: boolean;
 };
-const shouldForwardProp = (prop: string) =>
-  ![
-    'applyBlur',
-    'applyShadow',
-    'isActive',
-    'focus',
-    'position',
-    'size',
-  ].includes(prop);
-
-const StyledButton = styled('button', { shouldForwardProp })<
+const StyledButton = styled.button<
   Pick<
     FloatingIconButtonProps,
     'size' | 'position' | 'applyShadow' | 'applyBlur' | 'focus' | 'isActive'
-  >
+  > & { theme: ThemeType }
 >`
   align-items: center;
   backdrop-filter: ${({ theme, applyBlur }) =>
@@ -58,6 +48,7 @@ const StyledButton = styled('button', { shouldForwardProp })<
       case 'standalone':
         return theme.border.radius.sm;
     }
+    return '';
   }};
   box-shadow: ${({ theme, applyShadow, focus }) =>
     applyShadow
@@ -98,12 +89,13 @@ const StyledButton = styled('button', { shouldForwardProp })<
   }}
 
   ${({ theme, disabled }) =>
-    !disabled &&
-    css`
+    !disabled
+      ? `
       &:hover {
         background: ${theme.background.transparent.lighter};
       }
-    `}
+    `
+      : ''}
 
   &:active {
     background: ${({ theme, disabled }) =>
@@ -127,9 +119,10 @@ export const FloatingIconButton = ({
   onClick,
   isActive,
 }: FloatingIconButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledButton
+      theme={theme}
       disabled={disabled}
       focus={focus && !disabled}
       size={size}

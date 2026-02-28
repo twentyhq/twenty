@@ -1,7 +1,7 @@
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import styled from '@emotion/styled';
-import React from 'react';
-import { useTheme } from '@emotion/react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import React, { useContext } from 'react';
 
 export type InsideButtonProps = {
   className?: string;
@@ -10,7 +10,7 @@ export type InsideButtonProps = {
   disabled?: boolean;
 };
 
-const StyledButton = styled.button`
+const StyledButton = styled.button<{ theme: ThemeType }>`
   align-items: center;
   border: none;
   background-color: transparent;
@@ -37,10 +37,15 @@ export const InsideButton = ({
   onClick,
   disabled = false,
 }: InsideButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledButton className={className} onClick={onClick} disabled={disabled}>
+    <StyledButton
+      className={className}
+      onClick={onClick}
+      disabled={disabled}
+      theme={theme}
+    >
       {Icon && <Icon size={theme.icon.size.sm} />}
     </StyledButton>
   );

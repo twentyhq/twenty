@@ -1,7 +1,7 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import { type MouseEvent } from 'react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { type MouseEvent, useContext } from 'react';
 
 export type LightButtonAccent = 'secondary' | 'tertiary';
 
@@ -18,7 +18,7 @@ export type LightButtonProps = {
 };
 
 const StyledButton = styled.button<
-  Pick<LightButtonProps, 'accent' | 'active' | 'focus'>
+  Pick<LightButtonProps, 'accent' | 'active' | 'focus'> & { theme: ThemeType }
 >`
   align-items: center;
   background: transparent;
@@ -43,6 +43,7 @@ const StyledButton = styled.button<
             ? theme.font.color.tertiary
             : theme.font.color.extraLight;
     }
+    return '';
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
@@ -86,7 +87,7 @@ export const LightButton = ({
   type = 'button',
   onClick,
 }: LightButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledButton
@@ -97,6 +98,7 @@ export const LightButton = ({
       accent={accent}
       className={className}
       active={active}
+      theme={theme}
     >
       {!!Icon && <Icon size={theme.icon.size.md} />}
       {title}

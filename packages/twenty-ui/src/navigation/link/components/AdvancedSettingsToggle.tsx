@@ -1,10 +1,10 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
-import { useId } from 'react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { useContext, useId } from 'react';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ theme: ThemeType }>`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -13,13 +13,13 @@ const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledText = styled.div`
+const StyledText = styled.div<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledIconContainer = styled.div`
+const StyledIconContainer = styled.div<{ theme: ThemeType }>`
   align-items: center;
   display: flex;
   left: ${({ theme }) => theme.spacing(-5)};
@@ -50,11 +50,11 @@ export const AdvancedSettingsToggle = ({
   };
   const instanceId = useId();
 
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledContainer>
-      <StyledIconContainer>
+    <StyledContainer theme={theme}>
+      <StyledIconContainer theme={theme}>
         <IconPoint
           size={12}
           color={theme.color.yellow}
@@ -62,7 +62,7 @@ export const AdvancedSettingsToggle = ({
         />
       </StyledIconContainer>
       <StyledToggleContainer htmlFor={instanceId}>
-        <StyledText>{label}</StyledText>
+        <StyledText theme={theme}>{label}</StyledText>
 
         <Toggle
           id={instanceId}

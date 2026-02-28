@@ -1,7 +1,9 @@
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import type { ReactElement } from 'react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ theme: ThemeType }>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   background: ${({ theme }) => theme.background.transparent.secondary};
@@ -11,7 +13,7 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledCommandContain = styled.div`
+const StyledCommandContain = styled.div<{ theme: ThemeType }>`
   font-family: ${({ theme }) => theme.code.font.family};
 `;
 
@@ -21,11 +23,11 @@ const StyledButtonContainer = styled.div`
 
 const StyledLineContainer = styled.div``;
 
-const StyledLineStartSpan = styled.span`
+const StyledLineStartSpan = styled.span<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.code.text.orange};
 `;
 
-const StyledLineSpan = styled.span`
+const StyledLineSpan = styled.span<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.code.text.green};
 `;
 
@@ -35,14 +37,16 @@ type CommandBlockProps = {
 };
 
 export const CommandBlock = ({ commands, button }: CommandBlockProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <StyledContainer>
-      <StyledCommandContain>
+    <StyledContainer theme={theme}>
+      <StyledCommandContain theme={theme}>
         <>
           {commands.map((line, i) => (
             <StyledLineContainer key={i}>
-              <StyledLineStartSpan>{'> '}</StyledLineStartSpan>
-              <StyledLineSpan>{line}</StyledLineSpan>
+              <StyledLineStartSpan theme={theme}>{'> '}</StyledLineStartSpan>
+              <StyledLineSpan theme={theme}>{line}</StyledLineSpan>
             </StyledLineContainer>
           ))}
         </>

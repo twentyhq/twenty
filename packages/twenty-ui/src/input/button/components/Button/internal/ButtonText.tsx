@@ -1,7 +1,10 @@
-import styled from '@emotion/styled';
-import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
-const StyledEllipsis = styled.div<{ isLoading?: boolean }>`
+import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+
+const StyledEllipsis = styled.div<{ isLoading?: boolean; theme: ThemeType }>`
   right: 0;
   clip-path: ${({ theme, isLoading }) =>
     isLoading ? `inset(0 0 0 0)` : `inset(0 0 0 ${theme.spacing(6)})`};
@@ -19,7 +22,11 @@ const StyledTextWrapper = styled.div`
   position: relative;
 `;
 
-const StyledText = styled.div<{ isLoading?: boolean; hasIcon: boolean }>`
+const StyledText = styled.div<{
+  isLoading?: boolean;
+  hasIcon: boolean;
+  theme: ThemeType;
+}>`
   clip-path: ${({ isLoading, theme, hasIcon }) =>
     isLoading
       ? ` inset(0 ${!hasIcon ? theme.spacing(12) : theme.spacing(6)} 0 0)`
@@ -49,11 +56,17 @@ export const ButtonText = ({
   isLoading?: boolean;
   hasIcon: boolean;
   title?: string;
-}) => (
-  <StyledTextWrapper>
-    <StyledText isLoading={isLoading} hasIcon={hasIcon}>
-      {title}
-    </StyledText>
-    <StyledEllipsis isLoading={isLoading}>...</StyledEllipsis>
-  </StyledTextWrapper>
-);
+}) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <StyledTextWrapper>
+      <StyledText theme={theme} isLoading={isLoading} hasIcon={hasIcon}>
+        {title}
+      </StyledText>
+      <StyledEllipsis theme={theme} isLoading={isLoading}>
+        ...
+      </StyledEllipsis>
+    </StyledTextWrapper>
+  );
+};

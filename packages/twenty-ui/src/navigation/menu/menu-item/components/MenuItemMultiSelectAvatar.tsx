@@ -1,8 +1,9 @@
-import styled from '@emotion/styled';
-import { type ReactNode } from 'react';
+import { styled } from '@linaria/react';
+import { type ReactNode, useContext } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display';
 import { Checkbox } from '@ui/input/components/Checkbox';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import {
   StyledMenuItemBase,
   StyledMenuItemLabel,
@@ -10,7 +11,9 @@ import {
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-const StyledLeftContentWithCheckboxContainer = styled.div`
+const StyledLeftContentWithCheckboxContainer = styled.div<{
+  theme: ThemeType;
+}>`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -18,7 +21,7 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
   width: 100%;
 `;
 
-const StyledTextContainer = styled.div`
+const StyledTextContainer = styled.div<{ theme: ThemeType }>`
   display: flex;
   align-items: center;
   flex: 1 0 0;
@@ -47,28 +50,33 @@ export const MenuItemMultiSelectAvatar = ({
   isKeySelected,
   onSelectChange,
 }: MenuItemMultiSelectAvatarProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const handleOnClick = () => {
     onSelectChange?.(!selected);
   };
 
   return (
     <StyledMenuItemBase
+      theme={theme}
       className={className}
       onClick={handleOnClick}
       isKeySelected={isKeySelected}
     >
-      <StyledLeftContentWithCheckboxContainer>
+      <StyledLeftContentWithCheckboxContainer theme={theme}>
         <Checkbox checked={selected} />
-        <StyledMenuItemLeftContent>
+        <StyledMenuItemLeftContent theme={theme}>
           {avatar}
-          <StyledTextContainer>
-            <StyledMenuItemLabel>
+          <StyledTextContainer theme={theme}>
+            <StyledMenuItemLabel theme={theme}>
               <OverflowingTextWithTooltip text={text} />
             </StyledMenuItemLabel>
             {contextualText && (
               <>
-                <StyledMenuItemLabelLight>·</StyledMenuItemLabelLight>
-                <StyledMenuItemLabelLight>
+                <StyledMenuItemLabelLight theme={theme}>
+                  ·
+                </StyledMenuItemLabelLight>
+                <StyledMenuItemLabelLight theme={theme}>
                   <OverflowingTextWithTooltip text={contextualText} />
                 </StyledMenuItemLabelLight>
               </>

@@ -1,12 +1,14 @@
-import styled from '@emotion/styled';
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import {
   IconAlertTriangle,
   IconInfoCircle,
 } from '../../icon/components/TablerIcons';
 import { AppTooltip } from '../../tooltip/AppTooltip';
 
-const StyledBanner = styled.div`
+const StyledBanner = styled.div<{ theme: ThemeType }>`
   align-items: center;
   background-color: ${({ theme }) => theme.accent.secondary};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -17,7 +19,7 @@ const StyledBanner = styled.div`
   width: 100%;
 `;
 
-const StyledIconContainer = styled.div`
+const StyledIconContainer = styled.div<{ theme: ThemeType }>`
   align-items: center;
   color: ${({ theme }) => theme.color.blue};
   display: flex;
@@ -27,7 +29,7 @@ const StyledIconContainer = styled.div`
   width: 16px;
 `;
 
-const StyledMessage = styled.p`
+const StyledMessage = styled.p<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.color.blue};
   flex-grow: 1;
   font-family: ${({ theme }) => theme.font.family};
@@ -52,21 +54,23 @@ export const SidePanelInformationBanner = ({
   variant = 'default',
   tooltipMessage,
 }: SidePanelInformationBannerProps) => {
+  const { theme } = useContext(ThemeContext);
   const tooltipId = 'side-panel-information-banner-tooltip';
 
   return (
     <StyledBanner
+      theme={theme}
       className={className}
       data-tooltip-id={tooltipMessage ? tooltipId : undefined}
     >
-      <StyledIconContainer>
+      <StyledIconContainer theme={theme}>
         {variant === 'default' ? (
           <IconInfoCircle size={16} />
         ) : (
           <IconAlertTriangle size={16} />
         )}
       </StyledIconContainer>
-      <StyledMessage>{message}</StyledMessage>
+      <StyledMessage theme={theme}>{message}</StyledMessage>
       {isDefined(tooltipMessage) && (
         <AppTooltip
           anchorSelect={`[data-tooltip-id='${tooltipId}']`}

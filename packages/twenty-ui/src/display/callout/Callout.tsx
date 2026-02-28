@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconHelp, IconX } from '@ui/display/icon/components/TablerIcons';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { LightButton, LightIconButton } from '@ui/input';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 export type CalloutVariant =
   | 'info'
@@ -12,7 +13,10 @@ export type CalloutVariant =
   | 'neutral'
   | 'success';
 
-const StyledCalloutContainer = styled.div<{ variant: CalloutVariant }>`
+const StyledCalloutContainer = styled.div<{
+  variant: CalloutVariant;
+  theme: ThemeType;
+}>`
   align-items: flex-start;
   background-color: ${({ theme, variant }) =>
     variant === 'info'
@@ -47,7 +51,7 @@ const StyledCalloutContainer = styled.div<{ variant: CalloutVariant }>`
   width: 100%;
 `;
 
-const StyledHeader = styled.div`
+const StyledHeader = styled.div<{ theme: ThemeType }>`
   align-items: center;
   align-self: stretch;
   display: flex;
@@ -56,7 +60,10 @@ const StyledHeader = styled.div`
   min-height: ${({ theme }) => theme.spacing(6)};
 `;
 
-const StyledIconContainer = styled.div<{ variant: CalloutVariant }>`
+const StyledIconContainer = styled.div<{
+  variant: CalloutVariant;
+  theme: ThemeType;
+}>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,7 +82,7 @@ const StyledIconContainer = styled.div<{ variant: CalloutVariant }>`
             : theme.color.gray9};
 `;
 
-const StyledTitle = styled.div`
+const StyledTitle = styled.div<{ theme: ThemeType }>`
   flex: 1;
   color: ${({ theme }) => theme.font.color.primary};
   font-family: ${({ theme }) => theme.font.family};
@@ -87,7 +94,10 @@ const StyledTitle = styled.div`
   white-space: nowrap;
 `;
 
-const StyledDescriptionWrapper = styled.div<{ hasAction: boolean }>`
+const StyledDescriptionWrapper = styled.div<{
+  hasAction: boolean;
+  theme: ThemeType;
+}>`
   align-items: center;
   display: flex;
   align-self: stretch;
@@ -96,7 +106,7 @@ const StyledDescriptionWrapper = styled.div<{ hasAction: boolean }>`
   padding-left: ${({ theme }) => theme.spacing(6)};
 `;
 
-const StyledDescription = styled.div`
+const StyledDescription = styled.div<{ theme: ThemeType }>`
   flex: 1;
   color: ${({ theme }) => theme.font.color.tertiary};
   font-family: ${({ theme }) => theme.font.family};
@@ -134,6 +144,7 @@ export const Callout = ({
   isClosable = false,
   onClose,
 }: CalloutProps) => {
+  const { theme } = useContext(ThemeContext);
   const [isVisible, setIsVisible] = useState(true);
 
   const handleClose = () => {
@@ -150,12 +161,12 @@ export const Callout = ({
   }
 
   return (
-    <StyledCalloutContainer variant={variant}>
-      <StyledHeader>
-        <StyledIconContainer variant={variant}>
+    <StyledCalloutContainer variant={variant} theme={theme}>
+      <StyledHeader theme={theme}>
+        <StyledIconContainer variant={variant} theme={theme}>
           <Icon size={16} />
         </StyledIconContainer>
-        <StyledTitle>{title}</StyledTitle>
+        <StyledTitle theme={theme}>{title}</StyledTitle>
         {isClosable && (
           <LightIconButton
             Icon={IconX}
@@ -165,8 +176,8 @@ export const Callout = ({
           />
         )}
       </StyledHeader>
-      <StyledDescriptionWrapper hasAction={isDefined(action)}>
-        <StyledDescription>{description}</StyledDescription>
+      <StyledDescriptionWrapper hasAction={isDefined(action)} theme={theme}>
+        <StyledDescription theme={theme}>{description}</StyledDescription>
       </StyledDescriptionWrapper>
       {isDefined(action) && (
         <StyledFooter>

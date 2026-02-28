@@ -1,7 +1,9 @@
-import styled from '@emotion/styled';
-import React from 'react';
+import { styled } from '@linaria/react';
+import React, { useContext } from 'react';
 
-const StyledButtonLink = styled.a`
+import { ThemeContext, type ThemeType } from '@ui/theme';
+
+const StyledButtonLink = styled.a<{ theme: ThemeType }>`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
@@ -22,6 +24,8 @@ type ClickToActionLinkProps = React.ComponentProps<'a'> & {
 };
 
 export const ClickToActionLink = (props: ClickToActionLinkProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledButtonLink
       className={props.className}
@@ -29,6 +33,7 @@ export const ClickToActionLink = (props: ClickToActionLinkProps) => {
       onClick={props.onClick}
       target={props.target}
       rel={props.rel}
+      theme={theme}
     >
       {props.children}
     </StyledButtonLink>

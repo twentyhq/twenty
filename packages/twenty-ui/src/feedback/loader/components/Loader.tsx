@@ -1,9 +1,11 @@
-import styled from '@emotion/styled';
-import { type ThemeColor } from '@ui/theme';
+import { styled } from '@linaria/react';
+import { type ThemeColor, ThemeContext, type ThemeType } from '@ui/theme';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
 
 const StyledLoaderContainer = styled.div<{
   color?: ThemeColor;
+  theme: ThemeType;
 }>`
   box-sizing: border-box;
   justify-content: center;
@@ -21,8 +23,9 @@ const StyledLoaderContainer = styled.div<{
   overflow: hidden;
 `;
 
-const StyledLoader = styled(motion.div)<{
+const StyledLoaderBase = styled.div<{
   color?: ThemeColor;
+  theme: ThemeType;
 }>`
   background-color: ${({ color, theme }) =>
     color
@@ -33,24 +36,31 @@ const StyledLoader = styled(motion.div)<{
   width: 8px;
 `;
 
+const StyledLoader = motion.create(StyledLoaderBase);
+
 type LoaderProps = {
   color?: ThemeColor;
 };
 
-export const Loader = ({ color }: LoaderProps) => (
-  <StyledLoaderContainer color={color}>
-    <StyledLoader
-      color={color}
-      animate={{
-        x: [-16, 0, 16],
-        width: [8, 12, 8],
-        height: [8, 2, 8],
-      }}
-      transition={{
-        duration: 0.8,
-        times: [0, 0.15, 0.3],
-        repeat: Infinity,
-      }}
-    />
-  </StyledLoaderContainer>
-);
+export const Loader = ({ color }: LoaderProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <StyledLoaderContainer color={color} theme={theme}>
+      <StyledLoader
+        color={color}
+        theme={theme}
+        animate={{
+          x: [-16, 0, 16],
+          width: [8, 12, 8],
+          height: [8, 2, 8],
+        }}
+        transition={{
+          duration: 0.8,
+          times: [0, 0.15, 0.3],
+          repeat: Infinity,
+        }}
+      />
+    </StyledLoaderContainer>
+  );
+};

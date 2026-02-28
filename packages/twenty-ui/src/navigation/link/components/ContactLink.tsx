@@ -1,17 +1,17 @@
-import * as React from 'react';
-import { type Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
+import * as React from 'react';
+import { useContext } from 'react';
+import { ThemeContext } from '@ui/theme';
 
-const StyledClickableLink = withTheme(styled.a<{
-  theme: Theme;
+const StyledClickableLink = styled.a<{
   maxWidth?: number;
+  underlineColor: string;
+  hoverColor: string;
 }>`
   color: inherit;
   overflow: hidden;
   text-decoration: underline;
-  text-decoration-color: ${({ theme }) => theme.border.color.strong};
-  text-overflow: ellipsis;
-
+  text-decoration-color: ${({ underlineColor }) => underlineColor};
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
@@ -19,9 +19,9 @@ const StyledClickableLink = withTheme(styled.a<{
   max-width: ${({ maxWidth }) => maxWidth ?? '100%'};
 
   &:hover {
-    text-decoration-color: ${({ theme }) => theme.font.color.primary};
+    text-decoration-color: ${({ hoverColor }) => hoverColor};
   }
-`);
+`;
 
 type ContactLinkProps = {
   href: string;
@@ -35,13 +35,19 @@ export const ContactLink = ({
   children,
   onClick,
   maxWidth,
-}: ContactLinkProps) => (
-  <StyledClickableLink
-    maxWidth={maxWidth}
-    target="_blank"
-    onClick={onClick}
-    href={href}
-  >
-    {children}
-  </StyledClickableLink>
-);
+}: ContactLinkProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <StyledClickableLink
+      maxWidth={maxWidth}
+      target="_blank"
+      onClick={onClick}
+      href={href}
+      underlineColor={theme.border.color.strong}
+      hoverColor={theme.font.color.primary}
+    >
+      {children}
+    </StyledClickableLink>
+  );
+};

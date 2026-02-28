@@ -1,5 +1,4 @@
-import { useTheme } from '@emotion/react';
-import { type ReactNode } from 'react';
+import { useContext, type ReactNode } from 'react';
 
 import {
   StyledMenuItemIconCheck,
@@ -8,8 +7,9 @@ import {
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type MenuItemSelectAvatarProps = {
@@ -24,7 +24,7 @@ type MenuItemSelectAvatarProps = {
   testId?: string;
 };
 
-const StyledTextContainer = styled.div`
+const StyledTextContainer = styled.div<{ theme: ThemeType }>`
   display: flex;
   align-items: center;
   flex: 1 0 0;
@@ -45,10 +45,11 @@ export const MenuItemSelectAvatar = ({
   focused,
   testId,
 }: MenuItemSelectAvatarProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledMenuItemSelect
+      theme={theme}
       onClick={onClick}
       className={className}
       disabled={disabled}
@@ -58,23 +59,27 @@ export const MenuItemSelectAvatar = ({
       aria-selected={selected}
       aria-disabled={disabled}
     >
-      <StyledMenuItemLeftContent>
+      <StyledMenuItemLeftContent theme={theme}>
         {avatar}
-        <StyledTextContainer>
-          <StyledMenuItemLabel>
+        <StyledTextContainer theme={theme}>
+          <StyledMenuItemLabel theme={theme}>
             <OverflowingTextWithTooltip text={text} />
           </StyledMenuItemLabel>
           {contextualText && (
             <>
-              <StyledMenuItemLabelLight>·</StyledMenuItemLabelLight>
-              <StyledMenuItemLabelLight>
+              <StyledMenuItemLabelLight theme={theme}>
+                ·
+              </StyledMenuItemLabelLight>
+              <StyledMenuItemLabelLight theme={theme}>
                 <OverflowingTextWithTooltip text={contextualText} />
               </StyledMenuItemLabelLight>
             </>
           )}
         </StyledTextContainer>
       </StyledMenuItemLeftContent>
-      {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
+      {selected && (
+        <StyledMenuItemIconCheck theme={theme} size={theme.icon.size.md} />
+      )}
     </StyledMenuItemSelect>
   );
 };

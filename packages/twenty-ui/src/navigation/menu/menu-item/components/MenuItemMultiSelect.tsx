@@ -1,13 +1,16 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
 import { Tag } from '@ui/components';
 import { type IconComponent } from '@ui/display';
 import { Checkbox } from '@ui/input/components/Checkbox';
 import { MenuItemLeftContent } from '@ui/navigation/menu/menu-item/internals/components/MenuItemLeftContent';
-import { type ThemeColor } from '@ui/theme';
+import { ThemeContext, type ThemeType, type ThemeColor } from '@ui/theme';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
 
-const StyledLeftContentWithCheckboxContainer = styled.div`
+const StyledLeftContentWithCheckboxContainer = styled.div<{
+  theme: ThemeType;
+}>`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -37,17 +40,20 @@ export const MenuItemMultiSelect = ({
   className,
   onSelectChange,
 }: MenuItemMultiSelectProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const handleOnClick = () => {
     onSelectChange?.(!selected);
   };
 
   return (
     <StyledMenuItemBase
+      theme={theme}
       isKeySelected={isKeySelected}
       className={className}
       onClick={handleOnClick}
     >
-      <StyledLeftContentWithCheckboxContainer>
+      <StyledLeftContentWithCheckboxContainer theme={theme}>
         <Checkbox checked={selected} />
         {color ? (
           <Tag color={color} text={text} Icon={LeftIcon} />

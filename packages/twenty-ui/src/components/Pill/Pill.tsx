@@ -1,5 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { useContext } from 'react';
 
 type PillProps = {
   className?: string;
@@ -7,7 +9,7 @@ type PillProps = {
   Icon?: IconComponent;
 };
 
-const StyledPill = styled.span`
+const StyledPill = styled.span<{ theme: ThemeType }>`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.light};
   border-radius: ${({ theme }) => theme.border.radius.pill};
@@ -24,8 +26,10 @@ const StyledPill = styled.span`
 `;
 
 export const Pill = ({ className, label, Icon }: PillProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <StyledPill className={className}>
+    <StyledPill className={className} theme={theme}>
       {Icon && <Icon size={12} />}
       {label}
     </StyledPill>

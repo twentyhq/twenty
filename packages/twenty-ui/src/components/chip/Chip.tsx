@@ -1,8 +1,8 @@
-import { type Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 export enum ChipSize {
   Large = 'large',
@@ -38,15 +38,15 @@ export type ChipProps = {
   emptyLabel?: string;
 };
 
-const StyledDiv = withTheme(styled.div<{ theme: Theme }>`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`);
+const StyledDiv = styled.div<{ emptyLabelColor: string }>`
+  color: ${({ emptyLabelColor }) => emptyLabelColor};
+`;
 
-const StyledContainer = withTheme(styled.div<
+const StyledContainer = styled.div<
   Pick<
     ChipProps,
     'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant'
-  > & { theme: Theme }
+  > & { theme: ThemeType }
 >`
   --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --chip-vertical-padding: ${({ theme }) => theme.spacing(1)};
@@ -125,9 +125,8 @@ const StyledContainer = withTheme(styled.div<
     variant === ChipVariant.Transparent
       ? theme.spacing(0)
       : 'var(--chip-horizontal-padding)'};
-`);
+`;
 
-// TODO: refactor this
 const renderRightComponent = (
   rightComponent: (() => ReactNode) | ReactNode | null,
 ) => {
@@ -155,9 +154,12 @@ export const Chip = ({
   forceEmptyText = false,
   emptyLabel = 'Untitled',
 }: ChipProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
     <StyledContainer
       data-testid="chip"
+      theme={theme}
       accent={accent}
       clickable={clickable}
       disabled={disabled}
@@ -170,7 +172,9 @@ export const Chip = ({
       {!isLabelHidden && label && label.trim() ? (
         <OverflowingTextWithTooltip size={size} text={label} />
       ) : !forceEmptyText && !isLabelHidden ? (
-        <StyledDiv>{emptyLabel}</StyledDiv>
+        <StyledDiv emptyLabelColor={theme.font.color.tertiary}>
+          {emptyLabel}
+        </StyledDiv>
       ) : (
         ''
       )}

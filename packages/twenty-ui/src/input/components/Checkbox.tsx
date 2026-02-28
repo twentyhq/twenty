@@ -1,6 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
 import { IconCheck, IconMinus } from '@ui/display/icon/components/TablerIcons';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import * as React from 'react';
 
 export enum CheckboxVariant {
@@ -49,7 +51,7 @@ type InputProps = {
   disabled?: boolean;
 };
 
-const StyledInputContainer = styled.div<InputProps>`
+const StyledInputContainer = styled.div<InputProps & { theme: ThemeType }>`
   --size: ${({ checkboxSize, hoverable }) => {
     if (hoverable === true) {
       return checkboxSize === CheckboxSize.Large ? '32px' : '24px';
@@ -90,7 +92,7 @@ const StyledInputContainer = styled.div<InputProps>`
   }}
 `;
 
-const StyledInput = styled.input<InputProps>`
+const StyledInput = styled.input<InputProps & { theme: ThemeType }>`
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   margin: 0;
   opacity: 0;
@@ -189,6 +191,8 @@ export const Checkbox = ({
   disabled = false,
   accent = CheckboxAccent.Blue,
 }: CheckboxProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const [isInternalChecked, setIsInternalChecked] =
     React.useState<boolean>(false);
 
@@ -206,6 +210,7 @@ export const Checkbox = ({
 
   return (
     <StyledInputContainer
+      theme={theme}
       checkboxSize={size}
       variant={variant}
       shape={shape}
@@ -217,6 +222,7 @@ export const Checkbox = ({
       accent={accent}
     >
       <StyledInput
+        theme={theme}
         autoComplete="off"
         type="checkbox"
         id={checkboxId}

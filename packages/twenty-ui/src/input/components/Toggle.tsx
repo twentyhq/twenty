@@ -1,6 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { VisibilityHiddenInput } from '@ui/accessibility';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
 
 export type ToggleSize = 'small' | 'medium';
 
@@ -11,7 +13,7 @@ type ContainerProps = {
   'data-disabled'?: boolean;
 };
 
-const StyledContainer = styled.label<ContainerProps>`
+const StyledContainer = styled.label<ContainerProps & { theme: ThemeType }>`
   align-items: center;
   background-color: ${({ theme, isOn, color }) =>
     isOn ? (color ?? theme.color.blue) : theme.background.transparent.medium};
@@ -28,8 +30,9 @@ const StyledContainer = styled.label<ContainerProps>`
   width: ${({ toggleSize }) => (toggleSize === 'small' ? 24 : 32)}px;
 `;
 
-const StyledCircle = styled(motion.span)<{
+const StyledCircleBase = styled.span<{
   size: ToggleSize;
+  theme: ThemeType;
 }>`
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: 50%;
@@ -39,6 +42,8 @@ const StyledCircle = styled(motion.span)<{
   position: absolute;
   width: ${({ size }) => (size === 'small' ? 12 : 16)}px;
 `;
+
+const StyledCircle = motion.create(StyledCircleBase);
 
 export type ToggleProps = {
   id?: string;
@@ -59,6 +64,8 @@ export const Toggle = ({
   className,
   disabled,
 }: ToggleProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const circleVariants = {
     on: { x: toggleSize === 'small' ? 10 : 14 },
     off: { x: 2 },
@@ -66,6 +73,7 @@ export const Toggle = ({
 
   return (
     <StyledContainer
+      theme={theme}
       isOn={value}
       color={color}
       toggleSize={toggleSize}
@@ -83,6 +91,7 @@ export const Toggle = ({
       />
 
       <StyledCircle
+        theme={theme}
         initial={false}
         animate={value ? 'on' : 'off'}
         variants={circleVariants}

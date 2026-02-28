@@ -1,5 +1,4 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { isString } from '@sniptt/guards';
 import {
@@ -8,7 +7,8 @@ import {
   OverflowingTextWithTooltip,
   type IconComponent,
 } from '@ui/display';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledMenuItemBase,
@@ -20,10 +20,11 @@ import {
 export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
   disabled?: boolean;
   focused?: boolean;
+  theme: ThemeType;
 }>`
   ${({ theme, disabled, focused }) => {
     if (disabled === true) {
-      return css`
+      return `
         background: inherit;
         &:hover {
           background: inherit;
@@ -34,10 +35,12 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
         cursor: default;
       `;
     } else if (focused === true) {
-      return css`
+      return `
         background: ${theme.background.transparent.light};
       `;
     }
+
+    return '';
   }}
 `;
 
@@ -70,7 +73,7 @@ export const MenuItemSelect = ({
   contextualText,
   contextualTextPosition = 'left',
 }: MenuItemSelectProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledMenuItemSelect
@@ -81,6 +84,7 @@ export const MenuItemSelect = ({
       role="option"
       aria-selected={selected}
       aria-disabled={disabled}
+      theme={theme}
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon}
@@ -90,11 +94,11 @@ export const MenuItemSelect = ({
         }
         withIconContainer={withIconContainer}
       />
-      <StyledMenuItemRightContent>
+      <StyledMenuItemRightContent theme={theme}>
         {contextualTextPosition === 'right' && (
-          <StyledMenuItemLabel>
+          <StyledMenuItemLabel theme={theme}>
             {isString(contextualText) ? (
-              <StyledRightMenuItemContextualText>
+              <StyledRightMenuItemContextualText theme={theme}>
                 <OverflowingTextWithTooltip text={contextualText} />
               </StyledRightMenuItemContextualText>
             ) : (

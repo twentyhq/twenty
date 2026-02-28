@@ -1,12 +1,12 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import {
   type LightIconButtonAccent,
   type LightIconButtonSize,
 } from '@ui/input/button/components/LightIconButton';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { motion, type MotionProps } from 'framer-motion';
-import { type ComponentProps, type MouseEvent } from 'react';
+import { type ComponentProps, type MouseEvent, useContext } from 'react';
 
 export type AnimatedLightIconButtonProps = {
   className?: string;
@@ -23,7 +23,9 @@ export type AnimatedLightIconButtonProps = {
   Pick<MotionProps, 'animate' | 'transition'>;
 
 const StyledButton = styled.button<
-  Pick<AnimatedLightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'>
+  Pick<AnimatedLightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'> & {
+    theme: ThemeType;
+  }
 >`
   align-items: center;
   background: transparent;
@@ -49,6 +51,7 @@ const StyledButton = styled.button<
             ? theme.font.color.tertiary
             : theme.font.color.extraLight;
     }
+    return '';
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
@@ -102,7 +105,7 @@ export const AnimatedLightIconButton = ({
   onClick,
   title,
 }: AnimatedLightIconButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledButton
@@ -116,6 +119,7 @@ export const AnimatedLightIconButton = ({
       size={size}
       active={active}
       title={title}
+      theme={theme}
     >
       <StyledIconContainer animate={animate} transition={transition}>
         {Icon && (

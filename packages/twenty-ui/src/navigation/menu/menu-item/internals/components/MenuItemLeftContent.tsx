@@ -1,13 +1,13 @@
-import { useTheme } from '@emotion/react';
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { type ReactNode } from 'react';
+import { useContext, type ReactNode } from 'react';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   type IconComponent,
   IconGripVertical,
   OverflowingTextWithTooltip,
 } from '@ui/display';
+import { ThemeContext } from '@ui/theme';
 import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
 import { MenuItemIcon } from './MenuItemIcon';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
@@ -55,7 +55,7 @@ export const MenuItemLeftContent = ({
   gripMode = 'never',
   disabled = false,
 }: MenuItemLeftContentProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   const gripIconColor = withIconContainer
     ? theme.font.color.tertiary
@@ -64,7 +64,7 @@ export const MenuItemLeftContent = ({
       : theme.font.color.light;
 
   return (
-    <StyledMenuItemLeftContent className={className}>
+    <StyledMenuItemLeftContent theme={theme} className={className}>
       {gripMode === 'always' &&
         (withIconContainer ? (
           <MenuItemIconBoxContainer>
@@ -95,7 +95,7 @@ export const MenuItemLeftContent = ({
         <MenuItemIcon Icon={LeftIcon} withContainer={withIconContainer} />
       )}
       {LeftComponent}
-      <StyledMenuItemLabel>
+      <StyledMenuItemLabel theme={theme}>
         {isString(text) ? (
           <StyledMainText>
             <OverflowingTextWithTooltip text={text} />
@@ -107,7 +107,7 @@ export const MenuItemLeftContent = ({
           <>
             {isString(contextualText)
               ? isNonEmptyString(contextualText) && (
-                  <StyledMenuItemContextualText>
+                  <StyledMenuItemContextualText theme={theme}>
                     <OverflowingTextWithTooltip text={`· ${contextualText}`} />
                   </StyledMenuItemContextualText>
                 )
@@ -116,8 +116,8 @@ export const MenuItemLeftContent = ({
         )}
       </StyledMenuItemLabel>
       {contextualTextPosition === 'right' && (
-        <StyledMenuItemLabelRight>
-          <StyledRightMenuItemContextualText>
+        <StyledMenuItemLabelRight theme={theme}>
+          <StyledRightMenuItemContextualText theme={theme}>
             {isString(contextualText) ? (
               <OverflowingTextWithTooltip text={contextualText} />
             ) : (

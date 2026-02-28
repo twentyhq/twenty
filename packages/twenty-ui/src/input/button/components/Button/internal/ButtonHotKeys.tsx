@@ -1,14 +1,18 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
+
 import {
   type ButtonAccent,
   type ButtonSize,
   type ButtonVariant,
 } from '@ui/input';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { getOsShortcutSeparator } from '@ui/utilities';
 
 const StyledSeparator = styled.div<{
   buttonSize: ButtonSize;
   accent: ButtonAccent;
+  theme: ThemeType;
 }>`
   background: ${({ theme, accent }) => {
     switch (accent) {
@@ -29,6 +33,7 @@ const StyledSeparator = styled.div<{
 const StyledShortcutLabel = styled.div<{
   variant: ButtonVariant;
   accent: ButtonAccent;
+  theme: ThemeType;
 }>`
   color: ${({ theme, variant, accent }) => {
     switch (accent) {
@@ -55,11 +60,15 @@ export const ButtonHotkeys = ({
   accent: ButtonAccent;
   variant: ButtonVariant;
   hotkeys: string[];
-}) => (
-  <>
-    <StyledSeparator buttonSize={size} accent={accent} />
-    <StyledShortcutLabel variant={variant} accent={accent}>
-      {hotkeys.join(getOsShortcutSeparator())}
-    </StyledShortcutLabel>
-  </>
-);
+}) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <>
+      <StyledSeparator theme={theme} buttonSize={size} accent={accent} />
+      <StyledShortcutLabel theme={theme} variant={variant} accent={accent}>
+        {hotkeys.join(getOsShortcutSeparator())}
+      </StyledShortcutLabel>
+    </>
+  );
+};

@@ -1,5 +1,6 @@
-import { type ReactNode } from 'react';
-import styled from '@emotion/styled';
+import { useContext, type ReactNode } from 'react';
+import { styled } from '@linaria/react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 type SectionProps = {
   children: ReactNode;
@@ -24,6 +25,7 @@ const StyledSection = styled.div<{
   alignment: SectionAlignment;
   fullWidth: boolean;
   fontColor: SectionFontColor;
+  theme: ThemeType;
 }>`
   color: ${({ theme, fontColor }) => theme.font.color[fontColor]};
   text-align: ${({ alignment }) => alignment};
@@ -36,13 +38,18 @@ export const Section = ({
   alignment = SectionAlignment.Left,
   fullWidth = true,
   fontColor = SectionFontColor.Primary,
-}: SectionProps) => (
-  <StyledSection
-    className={className}
-    alignment={alignment}
-    fullWidth={fullWidth}
-    fontColor={fontColor}
-  >
-    {children}
-  </StyledSection>
-);
+}: SectionProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <StyledSection
+      className={className}
+      alignment={alignment}
+      fullWidth={fullWidth}
+      fontColor={fontColor}
+      theme={theme}
+    >
+      {children}
+    </StyledSection>
+  );
+};

@@ -1,7 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
+
+import { ThemeContext, type ThemeType } from '@ui/theme';
 
 const StyledNotificationCounter = styled.div<{
   variant: 'primary' | 'secondary';
+  theme: ThemeType;
 }>`
   width: 14px;
   height: 14px;
@@ -30,8 +34,14 @@ export const NotificationCounter = ({
   variant = 'primary',
   className,
 }: NotificationCounterProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <StyledNotificationCounter variant={variant} className={className}>
+    <StyledNotificationCounter
+      variant={variant}
+      className={className}
+      theme={theme}
+    >
       {count}
     </StyledNotificationCounter>
   );

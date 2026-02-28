@@ -1,7 +1,7 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
-import React, { type FunctionComponent } from 'react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import React, { type FunctionComponent, useContext } from 'react';
 
 export type MainButtonVariant = 'primary' | 'secondary';
 
@@ -14,7 +14,7 @@ type Props = {
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
-  Pick<Props, 'fullWidth' | 'width' | 'variant'>
+  Pick<Props, 'fullWidth' | 'width' | 'variant'> & { theme: ThemeType }
 >`
   align-items: center;
   background: ${({ theme, variant, disabled }) => {
@@ -117,10 +117,11 @@ export const MainButton = ({
   disabled,
   className,
 }: MainButtonProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledButton
       className={className}
+      theme={theme}
       {...{ disabled, fullWidth, width, onClick, type, variant }}
     >
       {Icon && <Icon size={theme.icon.size.sm} />}

@@ -1,11 +1,13 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { Loader } from '@ui/feedback';
 import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { useContext } from 'react';
 
 const StyledIcon = styled.div<{
   isLoading: boolean;
+  theme: ThemeType;
 }>`
   align-items: center;
   display: flex;
@@ -25,7 +27,7 @@ const StyledIconWrapper = styled.div`
   pointer-events: none;
 `;
 
-const StyledLoader = styled.div`
+const StyledLoader = styled.div<{ theme: ThemeType }>`
   left: ${({ theme }) => theme.spacing(2)};
   opacity: 1;
   position: absolute;
@@ -42,16 +44,16 @@ export const ButtonIcon = ({
   Icon?: IconComponent;
   isLoading?: boolean;
 }) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
   return (
     <StyledIconWrapper>
       {isLoading && (
-        <StyledLoader>
+        <StyledLoader theme={theme}>
           <Loader />
         </StyledLoader>
       )}
       {Icon && (
-        <StyledIcon isLoading={!!isLoading}>
+        <StyledIcon isLoading={!!isLoading} theme={theme}>
           <Icon size={theme.icon.size.sm} />
         </StyledIcon>
       )}

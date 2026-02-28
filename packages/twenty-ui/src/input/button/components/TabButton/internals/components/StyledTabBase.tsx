@@ -1,9 +1,8 @@
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { type ThemeType } from '@ui/theme';
 
-export const StyledTabButton = styled('button', {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'active',
-})<{
+export const StyledTabButton = styled.button<{
+  theme: ThemeType;
   active?: boolean;
   disabled?: boolean;
   to?: string;
@@ -40,6 +39,7 @@ export const StyledTabButton = styled('button', {
 `;
 
 export const StyledTabContainer = styled.div<{
+  theme: ThemeType;
   active?: boolean;
   disabled?: boolean;
 }>`
@@ -72,6 +72,7 @@ export const StyledTabContainer = styled.div<{
 `;
 
 export const StyledTabHover = styled.span<{
+  theme: ThemeType;
   contentSize?: 'sm' | 'md';
 }>`
   display: flex;

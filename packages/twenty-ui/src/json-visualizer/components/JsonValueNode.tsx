@@ -1,11 +1,13 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { JsonListItem } from '@ui/json-visualizer/components/internal/JsonListItem';
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeValue';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { useContext } from 'react';
 
-const StyledListItem = styled(JsonListItem)`
+const StyledListItem = styled(JsonListItem)<{ theme: ThemeType }>`
   column-gap: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -24,8 +26,10 @@ type JsonValueNodeProps = {
 );
 
 export const JsonValueNode = (props: JsonValueNodeProps) => {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <StyledListItem>
+    <StyledListItem theme={theme}>
       {props.label && (
         <JsonNodeLabel
           label={props.label}

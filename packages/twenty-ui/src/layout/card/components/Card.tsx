@@ -1,6 +1,12 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { useContext } from 'react';
 
-const StyledCard = styled.div<{ fullWidth?: boolean; rounded?: boolean }>`
+const StyledCard = styled.div<{
+  fullWidth?: boolean;
+  rounded?: boolean;
+  theme: ThemeType;
+}>`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme, rounded }) =>
     rounded ? theme.border.radius.md : theme.border.radius.sm};
@@ -9,4 +15,9 @@ const StyledCard = styled.div<{ fullWidth?: boolean; rounded?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
-export { StyledCard as Card };
+export const Card = (
+  props: CardProps<React.ComponentProps<typeof StyledCard>, 'theme'>,
+) => {
+  const { theme } = useContext(ThemeContext);
+  return <StyledCard {...props} theme={theme} />;
+};

@@ -1,10 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
-import { MOBILE_VIEWPORT } from '@ui/theme';
+import { MOBILE_VIEWPORT, ThemeContext, type ThemeType } from '@ui/theme';
 import { ColorSchemeCard } from './ColorSchemeCard';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ theme: ThemeType }>`
   display: flex;
   flex-direction: row;
   > * + * {
@@ -20,7 +21,7 @@ const StyledCardContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledLabel = styled.span`
+const StyledLabel = styled.span<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -43,31 +44,35 @@ export const ColorSchemePicker = ({
   lightLabel,
   darkLabel,
   systemLabel,
-}: ColorSchemePickerProps) => (
-  <StyledContainer className={className}>
-    <StyledCardContainer>
-      <ColorSchemeCard
-        onClick={() => onChange('Light')}
-        variant="Light"
-        selected={value === 'Light'}
-      />
-      <StyledLabel>{lightLabel}</StyledLabel>
-    </StyledCardContainer>
-    <StyledCardContainer>
-      <ColorSchemeCard
-        onClick={() => onChange('Dark')}
-        variant="Dark"
-        selected={value === 'Dark'}
-      />
-      <StyledLabel>{darkLabel}</StyledLabel>
-    </StyledCardContainer>
-    <StyledCardContainer>
-      <ColorSchemeCard
-        onClick={() => onChange('System')}
-        variant="System"
-        selected={value === 'System'}
-      />
-      <StyledLabel>{systemLabel}</StyledLabel>
-    </StyledCardContainer>
-  </StyledContainer>
-);
+}: ColorSchemePickerProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <StyledContainer theme={theme} className={className}>
+      <StyledCardContainer>
+        <ColorSchemeCard
+          onClick={() => onChange('Light')}
+          variant="Light"
+          selected={value === 'Light'}
+        />
+        <StyledLabel theme={theme}>{lightLabel}</StyledLabel>
+      </StyledCardContainer>
+      <StyledCardContainer>
+        <ColorSchemeCard
+          onClick={() => onChange('Dark')}
+          variant="Dark"
+          selected={value === 'Dark'}
+        />
+        <StyledLabel theme={theme}>{darkLabel}</StyledLabel>
+      </StyledCardContainer>
+      <StyledCardContainer>
+        <ColorSchemeCard
+          onClick={() => onChange('System')}
+          variant="System"
+          selected={value === 'System'}
+        />
+        <StyledLabel theme={theme}>{systemLabel}</StyledLabel>
+      </StyledCardContainer>
+    </StyledContainer>
+  );
+};

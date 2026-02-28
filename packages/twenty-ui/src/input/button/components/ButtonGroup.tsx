@@ -1,10 +1,11 @@
-import styled from '@emotion/styled';
-import React, { type ReactNode } from 'react';
+import { styled } from '@linaria/react';
+import React, { type ReactNode, useContext } from 'react';
 
 import { type ButtonPosition, type ButtonProps } from './Button/Button';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledButtonGroupContainer = styled.div`
+const StyledButtonGroupContainer = styled.div<{ theme: ThemeType }>`
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
 `;
@@ -22,36 +23,40 @@ export const ButtonGroup = ({
   variant,
   size,
   accent,
-}: ButtonGroupProps) => (
-  <StyledButtonGroupContainer className={className}>
-    {React.Children.map(children, (child, index) => {
-      if (!React.isValidElement(child)) return null;
+}: ButtonGroupProps) => {
+  const { theme } = useContext(ThemeContext);
 
-      let position: ButtonPosition;
+  return (
+    <StyledButtonGroupContainer theme={theme} className={className}>
+      {React.Children.map(children, (child, index) => {
+        if (!React.isValidElement(child)) return null;
 
-      if (index === 0) {
-        position = 'left';
-      } else if (index === children.length - 1) {
-        position = 'right';
-      } else {
-        position = 'middle';
-      }
+        let position: ButtonPosition;
 
-      const additionalProps: any = { position, variant, accent, size };
+        if (index === 0) {
+          position = 'left';
+        } else if (index === children.length - 1) {
+          position = 'right';
+        } else {
+          position = 'middle';
+        }
 
-      if (isDefined(variant)) {
-        additionalProps.variant = variant;
-      }
+        const additionalProps: any = { position, variant, accent, size };
 
-      if (isDefined(accent)) {
-        additionalProps.variant = variant;
-      }
+        if (isDefined(variant)) {
+          additionalProps.variant = variant;
+        }
 
-      if (isDefined(size)) {
-        additionalProps.size = size;
-      }
+        if (isDefined(accent)) {
+          additionalProps.variant = variant;
+        }
 
-      return React.cloneElement(child, additionalProps);
-    })}
-  </StyledButtonGroupContainer>
-);
+        if (isDefined(size)) {
+          additionalProps.size = size;
+        }
+
+        return React.cloneElement(child, additionalProps);
+      })}
+    </StyledButtonGroupContainer>
+  );
+};

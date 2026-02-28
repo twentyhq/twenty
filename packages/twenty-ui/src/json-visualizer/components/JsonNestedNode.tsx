@@ -1,16 +1,15 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type IconComponent } from '@ui/display';
 import { JsonArrow } from '@ui/json-visualizer/components/internal/JsonArrow';
-import { JsonList } from '@ui/json-visualizer/components/internal/JsonList';
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
 import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeValue';
 import { JsonNode } from '@ui/json-visualizer/components/JsonNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { ANIMATION } from '@ui/theme';
+import { ANIMATION, ThemeContext, type ThemeType } from '@ui/theme';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 
@@ -19,18 +18,38 @@ const StyledContainer = styled.li`
   list-style-type: none;
 `;
 
-const StyledLabelContainer = styled.div`
+const StyledLabelContainer = styled.div<{ theme: ThemeType }>`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledElementsCount = styled.span<{ variant?: 'red' }>`
+const StyledElementsCount = styled.span<{
+  variant?: 'red';
+  theme: ThemeType;
+}>`
   color: ${({ theme, variant }) =>
     variant === 'red' ? theme.font.color.danger : theme.font.color.tertiary};
 `;
 
-const StyledJsonList = styled(JsonList)``.withComponent(motion.ul);
+const StyledJsonListBase = styled.ul<{
+  depth: number;
+  theme: ThemeType;
+}>`
+  margin: 0;
+  padding: 0;
+  display: grid;
+  row-gap: ${({ theme }) => theme.spacing(2)};
+  ${({ theme, depth }) =>
+    depth > 0
+      ? `padding-left: ${theme.spacing(8)};
+         > :first-of-type {
+           margin-top: ${theme.spacing(2)};
+         }`
+      : ''}
+`;
+
+const StyledJsonList = motion.create(StyledJsonListBase);
 
 export const JsonNestedNode = ({
   label,
@@ -52,6 +71,7 @@ export const JsonNestedNode = ({
   highlighting?: JsonNodeHighlighting | undefined;
 }) => {
   const { shouldExpandNodeInitially } = useJsonTreeContextOrThrow();
+  const { theme } = useContext(ThemeContext);
 
   const hideRoot = !isDefined(label);
 
@@ -78,6 +98,7 @@ export const JsonNestedNode = ({
       }}
       transition={{ duration: ANIMATION.duration.normal }}
       depth={depth}
+      theme={theme}
     >
       {elements.length === 0 ? (
         <JsonNodeValue valueAsString={emptyElementsText} />
@@ -115,7 +136,7 @@ export const JsonNestedNode = ({
 
   return (
     <StyledContainer>
-      <StyledLabelContainer>
+      <StyledLabelContainer theme={theme}>
         <JsonArrow
           isOpen={isOpen}
           onClick={handleArrowClick}
@@ -137,6 +158,7 @@ export const JsonNestedNode = ({
         {renderElementsCount && (
           <StyledElementsCount
             variant={highlighting === 'red' ? 'red' : undefined}
+            theme={theme}
           >
             {renderElementsCount(elements.length)}
           </StyledElementsCount>

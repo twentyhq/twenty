@@ -36,7 +36,11 @@ export const TabContent = ({
       : theme.font.color.secondary;
 
   return (
-    <StyledTabHover contentSize={contentSize} className={className}>
+    <StyledTabHover
+      theme={theme}
+      contentSize={contentSize}
+      className={className}
+    >
       {LeftIcon && <LeftIcon color={iconColor} size={theme.icon.size.md} />}
       {logo && <Avatar avatarUrl={logo} size="md" placeholder={title} />}
       {title}
