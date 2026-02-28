@@ -31,25 +31,25 @@ const StyledEditorLoader = styled.div<{
   height: ${({ height }) =>
     typeof height === 'number' ? `${height}px` : height};
   justify-content: center;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  ${({ variant, theme }) => {
+  border: ${({ variant, theme }) =>
+    variant === 'borderless'
+      ? 'none'
+      : `1px solid ${theme.border.color.medium}`};
+  border-top: ${({ variant, theme }) => {
+    if (variant === 'default') return `1px solid ${theme.border.color.medium}`;
+    return 'none';
+  }};
+  border-radius: ${({ variant, theme }) => {
     switch (variant) {
       case 'default':
-        return `
-          border-radius: ${theme.border.radius.sm};
-        `;
-      case 'borderless':
-        return `
-          border: none;
-        `;
+        return theme.border.radius.sm;
       case 'with-header':
-        return `
-          border-radius: 0 0 ${theme.border.radius.sm} ${theme.border.radius.sm};
-          border-top: none;
-        `;
+        return `0 0 ${theme.border.radius.sm} ${theme.border.radius.sm}`;
+      default:
+        return '0';
     }
-  }}
+  }};
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
 `;
 
 const StyledCodeEditorContainer = styled.div`
@@ -66,43 +66,41 @@ const StyledEditorWrapper = styled.div<{
   .monaco-editor {
     outline-width: 0;
 
-    ${({ theme, transparentBackground }) =>
-      !transparentBackground
-        ? `
-        background-color: ${theme.background.secondary};
-      `
-        : ''}
+    background-color: ${({ theme, transparentBackground }) =>
+      !transparentBackground ? theme.background.secondary : 'transparent'};
 
-    ${({ variant, theme }) =>
-      variant !== 'borderless'
-        ? `
-        border-radius: ${theme.border.radius.sm};
-      `
-        : ''}
+    border-radius: ${({ variant, theme }) =>
+      variant !== 'borderless' ? theme.border.radius.sm : '0'};
   }
 
   .overflow-guard {
     box-sizing: border-box;
 
-    ${({ variant, theme }) => {
+    border: ${({ variant, theme }) => {
       switch (variant) {
-        case 'default': {
-          return `
-            border: 1px solid ${theme.border.color.medium};
-            border-radius: ${theme.border.radius.sm};
-          `;
-        }
-        case 'with-header': {
-          return `
-            border: 1px solid ${theme.border.color.medium};
-            border-radius: 0 0 ${theme.border.radius.sm}
-              ${theme.border.radius.sm};
-            border-top: none;
-          `;
-        }
+        case 'default':
+        case 'with-header':
+          return `1px solid ${theme.border.color.medium}`;
+        default:
+          return 'none';
       }
-      return '';
-    }}
+    }};
+    border-radius: ${({ variant, theme }) => {
+      switch (variant) {
+        case 'default':
+          return theme.border.radius.sm;
+        case 'with-header':
+          return `0 0 ${theme.border.radius.sm} ${theme.border.radius.sm}`;
+        default:
+          return '0';
+      }
+    }};
+    border-top: ${({ variant, theme }) => {
+      if (variant === 'with-header') return 'none';
+      if (variant === 'default')
+        return `1px solid ${theme.border.color.medium}`;
+      return 'none';
+    }};
   }
 `;
 

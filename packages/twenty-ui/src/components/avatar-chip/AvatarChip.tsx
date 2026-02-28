@@ -24,11 +24,10 @@ const StyledAvatarChipWrapper = styled.div<{
   divider: AvatarChipProps['divider'];
   theme: ThemeType;
 }>`
-  ${({ divider, theme }) => {
-    const borderStyle = (side: 'left' | 'right') =>
-      `border-${side}: 1px solid ${theme.border.color.light};`;
-    return divider ? borderStyle(divider) : '';
-  }}
+  border-left: ${({ divider, theme }) =>
+    divider === 'left' ? `1px solid ${theme.border.color.light}` : 'none'};
+  border-right: ${({ divider, theme }) =>
+    divider === 'right' ? `1px solid ${theme.border.color.light}` : 'none'};
 
   cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'inherit')};
   display: flex;

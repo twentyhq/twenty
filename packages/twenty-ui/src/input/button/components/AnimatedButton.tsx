@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import { type MotionProps, motion } from 'framer-motion';
-import { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Pill } from '@ui/components/Pill/Pill';
@@ -20,16 +20,276 @@ export type AnimatedButtonProps = ButtonProps &
     soonLabel?: string;
   };
 
+type AnimatedButtonDynamicStyles = {
+  background: string;
+  borderColor: string;
+  borderWidthOverride: string;
+  boxShadow: string;
+  color: string;
+  hoverBackground: string;
+  activeBackground: string;
+};
+
+const computeAnimatedButtonDynamicStyles = (
+  variant: ButtonVariant,
+  inverted: boolean,
+  accent: ButtonAccent,
+  disabled: boolean,
+  focus: boolean,
+  theme: ThemeType,
+): AnimatedButtonDynamicStyles => {
+  const result: AnimatedButtonDynamicStyles = {
+    background: 'transparent',
+    borderColor: 'transparent',
+    borderWidthOverride: '',
+    boxShadow: 'none',
+    color: theme.font.color.secondary,
+    hoverBackground: 'transparent',
+    activeBackground: 'transparent',
+  };
+
+  switch (variant) {
+    case 'primary':
+      switch (accent) {
+        case 'default':
+          result.background = !inverted
+            ? theme.background.secondary
+            : theme.background.primary;
+          result.borderColor = !inverted
+            ? !disabled && focus
+              ? theme.color.blue
+              : theme.background.transparent.light
+            : theme.background.transparent.light;
+          result.borderWidthOverride = '1px 1px 1px 1px';
+          result.boxShadow =
+            !disabled && focus
+              ? `0 0 0 3px ${
+                  !inverted
+                    ? theme.accent.tertiary
+                    : theme.background.transparent.medium
+                }`
+              : 'none';
+          result.color = !inverted
+            ? !disabled
+              ? theme.font.color.secondary
+              : theme.font.color.extraLight
+            : theme.font.color.secondary;
+          if (!disabled) {
+            result.hoverBackground = !inverted
+              ? theme.background.tertiary
+              : theme.background.secondary;
+            result.activeBackground = !inverted
+              ? theme.background.quaternary
+              : theme.background.tertiary;
+          } else {
+            result.hoverBackground = result.background;
+            result.activeBackground = result.background;
+          }
+          break;
+        case 'blue':
+          result.background = !inverted
+            ? theme.color.blue
+            : theme.background.primary;
+          result.borderColor = !inverted
+            ? focus
+              ? theme.color.blue
+              : theme.background.transparent.light
+            : theme.background.transparent.light;
+          result.borderWidthOverride = '1px 1px 1px 1px';
+          result.boxShadow =
+            !disabled && focus
+              ? `0 0 0 3px ${
+                  !inverted
+                    ? theme.accent.tertiary
+                    : theme.background.transparent.medium
+                }`
+              : 'none';
+          result.color = !inverted ? theme.grayScale.gray1 : theme.color.blue;
+          if (!disabled) {
+            result.hoverBackground = !inverted
+              ? theme.color.blue10
+              : theme.background.secondary;
+            result.activeBackground = !inverted
+              ? theme.color.blue12
+              : theme.background.tertiary;
+          } else {
+            result.hoverBackground = result.background;
+            result.activeBackground = result.background;
+          }
+          break;
+        case 'danger':
+          result.background = !inverted
+            ? theme.color.red
+            : theme.background.primary;
+          result.borderColor = !inverted
+            ? focus
+              ? theme.color.red
+              : theme.background.transparent.light
+            : theme.background.transparent.light;
+          result.borderWidthOverride = '1px 1px';
+          result.boxShadow =
+            !disabled && focus
+              ? `0 0 0 3px ${
+                  !inverted
+                    ? theme.color.red3
+                    : theme.background.transparent.medium
+                }`
+              : 'none';
+          result.color = !inverted ? theme.background.primary : theme.color.red;
+          if (!disabled) {
+            result.hoverBackground = !inverted
+              ? theme.color.red8
+              : theme.background.secondary;
+            result.activeBackground = !inverted
+              ? theme.color.red10
+              : theme.background.tertiary;
+          } else {
+            result.hoverBackground = result.background;
+            result.activeBackground = result.background;
+          }
+          break;
+      }
+      break;
+    case 'secondary':
+    case 'tertiary':
+      switch (accent) {
+        case 'default':
+          result.background = 'transparent';
+          result.borderColor = !inverted
+            ? variant === 'secondary'
+              ? !disabled && focus
+                ? theme.color.blue
+                : theme.background.transparent.medium
+              : focus
+                ? theme.color.blue
+                : 'transparent'
+            : variant === 'secondary'
+              ? focus || disabled
+                ? theme.grayScale.gray1
+                : theme.background.transparent.primary
+              : focus
+                ? theme.grayScale.gray1
+                : 'transparent';
+          result.borderWidthOverride = '1px 1px 1px 1px';
+          result.boxShadow =
+            !disabled && focus
+              ? `0 0 0 3px ${
+                  !inverted
+                    ? theme.accent.tertiary
+                    : theme.background.transparent.medium
+                }`
+              : 'none';
+          result.color = !inverted
+            ? !disabled
+              ? theme.font.color.secondary
+              : theme.font.color.extraLight
+            : theme.font.color.inverted;
+          result.hoverBackground = !inverted
+            ? !disabled
+              ? theme.background.transparent.light
+              : 'transparent'
+            : theme.background.transparent.light;
+          result.activeBackground = !inverted
+            ? !disabled
+              ? theme.background.transparent.light
+              : 'transparent'
+            : theme.background.transparent.medium;
+          break;
+        case 'blue':
+          result.background = 'transparent';
+          result.borderColor = !inverted
+            ? variant === 'secondary'
+              ? focus
+                ? theme.color.blue
+                : theme.accent.primary
+              : focus
+                ? theme.color.blue
+                : 'transparent'
+            : variant === 'secondary'
+              ? focus || disabled
+                ? theme.grayScale.gray1
+                : theme.background.transparent.primary
+              : focus
+                ? theme.grayScale.gray1
+                : 'transparent';
+          result.borderWidthOverride = '1px 1px 1px 1px';
+          result.boxShadow =
+            !disabled && focus
+              ? `0 0 0 3px ${
+                  !inverted
+                    ? theme.accent.tertiary
+                    : theme.background.transparent.medium
+                }`
+              : 'none';
+          result.color = !inverted
+            ? !disabled
+              ? theme.color.blue
+              : theme.accent.accent4060
+            : theme.font.color.inverted;
+          result.hoverBackground = !inverted
+            ? !disabled
+              ? theme.accent.tertiary
+              : 'transparent'
+            : theme.background.transparent.light;
+          result.activeBackground = !inverted
+            ? !disabled
+              ? theme.accent.secondary
+              : 'transparent'
+            : theme.background.transparent.medium;
+          break;
+        case 'danger':
+          result.background = 'transparent';
+          result.borderColor = !inverted
+            ? variant === 'secondary'
+              ? focus
+                ? theme.color.red
+                : theme.border.color.danger
+              : focus
+                ? theme.color.red
+                : 'transparent'
+            : variant === 'secondary'
+              ? focus || disabled
+                ? theme.grayScale.gray1
+                : theme.background.transparent.primary
+              : focus
+                ? theme.grayScale.gray1
+                : 'transparent';
+          result.borderWidthOverride = '1px 1px 1px 1px';
+          result.boxShadow =
+            !disabled && focus
+              ? `0 0 0 3px ${
+                  !inverted
+                    ? theme.color.red3
+                    : theme.background.transparent.medium
+                }`
+              : 'none';
+          result.color = !inverted
+            ? theme.font.color.danger
+            : theme.font.color.inverted;
+          result.hoverBackground = !inverted
+            ? !disabled
+              ? theme.background.danger
+              : 'transparent'
+            : theme.background.transparent.light;
+          result.activeBackground = !inverted
+            ? !disabled
+              ? theme.background.danger
+              : 'transparent'
+            : theme.background.transparent.medium;
+          break;
+      }
+      break;
+  }
+
+  return result;
+};
+
 const StyledButton = styled.button<
   Pick<
     ButtonProps,
     | 'fullWidth'
-    | 'variant'
-    | 'inverted'
     | 'size'
     | 'position'
-    | 'accent'
-    | 'focus'
     | 'justify'
     | 'to'
     | 'target'
@@ -38,317 +298,18 @@ const StyledButton = styled.button<
   > & { theme: ThemeType }
 >`
   align-items: center;
-  ${({ theme, variant, inverted, accent, disabled, focus }) => {
-    switch (variant) {
-      case 'primary':
-        switch (accent) {
-          case 'default':
-            return `
-              background: ${
-                !inverted
-                  ? theme.background.secondary
-                  : theme.background.primary
-              };
-              border-color: ${
-                !inverted
-                  ? !disabled && focus
-                    ? theme.color.blue
-                    : theme.background.transparent.light
-                  : theme.background.transparent.light
-              };
-              border-width: 1px 1px 1px 1px !important;
-              box-shadow: ${
-                !disabled && focus
-                  ? `0 0 0 3px ${
-                      !inverted
-                        ? theme.accent.tertiary
-                        : theme.background.transparent.medium
-                    }`
-                  : 'none'
-              };
-              color: ${
-                !inverted
-                  ? !disabled
-                    ? theme.font.color.secondary
-                    : theme.font.color.extraLight
-                  : theme.font.color.secondary
-              };
-              &:hover {
-                background: ${
-                  !inverted
-                    ? theme.background.tertiary
-                    : theme.background.secondary
-                };
-              }
-              &:active {
-                background: ${
-                  !inverted
-                    ? theme.background.quaternary
-                    : theme.background.tertiary
-                };
-              }
-            `;
-          case 'blue':
-            return `
-              background: ${
-                !inverted ? theme.color.blue : theme.background.primary
-              };
-              border-color: ${
-                !inverted
-                  ? focus
-                    ? theme.color.blue
-                    : theme.background.transparent.light
-                  : theme.background.transparent.light
-              };
-              border-width: 1px 1px 1px 1px !important;
-              box-shadow: ${
-                !disabled && focus
-                  ? `0 0 0 3px ${
-                      !inverted
-                        ? theme.accent.tertiary
-                        : theme.background.transparent.medium
-                    }`
-                  : 'none'
-              };
-              color: ${!inverted ? theme.grayScale.gray1 : theme.color.blue};
-              ${
-                disabled
-                  ? ''
-                  : `
-                    &:hover {
-                      background: ${
-                        !inverted
-                          ? theme.color.blue10
-                          : theme.background.secondary
-                      };
-                    }
-                    &:active {
-                      background: ${
-                        !inverted
-                          ? theme.color.blue12
-                          : theme.background.tertiary
-                      };
-                    }
-                  `
-              }
-            `;
-          case 'danger':
-            return `
-              background: ${
-                !inverted ? theme.color.red : theme.background.primary
-              };
-              border-color: ${
-                !inverted
-                  ? focus
-                    ? theme.color.red
-                    : theme.background.transparent.light
-                  : theme.background.transparent.light
-              };
-              border-width: 1px 1px !important;
-              box-shadow: ${
-                !disabled && focus
-                  ? `0 0 0 3px ${
-                      !inverted
-                        ? theme.color.red3
-                        : theme.background.transparent.medium
-                    }`
-                  : 'none'
-              };
-              color: ${!inverted ? theme.background.primary : theme.color.red};
-              ${
-                disabled
-                  ? ''
-                  : `
-                    &:hover {
-                      background: ${
-                        !inverted
-                          ? theme.color.red8
-                          : theme.background.secondary
-                      };
-                    }
-                    &:active {
-                      background: ${
-                        !inverted
-                          ? theme.color.red10
-                          : theme.background.tertiary
-                      };
-                    }
-                  `
-              }
-            `;
-        }
-        break;
-      case 'secondary':
-      case 'tertiary':
-        switch (accent) {
-          case 'default':
-            return `
-              background: transparent;
-              border-color: ${
-                !inverted
-                  ? variant === 'secondary'
-                    ? !disabled && focus
-                      ? theme.color.blue
-                      : theme.background.transparent.medium
-                    : focus
-                      ? theme.color.blue
-                      : 'transparent'
-                  : variant === 'secondary'
-                    ? focus || disabled
-                      ? theme.grayScale.gray1
-                      : theme.background.transparent.primary
-                    : focus
-                      ? theme.grayScale.gray1
-                      : 'transparent'
-              };
-              border-width: 1px 1px 1px 1px !important;
-              box-shadow: ${
-                !disabled && focus
-                  ? `0 0 0 3px ${
-                      !inverted
-                        ? theme.accent.tertiary
-                        : theme.background.transparent.medium
-                    }`
-                  : 'none'
-              };
-              color: ${
-                !inverted
-                  ? !disabled
-                    ? theme.font.color.secondary
-                    : theme.font.color.extraLight
-                  : theme.font.color.inverted
-              };
-              &:hover {
-                background: ${
-                  !inverted
-                    ? !disabled
-                      ? theme.background.transparent.light
-                      : 'transparent'
-                    : theme.background.transparent.light
-                };
-              }
-              &:active {
-                background: ${
-                  !inverted
-                    ? !disabled
-                      ? theme.background.transparent.light
-                      : 'transparent'
-                    : theme.background.transparent.medium
-                };
-              }
-            `;
-          case 'blue':
-            return `
-              background: transparent;
-              border-color: ${
-                !inverted
-                  ? variant === 'secondary'
-                    ? focus
-                      ? theme.color.blue
-                      : theme.accent.primary
-                    : focus
-                      ? theme.color.blue
-                      : 'transparent'
-                  : variant === 'secondary'
-                    ? focus || disabled
-                      ? theme.grayScale.gray1
-                      : theme.background.transparent.primary
-                    : focus
-                      ? theme.grayScale.gray1
-                      : 'transparent'
-              };
-              border-width: 1px 1px 1px 1px !important;
-              box-shadow: ${
-                !disabled && focus
-                  ? `0 0 0 3px ${
-                      !inverted
-                        ? theme.accent.tertiary
-                        : theme.background.transparent.medium
-                    }`
-                  : 'none'
-              };
-              color: ${
-                !inverted
-                  ? !disabled
-                    ? theme.color.blue
-                    : theme.accent.accent4060
-                  : theme.font.color.inverted
-              };
-              &:hover {
-                background: ${
-                  !inverted
-                    ? !disabled
-                      ? theme.accent.tertiary
-                      : 'transparent'
-                    : theme.background.transparent.light
-                };
-              }
-              &:active {
-                background: ${
-                  !inverted
-                    ? !disabled
-                      ? theme.accent.secondary
-                      : 'transparent'
-                    : theme.background.transparent.medium
-                };
-              }
-            `;
-          case 'danger':
-            return `
-              background: transparent;
-              border-color: ${
-                !inverted
-                  ? variant === 'secondary'
-                    ? focus
-                      ? theme.color.red
-                      : theme.border.color.danger
-                    : focus
-                      ? theme.color.red
-                      : 'transparent'
-                  : variant === 'secondary'
-                    ? focus || disabled
-                      ? theme.grayScale.gray1
-                      : theme.background.transparent.primary
-                    : focus
-                      ? theme.grayScale.gray1
-                      : 'transparent'
-              };
-              border-width: 1px 1px 1px 1px !important;
-              box-shadow: ${
-                !disabled && focus
-                  ? `0 0 0 3px ${
-                      !inverted
-                        ? theme.color.red3
-                        : theme.background.transparent.medium
-                    }`
-                  : 'none'
-              };
-              color: ${
-                !inverted ? theme.font.color.danger : theme.font.color.inverted
-              };
-              &:hover {
-                background: ${
-                  !inverted
-                    ? !disabled
-                      ? theme.background.danger
-                      : 'transparent'
-                    : theme.background.transparent.light
-                };
-              }
-              &:active {
-                background: ${
-                  !inverted
-                    ? !disabled
-                      ? theme.background.danger
-                      : 'transparent'
-                    : theme.background.transparent.medium
-                };
-              }
-            `;
-        }
-    }
-    return '';
-  }}
+  background: var(--abtn-bg);
+  border-color: var(--abtn-border-color);
+  border-width: var(--abtn-border-width);
+  box-shadow: var(--abtn-box-shadow);
+  color: var(--abtn-color);
+
+  &:hover {
+    background: var(--abtn-hover-bg);
+  }
+  &:active {
+    background: var(--abtn-active-bg);
+  }
 
   text-decoration: none;
   border-radius: ${({ position, theme }) => {
@@ -365,16 +326,6 @@ const StyledButton = styled.button<
     return '';
   }};
   border-style: solid;
-  border-width: ${({ variant, position }) => {
-    switch (variant) {
-      case 'primary':
-      case 'secondary':
-        return position === 'middle' ? '1px 0px' : '1px';
-      case 'tertiary':
-        return '0';
-    }
-    return '';
-  }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
@@ -479,6 +430,27 @@ export const AnimatedButton = ({
 }: AnimatedButtonProps) => {
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
+  const isDisabled = soon || disabled;
+
+  const dynamicStyles = useMemo(() => {
+    const s = computeAnimatedButtonDynamicStyles(
+      variant,
+      inverted,
+      accent,
+      isDisabled,
+      focus,
+      theme,
+    );
+    return {
+      '--abtn-bg': s.background,
+      '--abtn-border-color': s.borderColor,
+      '--abtn-border-width': s.borderWidthOverride || undefined,
+      '--abtn-box-shadow': s.boxShadow,
+      '--abtn-color': s.color,
+      '--abtn-hover-bg': s.hoverBackground,
+      '--abtn-active-bg': s.activeBackground,
+    } as React.CSSProperties;
+  }, [variant, inverted, accent, isDisabled, focus, theme]);
 
   const ButtonComponent = to ? Link : 'button';
 
@@ -487,15 +459,12 @@ export const AnimatedButton = ({
       theme={theme}
       as={ButtonComponent}
       fullWidth={fullWidth}
-      variant={variant}
-      inverted={inverted}
       size={size}
       position={position}
-      disabled={soon || disabled}
-      focus={focus}
+      disabled={isDisabled}
       justify={justify}
-      accent={accent}
       className={className}
+      style={dynamicStyles}
       onClick={onClick}
       to={to}
       target={target}

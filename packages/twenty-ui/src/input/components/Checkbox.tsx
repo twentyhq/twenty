@@ -77,19 +77,24 @@ const StyledInputContainer = styled.div<InputProps & { theme: ThemeType }>`
     }
   }};
   position: relative;
-  ${({ hoverable, isChecked, theme, indeterminate, disabled, accent }) => {
-    if (!hoverable || disabled === true) return '';
-    return `&:hover{
-      background-color: ${
-        indeterminate || isChecked
-          ? accent === CheckboxAccent.Blue
-            ? theme.background.transparent.blue
-            : theme.background.transparent.orange
-          : theme.background.transparent.light
-      };
-    }}
-  }`;
-  }}
+  &:hover {
+    background-color: ${({
+      hoverable,
+      isChecked,
+      theme,
+      indeterminate,
+      disabled,
+      accent,
+    }) => {
+      if (hoverable !== true || disabled === true) return 'transparent';
+      if (indeterminate === true || isChecked === true) {
+        return accent === CheckboxAccent.Blue
+          ? theme.background.transparent.blue
+          : theme.background.transparent.orange;
+      }
+      return theme.background.transparent.light;
+    }};
+  }
 `;
 
 const StyledInput = styled.input<InputProps & { theme: ThemeType }>`

@@ -18,31 +18,30 @@ import {
   StyledRightMenuItemContextualText,
 } from '../internals/components/StyledMenuItemBase';
 
-const RawStyledMenuItemSelect = styled(StyledMenuItemBase)<{
+const StyledMenuItemSelectInner = styled(StyledMenuItemBase)<{
   disabled?: boolean;
   focused?: boolean;
   theme: ThemeType;
 }>`
-  ${({ theme, disabled, focused }) => {
+  background: ${({ theme, disabled, focused }) => {
     if (disabled === true) {
-      return `
-        background: inherit;
-        &:hover {
-          background: inherit;
-        }
-
-        color: ${theme.font.color.tertiary};
-
-        cursor: default;
-      `;
-    } else if (focused === true) {
-      return `
-        background: ${theme.background.transparent.light};
-      `;
+      return 'inherit';
     }
-
+    if (focused === true) {
+      return theme.background.transparent.light;
+    }
     return '';
-  }}
+  }};
+
+  &:hover {
+    background: ${({ theme, disabled }) =>
+      disabled === true ? 'inherit' : theme.background.transparent.light};
+  }
+
+  color: ${({ theme, disabled }) =>
+    disabled === true ? theme.font.color.tertiary : theme.font.color.secondary};
+
+  cursor: ${({ disabled }) => (disabled === true ? 'default' : 'pointer')};
 `;
 
 export const StyledMenuItemSelect = forwardRef<
@@ -53,7 +52,8 @@ export const StyledMenuItemSelect = forwardRef<
 >(({ theme: propTheme, ...rest }, ref) => {
   const { theme: contextTheme } = useContext(ThemeContext);
   return (
-    <RawStyledMenuItemSelect
+    <StyledMenuItemSelectInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...rest}
       theme={propTheme ?? contextTheme}
       ref={ref as any}

@@ -34,38 +34,46 @@ const StyledMenuPicker = styled.button<{
   user-select: none;
   width: 100%;
 
-  ${({ theme, selected, disabled }) => {
+  background: ${({ theme, disabled }) => {
     if (disabled) {
-      return `
-        background: ${theme.background.secondary};
-        border-color: ${theme.border.color.medium};
-        color: ${theme.font.color.extraLight};
-        cursor: default;
-      `;
+      return theme.background.secondary;
     }
+    return 'transparent';
+  }};
 
+  border-color: ${({ theme, selected, disabled }) => {
+    if (disabled) {
+      return theme.border.color.medium;
+    }
     if (selected) {
-      return `
-        background: transparent;
-        border-color: ${theme.color.blue};
-        color: ${theme.color.blue};
-
-        &:hover {
-          background: ${theme.background.transparent.primary};
-        }
-      `;
+      return theme.color.blue;
     }
+    return theme.border.color.medium;
+  }};
 
-    return `
-      background: transparent;
-      border-color: ${theme.border.color.medium};
-      color: ${theme.font.color.tertiary};
+  color: ${({ theme, selected, disabled }) => {
+    if (disabled) {
+      return theme.font.color.extraLight;
+    }
+    if (selected) {
+      return theme.color.blue;
+    }
+    return theme.font.color.tertiary;
+  }};
 
-      &:hover {
-        background: ${theme.background.transparent.light};
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+
+  &:hover {
+    background: ${({ theme, selected, disabled }) => {
+      if (disabled) {
+        return theme.background.secondary;
       }
-    `;
-  }}
+      if (selected) {
+        return theme.background.transparent.primary;
+      }
+      return theme.background.transparent.light;
+    }};
+  }
 `;
 
 const StyledIconContainer = styled.div<{ theme: ThemeType }>`
@@ -82,6 +90,15 @@ const StyledLabel = styled.div<{
   selected: boolean;
   theme: ThemeType;
 }>`
+  color: ${({ theme, selected, disabled }) => {
+    if (disabled) {
+      return theme.font.color.extraLight;
+    }
+    if (selected) {
+      return theme.color.blue;
+    }
+    return theme.font.color.tertiary;
+  }};
   font-family: ${({ theme }) => theme.font.family};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -89,25 +106,8 @@ const StyledLabel = styled.div<{
   overflow: hidden;
   text-align: center;
   text-overflow: ellipsis;
+
   white-space: nowrap;
-
-  ${({ theme, selected, disabled }) => {
-    if (disabled) {
-      return `
-        color: ${theme.font.color.extraLight};
-      `;
-    }
-
-    if (selected) {
-      return `
-        color: ${theme.color.blue};
-      `;
-    }
-
-    return `
-      color: ${theme.font.color.tertiary};
-    `;
-  }}
 `;
 
 export type MenuPickerProps = {

@@ -16,18 +16,15 @@ const StyledButtonWrapper = styled.div<{
   isSelected?: boolean;
   theme: ThemeType;
 }>`
-  ${({ isSelected, theme }) =>
-    isSelected
-      ? `
-          button {
-            background-color: ${theme.background.transparent.medium};
+  button {
+    background-color: ${({ isSelected, theme }) =>
+      isSelected ? theme.background.transparent.medium : 'inherit'};
 
-            &:hover {
-              background-color: ${theme.background.transparent.medium};
-            }
-          }
-        `
-      : ''}
+    &:hover {
+      background-color: ${({ isSelected, theme }) =>
+        isSelected ? theme.background.transparent.medium : 'inherit'};
+    }
+  }
 `;
 
 export const ColorPickerButton = ({

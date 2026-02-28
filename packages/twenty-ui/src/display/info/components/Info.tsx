@@ -34,21 +34,26 @@ const StyledInfo = styled.div<Pick<InfoProps, 'accent'> & { theme: ThemeType }>`
   max-width: 512px;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
-  ${({ theme, accent }) => {
+  background: ${({ theme, accent }) => {
     switch (accent) {
       case 'blue':
-        return `
-          background: ${theme.color.blue5};
-          color: ${theme.color.blue10};
-        `;
+        return theme.color.blue5;
       case 'danger':
-        return `
-          background: ${theme.color.red3};
-          color: ${theme.color.red};
-        `;
+        return theme.color.red3;
+      default:
+        return 'transparent';
     }
-    return '';
-  }}
+  }};
+  color: ${({ theme, accent }) => {
+    switch (accent) {
+      case 'blue':
+        return theme.color.blue10;
+      case 'danger':
+        return theme.color.red;
+      default:
+        return 'inherit';
+    }
+  }};
 `;
 
 const StyledLink = styled(Link)`

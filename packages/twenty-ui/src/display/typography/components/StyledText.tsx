@@ -13,12 +13,12 @@ type StyledTextProps = {
   color?: string;
 };
 
-function useThemeFromContext() {
+const useThemeFromContext = () => {
   const { theme } = useContext(ThemeContext);
   return theme;
-}
+};
 
-const RawStyledTextContent = styled.div<{ theme: ThemeType }>`
+const StyledTextContentInner = styled.div<{ theme: ThemeType }>`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
 
@@ -34,7 +34,8 @@ export const StyledTextContent = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledTextContent
+    <StyledTextContentInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
@@ -43,7 +44,7 @@ export const StyledTextContent = forwardRef<
 });
 StyledTextContent.displayName = 'StyledTextContent';
 
-const RawStyledTextWrapper = styled.div<{
+const StyledTextWrapperInner = styled.div<{
   color?: string;
   theme: ThemeType;
 }>`
@@ -74,7 +75,8 @@ export const StyledTextWrapper = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledTextWrapper
+    <StyledTextWrapperInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}

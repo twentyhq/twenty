@@ -47,13 +47,8 @@ const StyledButton = styled.button<
     }
   }};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  ${({ theme, disabled }) => {
-    if (disabled === true) {
-      return '';
-    }
-
-    return `box-shadow: ${theme.boxShadow.light};`;
-  }}
+  box-shadow: ${({ theme, disabled }) =>
+    disabled ? 'none' : theme.boxShadow.light};
   color: ${({ theme, variant, disabled }) => {
     if (disabled === true) {
       return theme.font.color.light;
@@ -80,26 +75,18 @@ const StyledButton = styled.button<
   max-height: ${({ theme }) => theme.spacing(8)};
   width: ${({ fullWidth, width }) =>
     fullWidth ? '100%' : width ? `${width}px` : 'auto'};
-  ${({ theme, variant, disabled }) => {
-    switch (variant) {
-      case 'secondary':
-        return `
-          &:hover {
-            background: ${theme.background.tertiary};
-          }
-        `;
-      default:
-        return `
-          &:hover {
-            background: ${
-              !disabled
-                ? theme.background.primaryInvertedHover
-                : theme.background.secondary
-            };};
-          }
-        `;
-    }
-  }};
+  &:hover {
+    background: ${({ theme, variant, disabled }) => {
+      switch (variant) {
+        case 'secondary':
+          return theme.background.tertiary;
+        default:
+          return !disabled
+            ? theme.background.primaryInvertedHover
+            : theme.background.secondary;
+      }
+    }};
+  }
 `;
 
 type MainButtonProps = Props & {

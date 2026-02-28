@@ -78,24 +78,15 @@ const StyledButton = styled.button<
     ease;
   white-space: nowrap;
 
-  ${({ position, size }) => {
-    const sizeInPx =
-      (size === 'small' ? 24 : 32) - (position === 'standalone' ? 0 : 4);
+  height: ${({ position, size }) =>
+    (size === 'small' ? 24 : 32) - (position === 'standalone' ? 0 : 4)}px;
+  width: ${({ position, size }) =>
+    (size === 'small' ? 24 : 32) - (position === 'standalone' ? 0 : 4)}px;
 
-    return `
-      height: ${sizeInPx}px;
-      width: ${sizeInPx}px;
-    `;
-  }}
-
-  ${({ theme, disabled }) =>
-    !disabled
-      ? `
-      &:hover {
-        background: ${theme.background.transparent.lighter};
-      }
-    `
-      : ''}
+  &:hover {
+    background: ${({ theme, disabled }) =>
+      !disabled ? theme.background.transparent.lighter : 'transparent'};
+  }
 
   &:active {
     background: ${({ theme, disabled }) =>

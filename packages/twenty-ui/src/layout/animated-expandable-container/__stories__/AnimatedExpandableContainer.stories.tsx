@@ -20,8 +20,8 @@ const StyledButton = styled.button<{ theme: ThemeType }>`
 `;
 
 const StyledButtonWrapper = styled.div<{ dimension: 'width' | 'height' }>`
-  ${({ dimension }) => (dimension === 'height' ? `width: 600px;` : '')}
-  ${({ dimension }) => (dimension === 'width' ? `height: 300px;` : '')}
+  height: ${({ dimension }) => (dimension === 'width' ? '300px' : 'auto')};
+  width: ${({ dimension }) => (dimension === 'height' ? '600px' : 'auto')};
 `;
 
 const StyledExpandableWrapper = styled.div<{ theme: ThemeType }>`
@@ -36,9 +36,9 @@ const StyledContent = styled.div<{
   theme: ThemeType;
 }>`
   padding: ${({ theme }) => theme.spacing(3)};
-  ${({ dimension, mode }) =>
-    dimension === 'height' && mode === 'scroll-height' ? 'height: 200px;' : ''}
-  ${({ dimension }) => (dimension === 'width' ? 'width: 400px;' : '')}
+  height: ${({ dimension, mode }) =>
+    dimension === 'height' && mode === 'scroll-height' ? '200px' : 'auto'};
+  width: ${({ dimension }) => (dimension === 'width' ? '400px' : 'auto')};
 
   p {
     color: ${({ theme }) => theme.font.color.primary};

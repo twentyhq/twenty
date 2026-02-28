@@ -3,11 +3,7 @@ import { styled } from '@linaria/react';
 import { isUndefined } from '@sniptt/guards';
 
 import { IconCheck } from '@ui/display';
-import {
-  HOVER_BACKGROUND,
-  ThemeContext,
-  type ThemeType,
-} from '@ui/theme';
+import { ThemeContext, type ThemeType } from '@ui/theme';
 import { forwardRef, useContext } from 'react';
 import { type MenuItemAccent } from '../../types/MenuItemAccent';
 
@@ -21,7 +17,7 @@ export type MenuItemBaseProps = {
   theme?: ThemeType;
 };
 
-const RawStyledMenuItemBase = styled.div<
+const StyledMenuItemBaseInner = styled.div<
   MenuItemBaseProps & { theme: ThemeType }
 >`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
@@ -44,44 +40,35 @@ const RawStyledMenuItemBase = styled.div<
 
   padding: var(--vertical-padding) var(--horizontal-padding);
 
-  ${({ theme, isKeySelected }) =>
-    isKeySelected ? `background: ${theme.background.transparent.light};` : ''}
+  background: ${({ theme, isKeySelected, focused }) =>
+    isKeySelected || focused ? theme.background.transparent.light : ''};
 
-  ${({ isHoverBackgroundDisabled, disabled, theme }) =>
-    disabled || isHoverBackgroundDisabled ? '' : HOVER_BACKGROUND({ theme })};
+  transition: ${({ isHoverBackgroundDisabled, disabled }) =>
+    disabled || isHoverBackgroundDisabled ? 'none' : 'background 0.1s ease'};
 
-  ${({ theme, accent, disabled }) => {
+  color: ${({ theme, accent, disabled }) => {
     if (!isUndefined(disabled) && disabled !== false) {
-      return `
-        color: ${theme.font.color.tertiary};
-      `;
+      return theme.font.color.tertiary;
     }
-
     switch (accent) {
-      case 'danger': {
-        return `
-          color: ${theme.font.color.danger};
-          &:hover {
-            background: ${theme.background.transparent.danger};
-          }
-        `;
-      }
-      case 'placeholder': {
-        return `
-          color: ${theme.font.color.tertiary};
-        `;
-      }
+      case 'danger':
+        return theme.font.color.danger;
+      case 'placeholder':
+        return theme.font.color.tertiary;
       case 'default':
-      default: {
-        return `
-          color: ${theme.font.color.secondary};
-        `;
-      }
+      default:
+        return theme.font.color.secondary;
     }
-  }}
+  }};
 
-  ${({ focused, theme }) =>
-    focused ? `background: ${theme.background.transparent.light};` : ''};
+  &:hover {
+    background: ${({ theme, accent, disabled, isHoverBackgroundDisabled }) => {
+      if (disabled === true || isHoverBackgroundDisabled === true)
+        return 'transparent';
+      if (accent === 'danger') return theme.background.transparent.danger;
+      return theme.background.transparent.light;
+    }};
+  }
 
   position: relative;
   user-select: none;
@@ -89,19 +76,19 @@ const RawStyledMenuItemBase = styled.div<
   width: calc(100% - 2 * var(--horizontal-padding));
 `;
 
-function useThemeFromContext() {
+const useThemeFromContext = () => {
   const { theme } = useContext(ThemeContext);
   return theme;
-}
+};
 
 export const StyledMenuItemBase = forwardRef<
   HTMLDivElement,
-  MenuItemBaseProps &
-    React.ComponentPropsWithoutRef<'div'>
+  MenuItemBaseProps & React.ComponentPropsWithoutRef<'div'>
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledMenuItemBase
+    <StyledMenuItemBaseInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
@@ -116,7 +103,8 @@ export const StyledMenuItemLabel = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledMenuItemLabel
+    <StyledMenuItemLabelInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
@@ -125,7 +113,7 @@ export const StyledMenuItemLabel = forwardRef<
 });
 StyledMenuItemLabel.displayName = 'StyledMenuItemLabel';
 
-const RawStyledMenuItemLabel = styled.div<{ theme: ThemeType }>`
+const StyledMenuItemLabelInner = styled.div<{ theme: ThemeType }>`
   display: flex;
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
@@ -142,7 +130,8 @@ export const StyledMenuItemLabelLight = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledMenuItemLabelLight
+    <StyledMenuItemLabelLightInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
@@ -151,7 +140,7 @@ export const StyledMenuItemLabelLight = forwardRef<
 });
 StyledMenuItemLabelLight.displayName = 'StyledMenuItemLabelLight';
 
-const RawStyledMenuItemLabelLight = styled(RawStyledMenuItemLabel)`
+const StyledMenuItemLabelLightInner = styled(StyledMenuItemLabelInner)`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
@@ -161,7 +150,8 @@ export const StyledNoIconFiller = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledNoIconFiller
+    <StyledNoIconFillerInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
@@ -170,7 +160,7 @@ export const StyledNoIconFiller = forwardRef<
 });
 StyledNoIconFiller.displayName = 'StyledNoIconFiller';
 
-const RawStyledNoIconFiller = styled.div<{ theme: ThemeType }>`
+const StyledNoIconFillerInner = styled.div<{ theme: ThemeType }>`
   width: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -180,7 +170,8 @@ export const StyledMenuItemLeftContent = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledMenuItemLeftContent
+    <StyledMenuItemLeftContentInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
@@ -189,7 +180,7 @@ export const StyledMenuItemLeftContent = forwardRef<
 });
 StyledMenuItemLeftContent.displayName = 'StyledMenuItemLeftContent';
 
-const RawStyledMenuItemLeftContent = styled.div<{ theme: ThemeType }>`
+const StyledMenuItemLeftContentInner = styled.div<{ theme: ThemeType }>`
   align-items: center;
   display: flex;
 
@@ -210,7 +201,8 @@ export const StyledMenuItemRightContent = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledMenuItemRightContent
+    <StyledMenuItemRightContentInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
@@ -219,7 +211,7 @@ export const StyledMenuItemRightContent = forwardRef<
 });
 StyledMenuItemRightContent.displayName = 'StyledMenuItemRightContent';
 
-const RawStyledMenuItemRightContent = styled.div<{ theme: ThemeType }>`
+const StyledMenuItemRightContentInner = styled.div<{ theme: ThemeType }>`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -249,7 +241,8 @@ export const StyledHoverableMenuItemBase = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledHoverableMenuItemBase
+    <StyledHoverableMenuItemBaseInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
@@ -258,33 +251,24 @@ export const StyledHoverableMenuItemBase = forwardRef<
 });
 StyledHoverableMenuItemBase.displayName = 'StyledHoverableMenuItemBase';
 
-const RawStyledHoverableMenuItemBase = styled(RawStyledMenuItemBase)<{
+const StyledHoverableMenuItemBaseInner = styled(StyledMenuItemBaseInner)<{
   disabled?: boolean;
   isIconDisplayedOnHoverOnly?: boolean;
   cursor?: 'drag' | 'default';
   theme: ThemeType;
 }>`
-  ${({ isIconDisplayedOnHoverOnly, theme }) =>
-    isIconDisplayedOnHoverOnly
-      ? `
-      & .hoverable-buttons {
-        opacity: 0;
-        right: ${theme.spacing(2)};
-      }
-
-      &:hover {
-        & .hoverable-buttons {
-          opacity: 1;
-        }
-      }
-    `
-      : ''};
-
   & .hoverable-buttons {
+    opacity: ${({ isIconDisplayedOnHoverOnly }) =>
+      isIconDisplayedOnHoverOnly === true ? '0' : '1'};
+    right: ${({ isIconDisplayedOnHoverOnly, theme }) =>
+      isIconDisplayedOnHoverOnly === true ? theme.spacing(2) : 'auto'};
     transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
   }
 
   &:hover {
+    & .hoverable-buttons {
+      opacity: 1;
+    }
     & .grip-swap-default-icon {
       opacity: 0;
     }
@@ -313,7 +297,8 @@ export const StyledMenuItemIconCheck = forwardRef<
 >(({ theme: propTheme, ...rest }, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledMenuItemIconCheck
+    <StyledMenuItemIconCheckInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...rest}
       theme={propTheme ?? contextTheme}
       ref={ref}
@@ -322,7 +307,7 @@ export const StyledMenuItemIconCheck = forwardRef<
 });
 StyledMenuItemIconCheck.displayName = 'StyledMenuItemIconCheck';
 
-const RawStyledMenuItemIconCheck = styled(IconCheck)<{
+const StyledMenuItemIconCheckInner = styled(IconCheck)<{
   theme: ThemeType;
 }>`
   flex-shrink: 0;
@@ -335,7 +320,8 @@ export const StyledMenuItemContextualText = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledMenuItemContextualText
+    <StyledMenuItemContextualTextInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
@@ -344,7 +330,7 @@ export const StyledMenuItemContextualText = forwardRef<
 });
 StyledMenuItemContextualText.displayName = 'StyledMenuItemContextualText';
 
-const RawStyledMenuItemContextualText = styled.div<{
+const StyledMenuItemContextualTextInner = styled.div<{
   theme: ThemeType;
 }>`
   color: ${({ theme }) => theme.font.color.light};
@@ -362,7 +348,8 @@ export const StyledRightMenuItemContextualText = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledRightMenuItemContextualText
+    <StyledRightMenuItemContextualTextInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
@@ -372,8 +359,8 @@ export const StyledRightMenuItemContextualText = forwardRef<
 StyledRightMenuItemContextualText.displayName =
   'StyledRightMenuItemContextualText';
 
-const RawStyledRightMenuItemContextualText = styled(
-  RawStyledMenuItemContextualText,
+const StyledRightMenuItemContextualTextInner = styled(
+  StyledMenuItemContextualTextInner,
 )`
   text-align: right;
 `;

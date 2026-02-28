@@ -10,12 +10,8 @@ const StyledCardContentBase = styled.div<{
   background-color: ${({ theme }) => theme.background.secondary};
   padding: ${({ theme }) => theme.spacing(4)};
 
-  ${({ divider, theme }) =>
-    divider
-      ? `
-          border-bottom: 1px solid ${theme.border.color.medium};
-        `
-      : ''}
+  border-bottom: ${({ divider, theme }) =>
+    divider ? `1px solid ${theme.border.color.medium}` : 'none'};
 `;
 
 const MotionCardContent = motion.create(StyledCardContentBase);
@@ -38,6 +34,7 @@ export const CardContent = ({
       theme={theme}
       className={className}
       divider={divider}
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...motionProps}
     >
       {children}

@@ -2,12 +2,12 @@ import { styled } from '@linaria/react';
 import { ThemeContext, type ThemeType } from '@ui/theme';
 import { forwardRef, useContext } from 'react';
 
-function useThemeFromContext() {
+const useThemeFromContext = () => {
   const { theme } = useContext(ThemeContext);
   return theme;
-}
+};
 
-const RawStyledTabButton = styled.button<{
+const StyledTabButtonInner = styled.button<{
   theme: ThemeType;
   active?: boolean;
   disabled?: boolean;
@@ -56,7 +56,8 @@ export const StyledTabButton = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledTabButton
+    <StyledTabButtonInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
@@ -65,7 +66,7 @@ export const StyledTabButton = forwardRef<
 });
 StyledTabButton.displayName = 'StyledTabButton';
 
-const RawStyledTabContainer = styled.div<{
+const StyledTabContainerInner = styled.div<{
   theme: ThemeType;
   active?: boolean;
   disabled?: boolean;
@@ -108,7 +109,8 @@ export const StyledTabContainer = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledTabContainer
+    <StyledTabContainerInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
@@ -117,7 +119,7 @@ export const StyledTabContainer = forwardRef<
 });
 StyledTabContainer.displayName = 'StyledTabContainer';
 
-const RawStyledTabHover = styled.span<{
+const StyledTabHoverInner = styled.span<{
   theme: ThemeType;
   contentSize?: 'sm' | 'md';
 }>`
@@ -148,7 +150,8 @@ export const StyledTabHover = forwardRef<
 >((props, ref) => {
   const contextTheme = useThemeFromContext();
   return (
-    <RawStyledTabHover
+    <StyledTabHoverInner
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       theme={props.theme ?? contextTheme}
       ref={ref}
