@@ -1,5 +1,6 @@
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { FieldFocusStaticFocusedProvider } from '@/object-record/record-field/ui/contexts/FieldFocusContextProvider';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -78,15 +79,17 @@ export const RecordTableCellHoveredPortalContent = () => {
       showInteractiveStyle={showInteractiveStyle}
       isRecordTableRowActive={isRecordTableRowActive}
     >
-      {isFieldInputOnly ? (
-        <RecordTableCellEditMode>
-          <RecordTableCellFieldInput />
-        </RecordTableCellEditMode>
-      ) : (
-        <RecordTableCellDisplayMode>
-          <FieldDisplay />
-        </RecordTableCellDisplayMode>
-      )}
+      <FieldFocusStaticFocusedProvider>
+        {isFieldInputOnly ? (
+          <RecordTableCellEditMode>
+            <RecordTableCellFieldInput />
+          </RecordTableCellEditMode>
+        ) : (
+          <RecordTableCellDisplayMode>
+            <FieldDisplay />
+          </RecordTableCellDisplayMode>
+        )}
+      </FieldFocusStaticFocusedProvider>
       {showButton && <RecordTableCellEditButton />}
     </StyledRecordTableCellHoveredPortalContent>
   );
