@@ -15,6 +15,11 @@ const OBJECTS_TO_GENERATE = [
   'task',
   'note',
   'timelineActivity',
+  'workspaceMember',
+  'favorite',
+  'favoriteFolder',
+  'connectedAccount',
+  'calendarEvent',
 ];
 
 // Production query builders omit __typename on connection/edge wrappers

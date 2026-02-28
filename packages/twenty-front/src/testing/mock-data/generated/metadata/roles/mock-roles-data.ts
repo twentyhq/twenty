@@ -11202,7 +11202,7 @@ export const mockedRoles: Role[] =
         "userEmail": "richard.palmer1000@apple.dev"
       }
     ],
-    "agents": [],
-    "apiKeys": []
+    "apiKeys": [],
+    "agents": []
   }
 ];

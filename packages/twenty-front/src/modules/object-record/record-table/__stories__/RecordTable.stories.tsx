@@ -12,8 +12,10 @@ import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator'
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
-import { mockedViewsData } from '~/testing/mock-data/views';
+import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { sleep } from '~/utils/sleep';
+
+const companyView = mockedCoreViews.find((v) => v.name === 'All Companies')!;
 
 const meta: Meta = {
   title: 'Modules/ObjectRecord/RecordTable/RecordTable',
@@ -28,7 +30,7 @@ const meta: Meta = {
     ObjectMetadataItemsDecorator,
   ],
   args: {
-    recordTableId: `companies-${mockedViewsData[0].id}`,
+    recordTableId: `companies-${companyView.id}`,
     viewBarId: 'view-bar',
     objectNameSingular: 'company',
   },
