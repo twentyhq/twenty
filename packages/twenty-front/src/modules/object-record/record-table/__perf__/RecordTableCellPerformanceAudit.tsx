@@ -21,11 +21,11 @@ import {
   LinariaDisplayInner,
 } from './perf-linaria-cells';
 
-const ROWS = 50;
-const COLS = 8;
+const ROWS = 200;
+const COLS = 10;
 const TOTAL_CELLS = ROWS * COLS;
 
-const ITERATIONS = 5;
+const ITERATIONS = 3;
 
 // ---------------------------------------------------------------------------
 // Shared layout
@@ -33,7 +33,7 @@ const ITERATIONS = 5;
 
 const gridCss = {
   display: 'grid',
-  gridTemplateColumns: `repeat(${COLS}, 150px)`,
+  gridTemplateColumns: `repeat(${COLS}, 120px)`,
   gap: 0,
 } as const;
 
@@ -165,8 +165,22 @@ const recordFieldFamily = atomFamily(
 );
 
 const rowSelectedFamily = atomFamily((_recordId: string) => atom(false));
+const rowFocusedFamily = atomFamily((_recordId: string) => atom(false));
+const rowActiveFamily = atomFamily((_recordId: string) => atom(false));
+const rowDraggingFamily = atomFamily((_recordId: string) => atom(false));
+const rowPendingFamily = atomFamily((_recordId: string) => atom(false));
+const cellReadOnlyFamily = atomFamily((_key: string) => atom(false), (a, b) => a === b);
+const cellForbiddenFamily = atomFamily((_key: string) => atom(false), (a, b) => a === b);
 
 const hoverPositionAtom = atom<{ row: number; col: number } | null>(null);
+
+const objectMetadataItemsAtom = atom(
+  Array.from({ length: 30 }, (_, i) => ({
+    id: `obj-${i}`,
+    nameSingular: `Object${i}`,
+    fields: Array.from({ length: 20 }, (_, j) => ({ id: `f-${i}-${j}`, name: `field${j}` })),
+  })),
+);
 
 const cellIsHoveredFamily = atomFamily(
   ({ row, col }: { row: number; col: number }) =>
@@ -317,6 +331,7 @@ const Cell12_EventHandlers = ({ value }: { value: string }) => {
   );
 };
 
+// 10 atom reads per cell (real RecordTable reads ~8-12 atoms per cell)
 const Cell13_JotaiAtoms = ({
   value,
   recordId,
@@ -333,6 +348,13 @@ const Cell13_JotaiAtoms = ({
   useAtomValue(recordFieldFamily({ recordId, fieldName }));
   useAtomValue(rowSelectedFamily(recordId));
   useAtomValue(cellIsHoveredFamily({ row, col }));
+  useAtomValue(rowFocusedFamily(recordId));
+  useAtomValue(rowActiveFamily(recordId));
+  useAtomValue(rowDraggingFamily(recordId));
+  useAtomValue(rowPendingFamily(recordId));
+  useAtomValue(cellReadOnlyFamily(`${recordId}-${fieldName}`));
+  useAtomValue(cellForbiddenFamily(`${recordId}-${fieldName}`));
+  useAtomValue(objectMetadataItemsAtom);
   useContext(RowCtx);
   useContext(CellCtx);
   useContext(FieldCtx);
@@ -472,6 +494,13 @@ const FullSimAtomInner = ({
   useAtomValue(recordFieldFamily({ recordId, fieldName }));
   useAtomValue(rowSelectedFamily(recordId));
   useAtomValue(cellIsHoveredFamily({ row, col }));
+  useAtomValue(rowFocusedFamily(recordId));
+  useAtomValue(rowActiveFamily(recordId));
+  useAtomValue(rowDraggingFamily(recordId));
+  useAtomValue(rowPendingFamily(recordId));
+  useAtomValue(cellReadOnlyFamily(`${recordId}-${fieldName}`));
+  useAtomValue(cellForbiddenFamily(`${recordId}-${fieldName}`));
+  useAtomValue(objectMetadataItemsAtom);
 
   const handleMouseMove = () => setIsFocused(true);
   const handleMouseLeave = () => setIsFocused(false);
@@ -697,7 +726,7 @@ const BENCHMARKS: BenchmarkDef[] = [
     ),
   },
   {
-    name: '13. + 3 Jotai atom reads/cell',
+    name: '13. + 10 Jotai atom reads/cell',
     render: (data, recordIds) => (
       <Provider store={perfStore}>
         <div style={gridCss}>
@@ -747,7 +776,7 @@ const BENCHMARKS: BenchmarkDef[] = [
     ),
   },
   {
-    name: '16. Full sim + Jotai atoms (≈real RecordTable)',
+    name: '16. Full sim + 10 Jotai atoms (≈real RecordTable)',
     render: (data, recordIds) => (
       <Provider store={perfStore}>
         <div style={gridCss}>
@@ -898,8 +927,9 @@ export const RecordTableCellPerformanceAudit = () => {
     <div style={{ padding: 16, fontFamily: 'system-ui, sans-serif' }}>
       <h2 style={{ marginBottom: 4 }}>RecordTable Cell Performance Audit</h2>
       <p style={{ color: '#666', marginTop: 0 }}>
-        {TOTAL_CELLS} cells ({ROWS}x{COLS}), {ITERATIONS} iterations each. Each
-        test incrementally adds one real-world cost factor.
+        <strong>{TOTAL_CELLS.toLocaleString()} cells</strong> ({ROWS} rows x {COLS} cols),
+        {ITERATIONS} iterations each. Avg = total mount time.
+        Per cell = avg / {TOTAL_CELLS.toLocaleString()}.
       </p>
 
       <div style={{ marginBottom: 12 }}>
@@ -986,7 +1016,7 @@ export const RecordTableCellPerformanceAudit = () => {
                   Max
                 </th>
                 <th style={{ textAlign: 'right', padding: '8px 12px' }}>
-                  Per cell
+                  Avg/cell
                 </th>
                 <th style={{ textAlign: 'right', padding: '8px 12px' }}>
                   vs baseline

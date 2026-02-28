@@ -12,14 +12,14 @@ import {
 
 import { LinariaStaticCell as StyledCell } from './perf-linaria-cells';
 
-const ROWS = 50;
-const COLS = 8;
+const ROWS = 200;
+const COLS = 10;
 const TOTAL_CELLS = ROWS * COLS;
-const ITERATIONS = 5;
+const ITERATIONS = 3;
 
 const gridCss = {
   display: 'grid',
-  gridTemplateColumns: `repeat(${COLS}, 150px)`,
+  gridTemplateColumns: `repeat(${COLS}, 120px)`,
   gap: 0,
 } as const;
 
@@ -39,6 +39,8 @@ const recordAtomFamily = atomFamily((recordId: string) =>
     role: 'Engineer',
     status: 'Active',
     score: '95',
+    department: 'Engineering',
+    manager: 'Jane Doe',
   }),
 );
 
@@ -63,18 +65,83 @@ const cellIsHoveredFamily = atomFamily(
 
 const rowFocusedFamily = atomFamily((_recordId: string) => atom(false));
 const rowActiveFamily = atomFamily((_recordId: string) => atom(false));
+const rowDraggingFamily = atomFamily((_recordId: string) => atom(false));
+const rowPendingFamily = atomFamily((_recordId: string) => atom(false));
 
-// "heavy" derived atom that combines multiple sources (simulating real permission/metadata lookups)
-const cellComputedFamily = atomFamily(
-  ({ recordId, fieldName }: { recordId: string; fieldName: string }) =>
+// Per-cell permission/metadata atoms (simulating real RecordTable patterns)
+const cellReadOnlyFamily = atomFamily(
+  (_key: string) => atom(false),
+  (a, b) => a === b,
+);
+const cellForbiddenFamily = atomFamily(
+  (_key: string) => atom(false),
+  (a, b) => a === b,
+);
+const cellInputOnlyFamily = atomFamily(
+  (_key: string) => atom(false),
+  (a, b) => a === b,
+);
+
+// Simulating objectMetadataItems global atom (large object read per cell in real code)
+const objectMetadataItemsAtom = atom(
+  Array.from({ length: 30 }, (_, i) => ({
+    id: `obj-${i}`,
+    nameSingular: `Object${i}`,
+    namePlural: `Object${i}s`,
+    fields: Array.from({ length: 20 }, (_, j) => ({
+      id: `field-${i}-${j}`,
+      name: `field${j}`,
+      type: 'TEXT',
+    })),
+  })),
+);
+
+// Heavy derived atom: reads 12 source atoms (simulating real-world derived state)
+const cellHeavyComputedFamily = atomFamily(
+  ({
+    recordId,
+    fieldName,
+    row,
+    col,
+  }: {
+    recordId: string;
+    fieldName: string;
+    row: number;
+    col: number;
+  }) =>
     atom((get) => {
       const value = get(recordAtomFamily(recordId))?.[fieldName] ?? '';
       const isSelected = get(rowSelectedFamily(recordId));
       const isFocused = get(rowFocusedFamily(recordId));
       const isActive = get(rowActiveFamily(recordId));
-      return { value, isSelected, isFocused, isActive };
+      const isDragging = get(rowDraggingFamily(recordId));
+      const isPending = get(rowPendingFamily(recordId));
+      const isHovered = get(cellIsHoveredFamily({ row, col }));
+      const isReadOnly = get(cellReadOnlyFamily(`${recordId}-${fieldName}`));
+      const isForbidden = get(cellForbiddenFamily(`${recordId}-${fieldName}`));
+      const isInputOnly = get(cellInputOnlyFamily(`${recordId}-${fieldName}`));
+      const metadata = get(objectMetadataItemsAtom);
+      const hoverPos = get(hoverPositionAtom);
+      return {
+        value,
+        isSelected,
+        isFocused,
+        isActive,
+        isDragging,
+        isPending,
+        isHovered,
+        isReadOnly,
+        isForbidden,
+        isInputOnly,
+        metadataCount: metadata.length,
+        hasHover: hoverPos !== null,
+      };
     }),
-  (a, b) => a.recordId === b.recordId && a.fieldName === b.fieldName,
+  (a, b) =>
+    a.recordId === b.recordId &&
+    a.fieldName === b.fieldName &&
+    a.row === b.row &&
+    a.col === b.col,
 );
 
 // ---------------------------------------------------------------------------
@@ -173,8 +240,8 @@ const CellF_ThreeAtoms = ({
   return <StyledCell>{value}</StyledCell>;
 };
 
-// G. 5 Jotai atoms (value + selected + hovered + focused + active)
-const CellG_FiveAtoms = ({
+// G. 8 Jotai atoms per cell (value + selected + hovered + focused + active + dragging + pending + readOnly)
+const CellG_EightAtoms = ({
   recordId,
   fieldName,
   row,
@@ -190,18 +257,54 @@ const CellG_FiveAtoms = ({
   useAtomValue(cellIsHoveredFamily({ row, col }));
   useAtomValue(rowFocusedFamily(recordId));
   useAtomValue(rowActiveFamily(recordId));
+  useAtomValue(rowDraggingFamily(recordId));
+  useAtomValue(rowPendingFamily(recordId));
+  useAtomValue(cellReadOnlyFamily(`${recordId}-${fieldName}`));
   return <StyledCell>{value}</StyledCell>;
 };
 
-// H. 1 heavy derived atom (combines 4 sources — simulates real-world derived state)
-const CellH_DerivedAtom = ({
+// H. 1 heavy derived atom (12 sources — simulates real-world computed cell state)
+const CellH_HeavyDerived = ({
   recordId,
   fieldName,
+  row,
+  col,
 }: {
   recordId: string;
   fieldName: string;
+  row: number;
+  col: number;
 }) => {
-  const { value } = useAtomValue(cellComputedFamily({ recordId, fieldName }));
+  const { value } = useAtomValue(
+    cellHeavyComputedFamily({ recordId, fieldName, row, col }),
+  );
+  return <StyledCell>{value}</StyledCell>;
+};
+
+// H2. 12 individual atom reads per cell (same sources as H but read separately)
+const CellH2_TwelveAtoms = ({
+  recordId,
+  fieldName,
+  row,
+  col,
+}: {
+  recordId: string;
+  fieldName: string;
+  row: number;
+  col: number;
+}) => {
+  const value = useAtomValue(fieldValueSelectorFamily({ recordId, fieldName }));
+  useAtomValue(rowSelectedFamily(recordId));
+  useAtomValue(cellIsHoveredFamily({ row, col }));
+  useAtomValue(rowFocusedFamily(recordId));
+  useAtomValue(rowActiveFamily(recordId));
+  useAtomValue(rowDraggingFamily(recordId));
+  useAtomValue(rowPendingFamily(recordId));
+  useAtomValue(cellReadOnlyFamily(`${recordId}-${fieldName}`));
+  useAtomValue(cellForbiddenFamily(`${recordId}-${fieldName}`));
+  useAtomValue(cellInputOnlyFamily(`${recordId}-${fieldName}`));
+  useAtomValue(objectMetadataItemsAtom);
+  useAtomValue(hoverPositionAtom);
   return <StyledCell>{value}</StyledCell>;
 };
 
@@ -243,7 +346,10 @@ const CellL_NestedProviders = () => {
 // Benchmark definitions
 // ---------------------------------------------------------------------------
 
-const FIELD_NAMES = ['name', 'email', 'phone', 'company', 'city', 'role', 'status', 'score'];
+const FIELD_NAMES = [
+  'name', 'email', 'phone', 'company', 'city',
+  'role', 'status', 'score', 'department', 'manager',
+];
 
 type BenchmarkDef = {
   name: string;
@@ -342,13 +448,13 @@ const BENCHMARKS: BenchmarkDef[] = [
     ),
   },
   {
-    name: 'G. 5 Jotai atoms/cell',
+    name: 'G. 8 Jotai atoms/cell',
     render: (recordIds) => (
       <Provider store={perfStore}>
         <div style={gridCss}>
           {recordIds.flatMap((id, ri) =>
             FIELD_NAMES.map((fn, ci) => (
-              <CellG_FiveAtoms
+              <CellG_EightAtoms
                 key={`${ri}-${ci}`}
                 recordId={id}
                 fieldName={fn}
@@ -362,13 +468,39 @@ const BENCHMARKS: BenchmarkDef[] = [
     ),
   },
   {
-    name: 'H. 1 heavy derived atom (4 sources)',
+    name: 'H. 1 derived atom (12 sources)',
     render: (recordIds) => (
       <Provider store={perfStore}>
         <div style={gridCss}>
           {recordIds.flatMap((id, ri) =>
             FIELD_NAMES.map((fn, ci) => (
-              <CellH_DerivedAtom key={`${ri}-${ci}`} recordId={id} fieldName={fn} />
+              <CellH_HeavyDerived
+                key={`${ri}-${ci}`}
+                recordId={id}
+                fieldName={fn}
+                row={ri}
+                col={ci}
+              />
+            )),
+          )}
+        </div>
+      </Provider>
+    ),
+  },
+  {
+    name: 'H2. 12 individual atom reads/cell',
+    render: (recordIds) => (
+      <Provider store={perfStore}>
+        <div style={gridCss}>
+          {recordIds.flatMap((id, ri) =>
+            FIELD_NAMES.map((fn, ci) => (
+              <CellH2_TwelveAtoms
+                key={`${ri}-${ci}`}
+                recordId={id}
+                fieldName={fn}
+                row={ri}
+                col={ci}
+              />
             )),
           )}
         </div>
@@ -552,8 +684,9 @@ export const RecordTableStateAccessAudit = () => {
     <div style={{ padding: 16, fontFamily: 'system-ui, sans-serif' }}>
       <h2 style={{ marginBottom: 4 }}>State Access Pattern Audit</h2>
       <p style={{ color: '#666', marginTop: 0 }}>
-        {TOTAL_CELLS} cells ({ROWS}×{COLS}), {ITERATIONS} iterations each.
-        Compares context reads, Jotai atoms, derived selectors, and real hierarchy patterns.
+        <strong>{TOTAL_CELLS.toLocaleString()} cells</strong> ({ROWS} rows x {COLS} cols),
+        {ITERATIONS} iterations each. Avg = total mount time.
+        Per cell = avg / {TOTAL_CELLS.toLocaleString()}.
       </p>
 
       <div style={{ marginBottom: 12 }}>
@@ -618,7 +751,7 @@ export const RecordTableStateAccessAudit = () => {
                 <th style={{ textAlign: 'right', padding: '8px 12px' }}>Avg</th>
                 <th style={{ textAlign: 'right', padding: '8px 12px' }}>Min</th>
                 <th style={{ textAlign: 'right', padding: '8px 12px' }}>Max</th>
-                <th style={{ textAlign: 'right', padding: '8px 12px' }}>Per cell</th>
+                <th style={{ textAlign: 'right', padding: '8px 12px' }}>Avg/cell</th>
                 <th style={{ textAlign: 'right', padding: '8px 12px' }}>vs baseline</th>
                 <th style={{ textAlign: 'left', padding: '8px 12px', width: 200 }}>Bar</th>
               </tr>
