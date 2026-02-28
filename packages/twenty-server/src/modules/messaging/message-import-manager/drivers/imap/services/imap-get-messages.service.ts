@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ImapFlow } from 'imapflow';
 import { type Address, type Email as ParsedMail } from 'postal-mime';
@@ -35,13 +35,9 @@ export class ImapGetMessagesService
   private readonly logger = new Logger(ImapGetMessagesService.name);
 
   constructor(
-    @Inject(ImapClientProvider)
     private readonly imapClientProvider: ImapClientProvider,
-    @Inject(ImapMessageParserService)
     private readonly messageParser: ImapMessageParserService,
-    @Inject(ImapMessageTextExtractorService)
     private readonly textExtractor: ImapMessageTextExtractorService,
-    @Inject(ImapMessagesImportErrorHandler)
     private readonly errorHandler: ImapMessagesImportErrorHandler,
   ) {}
 

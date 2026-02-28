@@ -10,7 +10,6 @@ import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/sta
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service';
 import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
-import { ImapSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-sync.service';
 
 const createMockFolder = (
   overrides: Partial<MessageFolder> &
@@ -49,17 +48,8 @@ describe('ImapGetMessageListService', () => {
     getMailboxLock: jest.fn().mockResolvedValue({ release: jest.fn() }),
     fetchAll: jest.fn().mockResolvedValue([]),
     mailbox: {
-      uidValidity: 12345,
-      uidNext: 100,
-      highestModseq: '1000',
       exists: 0,
     },
-    capabilities: new Set(['CONDSTORE']),
-    status: jest.fn().mockResolvedValue({
-      uidValidity: 12345,
-      uidNext: 100,
-      highestModseq: '1000',
-    }),
   };
 
   beforeEach(async () => {
@@ -71,12 +61,6 @@ describe('ImapGetMessageListService', () => {
           useValue: {
             getClient: jest.fn().mockResolvedValue(mockImapClient),
             closeClient: jest.fn().mockResolvedValue(undefined),
-          },
-        },
-        {
-          provide: ImapSyncService,
-          useValue: {
-            syncFolder: jest.fn().mockResolvedValue({ messageUids: [1, 2, 3] }),
           },
         },
         {

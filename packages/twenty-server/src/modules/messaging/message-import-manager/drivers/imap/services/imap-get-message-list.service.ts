@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ImapFlow } from 'imapflow';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,9 +27,7 @@ export class ImapGetMessageListService
   private readonly logger = new Logger(ImapGetMessageListService.name);
 
   constructor(
-    @Inject(ImapClientProvider)
     private readonly imapClientProvider: ImapClientProvider,
-    @Inject(ImapMessageListFetchErrorHandler)
     private readonly errorHandler: ImapMessageListFetchErrorHandler,
   ) {}
 
