@@ -94,6 +94,10 @@ export const RecordTableContent = ({
 
   const handleDelegatedMouseMove = useCallback(
     (event: React.MouseEvent) => {
+      if (store.get(isSomeCellInEditMode)) {
+        return;
+      }
+
       const target = event.target as HTMLElement;
       const cellElement = target.closest<HTMLElement>(
         '[data-record-table-col]',
@@ -118,7 +122,7 @@ export const RecordTableContent = ({
 
       store.set(recordTableHoverPositionCallbackState, { column, row });
     },
-    [store, recordTableHoverPositionCallbackState],
+    [store, isSomeCellInEditMode, recordTableHoverPositionCallbackState],
   );
 
   return (
