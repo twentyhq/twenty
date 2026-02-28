@@ -18,6 +18,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application-registration/application-registration-variable.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'applicationRegistration', schema: 'core' })
 @ObjectType('ApplicationRegistration')
@@ -38,6 +39,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
   },
 )
 @Index('IDX_APPLICATION_REGISTRATION_CREATED_BY_USER_ID', ['createdByUserId'])
+@Index('IDX_APPLICATION_REGISTRATION_WORKSPACE_ID', ['workspaceId'])
 export class ApplicationRegistrationEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -84,6 +86,13 @@ export class ApplicationRegistrationEntity {
   @ManyToOne(() => UserEntity, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'createdByUserId' })
   createdByUser: Relation<UserEntity> | null;
+
+  @Column({ nullable: false, type: 'uuid' })
+  workspaceId: string;
+
+  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workspaceId' })
+  workspace: Relation<WorkspaceEntity>;
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true, type: 'text' })

@@ -136,6 +136,7 @@ export class ApplicationSyncService {
         application.applicationRegistrationId,
         manifest.application.universalIdentifier,
         applicationRegistrationMetadata,
+        workspaceId,
       );
 
     await this.applicationRegistrationService.update({
@@ -248,6 +249,7 @@ export class ApplicationSyncService {
       websiteUrl?: string;
       termsUrl?: string;
     },
+    workspaceId: string,
   ): Promise<string> {
     if (existingId) {
       return existingId;
@@ -265,6 +267,7 @@ export class ApplicationSyncService {
     const { applicationRegistration: newRegistration } =
       await this.applicationRegistrationService.create(
         { ...metadata, universalIdentifier },
+        workspaceId,
         null,
       );
 

@@ -19,8 +19,10 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -61,10 +63,10 @@ export class ApplicationRegistrationResolver {
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Query(() => [ApplicationRegistrationEntity])
-  async findManyApplicationRegistrations(): Promise<
-    ApplicationRegistrationEntity[]
-  > {
-    return this.applicationRegistrationService.findMany();
+  async findManyApplicationRegistrations(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ApplicationRegistrationEntity[]> {
+    return this.applicationRegistrationService.findMany(workspaceId);
   }
 
   @UseGuards(
@@ -74,8 +76,9 @@ export class ApplicationRegistrationResolver {
   @Query(() => ApplicationRegistrationEntity)
   async findOneApplicationRegistration(
     @Args('id') id: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationRegistrationService.findOneById(id);
+    return this.applicationRegistrationService.findOneById(id, workspaceId);
   }
 
   @UseGuards(
@@ -85,8 +88,9 @@ export class ApplicationRegistrationResolver {
   @Query(() => ApplicationRegistrationStatsDTO)
   async findApplicationRegistrationStats(
     @Args('id') id: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationStatsDTO> {
-    return this.applicationRegistrationService.getStats(id);
+    return this.applicationRegistrationService.getStats(id, workspaceId);
   }
 
   @UseGuards(
@@ -96,9 +100,14 @@ export class ApplicationRegistrationResolver {
   @Mutation(() => CreateApplicationRegistrationDTO)
   async createApplicationRegistration(
     @Args('input') input: CreateApplicationRegistrationInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
   ): Promise<CreateApplicationRegistrationDTO> {
-    return this.applicationRegistrationService.create(input, user?.id ?? null);
+    return this.applicationRegistrationService.create(
+      input,
+      workspaceId,
+      user?.id ?? null,
+    );
   }
 
   @UseGuards(
@@ -108,8 +117,9 @@ export class ApplicationRegistrationResolver {
   @Mutation(() => ApplicationRegistrationEntity)
   async updateApplicationRegistration(
     @Args('input') input: UpdateApplicationRegistrationInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationRegistrationService.update(input);
+    return this.applicationRegistrationService.update(input, workspaceId);
   }
 
   @UseGuards(
@@ -119,8 +129,9 @@ export class ApplicationRegistrationResolver {
   @Mutation(() => Boolean)
   async deleteApplicationRegistration(
     @Args('id') id: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
-    return this.applicationRegistrationService.delete(id);
+    return this.applicationRegistrationService.delete(id, workspaceId);
   }
 
   @UseGuards(
@@ -130,9 +141,13 @@ export class ApplicationRegistrationResolver {
   @Mutation(() => RotateClientSecretDTO)
   async rotateApplicationRegistrationClientSecret(
     @Args('id') id: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<RotateClientSecretDTO> {
     const clientSecret =
-      await this.applicationRegistrationService.rotateClientSecret(id);
+      await this.applicationRegistrationService.rotateClientSecret(
+        id,
+        workspaceId,
+      );
 
     return { clientSecret };
   }
@@ -144,9 +159,11 @@ export class ApplicationRegistrationResolver {
   @Query(() => [ApplicationRegistrationVariableEntity])
   async findApplicationRegistrationVariables(
     @Args('applicationRegistrationId') applicationRegistrationId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationVariableEntity[]> {
     return this.applicationRegistrationVariableService.findVariables(
       applicationRegistrationId,
+      workspaceId,
     );
   }
 
@@ -157,8 +174,12 @@ export class ApplicationRegistrationResolver {
   @Mutation(() => ApplicationRegistrationVariableEntity)
   async createApplicationRegistrationVariable(
     @Args('input') input: CreateApplicationRegistrationVariableInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationVariableEntity> {
-    return this.applicationRegistrationVariableService.createVariable(input);
+    return this.applicationRegistrationVariableService.createVariable(
+      input,
+      workspaceId,
+    );
   }
 
   @UseGuards(
@@ -168,8 +189,12 @@ export class ApplicationRegistrationResolver {
   @Mutation(() => ApplicationRegistrationVariableEntity)
   async updateApplicationRegistrationVariable(
     @Args('input') input: UpdateApplicationRegistrationVariableInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationVariableEntity> {
-    return this.applicationRegistrationVariableService.updateVariable(input);
+    return this.applicationRegistrationVariableService.updateVariable(
+      input,
+      workspaceId,
+    );
   }
 
   @UseGuards(
@@ -179,7 +204,11 @@ export class ApplicationRegistrationResolver {
   @Mutation(() => Boolean)
   async deleteApplicationRegistrationVariable(
     @Args('id') id: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
-    return this.applicationRegistrationVariableService.deleteVariable(id);
+    return this.applicationRegistrationVariableService.deleteVariable(
+      id,
+      workspaceId,
+    );
   }
 }

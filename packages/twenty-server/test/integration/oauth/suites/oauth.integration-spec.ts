@@ -40,8 +40,8 @@ const insertRegistration = async (
 
   await ds.query(
     `INSERT INTO core."applicationRegistration"
-      (id, "universalIdentifier", name, description, "oAuthClientId", "oAuthClientSecretHash", "oAuthRedirectUris", "oAuthScopes")
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      (id, "universalIdentifier", name, description, "oAuthClientId", "oAuthClientSecretHash", "oAuthRedirectUris", "oAuthScopes", "workspaceId")
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
     [
       id,
       universalIdentifier,
@@ -51,6 +51,7 @@ const insertRegistration = async (
       params.clientSecretHash,
       params.redirectUris,
       params.scopes,
+      TEST_WORKSPACE_ID,
     ],
   );
 
