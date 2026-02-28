@@ -1,7 +1,7 @@
 import { IconLink } from 'twenty-ui/display';
 
 import { WorkspaceNavigationMenuItemsFolder } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder';
-import { getNavigationMenuItemIconColors } from '@/navigation-menu-item/utils/getNavigationMenuItemIconColors';
+import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
@@ -13,7 +13,6 @@ export const WorkspaceSectionItemContent = ({
   item,
   editModeProps,
   useDndKit,
-  theme,
   isEditMode,
   isDragging,
   folderChildrenById,
@@ -32,6 +31,7 @@ export const WorkspaceSectionItemContent = ({
         folderId={item.id}
         folderName={item.name ?? 'Folder'}
         folderIconKey={item.Icon}
+        folderColor={'color' in item ? (item.color ?? undefined) : undefined}
         navigationMenuItems={folderChildrenById.get(item.id) ?? []}
         isGroup={folderCount > 1}
         isEditMode={isEditMode}
@@ -47,14 +47,13 @@ export const WorkspaceSectionItemContent = ({
 
   if (type === 'link') {
     const linkItem = item as ProcessedNavigationMenuItem;
-    const iconColors = getNavigationMenuItemIconColors(theme).link;
     return (
       <NavigationDrawerItem
         label={linkItem.labelIdentifier}
         to={isEditMode || isDragging ? undefined : linkItem.link}
         onClick={isEditMode ? editModeProps.onEditModeClick : undefined}
         Icon={IconLink}
-        iconBackgroundColor={iconColors}
+        iconColor={getEffectiveNavigationMenuItemColor(linkItem) ?? undefined}
         active={false}
         isSelectedInEditMode={editModeProps.isSelectedInEditMode}
         isDragging={isDragging}
