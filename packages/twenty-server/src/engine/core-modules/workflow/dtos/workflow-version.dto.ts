@@ -1,4 +1,4 @@
-import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
@@ -7,7 +7,7 @@ import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-obje
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-@ObjectType('WorkflowVersion')
+@ObjectType('WorkflowVersionDTO')
 export class WorkflowVersionDTO {
   @Field(() => UUIDScalarType)
   id: string;
@@ -15,10 +15,10 @@ export class WorkflowVersionDTO {
   @Field(() => String)
   name: string;
 
-  @Field(() => GraphQLISODateTime)
+  @Field(() => String)
   createdAt: string;
 
-  @Field(() => GraphQLISODateTime)
+  @Field(() => String)
   updatedAt: string;
 
   @Field(() => UUIDScalarType)
