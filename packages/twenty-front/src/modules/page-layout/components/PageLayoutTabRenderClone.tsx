@@ -53,7 +53,7 @@ export const PageLayoutTabRenderClone = ({
           cursor: 'grabbing',
         }}
       >
-        <StyledTabContainer active={tab.id === activeTabId} disabled={false}>
+        <StyledTabContainer theme={theme} active={tab.id === activeTabId} disabled={false}>
           <TabContent
             id={tab.id}
             active={false}

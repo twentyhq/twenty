@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { ThemeContext, type ThemeType } from '@ui/theme';
-import { motion } from 'framer-motion';
-import { useContext } from 'react';
+import { type HTMLMotionProps, motion } from 'framer-motion';
+import { type ReactNode, useContext } from 'react';
 
-const StyledEmptyContainer = styled.div<{ theme: ThemeType }>`
+const StyledEmptyContainerBase = styled.div<{ theme: ThemeType }>`
   align-items: center;
   width: 100%;
   height: 100%;
@@ -14,15 +14,35 @@ const StyledEmptyContainer = styled.div<{ theme: ThemeType }>`
   text-align: center;
 `;
 
-export const AnimatedPlaceholderEmptyContainer = (
-  props: AnimatedPlaceholderEmptyContainerProps<
-    React.ComponentProps<typeof StyledEmptyContainer> &
-      React.ComponentProps<typeof motion.div>,
-    'theme'
-  >,
-) => {
+const MotionEmptyContainer = motion.create(StyledEmptyContainerBase);
+
+type AnimatedPlaceholderEmptyContainerProps = Pick<
+  HTMLMotionProps<'div'>,
+  'initial' | 'animate' | 'transition'
+> & {
+  children?: ReactNode;
+  className?: string;
+};
+
+export const AnimatedPlaceholderEmptyContainer = ({
+  children,
+  className,
+  initial,
+  animate,
+  transition,
+}: AnimatedPlaceholderEmptyContainerProps) => {
   const { theme } = useContext(ThemeContext);
-  return <StyledEmptyContainer as={motion.div} {...props} theme={theme} />;
+  return (
+    <MotionEmptyContainer
+      theme={theme}
+      className={className}
+      initial={initial}
+      animate={animate}
+      transition={transition}
+    >
+      {children}
+    </MotionEmptyContainer>
+  );
 };
 
 export const EMPTY_PLACEHOLDER_TRANSITION_PROPS = {
@@ -43,14 +63,19 @@ const StyledEmptyTextContainer = styled.div<{ theme: ThemeType }>`
   width: 100%;
 `;
 
-export const AnimatedPlaceholderEmptyTextContainer = (
-  props: AnimatedPlaceholderEmptyTextContainerProps<
-    React.ComponentProps<typeof StyledEmptyTextContainer>,
-    'theme'
-  >,
-) => {
+export const AnimatedPlaceholderEmptyTextContainer = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
   const { theme } = useContext(ThemeContext);
-  return <StyledEmptyTextContainer {...props} theme={theme} />;
+  return (
+    <StyledEmptyTextContainer theme={theme} className={className}>
+      {children}
+    </StyledEmptyTextContainer>
+  );
 };
 
 const StyledEmptyTitle = styled.div<{ theme: ThemeType }>`
@@ -59,14 +84,19 @@ const StyledEmptyTitle = styled.div<{ theme: ThemeType }>`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-export const AnimatedPlaceholderEmptyTitle = (
-  props: AnimatedPlaceholderEmptyTitleProps<
-    React.ComponentProps<typeof StyledEmptyTitle>,
-    'theme'
-  >,
-) => {
+export const AnimatedPlaceholderEmptyTitle = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
   const { theme } = useContext(ThemeContext);
-  return <StyledEmptyTitle {...props} theme={theme} />;
+  return (
+    <StyledEmptyTitle theme={theme} className={className}>
+      {children}
+    </StyledEmptyTitle>
+  );
 };
 
 const StyledEmptySubTitle = styled.div<{ theme: ThemeType }>`
@@ -79,12 +109,17 @@ const StyledEmptySubTitle = styled.div<{ theme: ThemeType }>`
   width: 50%;
 `;
 
-export const AnimatedPlaceholderEmptySubTitle = (
-  props: AnimatedPlaceholderEmptySubTitleProps<
-    React.ComponentProps<typeof StyledEmptySubTitle>,
-    'theme'
-  >,
-) => {
+export const AnimatedPlaceholderEmptySubTitle = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
   const { theme } = useContext(ThemeContext);
-  return <StyledEmptySubTitle {...props} theme={theme} />;
+  return (
+    <StyledEmptySubTitle theme={theme} className={className}>
+      {children}
+    </StyledEmptySubTitle>
+  );
 };

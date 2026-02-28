@@ -1,4 +1,9 @@
-import { type ReactElement, type ReactNode, useContext } from 'react';
+import {
+  forwardRef,
+  type ReactElement,
+  type ReactNode,
+  useContext,
+} from 'react';
 import { styled } from '@linaria/react';
 import { ThemeContext, type ThemeType } from '@ui/theme';
 
@@ -8,7 +13,12 @@ type StyledTextProps = {
   color?: string;
 };
 
-export const StyledTextContent = styled.div<{ theme: ThemeType }>`
+function useThemeFromContext() {
+  const { theme } = useContext(ThemeContext);
+  return theme;
+}
+
+const RawStyledTextContent = styled.div<{ theme: ThemeType }>`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
 
@@ -18,7 +28,22 @@ export const StyledTextContent = styled.div<{ theme: ThemeType }>`
   white-space: nowrap;
 `;
 
-export const StyledTextWrapper = styled.div<{
+export const StyledTextContent = forwardRef<
+  HTMLDivElement,
+  { theme?: ThemeType } & React.ComponentPropsWithoutRef<'div'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledTextContent
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledTextContent.displayName = 'StyledTextContent';
+
+const RawStyledTextWrapper = styled.div<{
   color?: string;
   theme: ThemeType;
 }>`
@@ -39,6 +64,24 @@ export const StyledTextWrapper = styled.div<{
 
   color: ${({ theme, color }) => color ?? theme.font.color.primary};
 `;
+
+export const StyledTextWrapper = forwardRef<
+  HTMLDivElement,
+  {
+    theme?: ThemeType;
+    color?: string;
+  } & React.ComponentPropsWithoutRef<'div'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledTextWrapper
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledTextWrapper.displayName = 'StyledTextWrapper';
 
 export const StyledText = ({
   PrefixComponent,

@@ -62,7 +62,6 @@ const StyledRadioInputBase = styled.input<
           return theme.background.tertiary;
         }
         return '';
-        return theme.color.transparent.blue2;
       }};
   }
 

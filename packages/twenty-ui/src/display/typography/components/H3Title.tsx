@@ -1,7 +1,6 @@
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { type ReactNode } from 'react';
 import { ThemeContext, type ThemeType } from '@ui/theme';
 
 type H3TitleProps = {

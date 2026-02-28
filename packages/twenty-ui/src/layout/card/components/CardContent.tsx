@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
 import { ThemeContext, type ThemeType } from '@ui/theme';
-import { useContext } from 'react';
+import { motion } from 'framer-motion';
+import { type ComponentProps, type ReactNode, useContext } from 'react';
 
-const StyledCardContent = styled.div<{
+const StyledCardContentBase = styled.div<{
   divider?: boolean;
   theme: ThemeType;
 }>`
@@ -17,12 +18,29 @@ const StyledCardContent = styled.div<{
       : ''}
 `;
 
-export const CardContent = (
-  props: CardContentProps<
-    React.ComponentProps<typeof StyledCardContent>,
-    'theme'
-  >,
-) => {
+const MotionCardContent = motion.create(StyledCardContentBase);
+
+type CardContentProps = {
+  children?: ReactNode;
+  className?: string;
+  divider?: boolean;
+} & Omit<ComponentProps<typeof MotionCardContent>, 'theme'>;
+
+export const CardContent = ({
+  children,
+  className,
+  divider,
+  ...motionProps
+}: CardContentProps) => {
   const { theme } = useContext(ThemeContext);
-  return <StyledCardContent {...props} theme={theme} />;
+  return (
+    <MotionCardContent
+      theme={theme}
+      className={className}
+      divider={divider}
+      {...motionProps}
+    >
+      {children}
+    </MotionCardContent>
+  );
 };

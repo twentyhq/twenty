@@ -3,7 +3,12 @@ import { styled } from '@linaria/react';
 import { isUndefined } from '@sniptt/guards';
 
 import { IconCheck } from '@ui/display';
-import { HOVER_BACKGROUND, type ThemeType } from '@ui/theme';
+import {
+  HOVER_BACKGROUND,
+  ThemeContext,
+  type ThemeType,
+} from '@ui/theme';
+import { forwardRef, useContext } from 'react';
 import { type MenuItemAccent } from '../../types/MenuItemAccent';
 
 export type MenuItemBaseProps = {
@@ -13,10 +18,12 @@ export type MenuItemBaseProps = {
   hovered?: boolean;
   disabled?: boolean;
   focused?: boolean;
-  theme: ThemeType;
+  theme?: ThemeType;
 };
 
-export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
+const RawStyledMenuItemBase = styled.div<
+  MenuItemBaseProps & { theme: ThemeType }
+>`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
   align-items: center;
@@ -82,7 +89,43 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   width: calc(100% - 2 * var(--horizontal-padding));
 `;
 
-export const StyledMenuItemLabel = styled.div<{ theme: ThemeType }>`
+function useThemeFromContext() {
+  const { theme } = useContext(ThemeContext);
+  return theme;
+}
+
+export const StyledMenuItemBase = forwardRef<
+  HTMLDivElement,
+  MenuItemBaseProps &
+    React.ComponentPropsWithoutRef<'div'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledMenuItemBase
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledMenuItemBase.displayName = 'StyledMenuItemBase';
+
+export const StyledMenuItemLabel = forwardRef<
+  HTMLDivElement,
+  { theme?: ThemeType } & React.ComponentPropsWithoutRef<'div'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledMenuItemLabel
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledMenuItemLabel.displayName = 'StyledMenuItemLabel';
+
+const RawStyledMenuItemLabel = styled.div<{ theme: ThemeType }>`
   display: flex;
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
@@ -93,15 +136,60 @@ export const StyledMenuItemLabel = styled.div<{ theme: ThemeType }>`
   white-space: nowrap;
 `;
 
-export const StyledMenuItemLabelLight = styled(StyledMenuItemLabel)`
+export const StyledMenuItemLabelLight = forwardRef<
+  HTMLDivElement,
+  { theme?: ThemeType } & React.ComponentPropsWithoutRef<'div'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledMenuItemLabelLight
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledMenuItemLabelLight.displayName = 'StyledMenuItemLabelLight';
+
+const RawStyledMenuItemLabelLight = styled(RawStyledMenuItemLabel)`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-export const StyledNoIconFiller = styled.div<{ theme: ThemeType }>`
+export const StyledNoIconFiller = forwardRef<
+  HTMLDivElement,
+  { theme?: ThemeType } & React.ComponentPropsWithoutRef<'div'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledNoIconFiller
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledNoIconFiller.displayName = 'StyledNoIconFiller';
+
+const RawStyledNoIconFiller = styled.div<{ theme: ThemeType }>`
   width: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const StyledMenuItemLeftContent = styled.div<{ theme: ThemeType }>`
+export const StyledMenuItemLeftContent = forwardRef<
+  HTMLDivElement,
+  { theme?: ThemeType } & React.ComponentPropsWithoutRef<'div'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledMenuItemLeftContent
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledMenuItemLeftContent.displayName = 'StyledMenuItemLeftContent';
+
+const RawStyledMenuItemLeftContent = styled.div<{ theme: ThemeType }>`
   align-items: center;
   display: flex;
 
@@ -116,7 +204,22 @@ export const StyledMenuItemLeftContent = styled.div<{ theme: ThemeType }>`
   }
 `;
 
-export const StyledMenuItemRightContent = styled.div<{ theme: ThemeType }>`
+export const StyledMenuItemRightContent = forwardRef<
+  HTMLDivElement,
+  { theme?: ThemeType } & React.ComponentPropsWithoutRef<'div'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledMenuItemRightContent
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledMenuItemRightContent.displayName = 'StyledMenuItemRightContent';
+
+const RawStyledMenuItemRightContent = styled.div<{ theme: ThemeType }>`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -134,7 +237,28 @@ export const StyledDraggableItem = styled.div`
   display: flex;
 `;
 
-export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
+type HoverableMenuItemBaseProps = {
+  isIconDisplayedOnHoverOnly?: boolean;
+  cursor?: 'drag' | 'default';
+} & MenuItemBaseProps &
+  React.ComponentPropsWithoutRef<'div'>;
+
+export const StyledHoverableMenuItemBase = forwardRef<
+  HTMLDivElement,
+  HoverableMenuItemBaseProps
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledHoverableMenuItemBase
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledHoverableMenuItemBase.displayName = 'StyledHoverableMenuItemBase';
+
+const RawStyledHoverableMenuItemBase = styled(RawStyledMenuItemBase)<{
   disabled?: boolean;
   isIconDisplayedOnHoverOnly?: boolean;
   cursor?: 'drag' | 'default';
@@ -183,12 +307,46 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   }};
 `;
 
-export const StyledMenuItemIconCheck = styled(IconCheck)<{ theme: ThemeType }>`
+export const StyledMenuItemIconCheck = forwardRef<
+  any,
+  { theme?: ThemeType; size?: number; className?: string }
+>(({ theme: propTheme, ...rest }, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledMenuItemIconCheck
+      {...rest}
+      theme={propTheme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledMenuItemIconCheck.displayName = 'StyledMenuItemIconCheck';
+
+const RawStyledMenuItemIconCheck = styled(IconCheck)<{
+  theme: ThemeType;
+}>`
   flex-shrink: 0;
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const StyledMenuItemContextualText = styled.div<{ theme: ThemeType }>`
+export const StyledMenuItemContextualText = forwardRef<
+  HTMLDivElement,
+  { theme?: ThemeType } & React.ComponentPropsWithoutRef<'div'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledMenuItemContextualText
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledMenuItemContextualText.displayName = 'StyledMenuItemContextualText';
+
+const RawStyledMenuItemContextualText = styled.div<{
+  theme: ThemeType;
+}>`
   color: ${({ theme }) => theme.font.color.light};
   font-family: inherit;
   font-size: inherit;
@@ -198,8 +356,24 @@ export const StyledMenuItemContextualText = styled.div<{ theme: ThemeType }>`
   overflow: hidden;
 `;
 
-export const StyledRightMenuItemContextualText = styled(
-  StyledMenuItemContextualText,
+export const StyledRightMenuItemContextualText = forwardRef<
+  HTMLDivElement,
+  { theme?: ThemeType } & React.ComponentPropsWithoutRef<'div'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledRightMenuItemContextualText
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledRightMenuItemContextualText.displayName =
+  'StyledRightMenuItemContextualText';
+
+const RawStyledRightMenuItemContextualText = styled(
+  RawStyledMenuItemContextualText,
 )`
   text-align: right;
 `;

@@ -15,7 +15,7 @@ import {
   ComponentWithRouterDecorator,
   JotaiRootDecorator,
 } from '@ui/testing';
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { ThemeContext, type ThemeType } from '@ui/theme';
 
 const StyledTabContainer = styled.div<{ theme: ThemeType }>`
@@ -36,6 +36,11 @@ const StyledTabContainer = styled.div<{ theme: ThemeType }>`
     background-color: ${({ theme }) => theme.border.color.light};
   }
 `;
+
+const TabContainer = ({ children }: { children?: ReactNode }) => {
+  const { theme } = useContext(ThemeContext);
+  return <StyledTabContainer theme={theme}>{children}</StyledTabContainer>;
+};
 
 const meta: Meta<typeof TabButton> = {
   title: 'UI/Input/Button/TabButton',
@@ -67,28 +72,24 @@ export const Default: Story = {
     title: 'General',
     LeftIcon: IconSettings,
   },
-  render: (args) => {
-    const { theme } = useContext(ThemeContext);
-
-    return (
-      <StyledTabContainer theme={theme}>
-        <TabButton
-          id={args.id}
-          title={args.title}
-          LeftIcon={args.LeftIcon}
-          RightIcon={args.RightIcon}
-          active={args.active}
-          disabled={args.disabled}
-          pill={args.pill}
-          to={args.to}
-          logo={args.logo}
-          onClick={args.onClick}
-          className={args.className}
-          contentSize={args.contentSize}
-        />
-      </StyledTabContainer>
-    );
-  },
+  render: (args) => (
+    <TabContainer>
+      <TabButton
+        id={args.id}
+        title={args.title}
+        LeftIcon={args.LeftIcon}
+        RightIcon={args.RightIcon}
+        active={args.active}
+        disabled={args.disabled}
+        pill={args.pill}
+        to={args.to}
+        logo={args.logo}
+        onClick={args.onClick}
+        className={args.className}
+        contentSize={args.contentSize}
+      />
+    </TabContainer>
+  ),
 };
 
 export const Active: Story = {
@@ -97,28 +98,24 @@ export const Active: Story = {
     LeftIcon: IconUser,
     active: true,
   },
-  render: (args) => {
-    const { theme } = useContext(ThemeContext);
-
-    return (
-      <StyledTabContainer theme={theme}>
-        <TabButton
-          id={args.id}
-          title={args.title}
-          LeftIcon={args.LeftIcon}
-          RightIcon={args.RightIcon}
-          active={args.active}
-          disabled={args.disabled}
-          pill={args.pill}
-          to={args.to}
-          logo={args.logo}
-          onClick={args.onClick}
-          className={args.className}
-          contentSize={args.contentSize}
-        />
-      </StyledTabContainer>
-    );
-  },
+  render: (args) => (
+    <TabContainer>
+      <TabButton
+        id={args.id}
+        title={args.title}
+        LeftIcon={args.LeftIcon}
+        RightIcon={args.RightIcon}
+        active={args.active}
+        disabled={args.disabled}
+        pill={args.pill}
+        to={args.to}
+        logo={args.logo}
+        onClick={args.onClick}
+        className={args.className}
+        contentSize={args.contentSize}
+      />
+    </TabContainer>
+  ),
 };
 
 export const Disabled: Story = {
@@ -127,28 +124,24 @@ export const Disabled: Story = {
     LeftIcon: IconCheckbox,
     disabled: true,
   },
-  render: (args) => {
-    const { theme } = useContext(ThemeContext);
-
-    return (
-      <StyledTabContainer theme={theme}>
-        <TabButton
-          id={args.id}
-          title={args.title}
-          LeftIcon={args.LeftIcon}
-          RightIcon={args.RightIcon}
-          active={args.active}
-          disabled={args.disabled}
-          pill={args.pill}
-          to={args.to}
-          logo={args.logo}
-          onClick={args.onClick}
-          className={args.className}
-          contentSize={args.contentSize}
-        />
-      </StyledTabContainer>
-    );
-  },
+  render: (args) => (
+    <TabContainer>
+      <TabButton
+        id={args.id}
+        title={args.title}
+        LeftIcon={args.LeftIcon}
+        RightIcon={args.RightIcon}
+        active={args.active}
+        disabled={args.disabled}
+        pill={args.pill}
+        to={args.to}
+        logo={args.logo}
+        onClick={args.onClick}
+        className={args.className}
+        contentSize={args.contentSize}
+      />
+    </TabContainer>
+  ),
 };
 
 export const WithLogo: Story = {
@@ -156,28 +149,24 @@ export const WithLogo: Story = {
     title: 'Company',
     logo: 'https://picsum.photos/192/192',
   },
-  render: (args) => {
-    const { theme } = useContext(ThemeContext);
-
-    return (
-      <StyledTabContainer theme={theme}>
-        <TabButton
-          id={args.id}
-          title={args.title}
-          LeftIcon={args.LeftIcon}
-          RightIcon={args.RightIcon}
-          active={args.active}
-          disabled={args.disabled}
-          pill={args.pill}
-          to={args.to}
-          logo={args.logo}
-          onClick={args.onClick}
-          className={args.className}
-          contentSize={args.contentSize}
-        />
-      </StyledTabContainer>
-    );
-  },
+  render: (args) => (
+    <TabContainer>
+      <TabButton
+        id={args.id}
+        title={args.title}
+        LeftIcon={args.LeftIcon}
+        RightIcon={args.RightIcon}
+        active={args.active}
+        disabled={args.disabled}
+        pill={args.pill}
+        to={args.to}
+        logo={args.logo}
+        onClick={args.onClick}
+        className={args.className}
+        contentSize={args.contentSize}
+      />
+    </TabContainer>
+  ),
 };
 
 export const WithStringPill: Story = {
@@ -186,28 +175,24 @@ export const WithStringPill: Story = {
     LeftIcon: IconMail,
     pill: '12',
   },
-  render: (args) => {
-    const { theme } = useContext(ThemeContext);
-
-    return (
-      <StyledTabContainer theme={theme}>
-        <TabButton
-          id={args.id}
-          title={args.title}
-          LeftIcon={args.LeftIcon}
-          RightIcon={args.RightIcon}
-          active={args.active}
-          disabled={args.disabled}
-          pill={args.pill}
-          to={args.to}
-          logo={args.logo}
-          onClick={args.onClick}
-          className={args.className}
-          contentSize={args.contentSize}
-        />
-      </StyledTabContainer>
-    );
-  },
+  render: (args) => (
+    <TabContainer>
+      <TabButton
+        id={args.id}
+        title={args.title}
+        LeftIcon={args.LeftIcon}
+        RightIcon={args.RightIcon}
+        active={args.active}
+        disabled={args.disabled}
+        pill={args.pill}
+        to={args.to}
+        logo={args.logo}
+        onClick={args.onClick}
+        className={args.className}
+        contentSize={args.contentSize}
+      />
+    </TabContainer>
+  ),
 };
 
 export const WithBothIcons: Story = {
@@ -216,28 +201,24 @@ export const WithBothIcons: Story = {
     LeftIcon: IconSearch,
     RightIcon: IconChevronDown,
   },
-  render: (args) => {
-    const { theme } = useContext(ThemeContext);
-
-    return (
-      <StyledTabContainer theme={theme}>
-        <TabButton
-          id={args.id}
-          title={args.title}
-          LeftIcon={args.LeftIcon}
-          RightIcon={args.RightIcon}
-          active={args.active}
-          disabled={args.disabled}
-          pill={args.pill}
-          to={args.to}
-          logo={args.logo}
-          onClick={args.onClick}
-          className={args.className}
-          contentSize={args.contentSize}
-        />
-      </StyledTabContainer>
-    );
-  },
+  render: (args) => (
+    <TabContainer>
+      <TabButton
+        id={args.id}
+        title={args.title}
+        LeftIcon={args.LeftIcon}
+        RightIcon={args.RightIcon}
+        active={args.active}
+        disabled={args.disabled}
+        pill={args.pill}
+        to={args.to}
+        logo={args.logo}
+        onClick={args.onClick}
+        className={args.className}
+        contentSize={args.contentSize}
+      />
+    </TabContainer>
+  ),
 };
 
 export const AsLink: Story = {
@@ -246,28 +227,24 @@ export const AsLink: Story = {
     LeftIcon: IconUser,
     to: '/profile',
   },
-  render: (args) => {
-    const { theme } = useContext(ThemeContext);
-
-    return (
-      <StyledTabContainer theme={theme}>
-        <TabButton
-          id={args.id}
-          title={args.title}
-          LeftIcon={args.LeftIcon}
-          RightIcon={args.RightIcon}
-          active={args.active}
-          disabled={args.disabled}
-          pill={args.pill}
-          to={args.to}
-          logo={args.logo}
-          onClick={args.onClick}
-          className={args.className}
-          contentSize={args.contentSize}
-        />
-      </StyledTabContainer>
-    );
-  },
+  render: (args) => (
+    <TabContainer>
+      <TabButton
+        id={args.id}
+        title={args.title}
+        LeftIcon={args.LeftIcon}
+        RightIcon={args.RightIcon}
+        active={args.active}
+        disabled={args.disabled}
+        pill={args.pill}
+        to={args.to}
+        logo={args.logo}
+        onClick={args.onClick}
+        className={args.className}
+        contentSize={args.contentSize}
+      />
+    </TabContainer>
+  ),
 };
 
 export const SmallContent: Story = {
@@ -276,28 +253,24 @@ export const SmallContent: Story = {
     LeftIcon: IconSettings,
     contentSize: 'sm',
   },
-  render: (args) => {
-    const { theme } = useContext(ThemeContext);
-
-    return (
-      <StyledTabContainer theme={theme}>
-        <TabButton
-          id={args.id}
-          title={args.title}
-          LeftIcon={args.LeftIcon}
-          RightIcon={args.RightIcon}
-          active={args.active}
-          disabled={args.disabled}
-          pill={args.pill}
-          to={args.to}
-          logo={args.logo}
-          onClick={args.onClick}
-          className={args.className}
-          contentSize={args.contentSize}
-        />
-      </StyledTabContainer>
-    );
-  },
+  render: (args) => (
+    <TabContainer>
+      <TabButton
+        id={args.id}
+        title={args.title}
+        LeftIcon={args.LeftIcon}
+        RightIcon={args.RightIcon}
+        active={args.active}
+        disabled={args.disabled}
+        pill={args.pill}
+        to={args.to}
+        logo={args.logo}
+        onClick={args.onClick}
+        className={args.className}
+        contentSize={args.contentSize}
+      />
+    </TabContainer>
+  ),
 };
 
 export const MediumContent: Story = {
@@ -306,28 +279,24 @@ export const MediumContent: Story = {
     LeftIcon: IconSettings,
     contentSize: 'md',
   },
-  render: (args) => {
-    const { theme } = useContext(ThemeContext);
-
-    return (
-      <StyledTabContainer theme={theme}>
-        <TabButton
-          id={args.id}
-          title={args.title}
-          LeftIcon={args.LeftIcon}
-          RightIcon={args.RightIcon}
-          active={args.active}
-          disabled={args.disabled}
-          pill={args.pill}
-          to={args.to}
-          logo={args.logo}
-          onClick={args.onClick}
-          className={args.className}
-          contentSize={args.contentSize}
-        />
-      </StyledTabContainer>
-    );
-  },
+  render: (args) => (
+    <TabContainer>
+      <TabButton
+        id={args.id}
+        title={args.title}
+        LeftIcon={args.LeftIcon}
+        RightIcon={args.RightIcon}
+        active={args.active}
+        disabled={args.disabled}
+        pill={args.pill}
+        to={args.to}
+        logo={args.logo}
+        onClick={args.onClick}
+        className={args.className}
+        contentSize={args.contentSize}
+      />
+    </TabContainer>
+  ),
 };
 
 export const Catalog: CatalogStory<Story, typeof TabButton> = {
@@ -341,28 +310,24 @@ export const Catalog: CatalogStory<Story, typeof TabButton> = {
     onClick: { control: false },
     to: { control: false },
   },
-  render: (args) => {
-    const { theme } = useContext(ThemeContext);
-
-    return (
-      <StyledTabContainer theme={theme}>
-        <TabButton
-          id={args.id}
-          title={args.title}
-          LeftIcon={args.LeftIcon}
-          RightIcon={args.RightIcon}
-          active={args.active}
-          disabled={args.disabled}
-          pill={args.pill}
-          to={args.to}
-          logo={args.logo}
-          onClick={args.onClick}
-          className={args.className}
-          contentSize={args.contentSize}
-        />
-      </StyledTabContainer>
-    );
-  },
+  render: (args) => (
+    <TabContainer>
+      <TabButton
+        id={args.id}
+        title={args.title}
+        LeftIcon={args.LeftIcon}
+        RightIcon={args.RightIcon}
+        active={args.active}
+        disabled={args.disabled}
+        pill={args.pill}
+        to={args.to}
+        logo={args.logo}
+        onClick={args.onClick}
+        className={args.className}
+        contentSize={args.contentSize}
+      />
+    </TabContainer>
+  ),
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.active'] },
     catalog: {

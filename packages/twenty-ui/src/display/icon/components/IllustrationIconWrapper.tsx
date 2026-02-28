@@ -10,10 +10,18 @@ const StyledRectangleIllustrationIcon = styled('div')<{ theme: ThemeType }>`
   justify-content: center;
 `;
 
-export const IllustrationIconWrapper = (
-  props: React.HTMLAttributes<HTMLDivElement>,
-) => {
+export const IllustrationIconWrapper = ({
+  children,
+  className,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) => {
   const { theme } = useContext(ThemeContext);
 
-  return <StyledRectangleIllustrationIcon theme={theme} {...props} />;
+  return (
+    <StyledRectangleIllustrationIcon theme={theme} className={className}>
+      {children}
+    </StyledRectangleIllustrationIcon>
+  );
 };

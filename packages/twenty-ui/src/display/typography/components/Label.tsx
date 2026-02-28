@@ -19,10 +19,16 @@ const StyledLabel = styled.div<{ variant?: LabelVariant; theme: ThemeType }>`
 
 type LabelProps = {
   variant?: LabelVariant;
-} & React.HTMLAttributes<HTMLDivElement>;
+  children?: React.ReactNode;
+  className?: string;
+};
 
-export const Label = ({ variant, ...rest }: LabelProps) => {
+export const Label = ({ variant, children, className }: LabelProps) => {
   const { theme } = useContext(ThemeContext);
 
-  return <StyledLabel variant={variant} theme={theme} {...rest} />;
+  return (
+    <StyledLabel variant={variant} theme={theme} className={className}>
+      {children}
+    </StyledLabel>
+  );
 };

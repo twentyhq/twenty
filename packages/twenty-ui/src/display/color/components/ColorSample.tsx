@@ -58,7 +58,18 @@ const StyledColorSample = styled.div<StyledColorSampleProps>`
   }}
 `;
 
-export const ColorSample = (props: ColorSampleProps) => {
+export const ColorSample = ({
+  colorName,
+  color,
+  variant,
+}: ColorSampleProps) => {
   const { theme } = useContext(ThemeContext);
-  return <StyledColorSample {...props} theme={theme} />;
+  return (
+    <StyledColorSample
+      colorName={colorName}
+      color={color}
+      variant={variant}
+      theme={theme}
+    />
+  );
 };

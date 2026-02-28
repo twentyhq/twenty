@@ -1,6 +1,5 @@
-import { useContext } from 'react';
+import { type ReactElement, useContext } from 'react';
 import { styled } from '@linaria/react';
-import type { ReactElement } from 'react';
 import { ThemeContext, type ThemeType } from '@ui/theme';
 
 const StyledContainer = styled.div<{ theme: ThemeType }>`

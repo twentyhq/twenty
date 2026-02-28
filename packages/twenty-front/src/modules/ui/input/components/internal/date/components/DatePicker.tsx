@@ -512,7 +512,7 @@ export const DatePicker = ({
         </Suspense>
       </div>
       {clearable && (
-        <StyledButtonContainer onClick={handleClear}>
+        <StyledButtonContainer theme={theme} onClick={handleClear}>
           <StyledButton LeftIcon={IconCalendarX} text={t`Clear`} />
         </StyledButtonContainer>
       )}

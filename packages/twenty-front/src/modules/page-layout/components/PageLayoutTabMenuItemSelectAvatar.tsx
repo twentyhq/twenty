@@ -53,6 +53,7 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
 
   return (
     <StyledHoverableMenuItemBase
+      theme={theme}
       onClick={onClick}
       disabled={disabled}
       data-testid={testId}
@@ -63,16 +64,16 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <StyledMenuItemLeftContent>
+      <StyledMenuItemLeftContent theme={theme}>
         <TabAvatar tab={tab} />
         <StyledTextContainer>
-          <StyledMenuItemLabel>{tab.title}</StyledMenuItemLabel>
+          <StyledMenuItemLabel theme={theme}>{tab.title}</StyledMenuItemLabel>
         </StyledTextContainer>
       </StyledMenuItemLeftContent>
 
       <StyledRightContent>
         {selected && !isHovered && (
-          <StyledMenuItemIconCheck size={theme.icon.size.md} />
+          <StyledMenuItemIconCheck theme={theme} size={theme.icon.size.md} />
         )}
 
         {isHovered && showEditButton && (

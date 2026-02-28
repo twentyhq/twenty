@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { ThemeContext, type ThemeType } from '@ui/theme';
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 const StyledErrorContainer = styled.div<{ theme: ThemeType }>`
   align-items: center;
@@ -13,14 +13,19 @@ const StyledErrorContainer = styled.div<{ theme: ThemeType }>`
   text-align: center;
 `;
 
-export const AnimatedPlaceholderErrorContainer = (
-  props: AnimatedPlaceholderErrorContainerProps<
-    React.ComponentProps<typeof StyledErrorContainer>,
-    'theme'
-  >,
-) => {
+export const AnimatedPlaceholderErrorContainer = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
   const { theme } = useContext(ThemeContext);
-  return <StyledErrorContainer {...props} theme={theme} />;
+  return (
+    <StyledErrorContainer theme={theme} className={className}>
+      {children}
+    </StyledErrorContainer>
+  );
 };
 
 const StyledErrorTextContainer = styled.div<{ theme: ThemeType }>`
@@ -33,14 +38,19 @@ const StyledErrorTextContainer = styled.div<{ theme: ThemeType }>`
   width: 100%;
 `;
 
-export const AnimatedPlaceholderErrorTextContainer = (
-  props: AnimatedPlaceholderErrorTextContainerProps<
-    React.ComponentProps<typeof StyledErrorTextContainer>,
-    'theme'
-  >,
-) => {
+export const AnimatedPlaceholderErrorTextContainer = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
   const { theme } = useContext(ThemeContext);
-  return <StyledErrorTextContainer {...props} theme={theme} />;
+  return (
+    <StyledErrorTextContainer theme={theme} className={className}>
+      {children}
+    </StyledErrorTextContainer>
+  );
 };
 
 const StyledErrorTitle = styled.div<{ theme: ThemeType }>`
@@ -50,14 +60,19 @@ const StyledErrorTitle = styled.div<{ theme: ThemeType }>`
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
 `;
 
-export const AnimatedPlaceholderErrorTitle = (
-  props: AnimatedPlaceholderErrorTitleProps<
-    React.ComponentProps<typeof StyledErrorTitle>,
-    'theme'
-  >,
-) => {
+export const AnimatedPlaceholderErrorTitle = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
   const { theme } = useContext(ThemeContext);
-  return <StyledErrorTitle {...props} theme={theme} />;
+  return (
+    <StyledErrorTitle theme={theme} className={className}>
+      {children}
+    </StyledErrorTitle>
+  );
 };
 
 const StyledErrorSubTitle = styled.div<{ theme: ThemeType }>`
@@ -69,12 +84,17 @@ const StyledErrorSubTitle = styled.div<{ theme: ThemeType }>`
   overflow: hidden;
 `;
 
-export const AnimatedPlaceholderErrorSubTitle = (
-  props: AnimatedPlaceholderErrorSubTitleProps<
-    React.ComponentProps<typeof StyledErrorSubTitle>,
-    'theme'
-  >,
-) => {
+export const AnimatedPlaceholderErrorSubTitle = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
   const { theme } = useContext(ThemeContext);
-  return <StyledErrorSubTitle {...props} theme={theme} />;
+  return (
+    <StyledErrorSubTitle theme={theme} className={className}>
+      {children}
+    </StyledErrorSubTitle>
+  );
 };

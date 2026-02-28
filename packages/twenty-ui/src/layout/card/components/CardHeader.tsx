@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { ThemeContext, type ThemeType } from '@ui/theme';
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 const StyledCardHeader = styled.div<{ theme: ThemeType }>`
   background-color: ${({ theme }) => theme.background.primary};
@@ -10,12 +10,17 @@ const StyledCardHeader = styled.div<{ theme: ThemeType }>`
   padding: ${({ theme }) => theme.spacing(2, 4)};
 `;
 
-export const CardHeader = (
-  props: CardHeaderProps<
-    React.ComponentProps<typeof StyledCardHeader>,
-    'theme'
-  >,
-) => {
+export const CardHeader = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
   const { theme } = useContext(ThemeContext);
-  return <StyledCardHeader {...props} theme={theme} />;
+  return (
+    <StyledCardHeader theme={theme} className={className}>
+      {children}
+    </StyledCardHeader>
+  );
 };

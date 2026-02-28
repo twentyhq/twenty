@@ -9,13 +9,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { type ReactNode, useContext, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-const containAnimationStyles = `
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  width: 100%;
-`;
-
 type AnimatedExpandableContainerProps = {
   children: ReactNode;
   isExpanded: boolean;

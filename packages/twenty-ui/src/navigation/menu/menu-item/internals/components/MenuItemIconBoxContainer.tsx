@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type ComponentPropsWithoutRef, useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 import { ThemeContext, type ThemeType } from '@ui/theme';
 
@@ -12,12 +12,20 @@ const StyledIconContainerBase = styled.div<{ theme: ThemeType }>`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-type StyledIconContainerProps = ComponentPropsWithoutRef<'div'>;
-
-export const StyledIconContainer = (props: StyledIconContainerProps) => {
+export const StyledIconContainer = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
   const { theme } = useContext(ThemeContext);
 
-  return <StyledIconContainerBase theme={theme} {...props} />;
+  return (
+    <StyledIconContainerBase theme={theme} className={className}>
+      {children}
+    </StyledIconContainerBase>
+  );
 };
 
 export { StyledIconContainer as MenuItemIconBoxContainer };

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { ThemeContext, type ThemeType } from '@ui/theme';
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 const StyledCard = styled.div<{
   fullWidth?: boolean;
@@ -15,9 +15,26 @@ const StyledCard = styled.div<{
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
-export const Card = (
-  props: CardProps<React.ComponentProps<typeof StyledCard>, 'theme'>,
-) => {
+export const Card = ({
+  children,
+  className,
+  fullWidth,
+  rounded,
+}: {
+  children?: ReactNode;
+  className?: string;
+  fullWidth?: boolean;
+  rounded?: boolean;
+}) => {
   const { theme } = useContext(ThemeContext);
-  return <StyledCard {...props} theme={theme} />;
+  return (
+    <StyledCard
+      theme={theme}
+      className={className}
+      fullWidth={fullWidth}
+      rounded={rounded}
+    >
+      {children}
+    </StyledCard>
+  );
 };

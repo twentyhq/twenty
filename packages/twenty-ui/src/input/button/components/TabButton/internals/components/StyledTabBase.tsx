@@ -1,7 +1,13 @@
 import { styled } from '@linaria/react';
-import { type ThemeType } from '@ui/theme';
+import { ThemeContext, type ThemeType } from '@ui/theme';
+import { forwardRef, useContext } from 'react';
 
-export const StyledTabButton = styled.button<{
+function useThemeFromContext() {
+  const { theme } = useContext(ThemeContext);
+  return theme;
+}
+
+const RawStyledTabButton = styled.button<{
   theme: ThemeType;
   active?: boolean;
   disabled?: boolean;
@@ -38,7 +44,28 @@ export const StyledTabButton = styled.button<{
   }
 `;
 
-export const StyledTabContainer = styled.div<{
+export const StyledTabButton = forwardRef<
+  HTMLButtonElement,
+  {
+    theme?: ThemeType;
+    active?: boolean;
+    disabled?: boolean;
+    to?: string;
+    as?: React.ElementType;
+  } & React.ComponentPropsWithoutRef<'button'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledTabButton
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledTabButton.displayName = 'StyledTabButton';
+
+const RawStyledTabContainer = styled.div<{
   theme: ThemeType;
   active?: boolean;
   disabled?: boolean;
@@ -71,7 +98,26 @@ export const StyledTabContainer = styled.div<{
   }
 `;
 
-export const StyledTabHover = styled.span<{
+export const StyledTabContainer = forwardRef<
+  HTMLDivElement,
+  {
+    theme?: ThemeType;
+    active?: boolean;
+    disabled?: boolean;
+  } & React.ComponentPropsWithoutRef<'div'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledTabContainer
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledTabContainer.displayName = 'StyledTabContainer';
+
+const RawStyledTabHover = styled.span<{
   theme: ThemeType;
   contentSize?: 'sm' | 'md';
 }>`
@@ -92,3 +138,21 @@ export const StyledTabHover = styled.span<{
     background: ${({ theme }) => theme.background.quaternary};
   }
 `;
+
+export const StyledTabHover = forwardRef<
+  HTMLSpanElement,
+  {
+    theme?: ThemeType;
+    contentSize?: 'sm' | 'md';
+  } & React.ComponentPropsWithoutRef<'span'>
+>((props, ref) => {
+  const contextTheme = useThemeFromContext();
+  return (
+    <RawStyledTabHover
+      {...props}
+      theme={props.theme ?? contextTheme}
+      ref={ref}
+    />
+  );
+});
+StyledTabHover.displayName = 'StyledTabHover';

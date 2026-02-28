@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconChartPie, TooltipDelay } from '@ui/display';
 import { MenuPicker } from '@ui/navigation/menu/components/MenuPicker';
 import { ComponentDecorator } from '@ui/testing';
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { ThemeContext, type ThemeType } from '@ui/theme';
 
 const meta: Meta<typeof MenuPicker> = {
@@ -57,61 +57,62 @@ const StyledTitle = styled.h4<{ theme: ThemeType }>`
   margin-bottom: 8px;
 `;
 
-export const AllStates: Story = {
-  render: () => {
-    const { theme } = useContext(ThemeContext);
+const SectionTitle = ({ children }: { children?: ReactNode }) => {
+  const { theme } = useContext(ThemeContext);
+  return <StyledTitle theme={theme}>{children}</StyledTitle>;
+};
 
-    return (
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          width: '100%',
-          gap: '16px',
-        }}
-      >
-        <div>
-          <StyledTitle theme={theme}>Default</StyledTitle>
-          <MenuPicker id="default" icon={IconChartPie} label="Default" />
-        </div>
-        <div>
-          <StyledTitle theme={theme}>Selected</StyledTitle>
-          <MenuPicker
-            id="selected"
-            icon={IconChartPie}
-            label="Selected"
-            selected
-          />
-        </div>
-        <div>
-          <StyledTitle theme={theme}>Disabled</StyledTitle>
-          <MenuPicker
-            id="disabled"
-            icon={IconChartPie}
-            label="Disabled"
-            disabled
-          />
-        </div>
-        <div>
-          <StyledTitle theme={theme}>No Label</StyledTitle>
-          <MenuPicker
-            id="no-label"
-            icon={IconChartPie}
-            label="No Label"
-            showLabel={false}
-          />
-        </div>
-        <div>
-          <StyledTitle theme={theme}> With Tooltip</StyledTitle>
-          <MenuPicker
-            id="tooltip"
-            icon={IconChartPie}
-            label="Tooltip"
-            tooltipContent="Tooltip"
-            tooltipDelay={TooltipDelay.mediumDelay}
-          />
-        </div>
+export const AllStates: Story = {
+  render: () => (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        width: '100%',
+        gap: '16px',
+      }}
+    >
+      <div>
+        <SectionTitle>Default</SectionTitle>
+        <MenuPicker id="default" icon={IconChartPie} label="Default" />
       </div>
-    );
-  },
+      <div>
+        <SectionTitle>Selected</SectionTitle>
+        <MenuPicker
+          id="selected"
+          icon={IconChartPie}
+          label="Selected"
+          selected
+        />
+      </div>
+      <div>
+        <SectionTitle>Disabled</SectionTitle>
+        <MenuPicker
+          id="disabled"
+          icon={IconChartPie}
+          label="Disabled"
+          disabled
+        />
+      </div>
+      <div>
+        <SectionTitle>No Label</SectionTitle>
+        <MenuPicker
+          id="no-label"
+          icon={IconChartPie}
+          label="No Label"
+          showLabel={false}
+        />
+      </div>
+      <div>
+        <SectionTitle>With Tooltip</SectionTitle>
+        <MenuPicker
+          id="tooltip"
+          icon={IconChartPie}
+          label="Tooltip"
+          tooltipContent="Tooltip"
+          tooltipDelay={TooltipDelay.mediumDelay}
+        />
+      </div>
+    </div>
+  ),
 };

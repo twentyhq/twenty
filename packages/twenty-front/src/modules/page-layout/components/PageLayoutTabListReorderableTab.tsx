@@ -3,6 +3,7 @@ import { Draggable } from '@hello-pangea/dnd';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 
@@ -31,11 +32,13 @@ export const PageLayoutTabListReorderableTab = ({
     pageLayoutTabSettingsOpenTabIdComponentState,
   );
 
+  const theme = useTheme();
   const isSettingsOpenForThisTab = pageLayoutTabSettingsOpenTabId === tab.id;
   return (
     <Draggable draggableId={tab.id} index={index} isDragDisabled={disabled}>
       {(draggableProvided, draggableSnapshot) => (
         <StyledTabContainer
+          theme={theme}
           ref={draggableProvided.innerRef}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...draggableProvided.draggableProps}

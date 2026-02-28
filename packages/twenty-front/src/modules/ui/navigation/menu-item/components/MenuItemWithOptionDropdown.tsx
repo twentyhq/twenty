@@ -74,6 +74,7 @@ export const MenuItemWithOptionDropdown = ({
 
   return (
     <StyledHoverableMenuItemBase
+      theme={theme}
       data-testid={testId ?? undefined}
       onClick={handleMenuItemClick}
       className={className}
@@ -82,7 +83,7 @@ export const MenuItemWithOptionDropdown = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <StyledMenuItemLeftContent>
+      <StyledMenuItemLeftContent theme={theme}>
         <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">

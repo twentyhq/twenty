@@ -7,17 +7,18 @@ import {
   OverflowingTextWithTooltip,
   type IconComponent,
 } from '@ui/display';
-import { type ReactNode, useContext } from 'react';
+import { forwardRef, type ReactNode, useContext } from 'react';
 import { ThemeContext, type ThemeType } from '@ui/theme';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
+  type MenuItemBaseProps,
   StyledMenuItemBase,
   StyledMenuItemLabel,
   StyledMenuItemRightContent,
   StyledRightMenuItemContextualText,
 } from '../internals/components/StyledMenuItemBase';
 
-export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
+const RawStyledMenuItemSelect = styled(StyledMenuItemBase)<{
   disabled?: boolean;
   focused?: boolean;
   theme: ThemeType;
@@ -43,6 +44,23 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
     return '';
   }}
 `;
+
+export const StyledMenuItemSelect = forwardRef<
+  HTMLDivElement,
+  MenuItemBaseProps & {
+    focused?: boolean;
+  } & React.ComponentPropsWithoutRef<'div'>
+>(({ theme: propTheme, ...rest }, ref) => {
+  const { theme: contextTheme } = useContext(ThemeContext);
+  return (
+    <RawStyledMenuItemSelect
+      {...rest}
+      theme={propTheme ?? contextTheme}
+      ref={ref as any}
+    />
+  );
+});
+StyledMenuItemSelect.displayName = 'StyledMenuItemSelect';
 
 type MenuItemSelectProps = {
   LeftIcon?: IconComponent | null | undefined;
