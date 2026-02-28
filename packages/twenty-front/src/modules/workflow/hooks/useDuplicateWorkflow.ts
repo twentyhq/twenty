@@ -4,14 +4,14 @@ import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecord
 import { useMutation } from '@apollo/client';
 import {
   type DuplicateWorkflowInput,
-  type WorkflowVersion,
+  type WorkflowVersionDto,
 } from '~/generated/graphql';
 import { DUPLICATE_WORKFLOW } from '@/workflow/graphql/mutations/duplicateWorkflow';
 
 export const useDuplicateWorkflow = () => {
   const apolloCoreClient = useApolloCoreClient();
   const [mutate] = useMutation<
-    { duplicateWorkflow: WorkflowVersion },
+    { duplicateWorkflow: WorkflowVersionDto },
     { input: DuplicateWorkflowInput }
   >(DUPLICATE_WORKFLOW, {
     client: apolloCoreClient,
