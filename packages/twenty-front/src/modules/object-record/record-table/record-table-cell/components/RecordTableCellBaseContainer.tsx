@@ -6,7 +6,6 @@ import { useRecordTableRenderProfiler } from '@/object-record/record-table/__per
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/ui/meta-types/display/utils/isFieldIdentifierDisplay';
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
-import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { ThemeContext } from 'twenty-ui/theme';
@@ -70,20 +69,13 @@ export const RecordTableCellBaseContainer = ({
     fieldDefinition,
     isLabelIdentifier,
   );
-  const { onMoveHoverToCurrentCell } = useRecordTableBodyContextOrThrow();
-
-  const handleContainerMouseMove = () => {
-    onMoveHoverToCurrentCell(cellPosition);
-  };
 
   const handleContainerClick = () => {
-    onMoveHoverToCurrentCell(cellPosition);
     openTableCell();
   };
 
   return (
     <StyledBaseContainer
-      onMouseMove={handleContainerMouseMove}
       onClick={handleContainerClick}
       backgroundColorTransparentSecondary={
         theme.background.transparent.secondary

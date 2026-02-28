@@ -18,6 +18,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import styled from '@emotion/styled';
 import { useCallback, useRef, useState } from 'react';
 import { useStore } from 'jotai';
+import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -91,6 +92,40 @@ export const RecordTableContent = ({
     }
   }, [store, isSomeCellInEditMode, setRecordTableHoverPosition]);
 
+  const lastHoverPositionRef = useRef<TableCellPosition | null>(null);
+
+  const handleDelegatedMouseMove = useCallback(
+    (event: React.MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const cellElement = target.closest<HTMLElement>(
+        '[id^="record-table-cell-"]',
+      );
+
+      if (!cellElement) {
+        return;
+      }
+
+      const idParts = cellElement.id.split('-');
+      const column = parseInt(idParts[3], 10);
+      const row = parseInt(idParts[4], 10);
+
+      if (isNaN(column) || isNaN(row)) {
+        return;
+      }
+
+      const lastPosition = lastHoverPositionRef.current;
+
+      if (lastPosition?.column === column && lastPosition?.row === row) {
+        return;
+      }
+
+      const position = { column, row };
+      lastHoverPositionRef.current = position;
+      setRecordTableHoverPosition(position);
+    },
+    [setRecordTableHoverPosition],
+  );
+
   return (
     <StyledTableContainer ref={containerRef}>
       <RecordTableStyleWrapper
@@ -98,6 +133,7 @@ export const RecordTableContent = ({
         isDragging={isDragging}
         visibleRecordFields={visibleRecordFields}
         id={RECORD_TABLE_HTML_ID}
+        onMouseMove={handleDelegatedMouseMove}
         onMouseLeave={handleMouseLeave}
         hasRecordGroups={hasRecordGroups}
       >
