@@ -3,12 +3,18 @@ import { getFileType } from '@/activities/files/utils/getFileType';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { type FileUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import { AvatarChip, Chip, ChipVariant, LinkChip } from 'twenty-ui/components';
 import { type IconComponent, IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
+
+const StyledRemoveButtonContainer = styled.div`
+  cursor: pointer;
+  display: flex;
+`;
 
 export const AgentChatFilePreview = ({
   file,
@@ -43,15 +49,39 @@ export const AgentChatFilePreview = ({
   );
 
   const rightComponent = onRemove ? (
-    <AvatarChip
-      Icon={IconX}
-      IconColor={theme.font.color.secondary}
-      onClick={onRemove}
-      divider="left"
-    />
+    <StyledRemoveButtonContainer
+      onClick={(event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        onRemove();
+      }}
+      onMouseDown={(event) => {
+        event.stopPropagation();
+        event.preventDefault();
+      }}
+    >
+      <AvatarChip
+        Icon={IconX}
+        IconColor={theme.font.color.secondary}
+        divider="left"
+      />
+    </StyledRemoveButtonContainer>
   ) : undefined;
 
   if (isDefined(fileUrl)) {
+    if (isDefined(onRemove)) {
+      return (
+        <Chip
+          label={fileName}
+          emptyLabel={t`Untitled`}
+          variant={ChipVariant.Static}
+          clickable={false}
+          leftComponent={leftComponent}
+          rightComponent={rightComponent}
+        />
+      );
+    }
+
     return (
       <LinkChip
         label={fileName}
