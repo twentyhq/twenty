@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
 import ms from 'ms';
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { base64UrlEncode } from 'twenty-shared/utils';
 
 import {

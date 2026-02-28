@@ -99,16 +99,15 @@ export const Authorize = () => {
   const clientId = searchParam.get('clientId');
   const codeChallenge = searchParam.get('codeChallenge');
   const redirectUrl = searchParam.get('redirectUrl');
-  const state = searchParam.get('state');
-  const scope = searchParam.get('scope');
 
-  const { data, loading, error: queryError } = useQuery(
-    FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID,
-    {
-      variables: { clientId: clientId ?? '' },
-      skip: !isDefined(clientId),
-    },
-  );
+  const {
+    data,
+    loading,
+    error: queryError,
+  } = useQuery(FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID, {
+    variables: { clientId: clientId ?? '' },
+    skip: !isDefined(clientId),
+  });
 
   const applicationRegistration = data?.findApplicationRegistrationByClientId;
   const [authorizeApp] = useAuthorizeAppMutation();
@@ -135,8 +134,6 @@ export const Authorize = () => {
           clientId,
           codeChallenge: codeChallenge ?? undefined,
           redirectUrl,
-          state: state ?? undefined,
-          scope: scope ?? undefined,
         },
         onCompleted: (responseData) => {
           redirect(responseData.authorizeApp.redirectUrl);
@@ -151,7 +148,7 @@ export const Authorize = () => {
     }
   };
 
-  if (queryError) {
+  if (isDefined(queryError)) {
     return (
       <StyledContainer>
         <StyledCardWrapper>
@@ -222,9 +219,7 @@ export const Authorize = () => {
             ))}
           </StyledScopeList>
         )}
-        {authorizeError && (
-          <StyledErrorText>{authorizeError}</StyledErrorText>
-        )}
+        {authorizeError && <StyledErrorText>{authorizeError}</StyledErrorText>}
         <StyledButtonContainer>
           <UndecoratedLink to={AppPath.Index}>
             <MainButton

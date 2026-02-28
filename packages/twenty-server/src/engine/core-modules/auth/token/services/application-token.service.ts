@@ -148,9 +148,10 @@ export class ApplicationTokenService {
     }
   }
 
-  decodeToken(
-    token: string,
-  ): (ApplicationAccessTokenJwtPayload | ApplicationRefreshTokenJwtPayload) & {
+  decodeToken(token: string): (
+    | ApplicationAccessTokenJwtPayload
+    | ApplicationRefreshTokenJwtPayload
+  ) & {
     exp?: number;
     iat?: number;
   } {

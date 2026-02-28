@@ -737,10 +737,7 @@ describe('OAuth (integration)', () => {
   describe('Authorization code replay detection', () => {
     it('should return specific error when a used code is replayed', async () => {
       const code = crypto.randomBytes(42).toString('hex');
-      const hashedCode = crypto
-        .createHash('sha256')
-        .update(code)
-        .digest('hex');
+      const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
 
       const tokenId = await insertAppToken(ds, {
         value: hashedCode,
@@ -782,10 +779,7 @@ describe('OAuth (integration)', () => {
   describe('Token revocation endpoint', () => {
     it('should return 200 for valid token revocation', async () => {
       const code = crypto.randomBytes(42).toString('hex');
-      const hashedCode = crypto
-        .createHash('sha256')
-        .update(code)
-        .digest('hex');
+      const hashedCode = crypto.createHash('sha256').update(code).digest('hex');
 
       const tokenId = await insertAppToken(ds, {
         value: hashedCode,
@@ -849,9 +843,7 @@ describe('OAuth (integration)', () => {
         .expect(200);
 
       expect(introspectRes.body.active).toBe(true);
-      expect(introspectRes.body.client_id).toBe(
-        testRegistration.oAuthClientId,
-      );
+      expect(introspectRes.body.client_id).toBe(testRegistration.oAuthClientId);
       expect(introspectRes.body.token_type).toBe('Bearer');
     });
 

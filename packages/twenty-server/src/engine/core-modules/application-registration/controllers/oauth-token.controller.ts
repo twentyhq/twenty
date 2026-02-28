@@ -132,7 +132,10 @@ export class OAuthTokenController {
     if (!body.client_id) {
       res.status(401);
 
-      return { error: 'invalid_client', error_description: 'client_id is required' };
+      return {
+        error: 'invalid_client',
+        error_description: 'client_id is required',
+      };
     }
 
     return this.oauthService.introspectToken({
