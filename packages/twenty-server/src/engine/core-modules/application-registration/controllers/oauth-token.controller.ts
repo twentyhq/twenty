@@ -20,11 +20,12 @@ import { OAuthService } from 'src/engine/core-modules/application-registration/o
 import { OAuthErrorResponse } from 'src/engine/core-modules/application-registration/types/oauth-error-response.type';
 import { OAuthTokenResponse } from 'src/engine/core-modules/application-registration/types/oauth-token-response.type';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-const OAUTH_RATE_LIMIT_MAX = 20;
+const OAUTH_RATE_LIMIT_MAX = 60;
 const OAUTH_RATE_LIMIT_WINDOW_MS = 60_000;
 
 @Controller('oauth')
@@ -44,7 +45,7 @@ export class OAuthTokenController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    await this.applyRateLimit(req);
+    if (await this.applyRateLimit(req, res)) return;
 
     let result: OAuthTokenResponse | OAuthErrorResponse;
 
@@ -103,7 +104,7 @@ export class OAuthTokenController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    await this.applyRateLimit(req);
+    if (await this.applyRateLimit(req, res)) return;
     this.setSecurityHeaders(res);
 
     await this.oauthService.revokeToken({
@@ -125,7 +126,7 @@ export class OAuthTokenController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    await this.applyRateLimit(req);
+    if (await this.applyRateLimit(req, res)) return;
     this.setSecurityHeaders(res);
 
     if (!body.client_id) {
@@ -144,15 +145,30 @@ export class OAuthTokenController {
     });
   }
 
-  private async applyRateLimit(req: Request): Promise<void> {
+  private async applyRateLimit(req: Request, res: Response): Promise<boolean> {
     const rateLimitKey = `oauth:${req.ip}`;
 
-    await this.throttlerService.tokenBucketThrottleOrThrow(
-      rateLimitKey,
-      1,
-      OAUTH_RATE_LIMIT_MAX,
-      OAUTH_RATE_LIMIT_WINDOW_MS,
-    );
+    try {
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        rateLimitKey,
+        1,
+        OAUTH_RATE_LIMIT_MAX,
+        OAUTH_RATE_LIMIT_WINDOW_MS,
+      );
+
+      return false;
+    } catch (error) {
+      if (error instanceof ThrottlerException) {
+        res.status(429).json({
+          error: 'rate_limit_exceeded',
+          error_description: 'Too many requests, please try again later',
+        });
+
+        return true;
+      }
+
+      throw error;
+    }
   }
 
   private setSecurityHeaders(res: Response): void {
