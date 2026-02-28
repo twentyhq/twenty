@@ -194,27 +194,29 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationStatsDTO> {
     await this.findOneById(applicationRegistrationId);
 
-    const installs = await this.applicationRepository.find({
-      where: { applicationRegistrationId },
-      select: ['version'],
-    });
+    const versionDistribution: { version: string; count: number }[] =
+      await this.applicationRepository
+        .createQueryBuilder('application')
+        .select("COALESCE(application.version, 'unknown')", 'version')
+        .addSelect('COUNT(*)::int', 'count')
+        .where(
+          'application.applicationRegistrationId = :applicationRegistrationId',
+          { applicationRegistrationId },
+        )
+        .andWhere('application.deletedAt IS NULL')
+        .groupBy('version')
+        .orderBy('count', 'DESC')
+        .getRawMany();
 
-    const versionCounts = new Map<string, number>();
-
-    for (const install of installs) {
-      const version = install.version ?? 'unknown';
-
-      versionCounts.set(version, (versionCounts.get(version) ?? 0) + 1);
-    }
-
-    const versionDistribution = Array.from(versionCounts.entries())
-      .map(([version, count]) => ({ version, count }))
-      .sort((a, b) => b.count - a.count);
+    const activeInstalls = versionDistribution.reduce(
+      (sum, entry) => sum + entry.count,
+      0,
+    );
 
     const mostInstalledVersion = versionDistribution[0]?.version ?? null;
 
     return {
-      activeInstalls: installs.length,
+      activeInstalls,
       mostInstalledVersion,
       versionDistribution,
     };
