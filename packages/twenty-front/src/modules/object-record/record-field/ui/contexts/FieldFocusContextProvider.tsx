@@ -2,19 +2,16 @@ import { useState } from 'react';
 
 import { FieldFocusContext } from '@/object-record/record-field/ui/contexts/FieldFocusContext';
 
-const NOOP = () => {};
-
 const STATIC_UNFOCUSED_VALUE = {
   isFocused: false,
-  setIsFocused: NOOP,
+  setIsFocused: () => {},
 };
 
 const STATIC_FOCUSED_VALUE = {
   isFocused: true,
-  setIsFocused: NOOP,
+  setIsFocused: () => {},
 };
 
-// Stateful provider for contexts that need dynamic focus (inline cells, etc.)
 export const FieldFocusContextProvider = ({ children }: any) => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -30,7 +27,6 @@ export const FieldFocusContextProvider = ({ children }: any) => {
   );
 };
 
-// Static provider: no useState, always unfocused. Used in table display path.
 export const FieldFocusStaticUnfocusedProvider = ({
   children,
 }: {
@@ -41,7 +37,6 @@ export const FieldFocusStaticUnfocusedProvider = ({
   </FieldFocusContext.Provider>
 );
 
-// Static provider: no useState, always focused. Used in table hover portal.
 export const FieldFocusStaticFocusedProvider = ({
   children,
 }: {

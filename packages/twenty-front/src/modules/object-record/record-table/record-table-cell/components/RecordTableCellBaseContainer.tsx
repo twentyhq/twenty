@@ -84,6 +84,8 @@ export const RecordTableCellBaseContainer = ({
       fontColorMedium={theme.border.color.medium}
       isReadOnly={isReadOnly ?? false}
       id={`record-table-cell-${cellPosition.column}-${cellPosition.row}`}
+      data-record-table-col={cellPosition.column}
+      data-record-table-row={cellPosition.row}
       data-click-outside-id={
         isChipDisplay ? RECORD_CHIP_CLICK_OUTSIDE_ID : undefined
       }
