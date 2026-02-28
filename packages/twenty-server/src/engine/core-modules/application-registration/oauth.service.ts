@@ -119,7 +119,7 @@ export class OAuthService {
     // RFC 6749 §4.1.3: auth code must have been issued to this client
     const storedClientId = authCodeToken.context?.clientId;
 
-    if (storedClientId && storedClientId !== clientId) {
+    if (!storedClientId || storedClientId !== clientId) {
       return this.errorResponse(
         'invalid_grant',
         'Authorization code was not issued to this client',

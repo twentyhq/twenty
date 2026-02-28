@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  HttpCode,
   Post,
   Req,
   Res,
@@ -23,8 +24,8 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-const OAUTH_TOKEN_RATE_LIMIT_MAX = 20;
-const OAUTH_TOKEN_RATE_LIMIT_WINDOW_MS = 60_000;
+const OAUTH_RATE_LIMIT_MAX = 20;
+const OAUTH_RATE_LIMIT_WINDOW_MS = 60_000;
 
 @Controller('oauth')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -35,6 +36,7 @@ export class OAuthTokenController {
   ) {}
 
   @Post('token')
+  @HttpCode(200)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @UsePipes(new ValidationPipe())
   async token(
@@ -42,14 +44,7 @@ export class OAuthTokenController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const rateLimitKey = `oauth-token:${body.client_id ?? req.ip}`;
-
-    await this.throttlerService.tokenBucketThrottleOrThrow(
-      rateLimitKey,
-      1,
-      OAUTH_TOKEN_RATE_LIMIT_MAX,
-      OAUTH_TOKEN_RATE_LIMIT_WINDOW_MS,
-    );
+    await this.applyRateLimit(req);
 
     let result: OAuthTokenResponse | OAuthErrorResponse;
 
@@ -99,14 +94,16 @@ export class OAuthTokenController {
     return result;
   }
 
-  // RFC 7009: Token revocation endpoint
   @Post('revoke')
+  @HttpCode(200)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @UsePipes(new ValidationPipe())
   async revoke(
     @Body() body: OAuthRevokeInput,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
+    await this.applyRateLimit(req);
     this.setSecurityHeaders(res);
 
     await this.oauthService.revokeToken({
@@ -119,14 +116,16 @@ export class OAuthTokenController {
     return {};
   }
 
-  // RFC 7662: Token introspection endpoint
   @Post('introspect')
+  @HttpCode(200)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @UsePipes(new ValidationPipe())
   async introspect(
     @Body() body: OAuthIntrospectInput,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
+    await this.applyRateLimit(req);
     this.setSecurityHeaders(res);
 
     if (!body.client_id) {
@@ -145,8 +144,18 @@ export class OAuthTokenController {
     });
   }
 
+  private async applyRateLimit(req: Request): Promise<void> {
+    const rateLimitKey = `oauth:${req.ip}`;
+
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      rateLimitKey,
+      1,
+      OAUTH_RATE_LIMIT_MAX,
+      OAUTH_RATE_LIMIT_WINDOW_MS,
+    );
+  }
+
   private setSecurityHeaders(res: Response): void {
-    // RFC 6749 §5.1: token responses must not be cached
     res.set('Cache-Control', 'no-store');
     res.set('Pragma', 'no-cache');
   }

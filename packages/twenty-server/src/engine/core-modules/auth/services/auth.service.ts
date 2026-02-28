@@ -527,9 +527,14 @@ export class AuthService {
     }
 
     // Validate requested scopes are a subset of the registration's allowed scopes
-    const requestedScopes = authorizeAppInput.scope
+    const parsedScopes = authorizeAppInput.scope
       ? authorizeAppInput.scope.split(' ').filter(Boolean)
-      : applicationRegistration.oAuthScopes;
+      : [];
+
+    const requestedScopes =
+      parsedScopes.length > 0
+        ? parsedScopes
+        : applicationRegistration.oAuthScopes;
 
     const invalidScopes = requestedScopes.filter(
       (scope) => !applicationRegistration.oAuthScopes.includes(scope),
