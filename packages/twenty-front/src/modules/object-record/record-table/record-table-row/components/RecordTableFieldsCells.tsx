@@ -9,8 +9,10 @@ import { RecordTableCellWrapper } from '@/object-record/record-table/record-tabl
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { useRecordTableRenderProfiler } from '@/object-record/record-table/__perf__/useRecordTableRenderProfiler';
 
 export const RecordTableFieldsCells = () => {
+  useRecordTableRenderProfiler('RecordTableFieldsCells');
   const { isSelected, rowIndex } = useRecordTableRowContextOrThrow();
 
   const { isDragging } = useRecordTableRowDraggableContextOrThrow();

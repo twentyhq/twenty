@@ -15,6 +15,7 @@ import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { forwardRef, type ReactNode } from 'react';
+import { useRecordTableRenderProfiler } from '@/object-record/record-table/__perf__/useRecordTableRenderProfiler';
 
 type RecordTableTrProps = {
   children: ReactNode;
@@ -39,6 +40,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
     },
     ref,
   ) => {
+    useRecordTableRenderProfiler('RecordTableTr');
     const { objectMetadataItem } = useRecordTableContextOrThrow();
 
     const isRowSelected = useAtomComponentFamilyStateValue(

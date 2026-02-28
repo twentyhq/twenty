@@ -17,6 +17,7 @@ import { Authorize } from '~/pages/auth/Authorize';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { NotFound } from '~/pages/not-found/NotFound';
+import { RecordTablePerfPage } from '~/pages/__perf__/RecordTablePerfPage';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { BookCall } from '~/pages/onboarding/BookCall';
@@ -72,6 +73,7 @@ export const useCreateAppRouter = (
               />
             }
           />
+          <Route path="/__perf__/table" element={<RecordTablePerfPage />} />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
         </Route>
         <Route element={<BlankLayout />}>
