@@ -47,10 +47,12 @@ describe('ImapGetMessageListService', () => {
 
   const mockImapClient = {
     getMailboxLock: jest.fn().mockResolvedValue({ release: jest.fn() }),
+    fetchAll: jest.fn().mockResolvedValue([]),
     mailbox: {
       uidValidity: 12345,
       uidNext: 100,
       highestModseq: '1000',
+      exists: 0,
     },
     capabilities: new Set(['CONDSTORE']),
     status: jest.fn().mockResolvedValue({
@@ -222,6 +224,63 @@ describe('ImapGetMessageListService', () => {
       });
 
       expect(imapClientProvider.closeClient).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('folder sequence cursor sync', () => {
+    it('should fetch new message UIDs from sequence range and use mailbox exists as cursor', async () => {
+      const folder = createMockFolder({
+        name: 'INBOX',
+        externalId: 'INBOX:1',
+        isSynced: true,
+        syncCursor: '2',
+      });
+
+      mockImapClient.mailbox.exists = 4;
+      mockImapClient.fetchAll.mockResolvedValueOnce([{ uid: 10 }, { uid: 15 }]);
+
+      const [result] = await service.getMessageLists({
+        connectedAccount: mockConnectedAccount,
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
+        messageFolders: [folder],
+      });
+
+      expect(mockImapClient.fetchAll).toHaveBeenCalledWith(
+        '3:4',
+        { uid: true },
+        { uid: false },
+      );
+      expect(result.messageExternalIds).toEqual(['INBOX:15', 'INBOX:10']);
+      expect(result.nextSyncCursor).toBe('4');
+    });
+
+    it('should clamp an out-of-range sequence cursor to folder size', async () => {
+      const folder = createMockFolder({
+        name: 'INBOX',
+        externalId: 'INBOX:1',
+        isSynced: true,
+        syncCursor: '10',
+      });
+
+      mockImapClient.mailbox.exists = 4;
+
+      const [result] = await service.getMessageLists({
+        connectedAccount: mockConnectedAccount,
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
+        messageFolders: [folder],
+      });
+
+      expect(mockImapClient.fetchAll).not.toHaveBeenCalled();
+      expect(result.messageExternalIds).toEqual([]);
+      expect(result.nextSyncCursor).toBe('4');
     });
   });
 });

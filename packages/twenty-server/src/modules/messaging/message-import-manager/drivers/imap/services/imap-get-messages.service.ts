@@ -1,10 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type ImapFlow } from 'imapflow';
-import { Address, type Email as ParsedMail } from 'postal-mime';
+import { type Address, type Email as ParsedMail } from 'postal-mime';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type MessagingSyncDriver } from 'src/modules/messaging/message-import-manager/drivers/interfaces/messaging-sync-driver.interface';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapMessageParserService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-parser.service';
@@ -21,16 +22,35 @@ type ConnectedAccount = Pick<
   'id' | 'provider' | 'handle' | 'handleAliases' | 'connectionParameters'
 >;
 
+type ImapGetMessagesSyncArgs = {
+  messageExternalIds: string[];
+  connectedAccount: ConnectedAccount;
+};
+
 @Injectable()
-export class ImapGetMessagesService {
+export class ImapGetMessagesService
+  implements
+    MessagingSyncDriver<ImapGetMessagesSyncArgs, MessageWithParticipants[]>
+{
   private readonly logger = new Logger(ImapGetMessagesService.name);
 
   constructor(
+    @Inject(ImapClientProvider)
     private readonly imapClientProvider: ImapClientProvider,
+    @Inject(ImapMessageParserService)
     private readonly messageParser: ImapMessageParserService,
+    @Inject(ImapMessageTextExtractorService)
     private readonly textExtractor: ImapMessageTextExtractorService,
+    @Inject(ImapMessagesImportErrorHandler)
     private readonly errorHandler: ImapMessagesImportErrorHandler,
   ) {}
+
+  public async sync({
+    messageExternalIds,
+    connectedAccount,
+  }: ImapGetMessagesSyncArgs): Promise<MessageWithParticipants[]> {
+    return this.getMessages(messageExternalIds, connectedAccount);
+  }
 
   async getMessages(
     messageExternalIds: string[],
