@@ -68,14 +68,15 @@ export class ApplicationRegistrationVariableService {
       );
     }
 
-    const updateData: Partial<ApplicationRegistrationVariableEntity> = {
-      ...(isDefined(update.value) && {
-        encryptedValue: this.encryptionService.encrypt(update.value),
-      }),
-      ...(isDefined(update.description) && {
-        description: update.description,
-      }),
-    };
+    const updateData: Record<string, unknown> = {};
+
+    if (isDefined(update.value)) {
+      updateData.encryptedValue = this.encryptionService.encrypt(update.value);
+    }
+
+    if (isDefined(update.description)) {
+      updateData.description = update.description;
+    }
 
     if (Object.keys(updateData).length > 0) {
       await this.variableRepository.update(id, updateData);

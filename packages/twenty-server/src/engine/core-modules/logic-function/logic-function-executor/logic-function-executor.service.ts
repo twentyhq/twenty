@@ -29,8 +29,6 @@ import type { FlatApplicationVariable } from 'src/engine/core-modules/applicatio
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
-const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
-
 export class LogicFunctionExecutionException extends Error {
   constructor(
     message: string,
@@ -183,10 +181,6 @@ export class LogicFunctionExecutorService {
       await this.applicationTokenService.generateApplicationAccessToken({
         workspaceId,
         applicationId: flatApplication.id,
-        expiresInSeconds: Math.max(
-          flatLogicFunction.timeoutSeconds,
-          MIN_TOKEN_EXPIRATION_IN_SECONDS,
-        ),
       });
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));

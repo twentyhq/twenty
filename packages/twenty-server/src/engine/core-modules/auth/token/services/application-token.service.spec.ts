@@ -79,7 +79,6 @@ describe('ApplicationTokenService', () => {
       const result = await service.generateApplicationAccessToken({
         workspaceId,
         applicationId,
-        expiresInSeconds: 10,
       });
 
       expect(result).toEqual({
@@ -117,7 +116,6 @@ describe('ApplicationTokenService', () => {
         applicationId,
         userWorkspaceId,
         userId,
-        expiresInSeconds: 10,
       });
 
       expect(result).toEqual({
@@ -151,7 +149,6 @@ describe('ApplicationTokenService', () => {
       service.generateApplicationAccessToken({
         applicationId: 'non-existent-application',
         workspaceId: 'workspace-id',
-        expiresInSeconds: 10,
       }),
     ).rejects.toThrow(ApplicationException);
   });
@@ -163,7 +160,6 @@ describe('ApplicationTokenService', () => {
       service.generateApplicationAccessToken({
         applicationId: 'application-id',
         workspaceId: 'non-existent-workspace',
-        expiresInSeconds: 10,
       }),
     ).rejects.toThrow(WorkspaceException);
   });
