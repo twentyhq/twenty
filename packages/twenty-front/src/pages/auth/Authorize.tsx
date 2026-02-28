@@ -53,8 +53,8 @@ const StyledCardWrapper = styled.div`
 `;
 
 const StyledButtonContainer = styled.div`
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
   width: 100%;
 `;
