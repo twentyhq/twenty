@@ -104,7 +104,7 @@ const InternalTableContextProviders = ({
   children: React.ReactNode;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const allObjectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const currentRecordFields = useAtomComponentStateValue(
